@@ -425,7 +425,14 @@
    "description": "Trigger: fire when an Intercom conversation event occurs.\n\n    Add the generated webhook URL as a separate endpoint in Intercom Developer\n    Hub > Configure > Webhooks and subscribe the conversation.* topics you need.\n    Each domain trigger gets its own URL, so topics are isolated per trigger.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Conversation Event",
+    "filters": {
+     "event_types": "Which conversation event fires this workflow. Choose \"All conversation events\" to fire on every conversation.* topic, or pick one specific event (e.g. conversation.user.created, conversation.admin.closed). Subscribe the matching topics at the URL above in Developer Hub."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_contact_event",
@@ -434,7 +441,14 @@
    "description": "Trigger: fire when an Intercom contact event occurs.\n\n    Add the generated webhook URL in Developer Hub > Configure > Webhooks and\n    subscribe contact.* and/or visitor.* topics.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact Event",
+    "filters": {
+     "event_types": "Which contact event fires this workflow. Choose \"All contact events\" to fire on any contact.* / visitor.signed_up topic, or pick one (e.g. contact.user.created, contact.archived). Subscribe matching topics at the URL above in Developer Hub."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_ticket_event",
@@ -443,7 +457,14 @@
    "description": "Trigger: fire when an Intercom ticket event occurs.\n\n    Add the generated webhook URL in Developer Hub > Configure > Webhooks and\n    subscribe ticket.* topics.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Ticket Event",
+    "filters": {
+     "event_types": "Which ticket event fires this workflow. Choose \"All ticket events\" to fire on any ticket.* topic, or pick one (e.g. ticket.created, ticket.resolved). Subscribe matching topics at the URL above in Developer Hub."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_company_event",
@@ -452,7 +473,14 @@
    "description": "Trigger: fire when an Intercom company, admin, or workspace event occurs.\n\n    Add the generated webhook URL in Developer Hub > Configure > Webhooks and\n    subscribe company.* and/or admin.* topics.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Company / Workspace Event",
+    "filters": {
+     "event_types": "Which company or workspace event fires this workflow. Choose \"All company & workspace events\" to fire on any company.* / admin.* / event.created topic, or pick one (e.g. company.created). Subscribe matching topics at the URL above in Developer Hub."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -231,7 +231,17 @@
    "registered_with": [
     "exa_api_key",
     "exa_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Monitor Results",
+    "filters": {
+     "monitor_query": "The recurring search query the monitor runs",
+     "cadence": "How often the monitor runs, counted from when it's created: hours or days, at least an hour (1h, 6h, 1d, 7d)"
+    },
+    "required": [
+     "monitor_query"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

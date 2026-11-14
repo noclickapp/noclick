@@ -29,7 +29,16 @@
    "needs_account": true,
    "registered_with": [
     "isn_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Order Event",
+    "filters": {
+     "office_id": "Optional office UUID; defaults to your primary office",
+     "order_id": "Optional order UUID or numeric ID; leave empty for every order in the office",
+     "event_type": "Choose the order milestone that starts this workflow"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_order_status_changed",
@@ -40,7 +49,15 @@
    "needs_account": true,
    "registered_with": [
     "isn_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Order Status Changed",
+    "filters": {
+     "office_id": "Optional office UUID; defaults to your primary office",
+     "order_id": "Optional order UUID or numeric ID; leave empty for every order in the office"
+    },
+    "required": []
+   }
   },
   {
    "name": "get_current_user",

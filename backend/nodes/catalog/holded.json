@@ -39,7 +39,14 @@
    "registered_with": [
     "holded_api_key",
     "holded_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Holded Event",
+    "filters": {
+     "event_type": "The Holded event that starts this workflow. Requires developers:webhooks.write permission on the API key."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_contacts",

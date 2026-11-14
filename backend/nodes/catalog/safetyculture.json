@@ -149,7 +149,12 @@
    "needs_account": true,
    "registered_with": [
     "safetyculture_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Inspection Started",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inspection_completed",
@@ -160,7 +165,12 @@
    "needs_account": true,
    "registered_with": [
     "safetyculture_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Inspection Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

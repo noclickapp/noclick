@@ -755,7 +755,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Pageview",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pageleave",
@@ -769,7 +774,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Page Leave",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_autocapture",
@@ -783,7 +793,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Autocapture",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_rageclick",
@@ -797,7 +812,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Rageclick",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_identify",
@@ -811,7 +831,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Identify",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_group_identify",
@@ -825,7 +850,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Group Identify",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_set_person_properties",
@@ -839,7 +869,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Set Person Properties",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_feature_flag_called",
@@ -853,7 +888,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Feature Flag Called",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_survey_shown",
@@ -867,7 +907,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Survey Shown",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_survey_sent",
@@ -881,7 +926,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Survey Response",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_survey_dismissed",
@@ -895,7 +945,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Survey Dismissed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_exception",
@@ -909,7 +964,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Exception",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_web_vitals",
@@ -923,7 +983,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Web Vitals",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_screen",
@@ -937,7 +1002,12 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Screen View (Mobile)",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_custom_event",
@@ -951,7 +1021,16 @@
     "posthog_project_api_key",
     "posthog_oauth",
     "posthog_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Custom Event",
+    "filters": {
+     "event_name": "The event to fire on. Pick one of your project's events, or type a new name (use '*' for all events)."
+    },
+    "required": [
+     "event_name"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

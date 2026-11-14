@@ -33,7 +33,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Reply",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_mentions",
@@ -42,7 +49,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Mention",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_publish",
@@ -51,7 +65,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Publish",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_delete",
@@ -60,7 +81,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Delete",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_any_threads_event",
@@ -69,7 +97,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Any Threads Event",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_me",

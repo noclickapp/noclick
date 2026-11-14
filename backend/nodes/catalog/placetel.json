@@ -37,7 +37,14 @@
    "needs_account": true,
    "registered_with": [
     "placetel_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming Call",
+    "filters": {
+     "numbers": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_outgoing_call",
@@ -48,7 +55,14 @@
    "needs_account": true,
    "registered_with": [
     "placetel_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Outgoing Call",
+    "filters": {
+     "numbers": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_call_accepted",
@@ -59,7 +73,14 @@
    "needs_account": true,
    "registered_with": [
     "placetel_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Call Answered",
+    "filters": {
+     "numbers": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_call_ended",
@@ -70,7 +91,14 @@
    "needs_account": true,
    "registered_with": [
     "placetel_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Call Ended",
+    "filters": {
+     "numbers": "Optional phone numbers to subscribe to. Leave empty for all enabled numbers."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_me",

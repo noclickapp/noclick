@@ -138,7 +138,14 @@
    "registered_with": [
     "net2phone_access_token",
     "net2phone_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Call Event",
+    "filters": {
+     "user": "Omit to subscribe to calls for all users."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

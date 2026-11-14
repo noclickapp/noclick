@@ -404,7 +404,12 @@
    "registered_with": [
     "bamboohr_oauth",
     "bamboohr_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Employment Status Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_job_change",
@@ -416,7 +421,12 @@
    "registered_with": [
     "bamboohr_oauth",
     "bamboohr_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Job Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_info_change",
@@ -428,7 +438,12 @@
    "registered_with": [
     "bamboohr_oauth",
     "bamboohr_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Info Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_personal_info_change",
@@ -440,7 +455,12 @@
    "registered_with": [
     "bamboohr_oauth",
     "bamboohr_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Personal Info Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_field_change",
@@ -452,7 +472,14 @@
    "registered_with": [
     "bamboohr_oauth",
     "bamboohr_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Field Change (Any)",
+    "filters": {
+     "monitor_fields": "Comma-separated field aliases/names to watch for changes"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

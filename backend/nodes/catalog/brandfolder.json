@@ -215,7 +215,17 @@
    "needs_account": true,
    "registered_with": [
     "brandfolder_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Asset Event",
+    "filters": {
+     "brandfolder_id": "Brandfolder",
+     "event_type": "Created, updated (including ready for use), or deleted. Deliveries contain IDs, not asset content. Brandfolder does not document delivery signatures."
+    },
+    "required": [
+     "brandfolder_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

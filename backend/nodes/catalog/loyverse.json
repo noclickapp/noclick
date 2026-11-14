@@ -26,7 +26,12 @@
    "needs_account": true,
    "registered_with": [
     "loyverse_token"
-   ]
+   ],
+   "event": {
+    "description": "On Inventory Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "list_customers",

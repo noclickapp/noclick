@@ -39,7 +39,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_updated",
@@ -51,7 +56,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_deleted",
@@ -63,7 +73,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_deal_created",
@@ -75,7 +90,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Deal Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_deal_updated",
@@ -87,7 +107,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Deal Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_company_created",
@@ -99,7 +124,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Company Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_created",
@@ -111,7 +141,12 @@
    "registered_with": [
     "hubspot_oauth",
     "hubspot_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "list_contacts",

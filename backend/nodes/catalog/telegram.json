@@ -34,7 +34,12 @@
    "needs_account": true,
    "registered_with": [
     "telegram_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "Each update the bot gets: messages in its private chats, in groups it's in (what its privacy mode, set with @BotFather, lets it see) and in channels it administers, their edits, button presses and inline queries.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "send_message_to_channel",

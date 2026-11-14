@@ -2071,7 +2071,14 @@
    "registered_with": [
     "outreach_oauth",
     "outreach_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Outreach Event",
+    "filters": {
+     "event_type": "Completed tasks, new or updated prospects, replies, opportunity updates, or finished sequences"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

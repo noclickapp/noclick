@@ -433,7 +433,14 @@
     "kit_oauth",
     "kit_api_key",
     "kit_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Kit Event",
+    "filters": {
+     "event_type": "The Kit event that starts this workflow"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

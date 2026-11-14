@@ -146,7 +146,15 @@
    "needs_account": true,
    "registered_with": [
     "bubbles_token"
-   ]
+   ],
+   "event": {
+    "description": "On Meeting Recording Ready",
+    "filters": {
+     "team_id": "Leave empty for all your teams.",
+     "space_id": "Leave empty for all visible spaces."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

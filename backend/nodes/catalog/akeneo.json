@@ -218,7 +218,19 @@
    "needs_account": true,
    "registered_with": [
     "akeneo_token"
-   ]
+   ],
+   "event": {
+    "description": "Product Created, Updated or Deleted",
+    "filters": {
+     "pim_client_id": "The connection or App client ID that issued your PIM token. Enable Event Platform permission for this connection in Akeneo.",
+     "subscriber_id": "Choose a subscriber linked to this PIM connection. Use Create Event Subscriber once if none exists. NoClick removes only this workflow's HTTPS subscription.",
+     "events": "Product events"
+    },
+    "required": [
+     "pim_client_id",
+     "subscriber_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

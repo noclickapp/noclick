@@ -138,7 +138,17 @@
    "description": "Trigger when a batch/glossary/model job finishes",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Trigger when a batch/glossary/model job finishes",
+    "filters": {
+     "project_id": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+     "location": "GCP region whose operations to watch (e.g. us-central1)",
+     "schedule": "How often to poll for newly completed operations",
+     "max_results": "Maximum number of operations to fetch per poll (1-100)"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -737,7 +737,15 @@
     "honeycomb_api_key",
     "honeycomb_management_key",
     "honeycomb_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Trigger Fired",
+    "filters": {
+     "attach_dataset": "If set with 'Attach to ID', auto-attach the recipient to that Honeycomb trigger/burn alert.",
+     "attach_id": "An existing Honeycomb trigger id (or burn alert id) to attach this recipient to."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_burn_alert",
@@ -750,7 +758,15 @@
     "honeycomb_api_key",
     "honeycomb_management_key",
     "honeycomb_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Burn Alert",
+    "filters": {
+     "attach_dataset": "If set with 'Attach to ID', auto-attach the recipient to that Honeycomb trigger/burn alert.",
+     "attach_id": "An existing Honeycomb trigger id (or burn alert id) to attach this recipient to."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

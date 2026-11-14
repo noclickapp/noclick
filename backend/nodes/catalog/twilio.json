@@ -53,7 +53,16 @@
     "twilio_account",
     "twilio_api_key",
     "sendgrid_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming SMS",
+    "filters": {
+     "phone_number_sid": "SID of the Twilio number to receive SMS on (starts with PN)"
+    },
+    "required": [
+     "phone_number_sid"
+    ]
+   }
   },
   {
    "name": "on_call",
@@ -66,7 +75,17 @@
     "twilio_account",
     "twilio_api_key",
     "sendgrid_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming Call",
+    "filters": {
+     "phone_number_sid": "The Twilio number that rings this agent (an Account SID + Auth Token credential is needed).",
+     "greeting": "What the agent says when it picks up. Leave empty for a plain hello."
+    },
+    "required": [
+     "phone_number_sid"
+    ]
+   }
   },
   {
    "name": "send_sms_message",

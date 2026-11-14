@@ -529,7 +529,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Record Event",
+    "filters": {
+     "event_types": "Which record event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: record.created, record.updated, record.deleted, record.merged. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_list_entry_event",
@@ -542,7 +549,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On List Entry Event",
+    "filters": {
+     "event_types": "Which list-entry event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: list-entry.created, list-entry.updated, list-entry.deleted. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_note_event",
@@ -555,7 +569,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Note Event",
+    "filters": {
+     "event_types": "Which note event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: note.created, note.updated, note.deleted, note-content.updated. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_task_event",
@@ -568,7 +589,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Task Event",
+    "filters": {
+     "event_types": "Which task event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: task.created, task.updated, task.deleted. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_comment_event",
@@ -581,7 +609,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Comment Event",
+    "filters": {
+     "event_types": "Which comment event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: comment.created, comment.deleted, comment.resolved, comment.unresolved. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_attio_event",
@@ -594,7 +629,14 @@
     "attio_oauth",
     "attio_api_key",
     "attio_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Attio Event (Any)",
+    "filters": {
+     "event_types": "Which Attio webhook event fires this workflow. Choose 'All events' to fire on every event, or pick specific ones. Covers all 27 event types across records, list entries, notes, tasks, comments, lists, attributes, call recordings, and workspace members. Accepts a comma-separated list."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

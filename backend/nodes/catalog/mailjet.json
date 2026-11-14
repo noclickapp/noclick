@@ -994,7 +994,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Delivered",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_opened",
@@ -1005,7 +1010,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Opened",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_clicked",
@@ -1016,7 +1026,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Link Clicked",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_bounced",
@@ -1027,7 +1042,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Bounced",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_blocked",
@@ -1038,7 +1058,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Blocked",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_spam_complaint",
@@ -1049,7 +1074,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Spam Complaint",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_unsubscribed",
@@ -1060,7 +1090,12 @@
    "needs_account": true,
    "registered_with": [
     "mailjet_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Contact Unsubscribed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -202,7 +202,14 @@
    "needs_account": true,
    "registered_with": [
     "bold_commerce_token"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_customer_event",
@@ -213,7 +220,14 @@
    "needs_account": true,
    "registered_with": [
     "bold_commerce_token"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_order_created",
@@ -224,7 +238,14 @@
    "needs_account": true,
    "registered_with": [
     "bold_commerce_token"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Order Created",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -210,7 +210,17 @@
    "needs_account": true,
    "registered_with": [
     "formaloo_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Submission Event",
+    "filters": {
+     "form_slug": "Form slug",
+     "event_type": "Event type"
+    },
+    "required": [
+     "form_slug"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

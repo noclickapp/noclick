@@ -192,7 +192,14 @@
    "needs_account": true,
    "registered_with": [
     "vtex_app_key"
-   ]
+   ],
+   "event": {
+    "description": "On Order Updated",
+    "filters": {
+     "expression": "JSONata expression against the order. Default true receives every update. This replaces the dedicated app key's existing hook; use one workflow per app key."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

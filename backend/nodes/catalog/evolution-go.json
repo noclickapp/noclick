@@ -202,7 +202,14 @@
    "needs_account": true,
    "registered_with": [
     "evolution_go_instance_token"
-   ]
+   ],
+   "event": {
+    "description": "On WhatsApp event",
+    "filters": {
+     "event_type": "Incoming message or call. Use a dedicated instance: Evolution Go has one webhook URL per instance; registration replaces its event and channel settings. Deliveries are unsigned."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

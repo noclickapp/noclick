@@ -36,7 +36,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Order Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_paid",
@@ -48,7 +53,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Order Paid",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_fulfilled",
@@ -60,7 +70,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Order Fulfilled",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_cancelled",
@@ -72,7 +87,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Order Cancelled",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_created",
@@ -84,7 +104,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Product Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_updated",
@@ -96,7 +121,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Product Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_created",
@@ -108,7 +138,12 @@
    "registered_with": [
     "shopify_oauth",
     "shopify_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "list_products",

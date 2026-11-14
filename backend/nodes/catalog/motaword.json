@@ -207,7 +207,16 @@
    "needs_account": true,
    "registered_with": [
     "motaword_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Project Milestone",
+    "filters": {
+     "project_id": "One callback URL is supported per project. An existing different callback is never overwritten."
+    },
+    "required": [
+     "project_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

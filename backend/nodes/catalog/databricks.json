@@ -264,7 +264,12 @@
    "description": "Fires when a Databricks job run starts.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires when a Databricks job run starts.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_job_success",
@@ -273,7 +278,12 @@
    "description": "Fires when a Databricks job run completes successfully.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires when a Databricks job run completes successfully.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_job_failure",
@@ -282,7 +292,12 @@
    "description": "Fires when a Databricks job run ends in an unsuccessful state.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires when a Databricks job run ends in an unsuccessful state.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_job_duration_warning",
@@ -291,7 +306,12 @@
    "description": "Fires when a Databricks job run exceeds its configured duration warning threshold.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires when a Databricks job run exceeds its configured duration warning threshold.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_any_job_event",
@@ -300,7 +320,12 @@
    "description": "Fires on any Databricks job webhook notification event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on any Databricks job webhook notification event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "edit_cluster",

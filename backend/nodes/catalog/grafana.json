@@ -543,7 +543,15 @@
    "registered_with": [
     "grafana_service_account_token",
     "grafana_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Alert Notification",
+    "filters": {
+     "contact_point_name": "Leave empty for a unique NoClick contact point. After registration, select this contact point in your Grafana alert rules or notification policies. Requires permission to create contact points and Grafana webhook HMAC support.",
+     "notification_status": "Receive all notifications, firing groups, or fully resolved groups."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

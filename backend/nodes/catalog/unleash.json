@@ -26,7 +26,15 @@
    "needs_account": true,
    "registered_with": [
     "unleash_token"
-   ]
+   ],
+   "event": {
+    "description": "On Feature Flag Created",
+    "filters": {
+     "project_id": "Omit to watch all projects.",
+     "environment": "Omit to watch all environments. Events without an environment only match an unfiltered trigger."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_strategy_added",
@@ -37,7 +45,15 @@
    "needs_account": true,
    "registered_with": [
     "unleash_token"
-   ]
+   ],
+   "event": {
+    "description": "On Flag Strategy Added",
+    "filters": {
+     "project_id": "Omit to watch all projects.",
+     "environment": "Omit to watch all environments. Events without an environment only match an unfiltered trigger."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_feature_tagged",
@@ -48,7 +64,15 @@
    "needs_account": true,
    "registered_with": [
     "unleash_token"
-   ]
+   ],
+   "event": {
+    "description": "On Feature Flag Tagged",
+    "filters": {
+     "project_id": "Omit to watch all projects.",
+     "environment": "Omit to watch all environments. Events without an environment only match an unfiltered trigger."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_feature_moved",
@@ -59,7 +83,15 @@
    "needs_account": true,
    "registered_with": [
     "unleash_token"
-   ]
+   ],
+   "event": {
+    "description": "On Feature Flag Moved",
+    "filters": {
+     "project_id": "Omit to watch all projects.",
+     "environment": "Omit to watch all environments. Events without an environment only match an unfiltered trigger."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_projects",

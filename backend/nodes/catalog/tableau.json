@@ -223,7 +223,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workbook_updated",
@@ -235,7 +240,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workbook_deleted",
@@ -247,7 +257,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workbook_refresh_started",
@@ -259,7 +274,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Refresh Started",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workbook_refresh_succeeded",
@@ -271,7 +291,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Refresh Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workbook_refresh_failed",
@@ -283,7 +308,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workbook Refresh Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_created",
@@ -295,7 +325,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_updated",
@@ -307,7 +342,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_deleted",
@@ -319,7 +359,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_refresh_started",
@@ -331,7 +376,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Refresh Started",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_refresh_succeeded",
@@ -343,7 +393,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Refresh Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_datasource_refresh_failed",
@@ -355,7 +410,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Data Source Refresh Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_view_deleted",
@@ -367,7 +427,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On View Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_label_created",
@@ -379,7 +444,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Label Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_label_updated",
@@ -391,7 +461,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Label Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_label_deleted",
@@ -403,7 +478,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Label Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_admin_promoted",
@@ -415,7 +495,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Admin Promoted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_admin_demoted",
@@ -427,7 +512,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Admin Demoted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_site_deleted",
@@ -439,7 +529,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Site Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_deleted",
@@ -451,7 +546,12 @@
    "registered_with": [
     "tableau_pat",
     "tableau_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On User Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "switch_site",

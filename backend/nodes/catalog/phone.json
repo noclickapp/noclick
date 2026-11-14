@@ -35,7 +35,14 @@
    "needs_account": true,
    "registered_with": [
     "phone_number"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming Call",
+    "filters": {
+     "greeting": "What the agent says when it picks up. Leave empty for a plain hello."
+    },
+    "required": []
+   }
   },
   {
    "name": "place_call",

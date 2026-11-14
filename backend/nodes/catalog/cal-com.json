@@ -265,7 +265,14 @@
     "cal_com_oauth",
     "cal_com_api_key",
     "cal_com_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Booking Event",
+    "filters": {
+     "event_types": "Which Cal.com event(s) fire this workflow. Choose 'All booking events' to fire on every event, or pick a specific one. To fire on several specific events, enter their identifiers comma-separated (e.g. BOOKING_CREATED,BOOKING_CANCELLED). Available events: BOOKING_CREATED (a booking is scheduled), BOOKING_RESCHEDULED (a booking is moved to a new time), BOOKING_CANCELLED (a booking is cancelled), BOOKING_REQUESTED (a booking needs host confirmation), BOOKING_REJECTED (the host declines a pending booking), BOOKING_PAYMENT_INITIATED (payment processing begins), BOOKING_PAID (payment completes), BOOKING_NO_SHOW_UPDATED (attendee no-show status changes), MEETING_STARTED (scheduled start time reached), MEETING_ENDED (scheduled end time reached), RECORDING_READY (a meeting recording is available), RECORDING_TRANSCRIPTION_GENERATED (a recording transcription completes), INSTANT_MEETING (an instant meeting is initiated), FORM_SUBMITTED (a routing form is completed), FORM_SUBMITTED_NO_EVENT (a form is submitted with no booking), OOO_CREATED (an out-of-office entry is created)."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -176,7 +176,14 @@
    "needs_account": true,
    "registered_with": [
     "pledge_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Pledge Event",
+    "filters": {
+     "event_type": "Pledge delivers all topics to each endpoint. Choose which ones start this workflow."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

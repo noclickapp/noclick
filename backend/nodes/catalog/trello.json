@@ -346,7 +346,17 @@
    "needs_account": true,
    "registered_with": [
     "trello_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Board Change",
+    "filters": {
+     "board_id": "The board to watch for changes",
+     "event_types": "Which event fires the workflow. Trello delivers every board change to this webhook; this filters by the payload's action.type. Choose 'Any change on the board' to fire on everything."
+    },
+    "required": [
+     "board_id"
+    ]
+   }
   },
   {
    "name": "on_card_change",
@@ -357,7 +367,17 @@
    "needs_account": true,
    "registered_with": [
     "trello_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Card Change",
+    "filters": {
+     "card_id": "ID of the specific Trello card to watch for changes",
+     "event_types": "Which card event fires the workflow. Trello delivers all card changes to this webhook; this filters by the payload's action.type."
+    },
+    "required": [
+     "card_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -26,7 +26,18 @@
    "needs_account": true,
    "registered_with": [
     "kobotoolbox_api_token"
-   ]
+   ],
+   "event": {
+    "description": "New submission",
+    "filters": {
+     "project_id": "Project asset UID from the KoboToolbox project URL.",
+     "rest_service_id": "Create a dedicated service in the project’s Settings > REST Services, then copy its UID from the hooks API. NoClick replaces its endpoint, format, authentication, headers, subset and wrapper settings, and disables the service on disconnect. Do not use a service shared with another integration."
+    },
+    "required": [
+     "project_id",
+     "rest_service_id"
+    ]
+   }
   },
   {
    "name": "get_account",

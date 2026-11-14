@@ -410,7 +410,14 @@
    "needs_account": true,
    "registered_with": [
     "webex_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On New Message",
+    "filters": {
+     "room_id": "Watch one space, or leave blank for all accessible spaces"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_meeting_ended",
@@ -421,7 +428,12 @@
    "needs_account": true,
    "registered_with": [
     "webex_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Meeting Ended",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_new_recording",
@@ -432,7 +444,14 @@
    "needs_account": true,
    "registered_with": [
     "webex_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On New Recording",
+    "filters": {
+     "meeting_id": "Watch recordings for one meeting, or leave blank for all your recordings"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

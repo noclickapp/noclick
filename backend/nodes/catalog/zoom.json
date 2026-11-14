@@ -233,7 +233,12 @@
    "description": "Fires on the Zoom `meeting.created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_updated",
@@ -242,7 +247,12 @@
    "description": "Fires on the Zoom `meeting.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_deleted",
@@ -251,7 +261,12 @@
    "description": "Fires on the Zoom `meeting.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_started",
@@ -260,7 +275,12 @@
    "description": "Fires on the Zoom `meeting.started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_ended",
@@ -269,7 +289,12 @@
    "description": "Fires on the Zoom `meeting.ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_permanently_deleted",
@@ -278,7 +303,12 @@
    "description": "Fires on the Zoom `meeting.permanently_deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.permanently_deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_registration_created",
@@ -287,7 +317,12 @@
    "description": "Fires on the Zoom `meeting.registration_created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.registration_created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_registration_approved",
@@ -296,7 +331,12 @@
    "description": "Fires on the Zoom `meeting.registration_approved` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.registration_approved` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_registration_cancelled",
@@ -305,7 +345,12 @@
    "description": "Fires on the Zoom `meeting.registration_cancelled` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.registration_cancelled` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_registration_denied",
@@ -314,7 +359,12 @@
    "description": "Fires on the Zoom `meeting.registration_denied` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.registration_denied` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_joined",
@@ -323,7 +373,12 @@
    "description": "Fires on the Zoom `meeting.participant_joined` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_joined` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_left",
@@ -332,7 +387,12 @@
    "description": "Fires on the Zoom `meeting.participant_left` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_left` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_joined_waiting_room",
@@ -341,7 +401,12 @@
    "description": "Fires on the Zoom `meeting.participant_joined_waiting_room` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_joined_waiting_room` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_left_waiting_room",
@@ -350,7 +415,12 @@
    "description": "Fires on the Zoom `meeting.participant_left_waiting_room` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_left_waiting_room` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_admitted",
@@ -359,7 +429,12 @@
    "description": "Fires on the Zoom `meeting.participant_admitted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_admitted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_put_in_waiting_room",
@@ -368,7 +443,12 @@
    "description": "Fires on the Zoom `meeting.participant_put_in_waiting_room` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_put_in_waiting_room` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_jbh_waiting",
@@ -377,7 +457,12 @@
    "description": "Fires on the Zoom `meeting.participant_jbh_waiting` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_jbh_waiting` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_jbh_joined",
@@ -386,7 +471,12 @@
    "description": "Fires on the Zoom `meeting.participant_jbh_joined` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_jbh_joined` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_participant_role_changed",
@@ -395,7 +485,12 @@
    "description": "Fires on the Zoom `meeting.participant_role_changed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.participant_role_changed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_sharing_started",
@@ -404,7 +499,12 @@
    "description": "Fires on the Zoom `meeting.sharing_started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.sharing_started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_sharing_ended",
@@ -413,7 +513,12 @@
    "description": "Fires on the Zoom `meeting.sharing_ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.sharing_ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_live_streaming_started",
@@ -422,7 +527,12 @@
    "description": "Fires on the Zoom `meeting.live_streaming_started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.live_streaming_started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_live_streaming_stopped",
@@ -431,7 +541,12 @@
    "description": "Fires on the Zoom `meeting.live_streaming_stopped` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.live_streaming_stopped` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_alert",
@@ -440,7 +555,12 @@
    "description": "Fires on the Zoom `meeting.alert` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.alert` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_chat_message_sent",
@@ -449,7 +569,12 @@
    "description": "Fires on the Zoom `meeting.chat_message_sent` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.chat_message_sent` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_summary_completed",
@@ -458,7 +583,12 @@
    "description": "Fires on the Zoom `meeting.summary_completed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.summary_completed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_risk_alert",
@@ -467,7 +597,12 @@
    "description": "Fires on the Zoom `meeting.risk_alert` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.risk_alert` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_breakout_room_started",
@@ -476,7 +611,12 @@
    "description": "Fires on the Zoom `meeting.breakout_room_started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.breakout_room_started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_meeting_breakout_room_ended",
@@ -485,7 +625,12 @@
    "description": "Fires on the Zoom `meeting.breakout_room_ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `meeting.breakout_room_ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_created",
@@ -494,7 +639,12 @@
    "description": "Fires on the Zoom `webinar.created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_updated",
@@ -503,7 +653,12 @@
    "description": "Fires on the Zoom `webinar.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_deleted",
@@ -512,7 +667,12 @@
    "description": "Fires on the Zoom `webinar.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_started",
@@ -521,7 +681,12 @@
    "description": "Fires on the Zoom `webinar.started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_ended",
@@ -530,7 +695,12 @@
    "description": "Fires on the Zoom `webinar.ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_registration_created",
@@ -539,7 +709,12 @@
    "description": "Fires on the Zoom `webinar.registration_created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.registration_created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_registration_approved",
@@ -548,7 +723,12 @@
    "description": "Fires on the Zoom `webinar.registration_approved` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.registration_approved` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_registration_cancelled",
@@ -557,7 +737,12 @@
    "description": "Fires on the Zoom `webinar.registration_cancelled` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.registration_cancelled` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_registration_denied",
@@ -566,7 +751,12 @@
    "description": "Fires on the Zoom `webinar.registration_denied` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.registration_denied` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_participant_joined",
@@ -575,7 +765,12 @@
    "description": "Fires on the Zoom `webinar.participant_joined` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.participant_joined` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_participant_left",
@@ -584,7 +779,12 @@
    "description": "Fires on the Zoom `webinar.participant_left` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.participant_left` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_sharing_started",
@@ -593,7 +793,12 @@
    "description": "Fires on the Zoom `webinar.sharing_started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.sharing_started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_sharing_ended",
@@ -602,7 +807,12 @@
    "description": "Fires on the Zoom `webinar.sharing_ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.sharing_ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_webinar_alert",
@@ -611,7 +821,12 @@
    "description": "Fires on the Zoom `webinar.alert` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `webinar.alert` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_started",
@@ -620,7 +835,12 @@
    "description": "Fires on the Zoom `recording.started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_stopped",
@@ -629,7 +849,12 @@
    "description": "Fires on the Zoom `recording.stopped` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.stopped` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_paused",
@@ -638,7 +863,12 @@
    "description": "Fires on the Zoom `recording.paused` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.paused` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_resumed",
@@ -647,7 +877,12 @@
    "description": "Fires on the Zoom `recording.resumed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.resumed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_completed",
@@ -656,7 +891,12 @@
    "description": "Fires on the Zoom `recording.completed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.completed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_transcript_completed",
@@ -665,7 +905,12 @@
    "description": "Fires on the Zoom `recording.transcript_completed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.transcript_completed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_trashed",
@@ -674,7 +919,12 @@
    "description": "Fires on the Zoom `recording.trashed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.trashed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_deleted",
@@ -683,7 +933,12 @@
    "description": "Fires on the Zoom `recording.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_recovered",
@@ -692,7 +947,12 @@
    "description": "Fires on the Zoom `recording.recovered` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.recovered` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_batch_deleted",
@@ -701,7 +961,12 @@
    "description": "Fires on the Zoom `recording.batch_deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.batch_deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_registration_created",
@@ -710,7 +975,12 @@
    "description": "Fires on the Zoom `recording.registration_created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.registration_created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_recording_registration_approved",
@@ -719,7 +989,12 @@
    "description": "Fires on the Zoom `recording.registration_approved` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `recording.registration_approved` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_created",
@@ -728,7 +1003,12 @@
    "description": "Fires on the Zoom `user.created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_updated",
@@ -737,7 +1017,12 @@
    "description": "Fires on the Zoom `user.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_deleted",
@@ -746,7 +1031,12 @@
    "description": "Fires on the Zoom `user.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_activated",
@@ -755,7 +1045,12 @@
    "description": "Fires on the Zoom `user.activated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.activated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_deactivated",
@@ -764,7 +1059,12 @@
    "description": "Fires on the Zoom `user.deactivated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.deactivated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_disassociated",
@@ -773,7 +1073,12 @@
    "description": "Fires on the Zoom `user.disassociated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.disassociated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_invitation_accepted",
@@ -782,7 +1087,12 @@
    "description": "Fires on the Zoom `user.invitation_accepted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.invitation_accepted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_settings_updated",
@@ -791,7 +1101,12 @@
    "description": "Fires on the Zoom `user.settings_updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.settings_updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_presence_status_updated",
@@ -800,7 +1115,12 @@
    "description": "Fires on the Zoom `user.presence_status_updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.presence_status_updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_personal_notes_updated",
@@ -809,7 +1129,12 @@
    "description": "Fires on the Zoom `user.personal_notes_updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.personal_notes_updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_signed_in",
@@ -818,7 +1143,12 @@
    "description": "Fires on the Zoom `user.signed_in` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.signed_in` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_signed_out",
@@ -827,7 +1157,12 @@
    "description": "Fires on the Zoom `user.signed_out` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `user.signed_out` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_updated",
@@ -836,7 +1171,12 @@
    "description": "Fires on the Zoom `account.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `account.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_settings_updated",
@@ -845,7 +1185,12 @@
    "description": "Fires on the Zoom `account.settings_updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `account.settings_updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_created",
@@ -854,7 +1199,12 @@
    "description": "Fires on the Zoom `account.created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `account.created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_disassociated",
@@ -863,7 +1213,12 @@
    "description": "Fires on the Zoom `account.disassociated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `account.disassociated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_vanity_url_updated",
@@ -872,7 +1227,12 @@
    "description": "Fires on the Zoom `account.vanity_url_updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `account.vanity_url_updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_callee_answered",
@@ -881,7 +1241,12 @@
    "description": "Fires on the Zoom `phone.callee_answered` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.callee_answered` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_caller_connected",
@@ -890,7 +1255,12 @@
    "description": "Fires on the Zoom `phone.caller_connected` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.caller_connected` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_callee_ended",
@@ -899,7 +1269,12 @@
    "description": "Fires on the Zoom `phone.callee_ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.callee_ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_caller_ended",
@@ -908,7 +1283,12 @@
    "description": "Fires on the Zoom `phone.caller_ended` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.caller_ended` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_callee_missed",
@@ -917,7 +1297,12 @@
    "description": "Fires on the Zoom `phone.callee_missed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.callee_missed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_callee_rejected",
@@ -926,7 +1311,12 @@
    "description": "Fires on the Zoom `phone.callee_rejected` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.callee_rejected` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_recording_completed",
@@ -935,7 +1325,12 @@
    "description": "Fires on the Zoom `phone.recording_completed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.recording_completed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_recording_started",
@@ -944,7 +1339,12 @@
    "description": "Fires on the Zoom `phone.recording_started` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.recording_started` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_recording_stopped",
@@ -953,7 +1353,12 @@
    "description": "Fires on the Zoom `phone.recording_stopped` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.recording_stopped` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_voicemail_received",
@@ -962,7 +1367,12 @@
    "description": "Fires on the Zoom `phone.voicemail_received` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.voicemail_received` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_voicemail_transcript_completed",
@@ -971,7 +1381,12 @@
    "description": "Fires on the Zoom `phone.voicemail_transcript_completed` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.voicemail_transcript_completed` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_sms_received",
@@ -980,7 +1395,12 @@
    "description": "Fires on the Zoom `phone.sms_received` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.sms_received` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_sms_sent",
@@ -989,7 +1409,12 @@
    "description": "Fires on the Zoom `phone.sms_sent` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.sms_sent` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_phone_emergency_alert",
@@ -998,7 +1423,12 @@
    "description": "Fires on the Zoom `phone.emergency_alert` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `phone.emergency_alert` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_message_sent",
@@ -1007,7 +1437,12 @@
    "description": "Fires on the Zoom `chat_message.sent` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_message.sent` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_message_updated",
@@ -1016,7 +1451,12 @@
    "description": "Fires on the Zoom `chat_message.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_message.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_message_deleted",
@@ -1025,7 +1465,12 @@
    "description": "Fires on the Zoom `chat_message.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_message.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_created",
@@ -1034,7 +1479,12 @@
    "description": "Fires on the Zoom `chat_channel.created` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.created` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_updated",
@@ -1043,7 +1493,12 @@
    "description": "Fires on the Zoom `chat_channel.updated` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.updated` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_deleted",
@@ -1052,7 +1507,12 @@
    "description": "Fires on the Zoom `chat_channel.deleted` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.deleted` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_member_invited",
@@ -1061,7 +1521,12 @@
    "description": "Fires on the Zoom `chat_channel.member_invited` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.member_invited` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_member_joined",
@@ -1070,7 +1535,12 @@
    "description": "Fires on the Zoom `chat_channel.member_joined` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.member_joined` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_chat_channel_member_left",
@@ -1079,7 +1549,12 @@
    "description": "Fires on the Zoom `chat_channel.member_left` webhook event.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on the Zoom `chat_channel.member_left` webhook event.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_any_zoom_event",
@@ -1088,7 +1563,12 @@
    "description": "Fires on any Zoom webhook event delivered to this URL.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Fires on any Zoom webhook event delivered to this URL.",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "videosdk_list_sessions",

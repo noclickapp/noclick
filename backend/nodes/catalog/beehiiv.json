@@ -327,7 +327,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On New Subscriber",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscriber_confirmed",
@@ -339,7 +348,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscriber Confirmed",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_upgraded",
@@ -351,7 +369,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Upgraded",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_downgraded",
@@ -363,7 +390,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Downgraded",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_paused",
@@ -375,7 +411,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Paused",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_resumed",
@@ -387,7 +432,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Resumed",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_deleted",
@@ -399,7 +453,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Subscriber Unsubscribed",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_post_sent",
@@ -411,7 +474,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Post Sent",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_post_scheduled",
@@ -423,7 +495,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Post Scheduled",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_post_updated",
@@ -435,7 +516,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Post Updated",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_survey_response",
@@ -447,7 +537,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Survey Response",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_tier_changed",
@@ -459,7 +558,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Tier Changed",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_newsletter_list_event",
@@ -471,7 +579,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Newsletter List Event",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   },
   {
    "name": "on_beehiiv_event",
@@ -483,7 +600,16 @@
    "registered_with": [
     "beehiiv_api_key",
     "beehiiv_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On beehiiv Event (Any)",
+    "filters": {
+     "publication_id": "The beehiiv publication (pub_...) to operate on"
+    },
+    "required": [
+     "publication_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -199,7 +199,14 @@
    "registered_with": [
     "egnyte_oauth",
     "egnyte_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On File Uploaded",
+    "filters": {
+     "path": "Optional comma-separated folder paths, including subfolders. Leave empty to watch all paths; maximum 100 paths."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

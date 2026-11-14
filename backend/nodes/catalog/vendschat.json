@@ -138,7 +138,12 @@
    "needs_account": true,
    "registered_with": [
     "vendschat_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming WhatsApp Text",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

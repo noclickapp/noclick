@@ -268,7 +268,17 @@
    "description": "Trigger when a script's generated videos newly complete",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Trigger when a script's generated videos newly complete",
+    "filters": {
+     "script_id": "The script whose generated videos to watch for completion",
+     "schedule": "How often to poll the script for newly completed videos"
+    },
+    "required": [
+     "script_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

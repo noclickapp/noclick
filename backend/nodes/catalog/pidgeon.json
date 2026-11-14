@@ -223,7 +223,14 @@
    "needs_account": true,
    "registered_with": [
     "pidgeon_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Message Received",
+    "filters": {
+     "identity_id": "Optional: receive mail only for this address."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

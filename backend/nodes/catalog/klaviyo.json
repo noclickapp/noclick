@@ -628,7 +628,14 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Event (custom topic)",
+    "filters": {
+     "topics": "Comma-separated Klaviyo webhook topic IDs (see Get Webhook Topics), e.g. event:api.your_custom_metric"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_email_opened",
@@ -640,7 +647,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Opened",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_clicked",
@@ -652,7 +664,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Clicked",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_clicked_to_unsubscribe",
@@ -664,7 +681,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Clicked to Unsubscribe",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_received",
@@ -676,7 +698,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Received",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_bounced",
@@ -688,7 +715,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Bounced",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_dropped",
@@ -700,7 +732,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Dropped",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_marked_spam",
@@ -712,7 +749,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Email Marked as Spam",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_received",
@@ -724,7 +766,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Received",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_sent",
@@ -736,7 +783,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Sent",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_clicked",
@@ -748,7 +800,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Clicked",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_failed",
@@ -760,7 +817,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Failed to Deliver",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_auto_response_received",
@@ -772,7 +834,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Automated Response Received",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_sms_auto_response_failed",
@@ -784,7 +851,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "SMS Automated Response Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_push_opened",
@@ -796,7 +868,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Push Opened",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_push_received",
@@ -808,7 +885,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Push Received",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_push_bounced",
@@ -820,7 +902,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Push Bounced",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_subscribed_email",
@@ -832,7 +919,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Subscribed to Email Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_unsubscribed_email",
@@ -844,7 +936,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Unsubscribed from Email Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_subscribed_sms",
@@ -856,7 +953,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Subscribed to SMS Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_unsubscribed_sms",
@@ -868,7 +970,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Unsubscribed from SMS Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_subscribed_to_list",
@@ -880,7 +987,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Subscribed to List",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_updated_email_preferences",
@@ -892,7 +1004,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Updated Email Preferences",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_manually_suppressed_email",
@@ -904,7 +1021,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Manually Suppressed from Email Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_manually_unsuppressed_email",
@@ -916,7 +1038,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Manually Unsuppressed from Email Marketing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ready_to_review",
@@ -928,7 +1055,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Ready to Review",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_submitted_review",
@@ -940,7 +1072,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Submitted Review",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_submitted_rating",
@@ -952,7 +1089,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Submitted Rating",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_social_comment",
@@ -964,7 +1106,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Social Comment",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_social_dm",
@@ -976,7 +1123,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Social DM",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_social_ugc",
@@ -988,7 +1140,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Social UGC",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_profile_merged",
@@ -1000,7 +1157,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Profile Merged",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_skipped_send",
@@ -1012,7 +1174,12 @@
    "registered_with": [
     "klaviyo_oauth",
     "klaviyo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Skipped Send",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

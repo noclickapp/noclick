@@ -33,7 +33,14 @@
    "description": "Trigger: fires when a Jira issue is created.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Issue Created",
+    "filters": {
+     "jql_filter": "JQL restricting which issues' events fire the trigger. Jira dynamic webhooks only support =, !=, IN, and NOT IN operators; leave blank to match all issues."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_issue_updated",
@@ -42,7 +49,14 @@
    "description": "Trigger: fires when a Jira issue is updated.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Issue Updated",
+    "filters": {
+     "jql_filter": "JQL restricting which issues' events fire the trigger. Jira dynamic webhooks only support =, !=, IN, and NOT IN operators; leave blank to match all issues."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_issue_deleted",
@@ -51,7 +65,14 @@
    "description": "Trigger: fires when a Jira issue is deleted.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Issue Deleted",
+    "filters": {
+     "jql_filter": "JQL restricting which issues' events fire the trigger. Jira dynamic webhooks only support =, !=, IN, and NOT IN operators; leave blank to match all issues."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_comment_added",
@@ -60,7 +81,14 @@
    "description": "Trigger: fires when a comment is added to a Jira issue.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Comment Added",
+    "filters": {
+     "jql_filter": "JQL restricting which issues' events fire the trigger. Jira dynamic webhooks only support =, !=, IN, and NOT IN operators; leave blank to match all issues."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_issue",

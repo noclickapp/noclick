@@ -199,7 +199,17 @@
    "needs_account": true,
    "registered_with": [
     "outscraper_ca1391_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Google Maps Job Finished",
+    "filters": {
+     "query": "Search query",
+     "limit": "Places per query"
+    },
+    "required": [
+     "query"
+    ]
+   }
   },
   {
    "name": "on_email_verification_finished",
@@ -210,7 +220,16 @@
    "needs_account": true,
    "registered_with": [
     "outscraper_ca1391_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Email Verification Job Finished",
+    "filters": {
+     "query": "Email addresses"
+    },
+    "required": [
+     "query"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

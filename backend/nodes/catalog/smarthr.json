@@ -31,7 +31,14 @@
    "needs_account": true,
    "registered_with": [
     "smarthr_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Employee or Dependent Event",
+    "filters": {
+     "event_type": "Start when an employee or dependent is created, updated, deleted or imported."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_employees",

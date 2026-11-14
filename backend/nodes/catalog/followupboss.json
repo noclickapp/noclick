@@ -172,7 +172,14 @@
    "registered_with": [
     "followupboss_api_key",
     "followupboss_bearer_token"
-   ]
+   ],
+   "event": {
+    "description": "On People Event",
+    "filters": {
+     "event_type": "Requires the account owner's credential and a registered system."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

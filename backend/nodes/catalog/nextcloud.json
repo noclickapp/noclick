@@ -146,7 +146,17 @@
    "needs_account": true,
    "registered_with": [
     "nextcloud_app_password"
-   ]
+   ],
+   "event": {
+    "description": "On File Created, Updated, Deleted, Renamed or Restored",
+    "filters": {
+     "event_type": "File Event",
+     "user_id": "Only events caused by this Nextcloud user. Use the account's internal user ID, which may differ from its login name."
+    },
+    "required": [
+     "user_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

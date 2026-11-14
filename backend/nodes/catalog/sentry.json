@@ -545,7 +545,16 @@
     "sentry_auth_token",
     "sentry_oauth",
     "sentry_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Error Event",
+    "filters": {
+     "project_slug": "The Sentry project"
+    },
+    "required": [
+     "project_slug"
+    ]
+   }
   },
   {
    "name": "on_alert",
@@ -558,7 +567,16 @@
     "sentry_auth_token",
     "sentry_oauth",
     "sentry_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Alert",
+    "filters": {
+     "project_slug": "The Sentry project"
+    },
+    "required": [
+     "project_slug"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

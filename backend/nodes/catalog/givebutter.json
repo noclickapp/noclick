@@ -213,7 +213,14 @@
    "registered_with": [
     "givebutter_api_key",
     "givebutter_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Givebutter Event",
+    "filters": {
+     "event_type": "Start on a donation, new contact, campaign, ticket, recurring plan or refund event. Donation and contact events do not fire for CSV imports."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

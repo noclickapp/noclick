@@ -36,7 +36,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Feed Activity",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_mention",
@@ -48,7 +57,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Page Mention",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_ratings",
@@ -60,7 +78,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Rating",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_messages",
@@ -72,7 +99,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Message",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_messaging_postbacks",
@@ -84,7 +120,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Postback",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_messaging_referrals",
@@ -96,7 +141,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Referral",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_message_reactions",
@@ -108,7 +162,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Message Reaction",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_message_deliveries",
@@ -120,7 +183,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Message Delivered",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_message_reads",
@@ -132,7 +204,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Message Read",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_standby",
@@ -144,7 +225,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Standby (Handover)",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_any_facebook_event",
@@ -156,7 +246,16 @@
    "registered_with": [
     "facebook_oauth",
     "facebook_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Any Facebook Event",
+    "filters": {
+     "callback_mode": "Managed uses your connected Facebook account and selected Page. Manual keeps your own Meta app and callback settings.",
+     "page_id": "Page authorized by the connected Facebook account.",
+     "subscription_status": "Status"
+    },
+    "required": []
+   }
   },
   {
    "name": "get_me",

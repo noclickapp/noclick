@@ -154,7 +154,14 @@
    "needs_account": true,
    "registered_with": [
     "airwallex_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Deposit Event",
+    "filters": {
+     "event_type": "Deposit event"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transfer_event",
@@ -165,7 +172,14 @@
    "needs_account": true,
    "registered_with": [
     "airwallex_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Transfer Event",
+    "filters": {
+     "event_type": "PAID means processed by the banking partner; a transfer can still fail afterwards."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

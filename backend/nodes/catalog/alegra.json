@@ -186,7 +186,12 @@
    "needs_account": true,
    "registered_with": [
     "alegra_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Invoice",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_new_client",
@@ -197,7 +202,12 @@
    "needs_account": true,
    "registered_with": [
     "alegra_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Client",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_new_item",
@@ -208,7 +218,12 @@
    "needs_account": true,
    "registered_with": [
     "alegra_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Item",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

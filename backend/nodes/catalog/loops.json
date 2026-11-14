@@ -399,7 +399,14 @@
    "registered_with": [
     "loops_api_key",
     "loops_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Loops Event",
+    "filters": {
+     "event_type": "Only process events of this type. Leave empty to receive all events."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -930,7 +930,14 @@
    "needs_account": true,
    "registered_with": [
     "paypal_client_credentials"
-   ]
+   ],
+   "event": {
+    "description": "On PayPal Event",
+    "filters": {
+     "event_type": "The payment, subscription or dispute event that starts this workflow."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

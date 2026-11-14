@@ -140,7 +140,17 @@
    "registered_with": [
     "bitly_oauth",
     "bitly_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Link Engagement",
+    "filters": {
+     "organization_guid": "Organization GUID",
+     "group_guid": "Group GUID"
+    },
+    "required": [
+     "organization_guid"
+    ]
+   }
   },
   {
    "name": "api_add_custom_bitlink",

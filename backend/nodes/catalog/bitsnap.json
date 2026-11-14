@@ -227,7 +227,14 @@
    "needs_account": true,
    "registered_with": [
     "bitsnap_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Shop Event",
+    "filters": {
+     "event_type": "Receive all documented shop events or select one. Requires webhooks:write and the key's write switch."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

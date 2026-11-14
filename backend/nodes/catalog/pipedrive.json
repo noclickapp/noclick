@@ -2332,7 +2332,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Deal Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_deal_changed",
@@ -2344,7 +2349,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Deal Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_deal_deleted",
@@ -2356,7 +2366,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Deal Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_person_created",
@@ -2368,7 +2383,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Person Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_person_changed",
@@ -2380,7 +2400,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Person Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_person_deleted",
@@ -2392,7 +2417,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Person Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_organization_created",
@@ -2404,7 +2434,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Organization Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_organization_changed",
@@ -2416,7 +2451,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Organization Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_organization_deleted",
@@ -2428,7 +2468,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Organization Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_activity_created",
@@ -2440,7 +2485,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Activity Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_activity_changed",
@@ -2452,7 +2502,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Activity Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_activity_deleted",
@@ -2464,7 +2519,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Activity Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_created",
@@ -2476,7 +2536,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Note Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_changed",
@@ -2488,7 +2553,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Note Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_deleted",
@@ -2500,7 +2570,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Note Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_lead_created",
@@ -2512,7 +2587,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Lead Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_lead_changed",
@@ -2524,7 +2604,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Lead Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_lead_deleted",
@@ -2536,7 +2621,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Lead Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pipeline_created",
@@ -2548,7 +2638,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Pipeline Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pipeline_changed",
@@ -2560,7 +2655,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Pipeline Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pipeline_deleted",
@@ -2572,7 +2672,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Pipeline Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_created",
@@ -2584,7 +2689,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Product Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_changed",
@@ -2596,7 +2706,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Product Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_deleted",
@@ -2608,7 +2723,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Product Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_stage_created",
@@ -2620,7 +2740,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Stage Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_stage_changed",
@@ -2632,7 +2757,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Stage Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_stage_deleted",
@@ -2644,7 +2774,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Stage Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_created",
@@ -2656,7 +2791,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On User Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_changed",
@@ -2668,7 +2808,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On User Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_deleted",
@@ -2680,7 +2825,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On User Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pipedrive_any_event",
@@ -2692,7 +2842,12 @@
    "registered_with": [
     "pipedrive_oauth",
     "pipedrive_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Any Pipedrive Event",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

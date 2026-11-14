@@ -536,7 +536,12 @@
    "description": "Receive outbound webhook events fired by a Freshsales Workflow.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Webhook Events",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -26,7 +26,14 @@
    "needs_account": true,
    "registered_with": [
     "greenhouse_oauth_client"
-   ]
+   ],
+   "event": {
+    "description": "On Recruiting Event",
+    "filters": {
+     "event_type": "Requires a Greenhouse partner account with harvest:webhooks:create and harvest:webhooks:destroy scopes. Webhook registration is exclusive to partners."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_candidates",

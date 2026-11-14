@@ -236,7 +236,18 @@
    "registered_with": [
     "figma_oauth",
     "figma_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Figma Event",
+    "filters": {
+     "event_type": "Event Type",
+     "context": "Context",
+     "context_id": "File key, project ID, or team ID from its Figma URL"
+    },
+    "required": [
+     "context_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

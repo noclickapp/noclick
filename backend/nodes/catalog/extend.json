@@ -799,7 +799,12 @@
    "registered_with": [
     "extend_api_key",
     "extend_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Run Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

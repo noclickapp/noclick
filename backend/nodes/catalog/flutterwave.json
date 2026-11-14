@@ -26,7 +26,14 @@
    "needs_account": true,
    "registered_with": [
     "flutterwave_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Flutterwave Event",
+    "filters": {
+     "event_type": "Receive all supported payment events, or only the selected event. Completion notifications include the provider's status; they do not always mean success."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_customers",

@@ -223,7 +223,16 @@
    "needs_account": true,
    "registered_with": [
     "resource_guru_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Client Changed",
+    "filters": {
+     "account": "Account URL ID"
+    },
+    "required": [
+     "account"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

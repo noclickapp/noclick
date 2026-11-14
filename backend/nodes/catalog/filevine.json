@@ -202,7 +202,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Project",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_project_updated",
@@ -213,7 +222,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Project Updated",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_project_phase_changed",
@@ -224,7 +242,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Project Phase Changed",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_contact_created",
@@ -235,7 +262,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Contact",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_contact_updated",
@@ -246,7 +282,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Updated",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_note_created",
@@ -257,7 +302,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Note or Task",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_note_assigned",
@@ -268,7 +322,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Task Assigned",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   },
   {
    "name": "on_note_completed",
@@ -279,7 +342,16 @@
    "needs_account": true,
    "registered_with": [
     "filevine_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Task Completed",
+    "filters": {
+     "event_id": "The matching event from your Filevine organisation, selected automatically when unique."
+    },
+    "required": [
+     "event_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

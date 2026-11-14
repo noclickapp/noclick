@@ -393,7 +393,16 @@
    "description": "Poll-based trigger: fire when new pages/blogposts/comments are created.\n\n    Confluence has no general inbound webhook for REST/Basic-auth clients, so we\n    poll the v1 CQL search (``type IN (page, blogpost, comment) order by created\n    desc``) on a schedule and emit only content created since the last poll,\n    deduped on the most-recent content id.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On New Content",
+    "filters": {
+     "space_id": "Only watch a single space (optional; watches all spaces if blank)",
+     "content_type": "Which kind of newly-created content to watch",
+     "schedule": "How often to check for new content"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

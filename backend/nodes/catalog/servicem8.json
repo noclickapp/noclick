@@ -224,7 +224,12 @@
    "needs_account": true,
    "registered_with": [
     "servicem8_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Job Changed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

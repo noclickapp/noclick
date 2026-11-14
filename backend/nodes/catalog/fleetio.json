@@ -26,7 +26,14 @@
    "needs_account": true,
    "registered_with": [
     "fleetio_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Vehicle Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_issue_event",
@@ -37,7 +44,14 @@
    "needs_account": true,
    "registered_with": [
     "fleetio_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_fuel_entry_event",
@@ -48,7 +62,14 @@
    "needs_account": true,
    "registered_with": [
     "fleetio_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Fuel Entry Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_service_entry_event",
@@ -59,7 +80,14 @@
    "needs_account": true,
    "registered_with": [
     "fleetio_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Service Entry Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   },
   {
    "name": "list_vehicles",

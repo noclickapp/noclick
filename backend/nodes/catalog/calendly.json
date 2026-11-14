@@ -305,7 +305,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Invitee Created",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invitee_canceled",
@@ -318,7 +325,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Invitee Canceled",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invitee_no_show_created",
@@ -331,7 +345,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On No-Show Marked",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invitee_no_show_deleted",
@@ -344,7 +365,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On No-Show Undone",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_routing_form_submission_created",
@@ -357,7 +385,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Routing Form Submission",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_contact_created",
@@ -370,7 +405,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Created",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_contact_updated",
@@ -383,7 +425,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Updated",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_contact_deleted",
@@ -396,7 +445,14 @@
     "calendly_oauth",
     "calendly_pat",
     "calendly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Deleted",
+    "filters": {
+     "scope": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

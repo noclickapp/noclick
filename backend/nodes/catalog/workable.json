@@ -682,7 +682,16 @@
    "needs_account": true,
    "registered_with": [
     "workable_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Workable Event",
+    "filters": {
+     "event_type": "The Workable event that starts the workflow.",
+     "job_shortcode": "Candidate events only. Leave blank for all jobs.",
+     "stage_slug": "Candidate events only, for example hired. Leave blank for all stages."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

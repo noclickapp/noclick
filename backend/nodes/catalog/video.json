@@ -183,7 +183,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Video Encoding Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_live_stream_started",
@@ -194,7 +199,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Live Stream Started",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_live_stream_ended",
@@ -205,7 +215,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Live Stream Ended",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_video_source_recorded",
@@ -216,7 +231,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Video Source Recorded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_video_caption_generated",
@@ -227,7 +247,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Video Caption Generated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_video_summary_generated",
@@ -238,7 +263,12 @@
    "needs_account": true,
    "registered_with": [
     "video_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Video Summary Generated",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

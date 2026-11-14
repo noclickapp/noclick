@@ -207,7 +207,14 @@
    "needs_account": true,
    "registered_with": [
     "hasslefreebooks_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Paid",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

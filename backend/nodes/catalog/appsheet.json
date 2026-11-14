@@ -80,7 +80,12 @@
    "description": "Fires when rows are added (AppSheet bot event: 'Adds only').",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Rows Added",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_rows_updated",
@@ -89,7 +94,12 @@
    "description": "Fires when rows are updated (AppSheet bot event: 'Updates only').",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Rows Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_rows_deleted",
@@ -98,7 +108,12 @@
    "description": "Fires when rows are deleted (AppSheet bot event: 'Deletes only').",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Rows Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_data_change",
@@ -107,7 +122,12 @@
    "description": "Fires on any data change (AppSheet bot event: 'Adds and updates' / 'All changes').",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Any Data Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_schedule",
@@ -116,7 +136,12 @@
    "description": "Fires on a schedule (AppSheet bot event: 'Scheduled').",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Schedule",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

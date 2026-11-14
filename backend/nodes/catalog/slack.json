@@ -39,7 +39,14 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Channel Message",
+    "filters": {
+     "channel": "Optional — fire only for events in this channel. Leave empty to fire for every channel the bot is in."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_app_mention",
@@ -51,7 +58,14 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On App Mention",
+    "filters": {
+     "channel": "Optional — fire only for events in this channel. Leave empty to fire for every channel the bot is in."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_reaction_added",
@@ -63,7 +77,14 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Reaction Added",
+    "filters": {
+     "channel": "Optional — fire only for events in this channel. Leave empty to fire for every channel the bot is in."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_channel_created",
@@ -75,7 +96,12 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Channel Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_member_joined_channel",
@@ -87,7 +113,14 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Member Joined Channel",
+    "filters": {
+     "channel": "Optional — fire only for events in this channel. Leave empty to fire for every channel the bot is in."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_file_shared",
@@ -99,7 +132,14 @@
    "registered_with": [
     "slack_oauth",
     "slack_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On File Shared",
+    "filters": {
+     "channel": "Optional — fire only for events in this channel. Leave empty to fire for every channel the bot is in."
+    },
+    "required": []
+   }
   },
   {
    "name": "send_message_to_channel",

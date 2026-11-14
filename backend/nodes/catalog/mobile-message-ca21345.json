@@ -216,7 +216,14 @@
    "needs_account": true,
    "registered_with": [
     "mobile_message_ca21345_api"
-   ]
+   ],
+   "event": {
+    "description": "On Inbound SMS or Opt-out",
+    "filters": {
+     "replace_webhook_url": "Optional: paste the exact existing URL to explicitly replace it. Leave empty to refuse replacement."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_delivery_receipt",
@@ -227,7 +234,14 @@
    "needs_account": true,
    "registered_with": [
     "mobile_message_ca21345_api"
-   ]
+   ],
+   "event": {
+    "description": "On SMS Delivery Receipt",
+    "filters": {
+     "replace_webhook_url": "Optional: paste the exact existing URL to explicitly replace it. Leave empty to refuse replacement."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

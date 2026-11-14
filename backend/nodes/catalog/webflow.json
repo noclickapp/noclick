@@ -697,7 +697,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a form is submitted on the site.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "site_publish",
@@ -710,7 +719,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when the site is published.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "page_created",
@@ -723,7 +741,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a page is created.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "page_metadata_updated",
@@ -736,7 +763,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a page's metadata (SEO/slug/OG) changes.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "page_deleted",
@@ -749,7 +785,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a page is deleted.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "collection_item_created",
@@ -762,7 +807,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a CMS collection item is created.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "collection_item_changed",
@@ -775,7 +829,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a CMS collection item is updated.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "collection_item_deleted",
@@ -788,7 +851,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a CMS collection item is deleted.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "collection_item_published",
@@ -801,7 +873,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a CMS collection item is published live.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "collection_item_unpublished",
@@ -814,7 +895,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a CMS collection item is unpublished.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "ecomm_new_order",
@@ -827,7 +917,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a new ecommerce order is placed.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "ecomm_order_changed",
@@ -840,7 +939,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when an ecommerce order changes.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "ecomm_inventory_changed",
@@ -853,7 +961,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when ecommerce inventory changes.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "comment_created",
@@ -866,7 +983,16 @@
     "webflow_oauth",
     "webflow_api_token",
     "webflow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "Fires when a comment is created on the site.",
+    "filters": {
+     "site_id": "The Webflow site to operate on"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

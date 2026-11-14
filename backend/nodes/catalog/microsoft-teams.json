@@ -322,7 +322,18 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_teams_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Channel Message",
+    "filters": {
+     "team_id": "The team that owns the channel to watch",
+     "channel_id": "The channel to watch for new/updated messages"
+    },
+    "required": [
+     "channel_id",
+     "team_id"
+    ]
+   }
   },
   {
    "name": "on_chat_message",
@@ -333,7 +344,16 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_teams_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Chat Message",
+    "filters": {
+     "chat_id": "The chat to watch for new/updated messages"
+    },
+    "required": [
+     "chat_id"
+    ]
+   }
   },
   {
    "name": "on_change_notification",
@@ -344,7 +364,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_teams_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Change Notification (Advanced)",
+    "filters": {
+     "resource": "Any Graph change-notification resource, e.g. teams/{id}/channels/{id}/messages or chats/{id}/messages"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

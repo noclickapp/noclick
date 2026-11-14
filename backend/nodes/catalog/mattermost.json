@@ -26,7 +26,19 @@
    "needs_account": true,
    "registered_with": [
     "mattermost_token"
-   ]
+   ],
+   "event": {
+    "description": "New Public Channel Message",
+    "filters": {
+     "team_id": "Mattermost 26-character resource ID.",
+     "channel_id": "Public channel to watch. Private channels and direct messages are not supported.",
+     "trigger_words": "Optional first-word filters. Leave empty for every message in this public channel."
+    },
+    "required": [
+     "channel_id",
+     "team_id"
+    ]
+   }
   },
   {
    "name": "get_current_user",

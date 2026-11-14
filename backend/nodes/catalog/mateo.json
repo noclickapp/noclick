@@ -210,7 +210,12 @@
    "needs_account": true,
    "registered_with": [
     "mateo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_updated",
@@ -221,7 +226,12 @@
    "needs_account": true,
    "registered_with": [
     "mateo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_deleted",
@@ -232,7 +242,12 @@
    "needs_account": true,
    "registered_with": [
     "mateo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Contact Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_form_completed",
@@ -243,7 +258,12 @@
    "needs_account": true,
    "registered_with": [
     "mateo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Form Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

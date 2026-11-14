@@ -33,7 +33,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On New Lead (Lead Ads)",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_ad_issues",
@@ -42,7 +49,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Ad Issue / Disapproval",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_ad_in_process",
@@ -51,7 +65,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Ad Review Complete",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_creative_fatigue",
@@ -60,7 +81,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Creative Fatigue",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_ad_recommendations",
@@ -69,7 +97,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Ad Recommendation",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_async_ad_creation",
@@ -78,7 +113,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Async Ad Creation",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_product_set_issue",
@@ -87,7 +129,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Product Set Issue",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_any_meta_event",
@@ -96,7 +145,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Any Meta Event",
+    "filters": {
+     "verify_token": "Token Meta echoes during the subscription handshake."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_ad_accounts",

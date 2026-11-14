@@ -176,7 +176,14 @@
    "needs_account": true,
    "registered_with": [
     "zonnagps_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Fleet Event",
+    "filters": {
+     "event_type": "Event type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

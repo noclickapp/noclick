@@ -356,7 +356,18 @@
    "description": "Poll-based trigger: runs on a schedule, fetches the organization activity\n    audit log, and emits NEW activities since the last poll.\n\n    ClickHouse Cloud's management API has no outbound webhooks, so this trigger\n    polls the time-ordered `/activities` audit log and dedupes on the activity\n    `id` cursor — each activity is emitted at most once across polls.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Scheduled Query Results",
+    "filters": {
+     "organization_id": "The organization whose activity audit log to poll",
+     "activity_type": "Only emit activities whose type matches this value (e.g. 'service.create'). Leave blank to emit all.",
+     "schedule": "How often to poll for new activities"
+    },
+    "required": [
+     "organization_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

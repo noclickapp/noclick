@@ -186,7 +186,14 @@
    "needs_account": true,
    "registered_with": [
     "systemeio_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On systeme.io Event",
+    "filters": {
+     "event_type": "Start when a contact is created, opts in, gains or loses a tag, or a sale is made or canceled."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

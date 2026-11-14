@@ -192,7 +192,14 @@
    "needs_account": true,
    "registered_with": [
     "eduzz_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Eduzz Event",
+    "filters": {
+     "event_type": "Invoice paid, refunded or canceled, or subscription created or updated."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

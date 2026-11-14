@@ -222,7 +222,19 @@
    "needs_account": true,
    "registered_with": [
     "runscope_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Test Completed",
+    "filters": {
+     "bucket_key": "Bucket key",
+     "test_id": "Optional: receive only this test. Leave empty for every test using the shared environment.",
+     "environment_id": "Adds this callback to the chosen shared environment while retaining its other settings. Tests using or inheriting this environment notify this trigger. Avoid concurrent environment edits during activation."
+    },
+    "required": [
+     "bucket_key",
+     "environment_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

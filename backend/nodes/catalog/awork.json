@@ -202,7 +202,12 @@
    "needs_account": true,
    "registered_with": [
     "awork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Project Created",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -1004,7 +1004,15 @@
    "registered_with": [
     "asana_oauth",
     "asana_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Resource Change",
+    "filters": {
+     "resource_gid": "The gid of the Asana resource (task, project, section, etc.) to watch. When set, the trigger registers an Asana webhook (POST /webhooks) on it with your selected event filters.",
+     "event_types": "Comma-separated list of Asana event actions that fire this trigger. Use `*` (default) for all events. Options: `added` (a resource was created), `changed` (a resource was modified), `removed` (a resource was detached from a parent), `deleted` (a resource was deleted), `undeleted` (a deletion was undone). Selected actions become the webhook's `filters` so Asana only delivers matching events, and are re-checked on each inbound delivery."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

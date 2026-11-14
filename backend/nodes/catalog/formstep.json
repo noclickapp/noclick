@@ -186,7 +186,17 @@
    "needs_account": true,
    "registered_with": [
     "formstep_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Formstep Event",
+    "filters": {
+     "formId": "Form ID",
+     "event_type": "Event"
+    },
+    "required": [
+     "formId"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

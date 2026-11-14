@@ -208,7 +208,12 @@
    "needs_account": true,
    "registered_with": [
     "talkroute_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On New Text Message",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_new_call_record",
@@ -219,7 +224,12 @@
    "needs_account": true,
    "registered_with": [
     "talkroute_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On New Call Record",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_new_voicemail",
@@ -230,7 +240,12 @@
    "needs_account": true,
    "registered_with": [
     "talkroute_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On New Voicemail",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

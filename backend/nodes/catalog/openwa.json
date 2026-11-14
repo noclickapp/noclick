@@ -206,7 +206,16 @@
    "needs_account": true,
    "registered_with": [
     "openwa_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incoming Message",
+    "filters": {
+     "sessionId": "Session"
+    },
+    "required": [
+     "sessionId"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

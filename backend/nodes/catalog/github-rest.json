@@ -36,7 +36,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Push",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_opened",
@@ -48,7 +57,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Opened",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_edited",
@@ -60,7 +78,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Edited",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_deleted",
@@ -72,7 +99,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Deleted",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_pinned",
@@ -84,7 +120,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Pinned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_unpinned",
@@ -96,7 +141,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Unpinned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_closed",
@@ -108,7 +162,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Closed",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_reopened",
@@ -120,7 +183,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Reopened",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_assigned",
@@ -132,7 +204,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Assigned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_unassigned",
@@ -144,7 +225,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Unassigned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_labeled",
@@ -156,7 +246,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Labeled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_unlabeled",
@@ -168,7 +267,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Unlabeled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_locked",
@@ -180,7 +288,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Locked",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_unlocked",
@@ -192,7 +309,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Unlocked",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_transferred",
@@ -204,7 +330,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Transferred",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_milestoned",
@@ -216,7 +351,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Milestoned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_demilestoned",
@@ -228,7 +372,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Demilestoned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_issue_comment",
@@ -240,7 +393,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Comment",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_assigned",
@@ -252,7 +414,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Assigned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_auto_merge_disabled",
@@ -264,7 +435,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Auto Merge Disabled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_auto_merge_enabled",
@@ -276,7 +456,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Auto Merge Enabled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_closed",
@@ -288,7 +477,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Closed",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_converted_to_draft",
@@ -300,7 +498,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Converted To Draft",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_demilestoned",
@@ -312,7 +519,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Demilestoned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_dequeued",
@@ -324,7 +540,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Dequeued",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_edited",
@@ -336,7 +561,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Edited",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_enqueued",
@@ -348,7 +582,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Enqueued",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_labeled",
@@ -360,7 +603,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Labeled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_locked",
@@ -372,7 +624,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Locked",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_milestoned",
@@ -384,7 +645,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Milestoned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_merged",
@@ -396,7 +666,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Merged",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_opened",
@@ -408,7 +687,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Opened",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_ready_for_review",
@@ -420,7 +708,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Ready For Review",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_reopened",
@@ -432,7 +729,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Reopened",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_review_request_removed",
@@ -444,7 +750,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Review Request Removed",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_review_requested",
@@ -456,7 +771,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Review Requested",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_synchronize",
@@ -468,7 +792,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Synchronize",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_unassigned",
@@ -480,7 +813,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Unassigned",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_unlabeled",
@@ -492,7 +834,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Unlabeled",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_pull_request_unlocked",
@@ -504,7 +855,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Pull Request Unlocked",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_published",
@@ -516,7 +876,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Published",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_unpublished",
@@ -528,7 +897,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Unpublished",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_created",
@@ -540,7 +918,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Created",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_edited",
@@ -552,7 +939,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Edited",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_deleted",
@@ -564,7 +960,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Deleted",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_prereleased",
@@ -576,7 +981,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Prereleased",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_release_released",
@@ -588,7 +1002,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Release Released",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_star_created",
@@ -600,7 +1023,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Star Created",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "on_star_deleted",
@@ -612,7 +1044,16 @@
    "registered_with": [
     "github_oauth",
     "github_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Star Deleted",
+    "filters": {
+     "repository": "The repository to watch (owner/name)"
+    },
+    "required": [
+     "repository"
+    ]
+   }
   },
   {
    "name": "get_repository",

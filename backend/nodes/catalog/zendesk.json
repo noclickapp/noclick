@@ -2486,7 +2486,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Any Ticket Event",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_created",
@@ -2499,7 +2504,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_status_changed",
@@ -2512,7 +2522,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket status changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_comment_added",
@@ -2525,7 +2540,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket comment added",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_priority_changed",
@@ -2538,7 +2558,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket priority changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_agent_assignment_changed",
@@ -2551,7 +2576,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket agent reassigned",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_group_assignment_changed",
@@ -2564,7 +2594,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket group reassigned",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_tags_changed",
@@ -2577,7 +2612,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket tags changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_requester_changed",
@@ -2590,7 +2630,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket requester changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_organization_changed",
@@ -2603,7 +2648,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket organization changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_custom_field_changed",
@@ -2616,7 +2666,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket custom field changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_custom_status_changed",
@@ -2629,7 +2684,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket custom status changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_type_changed",
@@ -2642,7 +2702,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket type changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_subject_changed",
@@ -2655,7 +2720,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket subject changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_merged",
@@ -2668,7 +2738,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket merged",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_soft_deleted",
@@ -2681,7 +2756,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Ticket soft-deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ticket_csat_received",
@@ -2694,7 +2774,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On CSAT rating received",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_created",
@@ -2707,7 +2792,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On User created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_deleted",
@@ -2720,7 +2810,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On User deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_organization_created",
@@ -2733,7 +2828,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Organization created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_organization_deleted",
@@ -2746,7 +2846,12 @@
     "zendesk_oauth",
     "zendesk_api_token",
     "zendesk_conversations"
-   ]
+   ],
+   "event": {
+    "description": "On Organization deleted",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -193,7 +193,12 @@
    "needs_account": true,
    "registered_with": [
     "hubfit_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On client created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_check_in_submitted",
@@ -204,7 +209,12 @@
    "needs_account": true,
    "registered_with": [
     "hubfit_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On check in submitted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_workout_completed",
@@ -215,7 +225,12 @@
    "needs_account": true,
    "registered_with": [
     "hubfit_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On workout completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_package_purchased",
@@ -226,7 +241,12 @@
    "needs_account": true,
    "registered_with": [
     "hubfit_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On package purchased",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_questionnaire_submitted",
@@ -237,7 +257,12 @@
    "needs_account": true,
    "registered_with": [
     "hubfit_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On questionnaire submitted",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

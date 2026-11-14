@@ -260,7 +260,16 @@
    "registered_with": [
     "box_oauth",
     "box_developer_token"
-   ]
+   ],
+   "event": {
+    "description": "On File or Folder Event",
+    "filters": {
+     "target_type": "Whether to watch a file or a folder for events",
+     "target_id": "ID of the file or folder to watch (use 0 for the root folder)",
+     "event_types": "Comma-separated Box events that fire the workflow. Box delivers all subscribed events to one URL, so only the selected events run the workflow; the rest are skipped. Leave blank to fire on every event. Available: FILE.UPLOADED (File uploaded), FILE.PREVIEWED (File previewed), FILE.DOWNLOADED (File downloaded), FILE.TRASHED (File trashed), FILE.DELETED (File permanently deleted), FILE.RESTORED (File restored from trash), FILE.COPIED (File copied), FILE.MOVED (File moved), FILE.LOCKED (File locked), FILE.UNLOCKED (File unlocked), FILE.RENAMED (File renamed), COMMENT.CREATED (Comment added), COMMENT.UPDATED (Comment updated), COMMENT.DELETED (Comment deleted), TASK_ASSIGNMENT.CREATED (Task assigned), TASK_ASSIGNMENT.UPDATED (Task assignment updated), METADATA_INSTANCE.CREATED (Metadata added), METADATA_INSTANCE.UPDATED (Metadata updated), METADATA_INSTANCE.DELETED (Metadata deleted), COLLABORATION.CREATED (Collaboration created), COLLABORATION.ACCEPTED (Collaboration accepted), COLLABORATION.REJECTED (Collaboration rejected), COLLABORATION.REMOVED (Collaboration removed), COLLABORATION.UPDATED (Collaboration updated), SHARED_LINK.CREATED (Shared link created), SHARED_LINK.UPDATED (Shared link updated), SHARED_LINK.DELETED (Shared link deleted), FOLDER.CREATED (Folder created), FOLDER.RENAMED (Folder renamed), FOLDER.DOWNLOADED (Folder downloaded), FOLDER.TRASHED (Folder trashed), FOLDER.DELETED (Folder permanently deleted), FOLDER.RESTORED (Folder restored from trash), FOLDER.COPIED (Folder copied), FOLDER.MOVED (Folder moved), WEBHOOK.DELETED (Webhook deleted)"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

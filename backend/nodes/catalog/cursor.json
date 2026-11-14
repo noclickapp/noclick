@@ -264,7 +264,12 @@
    "description": "Receive legacy v0 statusChange webhooks for FINISHED or ERROR agents.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Agent Status Change",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

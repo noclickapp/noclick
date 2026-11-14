@@ -1506,7 +1506,16 @@
    "description": "Subscribe to channels",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Subscribe to Channels",
+    "filters": {
+     "channels": "List of channel names"
+    },
+    "required": [
+     "channels"
+    ]
+   }
   },
   {
    "name": "unsubscribe_from_channels",
@@ -1523,7 +1532,16 @@
    "description": "Subscribe to channels matching patterns",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Subscribe to Channel Patterns",
+    "filters": {
+     "patterns": "List of patterns"
+    },
+    "required": [
+     "patterns"
+    ]
+   }
   },
   {
    "name": "unsubscribe_from_channel_patterns",

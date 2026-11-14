@@ -321,7 +321,17 @@
    "description": "Trigger when a report run for a query completes",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Trigger when a report run for a query completes",
+    "filters": {
+     "query_id": "Bid Manager query whose report runs to watch for completion",
+     "schedule": "How often to poll for newly completed report runs"
+    },
+    "required": [
+     "query_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

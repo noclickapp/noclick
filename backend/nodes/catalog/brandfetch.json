@@ -136,7 +136,14 @@
    "description": "Receive brand-change events from Brandfetch (brand.updated, brand.company.updated).\n\n    Brandfetch webhooks are Enterprise-plan only and registered from the\n    Brandfetch dashboard (no self-serve subscription API), so this trigger\n    simply provisions an inbound URL the user pastes into their dashboard.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Brand Change Events",
+    "filters": {
+     "event_type": "Which Brandfetch event fires this workflow. Brandfetch delivers all events to one endpoint, so the trigger filters inbound deliveries by their `type` and skips events you did not select. Options: 'All brand events' (any event); 'brand.updated' (a brand's data changed); 'brand.company.updated' (a brand's company/firmographic data changed); 'brand.claimed' (a brand was claimed by its owner); 'brand.verified' (a brand was human-reviewed by Brandfetch); 'brand.deleted' (a brand was soft-deleted, rare)."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

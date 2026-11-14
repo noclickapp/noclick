@@ -388,7 +388,16 @@
    "registered_with": [
     "typeform_oauth",
     "typeform_pat"
-   ]
+   ],
+   "event": {
+    "description": "On New Form Response",
+    "filters": {
+     "form_id": "The unique ID of the form to watch for new responses"
+    },
+    "required": [
+     "form_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -511,7 +511,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Application Authorized",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_application_deauthorized",
@@ -523,7 +528,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Application Deauthorized",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_entitlement_create",
@@ -535,7 +545,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Entitlement Create",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_entitlement_update",
@@ -547,7 +562,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Entitlement Update",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_entitlement_delete",
@@ -559,7 +579,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Entitlement Delete",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_slash_command",
@@ -571,7 +596,12 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Slash Command",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_message",
@@ -583,7 +613,15 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Channel Message",
+    "filters": {
+     "channel_id": "Only messages in this channel and the threads opened in it — or, for a category, every channel under it. Leave empty for every channel in the server.",
+     "ignore_bots": "Skip messages posted by bots and webhooks — automated channels flood a trigger otherwise."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_mention",
@@ -595,7 +633,15 @@
    "registered_with": [
     "discord_bot_install",
     "discord_bot_token"
-   ]
+   ],
+   "event": {
+    "description": "On Bot Mention",
+    "filters": {
+     "channel_id": "Only messages in this channel and the threads opened in it — or, for a category, every channel under it. Leave empty for every channel in the server.",
+     "ignore_bots": "Skip messages posted by bots and webhooks — automated channels flood a trigger otherwise."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_channel_webhooks",

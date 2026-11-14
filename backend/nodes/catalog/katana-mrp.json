@@ -216,7 +216,12 @@
    "needs_account": true,
    "registered_with": [
     "katana_mrp_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Sales Order Delivered",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

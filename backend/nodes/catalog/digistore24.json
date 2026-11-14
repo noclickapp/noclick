@@ -26,7 +26,15 @@
    "needs_account": true,
    "registered_with": [
     "digistore24_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Order Event",
+    "filters": {
+     "event_type": "Order event",
+     "product_ids": "Use \"all\" or comma-separated product IDs."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_user_info",

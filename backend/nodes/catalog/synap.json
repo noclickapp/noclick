@@ -192,7 +192,14 @@
    "needs_account": true,
    "registered_with": [
     "synap_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Synap Event",
+    "filters": {
+     "event_type": "User registered or updated, attempt completed after marking, or learning record updated or deleted."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

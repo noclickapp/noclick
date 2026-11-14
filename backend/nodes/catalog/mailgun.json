@@ -250,7 +250,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Email Accepted",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_delivered",
@@ -261,7 +270,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Email Delivered",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_opened",
@@ -272,7 +290,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Email Opened",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_clicked",
@@ -283,7 +310,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Email Clicked",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_unsubscribed",
@@ -294,7 +330,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Unsubscribe",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_spam_complaint",
@@ -305,7 +350,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Spam Complaint",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_hard_bounce",
@@ -316,7 +370,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Hard Bounce",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_soft_bounce",
@@ -327,7 +390,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Soft Bounce",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   },
   {
    "name": "on_inbound_email",
@@ -338,7 +410,16 @@
    "needs_account": true,
    "registered_with": [
     "mailgun_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Inbound Email",
+    "filters": {
+     "domain": "The domain to receive events / inbound mail for"
+    },
+    "required": [
+     "domain"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

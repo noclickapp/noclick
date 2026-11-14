@@ -192,7 +192,16 @@
    "needs_account": true,
    "registered_with": [
     "mist_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Device Up or Down",
+    "filters": {
+     "site_id": "Mist UUID from a previous list or event"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "on_alarm",
@@ -203,7 +212,16 @@
    "needs_account": true,
    "registered_with": [
     "mist_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Alarm",
+    "filters": {
+     "site_id": "Mist UUID from a previous list or event"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

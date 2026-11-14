@@ -56,7 +56,12 @@
    "description": "Receive webhook events from Resend (delivered, bounced, opened, complained).",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Webhook Events",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

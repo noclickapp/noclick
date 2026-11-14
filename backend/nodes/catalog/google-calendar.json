@@ -24,7 +24,14 @@
    "description": "Trigger: fires when events change on a Google Calendar.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Calendar Event",
+    "filters": {
+     "calendar_id": "The calendar to watch ('primary' for the main calendar)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_event_active",
@@ -41,7 +48,14 @@
    "description": "Trigger: fires when a calendar event is cancelled or deleted.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Event Cancelled",
+    "filters": {
+     "calendar_id": "The calendar to watch ('primary' for the main calendar)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_event_created",
@@ -50,7 +64,14 @@
    "description": "Trigger: fires when a new calendar event is created.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Event Created",
+    "filters": {
+     "calendar_id": "The calendar to watch ('primary' for the main calendar)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_event_updated",
@@ -59,7 +80,14 @@
    "description": "Trigger: fires when an existing calendar event is modified.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Event Updated",
+    "filters": {
+     "calendar_id": "The calendar to watch ('primary' for the main calendar)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_event_tentative",
@@ -68,7 +96,14 @@
    "description": "Trigger: fires when a calendar event is tentatively accepted.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Event Tentative",
+    "filters": {
+     "calendar_id": "The calendar to watch ('primary' for the main calendar)"
+    },
+    "required": []
+   }
   },
   {
    "name": "list_calendar_events",

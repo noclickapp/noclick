@@ -271,7 +271,14 @@
    "registered_with": [
     "launchdarkly_token",
     "launchdarkly_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Account Activity",
+    "filters": {
+     "event_types": "Which LaunchDarkly events fire this workflow. Pick one or more (comma-separated). The webhook is registered with a matching policy filter and deliveries are also filtered at runtime, so the workflow only runs for the events you choose. Options:\n- All account activity (default): every change in the account\n- Feature flag created / deleted / turned on-off (toggle) / updated\n- Project created/updated/deleted\n- Environment created/updated/deleted\n- Segment created/updated/deleted\n- Account member invited/updated/removed\n- Webhook created/updated/deleted"
+    },
+    "required": []
+   }
   },
   {
    "name": "evaluate_segment_memberships",

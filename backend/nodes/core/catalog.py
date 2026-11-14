@@ -14,7 +14,9 @@ Each registered type has a generated file, ``nodes/catalog/<type without "automa
   says so: ``run_op.declares_no_account``, on NoClick's keys); and on each push trigger its schema
   offers (an app event, not a poll), ``registered_with``: the node's credential types NoClick
   registers it with by itself (``WebhookManager.registers_itself``), none where its provider is
-  pointed at a URL by hand;
+  pointed at a URL by hand, and its ``event``: the ``description`` an agent reads of it and the
+  ``filters`` narrowing it (each field it can be narrowed by -> what it matches; ``required``, those
+  it must be), so an event catalog lists every integration's events without importing one;
 - ``agent_tool_provider`` (``node_op_tools.node_supports_op_tools``), ``credentialed`` (its config
   takes a credential), ``output_handles``, ``registers`` (a step can hold a webhook, subscription or
   schedule registration) and its ``app_event_provider``;
@@ -50,6 +52,10 @@ def catalog_path(node_type: str, directory: Path = CATALOG_DIR) -> Path:
 CLASS_FACTS = frozenset({"credentials", "operations", "agent_tool_provider", "credentialed", "output_handles",
                          "registers", "app_event_provider", "summary", "retired"})
 OPERATION_FACTS = frozenset({"name", "display_name", "category", "description", "is_trigger", "needs_account"})
+# A push trigger's ``event``, beside its ``registered_with``.
+EVENT_FACTS = frozenset({"description", "filters", "required"})
+# Fields of a trigger operation that are its own plumbing, not something to narrow it by.
+_LIFECYCLE_WIDGETS = frozenset({"webhook", "subscription_status", "readonly", "nextRun", "password"})
 
 
 def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
@@ -133,8 +139,25 @@ def _operation_facts(node_type: str, node_class: Any, credential_types: List[str
         if op.name in triggers and not (polls and polls._is_schedule_operation(op.name)):
             facts["registered_with"] = [t for t in credential_types
                                         if WebhookManager.registers_itself(node_type, op.name, t)]
+            facts["event"] = _event_facts(op.name, op.display_name, triggers[op.name])
         out.append(facts)
     return out
+
+
+def _event_facts(operation: str, display_name: Optional[str], member: Dict[str, Any]) -> Dict[str, Any]:
+    """A push trigger's ``event`` (the module's docstring), from its member of the node's schema."""
+    schema = (member.get("properties") or {}).get("operation") or {}
+    # Pydantic titles a field named ``operation`` "Operation" unless told otherwise: no description of anything.
+    title = schema.get("title") if schema.get("title") != "Operation" else None
+    required = set(member.get("required") or [])
+    filters: Dict[str, str] = {}
+    for name, prop in (member.get("properties") or {}).items():
+        if name == "operation" or prop.get("ui:hidden") or prop.get("ui:widget") in _LIFECYCLE_WIDGETS:
+            continue
+        filters[name] = prop.get("description") or prop.get("title") or name
+    words = operation[3:] if operation.startswith("on_") else operation
+    return {"description": schema.get("description") or display_name or title or words.replace("_", " "),
+            "filters": filters, "required": sorted(required & set(filters))}
 
 
 def _summary(node_class: Any) -> str:
@@ -151,7 +174,9 @@ def _read(node_type: str) -> Optional[Dict[str, Any]]:
         facts = json.loads(catalog_path(node_type).read_text())
     except FileNotFoundError:
         return None
-    current = CLASS_FACTS <= facts.keys() and all(OPERATION_FACTS <= op.keys() for op in facts["operations"])
+    current = CLASS_FACTS <= facts.keys() and all(
+        OPERATION_FACTS <= op.keys() and ("registered_with" not in op or EVENT_FACTS <= op.get("event", {}).keys())
+        for op in facts["operations"])
     return facts if current else None
 
 

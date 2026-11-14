@@ -167,7 +167,12 @@
    "registered_with": [
     "fellow_api_key",
     "fellow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On AI Note Generated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_ai_note_shared",
@@ -179,7 +184,12 @@
    "registered_with": [
     "fellow_api_key",
     "fellow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On AI Note Shared",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_action_item_assigned",
@@ -191,7 +201,12 @@
    "registered_with": [
     "fellow_api_key",
     "fellow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Action Item Assigned",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_action_item_completed",
@@ -203,7 +218,12 @@
    "registered_with": [
     "fellow_api_key",
     "fellow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Action Item Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_fellow_event",
@@ -215,7 +235,12 @@
    "registered_with": [
     "fellow_api_key",
     "fellow_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Fellow Event (Any)",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

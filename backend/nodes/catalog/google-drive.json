@@ -24,7 +24,12 @@
    "description": "Trigger: fires when files change in the connected Google Drive.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Drive Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_file_changed",
@@ -33,7 +38,14 @@
    "description": "Trigger: fires when a file is created or modified in Google Drive.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On File Changed",
+    "filters": {
+     "watch_target_id": "Select a file to monitor exactly, or a folder to monitor files within it and all descendant subfolders. Leave empty to watch the entire Drive."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_file_removed",
@@ -42,7 +54,14 @@
    "description": "Trigger: fires when a file is trashed or permanently deleted from Google Drive.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On File Removed",
+    "filters": {
+     "watch_target_id": "Select a file to monitor exactly, or a folder to monitor files within it and all descendant subfolders. Leave empty to watch the entire Drive."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_folder_changed",
@@ -51,7 +70,14 @@
    "description": "Trigger: fires when a folder is created or modified in Google Drive.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Folder Changed",
+    "filters": {
+     "watch_parent_folder_id": "Only trigger for this folder and its descendant subfolders. Leave empty to watch all folders."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_folder_removed",
@@ -60,7 +86,14 @@
    "description": "Trigger: fires when a folder is trashed or permanently deleted from Google Drive.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Folder Removed",
+    "filters": {
+     "watch_parent_folder_id": "Only trigger for this folder and its descendant subfolders. Leave empty to watch all folders."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_files",

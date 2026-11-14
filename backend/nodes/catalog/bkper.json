@@ -210,7 +210,17 @@
    "needs_account": true,
    "registered_with": [
     "google_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Book Event",
+    "filters": {
+     "book_id": "Book",
+     "webhook_url": "Webhook URL"
+    },
+    "required": [
+     "book_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

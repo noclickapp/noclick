@@ -34,7 +34,16 @@
    "needs_account": true,
    "registered_with": [
     "dialpad_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Call Event",
+    "filters": {
+     "target_id": "Optional Dialpad user or group to watch.",
+     "target_type": "Target Type",
+     "call_state": "Call state that starts the workflow."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_sms",
@@ -45,7 +54,18 @@
    "needs_account": true,
    "registered_with": [
     "dialpad_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On SMS Event",
+    "filters": {
+     "target_id": "Optional Dialpad user or group to watch.",
+     "target_type": "Target Type",
+     "direction": "Direction",
+     "status": "Include Delivery Status Updates",
+     "include_internal": "Include Internal Messages"
+    },
+    "required": []
+   }
   },
   {
    "name": "list_calls",

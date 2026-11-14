@@ -223,7 +223,12 @@
    "needs_account": true,
    "registered_with": [
     "ezeep_printing_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Print Job Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

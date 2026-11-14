@@ -1465,7 +1465,16 @@
     "netlify_oauth",
     "netlify_pat",
     "netlify_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Deploy Succeeded",
+    "filters": {
+     "site_id": "The Netlify site to watch"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "on_deploy_failed",
@@ -1478,7 +1487,16 @@
     "netlify_oauth",
     "netlify_pat",
     "netlify_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Deploy Failed",
+    "filters": {
+     "site_id": "The Netlify site to watch"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "on_deploy_started",
@@ -1491,7 +1509,16 @@
     "netlify_oauth",
     "netlify_pat",
     "netlify_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Deploy Started",
+    "filters": {
+     "site_id": "The Netlify site to watch"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   },
   {
    "name": "on_form_submission",
@@ -1504,7 +1531,16 @@
     "netlify_oauth",
     "netlify_pat",
     "netlify_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Form Submission",
+    "filters": {
+     "site_id": "The Netlify site to watch"
+    },
+    "required": [
+     "site_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -30,7 +30,17 @@
    "needs_account": true,
    "registered_with": [
     "fatture_in_cloud_token"
-   ]
+   ],
+   "event": {
+    "description": "On Fatture in Cloud Event",
+    "filters": {
+     "company_id": "Company ID",
+     "event_type": "Start when an invoice, received document, client, supplier or product is created, updated or deleted. Requires read access to that resource. One subscription per app, company and event type is allowed."
+    },
+    "required": [
+     "company_id"
+    ]
+   }
   },
   {
    "name": "get_user_info",

@@ -279,7 +279,12 @@
    "registered_with": [
     "luma_api_key",
     "luma_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Luma Event",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

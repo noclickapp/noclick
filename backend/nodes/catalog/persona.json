@@ -212,7 +212,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_completed",
@@ -224,7 +229,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_failed",
@@ -236,7 +246,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_approved",
@@ -248,7 +263,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Approved",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_declined",
@@ -260,7 +280,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Declined",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_marked_for_review",
@@ -272,7 +297,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Marked For Review",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inquiry_expired",
@@ -284,7 +314,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Inquiry Expired",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_created",
@@ -296,7 +331,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Account Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_case_created",
@@ -308,7 +348,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Case Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_case_status_updated",
@@ -320,7 +365,12 @@
    "registered_with": [
     "persona_api_key",
     "persona_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Case Status Updated",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

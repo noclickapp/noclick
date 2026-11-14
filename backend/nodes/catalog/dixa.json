@@ -206,7 +206,12 @@
    "needs_account": true,
    "registered_with": [
     "dixa_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Internal Note Added",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

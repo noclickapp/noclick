@@ -199,7 +199,17 @@
    "needs_account": true,
    "registered_with": [
     "glean_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Glean Preset Event",
+    "filters": {
+     "preset_id": "Use List Trigger Presets and Get Trigger Preset to find a preset and its required inputs.",
+     "inputs": "Input names and values from Get Trigger Preset."
+    },
+    "required": [
+     "preset_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

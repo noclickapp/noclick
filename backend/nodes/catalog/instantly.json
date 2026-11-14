@@ -296,7 +296,14 @@
    "description": "Receive webhook events from Instantly (e.g. reply_received, positive_reply).",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Webhook Events",
+    "filters": {
+     "event_type": "The type of Instantly event to subscribe to"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

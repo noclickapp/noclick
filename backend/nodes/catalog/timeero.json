@@ -186,7 +186,14 @@
    "needs_account": true,
    "registered_with": [
     "timeero_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Clock In",
+    "filters": {
+     "replace_existing_subscription": "Enable to use this workflow as Timeero’s single company webhook receiver, replacing any existing configuration."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_clock_out",
@@ -197,7 +204,14 @@
    "needs_account": true,
    "registered_with": [
     "timeero_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Clock Out",
+    "filters": {
+     "replace_existing_subscription": "Enable to use this workflow as Timeero’s single company webhook receiver, replacing any existing configuration."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_new_job",
@@ -208,7 +222,14 @@
    "needs_account": true,
    "registered_with": [
     "timeero_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Job",
+    "filters": {
+     "replace_existing_subscription": "Enable to use this workflow as Timeero’s single company webhook receiver, replacing any existing configuration."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_new_task",
@@ -219,7 +240,14 @@
    "needs_account": true,
    "registered_with": [
     "timeero_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Task",
+    "filters": {
+     "replace_existing_subscription": "Enable to use this workflow as Timeero’s single company webhook receiver, replacing any existing configuration."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_new_schedule",
@@ -230,7 +258,14 @@
    "needs_account": true,
    "registered_with": [
     "timeero_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Schedule",
+    "filters": {
+     "replace_existing_subscription": "Enable to use this workflow as Timeero’s single company webhook receiver, replacing any existing configuration."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

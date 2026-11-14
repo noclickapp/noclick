@@ -45,7 +45,12 @@
    "registered_with": [
     "brex_api_token",
     "brex_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Expense Payment Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_transfer_processed",
@@ -57,7 +62,12 @@
    "registered_with": [
     "brex_api_token",
     "brex_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Transfer Processed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "list_expenses",

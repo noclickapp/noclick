@@ -420,7 +420,14 @@
    "description": "Receive any published Firecrawl webhook event.\n\n    Firecrawl webhooks are configured per-job by adding a `webhook` object to a\n    crawl / batch / extract request or to a monitor definition. Firecrawl also\n    accepts webhook objects on `/agent` in live API testing, and publishes\n    agent webhook payloads in its webhook OpenAPI. The trigger therefore accepts\n    any Firecrawl webhook, but only crawl / batch scrape / agent / monitor have\n    a published event taxonomy suitable for decomposed trigger variants.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Any Firecrawl Event",
+    "filters": {
+     "event_type": "Optional exact Firecrawl event type filter. Leave on 'Any published Firecrawl webhook' to accept every event family."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_crawl_event",
@@ -429,7 +436,14 @@
    "description": "Receive Firecrawl crawl webhook events.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Crawl Event",
+    "filters": {
+     "event_type": "Which crawl event should fire this workflow. 'Any crawl event' also matches future crawl-prefixed events such as crawl.failed."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_batch_scrape_event",
@@ -438,7 +452,14 @@
    "description": "Receive Firecrawl batch scrape webhook events.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Batch Scrape Event",
+    "filters": {
+     "event_type": "Which batch scrape event should fire this workflow. 'Any batch scrape event' also matches future batch_scrape-prefixed events such as batch_scrape.failed."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_agent_event",
@@ -447,7 +468,14 @@
    "description": "Receive Firecrawl agent webhook events.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Agent Event",
+    "filters": {
+     "event_type": "Which agent event should fire this workflow. Firecrawl publishes these payloads in its webhook OpenAPI."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_monitor_event",
@@ -456,7 +484,14 @@
    "description": "Receive Firecrawl monitor webhook events.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Monitor Event",
+    "filters": {
+     "event_type": "Which monitor event should fire this workflow."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -46,7 +46,16 @@
    "registered_with": [
     "tally_api_key",
     "tally_mcp"
-   ]
+   ],
+   "event": {
+    "description": "New Form Submission",
+    "filters": {
+     "form_id": "Form ID"
+    },
+    "required": [
+     "form_id"
+    ]
+   }
   },
   {
    "name": "list_forms",

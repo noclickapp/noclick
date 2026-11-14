@@ -572,7 +572,17 @@
    "registered_with": [
     "monday_oauth",
     "monday_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Board Event",
+    "filters": {
+     "board_id": "The board to watch for events",
+     "event": "The board event to trigger on"
+    },
+    "required": [
+     "board_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

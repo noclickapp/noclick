@@ -285,7 +285,12 @@
    "description": "Receive Task / Monitor completion events from Parallel.\n\n    Parallel webhooks are configured inline on create requests (no separate\n    registerable webhook API), so this provisions a NoClick webhook URL that the\n    user supplies in the `webhook` object when creating a Task or Monitor.\n    HMAC signature verification is supported.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Webhook Events",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -210,7 +210,16 @@
    "needs_account": true,
    "registered_with": [
     "46elks_basic_auth"
-   ]
+   ],
+   "event": {
+    "description": "Incoming SMS",
+    "filters": {
+     "number_id": "Choose the number whose callback this workflow will replace. SMS triggers disable automatic response-body replies; use Send SMS to reply. Use a dedicated number for each channel/trigger."
+    },
+    "required": [
+     "number_id"
+    ]
+   }
   },
   {
    "name": "on_incoming_mms",
@@ -221,7 +230,16 @@
    "needs_account": true,
    "registered_with": [
     "46elks_basic_auth"
-   ]
+   ],
+   "event": {
+    "description": "Incoming MMS",
+    "filters": {
+     "number_id": "Choose the number whose callback this workflow will replace. SMS triggers disable automatic response-body replies; use Send SMS to reply. Use a dedicated number for each channel/trigger."
+    },
+    "required": [
+     "number_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

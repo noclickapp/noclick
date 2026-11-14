@@ -258,7 +258,14 @@
    "needs_account": true,
    "registered_with": [
     "discourse_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Forum Event",
+    "filters": {
+     "event_types": "Which Discourse event group fires this workflow. The webhook only subscribes to the chosen group (Discourse filters server-side), and deliveries are re-checked at runtime against the X-Discourse-Event-Type header. Choose 'All Events' to fire on every event group.\n- All Events: every event Discourse emits\n- Topic: topic_created, topic_edited, topic_destroyed, topic_recovered\n- Post: post_created, post_edited, post_destroyed, post_recovered\n- User: user_created, user_approved, user_updated, user_logged_in\n- Group / Category / Tag: created, updated, destroyed for each\n- Reviewable / Notification / Like / User Promoted: their respective events"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

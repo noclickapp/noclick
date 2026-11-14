@@ -236,7 +236,14 @@
    "registered_with": [
     "mollie_1_api_key",
     "mollie_1_advanced_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Paid",
+    "filters": {
+     "testmode": "Receive test-mode events instead of live-mode events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_failed",
@@ -248,7 +255,14 @@
    "registered_with": [
     "mollie_1_api_key",
     "mollie_1_advanced_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Failed",
+    "filters": {
+     "testmode": "Receive test-mode events instead of live-mode events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_refund_refunded",
@@ -260,7 +274,14 @@
    "registered_with": [
     "mollie_1_api_key",
     "mollie_1_advanced_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Refund Completed",
+    "filters": {
+     "testmode": "Receive test-mode events instead of live-mode events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_chargeback_received",
@@ -272,7 +293,14 @@
    "registered_with": [
     "mollie_1_api_key",
     "mollie_1_advanced_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Chargeback Received",
+    "filters": {
+     "testmode": "Receive test-mode events instead of live-mode events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_link_paid",
@@ -284,7 +312,14 @@
    "registered_with": [
     "mollie_1_api_key",
     "mollie_1_advanced_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Link Paid",
+    "filters": {
+     "testmode": "Receive test-mode events instead of live-mode events."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

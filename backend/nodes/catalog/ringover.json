@@ -194,7 +194,14 @@
    "needs_account": true,
    "registered_with": [
     "ringover_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Call Event",
+    "filters": {
+     "event_type": "Call Event"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

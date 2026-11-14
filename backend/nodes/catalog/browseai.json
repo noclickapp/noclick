@@ -162,7 +162,16 @@
    "needs_account": true,
    "registered_with": [
     "browseai_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Task Finished",
+    "filters": {
+     "robotId": "Robot ID"
+    },
+    "required": [
+     "robotId"
+    ]
+   }
   },
   {
    "name": "on_data_changed",
@@ -173,7 +182,16 @@
    "needs_account": true,
    "registered_with": [
     "browseai_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Data Changed",
+    "filters": {
+     "robotId": "Robot ID"
+    },
+    "required": [
+     "robotId"
+    ]
+   }
   },
   {
    "name": "on_table_export_finished",
@@ -184,7 +202,16 @@
    "needs_account": true,
    "registered_with": [
     "browseai_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Table Export Finished",
+    "filters": {
+     "robotId": "Robot ID"
+    },
+    "required": [
+     "robotId"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

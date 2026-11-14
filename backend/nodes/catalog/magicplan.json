@@ -202,7 +202,14 @@
    "needs_account": true,
    "registered_with": [
     "magicplan_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Project Exported",
+    "filters": {
+     "replace_webhook_url": "Optional: paste the exact current workspace webhook URL to explicitly replace it while this trigger is active. NoClick restores it on disconnect."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

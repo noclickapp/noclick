@@ -191,7 +191,14 @@
    "needs_account": true,
    "registered_with": [
     "chatwoot_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Message",
+    "filters": {
+     "message_type": "Incoming customer messages by default. Choose all to include agent replies and template messages."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_conversation_created",
@@ -202,7 +209,12 @@
    "needs_account": true,
    "registered_with": [
     "chatwoot_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On New Conversation",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_conversation_status_changed",
@@ -213,7 +225,12 @@
    "needs_account": true,
    "registered_with": [
     "chatwoot_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Conversation Status Changed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

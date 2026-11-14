@@ -697,7 +697,17 @@
     "gitlab_oauth",
     "gitlab_token",
     "gitlab_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Project Event",
+    "filters": {
+     "project_id": "Project whose events should trigger this workflow",
+     "event_types": "Which GitLab event fires this workflow. GitLab delivers every subscribed event to one URL; non-matching deliveries are skipped. Options: All Events (default), Push (commits pushed), Tag Push (tags pushed), Issue (issue created/updated/closed), Merge Request (MR opened/updated/merged), Comment (note on issue/MR/commit/code), Pipeline (CI/CD pipeline status change), Job (CI job status change), Deployment (environment deploy status), Release (release created/updated), Wiki Page (wiki page created/updated)."
+    },
+    "required": [
+     "project_id"
+    ]
+   }
   },
   {
    "name": "on_group_event",
@@ -710,7 +720,17 @@
     "gitlab_oauth",
     "gitlab_token",
     "gitlab_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Group Event (Premium)",
+    "filters": {
+     "group_id": "Group whose events (across all its projects) trigger this workflow. Numeric group ID or group path. Requires GitLab Premium/Ultimate — group webhooks do not fire on free-tier groups.",
+     "event_types": "Which GitLab group event fires this workflow. Group hooks fire for events across every project in the group, plus group-level Member (user added/removed), Subgroup (created/removed), and Project (created/removed/transferred) events. GitLab delivers every subscribed event to one URL; non-matching deliveries are skipped."
+    },
+    "required": [
+     "group_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

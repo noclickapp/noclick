@@ -300,7 +300,12 @@
    "registered_with": [
     "pagerduty_oauth",
     "pagerduty_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Incident Event",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "get_alert",

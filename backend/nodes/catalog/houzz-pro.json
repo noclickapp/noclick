@@ -218,7 +218,12 @@
    "needs_account": true,
    "registered_with": [
     "houzz_pro_access_token"
-   ]
+   ],
+   "event": {
+    "description": "Project Updated",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

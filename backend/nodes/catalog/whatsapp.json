@@ -334,7 +334,16 @@
    "needs_account": true,
    "registered_with": [
     "whatsapp_qr"
-   ]
+   ],
+   "event": {
+    "description": "Receive Message",
+    "filters": {
+     "include_group_messages": "Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once. Not consulted when Only These Chats is set.",
+     "include_self_chat": "Also trigger on what you write in your own \"Message yourself\" chat on the linked phone, so you can talk to an agent from WhatsApp. What you send in any other chat, and what a NoClick node sends, never triggers. Heard whether or not Only These Chats lists it.",
+     "chat_ids": "Start a run only for messages in these chats; leave empty for every chat. When set, the list alone decides: a group listed here fires even with group messages off, and every chat not listed, direct or group, is ignored."
+    },
+    "required": []
+   }
   },
   {
    "name": "receive_status_update",
@@ -343,7 +352,12 @@
    "description": "Receive message status updates via webhook",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Status Update",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

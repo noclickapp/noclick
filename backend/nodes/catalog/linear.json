@@ -49,7 +49,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Created",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_issue_updated",
@@ -62,7 +69,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Updated",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_issue_deleted",
@@ -75,7 +89,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Issue Deleted",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_comment_created",
@@ -88,7 +109,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Comment Created",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_comment_updated",
@@ -101,7 +129,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Comment Updated",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_comment_deleted",
@@ -114,7 +149,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Comment Deleted",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_project_created",
@@ -127,7 +169,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Project Created",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_project_updated",
@@ -140,7 +189,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Project Updated",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_project_deleted",
@@ -153,7 +209,14 @@
     "linear_oauth",
     "linear_pat",
     "linear_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Project Deleted",
+    "filters": {
+     "team_id": "Limit events to a single team (leave blank for all public teams)"
+    },
+    "required": []
+   }
   },
   {
    "name": "list_issue_comments",

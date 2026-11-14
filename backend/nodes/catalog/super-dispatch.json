@@ -26,7 +26,14 @@
    "needs_account": true,
    "registered_with": [
     "super_dispatch_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Order Event",
+    "filters": {
+     "event_type": "The order change that starts this workflow."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_carriers",

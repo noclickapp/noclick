@@ -327,7 +327,30 @@
    "registered_with": [
     "findymail_api_key",
     "findymail_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Signal Match",
+    "filters": {
+     "monitor_name": "Name for the signal monitor created to power this trigger",
+     "signal_type": "The signal source to monitor for this trigger",
+     "keywords": "Comma-separated keywords. Required for keyword mentions and some post-engagement monitors.",
+     "post_url": "Required for post-engagement monitors when tracking one post",
+     "profile_url": "Optional LinkedIn profile URL for post-engagement monitors",
+     "engagement_types": "Comma-separated engagement types, e.g. like, comment",
+     "enrichment_level": "Contact enrichment level for matched signals",
+     "lead_list_id": "Optional contact list to add matched contacts to",
+     "ai_relevance_prompt": "Optional custom relevance prompt",
+     "target_companies": "Comma-separated company names or domains",
+     "is_shared": "Whether to share this monitor with your current team",
+     "icp_industries": "Comma-separated industries",
+     "icp_employee_count_ranges": "Comma-separated employee ranges, e.g. 51-200, 201-500",
+     "icp_countries": "Comma-separated 2-letter country codes, e.g. US, FR",
+     "icp_job_title_keywords": "Comma-separated job-title keywords",
+     "icp_seniority_levels": "Comma-separated seniority levels, e.g. 11, 13, 14",
+     "job_offer_title_keywords": "Comma-separated job-title keywords for company-hiring monitors"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

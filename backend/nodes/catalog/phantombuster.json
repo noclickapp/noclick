@@ -532,7 +532,12 @@
    "description": "Receive per-Phantom completion notifications from PhantomBuster.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Phantom Finished",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

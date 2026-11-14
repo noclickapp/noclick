@@ -160,7 +160,12 @@
    "description": "Fire the workflow when an async job completes (Svix-signed delivery).",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Job Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

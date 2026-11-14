@@ -114,7 +114,14 @@
    "needs_account": true,
    "registered_with": [
     "docusign_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Envelope or Recipient Event",
+    "filters": {
+     "event_type": "Event Type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

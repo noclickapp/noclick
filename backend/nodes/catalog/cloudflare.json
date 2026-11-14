@@ -2307,7 +2307,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Cloudflare Alert",
+    "filters": {
+     "alert_type": "Cloudflare alert type. Use list_available_alerts to see all types enabled for your account.",
+     "policy_name": "Name for the alert policy (defaults to 'NoClick - {alert_type}')"
+    },
+    "required": [
+     "alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_audit_log",
@@ -3145,7 +3155,14 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Stream Video Event",
+    "filters": {
+     "event_types": "Comma-separated event types to match: video-uploaded,video-encoding-completed,video-encoding-failed,live-input-connected,live-input-disconnected. Leave empty to receive all events."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_identity_providers",
@@ -4695,7 +4712,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On DDoS Attack Alert",
+    "filters": {
+     "ddos_layer": "DDoS protection layer to monitor",
+     "policy_name": "Name for the Cloudflare alert policy (defaults to 'NoClick - DDoS {layer}')"
+    },
+    "required": [
+     "ddos_layer"
+    ]
+   }
   },
   {
    "name": "cloudflare_ssl_alert",
@@ -4709,7 +4736,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On SSL/TLS Certificate Alert",
+    "filters": {
+     "ssl_alert_type": "SSL/TLS certificate event type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "ssl_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_tunnel_alert",
@@ -4723,7 +4760,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Tunnel Health/Event Alert",
+    "filters": {
+     "tunnel_alert_type": "Tunnel alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "tunnel_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_worker_alert",
@@ -4737,7 +4784,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Workers Error/Usage Alert",
+    "filters": {
+     "worker_alert_type": "Worker alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "worker_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_load_balancer_alert",
@@ -4751,7 +4808,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Load Balancer Health Change",
+    "filters": {
+     "lb_alert_type": "Load balancer alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "lb_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_waiting_room_alert",
@@ -4765,7 +4832,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Waiting Room Event",
+    "filters": {
+     "waiting_room_alert_type": "Waiting room alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "waiting_room_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_page_shield_alert",
@@ -4779,7 +4856,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Page Shield Alert",
+    "filters": {
+     "page_shield_alert_type": "Page Shield / Script Monitor alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "page_shield_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_zero_trust_alert",
@@ -4793,7 +4880,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Zero Trust Gateway Alert",
+    "filters": {
+     "zt_alert_type": "Zero Trust alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "zt_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_email_routing_alert",
@@ -4807,7 +4904,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Email Routing Incident",
+    "filters": {
+     "email_alert_type": "Email routing alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "email_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_magic_transit_alert",
@@ -4821,7 +4928,17 @@
     "cloudflare_api_token",
     "cloudflare_api_key",
     "cloudflare_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Magic Transit / BGP Alert",
+    "filters": {
+     "mt_alert_type": "Magic Transit / BGP alert type to monitor",
+     "policy_name": "Name for the Cloudflare alert policy"
+    },
+    "required": [
+     "mt_alert_type"
+    ]
+   }
   },
   {
    "name": "cloudflare_worker_deployed",

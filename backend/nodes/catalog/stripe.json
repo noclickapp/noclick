@@ -1292,7 +1292,14 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Custom Event",
+    "filters": {
+     "event_types": "Comma-separated Stripe event types to listen for (e.g. radar.early_fraud_warning.created). Leave empty for all events."
+    },
+    "required": []
+   }
   },
   {
    "name": "create_subscription_schedule",
@@ -3528,7 +3535,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_intent_payment_failed",
@@ -3540,7 +3552,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_intent_created",
@@ -3552,7 +3569,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Intent Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_intent_canceled",
@@ -3564,7 +3586,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Intent Canceled",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_intent_processing",
@@ -3576,7 +3603,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Processing",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_intent_requires_action",
@@ -3588,7 +3620,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Requires Action",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_succeeded",
@@ -3600,7 +3637,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Charge Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_failed",
@@ -3612,7 +3654,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Charge Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_refunded",
@@ -3624,7 +3671,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Charge Refunded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_captured",
@@ -3636,7 +3688,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Charge Captured",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_updated",
@@ -3648,7 +3705,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Charge Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_dispute_created",
@@ -3660,7 +3722,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Dispute Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_dispute_updated",
@@ -3672,7 +3739,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Dispute Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_dispute_closed",
@@ -3684,7 +3756,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Dispute Closed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_dispute_funds_withdrawn",
@@ -3696,7 +3773,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Dispute Funds Withdrawn",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_charge_refund_updated",
@@ -3708,7 +3790,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Refund Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_checkout_session_completed",
@@ -3720,7 +3807,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Checkout Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_checkout_session_expired",
@@ -3732,7 +3824,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Checkout Expired",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_checkout_session_async_payment_succeeded",
@@ -3744,7 +3841,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Checkout Async Payment Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_checkout_session_async_payment_failed",
@@ -3756,7 +3858,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Checkout Async Payment Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_created",
@@ -3768,7 +3875,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_updated",
@@ -3780,7 +3892,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_deleted",
@@ -3792,7 +3909,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_created",
@@ -3804,7 +3926,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_updated",
@@ -3816,7 +3943,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_deleted",
@@ -3828,7 +3960,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Canceled",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_trial_will_end",
@@ -3840,7 +3977,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Trial Will End",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_paused",
@@ -3852,7 +3994,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Paused",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_customer_subscription_resumed",
@@ -3864,7 +4011,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Resumed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_created",
@@ -3876,7 +4028,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_finalized",
@@ -3888,7 +4045,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Finalized",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_paid",
@@ -3900,7 +4062,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Paid",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_payment_succeeded",
@@ -3912,7 +4079,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Payment Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_payment_failed",
@@ -3924,7 +4096,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Payment Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_payment_action_required",
@@ -3936,7 +4113,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Payment Action Required",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_upcoming",
@@ -3948,7 +4130,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Upcoming Invoice",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_marked_uncollectible",
@@ -3960,7 +4147,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Uncollectible",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_voided",
@@ -3972,7 +4164,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Invoice Voided",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_created",
@@ -3984,7 +4181,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Product Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_updated",
@@ -3996,7 +4198,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Product Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_deleted",
@@ -4008,7 +4215,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Product Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_price_created",
@@ -4020,7 +4232,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Price Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_price_updated",
@@ -4032,7 +4249,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Price Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payout_created",
@@ -4044,7 +4266,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payout Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payout_paid",
@@ -4056,7 +4283,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payout Paid",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payout_failed",
@@ -4068,7 +4300,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payout Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_method_attached",
@@ -4080,7 +4317,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Method Attached",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_payment_method_detached",
@@ -4092,7 +4334,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Method Detached",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_setup_intent_succeeded",
@@ -4104,7 +4351,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Setup Intent Succeeded",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_setup_intent_setup_failed",
@@ -4116,7 +4368,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Setup Intent Failed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_updated",
@@ -4128,7 +4385,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Connected Account Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_account_application_deauthorized",
@@ -4140,7 +4402,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Account Deauthorized",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_review_opened",
@@ -4152,7 +4419,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Radar Review Opened",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_review_closed",
@@ -4164,7 +4436,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Radar Review Closed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_quote_accepted",
@@ -4176,7 +4453,12 @@
    "registered_with": [
     "stripe_oauth",
     "stripe_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Quote Accepted",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

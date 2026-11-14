@@ -56,7 +56,14 @@
     "instagram_oauth",
     "instagram_system_user_token",
     "instagram_page_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Comment",
+    "filters": {
+     "media_id": "Optional: receive comments only on this post. Leave blank for all posts owned by the connected account."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_mention",
@@ -70,7 +77,12 @@
     "instagram_oauth",
     "instagram_system_user_token",
     "instagram_page_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Mention",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_message",
@@ -84,7 +96,14 @@
     "instagram_oauth",
     "instagram_system_user_token",
     "instagram_page_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Message",
+    "filters": {
+     "sender_id": "Optional: receive messages only from this Instagram-scoped sender ID. Leave blank for all inbound senders."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_user_profile",

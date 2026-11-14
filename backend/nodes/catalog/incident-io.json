@@ -264,7 +264,14 @@
    "description": "Receive webhook events from incident.io (incident/action/follow-up events).",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Receive Webhook Events",
+    "filters": {
+     "event_type": "Which incident.io webhook event fires this workflow. incident.io delivers every subscribed event to one URL, so this filters the inbound payload by its `event_type`. Choose:\n- All events: fire on any delivered event\n- Incident created/updated/status updated: public incident lifecycle\n- Action created/updated, Follow-up created/updated: post-incident tasks\n- Incident membership granted/revoked: responder added/removed\n- Private incident created/updated/status updated: private-incident equivalents\nMake sure the matching event is enabled in incident.io Settings -> Webhooks."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

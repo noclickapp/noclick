@@ -612,7 +612,14 @@
    "registered_with": [
     "kommo_oauth",
     "kommo_long_lived_token"
-   ]
+   ],
+   "event": {
+    "description": "On Kommo Event",
+    "filters": {
+     "event_type": "Kommo event that starts the workflow. Requires an account administrator and an Advanced, Pro or Enterprise plan."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

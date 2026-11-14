@@ -218,7 +218,14 @@
    "needs_account": true,
    "registered_with": [
     "increase_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Increase Event",
+    "filters": {
+     "event_category": "Choose all banking events or one category."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

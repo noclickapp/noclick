@@ -183,7 +183,14 @@
    "needs_account": true,
    "registered_with": [
     "codat_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On financial data read completed",
+    "filters": {
+     "event_type": "Event type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

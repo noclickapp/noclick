@@ -26,7 +26,14 @@
    "needs_account": true,
    "registered_with": [
     "signable_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Signable Event",
+    "filters": {
+     "event_type": "Envelope complete means all required parties finished; envelope signed means one party signed."
+    },
+    "required": []
+   }
   },
   {
    "name": "list_envelopes",

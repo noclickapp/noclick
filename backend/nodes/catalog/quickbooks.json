@@ -320,7 +320,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Account Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_account_update",
@@ -329,7 +336,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Account Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_account_delete",
@@ -338,7 +352,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Account Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_account_merge",
@@ -347,7 +368,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Account Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_bill_create",
@@ -356,7 +384,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_bill_update",
@@ -365,7 +400,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_bill_delete",
@@ -374,7 +416,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_bill_void",
@@ -383,7 +432,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_billpayment_create",
@@ -392,7 +448,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Payment Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_billpayment_update",
@@ -401,7 +464,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Payment Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_billpayment_delete",
@@ -410,7 +480,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Payment Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_billpayment_void",
@@ -419,7 +496,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Bill Payment Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_budget_create",
@@ -428,7 +512,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Budget Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_budget_update",
@@ -437,7 +528,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Budget Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_budget_delete",
@@ -446,7 +544,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Budget Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_class_create",
@@ -455,7 +560,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Class Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_class_update",
@@ -464,7 +576,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Class Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_class_delete",
@@ -473,7 +592,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Class Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_class_merge",
@@ -482,7 +608,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Class Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_creditmemo_create",
@@ -491,7 +624,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Credit Memo Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_creditmemo_update",
@@ -500,7 +640,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Credit Memo Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_creditmemo_delete",
@@ -509,7 +656,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Credit Memo Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_creditmemo_void",
@@ -518,7 +672,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Credit Memo Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_currency_create",
@@ -527,7 +688,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Currency Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_currency_update",
@@ -536,7 +704,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Currency Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_currency_delete",
@@ -545,7 +720,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Currency Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_customer_create",
@@ -554,7 +736,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Customer Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_customer_update",
@@ -563,7 +752,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Customer Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_customer_delete",
@@ -572,7 +768,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Customer Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_customer_merge",
@@ -581,7 +784,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Customer Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_department_create",
@@ -590,7 +800,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Department Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_department_update",
@@ -599,7 +816,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Department Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_department_delete",
@@ -608,7 +832,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Department Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_department_merge",
@@ -617,7 +848,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Department Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_deposit_create",
@@ -626,7 +864,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Deposit Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_deposit_update",
@@ -635,7 +880,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Deposit Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_deposit_delete",
@@ -644,7 +896,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Deposit Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_deposit_void",
@@ -653,7 +912,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Deposit Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_employee_create",
@@ -662,7 +928,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Employee Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_employee_update",
@@ -671,7 +944,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Employee Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_employee_delete",
@@ -680,7 +960,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Employee Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_employee_merge",
@@ -689,7 +976,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Employee Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_estimate_create",
@@ -698,7 +992,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Estimate Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_estimate_update",
@@ -707,7 +1008,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Estimate Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_estimate_delete",
@@ -716,7 +1024,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Estimate Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_estimate_void",
@@ -725,7 +1040,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Estimate Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_estimate_emailed",
@@ -734,7 +1056,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Estimate Emailed",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invoice_create",
@@ -743,7 +1072,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invoice_update",
@@ -752,7 +1088,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invoice_delete",
@@ -761,7 +1104,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invoice_void",
@@ -770,7 +1120,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_invoice_emailed",
@@ -779,7 +1136,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Emailed",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_item_create",
@@ -788,7 +1152,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Item Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_item_update",
@@ -797,7 +1168,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Item Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_item_delete",
@@ -806,7 +1184,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Item Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_item_merge",
@@ -815,7 +1200,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Item Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalcode_create",
@@ -824,7 +1216,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Code Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalcode_update",
@@ -833,7 +1232,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Code Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalcode_delete",
@@ -842,7 +1248,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Code Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalentry_create",
@@ -851,7 +1264,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Entry Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalentry_update",
@@ -860,7 +1280,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Entry Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalentry_delete",
@@ -869,7 +1296,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Entry Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_journalentry_void",
@@ -878,7 +1312,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Journal Entry Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_create",
@@ -887,7 +1328,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_update",
@@ -896,7 +1344,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_delete",
@@ -905,7 +1360,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_void",
@@ -914,7 +1376,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_paymentmethod_create",
@@ -923,7 +1392,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Method Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_paymentmethod_update",
@@ -932,7 +1408,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Method Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_paymentmethod_delete",
@@ -941,7 +1424,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Method Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_paymentmethod_merge",
@@ -950,7 +1440,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payment Method Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payrollemployee_create",
@@ -959,7 +1456,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payroll Employee Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payrollemployee_update",
@@ -968,7 +1472,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payroll Employee Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payrollemployee_delete",
@@ -977,7 +1488,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payroll Employee Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payslips_create",
@@ -986,7 +1504,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payslips Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payslips_update",
@@ -995,7 +1520,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payslips Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payslips_delete",
@@ -1004,7 +1536,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Payslips Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_preferences_create",
@@ -1013,7 +1552,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Preferences Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_preferences_update",
@@ -1022,7 +1568,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Preferences Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_preferences_delete",
@@ -1031,7 +1584,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Preferences Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchase_create",
@@ -1040,7 +1600,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchase_update",
@@ -1049,7 +1616,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchase_delete",
@@ -1058,7 +1632,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchase_void",
@@ -1067,7 +1648,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchaseorder_create",
@@ -1076,7 +1664,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Order Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchaseorder_update",
@@ -1085,7 +1680,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Order Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchaseorder_delete",
@@ -1094,7 +1696,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Order Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_purchaseorder_void",
@@ -1103,7 +1712,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Purchase Order Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_refundreceipt_create",
@@ -1112,7 +1728,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Refund Receipt Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_refundreceipt_update",
@@ -1121,7 +1744,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Refund Receipt Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_refundreceipt_delete",
@@ -1130,7 +1760,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Refund Receipt Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_refundreceipt_void",
@@ -1139,7 +1776,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Refund Receipt Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_salesreceipt_create",
@@ -1148,7 +1792,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sales Receipt Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_salesreceipt_update",
@@ -1157,7 +1808,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sales Receipt Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_salesreceipt_delete",
@@ -1166,7 +1824,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sales Receipt Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_salesreceipt_void",
@@ -1175,7 +1840,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sales Receipt Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_taxagency_create",
@@ -1184,7 +1856,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Tax Agency Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_taxagency_update",
@@ -1193,7 +1872,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Tax Agency Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_taxagency_delete",
@@ -1202,7 +1888,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Tax Agency Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_taxagency_merge",
@@ -1211,7 +1904,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Tax Agency Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_term_create",
@@ -1220,7 +1920,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Term Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_term_update",
@@ -1229,7 +1936,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Term Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_term_delete",
@@ -1238,7 +1952,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Term Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_term_merge",
@@ -1247,7 +1968,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Term Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_timeactivity_create",
@@ -1256,7 +1984,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Time Activity Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_timeactivity_update",
@@ -1265,7 +2000,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Time Activity Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_timeactivity_delete",
@@ -1274,7 +2016,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Time Activity Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transfer_create",
@@ -1283,7 +2032,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Transfer Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transfer_update",
@@ -1292,7 +2048,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Transfer Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transfer_delete",
@@ -1301,7 +2064,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Transfer Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transfer_void",
@@ -1310,7 +2080,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Transfer Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendor_create",
@@ -1319,7 +2096,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendor_update",
@@ -1328,7 +2112,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendor_delete",
@@ -1337,7 +2128,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendor_merge",
@@ -1346,7 +2144,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Merged",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendorcredit_create",
@@ -1355,7 +2160,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Credit Created",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendorcredit_update",
@@ -1364,7 +2176,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Credit Updated",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendorcredit_delete",
@@ -1373,7 +2192,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Credit Deleted",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendorcredit_void",
@@ -1382,7 +2208,14 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Vendor Credit Voided",
+    "filters": {
+     "realm_id": "Only fire for webhook deliveries from this connected QuickBooks company"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

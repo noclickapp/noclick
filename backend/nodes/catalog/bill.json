@@ -31,7 +31,14 @@
    "needs_account": true,
    "registered_with": [
     "bill_session"
-   ]
+   ],
+   "event": {
+    "description": "On Bill Event",
+    "filters": {
+     "event_type": "BILL event that starts this workflow"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_payment_event",
@@ -42,7 +49,14 @@
    "needs_account": true,
    "registered_with": [
     "bill_session"
-   ]
+   ],
+   "event": {
+    "description": "On Payment Event",
+    "filters": {
+     "event_type": "BILL event that starts this workflow"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_vendor_event",
@@ -53,7 +67,14 @@
    "needs_account": true,
    "registered_with": [
     "bill_session"
-   ]
+   ],
+   "event": {
+    "description": "On Vendor Event",
+    "filters": {
+     "event_type": "BILL event that starts this workflow"
+    },
+    "required": []
+   }
   },
   {
    "name": "list_vendors",

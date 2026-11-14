@@ -336,7 +336,18 @@
    "description": "Trigger when a workbook export/materialization finishes",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "Trigger when a workbook export/materialization finishes",
+    "filters": {
+     "workbook_id": "The workbook whose exports/materializations to watch",
+     "status_filter": "Only emit materializations that reached this status",
+     "schedule": "How often to check for newly completed exports"
+    },
+    "required": [
+     "workbook_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

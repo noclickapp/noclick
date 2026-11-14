@@ -36,7 +36,12 @@
    "registered_with": [
     "qonto_api_key",
     "qonto_oauth"
-   ]
+   ],
+   "event": {
+    "description": "New or Updated Transaction",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_client_invoice",
@@ -48,7 +53,12 @@
    "registered_with": [
     "qonto_api_key",
     "qonto_oauth"
-   ]
+   ],
+   "event": {
+    "description": "New or Updated Client Invoice",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "get_organization",

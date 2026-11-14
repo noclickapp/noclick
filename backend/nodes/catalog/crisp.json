@@ -137,7 +137,12 @@
    "needs_account": true,
    "registered_with": [
     "crisp_website_token"
-   ]
+   ],
+   "event": {
+    "description": "On Visitor Message",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

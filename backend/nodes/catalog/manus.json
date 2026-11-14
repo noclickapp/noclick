@@ -26,7 +26,15 @@
    "needs_account": true,
    "registered_with": [
     "manus_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Task Event",
+    "filters": {
+     "event_type": "Task lifecycle event to receive, or all events.",
+     "stop_reason": "For task_stopped: completed (finish), needs input (ask), or both."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_current_user",

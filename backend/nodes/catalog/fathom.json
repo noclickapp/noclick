@@ -163,7 +163,12 @@
     "fathom_bearer_token",
     "fathom_api_key",
     "fathom_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On New Meeting",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

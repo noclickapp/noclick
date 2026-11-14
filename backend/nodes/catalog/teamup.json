@@ -26,7 +26,16 @@
    "needs_account": true,
    "registered_with": [
     "teamup_m2m_token"
-   ]
+   ],
+   "event": {
+    "description": "On Class Registration",
+    "filters": {
+     "application_id": "The API Application ID from Settings → Integrations → API Integration. Requires full admin access."
+    },
+    "required": [
+     "application_id"
+    ]
+   }
   },
   {
    "name": "list_providers",

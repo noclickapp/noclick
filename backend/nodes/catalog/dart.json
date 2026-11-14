@@ -187,7 +187,14 @@
    "registered_with": [
     "dart_api_token",
     "dart_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Dart Event",
+    "filters": {
+     "event_type": "Event"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

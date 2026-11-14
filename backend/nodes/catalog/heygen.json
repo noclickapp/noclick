@@ -26,7 +26,12 @@
    "needs_account": true,
    "registered_with": [
     "heygen_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Video Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "get_current_user",

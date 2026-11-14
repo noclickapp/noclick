@@ -230,7 +230,12 @@
    "needs_account": true,
    "registered_with": [
     "cats_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Candidate",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_pipeline_status_changed",
@@ -241,7 +246,12 @@
    "needs_account": true,
    "registered_with": [
     "cats_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Pipeline Status Changed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

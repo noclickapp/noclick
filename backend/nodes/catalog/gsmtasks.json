@@ -208,7 +208,16 @@
    "needs_account": true,
    "registered_with": [
     "gsmtasks_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Task Event",
+    "filters": {
+     "account": "Account's full API resource URL."
+    },
+    "required": [
+     "account"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

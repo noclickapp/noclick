@@ -202,7 +202,14 @@
    "needs_account": true,
    "registered_with": [
     "mycashflow_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On MyCashflow Event",
+    "filters": {
+     "event_type": "Event type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

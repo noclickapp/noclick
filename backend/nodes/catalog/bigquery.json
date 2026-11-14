@@ -49,7 +49,24 @@
    "description": "Poll-based trigger: run a SQL query on a schedule and emit NEW rows.\n\n    BigQuery has no native webhooks, so this acts as a scheduled query: on each\n    tick the user's SQL runs and only rows whose ``cursor_column`` is greater\n    than the last-seen cursor are emitted. The cursor high-water-mark lives in\n    durable node state (not config, which isn't persisted across polls) so\n    already-seen rows are never re-emitted, and the first poll baselines.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Scheduled Query Results",
+    "filters": {
+     "project_id": "GCP project ID (billing/quota project)",
+     "query": "The SQL query to run on each poll (GoogleSQL). Must include the cursor column and be ordered so new rows have a higher cursor value.",
+     "cursor_column": "Name of the timestamp/id column used to detect new rows. Only rows whose value in this column is greater than the last-seen value are emitted.",
+     "use_legacy_sql": "Use BigQuery legacy SQL dialect instead of GoogleSQL",
+     "location": "Dataset location (e.g. US, EU, us-central1)",
+     "max_results": "Maximum number of rows to scan per poll",
+     "schedule": "How often to run the query and check for new rows"
+    },
+    "required": [
+     "cursor_column",
+     "project_id",
+     "query"
+    ]
+   }
   },
   {
    "name": "insert_job",

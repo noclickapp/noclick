@@ -132,7 +132,12 @@
    "description": "Fire the workflow when a queued fal job completes (success or error).\n\n    fal posts the completion event to whatever URL is passed as the queue\n    submit's `webhook_url`. Wire this trigger and paste its URL into the\n    Submit to Queue operation's Webhook URL field.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Job Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

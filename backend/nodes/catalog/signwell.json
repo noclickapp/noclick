@@ -31,7 +31,15 @@
    "needs_account": true,
    "registered_with": [
     "signwell_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On SignWell Event",
+    "filters": {
+     "event_type": "SignWell delivers all events; only this event starts the workflow.",
+     "api_application_id": "Optionally restrict deliveries to one API application."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_me",

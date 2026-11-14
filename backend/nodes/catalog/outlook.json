@@ -738,7 +738,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Calendar Event Created",
+    "filters": {
+     "calendar_id": "Watch a specific calendar (default: primary)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_calendar_event_updated",
@@ -749,7 +756,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Calendar Event Updated",
+    "filters": {
+     "calendar_id": "Watch a specific calendar (default: primary)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_calendar_event_deleted",
@@ -760,7 +774,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Calendar Event Deleted",
+    "filters": {
+     "calendar_id": "Watch a specific calendar (default: primary)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_calendar_event_change",
@@ -771,7 +792,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Calendar Event Change (Any)",
+    "filters": {
+     "calendar_id": "Watch a specific calendar (default: primary)"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_email_received",
@@ -782,7 +810,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Email Received",
+    "filters": {
+     "folder_id": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts…) or a folder ID."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_email_updated",
@@ -793,7 +828,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Email Updated",
+    "filters": {
+     "folder_id": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts…) or a folder ID."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_email_deleted",
@@ -804,7 +846,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Email Deleted",
+    "filters": {
+     "folder_id": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts…) or a folder ID."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_email_change",
@@ -815,7 +864,14 @@
    "needs_account": true,
    "registered_with": [
     "microsoft_outlook_oauth"
-   ]
+   ],
+   "event": {
+    "description": "On Email Change (Any)",
+    "filters": {
+     "folder_id": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts…) or a folder ID."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

@@ -580,7 +580,12 @@
    "registered_with": [
     "teamwork_oauth",
     "teamwork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Project",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_tasklist_created",
@@ -592,7 +597,12 @@
    "registered_with": [
     "teamwork_oauth",
     "teamwork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Task List",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_tasklist_updated",
@@ -604,7 +614,12 @@
    "registered_with": [
     "teamwork_oauth",
     "teamwork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Updated Task List",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_time_created",
@@ -616,7 +631,12 @@
    "registered_with": [
     "teamwork_oauth",
     "teamwork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "New Time Entry",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_time_updated",
@@ -628,7 +648,12 @@
    "registered_with": [
     "teamwork_oauth",
     "teamwork_api_key"
-   ]
+   ],
+   "event": {
+    "description": "Updated Time Entry",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

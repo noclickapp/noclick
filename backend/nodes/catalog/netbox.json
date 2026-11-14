@@ -218,7 +218,14 @@
    "needs_account": true,
    "registered_with": [
     "netbox_api_token"
-   ]
+   ],
+   "event": {
+    "description": "On Object Created",
+    "filters": {
+     "object_type": "Object Type"
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

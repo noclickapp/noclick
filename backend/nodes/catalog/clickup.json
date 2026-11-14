@@ -1308,7 +1308,17 @@
    "registered_with": [
     "clickup_oauth",
     "clickup_pat"
-   ]
+   ],
+   "event": {
+    "description": "On Task Event",
+    "filters": {
+     "team_id": "The Workspace (team) to subscribe to events from",
+     "event_types": "Which ClickUp event fires this workflow. 'All events' (*) subscribes to every event below.\n- Task created / updated / deleted: a task is added, edited, or removed.\n- Task priority / status / assignee / due date / tag updated: a specific task field changes.\n- Task moved: a task changes list/folder/space.\n- Task comment posted / updated: a comment is added or edited on a task.\n- Task time estimate / time tracked updated: estimate or logged time changes.\n- List / Folder / Space created / updated / deleted: hierarchy containers change.\n- Goal / Key result created / updated / deleted: goals and their key results change."
+    },
+    "required": [
+     "team_id"
+    ]
+   }
   }
  ],
  "agent_tool_provider": true,

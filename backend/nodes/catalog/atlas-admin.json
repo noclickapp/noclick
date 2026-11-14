@@ -47,7 +47,14 @@
    "needs_account": true,
    "registered_with": [
     "atlas_admin_oauth2"
-   ]
+   ],
+   "event": {
+    "description": "On Alert",
+    "filters": {
+     "trigger_group_id": "Atlas project to register the alert webhook on"
+    },
+    "required": []
+   }
   },
   {
    "name": "on_cluster_event",

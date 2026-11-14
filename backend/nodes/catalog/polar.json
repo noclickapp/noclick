@@ -26,7 +26,17 @@
    "needs_account": true,
    "registered_with": [
     "polar_organization_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Order Event",
+    "filters": {
+     "organization_id": "Must equal the current OAT organization and selected environment.",
+     "event_type": "Order Event"
+    },
+    "required": [
+     "organization_id"
+    ]
+   }
   },
   {
    "name": "on_subscription_event",
@@ -37,7 +47,17 @@
    "needs_account": true,
    "registered_with": [
     "polar_organization_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Subscription Event",
+    "filters": {
+     "organization_id": "Must equal the current OAT organization and selected environment.",
+     "event_type": "Subscription Event"
+    },
+    "required": [
+     "organization_id"
+    ]
+   }
   },
   {
    "name": "on_customer_event",
@@ -48,7 +68,17 @@
    "needs_account": true,
    "registered_with": [
     "polar_organization_access_token"
-   ]
+   ],
+   "event": {
+    "description": "On Customer Event",
+    "filters": {
+     "organization_id": "Must equal the current OAT organization and selected environment.",
+     "event_type": "Customer Event"
+    },
+    "required": [
+     "organization_id"
+    ]
+   }
   },
   {
    "name": "check_connection",

@@ -198,7 +198,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "New Student",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_student_updated",
@@ -209,7 +214,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "Student Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_enrollment_created",
@@ -220,7 +230,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "New Enrollment",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_enrollment_trial",
@@ -231,7 +246,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "New Trial Enrollment",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_enrollment_completed",
@@ -242,7 +262,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "Course Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_enrollment_progress",
@@ -253,7 +278,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "Course Progress Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_created",
@@ -264,7 +294,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "New Order",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_lesson_completed",
@@ -275,7 +310,12 @@
    "needs_account": true,
    "registered_with": [
     "thinkific_api_token"
-   ]
+   ],
+   "event": {
+    "description": "Lesson Completed",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

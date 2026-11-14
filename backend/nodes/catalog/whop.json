@@ -39,7 +39,15 @@
    "registered_with": [
     "whop_api_key",
     "whop_mcp"
-   ]
+   ],
+   "event": {
+    "description": "On Whop Event",
+    "filters": {
+     "event_type": "The event that starts this workflow. Membership updates include cancellation/status changes.",
+     "resource_id": "Omit for the API key's current account. Set a biz_ or app_ ID to watch that resource."
+    },
+    "required": []
+   }
   },
   {
    "name": "get_account",

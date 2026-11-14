@@ -186,7 +186,12 @@
    "needs_account": true,
    "registered_with": [
     "dux_soup_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Profile Visit",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_action_completed",
@@ -197,7 +202,12 @@
    "needs_account": true,
    "registered_with": [
     "dux_soup_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Completed LinkedIn Action",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_linkedin_message",
@@ -208,7 +218,12 @@
    "needs_account": true,
    "registered_with": [
     "dux_soup_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On LinkedIn Message",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

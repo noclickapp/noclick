@@ -594,7 +594,14 @@
    "needs_account": true,
    "registered_with": [
     "shippo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Tracking Updated",
+    "filters": {
+     "is_test": "Receive test events instead of live events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transaction_created",
@@ -605,7 +612,14 @@
    "needs_account": true,
    "registered_with": [
     "shippo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Shipping Label Created",
+    "filters": {
+     "is_test": "Receive test events instead of live events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_transaction_updated",
@@ -616,7 +630,14 @@
    "needs_account": true,
    "registered_with": [
     "shippo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Shipping Label Updated",
+    "filters": {
+     "is_test": "Receive test events instead of live events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_batch_created",
@@ -627,7 +648,14 @@
    "needs_account": true,
    "registered_with": [
     "shippo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Batch Created",
+    "filters": {
+     "is_test": "Receive test events instead of live events."
+    },
+    "required": []
+   }
   },
   {
    "name": "on_batch_purchased",
@@ -638,7 +666,14 @@
    "needs_account": true,
    "registered_with": [
     "shippo_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Batch Purchased",
+    "filters": {
+     "is_test": "Receive test events instead of live events."
+    },
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,

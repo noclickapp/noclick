@@ -24,7 +24,12 @@
    "description": "Catch-all: fire on ANY HighLevel webhook POSTed to this URL (no event\n    filter). Useful with a marketplace-app single-URL subscription or when you\n    want one endpoint for all of a workflow's events.",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Any Webhook Event",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_create",
@@ -33,7 +38,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_update",
@@ -42,7 +52,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_delete",
@@ -51,7 +66,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_dnd_update",
@@ -60,7 +80,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact DND Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_contact_tag_update",
@@ -69,7 +94,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Contact Tags Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_inbound_message",
@@ -78,7 +108,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Inbound Message",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_outbound_message",
@@ -87,7 +122,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Outbound Message",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_conversation_unread",
@@ -96,7 +136,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Conversation Unread Change",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_conversation_update",
@@ -105,7 +150,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Conversation Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_provider_outbound_message",
@@ -114,7 +164,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Provider Outbound Message",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_email_stats",
@@ -123,7 +178,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Email Stats (delivered/opened/clicked)",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_create",
@@ -132,7 +192,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_update",
@@ -141,7 +206,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_delete",
@@ -150,7 +220,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_status_update",
@@ -159,7 +234,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Status Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_stage_update",
@@ -168,7 +248,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Stage Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_monetary_value_update",
@@ -177,7 +262,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Value Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_opportunity_assigned_to_update",
@@ -186,7 +276,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Opportunity Assignee Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_appointment_create",
@@ -195,7 +290,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Appointment Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_appointment_update",
@@ -204,7 +304,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Appointment Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_appointment_delete",
@@ -213,7 +318,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Appointment Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_create",
@@ -222,7 +332,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Note Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_update",
@@ -231,7 +346,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Note Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_note_delete",
@@ -240,7 +360,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Note Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_task_create",
@@ -249,7 +374,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Task Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_task_complete",
@@ -258,7 +388,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Task Completed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_task_delete",
@@ -267,7 +402,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Task Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_campaign_status_update",
@@ -276,7 +416,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Campaign Status Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_location_create",
@@ -285,7 +430,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sub-Account Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_location_update",
@@ -294,7 +444,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Sub-Account Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_create",
@@ -303,7 +458,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On User Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_update",
@@ -312,7 +472,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On User Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_user_delete",
@@ -321,7 +486,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On User Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_create",
@@ -330,7 +500,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_update",
@@ -339,7 +514,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_delete",
@@ -348,7 +528,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_sent",
@@ -357,7 +542,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Sent",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_paid",
@@ -366,7 +556,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Paid",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_partially_paid",
@@ -375,7 +570,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Partially Paid",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_invoice_void",
@@ -384,7 +584,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Invoice Voided",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_create",
@@ -393,7 +598,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Order Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_order_status_update",
@@ -402,7 +612,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Order Status Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_create",
@@ -411,7 +626,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Product Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_update",
@@ -420,7 +640,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Product Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_product_delete",
@@ -429,7 +654,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Product Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_price_create",
@@ -438,7 +668,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Price Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_price_update",
@@ -447,7 +682,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Price Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_price_delete",
@@ -456,7 +696,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Price Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_record_create",
@@ -465,7 +710,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Record Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_record_update",
@@ -474,7 +724,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Record Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_record_delete",
@@ -483,7 +738,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Record Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_object_schema_create",
@@ -492,7 +752,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Object Schema Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_object_schema_update",
@@ -501,7 +766,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Object Schema Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_association_create",
@@ -510,7 +780,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Association Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_association_update",
@@ -519,7 +794,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Association Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_association_delete",
@@ -528,7 +808,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Association Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_relation_create",
@@ -537,7 +822,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Relation Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_relation_delete",
@@ -546,7 +836,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Relation Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_app_install",
@@ -555,7 +850,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On App Installed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_app_uninstall",
@@ -564,7 +864,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On App Uninstalled",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_app_update",
@@ -573,7 +878,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On App Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_plan_change",
@@ -582,7 +892,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On SaaS Plan Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_saas_plan_create",
@@ -591,7 +906,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On SaaS Plan Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_external_auth_connected",
@@ -600,7 +920,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On External Auth Connected",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_voice_ai_call_end",
@@ -609,7 +934,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Voice AI Call Ended",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_create",
@@ -618,7 +948,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base Created",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_update",
@@ -627,7 +962,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base Updated",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_delete",
@@ -636,7 +976,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base Deleted",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_file_change",
@@ -645,7 +990,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base File Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_faq_change",
@@ -654,7 +1004,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base FAQ Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_rich_text_change",
@@ -663,7 +1018,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base Text Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_table_file_change",
@@ -672,7 +1032,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base Table Changed",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "on_knowledge_base_trained_url_change",
@@ -681,7 +1046,12 @@
    "description": "",
    "is_trigger": true,
    "needs_account": true,
-   "registered_with": []
+   "registered_with": [],
+   "event": {
+    "description": "On Knowledge Base URL Trained",
+    "filters": {},
+    "required": []
+   }
   },
   {
    "name": "fb_get_reporting",

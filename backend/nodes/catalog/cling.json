@@ -194,7 +194,12 @@
    "needs_account": true,
    "registered_with": [
     "cling_api_key"
-   ]
+   ],
+   "event": {
+    "description": "On Document Accepted",
+    "filters": {},
+    "required": []
+   }
   }
  ],
  "agent_tool_provider": true,
