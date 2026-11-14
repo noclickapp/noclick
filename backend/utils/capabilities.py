@@ -493,6 +493,12 @@ VIEW_AS = "auth.view_as"
 # benchmark can stand in for a QR scan no phone makes; without one, never.
 LINKED_TEST_VALUE = "credentials.linked_test_value"
 
+# Whether a user's feedback (the navbar's, an agent's submit_feedback) stays
+# out of the team's channel, kept only as its row: (email) -> bool. A
+# deployment's own test accounts, whose agents report what their made-up
+# connections can't do; without one, never.
+QUIET_FEEDBACK = "feedback.quiet"
+
 # Which rows of a shared queue this process's claims take, for a deployment
 # running more than one copy against one database: (owner_sql, since_sql) ->
 # a SQL predicate over the row, ``owner_sql`` naming whose row it is and
