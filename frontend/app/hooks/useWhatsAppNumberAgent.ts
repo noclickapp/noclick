@@ -2,7 +2,6 @@
 // it already, and making it on the owner's yes. Linking a number makes nothing on its own; the Connect dialog's last
 // step and the number's page under Connections both offer it through this, so they say the same.
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { navigateToTab } from '~/lib/navigation';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { WhatsAppAgentCreateResponse, WhatsAppAgentStatusResponse, WhatsAppNumberAgent } from '~/types/socket-events.generated';
 
@@ -62,9 +61,4 @@ export function useWhatsAppNumberAgent(credentialId: string | undefined, transpo
     }, [credentialId]);
 
     return { state, create };
-}
-
-/** Work, on the agent's own channel. */
-export function openAgentChannel(channelId: string): void {
-    navigateToTab('work', { show: 'home', channel: channelId, thread: null });
 }

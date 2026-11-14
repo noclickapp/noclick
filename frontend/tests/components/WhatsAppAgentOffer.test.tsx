@@ -5,14 +5,14 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const navigateToTab = vi.hoisted(() => vi.fn());
-vi.mock('~/lib/navigation', async (importOriginal) => ({ ...(await importOriginal<typeof import('~/lib/navigation')>()), navigateToTab }));
+const navigateToWorkChannel = vi.hoisted(() => vi.fn());
+vi.mock('~/lib/navigation', async (importOriginal) => ({ ...(await importOriginal<typeof import('~/lib/navigation')>()), navigateToWorkChannel }));
 
 import { WhatsAppAgentOffer } from '~/components/credential/connect/WhatsAppAgentOffer';
 
 afterEach(() => {
     cleanup();
-    navigateToTab.mockReset();
+    navigateToWorkChannel.mockReset();
 });
 
 const AGENT = { agent_id: 'a-1', name: 'WhatsApp', channel_id: 'ch-1', channel_name: 'whatsapp' };
@@ -37,7 +37,7 @@ describe('WhatsAppAgentOffer', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Done' }));
         expect(onDone).toHaveBeenCalledOnce();
         expect(send).toHaveBeenCalledTimes(1);
-        expect(navigateToTab).not.toHaveBeenCalled();
+        expect(navigateToWorkChannel).not.toHaveBeenCalled();
     });
 
     it('shows the agent that already answers the number, with its channel, and offers no second one', async () => {
@@ -49,7 +49,7 @@ describe('WhatsAppAgentOffer', () => {
         expect(screen.queryByRole('button', { name: 'Create agent' })).toBeNull();
 
         fireEvent.click(screen.getByRole('button', { name: 'Open its channel' }));
-        expect(navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-1', thread: null });
+        expect(navigateToWorkChannel).toHaveBeenCalledWith('ch-1');
         expect(onDone).toHaveBeenCalledOnce();
     });
 
@@ -60,7 +60,7 @@ describe('WhatsAppAgentOffer', () => {
         fireEvent.click(await screen.findByRole('button', { name: 'Create agent' }));
         expect((await screen.findByRole('alert')).textContent).toContain('Couldn’t create the agent. Your number is still connected.');
         fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-        await waitFor(() => expect(navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-1', thread: null }));
+        await waitFor(() => expect(navigateToWorkChannel).toHaveBeenCalledWith('ch-1'));
         expect(onDone).toHaveBeenCalledOnce();
         expect(send.mock.calls.map(([ask]) => ask)).toEqual([
             { event_name: 'whatsapp:agent:status', credential_id: 'cred-1' },
@@ -74,7 +74,7 @@ describe('WhatsAppAgentOffer', () => {
         render(<WhatsAppAgentOffer credentialId="cred-1" onDone={vi.fn()} transport={send as never} />);
         fireEvent.click(await screen.findByRole('button', { name: 'Create agent' }));
         expect(await screen.findByText('WhatsApp answers this number')).toBeTruthy();
-        expect(navigateToTab).not.toHaveBeenCalled();
+        expect(navigateToWorkChannel).not.toHaveBeenCalled();
     });
 
     it('an account with no agents to put on it gets Done alone', async () => {

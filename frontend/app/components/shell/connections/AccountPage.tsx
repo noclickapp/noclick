@@ -17,9 +17,10 @@ import { ShareDialog } from '~/components/shared/popups/ShareDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { Skeleton } from '~/components/ui/skeleton';
 import { useConnectionProbe, type ConnectionProbe } from '~/hooks/useConnectionProbe';
-import { openAgentChannel, useWhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
+import { useWhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
 import { leaveSharedCredential } from '~/lib/credentialAccess';
 import { movedDate, movedFrom, movedLine, type MovedFrom } from '~/lib/movedFrom';
+import { navigateToWorkChannel } from '~/lib/navigation';
 import { socketCall } from '~/lib/socketCall';
 import { cn } from '~/lib/utils';
 import type { ShareInfo } from '~/types/socket-events.generated';
@@ -316,7 +317,7 @@ function NumberAgent({ credentialId }: { credentialId: string }) {
                         )}
                     </div>
                     {answered?.channel_id ? (
-                        <button type="button" onClick={() => openAgentChannel(answered.channel_id!)} className={BUTTON_SECONDARY}>
+                        <button type="button" onClick={() => navigateToWorkChannel(answered.channel_id!)} className={BUTTON_SECONDARY}>
                             Open its channel
                         </button>
                     ) : (
@@ -324,7 +325,7 @@ function NumberAgent({ credentialId }: { credentialId: string }) {
                             <button
                                 type="button"
                                 disabled={busy}
-                                onClick={() => void create().then((made) => made?.made && made.agent.channel_id && openAgentChannel(made.agent.channel_id))}
+                                onClick={() => void create().then((made) => made?.made && made.agent.channel_id && navigateToWorkChannel(made.agent.channel_id))}
                                 className={BUTTON_PRIMARY}
                             >
                                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}

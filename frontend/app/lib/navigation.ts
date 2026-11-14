@@ -74,6 +74,12 @@ export function navigateToTab(tab: DashboardTab, params?: Record<string, string 
   }));
 }
 
+/** Work, on one channel: whatever Work had open closes, and the space is the channel's own (Work reads it from the
+ *  channel), so a space left in the URL can't hide it. */
+export function navigateToWorkChannel(channelId: string): void {
+  navigateToTab('work', { ...Object.fromEntries(WORK_PARAMS.map((key) => [key, null])), channel: channelId });
+}
+
 /** Open the Dashboard tab, optionally straight into one section's drill-down. */
 export function navigateToDashboard(focus?: DashboardFocus): void {
   window.dispatchEvent(new CustomEvent<TabSwitchEventDetail>('noclick:switch-tab', {

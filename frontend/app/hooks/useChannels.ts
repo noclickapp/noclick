@@ -29,6 +29,9 @@ export interface ChannelHistory {
 
 export interface Channels {
     loading: boolean;
+    /** The open channel isn't in the lists, which haven't been read since it opened (it was made since, say): they're
+     *  read again for it, and until they answer it isn't gone. */
+    findingOpen: boolean;
     /** Why the account's channels couldn't be read, in a sentence. */
     error: string | null;
     workspaces: ChannelWorkspace[];
@@ -136,6 +139,8 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
     openRef.current = openId;
     // The histories read (or followed) since this page mounted: any other one held from before is read again on open.
     const current = useRef(new Set<string>());
+    // The channel open when the latest read of the lists began; undefined until one answers after mount.
+    const [readWith, setReadWith] = useState<string | null | undefined>(undefined);
 
     useEffect(() => {
         // What's held is what the server sent: never a post still going or a note only you see.
@@ -152,12 +157,14 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
     }, []);
 
     const readLists = useCallback(async () => {
+        const opened = openRef.current;
         try {
             const [workspaces, channels] = await Promise.all([transport.workspaces(), transport.channels()]);
             setLists({ loading: false, error: null, workspaces, channels: channels.map(seated) });
         } catch (e) {
             setLists((prev) => ({ ...prev, loading: false, error: errorText(e) }));
         }
+        setReadWith(opened);
     }, [transport]);
 
     const readAgents = useCallback(async () => {
@@ -223,6 +230,13 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         void readLists();
         void readAgents();
     }, [readLists, readAgents]);
+
+    // A channel opened that the lists don't hold (held from an earlier visit, or read before it was made) is looked for in
+    // them once more before it counts as gone; the read on mount looks for the one open then.
+    const findingOpen = !!openId && !lists.channels.some((c) => c.id === openId) && readWith !== openId;
+    useEffect(() => {
+        if (findingOpen && readWith !== undefined) void readLists();
+    }, [findingOpen, readWith, readLists]);
 
     // A channel's history loads the first time it opens (or is read ahead); later it's kept current by changes. One
     // held from an earlier mount shows at once and catches up.
@@ -325,6 +339,7 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
     return useMemo<Channels>(
         () => ({
             loading: lists.loading,
+            findingOpen,
             error: lists.error,
             workspaces: lists.workspaces,
             channels: lists.channels,
@@ -450,6 +465,6 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 await readLists();
             },
         }),
-        [lists, agents, histories, transport, setHistory, readLists, readNew, replaceChannel, bringUp]
+        [lists, findingOpen, agents, histories, transport, setHistory, readLists, readNew, replaceChannel, bringUp]
     );
 }

@@ -6,7 +6,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-const state = vi.hoisted(() => ({ status: {} as Record<string, unknown>, sent: [] as Record<string, unknown>[], navigateToTab: vi.fn() }));
+const state = vi.hoisted(() => ({ status: {} as Record<string, unknown>, sent: [] as Record<string, unknown>[], navigateToWorkChannel: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({
     sendEventAsync: vi.fn(async (event: Record<string, unknown>) => {
         state.sent.push(event);
@@ -16,7 +16,7 @@ vi.mock('~/lib/socket-sender', () => ({
 }));
 vi.mock('~/lib/socketCall', () => ({ socketCall: vi.fn(async () => ({ shares: [] })) }));
 vi.mock('~/hooks/useConnectionProbe', () => ({ useConnectionProbe: () => ({ probe: undefined, check: vi.fn(), canCheck: false }), lastConnectionProbe: () => undefined }));
-vi.mock('~/lib/navigation', async (importOriginal) => ({ ...(await importOriginal<typeof import('~/lib/navigation')>()), navigateToTab: state.navigateToTab }));
+vi.mock('~/lib/navigation', async (importOriginal) => ({ ...(await importOriginal<typeof import('~/lib/navigation')>()), navigateToWorkChannel: state.navigateToWorkChannel }));
 
 import { AccountPage } from '~/components/shell/connections/AccountPage';
 import type { ConnectedAccount } from '~/components/shell/connections/accounts';
@@ -25,7 +25,7 @@ import type { CredentialInfo } from '~/types/socket-events.generated';
 afterEach(() => {
     cleanup();
     state.sent.length = 0;
-    state.navigateToTab.mockReset();
+    state.navigateToWorkChannel.mockReset();
 });
 
 const account = (credential_type = 'whatsapp_qr'): ConnectedAccount => ({
@@ -48,7 +48,7 @@ describe('a WhatsApp number’s agent on its page', () => {
         page();
         expect(await screen.findByText('No agent on this number')).toBeTruthy();
         fireEvent.click(screen.getByRole('button', { name: 'Create agent' }));
-        await waitFor(() => expect(state.navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-1', thread: null }));
+        await waitFor(() => expect(state.navigateToWorkChannel).toHaveBeenCalledWith('ch-1'));
         expect(state.sent).toContainEqual({ event_name: 'whatsapp:agent:create', credential_id: 'wa-1' });
     });
 
@@ -58,7 +58,7 @@ describe('a WhatsApp number’s agent on its page', () => {
         expect(await screen.findByText('Front desk answers this number')).toBeTruthy();
         expect(screen.queryByRole('button', { name: 'Create agent' })).toBeNull();
         fireEvent.click(screen.getByRole('button', { name: 'Open its channel' }));
-        expect(state.navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-9', thread: null });
+        expect(state.navigateToWorkChannel).toHaveBeenCalledWith('ch-9');
     });
 
     it('says nothing where the account has no agents, or on another app’s account', async () => {

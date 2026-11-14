@@ -7,7 +7,8 @@ import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { MemberAvatar } from '~/components/shell/channels/avatars';
 import type { MascotState } from '~/components/shell/channels/mascot/AgentMascot';
 import { hueFor } from '~/components/shell/channels/model';
-import { openAgentChannel, useWhatsAppNumberAgent, type NumberAgentTransport, type WhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
+import { useWhatsAppNumberAgent, type NumberAgentTransport, type WhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
+import { navigateToWorkChannel } from '~/lib/navigation';
 import { cn } from '~/lib/utils';
 
 // The name the template's agent takes on a first number, before it has an id of its own.
@@ -64,7 +65,7 @@ export function WhatsAppAgentOffer({ credentialId, onDone, transport }: { creden
                         <button
                             type="button"
                             onClick={() => {
-                                openAgentChannel(channelId);
+                                navigateToWorkChannel(channelId);
                                 onDone();
                             }}
                             className={cn(BUTTON_PRIMARY, 'h-10 flex-1 justify-center')}
@@ -94,7 +95,7 @@ export function WhatsAppAgentOffer({ credentialId, onDone, transport }: { creden
         const made = await create();
         // A yes that made it opens its channel, where it asks whom to answer; one already there stays shown here.
         if (made?.made && made.agent.channel_id) {
-            openAgentChannel(made.agent.channel_id);
+            navigateToWorkChannel(made.agent.channel_id);
             onDone();
         }
     };

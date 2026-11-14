@@ -9,11 +9,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import type { CredentialInfo } from '~/types/socket-events.generated';
 import { loadNodeSchemas } from '~/utils/nodeSchemas';
 
-const state = vi.hoisted(() => ({ credentials: [] as Partial<CredentialInfo>[], send: vi.fn(), navigateToTab: vi.fn() }));
+const state = vi.hoisted(() => ({ credentials: [] as Partial<CredentialInfo>[], send: vi.fn(), navigateToWorkChannel: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: state.send }));
 vi.mock('~/lib/navigation', async (importOriginal) => ({
     ...(await importOriginal<typeof import('~/lib/navigation')>()),
-    navigateToTab: state.navigateToTab,
+    navigateToWorkChannel: state.navigateToWorkChannel,
 }));
 vi.mock('~/utils/credentialAutoSelect', async (importOriginal) => ({
     ...(await importOriginal<typeof import('~/utils/credentialAutoSelect')>()),
@@ -61,7 +61,7 @@ beforeAll(async () => {
 }, 60_000);
 beforeEach(() => {
     state.credentials = [];
-    state.navigateToTab.mockReset();
+    state.navigateToWorkChannel.mockReset();
     state.send.mockReset();
     state.send.mockImplementation(async (event: { event_name?: string }) =>
         event?.event_name === 'whatsapp:qr:start' ? { success: true, connection_id: 'conn-1', qr_code: 'QR' } : { success: true, status: 'scan_qr' }
@@ -157,7 +157,7 @@ describe('Connect WhatsApp from Connections', () => {
         expect(sent('whatsapp:agent:create')).toEqual([]);
 
         fireEvent.click(screen.getByRole('button', { name: 'Create agent' }));
-        await waitFor(() => expect(state.navigateToTab).toHaveBeenCalledWith('work', { show: 'home', channel: 'ch-1', thread: null }));
+        await waitFor(() => expect(state.navigateToWorkChannel).toHaveBeenCalledWith('ch-1'));
         expect(sent('whatsapp:agent:create')).toEqual([{ event_name: 'whatsapp:agent:create', credential_id: 'wa-new' }]);
         await waitFor(() => expect(document.querySelector('[data-testid="create-credential-dialog"][data-state="open"]')).toBeNull());
     });
