@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { sendEventWithCallback } from '~/lib/socket-sender';
 import { cn } from '~/lib/utils';
+import { Switch } from '~/components/ui/switch';
 import { BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
 import { SettingsEmpty, SettingsGroup, SettingsGroupTitle, SettingsHeader } from '~/components/settings/SettingsParts';
@@ -314,13 +315,15 @@ function SkillRowCompact({
                 )}
             </div>
             <div className="flex items-center gap-1 shrink-0">
-                <SwitchControl
-                    enabled={active}
-                    onChange={(e) => {
-                        e.stopPropagation();
-                        onToggleActive();
-                    }}
+                {/* The product's switch, its taps and keys its own: none reach the row, which opens the skill. */}
+                <Switch
+                    checked={active}
+                    onCheckedChange={onToggleActive}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    aria-label={toggleTitle}
                     title={toggleTitle}
+                    className="mx-1"
                 />
                 {shareable && (
                     <IconBtn
@@ -372,44 +375,6 @@ function IconBtn({
             }`}
         >
             {children}
-        </button>
-    );
-}
-
-function SwitchControl({
-    enabled,
-    disabled,
-    onChange,
-    title,
-}: {
-    enabled: boolean;
-    disabled?: boolean;
-    onChange: (e: React.MouseEvent) => void;
-    title: string;
-}) {
-    return (
-        <button
-            type="button"
-            onClick={(e) => {
-                if (disabled) return;
-                onChange(e);
-            }}
-            title={title}
-            disabled={disabled}
-            aria-pressed={enabled}
-            className={`relative inline-flex shrink-0 mx-1 h-5 w-9 rounded-full border transition-colors ${
-                disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
-            } ${
-                enabled
-                    ? 'bg-foreground/80 border-primary/40'
-                    : 'bg-foreground/[0.04] border-border dark:border-white/[0.10] hover:border-muted-foreground/40 dark:hover:border-white/[0.18]'
-            }`}
-        >
-            <span
-                className={`absolute top-0.5 h-3.5 w-3.5 rounded-full transition-transform ${
-                    enabled ? 'bg-primary-foreground translate-x-[18px]' : 'bg-foreground/40 translate-x-0.5'
-                }`}
-            />
         </button>
     );
 }
