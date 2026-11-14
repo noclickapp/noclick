@@ -427,7 +427,7 @@ export function ChannelComposer({
                                                         type="button"
                                                         onClick={() => onRemoveAttachment(a.localId)}
                                                         aria-label="Remove voice clip"
-                                                        className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+                                                        className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100 max-md:after:absolute max-md:after:-inset-[11px] max-md:after:content-['']"
                                                     >
                                                         <X className="h-3 w-3" strokeWidth={2.5} />
                                                     </button>

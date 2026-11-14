@@ -306,7 +306,8 @@ export interface MessageActions {
 
 /** The emoji a person reaches for most, first in the hover bar as in Slack. */
 const QUICK_EMOJI = ['✅', '👀', '🙌'];
-const TOOL = 'grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
+// A message's bar: a finger's 40px on a phone, where a tap brings it up.
+const TOOL = 'grid h-8 w-8 place-items-center max-md:h-10 max-md:w-10 rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
 /** A name that opens what it names: underlined only under the pointer, as a name reads. */
 const NAME_LINK = 'rounded-sm underline-offset-[3px] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
 const LINKISH = 'rounded-full underline decoration-muted-foreground/40 underline-offset-2 transition-colors hover:text-foreground hover:decoration-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
