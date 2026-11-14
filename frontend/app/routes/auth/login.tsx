@@ -19,6 +19,8 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthLayout } from '~/components/auth/AuthLayout';
+import { cn } from '~/lib/utils';
+import { AUTH_LINK_CLASS, AUTH_QUIET_LINK_CLASS } from '~/components/auth/authStyle';
 import { AgentScaffoldAuthPanel } from '~/components/agents/AgentScaffoldAuthPanel';
 import {
     GoogleAuthButton,
@@ -295,7 +297,7 @@ export default function Login() {
                                 setShowSSO(false);
                                 setSsoSlug('');
                             }}
-                            className="font-medium text-foreground transition-opacity hover:opacity-70"
+                            className={AUTH_LINK_CLASS}
                         >
                             ← Back to sign in
                         </button>
@@ -304,7 +306,7 @@ export default function Login() {
                             <span>New to NoClick?</span>
                             <Link
                                 to={`/auth/register${registerParams}`}
-                                className="font-medium text-foreground transition-opacity hover:opacity-70"
+                                className={AUTH_LINK_CLASS}
                             >
                                 Create account
                             </Link>
@@ -312,7 +314,7 @@ export default function Login() {
                             <button
                                 type="button"
                                 onClick={() => setShowSSO(true)}
-                                className="transition-colors hover:text-foreground"
+                                className={AUTH_QUIET_LINK_CLASS}
                             >
                                 Enterprise SSO
                             </button>
@@ -384,7 +386,7 @@ export default function Login() {
                                             </Label>
                                             <Link
                                                 to="/auth/forgot-password"
-                                                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                                                className={cn('text-xs', AUTH_QUIET_LINK_CLASS)}
                                             >
                                                 Forgot password?
                                             </Link>
