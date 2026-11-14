@@ -1039,7 +1039,9 @@ class WorkflowNode(ABC):
         is never an opaque placeholder. ``"from_owner": True`` says the event
         is the connected account's owner talking to the agent (WhatsApp's
         "Message yourself" chat), which a platform may treat as their own turn
-        rather than an outsider's.
+        rather than an outsider's; ``"from_number"`` names a direct chat's
+        writer by phone number, which a platform that knows its owner's number
+        may take as theirs too.
         """
         from nodes.core.agent_events import default_agent_event
 

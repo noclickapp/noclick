@@ -2020,7 +2020,9 @@ class WhatsAppNode(WorkflowNode):
         raw WAHooks JSON, hand-builds an E.164 number, and mis-addresses the
         reply to a non-existent account (WAHA returns PENDING, never delivers).
         Non-message envelopes fall back to the base raw-JSON default. The
-        owner writing in their own "Message yourself" chat is ``from_owner``.
+        owner writing in their own "Message yourself" chat is ``from_owner``;
+        a direct chat's writer is named by number (``from_number``), which a
+        platform knowing its owner's number takes as theirs.
         """
         # WAHooks 'message' envelope (QR-linked accounts) — the channel case.
         if output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict):
@@ -2124,8 +2126,10 @@ class WhatsAppNode(WorkflowNode):
                 f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}{id_note}"
             )
             title = push_name or chat_id.split("@", 1)[0]
+            # Never a group's: there the reply reaches everyone in it.
+            number = None if owner or participant or chat_id.endswith("@g.us") else cls._sender_number(output)
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries,
-                    **({"from_owner": True} if owner else {})}
+                    **({"from_owner": True} if owner else {}), **({"from_number": number} if number else {})}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
         if output.get("object") == "whatsapp_business_account":
