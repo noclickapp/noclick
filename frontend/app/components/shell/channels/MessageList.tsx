@@ -18,7 +18,10 @@ import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
+import { useLongPress } from '~/hooks/useLongPress';
 import { cn } from '~/lib/utils';
+import { BUTTON_SECONDARY } from '../buttons';
+import { ShellDialog } from '../ShellDialog';
 import { MessageAttachments } from './attachments';
 import { MemberAvatar, MENTION_HUE, presenceFace } from './avatars';
 import { EmojiPicker } from './EmojiPicker';
@@ -208,55 +211,98 @@ function ReactionPicker({ onPick, className, label, onOpenChange }: { onPick: (e
     );
 }
 
-/** Who reacted, you first with how to take yours back, as Slack lists them. */
+/** Who reacted, you first, as Slack lists them. */
 function reactedBy(r: ChannelReaction): string[] {
     const others = r.names.filter((n) => n !== 'You');
-    return r.mine ? ['You (click to remove)', ...others] : others;
+    return r.mine ? ['You', ...others] : others;
 }
 
 function Reactions({ reactions, onReact }: { reactions: ChannelReaction[]; onReact: (emoji: string) => void }) {
+    // Held on a phone, a reaction says who reacted, as hovering one does on a laptop.
+    const [who, setWho] = useState<ChannelReaction | null>(null);
     return (
         <div className="mt-1.5 flex flex-wrap items-center gap-1 max-md:gap-1.5" data-testid="message-reactions">
             {reactions.map((r) => (
-                <Tooltip key={r.emoji}>
-                    <TooltipTrigger asChild>
-                        <button
-                            type="button"
-                            onClick={() => onReact(r.emoji)}
-                            aria-pressed={r.mine}
-                            aria-label={`${r.emoji} ${r.count}${r.mine ? ', yours' : ''}`}
-                            className={cn(
-                                // On a phone a size up, with the taps around it its own.
-                                "inline-flex h-7 items-center gap-1 rounded-full px-2 text-[13px] tabular-nums ring-1 ring-inset transition-colors max-md:px-2.5 max-md:relative max-md:h-8 max-md:after:absolute max-md:after:-inset-1 max-md:after:content-['']",
-                                r.mine ? 'bg-foreground/[0.08] text-foreground ring-foreground/30' : 'bg-foreground/[0.03] text-foreground/75 ring-foreground/[0.08] hover:bg-foreground/[0.06]'
-                            )}
-                        >
-                            <span className="text-[15px] leading-none">{r.emoji}</span>
-                            {r.count}
-                        </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" sideOffset={6} className="w-max max-w-[15rem] rounded-2xl border-border px-3 pb-3 pt-3 text-center shadow-xl dark:border-foreground/[0.1]">
-                        <span className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-foreground/[0.06] text-[28px] leading-none" aria-hidden>
-                            {r.emoji}
-                        </span>
-                        <span className="block text-[13px] leading-snug text-muted-foreground">
-                            {reactedBy(r).map((n, i, all) => (
-                                <Fragment key={`${n}:${i}`}>
-                                    {i > 0 && (i === all.length - 1 ? ' and ' : ', ')}
-                                    <span className="font-semibold text-foreground">{n}</span>
-                                </Fragment>
-                            ))}{' '}
-                            reacted with {r.emoji}
-                        </span>
-                    </TooltipContent>
-                </Tooltip>
+                <ReactionChip key={r.emoji} reaction={r} onReact={onReact} onHold={() => setWho(r)} />
             ))}
             <ReactionPicker
                 onPick={onReact}
                 label="Add a reaction"
                 className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.06] hover:text-foreground max-md:w-8 max-md:relative max-md:h-8 max-md:after:absolute max-md:after:-inset-1 max-md:after:content-['']"
             />
+            {who && (
+                <ShellDialog
+                    open
+                    onOpenChange={(open) => !open && setWho(null)}
+                    title="Who reacted"
+                    mark={<span className="text-[24px] leading-none">{who.emoji}</span>}
+                    testId="reacted-sheet"
+                    footer={
+                        who.mine ? (
+                            <button
+                                type="button"
+                                className={BUTTON_SECONDARY}
+                                onClick={() => {
+                                    onReact(who.emoji);
+                                    setWho(null);
+                                }}
+                            >
+                                Remove yours
+                            </button>
+                        ) : undefined
+                    }
+                >
+                    <ul className="space-y-1 pb-2">
+                        {reactedBy(who).map((name, i) => (
+                            <li key={`${name}:${i}`} className="py-1.5 text-[15px] text-foreground">
+                                {name}
+                            </li>
+                        ))}
+                    </ul>
+                </ShellDialog>
+            )}
         </div>
+    );
+}
+
+/** One reaction: its emoji and count, which a tap adds or takes back; who reacted in a tooltip, or held on a phone. */
+function ReactionChip({ reaction: r, onReact, onHold }: { reaction: ChannelReaction; onReact: (emoji: string) => void; onHold: () => void }) {
+    const hold = useLongPress(onHold);
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>
+                <button
+                    type="button"
+                    {...hold}
+                    onClick={() => onReact(r.emoji)}
+                    aria-pressed={r.mine}
+                    aria-label={`${r.emoji} ${r.count}${r.mine ? ', yours' : ''}`}
+                    className={cn(
+                        // On a phone a size up, with the taps around it its own; held, it never selects its text.
+                        "inline-flex h-7 select-none items-center gap-1 rounded-full px-2 text-[13px] tabular-nums ring-1 ring-inset transition-colors [-webkit-touch-callout:none] max-md:px-2.5 max-md:relative max-md:h-8 max-md:after:absolute max-md:after:-inset-1 max-md:after:content-['']",
+                        r.mine ? 'bg-foreground/[0.08] text-foreground ring-foreground/30' : 'bg-foreground/[0.03] text-foreground/75 ring-foreground/[0.08] hover:bg-foreground/[0.06]'
+                    )}
+                >
+                    <span className="text-[15px] leading-none">{r.emoji}</span>
+                    {r.count}
+                </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={6} className="w-max max-w-[15rem] rounded-2xl border-border px-3 pb-3 pt-3 text-center shadow-xl dark:border-foreground/[0.1]">
+                <span className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-foreground/[0.06] text-[28px] leading-none" aria-hidden>
+                    {r.emoji}
+                </span>
+                <span className="block text-[13px] leading-snug text-muted-foreground">
+                    {reactedBy(r).map((n, i, all) => (
+                        <Fragment key={`${n}:${i}`}>
+                            {i > 0 && (i === all.length - 1 ? ' and ' : ', ')}
+                            {/* With how to take yours back. */}
+                            <span className="font-semibold text-foreground">{n === 'You' && r.mine ? 'You (click to remove)' : n}</span>
+                        </Fragment>
+                    ))}{' '}
+                    reacted with {r.emoji}
+                </span>
+            </TooltipContent>
+        </Tooltip>
     );
 }
 

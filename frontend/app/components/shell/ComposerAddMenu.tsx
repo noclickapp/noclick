@@ -17,6 +17,7 @@ import { useChatFiles, type ChatFile } from '~/hooks/useChatFiles';
 import { isImageAttachment, type AgentChatAttachment, type ChatReference } from '~/lib/agentChat';
 import { scoreFields } from '~/lib/fuzzyRank';
 import { cn } from '~/lib/utils';
+import { TAP_AREA } from './buttons';
 import { workflowIconTypes } from '~/lib/workflowBrowserStore';
 import { useConnectedAccounts, type ConnectedAccount } from './connections/accounts';
 import { accountIcon } from './connections/ConnectedList';
@@ -361,7 +362,7 @@ export function ComposerAddMenu({
                         disabled={disabled}
                         aria-label="Add files, automations or accounts"
                         data-testid="composer-add-button"
-                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 data-[state=open]:bg-foreground/[0.08] data-[state=open]:text-foreground"
+                        className={cn('relative grid h-9 w-9 shrink-0 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-foreground/[0.07] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 data-[state=open]:bg-foreground/[0.08] data-[state=open]:text-foreground', TAP_AREA)}
                     >
                         <Plus className="h-5 w-5" strokeWidth={1.75} />
                     </button>

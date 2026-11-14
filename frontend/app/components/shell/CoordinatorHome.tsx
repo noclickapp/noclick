@@ -417,8 +417,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                     {beside}
                     <div className="flex min-h-0 flex-1 flex-col justify-center px-6 text-[36px]">{headline}</div>
                     <div className="flex snap-x gap-2.5 overflow-x-auto scroll-px-4 px-4 pb-3 scrollbar-hide">{starters('w-[228px] shrink-0 snap-start')}</div>
-                    {/* Clear of the home indicator, where a thumb reaches it. */}
-                    <div className="pb-[env(safe-area-inset-bottom)]">{composer}</div>
+                    {composer}
                     {memories}
                 </div>
             );
@@ -459,8 +458,7 @@ function CoordinatorChatPage({ useChat }: { useChat: () => CoordinatorChat }) {
                         )}
                     </div>
                 </div>
-                {/* On a phone, clear of the home indicator, where a thumb reaches it. */}
-                <div className={cn('shrink-0', inPhone && 'pb-[env(safe-area-inset-bottom)]')} style={reserved}>
+                <div className="shrink-0" style={reserved}>
                     {composer}
                 </div>
                 {memories}

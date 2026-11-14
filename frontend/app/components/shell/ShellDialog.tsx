@@ -7,6 +7,7 @@ import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from '
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { cn } from '~/lib/utils';
+import { TAP_AREA } from './buttons';
 import { useReturnFocus } from '~/hooks/useReturnFocus';
 
 const SIZES = { sm: 'max-w-[440px]', md: 'max-w-[580px]', lg: 'max-w-[780px]' } as const;
@@ -104,7 +105,7 @@ export function ShellDialog({ open, onOpenChange, title, description, mark, mark
             {/* Last in order, so opening a dialog focuses its first field rather than ✕. */}
             {dismissible && (
                 <Dialog.Close
-                    className="absolute right-4 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className={cn('absolute right-4 top-5 inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', TAP_AREA)}
                     aria-label="Close"
                 >
                     <X className="h-4 w-4" />

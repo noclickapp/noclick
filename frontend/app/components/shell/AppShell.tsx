@@ -96,7 +96,7 @@ export function PhoneBarBack({ label, title, onBack }: { label: string; title?: 
             <button
                 type="button"
                 onClick={onBack}
-                className="-ml-0.5 inline-flex h-9 min-w-0 items-center gap-0.5 rounded-lg pl-1 pr-2.5 text-[15px] text-foreground/85 transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                className="-ml-0.5 inline-flex h-10 min-w-0 items-center gap-0.5 rounded-lg pl-1 pr-2.5 text-[15px] text-foreground/85 transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
             >
                 <ChevronLeft className="h-5 w-5 shrink-0" strokeWidth={1.75} />
                 <span className="truncate">{label}</span>
@@ -151,7 +151,9 @@ function PhoneShell({ sidebar, title, builder, builderShown, banner, children }:
         return () => window.removeEventListener('noclick:switch-tab', onSwitch);
     }, []);
     return (
-        <div className="fixed inset-0 flex flex-col bg-background pt-[env(safe-area-inset-top)]">
+        // Clear of the notch and the home indicator, so every page's foot (a message box, a view bar) is where a thumb
+        // reaches it without each page keeping clear itself.
+        <div className="fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
             {banner}
             <header className="flex h-12 shrink-0 items-center gap-1 px-2">
                 <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>

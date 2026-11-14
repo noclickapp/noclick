@@ -372,12 +372,12 @@ export function ResourcesView() {
                 back={{ label: 'Resources', onBack: () => go(null) }}
                 actions={
                     manualFor(kind.id) && items[activeKind].length > 0 ? (
-                        <span className="flex flex-col items-start gap-1 sm:items-end">
+                        <span className="flex flex-col items-start gap-1 @2xl:items-end">
                             <button type="button" onClick={manualFor(kind.id)!.run} disabled={!!manualFor(kind.id)!.refusal} title={manualFor(kind.id)!.refusal} className={BUTTON_PRIMARY}>
                                 <Plus className="h-4 w-4" />
                                 {manualFor(kind.id)!.label}
                             </button>
-                            {manualFor(kind.id)!.refusal && <span className="max-w-[280px] text-[12.5px] text-muted-foreground sm:text-right">{manualFor(kind.id)!.refusal}</span>}
+                            {manualFor(kind.id)!.refusal && <span className="max-w-[280px] text-[12.5px] text-muted-foreground @2xl:text-right">{manualFor(kind.id)!.refusal}</span>}
                         </span>
                     ) : undefined
                 }

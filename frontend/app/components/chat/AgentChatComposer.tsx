@@ -12,6 +12,7 @@ import { ArrowUp, CornerUpRight, FileText, ListPlus, Loader2, Paperclip, X } fro
 import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
 import { cn } from '~/lib/utils';
+import { TAP_AREA } from '~/components/shell/buttons';
 import { useIsMobile } from '~/hooks/useIsMobile';
 import { useAutoGrowTextarea } from '~/hooks/useAutoGrowTextarea';
 import { useSurfaceFocus } from '~/hooks/useSurfaceFocus';
@@ -43,7 +44,10 @@ export function AttachmentTrayItem({
                 type="button"
                 onClick={() => onRemove(attachment.localId)}
                 aria-label={`Remove ${attachment.name}`}
-                className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+                className={cn(
+                    'absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border border-border bg-popover text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100',
+                    TAP_AREA
+                )}
             >
                 <X className="h-3 w-3" strokeWidth={2.5} />
             </button>
@@ -171,8 +175,9 @@ export function ComposerPrimaryButton({
                 aria-label={look.label}
                 data-primary={kind}
                 className={cn(
-                    'grid shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-[background-color,color,opacity,transform] duration-150 hover:opacity-90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-foreground/[0.08] disabled:text-foreground/35 disabled:hover:opacity-100 disabled:active:scale-100',
-                    sized.box
+                    'relative grid shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-[background-color,color,opacity,transform] duration-150 hover:opacity-90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:bg-foreground/[0.08] disabled:text-foreground/35 disabled:hover:opacity-100 disabled:active:scale-100',
+                    sized.box,
+                    TAP_AREA
                 )}
             >
                 <span key={kind} className="grid place-items-center duration-150 animate-in zoom-in-75 motion-reduce:animate-none">
