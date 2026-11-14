@@ -2286,6 +2286,12 @@ class WhatsAppQRStatusResponse(BaseModel):
     message: Optional[str] = Field(None, description="Status or error message")
 
 
+# The agent of a linked WhatsApp number (its own module, shared with the hosted responses.py).
+from wss.sender.whatsapp_agent_responses import (  # noqa: E402
+    WhatsAppAgentCreateResponse, WhatsAppAgentStatusResponse, WhatsAppNumberAgent,
+)
+
+
 # ============================================================================
 # Skill Response Models
 # ============================================================================
