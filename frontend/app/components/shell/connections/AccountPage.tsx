@@ -308,7 +308,11 @@ function NumberAgent({ credentialId }: { credentialId: string }) {
                         {answered ? (
                             <NumberAgentLine agent={answered} title={`${answered.name} answers this number`} line="It lives in its own channel, where you tell it what to do." />
                         ) : (
-                            <NumberAgentLine title="No agent on this number" line="An agent answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do." />
+                            <NumberAgentLine
+                                title="No agent on this number"
+                                line="An agent answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do."
+                                state={busy ? 'working' : state.phase === 'failed' ? 'failed' : 'waiting'}
+                            />
                         )}
                     </div>
                     {answered?.channel_id ? (

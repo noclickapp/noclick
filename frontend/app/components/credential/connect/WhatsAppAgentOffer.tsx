@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { MemberAvatar } from '~/components/shell/channels/avatars';
+import type { MascotState } from '~/components/shell/channels/mascot/AgentMascot';
 import { hueFor } from '~/components/shell/channels/model';
 import { openAgentChannel, useWhatsAppNumberAgent, type NumberAgentTransport, type WhatsAppNumberAgent } from '~/hooks/useWhatsAppNumberAgent';
 import { cn } from '~/lib/utils';
@@ -13,12 +14,13 @@ import { cn } from '~/lib/utils';
 const NEW_AGENT = { id: 'whatsapp-agent', name: 'WhatsApp' };
 const WIDE = 'h-10 w-full justify-center';
 
-/** The would-be agent's face beside what it says: the offer, or the agent that answers the number. */
-export function NumberAgentLine({ agent, title, line }: { agent?: WhatsAppNumberAgent; title: string; line: string }) {
+/** The would-be agent's face beside what it says (the offer, or the agent that answers the number), wearing where it
+ *  stands: waiting on a yes, at work while it's made, failed when it couldn't be. */
+export function NumberAgentLine({ agent, title, line, state = 'waiting' }: { agent?: WhatsAppNumberAgent; title: string; line: string; state?: MascotState }) {
     const id = agent?.agent_id ?? NEW_AGENT.id;
     return (
         <div className="flex items-start gap-3.5">
-            <MemberAvatar member={{ id, kind: 'agent', name: agent?.name ?? NEW_AGENT.name, hue: hueFor(id) }} size={32} className="h-12 w-12 text-[18px]" />
+            <MemberAvatar member={{ id, kind: 'agent', name: agent?.name ?? NEW_AGENT.name, agentId: agent?.agent_id, hue: hueFor(id) }} size={48} state={state} />
             <div className="min-w-0 pt-0.5">
                 <p className="text-[14px] font-semibold text-foreground">{title}</p>
                 <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted-foreground">{line}</p>
@@ -99,7 +101,11 @@ export function WhatsAppAgentOffer({ credentialId, onDone, transport }: { creden
     return (
         <div className="space-y-6" data-testid="whatsapp-agent-offer">
             <div className="space-y-3">
-                <NumberAgentLine title="Put an agent on this number?" line="It answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do." />
+                <NumberAgentLine
+                    title="Put an agent on this number?"
+                    line="It answers your WhatsApp messages for you and lives in its own channel, where you tell it what to do."
+                    state={busy ? 'working' : failed ? 'failed' : 'waiting'}
+                />
                 {failed && (
                     <p role="alert" className="flex items-start gap-2 text-[13.5px] text-red-600 dark:text-red-400">
                         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
