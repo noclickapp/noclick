@@ -1110,9 +1110,12 @@ class WorkflowNode(ABC):
         """Show ``agent_pickup``'s record on its channel, off the turn's path. Never raises."""
 
     @classmethod
-    async def agent_turn_ended(cls, picked: Dict[str, Any]) -> None:
+    async def agent_turn_ended(cls, picked: Dict[str, Any], *, shown: Optional[Dict[str, Any]] = None,
+                               finished: bool = True, again: bool = False) -> None:
         """The turn that took the event ended: take down what ``agent_working`` showed, unless its reply already
-        did. Never raises."""
+        did. ``shown``: what the turn put on the channel as it worked (``event_pickup.shown``). ``finished`` False: it
+        stopped partway (it failed, was canceled, or its server stopped), so what it left there as still at work says
+        so; ``again``: its event goes round again, and the run that takes it up ends it once more. Never raises."""
 
     @classmethod
     def describe_trigger(cls, operation: str, config: Dict[str, Any],

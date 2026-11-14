@@ -334,6 +334,21 @@ def _chat_key(chat_id: Any) -> str:
 # Which turn shows a chat its account typing, by its token: gone once a reply goes (``agent_turn_ended``), and once
 # WAHooks stops keeping the typing up (2 minutes after it began), when nothing is left to stop.
 TYPING_SHOWN_S = 120
+# A live status opens with this (the agent's "✻ Pulling today's prices..." while it works, edited into its answer):
+# one a turn left standing as it stopped partway is edited to say so (``agent_turn_ended``), never left at work.
+LIVE_STATUS_MARK = "✻"
+# What it says then, as the agent is asked to speak: short and plain.
+STATUS_STOPPED = "Sorry, that didn't go through."
+STATUS_RETRYING = "Sorry, that didn't go through. I'll try again."
+
+
+def _is_live_status(text: Any) -> bool:
+    return str(text or "").lstrip().startswith(LIVE_STATUS_MARK)
+
+
+def _status_shown(message_id: str) -> str:
+    """The name a turn's live status goes by in what it showed (``event_pickup.shown``)."""
+    return f"whatsapp_status:{message_id}"
 
 
 def _typing_key(connection_id: str, chat_id: str) -> str:
@@ -2268,25 +2283,27 @@ class WhatsAppNode(WorkflowNode):
 
     @classmethod
     def agent_pickup(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """A message an agent takes into a turn has the account typing in its chat at once, which WAHooks counts
-        toward the pause it keeps before the reply: a verified WAHooks message, never the owner's own "Message
-        yourself" chat, and in a group only one addressed to the account (mentioning it, or replying to its message),
-        since the agent may well let the rest of a group's talk pass."""
+        """The chat of a verified WAHooks message an agent takes into a turn, whose end tells it when the turn stopped
+        partway (``agent_turn_ended``); the owner's own messages count only in their "Message yourself" chat. It
+        shows the account ``typing`` at once, which WAHooks counts toward the pause it keeps before the reply, except
+        in the owner's own chat and in a group's talk not addressed to the account (mentioning it, or replying to its
+        message), which the agent may well let pass."""
         p = output.get("payload")
-        if output.get("event") not in _MESSAGE_EVENTS or not isinstance(p, dict):
+        if output.get("event") not in _MESSAGE_EVENTS or not isinstance(p, dict) or not cls._verified(output):
             return None
-        if not cls._verified(output) or cls._from_me(p):
+        owner = cls._owner_note(output)
+        if cls._from_me(p) and not owner:
             return None
         connection_id = str(output.get("connectionId") or "").strip()
         chat_id, _ = cls._message_chat(p)
         if not connection_id or not chat_id:
             return None
+        typing = not owner
         if chat_id.endswith("@g.us"):
             own = cls._own_ids(output)
             quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else {}
-            if not (cls._mentions_any(p, own) or cls._account_part(quoted.get("participant")) in own):
-                return None
-        return {"connection_id": connection_id, "chat_id": chat_id, "token": uuid.uuid4().hex}
+            typing = cls._mentions_any(p, own) or cls._account_part(quoted.get("participant")) in own
+        return {"connection_id": connection_id, "chat_id": chat_id, "token": uuid.uuid4().hex, "typing": typing}
 
     @classmethod
     async def agent_working(cls, picked: Dict[str, Any]) -> None:
@@ -2298,7 +2315,7 @@ class WhatsAppNode(WorkflowNode):
 
         api_key = os.environ.get("WAHOOKS_API_KEY")
         client = redis_client.get_shared_redis()
-        if not api_key or client is None:
+        if not api_key or client is None or not picked.get("typing", True):
             return
         conn, chat = picked["connection_id"], picked["chat_id"]
         key = _typing_key(conn, chat)
@@ -2319,12 +2336,30 @@ class WhatsAppNode(WorkflowNode):
             await _typing_not_shown(key, picked["token"])
 
     @classmethod
-    async def agent_turn_ended(cls, picked: Dict[str, Any]) -> None:
+    async def agent_turn_ended(cls, picked: Dict[str, Any], *, shown: Optional[Dict[str, Any]] = None,
+                               finished: bool = True, again: bool = False) -> None:
+        """Stops the typing a quiet turn left; a turn that stopped partway edits the live status it left standing to
+        say so, and that it tries again when it goes round again (whose own status is then the only one at work)."""
         api_key = os.environ.get("WAHOOKS_API_KEY")
         client = redis_client.get_shared_redis()
         if not api_key or client is None:
             return
         conn, chat = picked["connection_id"], picked["chat_id"]
+        statuses = [] if finished else [s for name, s in (shown or {}).items() if name.startswith("whatsapp_status:")]
+        if statuses:
+            def say_stopped():
+                from wahooks import WAHooks
+
+                with WAHooks(api_key=api_key) as wahooks:
+                    for status in statuses:
+                        wahooks.edit_message(status["connection_id"], status["message_id"], status["chat_id"],
+                                             STATUS_RETRYING if again else STATUS_STOPPED)
+
+            try:
+                await asyncio.to_thread(say_stopped)
+            except Exception:
+                # Past WhatsApp's ~15 minutes to edit a message, it stands as it is.
+                logger.warning("[WhatsApp] saying a stopped turn's status didn't go through failed", exc_info=True)
         try:
             # Gone when a reply went (``_execute_wahooks``); another turn's once a later message took the chat.
             if await client.get(_typing_key(conn, chat)) != picked["token"].encode():
@@ -3432,6 +3467,8 @@ class WhatsAppNode(WorkflowNode):
         """Execute WhatsApp operation via WAHooks API (v0.3.1+)"""
         from wahooks import WAHooks, WAHooksError
 
+        from nodes.agent import event_pickup
+
         action = op_config.operation
 
         if action not in QR_OPERATIONS:
@@ -3572,6 +3609,12 @@ class WhatsAppNode(WorkflowNode):
                     await _reply_sent(conn_id, chat_id)
                 if isinstance(result, dict) and (sent := _sent_message_id(result)):
                     result = {**result, "message_id": sent}
+                    if action == "send_text_message" and _is_live_status(op_config.body):
+                        await event_pickup.shown(self.conversation_id, _status_shown(sent),
+                                                 {"connection_id": conn_id, "chat_id": chat_id, "message_id": sent})
+            elif action == "edit_message" and not _is_live_status(op_config.body):
+                # The status became the answer (or its last word before a file): it no longer says the turn works.
+                await event_pickup.shown(self.conversation_id, _status_shown(op_config.message_id), None)
 
             api_time = (time.time() - start_time) * 1000
             return {
