@@ -2183,6 +2183,44 @@ class WhatsAppNode(WorkflowNode):
 
         return super().resolve_agent_event(output)
 
+    @classmethod
+    def summarize_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A WAHooks message as it looked on WhatsApp: who wrote (their profile name, their number where WhatsApp
+        names it), their words, a voice note or file with its transcript once the turn digested it, and the message
+        it quoted. A group's own name isn't in its messages, so a group chat goes unnamed."""
+        if not (output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict)):
+            return super().summarize_agent_event(output)
+        from nodes.core.agent_events import event_summary
+        from nodes.core.media_digest import media_kind
+
+        p = output["payload"]
+        key = (p.get("_data") or {}).get("key") or {}
+        chat = str(p.get("from") or key.get("remoteJid") or "").strip()
+        participant = str(key.get("participant") or "").strip()
+        group = chat.endswith("@g.us")
+        name = str((p.get("_data") or {}).get("pushName") or p.get("notifyName") or "").strip()
+        number = cls._sender_number(output)
+        number = f"+{number.lstrip('+')}" if number else None
+        media = p.get("media") if isinstance(p.get("media"), dict) else {}
+        found = None
+        if p.get("hasMedia") or media:
+            kind = media_kind(media.get("mimetype"), media.get("filename")) if media else "file"
+            found = {"kind": "voice" if kind == "audio" and cls._is_voice_note(p, media) else kind,
+                     "url": media.get("url") if media.get("rehosted") else None,
+                     "duration": cls._audio_seconds(p) if kind == "audio" else None,
+                     "transcript": media.get("transcript") or media.get("extracted_text")}
+        elif p.get("location"):
+            found = {"kind": "location", "url": None, "duration": None, "transcript": None}
+        elif p.get("vCards"):
+            found = {"kind": "contact", "url": None, "duration": None, "transcript": None}
+        quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else {}
+        return event_summary(
+            chat_name=None if group else name, chat_kind="self" if cls._owner_note(output) else
+            "group" if group else "direct", chat_number=None if group else number, sender_name=name,
+            sender_id=participant or chat, sender_number=number, text=p.get("body") or p.get("caption"),
+            media=found, quoted_text=" ".join(str(quoted.get("body") or "").split()),
+            message_id=p.get("id") if isinstance(p.get("id"), str) else None)
+
     @staticmethod
     def _sender_number(payload: Dict[str, Any]) -> Optional[str]:
         """The phone number an inbound message came from, in either envelope:

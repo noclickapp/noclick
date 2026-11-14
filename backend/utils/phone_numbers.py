@@ -94,6 +94,25 @@ def valid_e164(raw: str | None) -> str | None:
     return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
 
 
+def readable(raw: str | None) -> str | None:
+    """A number as people write it, '+1 202-555-0101' (``phonenumbers``' international format), from E.164, bare
+    digits ('12025550101', as WhatsApp keeps a linked number) or a phone chat id ('12025550101@c.us'). None for what
+    names no number (a @lid, a group); one its numbering plans can't place stays E.164."""
+    import phonenumbers
+
+    local, _, server = str(raw or "").strip().removeprefix("whatsapp:").partition("@")
+    if server and server not in ("c.us", "s.whatsapp.net"):
+        return None
+    local = local.split(":", 1)[0]
+    number = normalize_e164(local if local.startswith(("+", "00")) else "+" + local)
+    if number is None:
+        return None
+    parsed = phonenumbers.parse(number)
+    if not phonenumbers.is_possible_number(parsed):
+        return number
+    return phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+
+
 def mask_e164(e164: str) -> str:
     """'+14242421064' -> '+1•••••••1064', for logs and audit lines."""
     if len(e164) <= 6:

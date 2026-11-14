@@ -1058,6 +1058,22 @@ class WorkflowNode(ABC):
 
         return default_agent_event(output)
 
+    @classmethod
+    def summarize_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """What this node's fired-trigger OUTPUT brought, as a person reads back what an agent did with it:
+        ``{"chat": {name, kind, number}, "inbound": {sender_name, sender_id, sender_number, text, media,
+        quoted_text, message_id}}`` (``agent_events.event_summary``), each part None where the event doesn't say.
+        The default reads ``resolve_agent_event``: its conversation title (else its title) names the chat, its title
+        the writer, and its text is what came in. A channel-like trigger overrides it with the message's own parts.
+        None when nothing came in."""
+        from nodes.core.agent_events import event_summary
+
+        resolved = cls.resolve_agent_event(output)
+        if not resolved:
+            return None
+        return event_summary(chat_name=resolved.get("conversation_title") or resolved.get("title"),
+                             sender_name=resolved.get("title"), text=resolved.get("text"))
+
     # Grid layout constraints for interface nodes (defaultW, defaultH, minW, minH).
     # Only relevant for interface-* nodes; ignored for automation/agent nodes.
     grid_layout: Optional[Dict[str, int]] = None

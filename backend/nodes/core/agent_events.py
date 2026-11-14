@@ -140,6 +140,20 @@ def default_agent_event(output: Any, *, limit: int = DEFAULT_EVENT_CHARS) -> Dic
     return {"text": text, "conversation_key": None}
 
 
+def event_summary(*, chat_name: Optional[str] = None, chat_kind: Optional[str] = None,
+                  chat_number: Optional[str] = None, sender_name: Optional[str] = None,
+                  sender_id: Optional[str] = None, sender_number: Optional[str] = None, text: Optional[str] = None,
+                  media: Optional[Dict[str, Any]] = None, quoted_text: Optional[str] = None,
+                  message_id: Optional[str] = None) -> Dict[str, Any]:
+    """A ``summarize_agent_event`` result: the chat (``kind`` direct, group or self, the account owner's own) and
+    what came in (``media`` ``{kind, url, duration, transcript}``: ``kind`` voice, audio, image, video, document,
+    file, location or contact). Numbers are E.164."""
+    return {"chat": {"name": chat_name or None, "kind": chat_kind, "number": chat_number},
+            "inbound": {"sender_name": sender_name or None, "sender_id": sender_id or None,
+                        "sender_number": sender_number, "text": text or "", "media": media,
+                        "quoted_text": quoted_text or None, "message_id": message_id or None}}
+
+
 def compact_for_display(output: Any) -> Any:
     """The record persisted beside a trigger turn for the chat surface:
     pruned, strings clipped, and bounded as a whole — the frontend derives
