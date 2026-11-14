@@ -4,6 +4,7 @@ Connections remain account resources. No throwaway workflow is created to
 connect a provider, discover its operations, or perform an authorized action.
 """
 
+import asyncio
 from uuid import UUID
 
 from repositories.credentials import CredentialsRepo
@@ -118,7 +119,8 @@ class CredentialActions:
                 "instructions": "Call the loaded tool with the chosen credential_id and typed arguments. "
                 "Search again to reload a tool no longer visible. Restrictions apply to the selected credential."}
         if not matches and not credential_id and offset == 0 and query.strip():
-            result["setup_options"] = connection_suggestions(query)
+            # Off the event loop: the first suggestions of a process read every integration's operations.
+            result["setup_options"] = await asyncio.to_thread(connection_suggestions, query)
             result["instructions"] = (
                 "No connected account matches; this does not mean the action is unsupported. "
                 "Setup options describe integrations that need a connection, not callable tools. "

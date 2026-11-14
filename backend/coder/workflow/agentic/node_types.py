@@ -8,18 +8,21 @@ system prompt so it knows what nodes it can use.
 
 from __future__ import annotations
 
+from nodes.core.catalog import node_facts
 from nodes.core.registry import NODE_REGISTRY, is_listed
-from ..operation_catalog import get_native_agent_tools_for_node_type, get_operations_for_node_type
+from ..operation_catalog import get_native_agent_tools_for_node_type
 from ..structural_tools import STRUCTURAL_AGENT_TOOL_PROVIDERS, STRUCTURAL_AGENT_TOOL_TYPES
 from utils.node_search import by_popularity, knows_demand
 
 
 def _has_trigger_operation(node_type: str) -> bool:
-    """True if any of ``node_type``'s operations is flagged ``x-is-trigger``, as the operation catalog reads them.
+    """True if any of ``node_type``'s operations is flagged ``x-is-trigger``, as the operation catalog reads them,
+    from its node catalog file: the prompt asks it of every integration on every builder turn, and asking the classes
+    imported them all on the event loop.
 
     Reading the config union by hand took only its first member for a plain ``Union``, so 77 of the 97 integrations
     with triggers (Gmail, Stripe, Telegram, ...) were never named trigger-capable."""
-    return any(op.is_trigger for op in get_operations_for_node_type(node_type))
+    return any(op["is_trigger"] for op in node_facts(node_type)["operations"])
 
 
 # Integrations the prompt names, the most used first, where the deployment knows which those are (``NODE_DEMAND``):

@@ -284,6 +284,32 @@ def test_the_lookups_import_no_integration_but_the_one_they_name():
     assert result == {"resolved": "automation-2chat", "imported": ["automation-2chat"]}
 
 
+_BUILDER_NODE_LIST = """
+import json, sys
+from nodes.core.discovery import Declaration
+from nodes.core.registry import NODE_REGISTRY
+from coder.workflow.agentic.node_types import _get_available_node_types
+
+def imported():
+    return {t for t, e in NODE_REGISTRY._entries.items() if isinstance(e, Declaration) and e.module in sys.modules}
+
+before = imported()
+assert "TRIGGERS:" in _get_available_node_types()
+print(json.dumps({"imported": sorted(imported() - before)}))
+"""
+
+
+def test_the_builders_node_list_imports_no_integration():
+    """The builder's prompt names which integrations can trigger a workflow on every turn: from their catalog files,
+    where asking their classes imported every integration on the event loop of a process's first builder turn. Only
+    the structural tool providers it describes by their tools (``STRUCTURAL_AGENT_TOOL_PROVIDERS``) load."""
+    done = subprocess.run([sys.executable, "-c", _BUILDER_NODE_LIST], cwd=BACKEND, capture_output=True, text=True,
+                          timeout=600)
+    assert done.returncode == 0, done.stderr[-4000:]
+    result = json.loads(done.stdout.strip().splitlines()[-1])
+    assert result["imported"] == ["alarm", "filesystem"]
+
+
 def test_registration_lookups_are_the_class_walks(classes):
     from nodes.core.schedule_registration import CronScheduleTriggerMixin
     from nodes.core.webhook_subscriptions import AppEventTriggerMixin
