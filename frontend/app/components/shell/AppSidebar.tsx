@@ -322,6 +322,7 @@ function AccountRow({
     user,
     collapsed,
     billing,
+    support,
     switchTo,
     onNavigate,
     onTabChange,
@@ -329,6 +330,7 @@ function AccountRow({
     user: AccountMenuUser;
     collapsed: boolean;
     billing?: ReactNode;
+    support?: ReactNode;
     switchTo?: AccountMenuSwitch;
     onNavigate?: () => void;
     onTabChange: (tab: string) => void;
@@ -352,6 +354,7 @@ function AccountRow({
                 side={collapsed ? 'right' : 'top'}
                 align={collapsed ? 'end' : 'start'}
             >
+                {support}
                 <DropdownMenuItem className={ACCOUNT_MENU_ITEM} onClick={() => window.open('https://discord.com/invite/sHC2mrnss8', '_blank', 'noopener')}>
                     <FaDiscord className="mr-2 h-4 w-4 text-muted-foreground" />
                     <span>Community</span>
@@ -378,8 +381,9 @@ export interface SidebarProps {
     onTabChange: (tab: string) => void;
     /** With a canvas open: the builder chat beside it, and its toggle. */
     builder?: { open: boolean; onToggle: () => void };
-    /** What the host adds (hosted: the balance meter, the invite row under it and the billing rows). */
-    slots?: { balance?: ReactNode; invite?: ReactNode; billing?: ReactNode };
+    /** What the host adds (hosted: the balance meter, the invite row under it, the billing rows, and the account menu's
+     *  way to its support chat). */
+    slots?: { balance?: ReactNode; invite?: ReactNode; billing?: ReactNode; support?: ReactNode };
     /** The other place this account works (hosted: the developer console), first in the account menu;
      *  the console keeps the way back in the same spot. */
     switchTo?: AccountMenuSwitch;
@@ -457,7 +461,7 @@ export function SidebarContent({
                 {!collapsed && slots?.invite}
                 <FeedbackButton>
                     <div className={cn('flex items-center', collapsed && 'justify-center')}>
-                        <AccountRow user={user} collapsed={collapsed} billing={slots?.billing} switchTo={switchTo} onNavigate={onNavigate} onTabChange={onTabChange} />
+                        <AccountRow user={user} collapsed={collapsed} billing={slots?.billing} support={slots?.support} switchTo={switchTo} onNavigate={onNavigate} onTabChange={onTabChange} />
                     </div>
                 </FeedbackButton>
             </div>
