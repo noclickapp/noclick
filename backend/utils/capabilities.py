@@ -241,6 +241,11 @@ TOOL_CALL_GUARD = "agent.tool_call_guard"
 # credential must be saved in the graph.
 BOUND_CREDENTIALS = "workflow.bound_credentials"
 
+# A connection-backed credential's link came back (a re-scan landed, its provider pushed it up) or was found dead:
+# async (pool, owner_id, credential_id) -> None, for the owner's open pages showing what hangs on it (an agent's
+# triggers). Without one, they see it at their next read.
+CREDENTIAL_LINK_MOVED = "credentials.link_moved"
+
 # What a product keeps that holds a credential, beyond the workflows whose
 # nodes name it (a named connection, an agent): async (pool, credential_id,
 # owner_id) -> [{kind, id, name, used_by: [names]}], named before the owner

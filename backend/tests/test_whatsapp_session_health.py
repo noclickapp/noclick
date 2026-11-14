@@ -74,6 +74,9 @@ class _FakeRedis:
     async def delete(self, key):
         return 1 if self.store.pop(key, None) is not None else 0
 
+    async def mget(self, keys):
+        return [await self.get(k) for k in keys]
+
 
 @pytest.fixture(autouse=True)
 def _no_redis(monkeypatch):
@@ -440,11 +443,155 @@ async def test_absent_from_a_fresh_list_is_still_definitively_gone(status_cache)
     assert await dead_session_status("conn-deleted") == "missing"
 
 
-def test_remember_connection_status_stamps_the_live_cache(status_cache):
+@pytest.fixture
+def rescanned(monkeypatch):
+    """A container's map read 5 s before conn-1's phone was re-scanned (it holds the ``failed`` the session was), and
+    WAHooks' list as it is now. ``live`` says what the list answers; ``redis`` is shared by every container."""
     from utils import whatsapp_qr
 
-    whatsapp_qr.remember_connection_status("conn-new", "connected")
-    assert whatsapp_qr._status_cache[1]["conn-new"] == "connected"
+    redis = _FakeRedis()
+    monkeypatch.setenv("WAHOOKS_API_KEY", "k")
+    monkeypatch.setattr(whatsapp_qr, "get_shared_redis", lambda: redis)
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    monkeypatch.setattr(whatsapp_qr, "_status_cache", (time.monotonic() - 5, {"conn-1": "failed"}))
+    state = {"live": [{"id": "conn-1", "status": "connected"}], "fetches": [], "redis": redis}
+
+    class _Live(_ListClient):
+        def list_connections(self):
+            self._fetches.append(1)
+            if state["live"] is None:
+                raise ConnectionError("WAHooks unreachable")
+            return state["live"]
+
+    monkeypatch.setattr("wahooks.WAHooks", lambda api_key: _Live(None, state["fetches"]))
+    return state
+
+
+def _moved_elsewhere(state, connection_id="conn-1"):
+    """Another container saw the session move (its finalize, a WORKING push): only the shared mark reaches here."""
+    from utils.whatsapp_qr import _status_moved_key
+
+    state["redis"].store[_status_moved_key(connection_id)] = time.time()
+
+
+@pytest.mark.asyncio
+async def test_a_rescan_seen_in_another_container_is_read_again_here_not_served_from_this_map(rescanned):
+    """2026-11-14: a phone re-scanned from a stopped trigger's Reconnect read "Phone disconnected" on, because the
+    container serving the Triggers tab judged it by a map read before the scan; only the finalizing container's map
+    learned the session was back."""
+    from utils.credential_health import get_credential_health
+    from utils.whatsapp_qr import dead_session_status
+
+    # Nothing says it moved: the map is fresh enough, and served.
+    assert await dead_session_status("conn-1") == "failed" and rescanned["fetches"] == []
+
+    _moved_elsewhere(rescanned)
+    assert await dead_session_status("conn-1") is None and len(rescanned["fetches"]) == 1
+    [verdict] = (await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-1"}}])).values()
+    assert verdict.healthy and verdict.status == "connected"
+    # The map read after the move answers from then on.
+    assert len(rescanned["fetches"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_a_rescan_that_didnt_take_still_reads_dead(rescanned):
+    from utils.credential_health import get_credential_health
+
+    rescanned["live"] = [{"id": "conn-1", "status": "failed"}]
+    _moved_elsewhere(rescanned)
+    [verdict] = (await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-1"}}])).values()
+    assert not verdict.healthy and verdict.status == "failed" and len(rescanned["fetches"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_a_move_is_never_a_verdict_of_its_own(rescanned):
+    """Marking a session moved only sends it back to WAHooks' list: with WAHooks unreachable it is unknown (no
+    verdict), never "connected" because something said it came back."""
+    from utils import whatsapp_qr
+    from utils.credential_health import get_credential_health
+
+    rescanned["live"] = None
+    await whatsapp_qr.connection_status_moved("conn-1")
+    assert "conn-1" not in whatsapp_qr._status_cache[1]
+    assert await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-1"}}]) == {}
+
+
+class _CredentialPool:
+    def __init__(self, row):
+        self.row = row
+
+    async def fetchrow(self, query, *args):
+        assert "FROM credentials" in query and args == ("cred-1",)
+        return self.row
+
+
+@pytest.mark.asyncio
+async def test_a_session_back_up_closes_what_its_death_opened_and_tells_the_owners_pages(rescanned, monkeypatch):
+    from utils import capabilities, whatsapp_qr
+
+    redis = rescanned["redis"]
+    redis.store["conn:down:cred-1"] = int(time.time()) - 400
+    closed, told = AsyncMock(return_value=True), AsyncMock()
+    monkeypatch.setattr("utils.notifications.close_alert_window", closed)
+    monkeypatch.setitem(capabilities._providers, capabilities.CREDENTIAL_LINK_MOVED, told)
+    pool = _CredentialPool({"owner_id": "owner-1", "metadata": {"connection_id": "conn-1"}})
+
+    await whatsapp_qr.session_moved(pool, "cred-1", up=True)
+    assert whatsapp_qr._status_moved_key("conn-1") in redis.store
+    assert "conn:down:cred-1" not in redis.store
+    closed.assert_awaited_once_with("owner-1", "channel_disconnected:cred-1", 24 * 3600, pool=pool)
+    told.assert_awaited_once_with(pool, "owner-1", "cred-1")
+
+    # Found dead: read again everywhere and the pages told, but its alert's window stays open.
+    del redis.store[whatsapp_qr._status_moved_key("conn-1")]
+    await whatsapp_qr.session_moved(pool, "cred-1", up=False)
+    assert whatsapp_qr._status_moved_key("conn-1") in redis.store
+    closed.assert_awaited_once()
+    assert told.await_count == 2
+
+
+@pytest.mark.asyncio
+async def test_following_a_session_never_raises(monkeypatch):
+    from utils import whatsapp_qr
+
+    pool = MagicMock()
+    pool.fetchrow = AsyncMock(side_effect=RuntimeError("db down"))
+    await whatsapp_qr.session_moved(pool, "cred-1", up=True)
+
+
+@pytest.mark.asyncio
+async def test_status_pushes_follow_the_session_up_after_the_notice_and_down_once_verified(monkeypatch):
+    """WORKING: the reconnected notice reads the disconnect alert's window first, then the session is followed up
+    (which closes it). A down push past its grace, verified dead: followed down."""
+    redis = _FakeRedis()
+    redis.store["conn:down:cred-1"] = int(time.time()) - 400
+    monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: redis)
+    seen = []
+
+    async def notice(*a, **k):
+        seen.append("notice")
+        return True
+
+    async def moved(pool, credential_id, *, up):
+        seen.append(("moved", credential_id, up))
+
+    monkeypatch.setattr("utils.notifications.send_channel_reconnected_notice", notice)
+    monkeypatch.setattr("utils.whatsapp_qr.session_moved", moved)
+    msg = await WhatsAppNode.handle_control_event(
+        _event("WORKING"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1")
+    assert "reconnected" in msg and seen == ["notice", ("moved", "cred-1", True)]
+
+    seen.clear()
+    redis.store["conn:down:cred-1"] = int(time.time()) - 200
+    with patch.dict(os.environ, {"WAHOOKS_API_KEY": "k"}), \
+         patch("wahooks.WAHooks", lambda api_key: _StatusClient("failed")), \
+         patch("utils.notifications.send_channel_disconnected_alert", AsyncMock()):
+        msg = await WhatsAppNode.handle_control_event(
+            _event("FAILED"), RECEIVE_CFG, pool=_pool(), workflow_id="wf-1", node_id="wa-1")
+    assert "owner alerted" in msg and seen == [("moved", "cred-1", False)]
 
 
 # ── phone-number backfill ───────────────────────────────────────────────────

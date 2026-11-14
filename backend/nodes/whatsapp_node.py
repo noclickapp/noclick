@@ -2901,7 +2901,9 @@ class WhatsAppNode(WorkflowNode):
         stale registration delivering another session's death must not
         mis-flag a healthy credential) and alert the owner. WORKING closes the
         window and, if an alert had gone out, tells the owner it reconnected
-        so they don't re-scan a healthy link."""
+        so they don't re-scan a healthy link. Either way the credential's
+        session moved (``session_moved``): no process keeps judging it by the
+        status it had before, and the owner's pages read it again."""
         if "session" not in payload:
             return None
         if foreign := await cls._foreign_account_delivery(payload, config, pool=pool, node_id=node_id):
@@ -2915,9 +2917,13 @@ class WhatsAppNode(WorkflowNode):
         consumed = f"session.status {status or 'unknown'} consumed"
         credential_id = ((config or {}).get("credentialIds") or {}).get("whatsapp_qr")
         if status == "WORKING":
-            if credential_id and await cls._connection_back(str(credential_id), workflow_id, pool):
-                return f"{consumed} — owner told it reconnected"
-            return consumed
+            if not credential_id:
+                return consumed
+            from utils.whatsapp_qr import session_moved
+
+            told = await cls._connection_back(str(credential_id), workflow_id, pool)
+            await session_moved(pool, str(credential_id), up=True)  # after: the notice reads the alert's open window
+            return f"{consumed} — owner told it reconnected" if told else consumed
         if status not in ("FAILED", "STOPPED"):
             return consumed
         if not credential_id:
@@ -2956,6 +2962,7 @@ class WhatsAppNode(WorkflowNode):
                 return f"{consumed} (credential connection healthy)"
 
             from utils.notifications import send_channel_disconnected_alert
+            from utils.whatsapp_qr import session_moved
 
             await send_channel_disconnected_alert(
                 str(credential_id),
@@ -2965,6 +2972,7 @@ class WhatsAppNode(WorkflowNode):
                 workflow_name=row["workflow_name"] if row else None,
                 pool=pool,
             )
+            await session_moved(pool, str(credential_id), up=False)
             return f"{consumed} — owner alerted"
         except Exception as e:
             logger.warning(f"[WhatsAppNode] session.status handling failed: {e}")

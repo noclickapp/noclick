@@ -805,3 +805,39 @@ async def test_an_owner_with_no_email_is_texted_what_they_must_act_on(real_datab
     # News, not something to act on: the digest is never texted.
     assert not await send_system_alert(owner, "digest", **ALERT_KWARGS, pool=db.pool)
     assert len(texts) == cap
+
+
+@pytest.mark.asyncio
+async def test_a_channel_connected_again_closes_its_disconnect_window(real_database, monkeypatch):
+    """A phone re-scanned the same day it died: its next death is news again. The 24 h window kept a second death
+    silent, and a reconnected notice ("it recovered on its own") followed a re-scan the owner made themselves."""
+    import uuid
+
+    from utils.notifications import (
+        CHANNEL_DISCONNECTED_SUPPRESS_S,
+        channel_disconnected_key,
+        close_alert_window,
+        send_channel_disconnected_alert,
+        send_channel_reconnected_notice,
+    )
+
+    db = real_database
+    owner = str(uuid.uuid4())
+    await db.execute("INSERT INTO auth.users (id, email) VALUES ($1::uuid, $2)", owner, f"{owner}@example.com")
+    credential = str(await db.fetchval(
+        "INSERT INTO credentials (owner_id, name, credential_type, credential) "
+        "VALUES ($1::uuid, 'My WhatsApp', 'whatsapp_qr', 'x') RETURNING id", owner))
+    sent = []
+    monkeypatch.setattr(notifications, "_send_email", lambda to, subject, *a, **k: sent.append(subject) or True)
+
+    async def died():
+        return await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="failed",
+                                                     pool=db.pool)
+
+    assert await died() and not await died() and len(sent) == 1
+    key = channel_disconnected_key(credential)
+    assert await close_alert_window(owner, key, CHANNEL_DISCONNECTED_SUPPRESS_S, pool=db.pool)
+    assert not await close_alert_window(owner, key, CHANNEL_DISCONNECTED_SUPPRESS_S, pool=db.pool)
+    # Its window closed by the re-scan, nothing retracts the email the owner already acted on.
+    assert not await send_channel_reconnected_notice(credential, provider_label="WhatsApp", pool=db.pool)
+    assert await died() and len(sent) == 2

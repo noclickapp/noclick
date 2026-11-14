@@ -69,6 +69,44 @@ NO_QR_MESSAGE = ("WhatsApp's linking service didn't send a QR code in time; it m
 # provider sessions visible to this installation; cache it briefly.
 _STATUS_CACHE_TTL_S = 60
 _status_cache: Optional[tuple[float, dict[str, str]]] = None
+# When a connection's session last moved (``connection_status_moved``), in wall time, shared by every process: each
+# keeps its own cached map, and a move seen in one (a scan landing, WAHooks pushing WORKING) must not leave another
+# judging the connection by a map read before it. Outlives any map that could predate it.
+_STATUS_MOVED_TTL_S = 2 * _STATUS_CACHE_TTL_S
+
+
+def _status_moved_key(connection_id: str) -> str:
+    return f"whatsapp:qr:status_moved:{connection_id}"
+
+
+async def _moved_since(connection_ids: Iterable[str], since: float) -> bool:
+    """Whether any of the connections moved after ``since`` (wall time). Without Redis, none did: the map's own
+    TTL bounds how stale it is."""
+    ids = list(connection_ids)
+    client = get_shared_redis()
+    if not ids or client is None:
+        return False
+    try:
+        marks = await client.mget([_status_moved_key(cid) for cid in ids])
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Status-moved read failed: {e}")
+        return False
+    return any(mark is not None and float(_text(mark)) > since for mark in marks)
+
+
+async def connection_status_moved(connection_id: str) -> None:
+    """A connection's session moved: every process, this one too, reads its status from WAHooks again before
+    judging it, instead of from a map read before the move. Never a verdict of its own: what it moved to is only
+    ever taken from WAHooks' list."""
+    if _status_cache:
+        _status_cache[1].pop(connection_id, None)  # a required id the map lacks is a miss
+    client = get_shared_redis()
+    if client is None:
+        return
+    try:
+        await client.set(_status_moved_key(connection_id), time.time(), ex=_STATUS_MOVED_TTL_S)
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Status-moved mark for {connection_id} failed: {e}")
 
 
 async def get_connection_statuses(
@@ -82,13 +120,17 @@ async def get_connection_statuses(
     ``require``: the connection ids the caller is about to judge. A cached
     map lacking any of them is a cache MISS, not "gone": every scan mints a
     connection the cache predates, and serving that map would flag a just-
-    connected credential "(disconnected)" for up to a minute. Absence from a
-    FRESH list is the only definitive "gone"."""
+    connected credential "(disconnected)" for up to a minute. So is one that
+    moved since the map was read (``connection_status_moved``): a re-scan's
+    session is in every container's map as the ``failed`` it was. Absence from
+    a FRESH list is the only definitive "gone"."""
     global _status_cache
     now = time.monotonic()
     if _status_cache and now - _status_cache[0] < _STATUS_CACHE_TTL_S:
         cached = _status_cache[1]
-        if all(cid in cached for cid in (require or ())):
+        required = list(require or ())
+        read_at = time.time() - (now - _status_cache[0])
+        if all(cid in cached for cid in required) and not await _moved_since(required, read_at):
             return cached
     try:
         api_key = get_wahooks_api_key()
@@ -111,11 +153,35 @@ async def get_connection_statuses(
     return statuses
 
 
-def remember_connection_status(connection_id: str, status: str) -> None:
-    """Stamp a status observed first-hand (finalize just saw ``connected``)
-    into the live cache so the next picker list agrees without a refetch."""
-    if _status_cache:
-        _status_cache[1][connection_id] = status
+async def session_moved(pool, credential_id: str, *, up: bool) -> None:
+    """A WhatsApp credential's session came back (a re-scan landed, WAHooks
+    pushed WORKING) or was found dead. Every process reads it from WAHooks again
+    before judging it; one that's back closes what its death opened (a down
+    push's grace window, the disconnect alert's window, so a later death is
+    emailed again); and the owner's open pages read what hangs on it again
+    (``CREDENTIAL_LINK_MOVED``). Never raises: it follows a move that happened."""
+    from utils.capabilities import CREDENTIAL_LINK_MOVED, capability
+    from utils.credentials import credential_metadata
+
+    try:
+        row = await pool.fetchrow("SELECT owner_id, metadata FROM credentials WHERE id = $1::uuid", credential_id)
+        if row is None:
+            return
+        if connection_id := credential_metadata(row).get("connection_id"):
+            await connection_status_moved(str(connection_id))
+        owner_id = str(row["owner_id"])
+        if up:
+            from utils.connection_grace import up_signal
+            from utils.notifications import CHANNEL_DISCONNECTED_SUPPRESS_S, channel_disconnected_key, close_alert_window
+
+            await up_signal(credential_id)
+            await close_alert_window(owner_id, channel_disconnected_key(credential_id),
+                                     CHANNEL_DISCONNECTED_SUPPRESS_S, pool=pool)
+        if told := capability(CREDENTIAL_LINK_MOVED):
+            await told(pool, owner_id, credential_id)
+    except Exception:
+        logger.warning(f"[WhatsAppQR] Following credential {credential_id}'s session {'up' if up else 'down'} failed",
+                       exc_info=True)
 
 
 def get_wahooks_api_key() -> str:
@@ -626,7 +692,20 @@ async def finalize_qr_connection(
     message, created?}``. ``created`` is True only when THIS call inserted the
     credential (False on the idempotent double-finalize) — callers use it to
     decide whether an out-of-band claim that lost the race should roll back.
+    A credential it leaves connected is a session back up (``session_moved``):
+    a re-scan into a dead one's own connection changes nothing else about it.
     """
+    result = await _bind_scanned_connection(
+        pool, owner_id, connection_id, user_tier, encryption, credential_name, held_for_someone_else)
+    if result.get("status") == "connected" and result.get("credential_id"):
+        await session_moved(pool, result["credential_id"], up=True)
+    return result
+
+
+async def _bind_scanned_connection(
+    pool, owner_id: str, connection_id: str, user_tier: str, encryption,
+    credential_name: Optional[str], held_for_someone_else: bool,
+) -> dict[str, Any]:
     try:
         api_key = get_wahooks_api_key()
     except ValueError as e:
@@ -669,7 +748,7 @@ async def finalize_qr_connection(
 
         phone_number = connection.get("phoneNumber") or ""
         logger.info("[WhatsAppQR] Connected")
-        remember_connection_status(connection_id, "connected")
+        await connection_status_moved(connection_id)
 
         # Bind guard: only the owner who was shown this QR may mint a credential
         # for the connection. An expired reservation is rejected too — a stale

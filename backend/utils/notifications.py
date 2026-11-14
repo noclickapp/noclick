@@ -92,12 +92,16 @@ def texts_owner_without_email(category: str) -> bool:
     return category not in NOT_TEXTED
 # An alert that reached the owner: by email, or texted to one with no email (``metadata.texted``: the app).
 DELIVERED_SQL = "(email_sent OR metadata ? 'texted')"
+# A dedupe window still open: one its alert's cause ending hasn't closed (``close_alert_window``).
+OPEN_WINDOW_SQL = "NOT (metadata ? 'window_closed_at')"
 
 # Suppression window after a run-failure email per workflow — a cron flow
 # failing every 5 minutes sends one email, not 288/day. Failures inside the
 # window are counted and folded into the next email.
 RUN_FAILURE_SUPPRESS_S = 6 * 3600
 CREDITS_EXHAUSTED_SUPPRESS_S = 24 * 3600
+# One disconnect email per channel credential a day, until it's connected again (``close_alert_window``).
+CHANNEL_DISCONNECTED_SUPPRESS_S = 24 * 3600
 # One pause email per trigger per day: the breaker re-trips on the first
 # identical failure after a re-enable, and that is the same news.
 SCHEDULE_PAUSED_SUPPRESS_S = 24 * 3600
@@ -105,6 +109,10 @@ SCHEDULE_PAUSED_SUPPRESS_S = 24 * 3600
 # just a safety bound past the longest month.
 LOW_BALANCE_TTL_S = 40 * 24 * 3600
 LOW_BALANCE_FRACTION = 0.8
+
+
+def channel_disconnected_key(credential_id: str) -> str:
+    return f"channel_disconnected:{credential_id}"
 
 
 # ── Unsubscribe links (HMAC, category-scoped, never expire) ─────────────────
@@ -275,9 +283,9 @@ async def _window_acquire(
                     user_id, dedupe_key,
                 )
                 bumped = await conn.fetchrow(
-                    """WITH recent AS (
+                    f"""WITH recent AS (
                          SELECT id FROM user_notifications
-                          WHERE user_id = $1 AND dedupe_key = $2
+                          WHERE user_id = $1 AND dedupe_key = $2 AND {OPEN_WINDOW_SQL}
                             AND created_at > now() - make_interval(secs => $3)
                           ORDER BY created_at DESC LIMIT 1
                        )
@@ -307,6 +315,22 @@ async def _window_acquire(
     except Exception as e:
         logger.warning(f"[Notify] window check failed for {dedupe_key}: {e}")
         return local_acquired, 0, None
+
+
+async def close_alert_window(user_id: str, dedupe_key: str, ttl_s: int, pool=None) -> bool:
+    """Close ``dedupe_key``'s open window before its TTL, because what it alerted about is over (a channel is
+    connected again): the next occurrence is news and alerts again, within the category's daily cap. Its row stays,
+    as the record. True iff one was open."""
+    _LOCAL_WINDOWS.pop(dedupe_key, None)
+    closed = await _fetch_row(
+        pool,
+        f"""UPDATE user_notifications SET metadata = metadata || jsonb_build_object('window_closed_at', now())
+             WHERE user_id = $1 AND dedupe_key = $2 AND {OPEN_WINDOW_SQL}
+               AND created_at > now() - make_interval(secs => $3)
+            RETURNING id""",
+        user_id, dedupe_key, float(ttl_s),
+    )
+    return closed is not None
 
 
 async def _emails_sent_today(user_id: str, category: str, pool=None) -> int:
@@ -1114,16 +1138,17 @@ async def send_channel_reconnected_notice(
 ) -> bool:
     """The follow-up to send_channel_disconnected_alert: the provider reports
     the same connection WORKING again. Sent only when a disconnect EMAIL went
-    out for this credential in the last 2 h (a re-scan hours after an alert
-    needs no confirmation; a window that never emailed has nothing to
-    retract), so the owner learns the link healed itself and does NOT re-scan
+    out for this credential in the last 2 h and its window is still open (a
+    re-scan hours after an alert needs no confirmation, a re-scan the owner
+    made closed it, and a window that never emailed has nothing to retract),
+    so the owner learns the link healed itself and does NOT re-scan
     — a fresh scan on a healthy session adds a duplicate device link, the
     exact hazard the disconnect email warns about."""
     recent = await _fetch_row(
         pool,
-        f"SELECT 1 FROM user_notifications WHERE dedupe_key = $1 AND {DELIVERED_SQL} "
+        f"SELECT 1 FROM user_notifications WHERE dedupe_key = $1 AND {DELIVERED_SQL} AND {OPEN_WINDOW_SQL} "
         "AND created_at > now() - interval '2 hours'",
-        f"channel_disconnected:{credential_id}",
+        channel_disconnected_key(credential_id),
     )
     if not recent:
         return False
@@ -1259,8 +1284,8 @@ async def send_channel_disconnected_alert(
         preheader=f"{name} disconnected — reconnect to keep your workflows running",
         cta_text="Reconnect Now",
         cta_url=cta_url,
-        dedupe_key=f"channel_disconnected:{credential_id}",
-        dedupe_ttl_s=24 * 3600,
+        dedupe_key=channel_disconnected_key(credential_id),
+        dedupe_ttl_s=CHANNEL_DISCONNECTED_SUPPRESS_S,
         metadata={
             "credential_id": credential_id,
             "provider": provider_label,
