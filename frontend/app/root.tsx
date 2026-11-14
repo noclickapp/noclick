@@ -13,6 +13,7 @@ import {
     tryGuardedReload,
 } from '~/lib/staleChunkReload';
 import { buildSeoMeta, DEFAULT_TITLE, DEFAULT_DESCRIPTION } from '~/lib/seo';
+import { APPLE_STARTUP_IMAGES } from '~/lib/appleStartupImages';
 
 import styles from './tailwind.css?url';
 import '~/styles/button-3d.css';
@@ -56,6 +57,7 @@ export const links: LinksFunction = () => [
         sizes: '180x180',
         href: '/apple-touch-icon.png',
     },
+    ...APPLE_STARTUP_IMAGES,
     { rel: 'manifest', href: '/site.webmanifest' },
 ];
 
