@@ -331,12 +331,23 @@ def _chat_key(chat_id: Any) -> str:
     return f"{local}@{'s.whatsapp.net' if server == 'c.us' else server}"
 
 
-# Which turn shows a chat its account typing, by its token: gone once a reply goes (``agent_turn_ended``).
-TYPING_RECORD_TTL_S = 5 * 3600
+# Which turn shows a chat its account typing, by its token: gone once a reply goes (``agent_turn_ended``), and once
+# WAHooks stops keeping the typing up (2 minutes after it began), when nothing is left to stop.
+TYPING_SHOWN_S = 120
 
 
 def _typing_key(connection_id: str, chat_id: str) -> str:
     return f"whatsapp:typing:{connection_id}:{_chat_key(chat_id)}"
+
+
+async def _typing_not_shown(key: str, token: str) -> None:
+    """The typing a turn asked for never started: its end has nothing to stop."""
+    client = redis_client.get_shared_redis()
+    try:
+        if client is not None and await client.get(key) == token.encode():
+            await client.delete(key)
+    except Exception:
+        logger.warning("[WhatsApp] clearing a chat's typing record failed", exc_info=True)
 
 
 async def _reply_sent(connection_id: str, chat_id: str) -> None:
@@ -2249,8 +2260,8 @@ class WhatsAppNode(WorkflowNode):
 
     @classmethod
     def agent_pickup(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """A message an agent takes into a turn is read and the account types in its chat at once, which WAHooks
-        counts toward the pause it keeps before the reply: a verified WAHooks message, never the owner's own "Message
+        """A message an agent takes into a turn has the account typing in its chat at once, which WAHooks counts
+        toward the pause it keeps before the reply: a verified WAHooks message, never the owner's own "Message
         yourself" chat, and in a group only one addressed to the account (mentioning it, or replying to its message),
         since the agent may well let the rest of a group's talk pass."""
         p = output.get("payload")
@@ -2271,24 +2282,33 @@ class WhatsAppNode(WorkflowNode):
 
     @classmethod
     async def agent_working(cls, picked: Dict[str, Any]) -> None:
+        """One typing call, never a read receipt (a reply marks the chat read, and a turn that stays quiet leaves it
+        unread), and none while the chat already shows typing: every NoClick call shares one WAHooks token's calls a
+        minute. A refused call (429 once that minute is used up) is given up, never retried: the reply then waits its
+        usual pause."""
+        from wahooks import WAHooksError
+
         api_key = os.environ.get("WAHOOKS_API_KEY")
         client = redis_client.get_shared_redis()
         if not api_key or client is None:
             return
         conn, chat = picked["connection_id"], picked["chat_id"]
+        key = _typing_key(conn, chat)
         try:
-            await client.set(_typing_key(conn, chat), picked["token"], ex=TYPING_RECORD_TTL_S)
+            if not await client.set(key, picked["token"], nx=True, ex=TYPING_SHOWN_S):
+                return  # a turn before this one has it typing, and its end or its reply takes it down
 
             def show():
                 from wahooks import WAHooks
 
                 with WAHooks(api_key=api_key) as wahooks:
-                    wahooks.mark_read(conn, chat)
                     wahooks.start_typing(conn, chat)
 
             await asyncio.to_thread(show)
-        except Exception:
-            logger.warning("[WhatsApp] showing the agent at work in a chat failed", exc_info=True)
+        except Exception as e:
+            level = logging.INFO if isinstance(e, WAHooksError) and e.status_code == 429 else logging.WARNING
+            logger.log(level, "[WhatsApp] typing in a chat while the agent works failed: %s", e)
+            await _typing_not_shown(key, picked["token"])
 
     @classmethod
     async def agent_turn_ended(cls, picked: Dict[str, Any]) -> None:

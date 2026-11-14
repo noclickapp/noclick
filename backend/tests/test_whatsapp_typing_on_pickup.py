@@ -1,4 +1,4 @@
-"""A WhatsApp chat sees its message read and the account typing as soon as an agent takes the message into a turn.
+"""A WhatsApp chat sees the account typing as soon as an agent takes its message into a turn.
 
 WAHooks counts typing already shown toward the pause it keeps before a send, so a reply that used to wait about 7s
 for its own seen/typing/pause goes at once (``nodes.agent.event_pickup``). A turn that ends without sending stops the
@@ -54,9 +54,6 @@ class _WAHooks:
 
     def __exit__(self, *_a):
         return False
-
-    def mark_read(self, conn, chat):
-        self.calls.append(("mark_read", conn, chat))
 
     def start_typing(self, conn, chat):
         self.calls.append(("start_typing", conn, chat))
@@ -136,12 +133,12 @@ def test_a_group_message_addressed_to_the_account_shows_typing_in_the_group(outp
 async def test_typing_starts_on_pickup_and_a_quiet_ending_stops_it(gateway):
     await event_pickup.picked_up(CONVERSATION, _event(_message()))
     await _shown()
-    assert gateway == [("mark_read", "conn-1", CHAT), ("start_typing", "conn-1", CHAT)]
+    assert gateway == [("start_typing", "conn-1", CHAT)]  # one call: a reply marks the chat read
 
     await event_pickup.turn_ended(CONVERSATION)
     assert gateway[-1] == ("stop_typing", "conn-1", CHAT)
     await event_pickup.turn_ended(CONVERSATION)  # ended once: nothing left to stop
-    assert len(gateway) == 3
+    assert len(gateway) == 2
 
 
 async def test_a_reply_ends_the_typing_itself_so_the_turns_end_stops_nothing(gateway):
@@ -149,7 +146,7 @@ async def test_a_reply_ends_the_typing_itself_so_the_turns_end_stops_nothing(gat
     await _shown()
     await _send(WhatsAppSendTextConfig(to=CHAT, body="On it"))
     await event_pickup.turn_ended(CONVERSATION)
-    assert [c[0] for c in gateway] == ["mark_read", "start_typing", "send_message"]
+    assert [c[0] for c in gateway] == ["start_typing", "send_message"]
 
 
 async def test_a_reaction_alone_leaves_the_typing_for_the_turns_end_to_stop(gateway):
@@ -157,25 +154,42 @@ async def test_a_reaction_alone_leaves_the_typing_for_the_turns_end_to_stop(gate
     await _shown()
     await _send(WhatsAppSendReactionConfig(to=CHAT, message_id=f"false_{CHAT}_ABC", emoji="👍"))
     await event_pickup.turn_ended(CONVERSATION)
-    assert [c[0] for c in gateway] == ["mark_read", "start_typing", "react", "stop_typing"]
+    assert [c[0] for c in gateway] == ["start_typing", "react", "stop_typing"]
 
 
 async def test_the_turns_end_waits_for_the_pickup_it_would_otherwise_overtake(gateway):
     await event_pickup.picked_up(CONVERSATION, _event(_message()))
     await event_pickup.turn_ended(CONVERSATION)  # no _shown(): the typing request may still be in flight
-    assert [c[0] for c in gateway] == ["mark_read", "start_typing", "stop_typing"]
+    assert [c[0] for c in gateway] == ["start_typing", "stop_typing"]
 
 
-async def test_a_gateway_failure_never_reaches_the_turn(gateway, monkeypatch):
-    def down(*_a, **_kw):
-        raise ConnectionError("gateway unreachable")
+async def test_typing_the_gateway_refused_is_given_up_and_never_stopped(gateway, monkeypatch):
+    """Every NoClick call shares one WAHooks token's calls a minute: a 429 is given up at once, never retried, and
+    leaves the turn's end nothing to stop."""
+    from wahooks import WAHooksError
 
-    monkeypatch.setattr(_WAHooks, "start_typing", down)
-    monkeypatch.setattr(_WAHooks, "stop_typing", down)
+    def refused(*_a, **_kw):
+        _WAHooks.calls.append(("start_typing", "refused"))
+        raise WAHooksError("Too many requests", 429)
+
+    monkeypatch.setattr(_WAHooks, "start_typing", refused)
     await event_pickup.picked_up(CONVERSATION, _event(_message()))
     await _shown()
     await event_pickup.turn_ended(CONVERSATION)
-    assert gateway == [("mark_read", "conn-1", CHAT)]
+    assert gateway == [("start_typing", "refused")]
+
+
+async def test_a_chat_already_typing_is_asked_once(gateway):
+    """A second turn picking up the same chat while the first still has it typing calls nothing; the first's end
+    takes it down."""
+    await event_pickup.picked_up(CONVERSATION, _event(_message()))
+    await _shown()
+    await event_pickup.picked_up("ck:wf-1:other:12025550101@c.us", _event(_message()))
+    await _shown()
+    assert gateway == [("start_typing", "conn-1", CHAT)]
+    await event_pickup.turn_ended("ck:wf-1:other:12025550101@c.us")
+    await event_pickup.turn_ended(CONVERSATION)
+    assert gateway == [("start_typing", "conn-1", CHAT), ("stop_typing", "conn-1", CHAT)]
 
 
 # ── where the agent node shows and ends it ──────────────────────────────────

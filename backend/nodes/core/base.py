@@ -1080,7 +1080,7 @@ class WorkflowNode(ABC):
     @classmethod
     def agent_pickup(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """When an agent takes this node's fired-trigger OUTPUT into a turn, what the event's channel is shown while
-        it works (a chat: read, and typing), as the JSON-safe record ``agent_working`` shows and ``agent_turn_ended``
+        it works (a chat: typing), as the JSON-safe record ``agent_working`` shows and ``agent_turn_ended``
         takes down (``nodes.agent.event_pickup``). None shows nothing, the default. Pure: decided from the delivery
         alone, so claim a channel only for one whose signature was verified."""
         return None

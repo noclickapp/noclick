@@ -1,8 +1,8 @@
 """What an event's channel sees while an agent works it.
 
-A WhatsApp chat sees its message read and the account typing as soon as an agent takes the message into a turn,
-not only once the reply is sent; the gateway counts typing already shown toward the pause it keeps before a send,
-so the reply then goes at once. The trigger's node class decides what to show (``WorkflowNode.agent_pickup``) and
+A WhatsApp chat sees the account typing as soon as an agent takes its message into a turn, not only once the reply
+is sent; the gateway counts typing already shown toward the pause it keeps before a send, so the reply then goes at
+once. The trigger's node class decides what to show (``WorkflowNode.agent_pickup``) and
 shows it (``agent_working``); the turn's end takes it down unless the reply did (``agent_turn_ended``).
 
 A turn ends where its harness answers: in the agent node for one it runs itself, in the CLI turn callback for one
