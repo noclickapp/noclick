@@ -2,9 +2,9 @@
 // Kept apart from the model so the sidebar can list them without loading it.
 // An automation's published interface is one of its apps, and an automation's
 // tables are a database: there is one kind of each.
-import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, KeyRound, Mail, Phone, Server, type LucideIcon } from 'lucide-react';
+import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, KeyRound, Mail, Phone, Server, UsersRound, type LucideIcon } from 'lucide-react';
 
-export type KindId = 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'secrets' | 'repos' | 'files';
+export type KindId = 'agents' | 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'secrets' | 'repos' | 'files';
 
 export interface KindDef {
     id: KindId;
@@ -29,6 +29,16 @@ export interface KindDef {
 }
 
 export const KINDS: KindDef[] = [
+    {
+        id: 'agents',
+        label: 'Agents',
+        icon: UsersRound,
+        empty: 'Every agent your account owns, wherever it works: what each is doing, the spaces it works in, and what it has cost this month.',
+        noun: ['agent', 'agents'],
+        billed: 'use',
+        platform: true,
+        keywords: 'agent agents bots assistants ai workers spend costs',
+    },
     {
         id: 'numbers',
         label: 'Numbers',

@@ -1,7 +1,7 @@
 // What the Resources page lists: every kind the account can own, the items of
 // each, and the payload an item's page needs. Numbers, files and tables come
 // from the dashboard overview (numbers are phone_number credentials; files and
-// tables are workflow resources, workspaces agent volumes). Domains, email
+// tables are workflow resources, workspaces agent volumes). Agents, domains, email
 // addresses (inboxes), apps, databases, buckets and repos are the platform's, read by the
 // registered platform (platform.tsx) for the signed-in account, its platform users'
 // (`owner`) beside its own: an automation's
@@ -77,6 +77,10 @@ export interface ResourceItem {
     pending?: string;
     /** Its own price; null when it costs nothing (a domain registered elsewhere). */
     price?: ItemPrice | null;
+    /** Where it works, beside its line (an agent: the spaces it works in, or your account where it's in none). */
+    where?: string;
+    /** Where opening it goes when its page is elsewhere (an agent's, in Work), in place of a page here. */
+    open?: () => void;
     credential?: CredentialEntry;
     file?: FileRef;
     /** A database of an automation's tables: those tables. */
@@ -106,7 +110,7 @@ export function useResourceItems() {
     const platform = usePlatformResources();
 
     const items = useMemo(() => {
-        const byKind: Record<KindId, ResourceItem[]> = { numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], skills: [], memories: [], machines: [], secrets: [], repos: [], files: [] };
+        const byKind: Record<KindId, ResourceItem[]> = { agents: [], numbers: [], domains: [], email: [], apps: [], databases: [], storage: [], skills: [], memories: [], machines: [], secrets: [], repos: [], files: [] };
         for (const c of overview?.credentials ?? []) {
             if (c.credentialType !== 'phone_number') continue;
             const dropped = c.health === 'disconnected' || c.health === 'revoked';

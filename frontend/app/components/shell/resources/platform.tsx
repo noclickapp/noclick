@@ -86,6 +86,8 @@ export interface PlatformResources {
     Create?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void }>>>;
     /** A live figure a platform item's row shows beside its price (a website's requests this week), or nothing. */
     RowFigure?: ComponentType<{ item: ResourceItem }>;
+    /** A kind whose rows lead with the platform's own mark in place of the kind's icon (an agent's face and ring). */
+    Lead?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
     /** How `item`'s page removes it, or null where it offers nothing. */
     removal(item: ResourceItem): Removal | null;
     /** What's in the trash, by kind (only kinds whose deletion goes there). */

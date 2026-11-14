@@ -32,6 +32,8 @@ import { ResourceUserIcon } from './resources/ui';
 import { TILE_GRID, Tile, TileSkeletons } from './Tile';
 
 function Lead({ item }: { item: ResourceItem }) {
+    const PlatformLead = usePlatformResources()?.Lead?.[item.kind];
+    if (PlatformLead) return <PlatformLead item={item} />;
     if (item.file && item.kind === 'files') return <FileThumb file={item.file.entry} size={36} />;
     const tile = 'grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-foreground/[0.05]';
     if (item.workspace) {
@@ -86,6 +88,7 @@ function Row({ item, now, price, onOpen }: { item: ResourceItem; now: string; pr
             )}
             {origin && <span className="hidden min-w-0 max-w-[220px] shrink-0 truncate text-[12.5px] text-muted-foreground md:block">Built in {origin.name}</span>}
             {item.owner && <span className="hidden min-w-0 max-w-[220px] shrink-0 truncate text-[12.5px] text-muted-foreground md:block">For {item.owner.name}</span>}
+            {item.where && <span className="hidden min-w-0 max-w-[220px] shrink-0 truncate text-[12.5px] text-muted-foreground md:block">{item.where}</span>}
             {Figure && <Figure item={item} />}
             {price !== undefined && (
                 <span className="min-w-[72px] shrink-0 text-right text-[13px] tabular-nums text-foreground/85">
@@ -236,7 +239,7 @@ export function ResourcesView() {
                     context: k.label,
                     icon: k.icon,
                     about: item.subtitle,
-                    run: () => navigateToTab('resources', resourceAddress(k.id, { resource: item.id })),
+                    run: item.open ?? (() => navigateToTab('resources', resourceAddress(k.id, { resource: item.id }))),
                 }))
             )
         );
@@ -309,7 +312,7 @@ export function ResourcesView() {
         );
     }
 
-    const open = (item: ResourceItem) => go(item.kind, item.id, true);
+    const open = (item: ResourceItem) => (item.open ? item.open() : go(item.kind, item.id, true));
 
     if (activeKind === 'numbers' && billing && params.get('new') === '1') {
         return (

@@ -34,6 +34,7 @@ import asyncpg
 from repositories.organization import IS_ORG_MEMBER_SQL, PRIMARY_ORG_SQL
 from repositories.users import user_name_sql
 from utils.runtime_keys import graph_without_runtime_keys
+from utils.system_workflows import listed_sql
 
 
 # ─── Dataclass returns ─────────────────────────────────────────────────────
@@ -835,7 +836,7 @@ class ShareRepo:
                 ))
             )
             AND (
-                (rs.resource_type = 'workflow' AND w.owner_id != $1)
+                (rs.resource_type = 'workflow' AND w.owner_id != $1 AND {listed_sql()})
                 OR
                 (rs.resource_type = 'database' AND t.owner_id != $1)
                 OR

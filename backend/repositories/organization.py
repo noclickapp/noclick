@@ -28,6 +28,7 @@ from typing import Any, Callable, Dict, List, Optional
 from uuid import UUID
 
 from repositories.users import user_label_sql
+from utils.system_workflows import listed_sql
 
 
 # ── Column allowlists for dynamic UPDATE statements ─────────────────────────
@@ -761,12 +762,12 @@ class OrgRepo:
         self, conn, folder_id
     ) -> Optional[Dict[str, Any]]:
         """Single-folder read plus its workflow count — for ``get_folder``."""
-        row = await conn.fetchrow("""
+        row = await conn.fetchrow(f"""
             SELECT f.id, f.name, f.description, f.parent_folder_id,
                    f.path, f.depth, f.created_at, f.updated_at, f.owner_id,
                    COUNT(w.id) as workflow_count
             FROM workflow_folders f
-            LEFT JOIN workflows w ON w.folder_id = f.id
+            LEFT JOIN workflows w ON w.folder_id = f.id AND {listed_sql()}
             WHERE f.id = $1
             GROUP BY f.id, f.name, f.description, f.parent_folder_id,
                      f.path, f.depth, f.created_at, f.updated_at, f.owner_id
@@ -822,7 +823,7 @@ class OrgRepo:
                owner_info.display_name as owner_display_name,
                COUNT(w.id) as workflow_count
         FROM workflow_folders f
-        LEFT JOIN workflows w ON w.folder_id = f.id
+        LEFT JOIN workflows w ON w.folder_id = f.id AND {listed}
         LEFT JOIN LATERAL (
             SELECT """ + user_label_sql() + """ as display_name
             FROM auth.users WHERE id = f.owner_id
@@ -841,7 +842,7 @@ class OrgRepo:
                owner_info.display_name as owner_display_name,
                COUNT(w.id) as workflow_count
         FROM workflow_folders f
-        LEFT JOIN workflows w ON w.folder_id = f.id
+        LEFT JOIN workflows w ON w.folder_id = f.id AND {listed}
         LEFT JOIN LATERAL (
             SELECT """ + user_label_sql() + """ as display_name
             FROM auth.users WHERE id = f.owner_id
@@ -903,7 +904,7 @@ class OrgRepo:
                 parent_condition = "AND f.parent_folder_id IS NULL"
                 params = [org_id]
             sql = self._LIST_FOLDERS_ORG_SQL_TEMPLATE.format(
-                parent_condition=parent_condition
+                parent_condition=parent_condition, listed=listed_sql()
             )
         else:
             if parent_folder_id:
@@ -913,7 +914,7 @@ class OrgRepo:
                 parent_condition = "AND f.parent_folder_id IS NULL"
                 params = [user_id]
             sql = self._LIST_FOLDERS_PERSONAL_SQL_TEMPLATE.format(
-                parent_condition=parent_condition
+                parent_condition=parent_condition, listed=listed_sql()
             )
         rows = await conn.fetch(sql, *params)
         return [dict(r) for r in rows]
@@ -923,7 +924,7 @@ class OrgRepo:
                f.path, f.depth, f.created_at, f.updated_at, f.owner_id,
                COUNT(w.id) as workflow_count
         FROM workflow_folders f
-        LEFT JOIN workflows w ON w.folder_id = f.id
+        LEFT JOIN workflows w ON w.folder_id = f.id AND {listed}
         WHERE f.organization_id = $1
         GROUP BY f.id, f.name, f.description, f.parent_folder_id,
                  f.path, f.depth, f.created_at, f.updated_at, f.owner_id
@@ -935,7 +936,7 @@ class OrgRepo:
                f.path, f.depth, f.created_at, f.updated_at, f.owner_id,
                COUNT(w.id) as workflow_count
         FROM workflow_folders f
-        LEFT JOIN workflows w ON w.folder_id = f.id
+        LEFT JOIN workflows w ON w.folder_id = f.id AND {listed}
         WHERE (
             (f.owner_id = $1 AND f.organization_id IS NULL)
             OR EXISTS (
@@ -968,9 +969,9 @@ class OrgRepo:
         """All folders the user can see in current context, ordered by depth
         then name. Handler assembles into a tree by parent_folder_id."""
         if org_id:
-            rows = await conn.fetch(self._FOLDER_TREE_ORG_SQL, org_id)
+            rows = await conn.fetch(self._FOLDER_TREE_ORG_SQL.format(listed=listed_sql()), org_id)
         else:
-            rows = await conn.fetch(self._FOLDER_TREE_PERSONAL_SQL, user_id)
+            rows = await conn.fetch(self._FOLDER_TREE_PERSONAL_SQL.format(listed=listed_sql()), user_id)
         return [dict(r) for r in rows]
 
     async def get_folder_path(

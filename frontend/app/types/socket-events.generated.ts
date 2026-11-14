@@ -13826,6 +13826,17 @@ export interface WordPressOAuthValidateResponse {
   message?: string | null;
 }
 /**
+ * The agent a workflow is the own flow of (``utils.capabilities.WORKFLOW_AGENT``).
+ */
+export interface WorkflowAgentRef {
+  id: string;
+  name: string;
+  /**
+   * The viewer's account's own agent, which the app opens in its place
+   */
+  yours: boolean;
+}
+/**
  * Response for workflow:checkpoint:create request
  */
 export interface WorkflowCheckpointCreateResponse {
@@ -14105,6 +14116,10 @@ export interface WorkflowExecutionListResponse {
 export interface WorkflowGetResponse {
   workflow: WorkflowInfo1;
   readiness?: WorkflowReadinessReport | null;
+  /**
+   * The agent this workflow is the own flow of
+   */
+  agent?: WorkflowAgentRef | null;
   /**
    * Per-node last-run status keyed by node_id
    */

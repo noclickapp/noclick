@@ -70,7 +70,8 @@ export function useResourceCosts(items: Record<KindId, ResourceItem[]>): Resourc
             if (!kind.billed) continue;
             for (const item of items[kind.id]) {
                 const price = item.price ? monthlyCredits(item.price) : item.credential ? numberPrices.get(item.id) : undefined;
-                if (price) monthly.set(item.id, price);
+                // What its use has cost so far shows at nothing too: an agent that spent nothing says so.
+                if (price || item.price?.per === 'so-far') monthly.set(item.id, price ?? 0);
             }
             const spent = spentThisMonth?.[kind.id];
             const total = spent !== undefined ? usdToCredits(spent) : items[kind.id].reduce((sum, item) => sum + (monthly.get(item.id) ?? 0), 0);

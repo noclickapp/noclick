@@ -73,6 +73,7 @@ from utils.workflow_resource_manager import (
 from utils.webhook_manager import WebhookManager
 from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.system_workflows import client_settings, refusal
+from utils.capabilities import WORKFLOW_AGENT, capability
 from utils.relay_tokens import mint_user_room_token
 from utils.activity import signal_activity
 from utils.workflow_delta import compute_workflow_delta
@@ -729,6 +730,9 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                     settings=row.get('settings') or {},
                     graph_version=row.get('graph_version'),
                 )
+                # An agent's own flow: the app opens the agent in its place.
+                agent_of = capability(WORKFLOW_AGENT)
+                agent = await agent_of(conn, request.workflow_id, user_id) if agent_of else None
 
             # Send response — node_statuses rides along so the chips render in
             # the same paint as the graph (no second round-trip / pop-in).
@@ -736,7 +740,7 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
             if request.include_readiness:
                 from utils.workflow_readiness import readiness_report
                 readiness = await readiness_report(pool, request.workflow_id, workflow.workflow_data)
-            response = WorkflowGetResponse(workflow=workflow, node_statuses=node_statuses, readiness=readiness)
+            response = WorkflowGetResponse(workflow=workflow, node_statuses=node_statuses, readiness=readiness, agent=agent)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=response.model_dump()

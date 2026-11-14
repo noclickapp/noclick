@@ -49,7 +49,7 @@ PLACEHOLDER_WORKFLOW_NAMES = ("", "Untitled", "Untitled Workflow", NEW_WORKFLOW_
 # every user-facing history/latest/count read hides it with the predicate.
 from repositories.run_visibility import DELIVERED_STATUS, USER_VISIBLE_RUN_SQL  # noqa: F401 — re-exported
 from repositories.users import user_label_sql
-from utils.system_workflows import SYSTEM_KEY, not_system_sql
+from utils.system_workflows import SYSTEM_KEY, listed_sql, not_system_sql
 
 
 # ── Column allowlists ──────────────────────────────────────────────────────
@@ -663,12 +663,13 @@ class WorkflowRepo:
     async def list_trash(
         self, conn, user_id
     ) -> List[Dict[str, Any]]:
-        """All soft-deleted workflows owned by ``user_id``."""
-        rows = await conn.fetch("""
-            SELECT id, name, description, deleted_at
-            FROM workflows
-            WHERE owner_id = $1 AND deleted_at IS NOT NULL
-            ORDER BY deleted_at DESC
+        """All soft-deleted workflows owned by ``user_id`` that are automations (``listed_sql``): an agent's own
+        flow leaves the trash with its agent."""
+        rows = await conn.fetch(f"""
+            SELECT w.id, w.name, w.description, w.deleted_at
+            FROM workflows w
+            WHERE w.owner_id = $1 AND w.deleted_at IS NOT NULL AND {listed_sql()}
+            ORDER BY w.deleted_at DESC
         """, user_id)
         return [dict(r) for r in rows]
 
@@ -739,7 +740,7 @@ class WorkflowRepo:
             WHERE ((w.organization_id = $1 AND w.owner_id = $2)
                OR rs.id IS NOT NULL
                OR (rs_folder_org.permission IS NOT NULL AND rs.id IS NULL))
-               AND w.deleted_at IS NULL AND {not_system_sql()}
+               AND w.deleted_at IS NULL AND {listed_sql()}
                {folder_condition}
             ORDER BY w.updated_at DESC
         """, *params)
@@ -790,7 +791,7 @@ class WorkflowRepo:
                 OR
                 (rs_folder_share.permission IS NOT NULL AND w.owner_id != $1 AND rs_user.id IS NULL {folder_condition})
             )
-            AND w.deleted_at IS NULL AND {not_system_sql()}
+            AND w.deleted_at IS NULL AND {listed_sql()}
             ORDER BY w.updated_at DESC
         """, *params)
         return [dict(r) for r in rows]
@@ -806,7 +807,7 @@ class WorkflowRepo:
         if organization_id is not None:
             conditions = [
                 "((w.organization_id = $1 AND w.owner_id = $2) OR rs.id IS NOT NULL)",
-                "w.deleted_at IS NULL", not_system_sql(),
+                "w.deleted_at IS NULL", listed_sql(),
             ]
             params = [organization_id, user_id]
             idx = 3
@@ -819,7 +820,7 @@ class WorkflowRepo:
         else:
             conditions = [
                 "(w.owner_id = $1 AND w.organization_id IS NULL)",
-                "w.deleted_at IS NULL", not_system_sql(),
+                "w.deleted_at IS NULL", listed_sql(),
             ]
             params = [user_id]
             idx = 2
@@ -1500,8 +1501,8 @@ class WorkflowRepo:
         self, conn, organization_id: UUID, user_id: UUID
     ) -> List[Dict[str, Any]]:
         rows = await conn.fetch(
-            """SELECT f.id, f.name, f.parent_folder_id,
-                      (SELECT count(*) FROM workflows w WHERE w.folder_id = f.id AND w.deleted_at IS NULL) as workflow_count
+            f"""SELECT f.id, f.name, f.parent_folder_id,
+                      (SELECT count(*) FROM workflows w WHERE w.folder_id = f.id AND w.deleted_at IS NULL AND {listed_sql()}) as workflow_count
                FROM workflow_folders f
                WHERE f.organization_id = $1 AND f.owner_id = $2
                ORDER BY f.depth, f.name""",
@@ -1513,8 +1514,8 @@ class WorkflowRepo:
         self, conn, user_id: UUID
     ) -> List[Dict[str, Any]]:
         rows = await conn.fetch(
-            """SELECT f.id, f.name, f.parent_folder_id,
-                      (SELECT count(*) FROM workflows w WHERE w.folder_id = f.id AND w.deleted_at IS NULL) as workflow_count
+            f"""SELECT f.id, f.name, f.parent_folder_id,
+                      (SELECT count(*) FROM workflows w WHERE w.folder_id = f.id AND w.deleted_at IS NULL AND {listed_sql()}) as workflow_count
                FROM workflow_folders f
                WHERE f.owner_id = $1 AND f.organization_id IS NULL
                ORDER BY f.depth, f.name""",

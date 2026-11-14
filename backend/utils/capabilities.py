@@ -115,6 +115,11 @@ ACTIVITY_SIGNAL = "activity.signal"
 # one a workflow has no public endpoints to describe.
 PUBLIC_ENDPOINTS = "workflow.public_endpoints"
 
+# The agent a workflow is the own flow of, where agents run on workflows: async (conn, workflow_id, user_id) ->
+# {"id", "name", "yours"} or None (``yours``: the viewer's account's own agent, which the app can open). The app opens
+# that agent where it would open the workflow; without one, no workflow is an agent's.
+WORKFLOW_AGENT = "workflow.agent"
+
 # A workflow run's CPU on this process, once the run ends (utils/run_cpu.py): async (*, execution_id, user_id,
 # organization_id, workflow_id, cpu_ms) -> None, off the run's return. Hosted, it's what the run is charged for its
 # own compute; without one, the CPU is only on the run's span.
