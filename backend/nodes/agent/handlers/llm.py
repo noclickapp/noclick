@@ -238,6 +238,9 @@ async def execute_llm_model(
         if agent.turn_ended_by:
             # Which limit ended the turn (``guards``): the platform continues a turn its step limit ended.
             output['ended_by'] = agent.turn_ended_by
+        if agent.turn_carries_on:
+            # Its work goes straight on in a turn of its own (``guards.CARRIES_ON``), whose reply is the job's.
+            output['carries_on'] = True
         if agent.turn_handed_on:
             # A tool's result handed its work on (``guards.ENDS_TURN``): a wake-up waits on it.
             output['handed_on'] = True

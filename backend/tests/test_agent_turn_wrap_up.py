@@ -69,12 +69,13 @@ async def test_a_run_a_restart_handed_over_meets_its_limits_where_the_turn_stood
     assert (await _created_with(monkeypatch, {}))["so_far"] is None
 
 
-async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False):
-    """The node's output for a turn the engine left as ``ended_by``/``handed_on``, having said ``said``."""
+async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False, carries_on=False):
+    """The node's output for a turn the engine left as ``ended_by``/``handed_on``/``carries_on``, having said
+    ``said``."""
     reply = [""]
 
     class Ended:
-        turn_ended_by, turn_handed_on, turn_only_read = ended_by, handed_on, None
+        turn_ended_by, turn_handed_on, turn_carries_on, turn_only_read = ended_by, handed_on, carries_on, None
         cleanup = AsyncMock()
 
         async def __call__(self, message):
@@ -89,6 +90,13 @@ async def test_the_output_says_which_limit_ended_the_turn(monkeypatch):
     output = await _output_of(monkeypatch, "Did A and B; C is left.\n\nCarrying on in a moment.", ended_by="steps")
     assert output["status"] == "completed" and output["ended_by"] == "steps"
     assert output["response"].endswith("Carrying on in a moment.") and "handed_on" not in output
+    assert "carries_on" not in output
+
+
+async def test_the_output_says_the_turns_work_carries_on_by_itself(monkeypatch):
+    """Its node then leaves the reply to the turn carrying the work on (``AgentNode._persist_llm_assistant_turn``)."""
+    output = await _output_of(monkeypatch, "", ended_by="steps", carries_on=True)
+    assert output["ended_by"] == "steps" and output["carries_on"] is True
 
 
 async def test_the_output_says_a_tools_result_handed_the_turns_work_on(monkeypatch):

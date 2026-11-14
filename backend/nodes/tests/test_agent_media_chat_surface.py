@@ -224,6 +224,32 @@ async def test_llm_assistant_turn_persists_completed_with_images():
 
 
 @pytest.mark.asyncio
+async def test_a_silent_turn_whose_work_carries_on_leaves_its_reply_to_the_turn_carrying_it():
+    """A turn a limit ended whose work goes straight on in a turn of its own (``carries_on``) and said nothing writes
+    no reply: the turn carrying it on answers for the job, its steps included. One that said something keeps it, and
+    a tool-only turn that doesn't carry on keeps its reply (``test_reply_that_only_acted_keeps_its_turn``)."""
+    node = SimpleNamespace(
+        _media_urls_from_output=AgentNode._media_urls_from_output,
+        _persist_interface_chat_event=AsyncMock(),
+    )
+    carried = {"status": "completed", "response": "", "ended_by": "steps", "carries_on": True}
+    await AgentNode._persist_llm_assistant_turn(node, carried, conversation_id="c", model="m", raw_text="",
+                                                agent_errored=False)
+    node._persist_interface_chat_event.assert_not_awaited()
+
+    await AgentNode._persist_llm_assistant_turn(node, carried, conversation_id="c", model="m",
+                                                raw_text="Checking the deploy first.", agent_errored=False)
+    kwargs = node._persist_interface_chat_event.await_args.kwargs
+    assert kwargs["message"] == "Checking the deploy first." and kwargs["ended_by"] == "steps"
+
+    node._persist_interface_chat_event.reset_mock()
+    ended = {"status": "completed", "response": "", "ended_by": "steps"}
+    await AgentNode._persist_llm_assistant_turn(node, ended, conversation_id="c", model="m", raw_text="",
+                                                agent_errored=False)
+    assert node._persist_interface_chat_event.await_args.kwargs["message"] == ""
+
+
+@pytest.mark.asyncio
 async def test_llm_assistant_turn_skipped_when_agent_errored():
     """A real agent error already persisted a cancelled bubble via the
     AgentStateEvent branch — don't double-persist a normal turn."""
