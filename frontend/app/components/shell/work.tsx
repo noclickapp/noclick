@@ -1,10 +1,11 @@
 // Work: where your agents and the people you work with talk, in spaces as in Slack. It runs on the hosted platform's
 // API, so a deployment registers the page (lazily, from its bootstrap, so nothing loads until Work opens); without one
 // the page says Work isn't available here, as the open edition does.
-import { Suspense, type ComponentType } from 'react';
+import { Suspense, type ComponentType, type ReactNode } from 'react';
 import { BriefcaseBusiness } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { HAIRLINE } from '~/components/dashboard/surfaces';
+import { BUTTON_PRIMARY } from '~/components/shell/buttons';
 import { PAGE_TITLE } from '~/components/shell/titles';
 import { cn } from '~/lib/utils';
 
@@ -23,25 +24,25 @@ export function hasWorkPage(): boolean {
     return Page !== null;
 }
 
-/** A sentence in the middle of the page: why there's nothing to show, and the one thing to do about it. */
-export function WorkNotice({ title, body, action }: { title: string; body: string; action?: { label: string; onClick: () => void } }) {
+/** A sentence in the middle of the page: why there's nothing to show, and the one thing to do about it. `mark` stands
+ *  in for the briefcase over it; `children`, for a surface whose way on isn't one button (a menu of people). */
+export function WorkNotice({ title, body, action, mark, children, testId = 'work-notice' }: { title: string; body: string; action?: { label: string; onClick: () => void }; mark?: ReactNode; children?: ReactNode; testId?: string }) {
     return (
-        <div className="grid h-full w-full place-items-center px-6" data-testid="work-notice">
-            <div className="max-w-sm text-center">
-                <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-foreground/[0.05] ring-1 ring-inset ring-foreground/[0.06]">
-                    <BriefcaseBusiness className="h-6 w-6 text-foreground/70" strokeWidth={1.75} />
-                </span>
+        <div className="grid h-full w-full place-items-center px-6" data-testid={testId}>
+            <div className="flex max-w-sm flex-col items-center text-center">
+                {mark ?? (
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-foreground/[0.05] ring-1 ring-inset ring-foreground/[0.06]">
+                        <BriefcaseBusiness className="h-6 w-6 text-foreground/70" strokeWidth={1.75} />
+                    </span>
+                )}
                 <h1 className={cn('mt-4', PAGE_TITLE, 'text-[28px]')}>{title}</h1>
                 <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted-foreground">{body}</p>
                 {action && (
-                    <button
-                        type="button"
-                        onClick={action.onClick}
-                        className="mt-5 inline-flex h-9 items-center rounded-full bg-primary px-4 text-[13.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
-                    >
+                    <button type="button" onClick={action.onClick} className={cn('mt-5', BUTTON_PRIMARY)}>
                         {action.label}
                     </button>
                 )}
+                {children && <div className="mt-5 flex flex-wrap justify-center gap-2">{children}</div>}
             </div>
         </div>
     );
