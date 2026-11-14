@@ -1037,8 +1037,10 @@ class WorkflowNode(ABC):
         The default unwraps the delivery envelope, prunes empty values and
         ``_``-prefixed plumbing (``_webhook`` carries the inbound HTTP headers),
         and bounds the JSON — see ``nodes.core.agent_events``. An override may
-        also return ``"title"``, a short line the chat surface uses as the
-        conversation's name (else the text's first line), and ``"media"``, a
+        also return ``"title"``, a short line naming who or what sent the event,
+        which is also the conversation's name (else the text's first line)
+        unless ``"conversation_title"`` names the conversation apart (a group
+        chat's, whose events each name their writer), and ``"media"``, a
         list of ``agent_events.media_entry`` dicts for what the message
         carried besides text (a voice note, a photo, an attachment) — the
         agent digests those into the turn (``nodes.core.media_digest``:

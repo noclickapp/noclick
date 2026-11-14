@@ -293,6 +293,7 @@ def delivered_event(agent_node_id: str, nodes: Any) -> Optional[Dict[str, Any]]:
         "text": event.get("text") or "",
         "conversation_key": delivered.get("conversation_key") or event.get("conversation_key"),
         "title": event.get("title"),
+        "conversation_title": event.get("conversation_title"),
         "media": event.get("media") or [],
         "output": delivered["output"],
     }

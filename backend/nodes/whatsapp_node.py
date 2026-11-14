@@ -1870,6 +1870,8 @@ WAHOOKS_WEBHOOK_EVENTS = ["message", "session.status"]
 # every other message again), so a trigger subscribes to it only to hear its owner's own chat.
 SELF_CHAT_EVENT = "message.any"
 _MESSAGE_EVENTS = ("message", SELF_CHAT_EVENT)
+# What a group's conversation is called: a delivery names who wrote, never the group.
+GROUP_CHAT_TITLE = "WhatsApp group"
 
 
 def wahooks_webhook_events(config: Optional[Dict[str, Any]]) -> List[str]:
@@ -2150,11 +2152,15 @@ class WhatsAppNode(WorkflowNode):
                 f"To reply, call a send tool with to={chat_id} "
                 f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}{id_note}"
             )
-            title = push_name or chat_id.split("@", 1)[0]
+            group = chat_id.endswith("@g.us")
+            # Who wrote it, by number when WhatsApp gives no name. A group's conversation is the group's, never its
+            # first writer's; the delivery doesn't carry the group's name.
+            title = push_name or cls._number_label(sender_id, sender_phone)
             # Never a group's: there the reply reaches everyone in it.
-            number = (None if owner or participant or chat_id.endswith("@g.us") or not cls._verified(output)
+            number = (None if owner or participant or group or not cls._verified(output)
                       else cls._sender_number(output))
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries,
+                    **({"conversation_title": GROUP_CHAT_TITLE} if group else {}),
                     **({"from_owner": True} if owner else {}), **({"from_number": number} if number else {})}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
@@ -2196,6 +2202,15 @@ class WhatsAppNode(WorkflowNode):
             except (KeyError, IndexError, TypeError, AttributeError):
                 return None
         return None
+
+    @staticmethod
+    def _number_label(jid: str, phone: str) -> str:
+        """A writer named by their number: WAHooks' reading of it, else their chat id's when it is a phone's (a @lid
+        hides the number)."""
+        if phone:
+            return f"+{phone}"
+        local, _, server = jid.partition("@")
+        return f"+{local.split(':', 1)[0]}" if server in ("c.us", "s.whatsapp.net") else local
 
     @staticmethod
     def _account_part(jid: Any) -> str:
