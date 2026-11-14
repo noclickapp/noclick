@@ -364,8 +364,10 @@ export function ComposerAddMenu({
                     <Plus className="h-5 w-5" strokeWidth={1.75} />
                 </button>
             </PopoverTrigger>
-            {/* After the trigger: Radix keeps the anchor that registered last, and this one is the box. */}
-            <PopoverAnchor virtualRef={anchorRef as RefObject<HTMLElement>} />
+            {/* After the trigger: Radix keeps the anchor that registered last, and this one is the box. Keyed on open
+                so it registers again each time: Radix's popper registers a virtual anchor only when its element
+                changes, so StrictMode's second mount left the trigger's discarded first node (0×0, top-left) as anchor. */}
+            <PopoverAnchor key={open ? 'open' : 'closed'} virtualRef={anchorRef as RefObject<HTMLElement>} />
             <PopoverContent
                 side={side}
                 align="start"
