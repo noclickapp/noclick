@@ -64,6 +64,21 @@ class WhatsAppReceiveMessageConfig(BaseModel):
             "x-enum-searchable": True,
         },
     )
+    include_self_chat: str = Field(
+        "false",
+        title="Trigger on Your Own Chat",
+        description=(
+            'Also trigger on what you write in your own "Message yourself" chat on the linked phone, so you can '
+            "talk to an agent from WhatsApp. What you send in any other chat, and what a NoClick node sends, "
+            "never triggers. Heard whether or not Only These Chats lists it."
+        ),
+        json_schema_extra={
+            "enum": ["false", "true"],
+            "enumNames": ["No", 'Yes (my "Message yourself" chat)'],
+            "x-enum-searchable": True,
+            "x-supported-credential-types": ["whatsapp_qr"],
+        },
+    )
     chat_ids: List[str] = Field(
         default_factory=list,
         title="Only These Chats",

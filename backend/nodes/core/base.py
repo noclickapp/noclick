@@ -1036,7 +1036,10 @@ class WorkflowNode(ABC):
         carried besides text (a voice note, a photo, an attachment) — the
         agent digests those into the turn (``nodes.core.media_digest``:
         audio is transcribed, documents extracted) so a media-only message
-        is never an opaque placeholder.
+        is never an opaque placeholder. ``"from_owner": True`` says the event
+        is the connected account's owner talking to the agent (WhatsApp's
+        "Message yourself" chat), which a platform may treat as their own turn
+        rather than an outsider's.
         """
         from nodes.core.agent_events import default_agent_event
 

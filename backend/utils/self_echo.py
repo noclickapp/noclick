@@ -15,7 +15,10 @@ workflows directly, not via a chat.
 
 Failure posture: recording must never fail the user's send, and a Redis blip
 fails OPEN on the check (one extra fire, bounded by the fire budget) rather
-than eating a real human message. Both paths log.
+than eating a real human message. Both paths log. A chat where the account's
+own messages are heard (WhatsApp's "Message yourself") fails CLOSED instead
+(``self_post_verdict``): there a missed echo is the agent answering itself,
+and the fire budget fails open on the same Redis.
 
 Timing: the fingerprint is written right after the send's HTTP response, and
 the provider's echo must then traverse its own fan-out plus the receiver's
@@ -58,16 +61,22 @@ async def record_self_post(provider: str, message_id: Optional[str]) -> None:
         logger.warning(f"[SelfEcho] Failed to record {provider} self-post {message_id}: {e}")
 
 
-async def is_self_post(provider: str, message_id: Optional[str]) -> bool:
-    """Whether NoClick sent this message. Fails open (False) on Redis errors."""
+async def self_post_verdict(provider: str, message_id: Optional[str]) -> Optional[bool]:
+    """Whether NoClick sent this message; None when that can't be told (no id,
+    no Redis, a Redis error), for a caller that must fail closed."""
     if not message_id:
-        return False
+        return None
     client = get_shared_redis()
     if client is None:
-        return False
+        return None
     try:
         return await client.exists(_key(provider, message_id)) > 0
     except Exception as e:
-        # Fail open: one extra fire beats dropping a real human message.
         logger.warning(f"[SelfEcho] Fingerprint check failed for {provider} {message_id}: {e}")
-        return False
+        return None
+
+
+async def is_self_post(provider: str, message_id: Optional[str]) -> bool:
+    """Whether NoClick sent this message. Fails open (False) when it can't be
+    told: one extra fire beats dropping a real human message."""
+    return bool(await self_post_verdict(provider, message_id))

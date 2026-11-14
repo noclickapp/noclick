@@ -898,6 +898,24 @@
           "type": "string",
           "x-enum-searchable": true
         },
+        "include_self_chat": {
+          "default": "false",
+          "description": "Also trigger on what you write in your own \"Message yourself\" chat on the linked phone, so you can talk to an agent from WhatsApp. What you send in any other chat, and what a NoClick node sends, never triggers. Heard whether or not Only These Chats lists it.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes (my \"Message yourself\" chat)"
+          ],
+          "title": "Trigger on Your Own Chat",
+          "type": "string",
+          "x-enum-searchable": true,
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
         "chat_ids": {
           "description": "Start a run only for messages in these chats; leave empty for every chat. When set, the list alone decides: a group listed here fires even with group messages off, and every chat not listed, direct or group, is ignored.",
           "items": {

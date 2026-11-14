@@ -33,7 +33,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.whatsapp_trigger_config import CHAT_PICKER_OPTIONS, WhatsAppReceiveMessageConfig
 from utils.phone_numbers import is_noclick_number, noclick_line_refusal
-from utils.self_echo import is_self_post, record_self_post
+from utils.self_echo import is_self_post, record_self_post, self_post_verdict
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
 
@@ -1865,12 +1865,23 @@ class WhatsAppNodeConfig(NodeConfig[WhatsAppConfig, WhatsAppCredential]):
 # marked + owner alerted when the phone link dies, instead of leaving the
 # trigger falsely marked as healthy).
 WAHOOKS_WEBHOOK_EVENTS = ["message", "session.status"]
+# WAHA's "message" carries only what others send; the account's own messages arrive on "message.any" alone (with
+# every other message again), so a trigger subscribes to it only to hear its owner's own chat.
+SELF_CHAT_EVENT = "message.any"
+_MESSAGE_EVENTS = ("message", SELF_CHAT_EVENT)
 
 
-def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str) -> bool:
+def wahooks_webhook_events(config: Optional[Dict[str, Any]]) -> List[str]:
+    """The WAHooks events a receive_message trigger with ``config`` subscribes to."""
+    own_chat = (config or {}).get("include_self_chat") == "true"
+    return [*WAHOOKS_WEBHOOK_EVENTS, *([SELF_CHAT_EVENT] if own_chat else [])]
+
+
+def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str, *,
+                            events: List[str] = WAHOOKS_WEBHOOK_EVENTS) -> bool:
     """Sync (thread-pool) create-or-upgrade of our WAHooks webhook on a
     connection: registers the URL if absent and upgrades a pre-existing
-    config to the full WAHOOKS_WEBHOOK_EVENTS subscription. Returns True when
+    config to include every one of ``events``. Returns True when
     anything was created/updated."""
     from wahooks import WAHooks
 
@@ -1881,15 +1892,15 @@ def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str) 
         ]
         if not ours:
             client.create_webhook(
-                connection_id, url=webhook_url, events=list(WAHOOKS_WEBHOOK_EVENTS)
+                connection_id, url=webhook_url, events=list(events)
             )
             return True
         changed = False
         for w in ours:
             have = set(w.get("events") or [])
-            if not set(WAHOOKS_WEBHOOK_EVENTS) <= have:
+            if not set(events) <= have:
                 client.update_webhook(
-                    w["id"], events=sorted(have | set(WAHOOKS_WEBHOOK_EVENTS))
+                    w["id"], events=sorted(have | set(events))
                 )
                 changed = True
         return changed
@@ -1948,6 +1959,12 @@ class WhatsAppNode(WorkflowNode):
     # load_field_value; the Cloud API's go to a URL set in Meta's console.
     self_registering_triggers = {"receive_message": ("whatsapp_qr",)}
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        # Hearing the owner's own chat takes another WAHooks event. Nothing when off, so every registration made
+        # before the setting keeps its fingerprint.
+        return {"include_self_chat": "true"} if (config or {}).get("include_self_chat") == "true" else {}
+
     edit_examples = [
         "Send order confirmation message using approved template",
         "Reply to customer inquiry with shipping tracking info",
@@ -1987,7 +2004,8 @@ class WhatsAppNode(WorkflowNode):
             logger.warning(f"[WhatsAppNode] Couldn't read connection {connection_id}'s webhooks: {e}")
             return None
         ours = [w for w in hooks if w.get("url") == webhook_url]
-        if ours and all(set(WAHOOKS_WEBHOOK_EVENTS) <= set(w.get("events") or []) for w in ours):
+        wanted = set(wahooks_webhook_events(config))
+        if ours and all(wanted <= set(w.get("events") or []) for w in ours):
             return {"external_webhook_id": connection_id}
         return False
 
@@ -2001,15 +2019,22 @@ class WhatsAppNode(WorkflowNode):
         passes @-suffixed ids through untouched. Without this the agent gets the
         raw WAHooks JSON, hand-builds an E.164 number, and mis-addresses the
         reply to a non-existent account (WAHA returns PENDING, never delivers).
-        Non-message envelopes fall back to the base raw-JSON default.
+        Non-message envelopes fall back to the base raw-JSON default. The
+        owner writing in their own "Message yourself" chat is ``from_owner``.
         """
         # WAHooks 'message' envelope (QR-linked accounts) — the channel case.
-        if output.get("event") == "message" and isinstance(output.get("payload"), dict):
+        if output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict):
             p = output["payload"]
             key = (p.get("_data") or {}).get("key") or {}
             chat_id = str(p.get("from") or key.get("remoteJid") or "").strip()
             if not chat_id:
                 return super().resolve_agent_event(output)
+            owner = cls._owner_note(output)
+            me = output.get("me") if isinstance(output.get("me"), dict) else {}
+            # Their own chat is mostly named by their @lid; their number reaches it too (a send to it lands there),
+            # and keeps it one conversation whichever of their devices they write from.
+            if owner and (number := cls._account_part(me.get("id"))):
+                chat_id = f"{number}@c.us"
             from nodes.core.agent_events import media_entry
             from nodes.core.media_digest import media_kind, media_placeholder
 
@@ -2031,12 +2056,15 @@ class WhatsAppNode(WorkflowNode):
             sender_phone = str(p.get("senderPhone") or "").strip().lstrip("+")
             push_name = str((p.get("_data") or {}).get("pushName") or p.get("notifyName") or "").strip()
             sender_id = participant or chat_id
-            phone_shown = bool(sender_phone) and sender_phone != sender_id.split("@", 1)[0]
+            phone_shown = not owner and bool(sender_phone) and sender_phone != sender_id.split("@", 1)[0]
             identity = [push_name] if push_name else []
             if phone_shown:
                 identity.append(f"phone +{sender_phone}")
             header = f"WhatsApp message from {chat_id}"
-            if participant and participant != chat_id:
+            if owner:
+                header = ("WhatsApp message from the account's owner, to you, in their own \"Message yourself\" "
+                          f"chat {chat_id}")
+            elif participant and participant != chat_id:
                 header += f" (sent by {', '.join([participant, *identity])})"
             elif identity:
                 header += f" ({', '.join(identity)})"
@@ -2096,7 +2124,8 @@ class WhatsAppNode(WorkflowNode):
                 f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}{id_note}"
             )
             title = push_name or chat_id.split("@", 1)[0]
-            return {"text": text, "conversation_key": chat_id, "title": title, "media": entries}
+            return {"text": text, "conversation_key": chat_id, "title": title, "media": entries,
+                    **({"from_owner": True} if owner else {})}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
         if output.get("object") == "whatsapp_business_account":
@@ -2149,6 +2178,30 @@ class WhatsAppNode(WorkflowNode):
         addressed to it."""
         me = envelope.get("me") if isinstance(envelope.get("me"), dict) else {}
         return frozenset(filter(None, (cls._account_part(me.get("id")), cls._account_part(me.get("lid")))))
+
+    @staticmethod
+    def _from_me(p: Dict[str, Any]) -> bool:
+        key = (p.get("_data") or {}).get("key") or {}
+        return bool(p.get("fromMe") or key.get("fromMe"))
+
+    @classmethod
+    def _owner_note(cls, envelope: Dict[str, Any]) -> bool:
+        """Whether a delivery is the account's owner writing in their own "Message yourself" chat: their own message,
+        in the chat that is the account itself by either spelling WhatsApp gives it (its number, or its @lid with the
+        number as ``remoteJidAlt``), addressed to no one else (``to`` names only a group), and not one of the
+        device-sync records WhatsApp keeps in that chat (``protocolMessage``)."""
+        p = envelope.get("payload")
+        if not isinstance(p, dict) or not cls._from_me(p) or cls._raw_message(p).get("protocolMessage"):
+            return False
+        own = cls._own_ids(envelope)
+        key = (p.get("_data") or {}).get("key") or {}
+
+        def is_own(jid: Any) -> bool:
+            server = str(jid or "").partition("@")[2]
+            return server in ("c.us", "s.whatsapp.net", "lid") and cls._account_part(jid) in own
+
+        chat = (key.get("remoteJid") or p.get("from"), key.get("remoteJidAlt"))
+        return any(is_own(c) for c in chat) and (not p.get("to") or is_own(p["to"]))
 
     @classmethod
     def _mentions_any(cls, p: Dict[str, Any], ids: frozenset) -> bool:
@@ -2239,18 +2292,24 @@ class WhatsAppNode(WorkflowNode):
         """Drop WAHooks events a receive_message trigger must never fire on.
 
         A QR-linked account receives EVERY WhatsApp Web event as a
-        "message": contact stories (status@broadcast), Channel posts
-        (@newsletter), and the account's own outgoing messages (fromMe) — an
-        auto-reply workflow fed those DMs arbitrary contacts (incl. replying to
-        their stories) and echoes itself. Group chats are opt-in via
+        "message": contact stories (status@broadcast) and Channel posts
+        (@newsletter) — an auto-reply workflow fed those DMs arbitrary contacts
+        (incl. replying to their stories). Group chats are opt-in via
         include_group_messages, unless chat_ids is set: then it alone names the
         chats that fire, groups included. A message from one of NoClick's own
         numbers never fires, in either envelope (``is_noclick_number``).
+        The account's own messages (fromMe) come only on "message.any", which
+        repeats every other message too: of it, only the owner writing in
+        their own "Message yourself" chat fires, with include_self_chat on
+        (``_owner_note``; the agent's own replies there drop_trigger_event
+        drops by their id).
         """
         if (config or {}).get("operation") != "receive_message":
             return True
         if is_noclick_number(cls._sender_number(payload)):
             return False
+        if payload.get("event") == SELF_CHAT_EVENT:
+            return (config or {}).get("include_self_chat") == "true" and cls._owner_note(payload)
         event_payload = payload.get("payload")
         if payload.get("event") != "message" or not isinstance(event_payload, dict):
             # A WAHooks envelope (event+session keys) that isn't a message is
@@ -2263,7 +2322,7 @@ class WhatsAppNode(WorkflowNode):
             return True
 
         key = (event_payload.get("_data") or {}).get("key") or {}
-        if event_payload.get("fromMe") or key.get("fromMe"):
+        if cls._from_me(event_payload):
             return False
         chat_id = str(event_payload.get("from") or key.get("remoteJid") or "")
         if chat_id == "status@broadcast" or chat_id.endswith("@newsletter"):
@@ -2288,20 +2347,36 @@ class WhatsAppNode(WorkflowNode):
         to the other, so ``fromMe`` can't see it). Exact match on the stanza
         id fingerprinted at send (utils/self_echo.py). Nor does one from
         NoClick's own line that names it only by a @lid already known to be it
-        (``_from_noclick_lid``)."""
+        (``_from_noclick_lid``). In the owner's own chat, the agent's reply is
+        the account's own message too (``_own_echo``)."""
         event_payload = payload.get("payload")
         if (
             (config or {}).get("operation") != "receive_message"
-            or payload.get("event") != "message"
+            or payload.get("event") not in _MESSAGE_EVENTS
             or not isinstance(event_payload, dict)
         ):
             return None
         stanza = _stanza_id(event_payload.get("_data"))
+        if cls._from_me(event_payload):
+            return await cls._own_echo(event_payload, stanza)
         if await is_self_post("whatsapp", stanza):
             return f"message {stanza} was sent by a NoClick WhatsApp node"
         if await cls._from_noclick_lid(payload):
             return "message from one of NoClick's own numbers, by its @lid"
         return None
+
+    @staticmethod
+    async def _own_echo(p: Dict[str, Any], stanza: Optional[str]) -> Optional[str]:
+        """Why the account's own message, heard in its own chat, is a NoClick send rather than its owner writing:
+        WAHA marks a send through its API (``source``; the owner's own is ``app``), and every NoClick send is
+        fingerprinted by its id. Unlike another chat's, this check fails closed: a missed echo here is the agent
+        answering itself, and the fire budget fails open on the same Redis."""
+        if p.get("source") == "api":
+            return "message sent through the API, in the account's own chat"
+        sent = await self_post_verdict("whatsapp", stanza)
+        if sent is None:
+            return "message in the account's own chat that the echo guard can't check"
+        return f"message {stanza} was sent by a NoClick WhatsApp node" if sent else None
 
     @classmethod
     async def _from_noclick_lid(cls, payload: Dict[str, Any]) -> bool:
@@ -2325,7 +2400,7 @@ class WhatsAppNode(WorkflowNode):
         if (config or {}).get("operation") != "receive_message":
             return None
         event_payload = payload.get("payload")
-        if payload.get("event") != "message" or not isinstance(event_payload, dict):
+        if payload.get("event") not in _MESSAGE_EVENTS or not isinstance(event_payload, dict):
             return None
         key = (event_payload.get("_data") or {}).get("key") or {}
         return str(event_payload.get("from") or key.get("remoteJid") or "unknown")
@@ -2399,7 +2474,7 @@ class WhatsAppNode(WorkflowNode):
         without the provider URL (only the platform key opens it, and briefly):
         its slot says ``too_large`` with ``max_bytes`` and any known ``size``, or
         ``unavailable`` for a dead link, a transport failure or a missed deadline."""
-        if payload.get("event") != "message":
+        if payload.get("event") not in _MESSAGE_EVENTS:
             return None
         p = payload.get("payload") or {}
         await cls._remember_sender_number(payload)
@@ -2830,7 +2905,8 @@ class WhatsAppNode(WorkflowNode):
                                                 f"previous connection {stale}: {e}"
                                             )
                                     await asyncio.to_thread(
-                                        _wahooks_ensure_webhook, api_key, connection_id, webhook_url
+                                        _wahooks_ensure_webhook, api_key, connection_id, webhook_url,
+                                        events=wahooks_webhook_events(context),
                                     )
                                     # The row records the connection, so teardown never
                                     # needs the credential (another member's, or deleted).
@@ -2912,7 +2988,8 @@ class WhatsAppNode(WorkflowNode):
                     try:
                         api_key = os.environ.get("WAHOOKS_API_KEY")
                         if api_key and await asyncio.to_thread(
-                            _wahooks_ensure_webhook, api_key, conn_id, webhook_url
+                            _wahooks_ensure_webhook, api_key, conn_id, webhook_url,
+                            events=wahooks_webhook_events(op_config.model_dump()),
                         ):
                             logger.info(
                                 f"[WhatsAppNode] Re-registered WAHooks webhook for connection {conn_id}"
@@ -2926,7 +3003,8 @@ class WhatsAppNode(WorkflowNode):
             return self.no_event_output(
                 "receive_message",
                 "To test: send a WhatsApp message to the connected number from "
-                "ANOTHER phone (own/self messages are filtered as fromMe), or mock "
+                "ANOTHER phone (the number's own messages never trigger, but for its "
+                "\"Message yourself\" chat with Trigger on Your Own Chat on), or mock "
                 "this node's output.",
             )
         elif action == "receive_status_update":

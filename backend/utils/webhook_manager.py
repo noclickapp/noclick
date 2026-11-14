@@ -2480,9 +2480,12 @@ class WebhookManager:
 
         node_class = NODE_REGISTRY.get(node_type)
         is_schedule_family = _schedule_trigger_class(node_type) is not None
+        # A trigger its own loader registers (WhatsApp's own-chat setting) converges through the reconciler too.
+        loader_registered = bool(node_class and getattr(node_class, "self_registering_triggers", {}).get(
+            (new_config or {}).get("operation") or ""))
         if not is_schedule_family and not (
             node_class and isinstance(node_class, type)
-            and issubclass(node_class, ExternalWebhookTriggerMixin)
+            and (loader_registered or issubclass(node_class, ExternalWebhookTriggerMixin))
             and hasattr(node_class, "registration_fingerprint_fields")
         ):
             return False
