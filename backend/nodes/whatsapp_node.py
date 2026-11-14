@@ -32,6 +32,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.whatsapp_trigger_config import CHAT_PICKER_OPTIONS, WhatsAppReceiveMessageConfig
+from utils import redis_client
 from utils.phone_numbers import is_noclick_number, noclick_line_refusal
 from utils.self_echo import is_self_post, record_self_post, self_post_verdict
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
@@ -328,6 +329,25 @@ def _chat_key(chat_id: Any) -> str:
     @c.us or @s.whatsapp.net, and a bare phone number names the same chat."""
     local, _, server = wahooks_chat_id(chat_id).partition("@")
     return f"{local}@{'s.whatsapp.net' if server == 'c.us' else server}"
+
+
+# Which turn shows a chat its account typing, by its token: gone once a reply goes (``agent_turn_ended``).
+TYPING_RECORD_TTL_S = 5 * 3600
+
+
+def _typing_key(connection_id: str, chat_id: str) -> str:
+    return f"whatsapp:typing:{connection_id}:{_chat_key(chat_id)}"
+
+
+async def _reply_sent(connection_id: str, chat_id: str) -> None:
+    """A message went to the chat, which ends the typing a turn showed there: its turn's end has nothing to stop."""
+    client = redis_client.get_shared_redis()
+    if client is None:
+        return
+    try:
+        await client.delete(_typing_key(connection_id, chat_id))
+    except Exception:
+        logger.warning("[WhatsApp] clearing a chat's typing record failed", exc_info=True)
 
 
 def _stanza_id(message: Any) -> Optional[str]:
@@ -2227,6 +2247,72 @@ class WhatsAppNode(WorkflowNode):
             media=found, quoted_text=" ".join(str(quoted.get("body") or "").split()),
             message_id=p.get("id") if isinstance(p.get("id"), str) else None)
 
+    @classmethod
+    def agent_pickup(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """A message an agent takes into a turn is read and the account types in its chat at once, which WAHooks
+        counts toward the pause it keeps before the reply: a verified WAHooks message, never the owner's own "Message
+        yourself" chat, and in a group only one addressed to the account (mentioning it, or replying to its message),
+        since the agent may well let the rest of a group's talk pass."""
+        p = output.get("payload")
+        if output.get("event") not in _MESSAGE_EVENTS or not isinstance(p, dict):
+            return None
+        if not cls._verified(output) or cls._from_me(p):
+            return None
+        connection_id = str(output.get("connectionId") or "").strip()
+        chat_id, _ = cls._message_chat(p)
+        if not connection_id or not chat_id:
+            return None
+        if chat_id.endswith("@g.us"):
+            own = cls._own_ids(output)
+            quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else {}
+            if not (cls._mentions_any(p, own) or cls._account_part(quoted.get("participant")) in own):
+                return None
+        return {"connection_id": connection_id, "chat_id": chat_id, "token": uuid.uuid4().hex}
+
+    @classmethod
+    async def agent_working(cls, picked: Dict[str, Any]) -> None:
+        api_key = os.environ.get("WAHOOKS_API_KEY")
+        client = redis_client.get_shared_redis()
+        if not api_key or client is None:
+            return
+        conn, chat = picked["connection_id"], picked["chat_id"]
+        try:
+            await client.set(_typing_key(conn, chat), picked["token"], ex=TYPING_RECORD_TTL_S)
+
+            def show():
+                from wahooks import WAHooks
+
+                with WAHooks(api_key=api_key) as wahooks:
+                    wahooks.mark_read(conn, chat)
+                    wahooks.start_typing(conn, chat)
+
+            await asyncio.to_thread(show)
+        except Exception:
+            logger.warning("[WhatsApp] showing the agent at work in a chat failed", exc_info=True)
+
+    @classmethod
+    async def agent_turn_ended(cls, picked: Dict[str, Any]) -> None:
+        api_key = os.environ.get("WAHOOKS_API_KEY")
+        client = redis_client.get_shared_redis()
+        if not api_key or client is None:
+            return
+        conn, chat = picked["connection_id"], picked["chat_id"]
+        try:
+            # Gone when a reply went (``_execute_wahooks``); another turn's once a later message took the chat.
+            if await client.get(_typing_key(conn, chat)) != picked["token"].encode():
+                return
+            await client.delete(_typing_key(conn, chat))
+
+            def stop():
+                from wahooks import WAHooks
+
+                with WAHooks(api_key=api_key) as wahooks:
+                    wahooks.stop_typing(conn, chat)
+
+            await asyncio.to_thread(stop)
+        except Exception:
+            logger.warning("[WhatsApp] stopping the typing a quiet turn left failed", exc_info=True)
+
     @staticmethod
     def _seen_profiles(output: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """The chat's and its writer's profiles ``transform_trigger_payload`` put on a delivery (``{}`` for none)."""
@@ -3400,6 +3486,8 @@ class WhatsAppNode(WorkflowNode):
                 # Self-echo guard: another NoClick WhatsApp trigger that
                 # receives this message must not fire on it (drop_trigger_event).
                 await record_self_post("whatsapp", _stanza_id(result))
+                if action != "send_reaction_emoji":  # a reaction leaves the typing a turn showed
+                    await _reply_sent(conn_id, chat_id)
                 if isinstance(result, dict) and (sent := _sent_message_id(result)):
                     result = {**result, "message_id": sent}
 
