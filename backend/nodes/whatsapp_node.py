@@ -2054,8 +2054,7 @@ class WhatsAppNode(WorkflowNode):
         # WAHooks 'message' envelope (QR-linked accounts) — the channel case.
         if output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict):
             p = output["payload"]
-            key = (p.get("_data") or {}).get("key") or {}
-            chat_id = str(p.get("from") or key.get("remoteJid") or "").strip()
+            chat_id, participant = cls._message_chat(p)  # participant: the writer, in a group
             if not chat_id:
                 return super().resolve_agent_event(output)
             owner = cls._owner_note(output)
@@ -2076,7 +2075,6 @@ class WhatsAppNode(WorkflowNode):
                 media_placeholder(kind, voice=voice, filename=media.get("filename"))
                 if has_media else "[non-text message]"
             )
-            participant = str(key.get("participant") or "").strip()  # sender in a group
             # A @lid chat id hides the number, but WAHooks still names the
             # writer (senderPhone + pushName). Without them in the turn a
             # "supervisor = +1 868 …" rule can never match — 12 real approvals
@@ -2154,13 +2152,20 @@ class WhatsAppNode(WorkflowNode):
             )
             group = chat_id.endswith("@g.us")
             # Who wrote it, by number when WhatsApp gives no name. A group's conversation is the group's, never its
-            # first writer's; the delivery doesn't carry the group's name.
+            # first writer's; the delivery doesn't carry the group's name, so it's the one kept for the chat, if any.
             title = push_name or cls._number_label(sender_id, sender_phone)
+            seen_chat, seen_sender = cls._seen_profiles(output)
+            group_name = (seen_chat.get("name") or None) if group else None
             # Never a group's: there the reply reaches everyone in it.
             number = (None if owner or participant or group or not cls._verified(output)
                       else cls._sender_number(output))
+            # For the pages that draw the chat; the model's text never carries them.
+            chat = {"key": chat_id, "name": group_name if group else title, "avatar": seen_chat.get("avatar_url"),
+                    "kind": "self" if owner else "group" if group else "direct"}
+            sender = {"id": sender_id, "name": push_name or None, "avatar": seen_sender.get("avatar_url")}
             return {"text": text, "conversation_key": chat_id, "title": title, "media": entries,
-                    **({"conversation_title": GROUP_CHAT_TITLE} if group else {}),
+                    "chat": chat, "sender": sender,
+                    **({"conversation_title": group_name or GROUP_CHAT_TITLE} if group else {}),
                     **({"from_owner": True} if owner else {}), **({"from_number": number} if number else {})}
 
         # Meta Cloud API envelope — bare E.164 sender numbers.
@@ -2187,17 +2192,17 @@ class WhatsAppNode(WorkflowNode):
     def summarize_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """A WAHooks message as it looked on WhatsApp: who wrote (their profile name, their number where WhatsApp
         names it), their words, a voice note or file with its transcript once the turn digested it, and the message
-        it quoted. A group's own name isn't in its messages, so a group chat goes unnamed."""
+        it quoted. A group's own name isn't in its messages: it's the one kept for it (``profiles``), else unnamed;
+        the chat's and the writer's pictures likewise."""
         if not (output.get("event") in _MESSAGE_EVENTS and isinstance(output.get("payload"), dict)):
             return super().summarize_agent_event(output)
         from nodes.core.agent_events import event_summary
         from nodes.core.media_digest import media_kind
 
         p = output["payload"]
-        key = (p.get("_data") or {}).get("key") or {}
-        chat = str(p.get("from") or key.get("remoteJid") or "").strip()
-        participant = str(key.get("participant") or "").strip()
+        chat, participant = cls._message_chat(p)
         group = chat.endswith("@g.us")
+        seen_chat, seen_sender = cls._seen_profiles(output)
         name = str((p.get("_data") or {}).get("pushName") or p.get("notifyName") or "").strip()
         number = cls._sender_number(output)
         number = f"+{number.lstrip('+')}" if number else None
@@ -2215,11 +2220,24 @@ class WhatsAppNode(WorkflowNode):
             found = {"kind": "contact", "url": None, "duration": None, "transcript": None}
         quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else {}
         return event_summary(
-            chat_name=None if group else name, chat_kind="self" if cls._owner_note(output) else
+            chat_name=seen_chat.get("name") if group else name, chat_avatar=seen_chat.get("avatar_url"),
+            sender_avatar=seen_sender.get("avatar_url"), chat_kind="self" if cls._owner_note(output) else
             "group" if group else "direct", chat_number=None if group else number, sender_name=name,
             sender_id=participant or chat, sender_number=number, text=p.get("body") or p.get("caption"),
             media=found, quoted_text=" ".join(str(quoted.get("body") or "").split()),
             message_id=p.get("id") if isinstance(p.get("id"), str) else None)
+
+    @staticmethod
+    def _seen_profiles(output: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """The chat's and its writer's profiles ``transform_trigger_payload`` put on a delivery (``{}`` for none)."""
+        profiles = output.get("profiles") if isinstance(output.get("profiles"), dict) else {}
+        return profiles.get("chat") or {}, profiles.get("sender") or {}
+
+    @staticmethod
+    def _message_chat(p: Dict[str, Any]) -> Tuple[str, str]:
+        """A WAHooks message's chat id, and in a group its writer's ("" in a direct chat)."""
+        key = (p.get("_data") or {}).get("key") or {}
+        return str(p.get("from") or key.get("remoteJid") or "").strip(), str(key.get("participant") or "").strip()
 
     @staticmethod
     def _sender_number(payload: Dict[str, Any]) -> Optional[str]:
@@ -2557,10 +2575,52 @@ class WhatsAppNode(WorkflowNode):
             secs = data.get("duration")
         return float(secs) if isinstance(secs, (int, float)) and secs > 0 else None
 
+    # A delivery waits at most this long for what is kept of its chat's profiles.
+    PROFILE_READ_TIMEOUT_S = 3
+
     @classmethod
     async def transform_trigger_payload(
         cls, payload, config, *, pool, workflow_id, node_id
     ):
+        """An inbound message with what is kept of its chat's and writer's
+        WhatsApp profiles on it (``_stamp_profiles``) and its media rehosted
+        (``_rehost_media``)."""
+        profiled = await cls._stamp_profiles(payload, config, pool=pool, workflow_id=workflow_id)
+        rehosted = await cls._rehost_media(payload, config, pool=pool, workflow_id=workflow_id, node_id=node_id)
+        return rehosted if rehosted is not None else (payload if profiled else None)
+
+    @classmethod
+    async def _stamp_profiles(cls, payload, config, *, pool, workflow_id) -> bool:
+        """``payload["profiles"]``: the chat's and its writer's ``{jid, name,
+        avatar_url}`` as kept for the node's own connection
+        (``utils.whatsapp_profiles``; a group's ``name`` too), which fetches
+        what isn't kept yet in the background, never holding the delivery.
+        False when nothing could be read."""
+        if payload.get("event") not in _MESSAGE_EVENTS or not workflow_id:
+            return False
+        chat, participant = cls._message_chat(payload.get("payload") or {})
+        if not chat:
+            return False
+        from utils.inbound_media import resolve_delivery_credential
+        from utils.whatsapp_profiles import chat_profiles
+
+        writer = participant or chat
+        try:
+            async with asyncio.timeout(cls.PROFILE_READ_TIMEOUT_S):
+                # The credential's own connection, never the one a delivery names.
+                credential, _ = await resolve_delivery_credential(pool, config, str(workflow_id), "whatsapp_qr")
+                connection_id = str((credential or {}).get("connection_id") or "")
+                if not connection_id:
+                    return False
+                found = await chat_profiles(pool, connection_id, [chat, writer])
+        except Exception as e:
+            logger.warning(f"[WhatsApp] Chat profiles not read for workflow {workflow_id}: {type(e).__name__}: {e}")
+            return False
+        payload["profiles"] = {"chat": found[chat].as_dict(), "sender": found[writer].as_dict()}
+        return True
+
+    @classmethod
+    async def _rehost_media(cls, payload, config, *, pool, workflow_id, node_id):
         """Rehost an inbound message's media to workflow resources (R2) and
         swap ``payload.media.url`` for the public capability URL the agent can
         actually download. Media that can't be copied still runs as a message,

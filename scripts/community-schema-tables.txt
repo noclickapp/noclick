@@ -61,6 +61,7 @@ user_usage_events
 webhook_channels
 webhook_subscriptions
 webhooks
+whatsapp_chat_profiles
 workflow_authorized_credentials
 workflow_build_requests
 workflow_checkpoints

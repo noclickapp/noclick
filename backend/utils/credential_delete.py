@@ -87,7 +87,7 @@ async def delete_credential_with_teardown(pool, row, *, credential_id: str, user
             from utils.wahooks_connections import delete_wahooks_connection
             connection_id = get_encryption().decrypt_credential(row.credential).get('connection_id')
             if connection_id:
-                await delete_wahooks_connection(connection_id)
+                await delete_wahooks_connection(connection_id, pool)
         except Exception as e:
             logger.error(f"[CredentialDelete] Failed to delete WAHooks connection: {e}")
 

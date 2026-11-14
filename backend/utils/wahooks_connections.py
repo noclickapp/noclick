@@ -27,9 +27,10 @@ def get_wahooks_api_key() -> Optional[str]:
     return os.environ.get("WAHOOKS_API_KEY") or None
 
 
-async def delete_wahooks_connection(connection_id: str) -> None:
-    """Delete one connection at WAHooks. Raises on failure — callers decide
-    whether their surrounding operation may proceed without the teardown."""
+async def delete_wahooks_connection(connection_id: str, pool=None) -> None:
+    """Delete one connection at WAHooks, then what NoClick kept of its chats
+    (``pool``, else the native pool). Raises on a failed teardown — callers
+    decide whether their surrounding operation may proceed without it."""
     api_key = get_wahooks_api_key()
     if not api_key:
         raise RuntimeError("WAHooks API key not configured")
@@ -42,6 +43,13 @@ async def delete_wahooks_connection(connection_id: str) -> None:
 
     await asyncio.to_thread(_delete)
     logger.info(f"[WAHooks] Deleted connection {connection_id}")
+    from utils.database_pool import get_native_pool
+    from utils.whatsapp_profiles import forget_connection
+
+    try:
+        await forget_connection(pool or get_native_pool(), connection_id)
+    except Exception as e:
+        logger.warning(f"[WAHooks] Kept chat profiles of connection {connection_id} not removed: {e}")
 
 
 def signing_secret(webhooks: List[Dict[str, Any]], url: str) -> Optional[str]:
@@ -233,7 +241,7 @@ async def sweep_orphan_connections(pool) -> Dict[str, Any]:
             reserved.append(cid)
             continue
         try:
-            await delete_wahooks_connection(cid)
+            await delete_wahooks_connection(cid, pool)
             deleted.append(cid)
         except Exception as e:
             logger.error(f"[WAHooks] Sweep failed to delete orphan {cid}: {e}")

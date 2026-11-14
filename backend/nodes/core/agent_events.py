@@ -144,14 +144,16 @@ def event_summary(*, chat_name: Optional[str] = None, chat_kind: Optional[str] =
                   chat_number: Optional[str] = None, sender_name: Optional[str] = None,
                   sender_id: Optional[str] = None, sender_number: Optional[str] = None, text: Optional[str] = None,
                   media: Optional[Dict[str, Any]] = None, quoted_text: Optional[str] = None,
-                  message_id: Optional[str] = None) -> Dict[str, Any]:
+                  message_id: Optional[str] = None, chat_avatar: Optional[str] = None,
+                  sender_avatar: Optional[str] = None) -> Dict[str, Any]:
     """A ``summarize_agent_event`` result: the chat (``kind`` direct, group or self, the account owner's own) and
     what came in (``media`` ``{kind, url, duration, transcript}``: ``kind`` voice, audio, image, video, document,
-    file, location or contact). Numbers are E.164."""
-    return {"chat": {"name": chat_name or None, "kind": chat_kind, "number": chat_number},
+    file, location or contact). Numbers are E.164; avatars are picture URLs for the page, never the model."""
+    return {"chat": {"name": chat_name or None, "kind": chat_kind, "number": chat_number,
+                     "avatar": chat_avatar or None},
             "inbound": {"sender_name": sender_name or None, "sender_id": sender_id or None,
-                        "sender_number": sender_number, "text": text or "", "media": media,
-                        "quoted_text": quoted_text or None, "message_id": message_id or None}}
+                        "sender_number": sender_number, "sender_avatar": sender_avatar or None, "text": text or "",
+                        "media": media, "quoted_text": quoted_text or None, "message_id": message_id or None}}
 
 
 def compact_for_display(output: Any) -> Any:

@@ -600,7 +600,7 @@ async def _discard(pool, connection_id: str) -> None:
     from utils.wahooks_connections import delete_wahooks_connection
 
     try:
-        await delete_wahooks_connection(connection_id)
+        await delete_wahooks_connection(connection_id, pool)
     except Exception as e:
         logger.error(
             f"[WhatsAppQR] Connection {connection_id} not deleted after its flow failed ({e}); "

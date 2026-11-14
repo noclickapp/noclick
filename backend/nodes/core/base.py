@@ -1052,7 +1052,10 @@ class WorkflowNode(ABC):
         writer by phone number, which a platform that knows its owner's number
         may take as theirs too. Both say who wrote, so claim them only for a
         delivery whose signature was verified (``_webhook.signature_verified``),
-        never on what the payload itself says.
+        never on what the payload itself says. A chat-like trigger may return
+        ``"chat"`` (``{key, name, kind, avatar}``) and ``"sender"`` (``{id,
+        name, avatar}``) for the pages that draw the chat; they are display
+        data, never part of the model's text.
         """
         from nodes.core.agent_events import default_agent_event
 
