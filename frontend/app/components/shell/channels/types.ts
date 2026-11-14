@@ -26,8 +26,10 @@ export interface ChannelMember {
     initials?: string;
     /** A platform agent's job in a line, as its agent says it. */
     role?: string;
-    /** Taking a turn right now. */
+    /** Taking a turn right now: since when (ISO), and the thread it answers in (none: the channel itself). */
     busy?: boolean;
+    busySince?: string;
+    busyThread?: string;
     /** Its triggers are paused: it wakes only when someone messages it. */
     paused?: boolean;
     /** NoClick itself (the account's coordinator): drawn with NoClick's mark, as a channel draws NoClick. */

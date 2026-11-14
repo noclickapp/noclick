@@ -49,6 +49,8 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             # claims, so focus flapping stays well inside this: a refused withdrawal
             # would leave a claim standing until it lapses.
             "presence:chat": SocketIORateLimit(second=4, minute=60),
+            # A composer renews typing every 3s while keys are pressed, and stops it on send, blur or clear.
+            "platform:channel:typing": SocketIORateLimit(second=4, minute=60),
 
             # Relay viewer tokens. A tab mints one per relay (re)connect and
             # retries a failed mint with backoff; presence mints one per
