@@ -2606,19 +2606,6 @@ class WorkflowMCPResponseRequest(ClientEventBase):
     error: Optional[str] = Field(None, description="Error message if request failed")
 
 
-class WorkflowMCPSearchNodesRequest(ClientEventBase):
-    """
-    MCP tool request to search available workflow node types.
-
-    Returns summaries of available nodes including type, label, description,
-    available config types, and required credentials. Use get_node_config_schema
-    to get the full JSON schema for a specific config type.
-    """
-    event_name: ClassVar[str] = "workflow:mcp:search_nodes"
-
-    query: Optional[str] = Field(None, description="Search query to filter nodes (e.g., 'telegram', 'google')")
-
-
 class WorkflowMCPGetNodeConfigSchemaRequest(ClientEventBase):
     """
     MCP tool request to get the full JSON schema for a specific node config type.

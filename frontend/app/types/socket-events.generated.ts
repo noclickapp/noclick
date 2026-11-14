@@ -7734,24 +7734,6 @@ export interface WorkflowMCPRunWorkflowRequest {
   [k: string]: unknown;
 }
 /**
- * MCP tool request to search available workflow node types.
- *
- * Returns summaries of available nodes including type, label, description,
- * available config types, and required credentials. Use get_node_config_schema
- * to get the full JSON schema for a specific config type.
- */
-export interface WorkflowMCPSearchNodesRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  /**
-   * Search query to filter nodes (e.g., 'telegram', 'google')
-   */
-  query?: string | null;
-  [k: string]: unknown;
-}
-/**
  * MCP tool request to update the interface layout of a workflow.
  *
  * Uses XML commands to position, resize, and arrange interface blocks on a 12-column grid.
@@ -15085,7 +15067,6 @@ export interface ClientToServerEvents {
   'workflow:mcp:response': (data: WorkflowMCPResponseRequest) => void;
   'workflow:mcp:run_node': (data: WorkflowMCPRunNodeRequest) => void;
   'workflow:mcp:run_workflow': (data: WorkflowMCPRunWorkflowRequest) => void;
-  'workflow:mcp:search_nodes': (data: WorkflowMCPSearchNodesRequest) => void;
   'workflow:mcp:update_interface': (data: WorkflowMCPUpdateInterfaceRequest) => void;
   'workflow:mcp:update_workflow_metadata': (data: WorkflowMCPUpdateWorkflowMetadataRequest) => void;
   'workflow:node:evaluate_expression': (data: WorkflowNodeEvaluateExpressionRequest) => void;
@@ -15460,7 +15441,6 @@ export const ClientEventNames = {
   WorkflowMCPResponseRequest: 'workflow:mcp:response',
   WorkflowMCPRunNodeRequest: 'workflow:mcp:run_node',
   WorkflowMCPRunWorkflowRequest: 'workflow:mcp:run_workflow',
-  WorkflowMCPSearchNodesRequest: 'workflow:mcp:search_nodes',
   WorkflowMCPUpdateInterfaceRequest: 'workflow:mcp:update_interface',
   WorkflowMCPUpdateWorkflowMetadataRequest: 'workflow:mcp:update_workflow_metadata',
   WorkflowMoveToFolderRequest: 'workflow_folder:move_workflow',
@@ -15832,7 +15812,6 @@ interface ClientEventMap {
   WorkflowMCPResponseRequest: WorkflowMCPResponseRequest
   WorkflowMCPRunNodeRequest: WorkflowMCPRunNodeRequest
   WorkflowMCPRunWorkflowRequest: WorkflowMCPRunWorkflowRequest
-  WorkflowMCPSearchNodesRequest: WorkflowMCPSearchNodesRequest
   WorkflowMCPUpdateInterfaceRequest: WorkflowMCPUpdateInterfaceRequest
   WorkflowMCPUpdateWorkflowMetadataRequest: WorkflowMCPUpdateWorkflowMetadataRequest
   WorkflowMoveToFolderRequest: WorkflowMoveToFolderRequest
@@ -17454,10 +17433,6 @@ export const WorkflowMCPRunWorkflowRequest = {
   event_name: 'workflow:mcp:run_workflow' as const,
   create: (data: WorkflowMCPRunWorkflowRequest) => ({ event_name: 'workflow:mcp:run_workflow' as const, ...data })
 };
-export const WorkflowMCPSearchNodesRequest = {
-  event_name: 'workflow:mcp:search_nodes' as const,
-  create: (data: WorkflowMCPSearchNodesRequest) => ({ event_name: 'workflow:mcp:search_nodes' as const, ...data })
-};
 export const WorkflowMCPUpdateInterfaceRequest = {
   event_name: 'workflow:mcp:update_interface' as const,
   create: (data: WorkflowMCPUpdateInterfaceRequest) => ({ event_name: 'workflow:mcp:update_interface' as const, ...data })
@@ -17912,7 +17887,6 @@ export const EventRouting = {
   'workflow:mcp:response': 'API',
   'workflow:mcp:run_node': 'API',
   'workflow:mcp:run_workflow': 'API',
-  'workflow:mcp:search_nodes': 'API',
   'workflow:mcp:update_interface': 'API',
   'workflow:mcp:update_workflow_metadata': 'API',
   'workflow:node:evaluate_expression': 'API',

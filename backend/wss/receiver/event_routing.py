@@ -569,7 +569,6 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
 
         # Workflow MCP operations (for AI agent workflow manipulation)
         "workflow:mcp:response": Handler.WORKFLOW_MCP,
-        "workflow:mcp:search_nodes": Handler.WORKFLOW_MCP,
         "workflow:mcp:get_node_config_schema": Handler.WORKFLOW_MCP,
         "workflow:mcp:get_selected_node": Handler.WORKFLOW_MCP,
         "workflow:mcp:get_open_workflow": Handler.WORKFLOW_MCP,

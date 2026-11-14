@@ -174,10 +174,10 @@ class BaseHandlerTest:
     def reassemble_if_chunked(self, response_data):
         """Reassemble a chunked+compressed response payload from the captured
         ``__chunk__`` events (mirrors the frontend's chunk-receiver). Large
-        responses (e.g. search_nodes over the full node list) exceed the 1 MB
-        chunk threshold and come back as a ``{__chunked: True, ...}`` wrapper
-        with the real payload split across ``__chunk__`` events. Returns the
-        payload unchanged when it wasn't chunked."""
+        responses exceed the 1 MB chunk threshold and come back as a
+        ``{__chunked: True, ...}`` wrapper with the real payload split across
+        ``__chunk__`` events. Returns the payload unchanged when it wasn't
+        chunked."""
         if not (isinstance(response_data, dict) and response_data.get("__chunked")):
             return response_data
         import base64

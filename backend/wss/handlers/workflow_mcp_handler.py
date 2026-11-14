@@ -37,7 +37,6 @@ from wss.sender.responses import (
 )
 from wss.receiver.client_events import (
     WorkflowMCPResponseRequest,
-    WorkflowMCPSearchNodesRequest,
     WorkflowMCPGetNodeConfigSchemaRequest,
     WorkflowMCPGetSelectedNodeRequest,
     WorkflowMCPGetOpenWorkflowRequest,
@@ -64,7 +63,7 @@ from utils.activity import signal_activity
 from utils.database_pool import DatabasePoolMixin
 from utils.access_control import check_resource_access, Permission
 from wss.handlers.workflow_handler import get_user_org_context
-from nodes.core.registry import NODE_REGISTRY, is_listed
+from nodes.core.registry import NODE_REGISTRY
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
 from repositories.workflow import WorkflowRepo
 from repositories.organization import OrgRepo
@@ -97,7 +96,6 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
         """Register workflow MCP event handlers."""
         return {
             "workflow:mcp:response": self.handle_frontend_response,
-            "workflow:mcp:search_nodes": self.search_nodes,
             "workflow:mcp:get_node_config_schema": self.get_node_config_schema,
             "workflow:mcp:get_selected_node": self.get_selected_node,
             "workflow:mcp:get_open_workflow": self.get_open_workflow,
@@ -745,154 +743,6 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
     # =========================================================================
     # Backend-Only Tools (Node Discovery)
     # =========================================================================
-
-    async def search_nodes(
-        self, sid: str, request: WorkflowMCPSearchNodesRequest
-    ) -> None:
-        """
-        Search available workflow node types.
-
-        Returns summaries of available nodes including type, label, description,
-        available config types, and required credentials. Does NOT include full
-        JSON schemas - use get_node_config_schema for that.
-        """
-        try:
-            query = request.query.lower() if request.query else None
-            results = []
-
-            for node_type, node_class in NODE_REGISTRY.items():
-                # Test nodes, and retired services saved nodes still run on
-                if node_type.startswith('test-') or not is_listed(node_type):
-                    continue
-
-                # Extract metadata from node class
-                summary = self._get_node_summary(node_type, node_class)
-
-                # Filter by query if provided
-                if query:
-                    searchable = f"{summary['type']} {summary['label']} {summary['description']}".lower()
-                    if query not in searchable:
-                        continue
-
-                results.append(summary)
-
-            await send_event(self.sio, sid, ResponseEvent(
-                request_id=request.request_id,
-                data={"nodes": results}
-            ))
-
-        except Exception as e:
-            logger.error(f"Error searching nodes: {e}", exc_info=True)
-            await send_event(self.sio, sid, ResponseEvent(
-                request_id=request.request_id,
-                data={},
-                error=str(e)
-            ))
-
-    def _get_node_summary(self, node_type: str, node_class) -> Dict[str, Any]:
-        """
-        Extract a summary for a node type including available config types.
-        """
-        # Extract label and description from class name/docstring
-        label = node_class.__name__.replace('Node', '').replace('_', ' ')
-        description = node_class.__doc__ or ""
-        if description:
-            # Get first line of docstring
-            description = description.strip().split('\n')[0].strip()
-
-        # Determine category from node type
-        if node_type.startswith('automation-'):
-            category = 'automation'
-        elif node_type == 'agent':
-            category = 'ai'
-        else:
-            category = 'other'
-
-        # Get available config types from Union
-        config_types = self._get_config_type_summaries(node_class)
-
-        # Determine required credential type
-        credential_type = None
-        config_model = node_class.get_config_model()
-        if config_model and hasattr(config_model, 'model_fields'):
-            credentials_field = config_model.model_fields.get('credentials')
-            if credentials_field and credentials_field.annotation:
-                credential_type = self._extract_credential_type(credentials_field.annotation)
-
-        return {
-            "type": node_type,
-            "label": label,
-            "description": description,
-            "category": category,
-            "config_types": config_types,
-            "credential_type": credential_type
-        }
-
-    def _get_config_type_summaries(self, node_class) -> list:
-        """
-        Get summaries of available config types for a node.
-
-        For Union types, this returns info about each variant.
-        """
-        config_model = node_class.get_config_model()
-        if not config_model:
-            return []
-
-        # Check if config model has a 'config' field that's a Union
-        if hasattr(config_model, 'model_fields'):
-            config_field = config_model.model_fields.get('config')
-            if config_field and config_field.annotation:
-                return self._extract_union_summaries(config_field.annotation)
-
-        return []
-
-    def _extract_union_summaries(self, annotation) -> list:
-        """
-        Extract summaries from a Union type annotation.
-
-        Includes required_fields to help agent understand what's needed
-        without calling get_node_config_schema.
-        """
-        summaries = []
-        origin = get_origin(annotation)
-
-        if origin is Union:
-            for variant in get_args(annotation):
-                if variant is type(None):
-                    continue
-                if hasattr(variant, '__name__'):
-                    summary = {
-                        "name": variant.__name__,
-                        "description": variant.__doc__.strip().split('\n')[0] if variant.__doc__ else "",
-                        "required_fields": self._get_required_fields(variant)
-                    }
-                    summaries.append(summary)
-        elif hasattr(annotation, '__name__'):
-            # Single config type
-            summaries.append({
-                "name": annotation.__name__,
-                "description": annotation.__doc__.strip().split('\n')[0] if annotation.__doc__ else "",
-                "required_fields": self._get_required_fields(annotation)
-            })
-
-        return summaries
-
-    def _get_required_fields(self, model_class) -> List[str]:
-        """
-        Extract required field names from a Pydantic model.
-
-        Returns list of field names that must be provided (no default value).
-        """
-        required = []
-        if not hasattr(model_class, 'model_fields'):
-            return required
-
-        for field_name, field_info in model_class.model_fields.items():
-            # Field is required if it has no default and no default_factory
-            if field_info.is_required():
-                required.append(field_name)
-
-        return required
 
     def _extract_credential_type(self, annotation) -> Optional[str]:
         """

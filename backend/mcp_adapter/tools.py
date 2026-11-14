@@ -11,19 +11,9 @@ from typing import Dict
 # Maps socket event names to MCP tool metadata
 MCP_EVENTS: Dict[str, Dict[str, any]] = {
     # Workflow MCP Tools
-    "workflow:mcp:search_nodes": {
-        "name": "search_workflow_nodes",
-        "description": "Search available workflow node types. Returns type, label, description, config_types (with required_fields), and credentials. Use get_node_config_schema for full JSON schema.",
-        "tags": {"workflow", "search", "nodes"},
-        "annotations": {
-            "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
     "workflow:mcp:get_node_config_schema": {
         "name": "get_workflow_node_config_schema",
-        "description": "Get the full JSON schema for a specific node config type. Call search_workflow_nodes first to see available config_types for each node.",
+        "description": "Get the full JSON schema for a specific node config type.",
         "tags": {"workflow", "schema", "nodes"},
         "annotations": {
             "readOnlyHint": True,
