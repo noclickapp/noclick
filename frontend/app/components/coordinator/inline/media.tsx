@@ -186,7 +186,7 @@ function titleOf(source: Source, site: string): string {
 }
 
 /** The site's own icon, on white since a dark logo vanishes on the dark thread; its initial when none loads. */
-function SiteIcon({ site, className }: { site: string; className?: string }) {
+export function SiteIcon({ site, className }: { site: string; className?: string }) {
     const [missing, setMissing] = useState(false);
     if (missing) {
         return <span className={cn('grid shrink-0 place-items-center overflow-hidden bg-secondary text-[9px] font-semibold uppercase leading-none text-foreground/70 dark:bg-foreground/[0.1]', className)}>{site[0]}</span>;
