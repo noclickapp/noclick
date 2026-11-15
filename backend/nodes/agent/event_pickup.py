@@ -30,7 +30,7 @@ RECORD_TTL_S = 5 * 3600
 # How long a turn's end waits for what its pickup is still showing, so it never takes it down first.
 SHOWING_WAIT_S = 5.0
 # What an agent's output says when its turn stopped short of its end (``coder.coordinator.tasks.turn_error``'s).
-_STOPPED_SHORT = frozenset({"failed", "error", "turn_lost"})
+_STOPPED_SHORT = frozenset({"failed", "error", "turn_lost", "canceled"})
 _showing: Dict[str, asyncio.Task] = {}
 
 

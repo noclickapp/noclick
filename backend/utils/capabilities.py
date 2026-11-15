@@ -356,6 +356,13 @@ AGENT_SKILLS = "agent.skills"
 # answer cheaply for conversations it has no say over.
 TURN_STEERING = "agent.turn_steering"
 
+# Whether an in-process agent's running turn was canceled (a person's Stop), by the
+# id its platform gave it (``utils.turn_events.TURN_REF_KEY``): async (turn_ref) ->
+# bool. Asked before and after every model call, before every tool call and every
+# ``coder.openai_agent.guards.CANCEL_POLL_S`` while one runs, so it must answer
+# cheaply; once it says yes the turn stops (``guards.TurnCanceled``).
+TURN_CANCELED = "agent.turn_canceled"
+
 # Environment variables an edition keeps itself for an agent's sandbox (named
 # secrets): async (spec) -> {NAME: value}. ``spec`` is the agent's
 # ``_sandboxEnv`` runtime config (nodes.agent.user_env.SANDBOX_ENV_KEY); the

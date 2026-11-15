@@ -357,6 +357,8 @@ class Agent:
         self.turn_carries_on = False
         # The calls the last turn read with, when none can have changed anything (``guards.TurnGuard.only_read``).
         self.turn_only_read: Optional[int] = None
+        # The last turn was canceled as it ran and stopped there (``_end_canceled``): it has no reply.
+        self.turn_canceled = False
 
         # Whether create() has finished. Until then, ``__call__`` raises.
         self._initialized = False
@@ -397,6 +399,7 @@ class Agent:
         first_call_effort: Optional[str] = None,
         effort: Optional[str] = None,
         empty_answer: Optional[str] = None,
+        canceled: Optional[Callable[[], Awaitable[bool]]] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
         sandbox_network: Optional[Sequence[str]] = None,
@@ -469,6 +472,9 @@ class Agent:
         # What a run is told when its model answers with nothing (no words, no call), which would end it where it
         # stands: it runs on once with this note, and may still end without a word. None: an empty answer ends it.
         agent._empty_answer = empty_answer
+        # Whether the turn its platform runs was canceled (``guards.cancel_check``): once it was, the turn stops where
+        # it stands and keeps no reply (``_end_canceled``). None: nothing cancels it but the caller's own ``pause``.
+        agent._canceled = canceled
         # Hook up the durable Session iff caller asked for persistence AND
         # gave us a conversation_id to key it on. Falls through to the
         # transient in-memory ``_history`` path otherwise.
@@ -990,9 +996,10 @@ class Agent:
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
                           ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up,
                           ends_unsaid=guards.HANDED_ON in wrap_up, ends_stopped=guards.STOPPED in wrap_up,
-                          so_far=getattr(self, "_so_far", None))
+                          so_far=getattr(self, "_so_far", None), canceled_check=getattr(self, "_canceled", None))
         self._so_far = None
         self._turn_guard, self.turn_ended_by, self.turn_closing, self.turn_carries_on = guard, None, None, False
+        self.turn_canceled = False
         try:
             with guards.running(getattr(self, "conversation_id", None), guard):
                 await self._turn(message, guard)
@@ -1077,9 +1084,11 @@ class Agent:
                             self._sdk_agent.model_settings = settings
                             return data.model_data
 
-                    input_filter = chain(getattr(self, "_call_model_input_filter", None) or chain(
+                    shaping = getattr(self, "_call_model_input_filter", None) or chain(
                         steering.filter_for(getattr(self, "conversation_id", None), getattr(self, "_session", None)),
-                        getattr(self, "_context_filter", None)), restore, _seen)
+                        getattr(self, "_context_filter", None))
+                    # A canceled turn starts no model call, nor anything the shaping would do before one.
+                    input_filter = chain(guard.before_model_call, shaping, restore, _seen)
                     from agents import RunConfig
                     run_config = RunConfig(call_model_input_filter=input_filter)
                     # A guard stops the run after the calls in hand (``TurnGuard.watch``), long before this backstop.
@@ -1162,6 +1171,8 @@ class Agent:
                             await self._emit_run_item_event(ev)
                         # AgentUpdatedStreamEvent and other lifecycle events are not
                         # surfaced to the frontend.
+            except guards.TurnCanceled:
+                break  # its turn was canceled: the run stopped where it would go on (``_end_canceled``)
             except InsufficientBalanceError as e:
                 # Finish the chat once, then preserve the typed failure so
                 # workflow runners can stop unfunded work without retrying it.
@@ -1177,6 +1188,8 @@ class Agent:
                 ))
                 raise
             except Exception as e:
+                if guard.cut_short:
+                    break  # a run cut as its turn was canceled ended there: no failure to report or retry
                 if (
                     attempt + 1 < _LLM_RUN_ATTEMPTS
                     and accumulated_text == (said or "")
@@ -1229,6 +1242,10 @@ class Agent:
                 turn_notes.reset(notes)
             break  # attempt succeeded
 
+        if guard.cut_short:
+            await self._end_canceled(guard, result, new_items)
+            return
+
         # A guard that stopped the run, rather than the model's answer: the turn wraps up once, or ends on its line.
         # One a tool's result handed on before it said a word says it in that one call, or ends with nothing; one a
         # result stopped says there where the work stands.
@@ -1236,7 +1253,7 @@ class Agent:
         stopped = result is not None and result.final_output is None and not guard.paused
         ended_by = guard.tripped if stopped else None
         if ended_by == guards.FUNDS:
-            await self._end_unfunded(guard, result.to_input_list(), run_config, env_overrides)
+            await self._end_unfunded(guard, result, run_config, env_overrides)
             return
         closing_for = ended_by or (guards.STOPPED if stopped and guard.stopped_work else None) or (
             guards.HANDED_ON if stopped and guard.owes_line else None)
@@ -1248,6 +1265,9 @@ class Agent:
             self.turn_ended_by = ended_by
             with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
                 wrapped = await self._wrap_up_turn(closing_for, guard, result.to_input_list(), run_config)
+            if guard.cut_short:
+                await self._end_canceled(guard, result, new_items)
+                return
             if wrapped is None and ended_by is not None:
                 line = guards.stopped_line(ended_by, guard.limits)
                 logger.warning("[openai_agent] turn ended by its %s limit with no wrap-up", ended_by)
@@ -1334,7 +1354,7 @@ class Agent:
                 closing = await Runner.run(closing_agent,
                                            [*history, {"role": "developer", "content": prompt}],
                                            hooks=guard, max_turns=1, run_config=run_config)
-        except MaxTurnsExceeded:
+        except (MaxTurnsExceeded, guards.TurnCanceled):
             return None
         except TimeoutError:
             logger.warning("[openai_agent] a turn's wrap-up got no answer in %gs; it ends on its line",
@@ -1349,19 +1369,23 @@ class Agent:
                                       content=[ResponseOutputText(type="output_text", text=text, annotations=[])])
         return text, MessageOutputItem(agent=closing_agent, raw_item=reply).to_input_item()
 
-    async def _end_unfunded(self, guard: TurnGuard, history: List[Dict[str, Any]], run_config: Any,
+    async def _end_unfunded(self, guard: TurnGuard, result: Any, run_config: Any,
                             env_overrides: Dict[str, str]) -> None:
         """A tool the credit gate turned down ended the turn (``guards.FUNDS``): its wrap-up says once what the turn
         got done (``turn_closing``, never streamed: the agent node keeps it on the turn's failed reply, for the
         refusal its platform makes of the failure), then the turn fails with the gate's words, as one whose model call
         the gate turned down does."""
         self.turn_ended_by = guards.FUNDS
+        history = result.to_input_list()
         closing: List[Dict[str, Any]] = []
         try:
             with override_env(**env_overrides) if env_overrides else contextlib.nullcontext():
                 wrapped = await self._wrap_up_turn(guards.FUNDS, guard, history, run_config)
         except InsufficientBalanceError:
             wrapped = None  # nor can that call be paid for
+        if guard.cut_short:
+            await self._end_canceled(guard, result, [])
+            return
         if wrapped is not None:
             self.turn_closing, item = wrapped
             closing = [item]
@@ -1372,6 +1396,25 @@ class Agent:
         logger.warning("[openai_agent] turn ended unfunded: %s", guard.unfunded)
         await self._emit_message(ChatMessageEvent(message=guard.unfunded, finished=True, status="error"))
         await self._emit_message(AgentStateEvent(state="error", reason=guard.unfunded))
+
+    async def _end_canceled(self, guard: TurnGuard, result: Any, new_items: List[Dict[str, Any]]) -> None:
+        """A turn canceled as it ran (``guards.TurnCanceled``) ends where it stopped: nothing it said becomes a reply
+        (``turn_canceled``), no fold runs after it, and its history says it stopped there, with its own message when
+        the run stopped before keeping it, so the turn after it reads it as stopped rather than unanswered. The step
+        it was cut on was never kept, so no call in its history is left without a result."""
+        self.turn_canceled, self.turn_ended_by, self.turn_carries_on = True, None, False
+        note = {"role": "user", "content": guards.CANCELED_NOTE}
+        try:
+            if self._session is not None:
+                await self._session.add_items([*([] if guard.began else new_items), note])
+            else:
+                kept = result.to_input_list() if result is not None else [*(self._history or []), *new_items]
+                self._history = [*kept, note]
+        except Exception:
+            logger.warning("[openai_agent] a canceled turn's history couldn't say where it stopped", exc_info=True)
+        logger.info("[openai_agent] turn canceled as it ran: conversation=%s model_calls=%d",
+                    getattr(self, "conversation_id", None), guard.model_calls)
+        await self._emit_message(ChatMessageEvent(message=None, finished=True))
 
     def _settle_context(self) -> None:
         """With the reply out, fold what the next turn would otherwise wait on, in the background. Never after a turn

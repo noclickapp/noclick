@@ -11,7 +11,7 @@ import pytest
 from coder.openai_agent.guards import TurnLimits, TurnSoFar
 from nodes.agent.handlers.llm import execute_llm_model
 from utils.turn_events import (
-    TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_SO_FAR_KEY, TURN_WRAP_UP_KEY,
+    TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_REF_KEY, TURN_SO_FAR_KEY, TURN_WRAP_UP_KEY,
 )
 
 pytestmark = pytest.mark.asyncio
@@ -69,13 +69,14 @@ async def test_a_run_a_restart_handed_over_meets_its_limits_where_the_turn_stood
     assert (await _created_with(monkeypatch, {}))["so_far"] is None
 
 
-async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False, carries_on=False):
-    """The node's output for a turn the engine left as ``ended_by``/``handed_on``/``carries_on``, having said
-    ``said``."""
+async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False, carries_on=False, canceled=False):
+    """The node's output for a turn the engine left as ``ended_by``/``handed_on``/``carries_on``/``canceled``, having
+    said ``said``."""
     reply = [""]
 
     class Ended:
         turn_ended_by, turn_handed_on, turn_carries_on, turn_only_read = ended_by, handed_on, carries_on, None
+        turn_canceled = canceled
         cleanup = AsyncMock()
 
         async def __call__(self, message):
@@ -103,6 +104,30 @@ async def test_the_output_says_a_tools_result_handed_the_turns_work_on(monkeypat
     """Its platform takes such a turn's silence for the model's call on work still under way, never a failure."""
     output = await _output_of(monkeypatch, "", handed_on=True)
     assert output["status"] == "completed" and output["handed_on"] is True and "ended_by" not in output
+
+
+async def test_a_turn_canceled_as_it_ran_has_no_reply(monkeypatch):
+    """Whatever it streamed before its Stop, the output carries no reply: its node keeps none and its platform reads it
+    as canceled (``AgentNode._persist_llm_assistant_turn``, ``service._run_turn``)."""
+    output = await _output_of(monkeypatch, "Let me look for a way", canceled=True)
+    assert output["status"] == "canceled" and output["canceled"] is True and output["response"] == ""
+    assert "ended_by" not in output
+
+
+async def test_a_turn_its_platform_named_asks_whether_it_was_canceled(monkeypatch):
+    """Its platform names it (``TURN_REF_KEY``) and answers ``TURN_CANCELED``; a workflow's agent node names none."""
+    from utils import capabilities
+
+    asked = []
+
+    async def canceled(turn_ref):
+        asked.append(turn_ref)
+        return True
+
+    monkeypatch.setitem(capabilities._providers, capabilities.TURN_CANCELED, canceled)
+    check = (await _created_with(monkeypatch, {TURN_REF_KEY: "op-1"}))["canceled"]
+    assert await check() is True and asked == ["op-1"]
+    assert (await _created_with(monkeypatch, {}))["canceled"] is None
 
 
 async def test_a_turn_someone_waits_on_starts_with_the_effort_the_platform_names(monkeypatch):

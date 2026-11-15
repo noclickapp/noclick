@@ -45,7 +45,14 @@ A turn a platform hands to another process mid-run (a deploy) runs on there unde
 first run (``TurnSoFar``: its clock, steps, spend and reads in a row): the guard of each turn running in a process is
 kept by its conversation (``running``), so the platform reads how far the turn had gone as it stops it
 (``gone_so_far``) and seeds the next run's guard with it. Each run starting fresh, turns crossing a deploy ran well
-past their time limit (2026-10-26)."""
+past their time limit (2026-10-26).
+
+A turn whose platform cancels it while it runs (a person's Stop: ``utils.capabilities.TURN_CANCELED``) stops there:
+the guard asks before each model call, after each one (before its calls run or its answer is kept) and before each
+tool call, and every ``CANCEL_POLL_S`` while one is in flight, which it then cuts where it stands
+(``cancel(mode="immediate")``: the step it was on is never kept, so no call is left without its result). A tool call
+made after the cancel answers ``CANCELED_RESULT`` without running. Asked only between steps, a canceled turn ran on
+for seconds, read its tools' refusals as being unable to act and kept a reply its person never wanted."""
 
 from __future__ import annotations
 
@@ -56,7 +63,7 @@ import logging
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterator, Mapping, Optional, Set, Tuple
+from typing import Any, Awaitable, Callable, Dict, Iterator, Mapping, Optional, Set, Tuple
 
 from agents import RunHooks
 from agents.tool_guardrails import (
@@ -113,10 +120,33 @@ OVERDUE_S = 60.0
 # The most a turn's one wrap-up call may take; past it the turn ends on its stopped line alone.
 WRAP_UP_S = 90.0
 
+# What a tool call made after its turn was canceled answers in place of running.
+CANCELED_RESULT = "This turn was stopped, so nothing was done."
+# What a canceled turn's history keeps where it stopped, so the turn after it reads it as stopped, not unanswered.
+CANCELED_NOTE = "[This turn was stopped here, before it finished.]"
+# How often a running turn asks whether it was canceled, beside its checks at each model and tool call.
+CANCEL_POLL_S = 1.0
+
 # Read through the module so a test can move the clock.
 _now = time.monotonic
 # The clock a turn's runs in other processes share (``TurnSoFar.started_at``).
 _wall = time.time
+
+
+class TurnCanceled(Exception):
+    """Raised inside a run whose turn was canceled, where it would start a model call or act on one's answer: the run
+    ends there and its agent ends the turn (``Agent._end_canceled``)."""
+
+
+def cancel_check(turn_ref: Optional[str]) -> Optional[Callable[[], Awaitable[bool]]]:
+    """Whether the turn a platform named ``turn_ref`` (``utils.turn_events.TURN_REF_KEY``) was canceled, asked through
+    ``TURN_CANCELED``; None when nothing cancels turns or the turn has no name."""
+    from utils.capabilities import TURN_CANCELED, capability
+
+    canceled = capability(TURN_CANCELED)
+    if canceled is None or not turn_ref:
+        return None
+    return lambda: canceled(turn_ref)
 
 
 def ends_turn(output: Any) -> Any:
@@ -273,13 +303,24 @@ class TurnGuard(RunHooks):
     or handing it to them (``THEIRS``) while its words all came before work it did since (``unsaid_change``), and
     ``owes_line`` is that its closing call says it. With ``ends_stopped``, a result stopping the work (``STOPPED``)
     ends the turn, and ``stopped_work`` is that its closing call says where the work stands. ``so_far``: what the
-    turn's earlier runs used (``TurnSoFar``), which this run's counts start from."""
+    turn's earlier runs used (``TurnSoFar``), which this run's counts start from. ``canceled_check`` asks whether the
+    turn was canceled (``cancel_check``); once it says so, ``canceled`` is set and nothing more of the run starts, and
+    ``cut_short`` once the run stopped for it (a run that had finished by then keeps its answer)."""
 
     def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None, *, ends_unfunded: bool = False,
                  ends_stalled: bool = False, ends_unsaid: bool = False, ends_stopped: bool = False,
-                 so_far: Optional[TurnSoFar] = None):
+                 so_far: Optional[TurnSoFar] = None,
+                 canceled_check: Optional[Callable[[], Awaitable[bool]]] = None):
         self.limits = limits
         self._inner = inner
+        self._canceled_check = canceled_check
+        self.canceled = False
+        self.cut_short = False
+        # A model call got past its start, so the run has kept the turn's own input in its history.
+        self.began = False
+        self._result: Any = None
+        self._watcher: Optional[asyncio.Task] = None
+        self._check_failed = False
         self._ends_unfunded = ends_unfunded
         self._ends_stalled = ends_stalled
         self._ends_unsaid = ends_unsaid
@@ -336,17 +377,64 @@ class TurnGuard(RunHooks):
 
     def watch(self, result: Any) -> None:
         """The streamed run to stop once a guard trips; with a time limit, stopped by the clock as well, at once,
-        when a call still holds it ``OVERDUE_S`` past the limit (``_overdue``)."""
+        when a call still holds it ``OVERDUE_S`` past the limit (``_overdue``); with a cancel check, cut once the turn
+        is canceled (``_watch_canceled``)."""
         self._stop = lambda: result.cancel(mode="after_turn")
+        self._result = result
         if self.limits.minutes is not None:
             left = self.limits.minutes * 60 - self.elapsed_s + OVERDUE_S
             self._timers.append(asyncio.get_running_loop().call_later(max(left, 0.0), self._overdue, result))
+        if self._canceled_check is not None and self._watcher is None:
+            self._watcher = asyncio.get_running_loop().create_task(self._watch_canceled())
 
     def close(self) -> None:
-        """The turn is over: its clock stops."""
+        """The turn is over: its clock stops, and nothing asks any more whether it was canceled."""
         for timer in self._timers:
             timer.cancel()
         self._timers.clear()
+        if self._watcher is not None:
+            self._watcher.cancel()
+            self._watcher = None
+
+    async def is_canceled(self) -> bool:
+        """Whether the turn was canceled: ``canceled`` once known, else its check's answer. A check that fails answers
+        no (warned once): the run goes on as it would with nothing to cancel it, and the next check asks again."""
+        if self.canceled or self._canceled_check is None:
+            return self.canceled
+        try:
+            self.canceled = bool(await self._canceled_check())
+        except Exception:
+            if not self._check_failed:
+                self._check_failed = True
+                logger.warning("agent_turn_cancel_check_failed: the turn goes on until a check answers", exc_info=True)
+        return self.canceled
+
+    async def halt_if_canceled(self) -> None:
+        """Raise ``TurnCanceled`` once the turn was canceled: the run stops where it would go on."""
+        if await self.is_canceled():
+            self.cut_short = True
+            raise TurnCanceled()
+
+    async def before_model_call(self, data: Any) -> Any:
+        """The first of a run's input filters: once the turn was canceled no model call starts, nor what the filters
+        after this one do (taking messages steered into the turn, folding its conversation)."""
+        await self.halt_if_canceled()
+        return data.model_data
+
+    def cut(self) -> None:
+        """End the run where it stands: the step it's on (a model call, the tool calls it made) is dropped whole."""
+        result = self._result
+        if result is not None and not result.is_complete:
+            self.cut_short = True
+            result.cancel(mode="immediate")
+
+    async def _watch_canceled(self) -> None:
+        while True:
+            await asyncio.sleep(CANCEL_POLL_S)
+            if await self.is_canceled():
+                logger.info("agent_turn_canceled: the run is cut where it stood")
+                self.cut()
+                return
 
     def _overdue(self, result: Any) -> None:
         """A model call that never answers ends no step, so the time limit, checked at each one, never trips: a
@@ -374,6 +462,7 @@ class TurnGuard(RunHooks):
     async def on_llm_start(self, context, agent, system_prompt, input_items) -> None:
         if self._inner is not None:
             await self._inner.on_llm_start(context, agent, system_prompt, input_items)
+        self.began = True
 
     async def on_llm_end(self, context, agent, response) -> None:
         if self._inner is not None:
@@ -384,6 +473,8 @@ class TurnGuard(RunHooks):
         # A step's words come before its calls: one that changes something leaves its words behind that work.
         self.unsaid_change = changes_something(response) or (self.unsaid_change and not spoke)
         self._check()
+        # Canceled while the model answered: its calls never run and its answer is never kept.
+        await self.halt_if_canceled()
 
     async def on_tool_end(self, context, agent, tool, result) -> None:
         unfunded = self._ends_unfunded and not self.tripped and credit_refusal(result)
@@ -478,10 +569,13 @@ def gone_so_far(conversation_id: str) -> Optional[TurnSoFar]:
 
 
 def loop_guardrails(guard_of: Callable[[], Optional[TurnGuard]]) -> Dict[str, list]:
-    """A tool's guardrails for the loop detector, reading the running turn's guard."""
+    """A tool's guardrails for the loop detector, reading the running turn's guard; a call made once the turn was
+    canceled answers ``CANCELED_RESULT`` without running."""
 
     async def refuse(data: ToolInputGuardrailData) -> ToolGuardrailFunctionOutput:
         guard = guard_of()
+        if guard is not None and await guard.is_canceled():
+            return ToolGuardrailFunctionOutput.reject_content(CANCELED_RESULT)
         refused = guard and guard.refusal(data.context.tool_name, data.context.tool_arguments)
         return ToolGuardrailFunctionOutput.reject_content(refused) if refused else ToolGuardrailFunctionOutput.allow()
 
