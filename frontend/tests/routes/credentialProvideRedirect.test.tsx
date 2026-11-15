@@ -11,9 +11,11 @@ vi.mock('react-router', async (importOriginal) => ({
     useLoaderData: mocks.loaderData,
 }));
 vi.mock('~/lib/nodeCatalog.server', () => ({ getAllSerializedNodeMeta: () => ({}) }));
-vi.mock('~/components/credential/CredentialProvideFlow', () => ({
+vi.mock('~/utils/credentialAppName', () => ({
     formatCredentialType: (t: string) => t,
     appNameForCredentialType: (t: string) => t,
+}));
+vi.mock('~/components/credential/CredentialProvideFlow', () => ({
     CredentialProvideFlow: ({ onDetails, onProvided }: {
         onDetails: (d: Record<string, unknown>) => void;
         onProvided: (verification?: Record<string, unknown> | null) => void;

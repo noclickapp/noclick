@@ -9,10 +9,10 @@ import { PublicThemeToggle } from '~/components/shared/PublicThemeToggle';
 import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import {
-    appNameForCredentialType,
     CredentialProvideFlow,
     type ProvideRequestDetails,
 } from '~/components/credential/CredentialProvideFlow';
+import { appNameForCredentialType } from '~/utils/credentialAppName';
 import { DIALOG_MARK } from '~/components/shell/ShellDialog';
 import { AiMark } from '~/components/shell/connections/aiAccounts';
 import { connectDialogHeader } from '~/components/credential/connect/connectHeader';

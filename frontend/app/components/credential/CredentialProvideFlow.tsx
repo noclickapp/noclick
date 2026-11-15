@@ -14,9 +14,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { Loader2, Shield, Clock, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import { getProviderConfig, getProviderConfigByCredentialType, oauthNeedsInAppSelection } from '~/utils/oauthProviders';
-import { getServiceForCredentialType } from '~/utils/credentialTypes';
-import { credentialAppName } from '~/utils/credentialIcons';
+import { getProviderConfig, oauthNeedsInAppSelection } from '~/utils/oauthProviders';
+import { appNameForCredentialType, formatCredentialType } from '~/utils/credentialAppName';
 import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { AGENT_SIGN_IN_NAMES, agentCompanyOf, agentCredentialProvider, signInForKey } from '~/lib/agentCredentialModel';
 import { getProviderMetadata, type ModelProvider } from '~/types/provider';
@@ -30,7 +29,7 @@ import {
   type ProvideCredentialMethod,
 } from './CredentialMethodConnect';
 import { provideLinkTransport } from './provideLinkTransport';
-import { fixWordCasing, humanizeCredentialLabel } from '~/utils/credentialLabels';
+import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import type { CredentialField } from './CredentialFieldInput';
 
 export interface ProvideRequestDetails {
@@ -58,24 +57,6 @@ export interface ProvideRequestDetails {
   redirect_url?: string | null;
   /** The harness the asking agent runs on when it takes no plan: why the link offers an AI key without its sign-in. */
   sign_in_withheld?: string | null;
-}
-
-/** Convert credential_type to human-readable label */
-export function formatCredentialType(type: string): string {
-  return type
-    .replace(/_oauth$/, '')
-    .replace(/_pat$/, ' PAT')
-    .replace(/_api_key$/, ' API Key')
-    .replace(/_bot_token$/, ' Bot Token')
-    .replace(/_api_token$/, ' API Token')
-    .replace(/_bearer_token$/, ' Bearer Token')
-    .replace(/_integration_token$/, ' Integration Token')
-    .replace(/_access_token$/, ' Access Token')
-    .replace(/_connection_string$/, ' Connection String')
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
-    // "Whatsapp Qr" → "WhatsApp QR": Title Case can't know acronyms/brands.
-    .split(' ').map(w => fixWordCasing(w)).join(' ');
 }
 
 /** Why a request can't be provided (the provide page words each for a stranger, the chat's card for its owner):
@@ -167,18 +148,6 @@ const PROBLEMS: Record<ProvideRequestProblem, string> = {
  *  the request has no sign-in for (the provide page refuses the first and draws nothing for the second). */
 export function signsInOnlyInApp(method: ProvideCredentialMethod): boolean {
   return kindFromBackendMethod(method) === 'oauth' && (!method.oauth_provider || oauthNeedsInAppSelection(method.oauth_provider));
-}
-
-/** The app a request is for, as Connections names it: an AI account's company ("Anthropic"), else the app as the
- *  catalog names it ("Notion"), else its sign-in's provider, else its type. */
-export function appNameForCredentialType(credentialType: string): string {
-  return (
-    agentCompanyOf(credentialType)?.title ??
-    getServiceForCredentialType(credentialType)?.label ??
-    credentialAppName(credentialType) ??
-    getProviderConfigByCredentialType(credentialType)?.name ??
-    formatCredentialType(credentialType)
-  );
 }
 
 /** Of a company's ways in (Connections' own, in its order and words), those a link offers: each the request lists, a

@@ -70,9 +70,9 @@ export function Rows({ children, className }: { children: ReactNode; className?:
     return <div className={cn('divide-y divide-border dark:divide-foreground/[0.07]', className)}>{children}</div>;
 }
 
-export function Row({ lead, title, detail, aside, className }: { lead?: ReactNode; title: ReactNode; detail?: ReactNode; aside?: ReactNode; className?: string }) {
+export function Row({ lead, title, detail, aside, className, testId }: { lead?: ReactNode; title: ReactNode; detail?: ReactNode; aside?: ReactNode; className?: string; testId?: string }) {
     return (
-        <div className={cn('flex min-h-[52px] items-center gap-3 py-2', className)}>
+        <div className={cn('flex min-h-[52px] items-center gap-3 py-2', className)} data-testid={testId}>
             {lead && <span className="shrink-0">{lead}</span>}
             <div className="min-w-0 flex-1">
                 <div className="truncate text-[14px] text-foreground">{title}</div>

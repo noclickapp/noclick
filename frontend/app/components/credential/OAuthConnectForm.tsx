@@ -108,6 +108,24 @@ export function resolveOAuthRedirectUri(
     return `${installationOrigin.replace(/\/$/, '')}${redirectUri}`;
 }
 
+/** What a new sign-in's credential is named. After its SPECIFIC type, not the provider label: one provider can back many
+ *  credential types (Microsoft → Word/Excel/OneDrive/…), and the backend derives the DB credential_type from this name.
+ *  Naming everything "Microsoft - date" made every Microsoft node collapse onto one type and trip the per-type limit. */
+export function oauthCredentialName(credentialType: string, displayName: string): string {
+    const schemaTitle = getSchemaTitleFromCredentialType(credentialType);
+    const credentialLabel = schemaTitle ? humanizeCredentialLabel(schemaTitle.replace('Credential', '')) : displayName;
+    return `${credentialLabel} - ${new Date().toLocaleDateString()}`;
+}
+
+/** A sign-in this form starts from its button alone, so a surface can start it from a button of its own: nothing to type
+ *  first (a tenant, a context value, an OAuth app of the person's own) and no device code to show. */
+export function signsInInOneTap(provider: string, credentialType: string, requiresCustomClient?: boolean): boolean {
+    const providers = INTEGRATION_METADATA.oauthProviders;
+    const spec = Object.hasOwn(providers, provider) ? providers[provider] : undefined;
+    const typesFirst = Object.values(spec?.contextFields ?? {}).some((field) => field.source === 'input');
+    return !typesFirst && !requiresCustomClient && !spec?.deviceFlow && !getOAuthConnectInput(provider, credentialType);
+}
+
 export function OAuthConnectForm({
     provider,
     credentialType,
@@ -179,18 +197,7 @@ export function OAuthConnectForm({
     const byooMissing =
         !!requiresCustomClient && (!clientId.trim() || !clientSecret.trim());
 
-    // Name the credential after its SPECIFIC type, not the provider label.
-    // One provider can back many credential types (Microsoft → Word/Excel/
-    // OneDrive/…), and the backend derives the DB credential_type from this
-    // name. Naming everything "Microsoft - date" made every Microsoft node
-    // collapse onto one type and trip the per-type credential limit.
-    const newCredentialName = () => {
-        const schemaTitle = getSchemaTitleFromCredentialType(credentialType);
-        const credentialLabel = schemaTitle
-            ? humanizeCredentialLabel(schemaTitle.replace('Credential', ''))
-            : displayName;
-        return `${credentialLabel} - ${new Date().toLocaleDateString()}`;
-    };
+    const newCredentialName = () => oauthCredentialName(credentialType, displayName);
 
     // Shared trigger so the Connect button and the error panel's Reconnect fire the exact
     // same flow. No-op when a gate (plan limit) or a required input isn't satisfied.

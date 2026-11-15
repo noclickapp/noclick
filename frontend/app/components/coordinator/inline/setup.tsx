@@ -1,17 +1,16 @@
-// Setting an agent up without leaving the thread: the apps it needs, each with the one thing that connects it, one
-// account connected right on its card, and the agent itself drawn on a canvas while it's built.
-import { Fragment, useRef, useState, type ReactNode } from 'react';
+// Setting an agent up without leaving the thread: the apps it needs, each with the one thing that connects it, the
+// accounts a turn asks for on one card (a row each, connected from its row), and the agent itself drawn on a canvas
+// while it's built.
+import { useRef, type ReactNode } from 'react';
 import { verdictState, verdictSummary } from '~/components/credential/ConnectionVerdict';
-import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import type { ProvideRequestProblem } from '~/components/credential/CredentialProvideFlow';
 import type { ScaffoldBlob } from '~/lib/agentScaffold';
-import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { cn } from '~/lib/utils';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { ThinkingOrb } from '~/components/shared/ThinkingOrb';
 import { Canvas } from './canvas';
 import { FreshCheck, ProgressMotion, Swap } from './motion';
-import { InlineCard, LiveDot, PILL_PRIMARY, PILL_QUIET, PILL_SECONDARY, Receipt, Row, Rows, Status } from './primitives';
+import { InlineCard, listOf, LiveDot, PILL_QUIET, Receipt, Row, Rows, Status } from './primitives';
 
 export interface AppRow {
     key: string;
@@ -36,116 +35,75 @@ export function ConnectAppsCard({ title, meta, apps }: { title: ReactNode; meta?
     );
 }
 
-/** How a way in reads as the switch to it, beside the one the card leads with. */
-function otherWay(method: ProvideCredentialMethod, name: string): string {
-    switch (kindFromBackendMethod(method)) {
-        case 'oauth':
-            return `Sign in with ${name} instead`;
-        case 'qr_scan':
-            return 'Scan a QR code instead';
-        case 'agent_oauth':
-            return 'Sign in with your plan instead';
-        case 'mcp':
-            return `Sign in with ${name} through MCP instead`;
-        default:
-            return `Use ${/^[aeiou]/i.test(method.label) ? 'an' : 'a'} ${method.label} instead`;
-    }
+/** An account that's in: who it is, and what the connect-time check said when it just ran here. */
+export interface ConnectedAccount {
+    name: string;
+    account?: string;
+    verification?: CredentialTestConnectionResponse | null;
 }
 
-/** One account to connect, connected on the card itself: its mark and what it's for, then the way in (a key's
- *  fields, a sign-in that opens in a small window over the chat, or a QR code once asked for, since showing one
- *  holds a WhatsApp connection open), with a quiet switch to the request's other ways in. `renderMethod` draws a
- *  way in: the product's own connect form, run on the request. */
-export function ConnectAccountCard({
-    mark,
-    name,
-    meta,
-    methods,
-    requested,
-    renderMethod,
-    showQr = false,
-    onPlan,
-}: {
-    mark: ReactNode;
-    name: string;
-    meta?: ReactNode;
-    /** The request's ways in; absent while it loads. */
-    methods?: ProvideCredentialMethod[];
-    /** The credential type asked for: its way in leads. */
-    requested: string;
-    renderMethod: (method: ProvideCredentialMethod) => ReactNode;
-    /** Start with the QR code showing. */
-    showQr?: boolean;
-    /** The plan sign-ins have a card of their own (the plan offer): switching to one goes back there. */
-    onPlan?: () => void;
-}) {
-    const [chosen, setChosen] = useState(requested);
-    const [qrShown, setQrShown] = useState(showQr);
-    const method = methods?.find((m) => m.credential_type === chosen) ?? methods?.[0];
-    const kind = method && kindFromBackendMethod(method);
-    const holding = kind === 'qr_scan' && !qrShown;
-    const others = methods?.filter((m) => m !== method) ?? [];
+/** A key nothing could check is saved, never shown as working. */
+const savedOnly = (verification?: CredentialTestConnectionResponse | null) => !!verification && verdictState(verification) === 'unverified';
+
+/** What the check proved (their customers, their channels), else the account itself. */
+const accountLine = ({ account, verification }: ConnectedAccount) => verdictSummary(verification) ?? account;
+
+/** The accounts a turn asks to connect, as one card: a row each (its mark, its name, how it connects and the one button
+ *  that does it), counted as they land. Once every one is in, the card folds to `ConnectedSummary`. */
+export function ConnectAccountsCard({ total, done, meta, children }: { total: number; done: number; meta?: ReactNode; children: ReactNode }) {
     return (
         <InlineCard
-            lead={mark}
-            title={`Connect ${name}`}
+            title={total === 1 ? 'Connect an account' : `Connect ${total} accounts`}
             meta={meta}
-            actions={
-                (holding || others.length > 0) && (
-                    <>
-                        {holding && (
-                            <button type="button" className={PILL_PRIMARY} onClick={() => setQrShown(true)} data-testid="coordinator-connect-qr">
-                                Show QR code
-                            </button>
-                        )}
-                        {others.map((other) => (
-                            <button
-                                key={other.credential_type}
-                                type="button"
-                                className={PILL_QUIET}
-                                onClick={() => (onPlan && kindFromBackendMethod(other) === 'agent_oauth' ? onPlan() : setChosen(other.credential_type))}
-                            >
-                                {otherWay(other, name)}
-                            </button>
-                        ))}
-                    </>
-                )
-            }
+            aside={total > 1 && <span className="text-[12.5px] tabular-nums text-muted-foreground">{`${done} of ${total} done`}</span>}
         >
-            {!method ? (
-                <Status state="working">Getting it ready</Status>
-            ) : holding ? null : (
-                <div className="space-y-2" data-testid="coordinator-connect-form">
-                    <Fragment key={method.credential_type}>{renderMethod(method)}</Fragment>
-                </div>
-            )}
+            <div data-testid="coordinator-connect">
+                <Rows className="-mb-1">{children}</Rows>
+            </div>
         </InlineCard>
     );
 }
 
-/** A sign-in the card can't finish (it asks which account or project to use once you're in, which only the app's
- *  own connect form can do): where to connect it instead. Connecting there doesn't answer the request, so NoClick
- *  is told by hand. */
-export function ConnectElsewhere({ name, place, onOpen }: { name: string; place: string; onOpen: () => void }) {
+/** What a test finds an account's row by. */
+export const connectRowId = (name: string) => `connect-row:${name}`;
+
+/** An account's row once it's in: a check, and who it is. */
+export function ConnectedRow({ mark, connected }: { mark: ReactNode; connected: ConnectedAccount }) {
+    const saved = savedOnly(connected.verification);
     return (
-        <div className="space-y-3">
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-                Signing in to {name} needs a step that only runs in {place}. Connect it there, then tell NoClick it’s done.
-            </p>
-            <button type="button" className={PILL_SECONDARY} onClick={onOpen}>
-                Open {place}
-            </button>
-        </div>
+        <Row
+            testId={connectRowId(connected.name)}
+            lead={mark}
+            title={connected.name}
+            detail={saved ? 'Saved, not verified yet' : 'Connected'}
+            aside={
+                !saved && (
+                    <Status state="done">
+                        <span className="max-w-[200px] truncate">{accountLine(connected)}</span>
+                    </Status>
+                )
+            }
+        />
     );
 }
 
-/** A connected account in one line: what the connect-time check proved when it just ran here (their customers,
- *  their channels), else the account itself. A key nothing could check is saved, never shown as working. */
-export function ConnectedReceipt({ name, account, verification }: { name: string; account?: string; verification?: CredentialTestConnectionResponse | null }) {
-    if (verification && verdictState(verification) === 'unverified') {
-        return <Receipt tone="info">{name} saved, not verified yet · the first run will tell</Receipt>;
-    }
-    const line = verdictSummary(verification) ?? account;
+/** Every account in, in one line. */
+export function ConnectedSummary({ accounts }: { accounts: ConnectedAccount[] }) {
+    if (accounts.length === 1) return <ConnectedReceipt {...accounts[0]} />;
+    const saved = accounts.filter((a) => savedOnly(a.verification)).map((a) => a.name);
+    const connected = accounts.filter((a) => !savedOnly(a.verification)).map((a) => a.name);
+    if (!connected.length) return <Receipt tone="info">{listOf(saved)} saved, not verified yet · the first run will tell</Receipt>;
+    return (
+        <Receipt>
+            {listOf(connected)} {connected.length === 1 ? 'is' : 'are'} connected{saved.length ? ` · ${listOf(saved)} saved, not verified yet` : ''}
+        </Receipt>
+    );
+}
+
+/** A connected account in one line: what the connect-time check proved when it just ran here, else the account itself. */
+export function ConnectedReceipt({ name, account, verification }: ConnectedAccount) {
+    if (savedOnly(verification)) return <Receipt tone="info">{name} saved, not verified yet · the first run will tell</Receipt>;
+    const line = accountLine({ name, account, verification });
     return (
         <Receipt>
             {name} connected{line ? ` · ${line}` : ''}
@@ -153,25 +111,10 @@ export function ConnectedReceipt({ name, account, verification }: { name: string
     );
 }
 
-/** A request that can no longer be connected here, and the way on: a new request from NoClick, or another try when
- *  it just couldn't be read. */
-export function ConnectUnavailable({ name, problem, note, onRetry }: { name: string; problem: ProvideRequestProblem; note?: string; onRetry: () => void }) {
-    // Ended for a reason of its own (a scan of a number an agent already answers): that, and nothing to ask again.
-    if (note) return <Receipt tone="info">{note}</Receipt>;
-    if (problem === 'failed' || problem === 'unreachable') {
-        return (
-            <Receipt
-                tone="info"
-                action={
-                    <button type="button" className={cn(PILL_QUIET, 'h-7')} onClick={onRetry}>
-                        Try again
-                    </button>
-                }
-            >
-                Couldn’t load the way to connect {name}
-            </Receipt>
-        );
-    }
+/** Why a request can no longer be connected here: ended for a reason of its own (`note`), or what to do about it. */
+export function unavailableLine(name: string, problem: ProvideRequestProblem, note?: string): string {
+    if (note) return note;
+    if (problem === 'failed' || problem === 'unreachable') return `Couldn’t load the way to connect ${name}`;
     const why =
         problem === 'too_many'
             ? `Too many tries to connect ${name}`
@@ -180,7 +123,28 @@ export function ConnectUnavailable({ name, problem, note, onRetry }: { name: str
               : problem === 'not_found'
                 ? `A newer request to connect ${name} replaced this one`
                 : `${name} wasn’t connected in time`;
-    return <Receipt tone="info">{why} · ask NoClick again</Receipt>;
+    return `${why} · ask NoClick again`;
+}
+
+/** A request that just couldn't be read, which another try may load. */
+export const retriesRead = (problem: ProvideRequestProblem, note?: string) => !note && (problem === 'failed' || problem === 'unreachable');
+
+/** A request that can no longer be connected here, in one line, with another try when it just couldn't be read. */
+export function ConnectUnavailable({ name, problem, note, onRetry }: { name: string; problem: ProvideRequestProblem; note?: string; onRetry: () => void }) {
+    return (
+        <Receipt
+            tone="info"
+            action={
+                retriesRead(problem, note) && (
+                    <button type="button" className={cn(PILL_QUIET, 'h-7')} onClick={onRetry}>
+                        Try again
+                    </button>
+                )
+            }
+        >
+            {unavailableLine(name, problem, note)}
+        </Receipt>
+    );
 }
 
 export interface BuildPart {

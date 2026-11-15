@@ -16,7 +16,7 @@ import { kindFromBackendMethod, type CredentialMethodKind } from '~/lib/credenti
 import { cn } from '~/lib/utils';
 import { copyMethodOf, keyNoun, methodCopy, sourceLink, withArticle, type MethodCopy } from '~/utils/credentialCopy';
 import { getCredentialIcon } from '~/utils/credentialIcons';
-import type { ConnectResult, ConnectStage } from './connectHeader';
+import { landedVerification, type ConnectResult, type ConnectStage } from './connectHeader';
 import { FinalStep, Step } from './steps';
 
 export { connectDialogHeader, type ConnectResult, type ConnectStage } from './connectHeader';
@@ -170,7 +170,7 @@ export function ConnectApp({
         return (
             <div ref={stageRef} className="space-y-6 pb-5 pt-1">
                 {/* A sign-in proves as little as a pasted key until the connect-time check has asked the provider. */}
-                <ConnectionVerdict providerLabel={app} verification={result.verification} accountLine={result.account} />
+                <ConnectionVerdict providerLabel={app} verification={landedVerification(result)} accountLine={result.account} />
                 {afterConnect?.(result) ?? (
                     <button type="button" onClick={onDone} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center')}>
                         Done

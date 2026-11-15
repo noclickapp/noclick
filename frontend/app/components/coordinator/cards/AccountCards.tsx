@@ -1,8 +1,8 @@
-// Cards about the account's connections and NoClick itself: an app to connect, connected right on the card over the
-// request the coordinator made (connect_credential), a call held for your OK before an account makes it, something it
-// will remember (with the way to take it back), its own email address, and where a message to you went, or a way to
-// reach you on your phone when there isn't one yet.
-import { lazy, Suspense, useCallback, useState } from 'react';
+// Cards about the account's connections and NoClick itself: the accounts a turn asks to connect, one card with a row
+// each, connected from its row over the request each ask made (connect_credential, or a platform's connect link), a
+// call held for your OK before an account makes it, something it will remember (with the way to take it back), its own
+// email address, and where a message to you went, or a way to reach you on your phone when there isn't one yet.
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { CredentialArguments } from '~/components/credential/CredentialArguments';
@@ -15,30 +15,31 @@ import { inboxLink } from '~/components/shell/mailApp';
 import { useCatalogServices } from '~/components/shell/connections/accounts';
 import { EmailReceipt, RepliedOn, type EmailFailure, type EmailReceiptState } from '~/components/coordinator/inline/channels';
 import { MemoryLine, PhoneHandoffCard } from '~/components/coordinator/inline/keeping';
-import { PILL_PRIMARY, PILL_QUIET, Receipt, Status } from '~/components/coordinator/inline/primitives';
-import { ConnectAccountCard, ConnectedReceipt } from '~/components/coordinator/inline/setup';
+import { PILL_PRIMARY, PILL_QUIET, Receipt, Row, Status } from '~/components/coordinator/inline/primitives';
+import { ConnectAccountsCard, ConnectedRow, ConnectedSummary, connectRowId } from '~/components/coordinator/inline/setup';
+import { connectAsksOf, type ConnectAsk } from '~/components/coordinator/toolCardRegistry';
 import { ApprovalCard } from '~/components/coordinator/inline/work';
 import { useCredentialList } from '~/hooks/useCachedCredentialList';
 import { useCredentialApprovalReview } from '~/hooks/useCredentialApprovalReview';
 import { useSocketEvent } from '~/hooks/useSocketEvent';
 import { useTextNoClick } from '~/hooks/useTextNoClick';
-import { agentCompanyOf } from '~/lib/agentCredentialModel';
 import { failed, obj, str, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import { formatPhoneForDisplay } from '~/lib/phoneFormat';
 import { socketCall } from '~/lib/socketCall';
 import { cn } from '~/lib/utils';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { getCredentialIcon } from '~/utils/credentialIcons';
-import { humanizeCredentialLabel } from '~/utils/credentialLabels';
+import { appNameForCredentialType } from '~/utils/credentialAppName';
+import type { RequestedAccount } from './ConnectRequest';
 
-const ConnectRequest = lazy(() => import('./ConnectRequest'));
+const ConnectRequests = lazy(() => import('./ConnectRequest'));
 
 // A connection made just before the call (clock skew between here and the server) still answers it.
 const SKEW_MS = 60_000;
 
 const reloadCredentials = () => window.dispatchEvent(new Event(CREDENTIALS_CHANGED_EVENT));
 
-// ── An app to connect ────────────────────────────────────────────────────────
+// ── Accounts to connect ──────────────────────────────────────────────────────
 
 /** The request's token, from the provide link the tool answered with. */
 function provideToken(url: string): string | undefined {
@@ -51,89 +52,103 @@ interface Connected {
     verification?: CredentialTestConnectionResponse | null;
 }
 
-export function ConnectCard({ call }: { call: CoordinatorToolCall }) {
-    const type = str(call.args, 'credential_type');
-    const url = str(call.result, 'url');
-    if (!type || !url || failed(call.result)) return null;
-    return <ConnectAccount type={type} url={url} requestId={str(call.result, 'request_id')} message={str(call.args, 'message')} startedAt={call.startedAt} />;
+/** Every account a turn asks to connect (the coordinator's connect_credential, a platform's connect link), as one card
+ *  drawn under the turn's first ask. */
+export function ConnectCard({ call, turn }: { call: CoordinatorToolCall; turn?: readonly CoordinatorToolCall[] }) {
+    const asks = useMemo(() => connectAsksOf(turn ?? [call]), [turn, call]);
+    if (asks[0]?.id !== call.id) return null;
+    return <ConnectAccounts asks={asks} />;
 }
 
-/** An account to connect, connected on the card over the request behind a provide link (`url`): the coordinator's
- *  own (connect_credential) or one a platform agent's connect link made. `requestId` hears it fulfilled elsewhere;
- *  `onPlan` is where its plan sign-ins are offered instead. */
+/** One account to connect, on the same card with a row of its own: an AI company's key given instead of its plan,
+ *  whose plan sign-ins have a card of their own (`onPlan` switches back to it). */
 export function ConnectAccount({
     type,
     url,
-    requestId,
     message,
     startedAt,
     onPlan,
 }: {
     type: string;
     url: string;
-    requestId?: string;
     message?: string;
     startedAt: number;
     onPlan?: () => void;
 }) {
-    const token = provideToken(url);
+    const asks = useMemo(() => [{ id: url, credentialType: type, url, message, startedAt }], [type, url, message, startedAt]);
+    return <ConnectAccounts asks={asks} onPlan={onPlan} />;
+}
+
+/** Accounts to connect, each over the request behind its provide link, connected from its row. An account already in
+ *  (connected here, elsewhere, or before a reload) shows as in without reading its request; once all are, the card is
+ *  one line. */
+function ConnectAccounts({ asks, onPlan }: { asks: ConnectAsk[]; onPlan?: () => void }) {
     const services = useCatalogServices();
     const { credentials, loaded } = useCredentialList();
-    const [connected, setConnected] = useState<Connected | null>(null);
-    const [attempt, setAttempt] = useState(0);
-    const reread = useCallback(() => setAttempt((n) => n + 1), []);
-    // The request was provided: here, in another tab, or on another device from the same link.
+    const [connected, setConnected] = useState<Record<string, Connected>>({});
+    // Once its rows have drawn, the card folds itself, so a dialog over the last account stays open on what it proved.
+    const live = useRef(false);
+    const join = useCallback((id: string, next: Connected) => setConnected((prev) => ({ ...prev, [id]: { ...prev[id], ...next } })), []);
+    // A request was provided: here, in another tab, or on another device from the same link.
     useSocketEvent(
         'credential_request:fulfilled',
         (frame) => {
-            if (!requestId || frame.request_id !== requestId) return;
-            setConnected((prev) => ({ ...prev, credentialId: frame.credential_id }));
+            const ask = asks.find((a) => a.requestId && a.requestId === frame.request_id);
+            if (!ask) return;
+            join(ask.id, { credentialId: frame.credential_id });
             reloadCredentials();
         },
-        [requestId]
+        [asks, join]
     );
-    const provided = useCallback((verification?: CredentialTestConnectionResponse | null) => {
-        setConnected((prev) => ({ ...prev, verification }));
-        reloadCredentials();
-    }, []);
-    const alreadyFulfilled = useCallback((credentialId?: string) => {
-        setConnected((prev) => ({ ...prev, credentialId: credentialId ?? prev?.credentialId }));
-    }, []);
-    if (!token) return null;
-    const service = services.find((s) => s.acceptedCredentialTypes.includes(type));
-    // A model's key or plan is named for its company ("Anthropic"), not its type ("agent anthropic").
-    const label = service?.label ?? agentCompanyOf(type)?.title ?? humanizeCredentialLabel(type.replace(/_(oauth|api_key|token)$/, '').replace(/_/g, ' '));
-    const { Icon, iconColor } = getCredentialIcon(type);
-    const mark = service ? (
-        <NodeMark type={service.value} size="md" />
-    ) : (
-        <span className="grid h-8 w-8 place-items-center rounded-lg bg-foreground/[0.05]">
-            <BrandIcon Icon={Icon} iconColor={iconColor} className="h-4 w-4" />
-        </span>
+    const provided = useCallback(
+        (id: string, verification?: CredentialTestConnectionResponse | null) => {
+            join(id, { verification });
+            reloadCredentials();
+        },
+        [join]
     );
-    // Any of the app's ways in answers the call (a WhatsApp access token for a QR request).
-    const accepted = service?.acceptedCredentialTypes ?? [type];
-    const made = connected?.credentialId
-        ? credentials.find((c) => c.id === connected.credentialId)
-        : credentials.find((c) => accepted.includes(c.credential_type) && Date.parse(c.created_at) >= startedAt - SKEW_MS);
-    if (made || connected) return <ConnectedReceipt name={label} account={made && describeAccount(made, label).line} verification={connected?.verification} />;
-    // An account already in shows as its receipt without reading the request (or loading the forms) first.
+    const fulfilled = useCallback((id: string, credentialId?: string) => join(id, credentialId ? { credentialId } : {}), [join]);
+
+    const accounts: RequestedAccount[] = asks.flatMap((ask) => {
+        const token = provideToken(ask.url);
+        if (!token) return [];
+        const service = services.find((s) => s.acceptedCredentialTypes.includes(ask.credentialType));
+        // As the catalog names it, else in the brand's casing for its type: never the raw type.
+        const name = service?.label ?? appNameForCredentialType(ask.credentialType);
+        const { Icon, iconColor } = getCredentialIcon(ask.credentialType);
+        const mark = service ? (
+            <NodeMark type={service.value} size="md" />
+        ) : (
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-foreground/[0.05]">
+                <BrandIcon Icon={Icon} iconColor={iconColor} className="h-4 w-4" />
+            </span>
+        );
+        // Any of the app's ways in answers the ask (a WhatsApp access token for a QR request).
+        const accepted = service?.acceptedCredentialTypes ?? [ask.credentialType];
+        const mine = connected[ask.id];
+        const made = mine?.credentialId
+            ? credentials.find((c) => c.id === mine.credentialId)
+            : credentials.find((c) => accepted.includes(c.credential_type) && Date.parse(c.created_at) >= ask.startedAt - SKEW_MS);
+        const done = made || mine ? { name, account: made ? describeAccount(made, name).line : undefined, verification: mine?.verification } : undefined;
+        return [{ ask, token, name, mark, done }];
+    });
+    if (!accounts.length) return null;
+    const allIn = accounts.every((a) => a.done);
+    if (allIn && !live.current) return <ConnectedSummary accounts={accounts.map((a) => a.done!)} />;
+    // An account already in shows as in without reading the request (or loading the forms) first.
     if (!loaded) return null;
-    const meta = message || 'NoClick picks up where it left off as soon as it’s connected.';
+    live.current = true;
+    // One account's card says what it's for; several are said in the message above them.
+    const meta = accounts.length === 1 ? accounts[0].ask.message || 'NoClick picks up where it left off as soon as it’s connected.' : undefined;
     return (
-        <Suspense fallback={<ConnectAccountCard mark={mark} name={label} meta={meta} requested={type} renderMethod={() => null} />}>
-            <ConnectRequest
-                key={attempt}
-                token={token}
-                requested={type}
-                name={label}
-                mark={mark}
-                meta={meta}
-                onProvided={provided}
-                onFulfilled={alreadyFulfilled}
-                onRetry={reread}
-                onPlan={onPlan}
-            />
+        <Suspense
+            fallback={
+                <ConnectAccountsCard total={accounts.length} done={accounts.filter((a) => a.done).length} meta={meta}>
+                    {accounts.map((a) => (a.done ? <ConnectedRow key={a.ask.id} mark={a.mark} connected={a.done} /> : <Row key={a.ask.id} testId={connectRowId(a.name)} lead={a.mark} title={a.name} detail="Getting it ready" />))}
+                </ConnectAccountsCard>
+            }
+        >
+            <ConnectRequests accounts={accounts} meta={meta} onProvided={provided} onFulfilled={fulfilled} onPlan={onPlan} />
         </Suspense>
     );
 }

@@ -10,7 +10,7 @@ import { useLoaderData } from 'react-router';
 import { getAllSerializedNodeMeta } from '~/lib/nodeCatalog.server';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { ProvideCredentialView } from '~/components/credential/ProvideCredentialView';
-import { appNameForCredentialType } from '~/components/credential/CredentialProvideFlow';
+import { appNameForCredentialType } from '~/utils/credentialAppName';
 import { buildSeoMeta } from '~/lib/seo';
 import { connectPreview } from '~/lib/linkPreviews';
 import { AGENT_SIGN_IN_NAMES } from '~/lib/agentCredentialModel';

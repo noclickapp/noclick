@@ -3,7 +3,7 @@
 // the credential forms and every node schema) because a platform registers here while every page boots.
 import { createContext, useContext, type ComponentType, type ReactNode } from 'react';
 import type { AgentChatMessage } from '~/hooks/useAgentChat';
-import type { CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
+import { failed, str, type CoordinatorToolCall } from '~/lib/coordinatorToolCalls';
 import type { NewestCard } from './canvases';
 import type { CoordinatorSetupRef } from '~/types/socket-events.generated';
 
@@ -27,6 +27,49 @@ export const MATCHED_CARDS: { match: CardMatch; Card: ToolCard; whileRunning: bo
 /** `whileRunning`: the card draws while its call still runs too (work it follows live), not only once it answered. */
 export function registerToolCard(match: CardMatch, Card: ToolCard, { whileRunning = false }: { whileRunning?: boolean } = {}): void {
     MATCHED_CARDS.push({ match, Card, whileRunning });
+}
+
+/** An account a call asks the owner to connect: the credential request behind its provide link (`url`), which
+ *  `requestId` hears fulfilled elsewhere. */
+export interface ConnectAsk {
+    /** The call that asked. */
+    id: string;
+    credentialType: string;
+    url: string;
+    requestId?: string;
+    /** What it's for, in the asker's words. */
+    message?: string;
+    startedAt: number;
+}
+
+export type ConnectAskOf = (call: CoordinatorToolCall) => ConnectAsk | undefined;
+
+// The coordinator's own ask (connect_credential), and any a platform registers (hosted: a connect link one of its calls
+// made), so every ask a turn makes is one card.
+const CONNECT_ASKS: ConnectAskOf[] = [
+    (call) => {
+        const credentialType = str(call.args, 'credential_type');
+        const url = str(call.result, 'url');
+        if (call.tool !== 'connect_credential' || !credentialType || !url || failed(call.result)) return undefined;
+        return { id: call.id, credentialType, url, requestId: str(call.result, 'request_id'), message: str(call.args, 'message'), startedAt: call.startedAt };
+    },
+];
+
+export function registerConnectAsk(read: ConnectAskOf): void {
+    CONNECT_ASKS.push(read);
+}
+
+export function connectAskOf(call: CoordinatorToolCall): ConnectAsk | undefined {
+    for (const read of CONNECT_ASKS) {
+        const ask = read(call);
+        if (ask) return ask;
+    }
+    return undefined;
+}
+
+/** Every account a turn's calls ask to connect, in the order they asked. */
+export function connectAsksOf(calls: readonly CoordinatorToolCall[]): ConnectAsk[] {
+    return calls.flatMap((call) => connectAskOf(call) ?? []);
 }
 
 // How a turn shows the agent at work (its calls as it makes them, the wait for its reply), where the platform draws

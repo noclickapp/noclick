@@ -6,7 +6,7 @@
 // come straight from the method; nothing is hand-rolled here (the Linear "Invalid scope:
 // email" and the Shopify "no shop field on the link" bugs both came from a bespoke button).
 
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Info } from 'lucide-react';
 import { OAuthAuthorizeProvider, OAuthExchangeProvider } from '~/hooks/oauth/OAuthExchangeContext';
 import { oauthNeedsInAppSelection } from '~/utils/oauthProviders';
@@ -35,16 +35,48 @@ interface RedirectOAuthProvideMethodProps {
     onRequestEnded?: () => void;
 }
 
-// The connect form must render INSIDE the transport provider so the provider hooks'
-// exchange lands on the credential-request endpoints (not the authed socket).
+export type ProvideLinkOAuthEngine = ReturnType<typeof useOAuthConnect>;
+
+// The engine's hooks run INSIDE the transport provider, so the exchange lands on the credential-request endpoints (not
+// the authed socket).
+function Engine({ onProvided, children }: { onProvided: () => void; children: (engine: ProvideLinkOAuthEngine) => ReactNode }) {
+    const engine = useOAuthConnect({ onCredentialCreated: () => onProvided() });
+    return <>{children(engine)}</>;
+}
+
+/** The link's sign-in engine (useOAuthConnect over the request's own exchange), for whatever draws its button: the
+ *  connect form below, or a row's own Sign in (the coordinator's connect card). */
+export function ProvideLinkOAuth({
+    apiBase, token, credentialType, oauthApp, onProvided, onRequestEnded, children,
+}: Pick<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'credentialType' | 'oauthApp' | 'onProvided' | 'onRequestEnded'> & {
+    children: (engine: ProvideLinkOAuthEngine) => ReactNode;
+}) {
+    const transport = useMemo(
+        () => provideLinkTransport(apiBase, token, credentialType, onRequestEnded),
+        [apiBase, token, credentialType, onRequestEnded],
+    );
+    const authorizeParams = useMemo(() => {
+        const params: Record<string, string> = {};
+        if (oauthApp) params.oauth_app = token;
+        return params;
+    }, [oauthApp, token]);
+    return (
+        <OAuthExchangeProvider value={transport}>
+            <OAuthAuthorizeProvider value={authorizeParams}>
+                <Engine onProvided={onProvided}>{children}</Engine>
+            </OAuthAuthorizeProvider>
+        </OAuthExchangeProvider>
+    );
+}
+
 function ConnectForm({
-    provider, credentialType, scopes, userScopes, supportsCustomClient, requiresCustomClient,
-    redirectUri, serviceName, note, onProvided,
-}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp' | 'onRequestEnded'>) {
+    engine, provider, credentialType, scopes, userScopes, supportsCustomClient, requiresCustomClient,
+    redirectUri, serviceName, note,
+}: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token' | 'oauthApp' | 'onProvided' | 'onRequestEnded'> & { engine: ProvideLinkOAuthEngine }) {
     const {
         connect, connectOrgConsent, isConnecting, connectingProvider, error, planLimitError,
         clearError, pendingSelection, resolvePendingSelection, cancelConnect, deviceAuthorization,
-    } = useOAuthConnect({ onCredentialCreated: () => onProvided() });
+    } = engine;
 
     return (
         <OAuthConnectForm
@@ -76,15 +108,6 @@ export function RedirectOAuthProvideMethod({
     apiBase, token, credentialType, provider, scopes, userScopes,
     supportsCustomClient, requiresCustomClient, oauthApp, redirectUri, serviceName, note, onProvided, onRequestEnded,
 }: RedirectOAuthProvideMethodProps) {
-    const transport = useMemo(
-        () => provideLinkTransport(apiBase, token, credentialType, onRequestEnded),
-        [apiBase, token, credentialType, onRequestEnded],
-    );
-    const authorizeParams = useMemo(() => {
-        const params: Record<string, string> = {};
-        if (oauthApp) params.oauth_app = token;
-        return params;
-    }, [oauthApp, token]);
     // Some providers (Facebook/Instagram account, Supabase project) finish OAuth with an
     // in-popup selection the HTTP provide transport can't complete. Rather than let the
     // user hit a dead end mid-flow, say so up front — a sibling method (if any) stays
@@ -99,9 +122,10 @@ export function RedirectOAuthProvideMethod({
         );
     }
     return (
-        <OAuthExchangeProvider value={transport}>
-            <OAuthAuthorizeProvider value={authorizeParams}>
+        <ProvideLinkOAuth apiBase={apiBase} token={token} credentialType={credentialType} oauthApp={oauthApp} onProvided={onProvided} onRequestEnded={onRequestEnded}>
+            {(engine) => (
                 <ConnectForm
+                    engine={engine}
                     provider={provider}
                     credentialType={credentialType}
                     scopes={scopes}
@@ -111,9 +135,8 @@ export function RedirectOAuthProvideMethod({
                     redirectUri={redirectUri}
                     serviceName={serviceName}
                     note={note}
-                    onProvided={onProvided}
                 />
-            </OAuthAuthorizeProvider>
-        </OAuthExchangeProvider>
+            )}
+        </ProvideLinkOAuth>
     );
 }

@@ -4,7 +4,8 @@
 // link's own calls (2026-11-12: the link offered a bare "Anthropic API key" field first, under "Agent Anthropic").
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { appNameForCredentialType, CredentialProvideFlow, type ProvideRequestDetails } from '~/components/credential/CredentialProvideFlow';
+import { CredentialProvideFlow, type ProvideRequestDetails } from '~/components/credential/CredentialProvideFlow';
+import { appNameForCredentialType } from '~/utils/credentialAppName';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { AskSomeoneForm } from '~/components/workflow/CredentialRequestActions';
 import { signInForKey } from '~/lib/agentCredentialModel';
