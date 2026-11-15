@@ -10,7 +10,7 @@ import { cn } from '~/lib/utils';
 
 export function SpaceNewsNote({ msg }: { msg: AgentChatMessage & { space: { id: string; label: string } } }) {
     const open = () =>
-        navigateToTab('work', { space: msg.space.id, show: null, channel: WORK_NOCLICK_CHANNEL, thread: null, agent: null, conversation: null, panel: null, machine: null, res: null, item: null });
+        navigateToTab('work', { space: msg.space.id, show: null, channel: WORK_NOCLICK_CHANNEL, thread: null, agent: null, panel: null, machine: null, res: null, item: null });
     return (
         <div data-testid="space-news">
             <button
