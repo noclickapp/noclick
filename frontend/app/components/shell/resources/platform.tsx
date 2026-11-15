@@ -88,6 +88,9 @@ export interface PlatformResources {
     RowFigure?: ComponentType<{ item: ResourceItem }>;
     /** A kind whose rows lead with the platform's own mark in place of the kind's icon (an agent's face and ring). */
     Lead?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
+    /** A kind whose item's page is the platform's own (an agent's: its files, spend and sessions), framed as every
+     *  resource's page is (`ResourcePageFrame`), in place of the shared anatomy. */
+    Page?: Partial<Record<KindId, ComponentType<{ item: ResourceItem; now: string; onBack: (to: 'all' | 'kind') => void }>>>;
     /** A kind whose rows end in a ⋯ menu of the platform's own (an agent's Rename), beside the row it acts on. */
     RowMenu?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
     /** How `item`'s page removes it, or null where it offers nothing. */

@@ -373,6 +373,44 @@ function CopyLink({ url }: { url: string }) {
 // ---------------------------------------------------------------------------
 // The page
 
+/** Where a resource's page sits: the way back (Resources / its kind, or a phone's bar, which `inner` takes over while
+ *  its body is a level down), at the page's width. A platform's own page for a kind (an agent's) is framed the same. */
+export function ResourcePageFrame({
+    kindLabel,
+    onBack,
+    inner,
+    wide,
+    children,
+}: {
+    kindLabel: string;
+    onBack: (to: 'all' | 'kind') => void;
+    inner?: InnerStep | null;
+    wide?: boolean;
+    children: ReactNode;
+}) {
+    const inPhone = useInPhoneShell();
+    return (
+        <div className="h-full overflow-y-auto scrollbar-subtle" data-testid="resource-detail">
+            <div className={cn('mx-auto w-full px-5 pb-24 pt-4 sm:px-8 sm:pt-8', wide ? 'max-w-[1200px]' : 'max-w-[960px]')}>
+                {inPhone ? (
+                    <PhoneBarBack label={inner?.label ?? kindLabel} onBack={inner?.onBack ?? (() => onBack('kind'))} />
+                ) : (
+                    <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1 text-[13px] text-muted-foreground">
+                        <button type="button" onClick={() => onBack('all')} className="rounded-md px-1 py-0.5 transition-colors hover:text-foreground">
+                            Resources
+                        </button>
+                        <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+                        <button type="button" onClick={() => onBack('kind')} className="rounded-md px-1 py-0.5 transition-colors hover:text-foreground">
+                            {kindLabel}
+                        </button>
+                    </nav>
+                )}
+                {children}
+            </div>
+        </div>
+    );
+}
+
 export function ResourceDetail({
     item,
     now,
@@ -392,7 +430,6 @@ export function ResourceDetail({
     const kind = kindDef(item.kind);
     const Icon = kind.icon;
     const file = item.file;
-    const inPhone = useInPhoneShell();
     const platform = usePlatformResources();
     const [inner, setInner] = useState<InnerStep | null>(null);
     // Taken when asked, so its preview is read once.
@@ -525,63 +562,47 @@ export function ResourceDetail({
     );
 
     return (
-        <div className="h-full overflow-y-auto scrollbar-subtle" data-testid="resource-detail">
-            <div className={cn('mx-auto w-full px-5 pb-24 pt-4 sm:px-8 sm:pt-8', item.kind === 'repos' || item.kind === 'databases' ? 'max-w-[1200px]' : 'max-w-[960px]')}>
-                {inPhone ? (
-                    <PhoneBarBack label={inner?.label ?? kind.label} onBack={inner?.onBack ?? (() => onBack('kind'))} />
-                ) : (
-                    <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1 text-[13px] text-muted-foreground">
-                        <button type="button" onClick={() => onBack('all')} className="rounded-md px-1 py-0.5 transition-colors hover:text-foreground">
-                            Resources
-                        </button>
-                        <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-                        <button type="button" onClick={() => onBack('kind')} className="rounded-md px-1 py-0.5 transition-colors hover:text-foreground">
-                            {kind.label}
-                        </button>
-                    </nav>
-                )}
+        <ResourcePageFrame kindLabel={kind.label} onBack={onBack} inner={inner} wide={item.kind === 'repos' || item.kind === 'databases'}>
+            <header className="flex flex-wrap items-start gap-4">
+                {lead}
+                <div className="min-w-0 flex-1">
+                    <h1 className={cn('min-w-0 break-words sm:truncate', PAGE_TITLE)}>{item.title}</h1>
+                    <p className="mt-1 text-[14px] leading-snug text-muted-foreground sm:truncate">{item.subtitle}</p>
+                    {item.origin && (
+                        <p className="mt-1 text-[13px] text-muted-foreground">
+                            Built in the{' '}
+                            <button
+                                type="button"
+                                onClick={() => navigateToWorkflow({ id: item.origin!.id, name: item.origin!.name })}
+                                className="text-foreground underline-offset-4 hover:underline"
+                            >
+                                {item.origin.name}
+                            </button>{' '}
+                            automation
+                        </p>
+                    )}
+                    {item.owner && <p className="mt-1 text-[13px] text-muted-foreground">For {item.owner.name}, one of your users</p>}
+                </div>
+                {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">{actions}</div>}
+            </header>
+            {removing && <RemovalPanel removal={removing} onCancel={() => setRemoving(null)} onDone={removed} />}
 
-                <header className="flex flex-wrap items-start gap-4">
-                    {lead}
-                    <div className="min-w-0 flex-1">
-                        <h1 className={cn('min-w-0 break-words sm:truncate', PAGE_TITLE)}>{item.title}</h1>
-                        <p className="mt-1 text-[14px] leading-snug text-muted-foreground sm:truncate">{item.subtitle}</p>
-                        {item.origin && (
-                            <p className="mt-1 text-[13px] text-muted-foreground">
-                                Built in the{' '}
-                                <button
-                                    type="button"
-                                    onClick={() => navigateToWorkflow({ id: item.origin!.id, name: item.origin!.name })}
-                                    className="text-foreground underline-offset-4 hover:underline"
-                                >
-                                    {item.origin.name}
-                                </button>{' '}
-                                automation
-                            </p>
-                        )}
-                        {item.owner && <p className="mt-1 text-[13px] text-muted-foreground">For {item.owner.name}, one of your users</p>}
-                    </div>
-                    {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">{actions}</div>}
-                </header>
-                {removing && <RemovalPanel removal={removing} onCancel={() => setRemoving(null)} onDone={removed} />}
+            {item.attention && (
+                <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-red-500/20 bg-red-500/[0.04] px-4 py-3 text-[13.5px] text-foreground">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
+                    {item.attention}
+                </div>
+            )}
+            {item.pending && (
+                <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-border bg-foreground/[0.03] px-4 py-3 text-[13.5px] text-foreground dark:border-foreground/[0.08]">
+                    <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                    {item.pending}
+                </div>
+            )}
 
-                {item.attention && (
-                    <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-red-500/20 bg-red-500/[0.04] px-4 py-3 text-[13.5px] text-foreground">
-                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
-                        {item.attention}
-                    </div>
-                )}
-                {item.pending && (
-                    <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-border bg-foreground/[0.03] px-4 py-3 text-[13.5px] text-foreground dark:border-foreground/[0.08]">
-                        <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                        {item.pending}
-                    </div>
-                )}
-
-                {(facts.length > 0 || cost) && <Facts rows={cost ? [...facts, ['Cost', cost]] : facts} />}
-                {!item.platform?.usersInBody && <UsedBy item={item} />}
-                <InnerBackContext.Provider value={setInner}>{body}</InnerBackContext.Provider>
-            </div>
-        </div>
+            {(facts.length > 0 || cost) && <Facts rows={cost ? [...facts, ['Cost', cost]] : facts} />}
+            {!item.platform?.usersInBody && <UsedBy item={item} />}
+            <InnerBackContext.Provider value={setInner}>{body}</InnerBackContext.Provider>
+        </ResourcePageFrame>
     );
 }

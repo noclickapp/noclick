@@ -298,6 +298,8 @@ export function ResourcesView() {
         );
 
     if (resourceId && activeKind) {
+        const Page = platform?.Page?.[activeKind];
+        if (selected && Page) return <Page item={selected} now={now} onBack={(to) => go(to === 'all' ? null : activeKind)} />;
         if (selected) {
             return (
                 <ResourceDetail

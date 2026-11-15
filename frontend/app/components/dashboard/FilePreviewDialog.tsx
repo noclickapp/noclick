@@ -66,9 +66,15 @@ function WorkspaceTextPreview({ url, markdown }: { url: string; markdown: boolea
     return <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg bg-muted/50 p-3 text-xs leading-relaxed text-foreground/90">{content}</pre>;
 }
 
+/** A workspace file's signed link: the platform API's own (absolute), else the engine's path on this API. */
+function workspaceLink(file: FileEntry, download = false): string | undefined {
+    if (file.url) return download ? `${file.url}&dl=1` : file.url;
+    return file.urlPath ? workspaceFileUrl(file.urlPath, { download }) : undefined;
+}
+
 function WorkspacePreview({ file }: { file: FileEntry }) {
-    if (!file.urlPath) return <p className="m-0 py-4 text-[13px] text-foreground/60 dark:text-foreground/40">This file has no signed link yet — reopen the Files view to refresh it.</p>;
-    const url = workspaceFileUrl(file.urlPath);
+    const url = workspaceLink(file);
+    if (!url) return <p className="m-0 py-4 text-[13px] text-foreground/60 dark:text-foreground/40">This file has no signed link yet — reopen the Files view to refresh it.</p>;
     const ext = file.path.includes('.') ? file.path.slice(file.path.lastIndexOf('.') + 1).toLowerCase() : '';
     if (file.kind === 'image') return <img src={url} alt={file.path} className="max-h-[65vh] max-w-full rounded-lg object-contain" />;
     if (file.kind === 'video') {
@@ -102,7 +108,7 @@ export function FilePreviewBody({ file, source }: { file: FileEntry; source: Fil
 /** Where a file downloads from: its resource URL, or its workspace file as an attachment. */
 export function fileDownloadHref(file: FileEntry, source: FileSource): string | undefined {
     if (source.kind === 'resources') return file.url ?? undefined;
-    return file.urlPath ? workspaceFileUrl(file.urlPath, { download: true }) : undefined;
+    return workspaceLink(file, true);
 }
 
 /** Saves a table as CSV, every row of it. */
