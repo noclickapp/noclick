@@ -23,6 +23,7 @@ class _CallableAgentStub:
         self.turn_ended_by = None  # no turn limit ended the turn
         self.turn_handed_on = False
         self.turn_carries_on = False
+        self.turn_canceled = False
         self.turn_only_read = None
 
     async def __call__(self, _message_dict):
