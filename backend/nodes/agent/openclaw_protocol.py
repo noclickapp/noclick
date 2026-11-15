@@ -24,6 +24,15 @@ PLAN_ENV = "NOCLICK_OPENCLAW_PLAN"
 DENIED_TOOLS = ("cron",)
 
 
+def final_reply(payload) -> dict:
+    """What a run's final ``chat`` event says: its text, and its error when it didn't end ``final``."""
+    message = payload.get('message') or {}
+    content = message.get('content') or []
+    text = content if isinstance(content, str) else ''.join(p.get('text', '') for p in content if p.get('type') == 'text')
+    error = None if payload['state'] == 'final' else payload.get('errorMessage') or f"OpenClaw run {payload['state']}"
+    return {'response': text, 'error': error}
+
+
 def bridge_env() -> dict:
     return {"NOCLICK_OPENCLAW_START_MS": str(GATEWAY_START_S * 1000),
             "NOCLICK_OPENCLAW_DOCTOR_MS": str(DOCTOR_S * 1000)}
@@ -70,8 +79,4 @@ class OpenClawReceipts:
             self.finished.popitem(last=False)
         for receipt in receipts:
             self.pending.pop(receipt)
-        message = payload.get('message') or {}
-        content = message.get('content') or []
-        text = content if isinstance(content, str) else ''.join(p.get('text', '') for p in content if p.get('type') == 'text')
-        error = None if payload['state'] == 'final' else payload.get('errorMessage') or f"OpenClaw run {payload['state']}"
-        return {'response': text, 'error': error, 'input_ids': receipts}
+        return {**final_reply(payload), 'input_ids': receipts}
