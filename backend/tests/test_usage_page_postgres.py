@@ -2,10 +2,10 @@
 wss/handlers/usage_page_handler.py), where nobody is billed: the period is the
 UTC calendar month and the page shows what each thing cost.
 
-These pin: the groups are the payer's rows split by window, UTC day and every
-breakdown field, and their sums are the rows'; a group's key picks exactly its
+These pin: the groups are the payer's rows split by window, day (in the
+reader's time zone, UTC when it sends none) and every breakdown field, and their sums are the rows'; a group's key picks exactly its
 rows out of the charges; charges page newest first by a cursor that neither
-skips nor repeats a row; a day narrows them to that UTC day; a charge's run and
+skips nor repeats a row; a day narrows them to that day in the reader's zone; a charge's run and
 the names of what it was for come with it; and someone else's rows never do.
 Rows are inserted the way the trackers write them (with only the columns every
 schema has)."""
@@ -144,6 +144,35 @@ async def test_charges_page_by_cursor_and_narrow_by_key_and_day(db):
     assert (await charges_page(me, **window, keys=[], limit=50))["rows"] == []
     day = await charges_page(me, **window, day="2026-10-03", limit=50)
     assert {r["created_at"][:10] for r in day["rows"]} == {"2026-10-03"} and len(day["rows"]) == 3
+
+
+async def test_days_are_split_in_the_readers_time_zone(db):
+    # 20:00 UTC on the 2nd is already the 3rd in India, and 19:00 UTC on the 3rd is the 4th there.
+    me = await account(db)
+    at = [datetime(2026, 10, 2, 20, tzinfo=timezone.utc), datetime(2026, 10, 3, 10, tzinfo=timezone.utc),
+          datetime(2026, 10, 3, 19, tzinfo=timezone.utc)]
+    ids = [await charge(db, me, t, 0.01, "exa/search_api", usage_type="api_usage") for t in at]
+    period = calendar_period(NOW)
+    window = dict(start=period["window_start"], end=period["window_end"])
+
+    def days(groups):
+        out = {}
+        for g in groups:
+            if g["current"]:
+                out[g["day"]] = out.get(g["day"], 0) + g["n"]
+        return out
+
+    assert days((await page(me))["groups"]) == {"2026-10-02": 1, "2026-10-03": 2}
+    assert days((await page(me, tz="Asia/Kolkata"))["groups"]) == {"2026-10-03": 2, "2026-10-04": 1}
+    there = await charges_page(me, **window, day="2026-10-03", tz="Asia/Kolkata", limit=50)
+    assert [r["id"] for r in there["rows"]] == [ids[1], ids[0]]
+    with pytest.raises(ValueError, match="Unknown time zone"):
+        await page(me, tz="Mars/Olympus_Mons")
+
+
+def test_a_day_across_a_clock_change_is_its_real_length():
+    start, end = usage_page_handler._day_bounds("2026-11-01", "America/New_York")
+    assert (start.isoformat(), end - start) == ("2026-11-01T04:00:00+00:00", timedelta(hours=25))
 
 
 async def test_charges_recorded_in_the_same_instant_page_without_a_gap_or_a_repeat(db):

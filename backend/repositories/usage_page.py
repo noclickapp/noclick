@@ -1,7 +1,7 @@
 """UsagePageRepo — the usage page's reads over ``user_usage_events``.
 
 The page groups a payer's rows by everything a breakdown splits them by (one
-group per window, UTC day and set of fields) and reads its charges a page at a
+group per window, day in the reader's time zone and set of fields) and reads its charges a page at a
 time. A group's key is the same SQL expression in both reads, so a drill the
 page works out over the groups ("this model inside this automation") narrows the
 charges to the keys it picked: nothing about services or models is restated in
@@ -62,7 +62,7 @@ CHARGE_METADATA_KEYS: Tuple[str, ...] = (
 # Every ``$n`` below is bound by the methods that run these.
 GROUPS_SQL = """
     SELECT e.created_at >= $2 AS current,
-           to_char(e.created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS day,
+           to_char(e.created_at AT TIME ZONE $5, 'YYYY-MM-DD') AS day,
            min(e.created_at) AS created_at,
            {key} AS k,
            {fields},
@@ -135,10 +135,10 @@ class UsagePageRepo:
 
     async def groups(
         self, *, user_id: str, window_start: datetime, window_end: datetime, previous_start: datetime,
-        extra_columns: Optional[ExtraColumns] = None,
+        tz: str = "UTC", extra_columns: Optional[ExtraColumns] = None,
     ) -> List[Dict[str, Any]]:
         """The payer's rows from the previous window's start to this one's end,
-        grouped by window (``current``), UTC day and every field in GROUP_FIELDS."""
+        grouped by window (``current``), day in ``tz`` and every field in GROUP_FIELDS."""
         sql = GROUPS_SQL.format(
             key=GROUP_KEY_SQL,
             record=METADATA_RECORD_SQL,
@@ -147,7 +147,7 @@ class UsagePageRepo:
             extra="".join(f",\n           {agg} AS {name}" for name, (_, agg) in (extra_columns or {}).items()),
         )
         async with self._pool.acquire() as conn:
-            rows = await conn.fetch(sql, user_id, window_start, previous_start, window_end)
+            rows = await conn.fetch(sql, user_id, window_start, previous_start, window_end, tz)
         return [dict(r) for r in rows]
 
     async def charges(
@@ -157,18 +157,18 @@ class UsagePageRepo:
         start: datetime,
         end: datetime,
         keys: Optional[List[str]] = None,
-        day_start: Optional[datetime] = None,
+        day: Optional[Tuple[datetime, datetime]] = None,
         cursor: Optional[ChargesCursor] = None,
         limit: int = 50,
         extra_columns: Optional[ExtraColumns] = None,
     ) -> List[Dict[str, Any]]:
         """One page of the payer's charges in ``[start, end)``, newest first,
-        narrowed to the groups in ``keys`` (None: every group) and to one UTC day."""
+        narrowed to the groups in ``keys`` (None: every group) and to one day's ``[start, end)``."""
         clauses = ["e.user_id = $1", "e.created_at >= $2", "e.created_at < $3"]
         params: List[Any] = [user_id, start, end]
-        if day_start is not None:
-            params.append(day_start)
-            clauses.append(f"e.created_at >= ${len(params)} AND e.created_at < ${len(params)} + interval '1 day'")
+        if day is not None:
+            params.extend(day)
+            clauses.append(f"e.created_at >= ${len(params) - 1} AND e.created_at < ${len(params)}")
         if keys is not None:
             params.append(keys)
             clauses.append(f"{GROUP_KEY_SQL} = ANY(${len(params)}::text[])")

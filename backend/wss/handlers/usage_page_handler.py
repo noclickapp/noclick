@@ -5,7 +5,8 @@ The usage page (Settings → Usage).
 account's charges grouped every way the page breaks them down
 (repositories/usage_page.py), names for what they were for, and the first page
 of charges; ``usage:charges`` pages through the charges, narrowed to the groups
-a drill or a search picked. Where the deployment bills (the ``USAGE_BILLING``
+a drill or a search picked. Days are split in the reader's time zone (``tz``,
+UTC when absent); the period itself is a pair of instants either way. Where the deployment bills (the ``USAGE_BILLING``
 capability), its period is the plan's window and the page also gets the money
 behind it; elsewhere the period is the UTC calendar month and each charge is
 what it cost.
@@ -13,9 +14,10 @@ what it cost.
 
 import json
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
-from typing import Any, Callable, Dict, Iterable, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from billing.clock import billing_month_start_utc, billing_now
 from repositories.usage_page import ChargesCursor, GROUP_FIELDS, UsagePageRepo
@@ -66,6 +68,24 @@ def _parse_time(raw: str) -> datetime:
     return at if at.tzinfo else at.replace(tzinfo=timezone.utc)
 
 
+def _zone(tz: Optional[str]) -> str:
+    """The reader's IANA time zone, which days are split in; UTC when the page sent none."""
+    if not tz:
+        return "UTC"
+    try:
+        ZoneInfo(tz)
+    except (ZoneInfoNotFoundError, ValueError):
+        raise ValueError(f"Unknown time zone: {tz}")
+    return tz
+
+
+def _day_bounds(day: str, tz: str) -> Tuple[datetime, datetime]:
+    """``day``'s ``[start, end)`` in ``tz``: midnight to midnight there, 23 or 25 hours across a clock change."""
+    zone, d = ZoneInfo(tz), date.fromisoformat(day)
+    return (datetime.combine(d, time(), zone).astimezone(timezone.utc),
+            datetime.combine(d + timedelta(days=1), time(), zone).astimezone(timezone.utc))
+
+
 def calendar_period(now: datetime) -> Dict[str, Any]:
     """The period where nobody is billed: the UTC calendar month."""
     start = billing_month_start_utc(now)
@@ -96,20 +116,23 @@ class UsagePageHandler(SocketIOHandler):
             await send_event(self.sio, sid, ResponseEvent(request_id=request_id, data=None, error="Usage didn't load"))
 
     async def handle_page(self, sid: str, request: UsagePageRequest) -> None:
-        await self._respond(sid, request.request_id, page)
+        async def op(user_id: str) -> Dict[str, Any]:
+            return await page(user_id, tz=request.tz)
+        await self._respond(sid, request.request_id, op)
 
     async def handle_charges(self, sid: str, request: UsageChargesRequest) -> None:
         async def op(user_id: str) -> Dict[str, Any]:
             return await charges_page(
                 user_id, start=_parse_time(request.start), end=_parse_time(request.end), keys=request.keys,
-                day=request.day, cursor=ChargesCursor.decode(request.cursor) if request.cursor else None,
-                limit=request.limit,
+                day=request.day, tz=request.tz,
+                cursor=ChargesCursor.decode(request.cursor) if request.cursor else None, limit=request.limit,
             )
         await self._respond(sid, request.request_id, op)
 
 
-async def page(user_id: str) -> Dict[str, Any]:
-    """Everything the usage page shows for ``user_id``, the payer."""
+async def page(user_id: str, *, tz: Optional[str] = None) -> Dict[str, Any]:
+    """Everything the usage page shows for ``user_id``, the payer, its days split in ``tz``."""
+    zone = _zone(tz)
     pool = get_native_pool()
     billing = capability(USAGE_BILLING)
     now = billing_now()
@@ -119,7 +142,7 @@ async def page(user_id: str) -> Dict[str, Any]:
         {**_row(g), "user_id": user_id}
         for g in await repo.groups(
             user_id=user_id, window_start=period["window_start"], window_end=period["window_end"],
-            previous_start=period["previous_start"], extra_columns=billing.columns if billing else None,
+            previous_start=period["previous_start"], tz=zone, extra_columns=billing.columns if billing else None,
         )
     ]
     directory = await repo.names(
@@ -146,15 +169,15 @@ async def page(user_id: str) -> Dict[str, Any]:
 
 async def charges_page(
     user_id: str, *, start: datetime, end: datetime, keys: Optional[List[str]] = None, day: Optional[str] = None,
-    cursor: Optional[ChargesCursor] = None, limit: int = FIRST_PAGE,
+    tz: Optional[str] = None, cursor: Optional[ChargesCursor] = None, limit: int = FIRST_PAGE,
 ) -> Dict[str, Any]:
     """One page of charges, the runs they belong to, and where the next page starts."""
     pool = get_native_pool()
     billing = capability(USAGE_BILLING)
     repo = UsagePageRepo(pool)
-    day_start = _parse_time(f"{day}T00:00:00+00:00") if day else None
     rows = [_row(r) for r in await repo.charges(
-        user_id=user_id, start=start, end=end, keys=keys, day_start=day_start, cursor=cursor, limit=limit + 1,
+        user_id=user_id, start=start, end=end, keys=keys, day=_day_bounds(day, _zone(tz)) if day else None,
+        cursor=cursor, limit=limit + 1,
         extra_columns=billing.columns if billing else None,
     )]
     more = len(rows) > limit

@@ -35,27 +35,61 @@ export function heroParts(usd: number): [string, string] {
     return dot === -1 ? [s, ''] : [s.slice(0, dot), s.slice(dot)];
 }
 
-// ── dates (UTC: billing's windows and day buckets are UTC) ───────────────────
+// ── dates: times and days in the reader's own time zone ──────────────────────
+// Billing's windows are instants either way; usage:page splits its groups into days in the zone it's sent (ZONE).
 
-export const dayKey = (t: number | string) => new Date(t).toISOString().slice(0, 10);
-const dayStart = (t: number) => Math.floor(t / DAY_MS) * DAY_MS;
+export const ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Intl formatters are costly to build, and a drill relabels every visible row.
 const FORMATS = new Map<string, Intl.DateTimeFormat>();
-function format(opts: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
-    const key = JSON.stringify(opts);
+function format(opts: Intl.DateTimeFormatOptions, timeZone = ZONE): Intl.DateTimeFormat {
+    const key = JSON.stringify([opts, timeZone]);
     let f = FORMATS.get(key);
-    if (!f) FORMATS.set(key, (f = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'UTC' })));
+    if (!f) FORMATS.set(key, (f = new Intl.DateTimeFormat('en-US', { ...opts, timeZone })));
     return f;
 }
 
+function wallClock(t: number): Record<string, number> {
+    const parts = format({ year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' }).formatToParts(t);
+    return Object.fromEntries(parts.filter((p) => p.type !== 'literal').map((p) => [p.type, Number(p.value)]));
+}
+
+/** The reader's day ('YYYY-MM-DD') an instant falls on. */
+export function dayKey(t: number | string): string {
+    const w = wallClock(new Date(t).getTime());
+    return `${w.year}-${String(w.month).padStart(2, '0')}-${String(w.day).padStart(2, '0')}`;
+}
+
+/** The day `n` days after `key`. */
+export const nextDay = (key: string, n = 1) => new Date(Date.parse(`${key}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
+
+const offsetAt = (t: number) => {
+    const w = wallClock(t);
+    return Date.UTC(w.year, w.month - 1, w.day, w.hour, w.minute, w.second) - Math.floor(t / 1000) * 1000;
+};
+
+/** When the reader's day `key` starts (its local midnight, wherever a clock change moves it). */
+export function dayStartOf(key: string): number {
+    const midnightUtc = Date.parse(`${key}T00:00:00Z`);
+    return midnightUtc - offsetAt(midnightUtc - offsetAt(midnightUtc));
+}
+const dayStart = (t: number) => dayStartOf(dayKey(t));
+const noonOf = (key: string) => new Date(dayStartOf(key) + DAY_MS / 2).toISOString();
+
+/** The reader's zone as a short name ("PST", "GMT+5:30"), beside a time that stands alone. */
+export const ZONE_LABEL = format({ timeZoneName: 'short' }).formatToParts(0).find((p) => p.type === 'timeZoneName')?.value ?? ZONE;
+
+/** A day key as a date; keys are calendar dates, so formatting is pinned to UTC, where they were parsed. */
 export function dayLabel(key: string, opts: { weekday?: boolean; year?: boolean } = {}): string {
-    return format({
-        month: 'short',
-        day: 'numeric',
-        weekday: opts.weekday ? 'short' : undefined,
-        year: opts.year ? 'numeric' : undefined,
-    }).format(Date.parse(`${key}T00:00:00Z`));
+    return format(
+        {
+            month: 'short',
+            day: 'numeric',
+            weekday: opts.weekday ? 'short' : undefined,
+            year: opts.year ? 'numeric' : undefined,
+        },
+        'UTC',
+    ).format(Date.parse(`${key}T00:00:00Z`));
 }
 
 export function timeLabel(iso: string): string {
@@ -203,7 +237,7 @@ function agentName(snap: UsageSnapshot, id: string): string {
 export interface Period {
     start: number;
     end: number;
-    /** UTC day keys from the window's first day up to its last. */
+    /** The reader's days the window touches, first to last. */
     days: string[];
     todayKey: string;
     /** Days fully or partly gone, counting today. */
@@ -219,7 +253,7 @@ export function periodOf(start: string, end: string, now: string): Period {
     const e = Date.parse(end);
     const n = Date.parse(now);
     const days: string[] = [];
-    for (let t = dayStart(s); t < e; t += DAY_MS) days.push(dayKey(t));
+    for (let k = dayKey(s), last = dayKey(e - 1); k <= last; k = nextDay(k)) days.push(k);
     const todayKey = dayKey(n);
     const idx = days.indexOf(todayKey);
     return {
@@ -471,7 +505,7 @@ export function deriveView(snap: UsageSnapshot): UsageView {
     }
     // The pace: metered spend on full days since the first charge (or the window's start).
     const firstRow = rows.length ? Math.min(...rows.map((r) => rowOf(r).t)) : nowT;
-    const fullDays = period.days.slice(0, Math.max(0, period.elapsedDays - 1)).filter((k) => Date.parse(`${k}T00:00:00Z`) >= dayStart(firstRow));
+    const fullDays = period.days.slice(0, Math.max(0, period.elapsedDays - 1)).filter((k) => k >= dayKey(firstRow));
     const pace = paceOf(fullDays.map((k) => byDay.get(k)?.meteredTotal ?? 0));
     const todayMetered = byDay.get(period.todayKey)?.meteredTotal ?? 0;
     const restOfToday = Math.max(0, pace.rate * (1 - period.todayFraction) - Math.max(0, todayMetered - pace.rate * period.todayFraction));
@@ -542,7 +576,7 @@ export function deriveView(snap: UsageSnapshot): UsageView {
     const variance = pace.n ? R * pace.sd ** 2 + (R * R * pace.sd ** 2) / pace.n : (spent || 1) ** 2;
     const half = 1.2816 * Math.sqrt(variance);
     const demand = spent + pace.rate * R + scheduledLeft;
-    const capped = runway.blocked || (runway.runsOut != null && Date.parse(`${runway.runsOut}T00:00:00Z`) < period.end);
+    const capped = runway.blocked || (runway.runsOut != null && dayStartOf(runway.runsOut) < period.end);
     const mid = capped ? spent + runway.periodSpend : demand;
     const projection: Projection = {
         mid,
@@ -558,10 +592,10 @@ export function deriveView(snap: UsageSnapshot): UsageView {
     };
     const auto = billing?.autoTopUp ?? null;
     if (runway.runsOut && !runway.blocked) {
-        upcoming.push({ key: 'runout', at: `${runway.runsOut}T12:00:00Z`, kind: 'runout', label: hasBalance ? 'Balance runs out' : plan?.billing_model === 'legacy' ? 'Credits run out' : 'Included usage runs out', detail: 'At this pace, unless funds are added', usd: null, paidBy: null });
+        upcoming.push({ key: 'runout', at: noonOf(runway.runsOut), kind: 'runout', label: hasBalance ? 'Balance runs out' : plan?.billing_model === 'legacy' ? 'Credits run out' : 'Included usage runs out', detail: 'At this pace, unless funds are added', usd: null, paidBy: null });
     }
-    for (const t of runway.topups.filter((x) => Date.parse(`${x.at}T00:00:00Z`) < horizon)) upcoming.push({ key: `topup:${t.at}`, at: `${t.at}T12:00:00Z`, kind: 'topup', label: 'Auto top-up', detail: auto ? `Balance under ${roundMoney(auto.thresholdUsd)}` : '', usd: t.usd, paidBy: 'card' });
-    if (runway.capStopsAt) upcoming.push({ key: 'capstop', at: `${runway.capStopsAt}T12:00:00Z`, kind: 'capstop', label: 'Auto top-up reaches its monthly limit', detail: auto ? `${money(auto.monthlyCapUsd)} a month` : '', usd: null, paidBy: null });
+    for (const t of runway.topups.filter((x) => dayStartOf(x.at) < horizon)) upcoming.push({ key: `topup:${t.at}`, at: noonOf(t.at), kind: 'topup', label: 'Auto top-up', detail: auto ? `Balance under ${roundMoney(auto.thresholdUsd)}` : '', usd: t.usd, paidBy: 'card' });
+    if (runway.capStopsAt) upcoming.push({ key: 'capstop', at: noonOf(runway.capStopsAt), kind: 'capstop', label: 'Auto top-up reaches its monthly limit', detail: auto ? `${money(auto.monthlyCapUsd)} a month` : '', usd: null, paidBy: null });
     upcoming.sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
 
     const days: DayRow[] = period.days.map((k, idx) => {
@@ -641,14 +675,14 @@ function simulate(
     const windowEnd = Date.parse(plan.window_end);
     const included = plan.included_usd ?? 0;
     for (let i = 0; i < 62; i++) {
-        const t = dayStart(nowT) + i * DAY_MS;
-        const k = dayKey(t);
+        const k = nextDay(dayKey(nowT), i);
+        const t = dayStartOf(k);
         if (i > 0 && dayLeft != null) dayLeft = plan.daily_usd;
         if (t >= windowEnd && t < windowEnd + DAY_MS) {
             monthLeft = included; // the window renews
             topupLeft = plan.topup_usd;
         }
-        if (k.endsWith('-01')) autoMonth = 0; // auto top-up's limit counts the UTC month
+        if (k.endsWith('-01')) autoMonth = 0; // auto top-up's limit counts the UTC month: within a day here
         let need = (i === 0 ? s.restOfToday : s.rate) + (s.scheduledByDay.get(k)?.reduce((a, b) => a + b.usd, 0) ?? 0);
         const inc = Math.min(need, dayLeft != null ? Math.min(dayLeft, monthLeft) : monthLeft);
         monthLeft -= inc;
@@ -696,7 +730,7 @@ function simulate(
 function groupRows(view: UsageView, keyOf: (r: UsageGroup) => { id: string; label: string }, where?: ((r: UsageGroup) => boolean) | null): ThingRow[] {
     const { snap, period, runway } = view;
     // Days left that money will be spent on: none while stopped, up to the day it runs out.
-    const activeDaysLeft = runway.blocked ? 0 : runway.runsOut ? Math.min(period.remainingDays, Math.max(0, (Date.parse(`${runway.runsOut}T00:00:00Z`) + DAY_MS - Date.parse(snap.now)) / DAY_MS)) : period.remainingDays;
+    const activeDaysLeft = runway.blocked ? 0 : runway.runsOut ? Math.min(period.remainingDays, Math.max(0, (dayStartOf(nextDay(runway.runsOut)) - Date.parse(snap.now)) / DAY_MS)) : period.remainingDays;
     const rows = metered(snap).filter((r) => !where || where(r));
     const cur = rows.filter((r) => r.current);
     const prev = rows.filter((r) => !r.current);

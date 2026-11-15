@@ -6521,9 +6521,13 @@ export interface UsageChargesRequest {
    */
   keys?: string[] | null;
   /**
-   * Only charges on this UTC day (YYYY-MM-DD)
+   * Only charges on this day (YYYY-MM-DD) in `tz`
    */
   day?: string | null;
+  /**
+   * The reader's IANA time zone, as sent to usage:page (omit for UTC)
+   */
+  tz?: string | null;
   /**
    * The previous page's `next`
    */
@@ -6612,6 +6616,10 @@ export interface UsagePageRequest {
    * UUID for request/response correlation
    */
   request_id?: string | null;
+  /**
+   * The reader's IANA time zone; days are split in it (omit for UTC)
+   */
+  tz?: string | null;
   [k: string]: unknown;
 }
 /**

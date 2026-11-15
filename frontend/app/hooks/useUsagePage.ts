@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { socketCall } from '~/lib/socketCall';
 import { onSocketEvent } from '~/lib/socket-receiver';
-import { toSnapshot } from '~/components/usage/page/derive';
+import { ZONE, toSnapshot } from '~/components/usage/page/derive';
 import type { ChargesPage, ChargesSource, UsagePageData, UsageSnapshot } from '~/components/usage/page/types';
 
 const BACKSTOP_MS = 60_000;
@@ -38,7 +38,7 @@ export function useUsagePage(): UsagePageState {
         if (inFlight.current) return;
         inFlight.current = true;
         try {
-            const page = (await socketCall('usage:page')) as unknown as UsagePageData;
+            const page = (await socketCall('usage:page', { tz: ZONE })) as unknown as UsagePageData;
             period.current = page.period;
             kept = { snap: toSnapshot(page), firstPage: page.charges, period: page.period };
             setData(kept);
@@ -85,6 +85,7 @@ export function useUsagePage(): UsagePageState {
             end: p.window_end,
             keys: query.keys ?? undefined,
             day: query.day ?? undefined,
+            tz: ZONE,
             cursor: cursor ?? undefined,
             limit,
         })) as unknown as ChargesPage;

@@ -18,7 +18,7 @@ import { DashboardRunDialog } from '~/components/dashboard/DashboardRunDialog';
 import type { RunRow } from '~/components/dashboard/types';
 import { HUED, ShareBar, serviceColor, type Ink } from './charts';
 import { usageBillingSlots } from './billing';
-import { SERVICES, chargeQuery, dayLabel, foldReadings, lineItem, money, planName, timeLabel, type ChargeFilter, type ConsumerKind, type LineItem, type ServiceId, type UsageView } from './derive';
+import { SERVICES, ZONE_LABEL, chargeQuery, dayKey, dayLabel, foldReadings, lineItem, money, planName, timeLabel, type ChargeFilter, type ConsumerKind, type LineItem, type ServiceId, type UsageView } from './derive';
 import { useUsageMotion } from './motion';
 import { Pills } from './parts';
 import type { ChargeRow, ChargeRun, ChargesPage, ChargesSource } from './types';
@@ -150,7 +150,7 @@ export function ChargesTable({
     const groups = useMemo(() => {
         const out: { day: string; rows: LineItem[] }[] = [];
         for (const i of items) {
-            const k = i.at.slice(0, 10);
+            const k = dayKey(i.at);
             if (out[out.length - 1]?.day !== k) out.push({ day: k, rows: [] });
             out[out.length - 1].rows.push(i);
         }
@@ -464,7 +464,7 @@ function ChargeDrawer({ view, item, run, onClose, onOpenRun }: { view: UsageView
         if (m.number) facts.push({ label: 'Number', value: `${m.number}${m.direction ? ` · ${m.direction === 'inbound' ? 'answered' : 'placed'}` : ''}` });
         if (m.call_sid) facts.push({ label: 'Call', value: `${m.minutes ?? ''} min · ${m.call_sid}` });
         // A metered reading's from/to are the stretch it covers; an email's from is who sent it.
-        if (m.from && m.to) facts.push({ label: 'Covers', value: `${timeLabel(m.from)} to ${timeLabel(m.to)} UTC` });
+        if (m.from && m.to) facts.push({ label: 'Covers', value: `${timeLabel(m.from)} to ${timeLabel(m.to)} ${ZONE_LABEL}` });
         else if (m.from) facts.push({ label: 'From', value: m.from });
         facts.push({ label: 'Quantity', value: i.quantity });
         const rate = parts ? null : rateOf(i);
@@ -490,7 +490,7 @@ function ChargeDrawer({ view, item, run, onClose, onOpenRun }: { view: UsageView
             open={!!i}
             onOpenChange={(o) => !o && onClose()}
             title={i?.what ?? 'Charge'}
-            description={i ? `${dayLabel(i.at.slice(0, 10), { weekday: true })}, ${timeLabel(i.at)} UTC · ${i.thing}` : undefined}
+            description={i ? `${dayLabel(dayKey(i.at), { weekday: true })}, ${timeLabel(i.at)} ${ZONE_LABEL} · ${i.thing}` : undefined}
         >
             {i && (
                 <div>
@@ -540,7 +540,7 @@ function ChargeDrawer({ view, item, run, onClose, onOpenRun }: { view: UsageView
                         onClick={() => {
                             onClose();
                             askNoClick(
-                                `Explain the ${money(i.usd)} ${i.what} charge on ${dayLabel(i.at.slice(0, 10))} (${charges.length > 1 ? 'charges' : 'charge'} ${charges.map((c) => c.id).join(', ')}${m?.execution_id ? `, run ${m.execution_id}` : ''}).`
+                                `Explain the ${money(i.usd)} ${i.what} charge on ${dayLabel(dayKey(i.at))} (${charges.length > 1 ? 'charges' : 'charge'} ${charges.map((c) => c.id).join(', ')}${m?.execution_id ? `, run ${m.execution_id}` : ''}).`
                             );
                         }}
                     >

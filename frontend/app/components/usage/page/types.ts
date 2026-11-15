@@ -92,7 +92,7 @@ export interface UsageRow {
     k: string;
 }
 
-/** The payer's charges in one window and UTC day that agree on every breakdown field. */
+/** The payer's charges in one window and day (the reader's) that agree on every breakdown field. */
 export interface UsageGroup extends UsageRow {
     /** How many charges it holds. */
     n: number;
@@ -127,7 +127,7 @@ export interface ChargesPage {
     next: string | null;
 }
 
-/** What narrows the charges: the groups a drill, a service or a search picked (null: all) and one UTC day. */
+/** What narrows the charges: the groups a drill, a service or a search picked (null: all) and one of the reader's days. */
 export interface ChargesQuery {
     keys: string[] | null;
     day: string | null;

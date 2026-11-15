@@ -592,6 +592,8 @@ class UsagePageRequest(ClientEventBase):
     charges. The money behind it where the deployment bills."""
     event_name: ClassVar[str] = "usage:page"
 
+    tz: Optional[str] = Field(None, description="The reader's IANA time zone; days are split in it (omit for UTC)")
+
 
 class UsageChargesRequest(ClientEventBase):
     """A page of the signed-in account's charges, newest first."""
@@ -600,7 +602,8 @@ class UsageChargesRequest(ClientEventBase):
     start: str = Field(..., description="Period start (ISO), as usage:page returned it")
     end: str = Field(..., description="Period end (ISO), exclusive")
     keys: Optional[List[str]] = Field(None, description="Only charges in these groups (usage:page's `k`); omit for all")
-    day: Optional[str] = Field(None, description="Only charges on this UTC day (YYYY-MM-DD)")
+    day: Optional[str] = Field(None, description="Only charges on this day (YYYY-MM-DD) in `tz`")
+    tz: Optional[str] = Field(None, description="The reader's IANA time zone, as sent to usage:page (omit for UTC)")
     cursor: Optional[str] = Field(None, description="The previous page's `next`")
     limit: int = Field(50, ge=1, le=500, description="Charges per page")
 

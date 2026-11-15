@@ -101,7 +101,8 @@ it('shows a skeleton while the page reads, then the page', async () => {
     expect(screen.getByLabelText('Loading usage')).toBeTruthy();
     await act(async () => resolve(BUSY));
     expect(await screen.findByLabelText('Where it goes')).toBeTruthy();
-    expect(socketCall).toHaveBeenCalledWith('usage:page');
+    // Days are split in the reader's own time zone.
+    expect(socketCall).toHaveBeenCalledWith('usage:page', { tz: Intl.DateTimeFormat().resolvedOptions().timeZone });
 });
 
 it('shows the page it last read at once when it opens again in the tab, and reads it again behind it', async () => {

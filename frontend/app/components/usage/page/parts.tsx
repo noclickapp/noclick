@@ -6,7 +6,7 @@ import { cn } from '~/lib/utils';
 import { ROWS, clickableRow } from '~/components/dashboard/primitives';
 import { HUED, serviceColor, type Ink } from './charts';
 import { useUsageMotion } from './motion';
-import { dayLabel, daysFrom, money, roundMoney, type Dimension, type ServiceId, type ThingRow, type UpcomingItem, type UsageView } from './derive';
+import { dayKey, dayLabel, daysFrom, money, roundMoney, type Dimension, type ServiceId, type ThingRow, type UpcomingItem, type UsageView } from './derive';
 
 const pct = (x: number) => (x >= 0.995 ? '100%' : x < 0.01 ? '<1%' : `${Math.round(x * 100)}%`);
 
@@ -255,7 +255,7 @@ export function ComingUp({ view, limit = 6, compact }: { view: UsageView; limit?
 }
 
 function UpcomingRow({ item: u, today, compact }: { item: UpcomingItem; today: string; compact?: boolean }) {
-    const key = u.at.slice(0, 10);
+    const key = dayKey(u.at);
     const warn = u.kind === 'runout' || u.kind === 'capstop';
     return (
         <div className={cn('flex items-start gap-3', compact ? 'py-2' : 'py-2.5')}>
