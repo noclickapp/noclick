@@ -268,6 +268,22 @@ class TestSharedAgentVisitor(BaseHandlerTest):
         assert FakeLinkRepo.touched == [LINK_ID]
 
     @pytest.mark.asyncio
+    async def test_a_visitors_text_reaches_the_agent_as_written(self, frontend_sio, sid):
+        """A visitor's line is the agent's turn as written, braces included."""
+        from tests.test_chat_turn_literal import STORED, TEXT, agent_turn_config
+        from wss.handlers.workflow_execution_handler import apply_config_overrides
+
+        fake_exec = self._capture_execute()
+        await send_event(frontend_sio, sid, SharedAgentSendRequest(request_id="v1", text=TEXT))
+        await asyncio.sleep(0.05)
+
+        request = fake_exec.handle_execute.await_args.kwargs["request"]
+        nodes = [{"id": NODE_ID, "type": "agent", "config": {"message": "Answer visitors"}}]
+        apply_config_overrides(nodes, request.config_overrides)
+        config = await agent_turn_config(nodes[0], STORED)
+        assert config["message"] == TEXT
+
+    @pytest.mark.asyncio
     async def test_send_rejected_when_link_revoked(self, frontend_sio, sid):
         """Rotate/deactivate applies to already-connected sockets on next send."""
         FakeLinkRepo.visit_row = None

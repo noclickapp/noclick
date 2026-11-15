@@ -5455,33 +5455,15 @@ const FlowCanvasInner = ({
                         : undefined),
                 attachments,
             });
-            const runNodes = graph.nodes.map((n) => {
-                if (n.id !== agentNodeId) return n;
-                // One-shot override for this run only.
-                return {
-                    ...n,
-                    config: {
-                        ...(n.config as Record<string, unknown>),
-                        ...turnOverride,
-                    },
-                };
-            });
             sendEvent(
                 WorkflowExecuteRequest.create({
                     workflow_id: workflowId,
                     start_node_id: agentNodeId,
-                    // A viewer's turn rides the saved graph: only what the
-                    // turn says (message, model, thread, attachments).
-                    ...(canEditRef.current
-                        ? runGraphFields(true, {
-                              nodes: runNodes,
-                              edges: graph.edges,
-                          })
-                        : {
-                              config_overrides: {
-                                  [agentNodeId]: turnOverride,
-                              },
-                          }),
+                    // An editor's run carries the canvas graph, a viewer's the
+                    // saved one. Either way the turn rides config_overrides,
+                    // which the run hands the agent as text, never a template.
+                    ...runGraphFields(canEditRef.current, graph),
+                    config_overrides: { [agentNodeId]: turnOverride },
                 })
             );
         },

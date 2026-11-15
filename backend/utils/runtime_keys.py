@@ -20,7 +20,7 @@ are config like any other.
 from __future__ import annotations
 
 import json
-from typing import Any, Collection, Dict, List, Mapping, Optional
+from typing import Any, Collection, Dict, List, Mapping, Optional, Set
 
 AUTHORED_KEYS = frozenset({
     "_settings",  # the node's settings panel (on-error handling, …)
@@ -34,9 +34,20 @@ AUTHORED_KEYS = frozenset({
 # config override.
 DELIVERED_KEYS = frozenset({"_triggerPayload", "_agent_turn_output", "_error_inputs"})
 
+# The config keys a run set as text (a chat turn's message, …), named on the node's config.
+LITERAL_KEYS = "_literalKeys"
+
 
 def is_runtime_key(key: Any) -> bool:
     return isinstance(key, str) and key.startswith("_") and key not in AUTHORED_KEYS
+
+
+def literal_config_keys(config: Mapping[str, Any]) -> Set[str]:
+    """The keys of ``config`` a run hands its node verbatim, never resolving a
+    ``{{ }}`` in them: runtime keys (data, never authored) and the ones the run
+    named in ``LITERAL_KEYS``."""
+    marked = set(config.get(LITERAL_KEYS) or ())
+    return {k for k in config if is_runtime_key(k) or k in marked}
 
 
 def config_without_runtime_keys(config: Mapping[str, Any], keep: Collection[str] = ()) -> Dict[str, Any]:

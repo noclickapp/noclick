@@ -33,7 +33,9 @@ from utils.credentials import (
 )
 from utils.access_control import check_resource_access, Permission, workflow_permission
 from utils.node_schema_tracker import track_node_schema
-from utils.runtime_keys import DELIVERED_KEYS, config_without_runtime_keys, nodes_without_runtime_keys
+from utils.runtime_keys import (
+    DELIVERED_KEYS, LITERAL_KEYS, config_without_runtime_keys, literal_config_keys, nodes_without_runtime_keys,
+)
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, is_sdk_client, WorkflowNodeStateEvent, WorkflowNodeOutputEvent, WorkflowStartedEvent, WorkflowCompleteEvent, ResponseEvent, CreditsExhaustedEvent
 from wss.receiver.client_events import WorkflowExecuteRequest
@@ -156,11 +158,18 @@ def chat_turn_overrides_only(overrides: Optional[Dict[str, Dict[str, Any]]], nod
 
 
 def apply_config_overrides(nodes: List[Dict[str, Any]], overrides: Optional[Dict[str, Dict[str, Any]]]) -> None:
-    """Merge per-node config overrides (keyed by node id) into ``nodes`` in place."""
+    """Merge per-node config overrides (keyed by node id) into ``nodes`` in place.
+
+    A chat turn's keys on an agent are what someone said, not templates, so
+    they are marked literal: the run hands them to the agent unresolved."""
     for node in nodes:
         node_overrides = (overrides or {}).get(node.get('id', ''))
         if node_overrides:
-            node.setdefault('config', {}).update(node_overrides)
+            config = node.setdefault('config', {})
+            config.update(node_overrides)
+            said = CHAT_TURN_KEYS & node_overrides.keys() if node.get('type') == 'agent' else set()
+            if said:
+                config[LITERAL_KEYS] = sorted(said | set(config.get(LITERAL_KEYS) or ()))
 
 
 def _output_teaches_a_shape(node_instance, node_config: Dict[str, Any], no_event: bool, emitted: bool) -> bool:
@@ -1482,16 +1491,17 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         nodes, edges, workflow_org_id, workflow_variables, _settings = fetched
         import copy
         nodes = copy.deepcopy(nodes)
-        apply_config_overrides(nodes, config_overrides)
-        agent = next((n for n in nodes if n.get('id') == agent_node_id), None)
-        if agent is None:
-            return _result(False, f"Agent node {agent_node_id} not found")
-        agent.setdefault('config', {}).update({
+        overrides = config_overrides or {}
+        apply_config_overrides(nodes, {**overrides, agent_node_id: {
+            **overrides.get(agent_node_id, {}),
             "message": message, "conversation_key": conversation_key, "mockedOutput": None,
             # The turn remembers but is not remembered: the call's transcript,
             # delivered at hang-up, is the one message it leaves in memory.
             "_memoryReadonly": True,
-        })
+        }})
+        agent = next((n for n in nodes if n.get('id') == agent_node_id), None)
+        if agent is None:
+            return _result(False, f"Agent node {agent_node_id} not found")
         executable = [n for n in nodes if n.get('type') not in NON_EXECUTABLE_NODE_TYPES]
         # The agent's forward edges are cut so reachability yields the agent plus
         # the providers and data nodes that feed it, never what it feeds.
@@ -3679,10 +3689,12 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         _primary_input = node_outputs.get(_incoming[0]) if len(_incoming) == 1 else None
         # Feed the evaluated config into the resolver; keep `node_config` raw so the
         # state-injection path below still substring-matches its un-evaluated refs.
+        # Literal keys (runtime data, a chat turn's text) skip both passes.
+        literal_keys = literal_config_keys(node_config)
         unresolved: List[UnresolvedReference] = []
         evaluated_config = await evaluate_expressions(
-            node_config, node_outputs, workflow_nodes=workflow_nodes,
-            primary_input=_primary_input, unresolved=unresolved,
+            {k: v for k, v in node_config.items() if k not in literal_keys}, node_outputs,
+            workflow_nodes=workflow_nodes, primary_input=_primary_input, unresolved=unresolved,
         )
         if unresolved:
             self._raise_on_unresolved_required_refs(
@@ -3691,7 +3703,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
 
         # Resolve references in config values (e.g., {{nodeId.output.field}})
         # This allows config fields to reference outputs from upstream nodes
-        resolved_config = self._resolve_references(evaluated_config, node_outputs)
+        resolved_config = {
+            **self._resolve_references(evaluated_config, node_outputs),
+            **{k: node_config[k] for k in literal_keys},
+        }
         logger.debug(f"[WorkflowExecution] Node {node_id} config after reference resolution: {resolved_config}")
 
         # Integration node wired to an agent's bottom handle acts as a TOOL
