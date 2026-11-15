@@ -17,6 +17,13 @@ const NODE_META = mergeDeclarations(
 /** Every node type with a generated schema (~/schemas/nodes), keyed as on the canvas ('automation-slack'). */
 export const NODE_SCHEMA_TYPES: readonly string[] = Object.keys(NODE_META);
 
+/** Canvas node types with no config by design, hence no schema: nothing to fill, so always complete. Any other
+ *  canvas type without a schema is a bug (tests/utils/nodeSchemaRegistry.test.ts). */
+export const CONFIGLESS_NODE_TYPES: ReadonlySet<string> = new Set([
+    'trigger-run', // the manual Run step: RunTriggerNode has no config model
+    'stickyNote', // a canvas annotation, never run
+]);
+
 /**
  * The separate image/audio/video interface nodes were merged into the universal
  * File/Multimedia node (interface-file) in 2026-07. Resolve those legacy types to

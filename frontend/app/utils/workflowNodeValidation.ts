@@ -7,6 +7,7 @@ import type { Edge, Node } from '@xyflow/react';
 import { getSchemaInfo, getFieldsForOption, getRequireOneOfGroups, nodeTypeOffersOperationChoice, type RequireOneOfGroups } from '~/utils/schemaFieldExtractor';
 import { hasUnconnectedCredentials, providerCredentialsMissing } from '~/components/workflow/NodeCredentials';
 import { isAgentToolProviderType, isAgentTriggerFed, isTriggerSource } from '~/utils/nodeSchemas';
+import { CONFIGLESS_NODE_TYPES } from '~/utils/nodeMeta';
 import { tikTokNodePublishingError } from '~/utils/tikTokPublishing';
 
 /** Graph context for edge-dependent validation (agent tool-provider mode).
@@ -64,11 +65,6 @@ export function contextFromWiringKey(key: string): NodeValidationContext {
 export function buildNodeValidationContext(nodes: Node[], edges: Edge[]): NodeValidationContext {
     return contextFromWiringKey(computeWiredProviderIdsKey(nodes, edges));
 }
-
-// Node types that don't require configuration validation
-const SKIP_VALIDATION_TYPES = new Set([
-    'stickyNote',
-]);
 
 export interface NodeValidationIssue {
     type: 'missing_required_field' | 'missing_credentials' | 'missing_operation' | 'trigger_not_receiving';
@@ -224,8 +220,7 @@ export function describeRequireOneOfGroup(
 export function validateNode(node: Node, context?: NodeValidationContext): NodeValidationResult {
     const issues: NodeValidationIssue[] = [];
 
-    // Skip validation for certain node types
-    if (!node.type || SKIP_VALIDATION_TYPES.has(node.type)) {
+    if (!node.type || CONFIGLESS_NODE_TYPES.has(node.type)) {
         return { isComplete: true, issues: [] };
     }
 
@@ -285,7 +280,7 @@ export function validateNode(node: Node, context?: NodeValidationContext): NodeV
     // Get schema info for this node type
     const schemaInfo = getSchemaInfo(node.type);
     if (!schemaInfo) {
-        // No schema means no validation needed (e.g., custom nodes)
+        // Not loaded yet; a loaded type with no schema is a bug the config panel names.
         return { isComplete: issues.length === 0, issues };
     }
 

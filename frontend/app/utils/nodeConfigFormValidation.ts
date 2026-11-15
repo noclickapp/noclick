@@ -6,6 +6,7 @@
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { getSchemaInfo } from '~/utils/schemaFieldExtractor';
+import { CONFIGLESS_NODE_TYPES } from '~/utils/nodeMeta';
 import { evaluateRequireOneOf, describeRequireOneOfGroup } from '~/utils/workflowNodeValidation';
 import { tikTokDisclosureError } from '~/utils/tikTokPublishing';
 
@@ -83,6 +84,7 @@ export function validateConfigForm(
     config: Record<string, any>,
     operation: string | undefined,
 ): ConfigFormValidation {
+    if (CONFIGLESS_NODE_TYPES.has(nodeType)) return { valid: true, errors: [] };
     const info = getSchemaInfo(nodeType);
     if (!info) {
         return { valid: false, errors: [{ message: 'No schema found for this node type', type: 'general' }] };

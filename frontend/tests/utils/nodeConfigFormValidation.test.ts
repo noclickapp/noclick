@@ -63,6 +63,21 @@ describe('a WhatsApp message trigger', () => {
     });
 });
 
+describe('a node with no config by design', () => {
+    test('a Run step is complete in the panel and on the canvas', () => {
+        expect(validateConfigForm('trigger-run', {}, undefined)).toEqual({ valid: true, errors: [] });
+        const run = { id: 'run', type: 'trigger-run', position: { x: 0, y: 0 }, data: { config: {} } } as Node;
+        expect(validateNode(run)).toEqual({ isComplete: true, issues: [] });
+    });
+
+    test('a node type that should have a schema and has none is still an error', () => {
+        expect(validateConfigForm('automation-no-such-node', {}, undefined)).toEqual({
+            valid: false,
+            errors: [{ message: 'No schema found for this node type', type: 'general' }],
+        });
+    });
+});
+
 describe('a send step', () => {
     test('still reports the fields it is missing', () => {
         const result = validateConfigForm('automation-whatsapp', { to: '15550001111' }, 'send_text_message');
