@@ -63,7 +63,7 @@ logger = logging.getLogger(__name__)
 CATEGORIES = frozenset({
     "run_failure", "credits", "digest", "credential_revoked", "channel_disconnected",
     "schedule_paused", "topup", "phone_numbers", "platform_paused", "spend_cap", "referrals", "machines",
-    "approvals",
+    "approvals", "sign_in_expiring",
 })
 CATEGORY_LABELS = {
     "run_failure": "workflow failure alerts",
@@ -79,6 +79,7 @@ CATEGORY_LABELS = {
     "referrals": "news of people you invited",
     "machines": "decisions on your requests for machines",
     "approvals": "actions waiting for your approval",
+    "sign_in_expiring": "reminders before a sign-in expires",
 }
 
 # What an owner with no email isn't texted (``_text_owner``): the digest is news, never something to act on; a failed
@@ -221,6 +222,8 @@ ALERT_DAILY_CAPS = {
     "machines": 3,
     # Once a window per credential (APPROVAL_WAITING_SUPPRESS_S).
     "approvals": 3,
+    # Once a sign-in, per credential; room for an owner whose few sign-ins come due the same day.
+    "sign_in_expiring": 3,
 }
 assert set(ALERT_DAILY_CAPS) == CATEGORIES  # every category decides its cap explicitly
 

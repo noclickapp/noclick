@@ -68,6 +68,9 @@ PLAN_MODELS_AT_KEY = "chatgpt_models_at"
 # The email a sign-in is for, in its credential's metadata: what Connect reads as the connection's ``account``, so two
 # plans of one kind are told apart.
 SIGNED_IN_AS_KEY = "verified_as"
+# When a Claude sign-in was made, in its credential's metadata. Claude ends a sign-in a fixed time after it was made,
+# however often its token is refreshed, and a reconnect updates the row in place, so ``created_at`` can't say it.
+SIGNED_IN_AT_KEY = "signed_in_at"
 
 # Row-level bookkeeping keys the flat env view carries for the refresh
 # machinery (CAS + audit); never env vars, always stripped before dispatch.

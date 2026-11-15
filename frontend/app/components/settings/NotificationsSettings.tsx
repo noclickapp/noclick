@@ -45,6 +45,12 @@ const CATEGORIES = [
         description: 'When a live channel connection (like WhatsApp) drops and messages stop arriving.',
     },
     {
+        key: 'sign_in_expiring',
+        label: 'Expiring sign-ins',
+        description: 'A few days before a Claude sign-in your agents use expires, so you can sign in again in time.',
+        billingOnly: true,
+    },
+    {
         key: 'approvals',
         label: 'Approvals',
         description: 'When an agent is waiting for you to approve something it asked to do with an account you restricted.',

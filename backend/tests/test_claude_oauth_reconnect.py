@@ -4,6 +4,7 @@ Exercise the actual handler, PKCE and SQL against test Postgres; only provider
 HTTP and socket delivery are replaced.
 """
 import uuid
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock
 
 import httpx
@@ -13,7 +14,7 @@ import respx
 
 from tests.fixtures.real_db_fixture import real_database
 from nodes.agent import harness_oauth_flows as flows
-from nodes.agent.harness_oauth import CLAUDE_CODE_TOKEN_URL
+from nodes.agent.harness_oauth import CLAUDE_CODE_TOKEN_URL, SIGNED_IN_AT_KEY
 from utils.encryption import get_encryption
 from wss.handlers.oauth import claude_code_auth_handler as auth
 from wss.receiver.client_events import (
@@ -58,6 +59,14 @@ async def account(real_database, monkeypatch):
 @respx.mock
 async def test_reconnect_keeps_id_name_and_count_and_replaces_tokens(account):
     db, user_id, credential_id, handler, sent = account
+    # A month-old row with an old sign-in: the reconnect must restamp the sign-in, since the row's creation stays.
+    await db.execute(
+        "UPDATE credentials SET created_at = now() - interval '30 days', metadata = metadata || $2::jsonb "
+        "WHERE id = $1::uuid",
+        credential_id, {SIGNED_IN_AT_KEY: (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()},
+    )
+    created_at = await db.fetchval("SELECT created_at FROM credentials WHERE id = $1::uuid", credential_id)
+    reconnected_from = datetime.now(timezone.utc)
     await handler.start_oauth(
         "sid",
         ClaudeCodeAuthStartRequest(request_id="start", credential_id=credential_id),
@@ -81,10 +90,12 @@ async def test_reconnect_keeps_id_name_and_count_and_replaces_tokens(account):
     assert result["success"] is True, result
     assert result["credential_id"] == credential_id
     rows = await db.fetch(
-        "SELECT id, name, credential FROM credentials WHERE owner_id=$1", user_id
+        "SELECT id, name, credential, created_at, metadata FROM credentials WHERE owner_id=$1", user_id
     )
     assert len(rows) == 1
     assert rows[0]["name"] == "My Claude"
+    assert rows[0]["created_at"] == created_at
+    assert datetime.fromisoformat(rows[0]["metadata"][SIGNED_IN_AT_KEY]) >= reconnected_from
     assert (
         get_encryption().decrypt_credential(rows[0]["credential"])["credentials"][
             "CLAUDE_CODE_ACCESS_TOKEN"

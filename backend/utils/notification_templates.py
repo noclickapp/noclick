@@ -140,6 +140,15 @@ def strong(html: str) -> str:
     return f'<strong style="color:{INK};font-weight:600;">{html}</strong>'
 
 
+def numbered_steps(steps) -> str:
+    """Steps to follow in order. steps: [html] — pre-escaped."""
+    items = "".join(f'<li style="margin:0 0 6px;">{step}</li>' for step in steps)
+    return (
+        f'<ol style="margin:0 0 14px;padding-left:20px;font-size:14px;line-height:1.65;color:{BODY};'
+        f'font-family:{FONT};">{items}</ol>'
+    )
+
+
 def kv_rows(rows) -> str:
     """Key-value detail table. rows: [(label, value_html)] — values pre-escaped."""
     trs = ""

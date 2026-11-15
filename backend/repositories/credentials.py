@@ -185,6 +185,25 @@ class CredentialRequestRow:
     token: Optional[str] = None
 
 
+@dataclass(frozen=True)
+class WorkflowNodesUsingCredential:
+    """A workflow whose nodes reference a credential, and those nodes' ids."""
+    workflow_id: str
+    workflow_name: str
+    node_ids: List[str]
+
+
+@dataclass(frozen=True)
+class LiveSignIn:
+    """An unrevoked sign-in credential, with when it was signed in and the account it's for (when known)."""
+    credential_id: str
+    owner_id: str
+    organization_id: Optional[str]
+    name: Optional[str]
+    signed_in_as: Optional[str]
+    signed_in_at: datetime
+
+
 class CredentialsRepo:
     """Read/write SQL for the credentials + credential_requests tables.
 
@@ -647,7 +666,7 @@ class CredentialsRepo:
     # owner's + credential org's workflows — the only ones that can resolve
     # this credential at run time.
     _WORKFLOWS_REFERENCING_SQL = """
-        SELECT DISTINCT w.id::text AS workflow_id, w.name
+        SELECT w.id::text AS workflow_id, w.name, array_agg(DISTINCT n->>'id') AS node_ids
         FROM workflows w
         CROSS JOIN LATERAL jsonb_array_elements(w.workflow->'nodes') AS n
         WHERE w.deleted_at IS NULL
@@ -666,22 +685,63 @@ class CredentialsRepo:
                   SELECT 1 FROM jsonb_each_text(n->'config'->'credentialIds') kv
                   WHERE kv.value = $1))
           )
+        GROUP BY w.id, w.name
         ORDER BY w.name
     """
+
+    async def list_workflow_nodes_referencing_credential(
+        self, credential_id: str, owner_id: str, org_id: Optional[str]
+    ) -> List[WorkflowNodesUsingCredential]:
+        """Workflows whose nodes reference this credential id, each with the
+        ids of those nodes, by workflow name."""
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(
+                self._WORKFLOWS_REFERENCING_SQL, credential_id, owner_id, org_id,
+            )
+        return [
+            WorkflowNodesUsingCredential(
+                workflow_id=r["workflow_id"], workflow_name=r["name"] or "Untitled",
+                node_ids=sorted(n for n in r["node_ids"] if n),
+            )
+            for r in rows
+        ]
 
     async def list_workflows_referencing_credential(
         self, credential_id: str, owner_id: str, org_id: Optional[str]
     ) -> List[Dict[str, str]]:
         """Workflows whose nodes reference this credential id — the pre-delete
         usage warning surfaced to the owner."""
-        async with self._pool.acquire() as conn:
-            rows = await conn.fetch(
-                self._WORKFLOWS_REFERENCING_SQL, credential_id, owner_id, org_id,
-            )
         return [
-            {"workflow_id": r["workflow_id"], "workflow_name": r["name"] or "Untitled"}
-            for r in rows
+            {"workflow_id": w.workflow_id, "workflow_name": w.workflow_name}
+            for w in await self.list_workflow_nodes_referencing_credential(credential_id, owner_id, org_id)
         ]
+
+    # A row without the sign-in time in its metadata predates the stamp, and every reconnect stamps it, so the row's
+    # creation is when it signed in.
+    _LIVE_SIGN_INS_SQL = f"""
+        SELECT credential_id, owner_id, organization_id, name, signed_in_as, signed_in_at
+        FROM (
+            SELECT c.id::text AS credential_id, c.owner_id::text AS owner_id,
+                   c.organization_id::text AS organization_id, c.name, c.metadata->>$5 AS signed_in_as,
+                   COALESCE((c.metadata->>$4)::timestamptz, c.created_at) AS signed_in_at
+            FROM credentials c
+            WHERE c.credential_type = $1 AND c.revoked_at IS NULL AND {listed_to_owner_sql('c')}
+        ) live
+        WHERE signed_in_at > $2 AND signed_in_at <= $3
+        ORDER BY signed_in_at
+    """
+
+    async def list_live_sign_ins(
+        self, credential_type: str, *, signed_in_after: datetime, signed_in_before: datetime,
+        signed_in_at_key: str, signed_in_as_key: str,
+    ) -> List[LiveSignIn]:
+        """Unrevoked sign-ins of ``credential_type`` their owners can see, made in
+        (``signed_in_after``, ``signed_in_before``], oldest first. The metadata
+        keys name when each was made and the account it's for."""
+        async with self._pool.acquire() as conn:
+            rows = await conn.fetch(self._LIVE_SIGN_INS_SQL, credential_type, signed_in_after, signed_in_before,
+                                    signed_in_at_key, signed_in_as_key)
+        return [LiveSignIn(**dict(r)) for r in rows]
 
     _ACTIVE_WEBHOOK_NODES_SQL = """
         SELECT workflow_id::text AS workflow_id, node_id

@@ -31,6 +31,7 @@ import time
 import uuid
 from base64 import urlsafe_b64encode
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 import httpx
@@ -296,7 +297,7 @@ async def claude_code_complete(poll: Dict[str, Any], *, context: Optional[dict] 
     if not access_token:
         raise OAuthFlowError("No access token received from token exchange")
     expires_in = tokens.get("expires_in", "")
-    from nodes.agent.harness_oauth import claude_account_email, signed_in_as
+    from nodes.agent.harness_oauth import SIGNED_IN_AT_KEY, claude_account_email, signed_in_as
 
     return {
         "status": "completed",
@@ -308,8 +309,9 @@ async def claude_code_complete(poll: Dict[str, Any], *, context: Optional[dict] 
                 "CLAUDE_CODE_EXPIRES_AT": compute_expires_at_iso(expires_in, access_token) or "",
             }
         },
-        # The credential's own metadata: the account it's signed in as.
-        "metadata": signed_in_as(claude_account_email(tokens)),
+        # The credential's own metadata: the account it's signed in as, and when (a reconnect overwrites both).
+        "metadata": {**signed_in_as(claude_account_email(tokens)),
+                     SIGNED_IN_AT_KEY: datetime.now(timezone.utc).isoformat()},
     }
 
 

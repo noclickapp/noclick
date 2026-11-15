@@ -5,6 +5,8 @@ the minted credential_data blobs are pinned — these are the single source of t
 for both the socket handlers and the public credential-provide endpoints.
 """
 
+from datetime import datetime, timezone
+
 import httpx
 import pytest
 
@@ -13,6 +15,7 @@ import pytest
 respx = pytest.importorskip("respx")
 
 from nodes.agent import harness_oauth_flows as flows
+from nodes.agent.harness_oauth import SIGNED_IN_AT_KEY
 from nodes.agent.harness_oauth_flows import (
     codex_start, codex_complete,
     claude_code_start, claude_code_complete,
@@ -170,8 +173,23 @@ class TestClaudeCodePkceFlow:
             "access_token": "cacc", "refresh_token": "cref", "expires_in": 3600,
             **({"account": account, "organization": {"uuid": "o-1", "name": "Org"}} if account else {})}))
         done = await claude_code_complete({**start["poll"], "code": "the-code#the-state"})
-        assert done["metadata"] == kept
+        assert {k: v for k, v in done["metadata"].items() if k != SIGNED_IN_AT_KEY} == kept
         assert "plan@example.com" not in str(done["credential_data"])
+
+    @respx.mock
+    async def test_a_sign_in_keeps_when_it_was_made(self, monkeypatch):
+        """Claude ends a sign-in a fixed time after it was made, so the credential's metadata keeps that moment
+        (the expiry reminder counts from it); a reconnect writes the same metadata over the row it renews."""
+        monkeypatch.setattr(flows, "_redis_client", _FakeRedis())
+        start = await claude_code_start()
+        from nodes.agent.harness_oauth import CLAUDE_CODE_TOKEN_URL
+        respx.post(CLAUDE_CODE_TOKEN_URL).mock(return_value=httpx.Response(200, json={
+            "access_token": "cacc", "refresh_token": "cref", "expires_in": 3600}))
+        before = datetime.now(timezone.utc)
+        done = await claude_code_complete({**start["poll"], "code": "the-code#the-state"})
+        signed_in_at = datetime.fromisoformat(done["metadata"][SIGNED_IN_AT_KEY])
+        assert before <= signed_in_at <= datetime.now(timezone.utc)
+        assert SIGNED_IN_AT_KEY not in str(done["credential_data"])
 
     async def test_complete_with_expired_session_raises(self, monkeypatch):
         monkeypatch.setattr(flows, "_redis_client", _FakeRedis())

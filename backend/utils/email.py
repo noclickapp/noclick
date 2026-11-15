@@ -7,6 +7,7 @@ import os
 import logging
 from decimal import Decimal
 from typing import Optional
+from urllib.parse import urlencode
 import resend
 
 from utils.edition import is_local_edition
@@ -32,9 +33,11 @@ def credential_provide_url(token: str, frontend_url: Optional[str] = None) -> st
     return f"{base_url}/credential/provide/{token}"
 
 
-def workflow_url(workflow_id) -> str:
-    """Where the app opens a workflow on its canvas (``/workflow/<slug>`` is a template's public page)."""
-    return f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+def workflow_url(workflow_id, node_id: Optional[str] = None) -> str:
+    """Where the app opens a workflow on its canvas (``/workflow/<slug>`` is a template's public page), with
+    ``node_id``'s settings open when given."""
+    url = f"{FRONTEND_URL}/dashboard?tab=workflows&workflow={workflow_id}"
+    return f"{url}&{urlencode({'node': node_id})}" if node_id else url
 
 
 def phone_sign_in(url: str) -> str:

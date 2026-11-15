@@ -661,6 +661,7 @@ async def test_get_prefs_defaults_and_overrides(monkeypatch):
         "referrals": True,
         "run_failure": True,
         "schedule_paused": True,
+        "sign_in_expiring": True,
         "spend_cap": True,
         "topup": True,
     }
