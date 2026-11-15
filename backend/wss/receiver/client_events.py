@@ -304,11 +304,6 @@ class CoordinatorAttachmentsListRequest(ClientEventBase):
     limit: int = Field(30, ge=1, le=100)
 
 
-class CoordinatorResetRequest(ClientEventBase):
-    """Start the coordinator conversation over"""
-    event_name: ClassVar[str] = "coordinator:reset"
-
-
 class CoordinatorMemoriesListRequest(ClientEventBase):
     """Search the account's memory headers without loading full bodies"""
     event_name: ClassVar[str] = "coordinator:memories:list"

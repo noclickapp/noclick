@@ -32,7 +32,7 @@ from utils.capabilities import COORDINATOR_PLATFORM_TOOLS, OWNER_MESSAGE
 from tests.utils.base_handler_test import BaseHandlerTest
 from utils import feature_gates
 from wss.receiver.client_events import (
-    CoordinatorEmailInboundRequest, CoordinatorOpenRequest, CoordinatorResetRequest, CoordinatorSendRequest,
+    CoordinatorEmailInboundRequest, CoordinatorOpenRequest, CoordinatorSendRequest,
     CoordinatorMemoriesListRequest, CoordinatorMemoryGetRequest, CoordinatorMemorySaveRequest,
     CoordinatorMemoryDeleteRequest, CoordinatorJobsRequest, CoordinatorAlarmsRequest,
     CoordinatorAttachmentUploadUrlRequest, CoordinatorAttachmentsListRequest, CoordinatorReference,
@@ -515,7 +515,7 @@ class TestCoordinatorHandler(BaseHandlerTest):
         return responses[0]
 
     @pytest.mark.asyncio
-    async def test_open_send_and_reset_over_the_socket(self, frontend_sio, sid, monkeypatch):
+    async def test_open_and_send_over_the_socket(self, frontend_sio, sid, monkeypatch):
         monkeypatch.delenv("WHATSAPP_DISPLAY_NUMBER", raising=False)
         monkeypatch.delenv("SENDBLUE_NUMBER", raising=False)
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1"))
@@ -537,11 +537,6 @@ class TestCoordinatorHandler(BaseHandlerTest):
         assert self.turn.await_args.kwargs["user_email"] == "someone@example.com"
         assert self.turn.await_args.kwargs["sid"] == sid
 
-        monkeypatch.setattr("repositories.coordinator_wakeups.coordinator_lock", fake_coordinator_lock)
-        monkeypatch.setattr("repositories.coordinator_wakeups.CoordinatorWakeupRepo.reset", AsyncMock(return_value=True))
-        reset = await self._send(frontend_sio, sid, CoordinatorResetRequest(request_id="r1"))
-        assert reset["data"] == {"reset": True}
-
     @pytest.mark.asyncio
     async def test_an_instance_without_the_models_key_asks_for_it_before_any_turn(self, frontend_sio, sid, monkeypatch):
         """A self-hosted install before its model key is added: the chat opens naming the key it needs, and a send is
@@ -557,8 +552,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
     @pytest.mark.asyncio
     async def test_an_account_an_agent_answers_is_pointed_at_it(self, frontend_sio, sid, monkeypatch):
         """Where an agent answers the owner in the coordinator's place (``ACCOUNT_AGENT``), opening the chat makes it
-        first (its clock where the browser is) and names it, and a send or a reset is pointed at it instead of running
-        a coordinator turn."""
+        first (its clock where the browser is) and names it, and a send is pointed at it instead of running a
+        coordinator turn."""
         asked = []
 
         async def account_agent(pool, user_id, *, ensure=False, timezone=None):
@@ -569,9 +564,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
         opened = await self._send(frontend_sio, sid, CoordinatorOpenRequest(request_id="o1", timezone="Europe/London"))
         assert opened["data"]["agent"] == {"id": "agent-1", "conversation": "owner"}
         assert asked == [("uuid-test-user", True, "Europe/London")]
-        for request in (CoordinatorSendRequest(request_id="s1", text="hi"), CoordinatorResetRequest(request_id="r1")):
-            refused = await self._send(frontend_sio, sid, request)
-            assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
+        refused = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s1", text="hi"))
+        assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
         self.turn.assert_not_awaited()
 
     @pytest.mark.asyncio
@@ -593,8 +587,8 @@ class TestCoordinatorHandler(BaseHandlerTest):
 
     @pytest.mark.asyncio
     async def test_a_page_that_never_opened_the_chat_still_reaches_the_agent(self, frontend_sio, sid, monkeypatch):
-        """A send or a reset from a page that skipped opening the chat (an older one) makes the agent, as an open
-        does, rather than running the coordinator for an account meant to move."""
+        """A send from a page that skipped opening the chat (an older one) makes the agent, as an open does, rather
+        than running the coordinator for an account meant to move."""
         asked = []
 
         async def account_agent(pool, user_id, *, ensure=False, timezone=None):
@@ -602,10 +596,9 @@ class TestCoordinatorHandler(BaseHandlerTest):
             return {"id": "agent-1", "conversation": "owner"} if ensure else None
 
         monkeypatch.setitem(capabilities._providers, capabilities.ACCOUNT_AGENT, account_agent)
-        for request in (CoordinatorSendRequest(request_id="s1", text="hi"), CoordinatorResetRequest(request_id="r1")):
-            refused = await self._send(frontend_sio, sid, request)
-            assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
-        assert asked == [True, True]
+        refused = await self._send(frontend_sio, sid, CoordinatorSendRequest(request_id="s1", text="hi"))
+        assert refused["data"] == {"kind": "agent", "agent": {"id": "agent-1", "conversation": "owner"}}
+        assert asked == [True]
         self.turn.assert_not_awaited()
 
     @pytest.mark.asyncio
@@ -677,7 +670,6 @@ class TestCoordinatorHandler(BaseHandlerTest):
         monkeypatch.setitem(feature_gates.FEATURE_ROLLOUT, "coordinator", feature_gates.INTERNAL)
         monkeypatch.setattr(feature_gates, "is_internal_user", lambda email: False)
         for request in (CoordinatorOpenRequest(request_id="g0"), CoordinatorSendRequest(request_id="g1", text="hi"),
-                        CoordinatorResetRequest(request_id="g2"),
                         CoordinatorMemoriesListRequest(request_id="g3"),
                         CoordinatorMemoryGetRequest(request_id="g4", memory_id=WORKFLOW),
                         CoordinatorMemorySaveRequest(request_id="g5", memory={

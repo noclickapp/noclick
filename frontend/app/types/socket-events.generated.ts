@@ -2407,16 +2407,6 @@ export interface CoordinatorReference {
   id: string;
 }
 /**
- * Start the coordinator conversation over
- */
-export interface CoordinatorResetRequest {
-  /**
-   * UUID for request/response correlation
-   */
-  request_id?: string | null;
-  [k: string]: unknown;
-}
-/**
  * Send the coordinator a message; the reply streams as chat:message frames
  */
 export interface CoordinatorSendRequest {
@@ -14821,7 +14811,6 @@ export interface ClientToServerEvents {
   'coordinator:memories:list': (data: CoordinatorMemoriesListRequest) => void;
   'coordinator:memories:save': (data: CoordinatorMemorySaveRequest) => void;
   'coordinator:open': (data: CoordinatorOpenRequest) => void;
-  'coordinator:reset': (data: CoordinatorResetRequest) => void;
   'coordinator:send': (data: CoordinatorSendRequest) => void;
   'credential:authorize_for_workflow': (data: CredentialAuthorizeForWorkflowRequest) => void;
   'credential:create': (data: CredentialCreateRequest) => void;
@@ -15183,7 +15172,6 @@ export const ClientEventNames = {
   CoordinatorMemoryGetRequest: 'coordinator:memories:get',
   CoordinatorMemorySaveRequest: 'coordinator:memories:save',
   CoordinatorOpenRequest: 'coordinator:open',
-  CoordinatorResetRequest: 'coordinator:reset',
   CoordinatorSendRequest: 'coordinator:send',
   CredentialAuthorizeForWorkflowRequest: 'credential:authorize_for_workflow',
   CredentialCreateRequest: 'credential:create',
@@ -15554,7 +15542,6 @@ interface ClientEventMap {
   CoordinatorMemoryGetRequest: CoordinatorMemoryGetRequest
   CoordinatorMemorySaveRequest: CoordinatorMemorySaveRequest
   CoordinatorOpenRequest: CoordinatorOpenRequest
-  CoordinatorResetRequest: CoordinatorResetRequest
   CoordinatorSendRequest: CoordinatorSendRequest
   CredentialAuthorizeForWorkflowRequest: CredentialAuthorizeForWorkflowRequest
   CredentialCreateRequest: CredentialCreateRequest
@@ -16376,10 +16363,6 @@ export const CoordinatorMemorySaveRequest = {
 export const CoordinatorOpenRequest = {
   event_name: 'coordinator:open' as const,
   create: (data: CoordinatorOpenRequest) => ({ event_name: 'coordinator:open' as const, ...data })
-};
-export const CoordinatorResetRequest = {
-  event_name: 'coordinator:reset' as const,
-  create: (data: CoordinatorResetRequest) => ({ event_name: 'coordinator:reset' as const, ...data })
 };
 export const CoordinatorSendRequest = {
   event_name: 'coordinator:send' as const,
@@ -17614,7 +17597,6 @@ export const EventRouting = {
   'coordinator:memories:list': 'API',
   'coordinator:memories:save': 'API',
   'coordinator:open': 'API',
-  'coordinator:reset': 'API',
   'coordinator:send': 'API',
   'credential:authorize_for_workflow': 'API',
   'credential:create': 'API',

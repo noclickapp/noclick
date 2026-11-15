@@ -5,8 +5,7 @@ coordinator:open hands the client the account's one conversation id and
 the other ways into it (the number it answers on, its email address and
 whether mail to it is taken; coordinator:email:inbound turns that on or off),
 coordinator:send runs a turn that streams the usual chat:message frames (with
-any files and references the composer added), and coordinator:reset starts the
-thread over. coordinator:attachment:upload_url reserves a file the composer
+any files and references the composer added). coordinator:attachment:upload_url reserves a file the composer
 uploads straight to storage; coordinator:attachments:list offers the ones sent
 before; coordinator:jobs reads back the work its turns started and
 coordinator:alarms the reminders they set (for the chat's live cards);
@@ -53,7 +52,6 @@ from wss.receiver.client_events import (
     CoordinatorAlarmsRequest,
     CoordinatorJobsRequest,
     CoordinatorOpenRequest,
-    CoordinatorResetRequest,
     CoordinatorSendRequest,
 )
 from wss.schema import SocketIOHandler
@@ -109,7 +107,6 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             "coordinator:send": self.handle_send,
             "coordinator:attachment:upload_url": self.handle_attachment_upload_url,
             "coordinator:attachments:list": self.handle_attachments_list,
-            "coordinator:reset": self.handle_reset,
             "coordinator:memories:list": self.handle_memories_list,
             "coordinator:memories:get": self.handle_memory_get,
             "coordinator:memories:save": self.handle_memory_save,
@@ -220,17 +217,6 @@ class CoordinatorHandler(DatabasePoolMixin, SocketIOHandler):
             return await attachments.list_account_attachments(
                 await self.get_pool(), user_id, query=request.query, limit=request.limit,
             )
-        await self._respond(sid, request.request_id, op)
-
-    async def handle_reset(self, sid: str, request: CoordinatorResetRequest) -> None:
-        async def op(user_id: str, _email):
-            from repositories.coordinator_wakeups import CoordinatorWakeupRepo, coordinator_lock
-
-            pool = await self.get_pool()
-            if agent := await account_agent(pool, user_id, ensure=True):
-                raise AnsweredByAgent(agent)
-            async with coordinator_lock(pool, user_id):
-                return {"reset": await CoordinatorWakeupRepo(pool).reset(user_id)}
         await self._respond(sid, request.request_id, op)
 
     async def handle_memories_list(self, sid: str, request: CoordinatorMemoriesListRequest) -> None:

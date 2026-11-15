@@ -145,7 +145,6 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "coordinator:send": Handler.COORDINATOR,
         "coordinator:attachment:upload_url": Handler.COORDINATOR,
         "coordinator:attachments:list": Handler.COORDINATOR,
-        "coordinator:reset": Handler.COORDINATOR,
         "coordinator:memories:list": Handler.COORDINATOR,
         "coordinator:memories:get": Handler.COORDINATOR,
         "coordinator:memories:save": Handler.COORDINATOR,

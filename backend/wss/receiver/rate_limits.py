@@ -63,7 +63,6 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             "coordinator:send": SocketIORateLimit(second=1, minute=12),
             "coordinator:attachment:upload_url": SocketIORateLimit(second=5, minute=60),
             "coordinator:attachments:list": SocketIORateLimit(second=5, minute=60),
-            "coordinator:reset": SocketIORateLimit(second=1, minute=5),
             "coordinator:memories:list": SocketIORateLimit(second=5, minute=60),
             "coordinator:memories:get": SocketIORateLimit(second=5, minute=60),
             "coordinator:memories:save": SocketIORateLimit(second=2, minute=30),
