@@ -305,6 +305,11 @@ CONVERSATION_CHECKPOINTS = "agent.conversation_checkpoints"
 # no-op.
 FORGET_CONVERSATION_CHECKPOINT = "agent.forget_conversation_checkpoint"
 
+# Start over the thread a coding harness keeps of a conversation in its own session store, once the conversation's
+# history is wiped in place (``repositories.conversation.forget_history``): async (conn, *, conversation_id) -> None,
+# inside the caller's transaction; a conversation no harness keeps a store for is a no-op.
+FORGET_CONVERSATION_SESSIONS = "agent.forget_conversation_sessions"
+
 # Let a spawned agent reach the agent that gave it its task (the
 # ``tell_parent`` tool): async (pool, *, spec, arguments) -> result dict.
 # ``spec`` is the agent's ``_tellParent`` runtime config; without a provider

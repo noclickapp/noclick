@@ -79,13 +79,17 @@ async def drop_checkpoint_past_history(conn, conversation_id: str) -> None:
 
 async def forget_history(conn, conversation_id: str) -> None:
     """Wipe the conversation's model history inside the caller's transaction: its items (the key and their rows),
-    its checkpoint (``drop_checkpoint``) and the rest of what describes it (``HISTORY_KEYS``)."""
+    its checkpoint (``drop_checkpoint``), the rest of what describes it (``HISTORY_KEYS``) and the copy a coding
+    harness keeps in its own session store (``FORGET_CONVERSATION_SESSIONS``), which its next turn would resume."""
     from repositories import conversation_history
+    from utils.capabilities import FORGET_CONVERSATION_SESSIONS, capability
 
     await drop_checkpoint(conn, conversation_id)
     await conn.execute("UPDATE conversations SET metadata = COALESCE(metadata, '{}'::jsonb) - $2::text[] "
                        "WHERE conversation_id = $1", conversation_id, list(HISTORY_KEYS))
     await conversation_history.clear(conn, conversation_id)
+    if forget := capability(FORGET_CONVERSATION_SESSIONS):
+        await forget(conn, conversation_id=conversation_id)
 
 
 def agent_thread_workflow(conversation_id: Optional[str]) -> Optional[str]:
