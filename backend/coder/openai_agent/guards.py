@@ -52,7 +52,12 @@ the guard asks before each model call, after each one (before its calls run or i
 tool call, and every ``CANCEL_POLL_S`` while one is in flight, which it then cuts where it stands
 (``cancel(mode="immediate")``: the step it was on is never kept, so no call is left without its result). A tool call
 made after the cancel answers ``CANCELED_RESULT`` without running. Asked only between steps, a canceled turn ran on
-for seconds, read its tools' refusals as being unable to act and kept a reply its person never wanted."""
+for seconds, read its tools' refusals as being unable to act and kept a reply its person never wanted.
+
+A turn whose reply goes out through a tool (a channel's send, to the chat it answers: ``reply_to``) has replied once
+its last call beside its own notes and follow-ups sent a message there (``progress.sends``) and its result reports no
+failure (``replied``), whatever its model wrote, so its agent doesn't tell it that an empty answer left it unanswered.
+Told so after a reply it had sent, a channel agent took one more model call to say nothing, and could send twice."""
 
 from __future__ import annotations
 
@@ -174,6 +179,37 @@ def credit_refusal(output: Any) -> Optional[str]:
     error = output.get("error") if isinstance(output, Mapping) else None
     found = match_insufficient_credits(error) if isinstance(error, str) else None
     return found.group(0) if found else None
+
+
+def succeeded(output: Any) -> bool:
+    """Whether a tool's result reports that it ran: a mapping with no failure in it (``success`` false, an ``error``
+    ``status`` or an ``error``), as a call held for someone's approval or refused reports one."""
+    if isinstance(output, str):
+        try:
+            output = json.loads(output)
+        except ValueError:
+            return False
+    if not isinstance(output, Mapping):
+        return False
+    return output.get("success") is not False and output.get("status") != "error" and not output.get("error")
+
+
+def addresses(arguments: Any, chat: str) -> bool:
+    """Whether a call's arguments name ``chat`` as one of their values (a number as its digits), at any depth: a
+    routed call's are nested."""
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments or "{}")
+        except ValueError:
+            return False
+    values = arguments.values() if isinstance(arguments, Mapping) else arguments if isinstance(arguments, list) else ()
+    for value in values:
+        if isinstance(value, (Mapping, list)):
+            if addresses(value, chat):
+                return True
+        elif isinstance(value, (str, int)) and not isinstance(value, bool) and str(value).strip() == chat:
+            return True
+    return False
 
 
 def says_something(response: Any) -> bool:
@@ -305,15 +341,18 @@ class TurnGuard(RunHooks):
     ends the turn, and ``stopped_work`` is that its closing call says where the work stands. ``so_far``: what the
     turn's earlier runs used (``TurnSoFar``), which this run's counts start from. ``canceled_check`` asks whether the
     turn was canceled (``cancel_check``); once it says so, ``canceled`` is set and nothing more of the run starts, and
-    ``cut_short`` once the run stopped for it (a run that had finished by then keeps its answer)."""
+    ``cut_short`` once the run stopped for it (a run that had finished by then keeps its answer). With ``reply_to``,
+    the chat a turn's reply goes to through its tools, ``replied`` is that it sent it there (``kept_reply``)."""
 
     def __init__(self, limits: TurnLimits, inner: Optional[RunHooks] = None, *, ends_unfunded: bool = False,
                  ends_stalled: bool = False, ends_unsaid: bool = False, ends_stopped: bool = False,
                  so_far: Optional[TurnSoFar] = None,
-                 canceled_check: Optional[Callable[[], Awaitable[bool]]] = None):
+                 canceled_check: Optional[Callable[[], Awaitable[bool]]] = None, reply_to: Optional[str] = None):
         self.limits = limits
         self._inner = inner
         self._canceled_check = canceled_check
+        self._reply_to = reply_to
+        self.replied = False
         self.canceled = False
         self.cut_short = False
         # A model call got past its start, so the run has kept the turn's own input in its history.
@@ -499,6 +538,14 @@ class TurnGuard(RunHooks):
         # A long tool can run the clock out between model calls.
         self._check()
 
+    def kept_reply(self, tool: str, arguments: str, output: Any) -> None:
+        """After each call: the turn has replied while its last call beside its own notes and follow-ups
+        (``progress.only_its_own``) sent a message (``progress.sends``) to ``reply_to`` and reported no failure."""
+        if not self._reply_to or progress.only_its_own(tool):
+            return
+        self.replied = (progress.sends(tool, arguments) and addresses(arguments, self._reply_to)
+                        and succeeded(output))
+
     def unchanged(self, tool: str, arguments: str) -> Optional[str]:
         """Counts a call that only read (``progress.only_reads``), or starts the count again after one that may have
         changed something; the note its result carries at ``QUIET_NUDGE`` in a row, and at ``QUIET_STOP`` the turn
@@ -584,6 +631,7 @@ def loop_guardrails(guard_of: Callable[[], Optional[TurnGuard]]) -> Dict[str, li
         if not guard:
             return ToolGuardrailFunctionOutput.allow()
         name, arguments = data.context.tool_name, data.context.tool_arguments
+        guard.kept_reply(name, arguments, data.output)
         nudged = guard.repeated(name, arguments, data.output)
         noted = guard.unchanged(name, arguments)
         if noted:
@@ -616,6 +664,7 @@ def record(guard: TurnGuard, ended_by: Optional[str], *, conversation_id: Option
             span.set_attribute("agent.turn.handed_on", guard.handed_on)
             span.set_attribute("agent.turn.owed_line", guard.owes_line)
             span.set_attribute("agent.turn.stopped_work", guard.stopped_work)
+            span.set_attribute("agent.turn.sent_reply", guard.replied)
             span.set_attribute("agent.turn.longest_read_streak", guard.longest_quiet)
             span.set_attribute("agent.turn.read_notes", guard.quiet_notes)
             if ended_by:

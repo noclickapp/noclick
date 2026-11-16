@@ -25,7 +25,9 @@ started: the run meets those limits from there.
 ``TURN_FIRST_EFFORT_KEY`` is the reasoning effort of a turn's first model call,
 for one someone waits on: its first words come sooner. ``TURN_EMPTY_ANSWER_KEY``
 is what a turn whose model answered with nothing (no words, no call) is told,
-once, to run on rather than end there. ``TURN_COMMAND_KEY`` makes the turn one of
+once, to run on rather than end there, unless its reply went out through a tool
+to ``TURN_REPLY_TO_KEY``: the chat a turn whose reply is a channel's send answers.
+``TURN_COMMAND_KEY`` makes the turn one of
 its harness's own commands (``{name, arguments}``) rather than a message: it's
 delivered as that command alone, with none of what a message carries composed in,
 and kept on its persisted message as ``command``. ``TURN_PERMISSION_MODE_KEY`` is the conversation's permission
@@ -56,6 +58,7 @@ TURN_LIMITS_KEY = "_turnLimits"
 TURN_SO_FAR_KEY = "_turnSoFar"
 TURN_FIRST_EFFORT_KEY = "_turnFirstEffort"
 TURN_EMPTY_ANSWER_KEY = "_turnEmptyAnswer"
+TURN_REPLY_TO_KEY = "_turnReplyTo"
 TURN_COMMAND_KEY = "_turnCommand"
 TURN_PERMISSION_MODE_KEY = "_turnPermissionMode"
 TURN_EFFORT_KEY = "_turnEffort"
@@ -114,6 +117,11 @@ def turn_first_effort_of(node_config: Any) -> Optional[str]:
 def turn_empty_answer_of(node_config: Any) -> Optional[str]:
     """What the turn is told when its model answers with nothing, when a platform set it."""
     return _text(node_config, TURN_EMPTY_ANSWER_KEY)
+
+
+def turn_reply_to_of(node_config: Any) -> Optional[str]:
+    """The chat the turn's reply goes to through its tools, when a platform said."""
+    return _text(node_config, TURN_REPLY_TO_KEY)
 
 
 def turn_command_of(node_config: Any) -> Optional[Dict[str, str]]:

@@ -399,6 +399,7 @@ class Agent:
         first_call_effort: Optional[str] = None,
         effort: Optional[str] = None,
         empty_answer: Optional[str] = None,
+        reply_to: Optional[str] = None,
         canceled: Optional[Callable[[], Awaitable[bool]]] = None,
         sandbox_region: Optional[str] = None,
         sandbox_volumes: Optional[Dict[str, str]] = None,
@@ -472,6 +473,9 @@ class Agent:
         # What a run is told when its model answers with nothing (no words, no call), which would end it where it
         # stands: it runs on once with this note, and may still end without a word. None: an empty answer ends it.
         agent._empty_answer = empty_answer
+        # The chat a turn's reply goes to through its tools (a channel's send): one that sent it there as its last act
+        # (``TurnGuard.replied``) said what it had to, so an empty answer then ends it without that note.
+        agent._reply_to = reply_to
         # Whether the turn its platform runs was canceled (``guards.cancel_check``): once it was, the turn stops where
         # it stands and keeps no reply (``_end_canceled``). None: nothing cancels it but the caller's own ``pause``.
         agent._canceled = canceled
@@ -996,7 +1000,8 @@ class Agent:
         guard = TurnGuard(getattr(self, "_limits", None) or TurnLimits(), getattr(self, "_billing_hooks", None),
                           ends_unfunded=guards.FUNDS in wrap_up, ends_stalled=guards.STALLED in wrap_up,
                           ends_unsaid=guards.HANDED_ON in wrap_up, ends_stopped=guards.STOPPED in wrap_up,
-                          so_far=getattr(self, "_so_far", None), canceled_check=getattr(self, "_canceled", None))
+                          so_far=getattr(self, "_so_far", None), canceled_check=getattr(self, "_canceled", None),
+                          reply_to=getattr(self, "_reply_to", None))
         self._so_far = None
         self._turn_guard, self.turn_ended_by, self.turn_closing, self.turn_carries_on = guard, None, None, False
         self.turn_canceled = False
@@ -1302,7 +1307,7 @@ class Agent:
                     + [{"role": "assistant", "content": accumulated_text}]
                 )
 
-        if said is None and self._answered_nothing(result):
+        if said is None and self._answered_nothing(result) and not guard.replied:
             await self._turn({"input_items": [{"role": "developer", "content": self._empty_answer}]}, guard,
                              said=accumulated_text)
             return

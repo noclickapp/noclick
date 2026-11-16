@@ -7,7 +7,8 @@ of unknown effect counts as progress. ``guards.TurnGuard`` counts the calls in a
 Any other tool is judged by the judges a platform registers (``register``): each answers for the tools it knows
 (True: only read; False: changed something) and None for the rest. ``only_its_own(tool)`` is true of a tool a platform
 says touches only the turn's own notes and follow-ups, or talks to someone (``register_own``): it changes nothing about
-the work a person asked for, though it isn't a read."""
+the work a person asked for, though it isn't a read. ``sends(tool, arguments)`` is true of a call a platform says sends
+a message to someone (``register_send``), as a channel's reply goes out."""
 
 from __future__ import annotations
 
@@ -20,6 +21,7 @@ from typing import Any, Callable, List, Mapping, Optional
 Judge = Callable[[str, Mapping[str, Any]], Optional[bool]]
 _JUDGES: List[Judge] = []
 _OWN: List[Callable[[str], bool]] = []
+_SENDS: List[Callable[[str, Mapping[str, Any]], bool]] = []
 
 SHELL_TOOL = "execute_bash"
 
@@ -85,14 +87,31 @@ def only_its_own(tool: str) -> bool:
     return any(judge(tool) for judge in _OWN)
 
 
-def only_reads(tool: str, arguments: Any) -> bool:
-    """Whether the call is known to have changed nothing."""
+def register_send(judge: Callable[[str, Mapping[str, Any]], bool]) -> None:
+    """A platform's judge of the calls that send a message to someone (``sends``)."""
+    if judge not in _SENDS:
+        _SENDS.append(judge)
+
+
+def sends(tool: str, arguments: Any) -> bool:
+    """Whether the call sends a message to someone, as a platform judges it; never when none does."""
+    arguments = _parsed(arguments)
+    return arguments is not None and any(judge(tool, arguments) for judge in _SENDS)
+
+
+def _parsed(arguments: Any) -> Optional[Mapping[str, Any]]:
     if isinstance(arguments, str):
         try:
             arguments = json.loads(arguments or "{}")
         except ValueError:
-            return False
-    if not isinstance(arguments, Mapping):
+            return None
+    return arguments if isinstance(arguments, Mapping) else None
+
+
+def only_reads(tool: str, arguments: Any) -> bool:
+    """Whether the call is known to have changed nothing."""
+    arguments = _parsed(arguments)
+    if arguments is None:
         return False
     if tool == SHELL_TOOL:
         command = arguments.get("command")

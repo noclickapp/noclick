@@ -11,7 +11,8 @@ import pytest
 from coder.openai_agent.guards import TurnLimits, TurnSoFar
 from nodes.agent.handlers.llm import execute_llm_model
 from utils.turn_events import (
-    TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_REF_KEY, TURN_SO_FAR_KEY, TURN_WRAP_UP_KEY,
+    TURN_EMPTY_ANSWER_KEY, TURN_FIRST_EFFORT_KEY, TURN_LIMITS_KEY, TURN_REF_KEY, TURN_REPLY_TO_KEY, TURN_SO_FAR_KEY,
+    TURN_WRAP_UP_KEY,
 )
 
 pytestmark = pytest.mark.asyncio
@@ -139,3 +140,10 @@ async def test_a_turn_the_platform_names_a_note_for_an_empty_answer_hands_it_to_
     note = "Your last response was empty: carry on, or end without a word."
     assert (await _created_with(monkeypatch, {TURN_EMPTY_ANSWER_KEY: note}))["empty_answer"] == note
     assert (await _created_with(monkeypatch, {}))["empty_answer"] is None
+
+
+async def test_the_chat_a_turns_reply_goes_to_through_its_tools_reaches_the_engine(monkeypatch):
+    """A turn nobody waits on the words of answers its chat through a send (``TURN_REPLY_TO_KEY``): the engine ends
+    it on an empty answer once its send got there (``tests/test_openai_agent_empty_answer.py``)."""
+    assert (await _created_with(monkeypatch, {TURN_REPLY_TO_KEY: "12025550101@c.us"}))["reply_to"] == "12025550101@c.us"
+    assert (await _created_with(monkeypatch, {}))["reply_to"] is None

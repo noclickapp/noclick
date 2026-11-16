@@ -21,8 +21,8 @@ from nodes.agent.placement import agent_scope_of, sandbox_network_of, sandbox_re
 from nodes.agent.git_mounts import sandbox_setups_of
 from nodes.agent.provider_errors import classify_and_rewrite_provider_error
 from utils.turn_events import (
-    turn_effort_of, turn_empty_answer_of, turn_first_effort_of, turn_limits_of, turn_ref_of, turn_so_far_of,
-    turn_wrap_up_of,
+    turn_effort_of, turn_empty_answer_of, turn_first_effort_of, turn_limits_of, turn_ref_of, turn_reply_to_of,
+    turn_so_far_of, turn_wrap_up_of,
 )
 from wss.sender.schema import ContentItem, ImageUrl
 
@@ -150,6 +150,7 @@ async def execute_llm_model(
             first_call_effort=turn_first_effort_of(node_config),
             effort=turn_effort_of(node_config),
             empty_answer=turn_empty_answer_of(node_config),
+            reply_to=turn_reply_to_of(node_config),
             # A turn its platform named stops where it stands once the platform cancels it (a person's Stop).
             canceled=cancel_check(turn_ref_of(node_config)),
             # A turn that leaves no memory needs only recent memory, and it is
