@@ -14,7 +14,7 @@ import httpx
 import pytest
 
 from nodes.whatsapp_node import GROUP_CHAT_TITLE, WhatsAppNode
-from utils import r2_cloudflare, whatsapp_profiles
+from utils import r2_cloudflare, wahooks_connections, whatsapp_profiles
 from utils.async_helpers import drain_spawned_tasks
 
 pytestmark = pytest.mark.asyncio
@@ -31,6 +31,7 @@ class FakeWhatsApp:
     def __init__(self) -> None:
         self.pictures: Dict[str, Optional[bytes]] = {}
         self.chats: List[Dict[str, Any]] = []
+        self.groups: Dict[str, Dict[str, Any]] = {}  # each group's object, as GET .../groups/{id} answers it
         self.link_host = "pps.whatsapp.net"
         self.failing: Optional[str] = None  # "status" (WAHooks answers 503) or "network"
         self.requests: List[str] = []
@@ -43,6 +44,10 @@ class FakeWhatsApp:
             if self.failing == "status":
                 return httpx.Response(503, json={"message": "Service Unavailable"})
             parts = request.url.path.split("/")
+            if parts[-2] == "groups":
+                group = self.groups.get(unquote(parts[-1]))
+                return httpx.Response(200, json=group) if group else httpx.Response(
+                    404, json={"message": "Group not found"})
             if parts[-1] == "chats":
                 offset = int(request.url.params.get("offset", 0))
                 return httpx.Response(200, json=self.chats[offset:offset + int(request.url.params["limit"])])
@@ -63,7 +68,7 @@ def whatsapp(monkeypatch):
     fake = FakeWhatsApp()
     transport = httpx.MockTransport(fake.handle)
     monkeypatch.setenv("WAHOOKS_API_KEY", "wh_test")
-    monkeypatch.setattr(whatsapp_profiles, "_wahooks_client", lambda key: httpx.AsyncClient(
+    monkeypatch.setattr(wahooks_connections, "wahooks_http", lambda key, **kw: httpx.AsyncClient(
         base_url="https://api.wahooks.com/api", transport=transport, headers={"Authorization": f"Bearer {key}"}))
     monkeypatch.setattr(whatsapp_profiles, "_cdn_client", lambda: httpx.AsyncClient(transport=transport))
     return fake
@@ -310,9 +315,18 @@ async def test_only_a_group_without_a_name_holds_a_read_that_waits_for_names(pos
     assert (await whatsapp_profiles.chat_profiles(postgres_pool, line, [GROUP]))[GROUP].name == "Bakery orders (new)"
 
 
-async def test_a_groups_first_message_reaches_its_agent_named(postgres_pool, whatsapp, storage, line, monkeypatch):
-    """The delivery waits for a group's name it hasn't kept, so the turn names the group, and says the agent can't
-    see who's in it (WAHooks lists no group's members), instead of handing it a bare group id."""
+def _group(*members: Dict[str, Any], name: str = "Bakery orders") -> Dict[str, Any]:
+    """A group as WAHooks' GET .../groups/{id} answers it, the account itself among its members."""
+    me = {"id": "12025550108@c.us", "phone": "12025550108", "lid": None, "name": "12025550108", "role": "admin",
+          "isMe": True}
+    return {"id": GROUP, "name": name, "description": None, "owner": None, "createdAt": None,
+            "participantCount": len(members) + 1, "participants": [me, *members], "announcementOnly": False,
+            "locked": False, "isCommunity": False}
+
+
+@pytest.fixture
+def delivered(monkeypatch, line):
+    """A delivery's credential: the line's own connection."""
     from utils import inbound_media
 
     async def credential(pool, config, workflow_id, credential_type):
@@ -320,16 +334,68 @@ async def test_a_groups_first_message_reaches_its_agent_named(postgres_pool, wha
         return {"connection_id": line}, None
 
     monkeypatch.setattr(inbound_media, "resolve_delivery_credential", credential)
+
+
+async def test_a_groups_message_reaches_its_agent_named_with_its_members(postgres_pool, whatsapp, storage, line,
+                                                                         delivered):
+    """A group's messages carry neither its name nor who's in it: the delivery reads both, so the turn names the group
+    and its members (admins first, a number WhatsApp hides said so, the account itself left out), says whether the
+    sender and the account are admins, and never a bare group id."""
     whatsapp.chats = [{"id": GROUP, "name": "Bakery orders"}]
-    payload = _wahooks_message(GROUP, participant=WRITER)
+    whatsapp.groups[GROUP] = _group(
+        {"id": PERSON, "phone": "12025550101", "lid": None, "name": None, "role": "member", "isMe": False},
+        {"id": HIDDEN, "phone": None, "lid": HIDDEN, "name": "Meera", "role": "member", "isMe": False},
+        {"id": WRITER, "phone": "12025550107", "lid": "12025550103@lid", "name": "Ravi", "role": "superadmin",
+         "isMe": False})
+    # The sender is named by their @lid: the same person as Ravi's @c.us entry.
+    payload = _wahooks_message(GROUP, participant="12025550103@lid")
     assert await WhatsAppNode._stamp_profiles(payload, {}, pool=postgres_pool, workflow_id=str(uuid.uuid4()))
     assert payload["profiles"]["chat"]["name"] == "Bakery orders"
 
     text = WhatsAppNode.resolve_agent_event(payload)["text"]
-    assert text.startswith(f'WhatsApp message in the group "Bakery orders" ({GROUP}), sent by {WRITER} (Ravi):\n')
-    assert f"to={GROUP}" in text and "its member list isn't available to you" in text
-    unnamed = WhatsAppNode.resolve_agent_event(_wahooks_message(GROUP, participant=WRITER))["text"]
-    assert unnamed.startswith(f"WhatsApp message in a group ({GROUP}), sent by {WRITER} (Ravi):\n")
-    # A direct chat says nothing of groups.
-    direct = WhatsAppNode.resolve_agent_event(_wahooks_message(PERSON, push_name="Asha"))["text"]
-    assert direct.startswith(f"WhatsApp message from {PERSON} (Asha):\n") and "group" not in direct
+    assert text.startswith(f'WhatsApp message in the group "Bakery orders" ({GROUP}), sent by 12025550103@lid '
+                           "(Ravi):\n")
+    assert f"to={GROUP}" in text
+    assert ("Everyone in the group reads what you send to it. It has 3 members besides you: Ravi (+1 202-555-0107, "
+            "admin), +1 202-555-0101, Meera (hidden number). The sender is one of its admins. You're one of its "
+            "admins.") in text
+    assert "12025550108" not in text and "isn't available" not in text
+    # A direct chat says nothing of groups, and reads no group.
+    direct = _wahooks_message(PERSON, push_name="Asha")
+    assert await WhatsAppNode._stamp_profiles(direct, {}, pool=postgres_pool, workflow_id=str(uuid.uuid4()))
+    assert "group" not in direct and whatsapp.calls(f"/groups/{GROUP}") == 1
+    text = WhatsAppNode.resolve_agent_event(direct)["text"]
+    assert text.startswith(f"WhatsApp message from {PERSON} (Asha):\n") and "group" not in text
+
+
+async def test_a_group_whose_members_cant_be_read_still_reaches_its_agent(postgres_pool, whatsapp, storage, line,
+                                                                          delivered, monkeypatch, caplog):
+    """Members WAHooks can't give (an error, or no answer within the delivery's budget) never hold the turn: it says
+    they're unknown, the failure is logged, and the group is still named by what its delivery found."""
+    whatsapp.chats = [{"id": GROUP, "name": "Bakery orders"}]
+    payload = _wahooks_message(GROUP, participant=WRITER)  # WAHooks answers 404 for it
+    assert await WhatsAppNode._stamp_profiles(payload, {}, pool=postgres_pool, workflow_id=str(uuid.uuid4()))
+    assert "group" not in payload and "Members of group" in caplog.text
+    text = WhatsAppNode.resolve_agent_event(payload)["text"]
+    assert text.startswith(f'WhatsApp message in the group "Bakery orders" ({GROUP})')
+    assert "Its members are unknown: the member list couldn't be read just now." in text
+
+    # A slow gateway: the delivery goes on at its budget, with what it has.
+    monkeypatch.setattr(WhatsAppNode, "PROFILE_READ_TIMEOUT_S", 1)
+    whatsapp.groups[GROUP] = _group()
+    handle = whatsapp.handle
+
+    async def slow(request):
+        if "/groups/" in request.url.path:
+            await asyncio.sleep(5)
+        return handle(request)
+
+    slow_transport = httpx.MockTransport(slow)
+    monkeypatch.setattr(wahooks_connections, "wahooks_http", lambda key, **kw: httpx.AsyncClient(
+        base_url="https://api.wahooks.com/api", transport=slow_transport))
+    payload = _wahooks_message(GROUP, participant=WRITER)
+    started = asyncio.get_running_loop().time()
+    assert await WhatsAppNode._stamp_profiles(payload, {}, pool=postgres_pool, workflow_id=str(uuid.uuid4()))
+    assert asyncio.get_running_loop().time() - started < 1.5
+    assert "group" not in payload and payload["profiles"]["chat"]["name"] == "Bakery orders"
+    assert "members are unknown" in WhatsAppNode.resolve_agent_event(payload)["text"]

@@ -62,13 +62,6 @@ def is_group(jid: str) -> bool:
     return jid.endswith("@g.us")
 
 
-def _wahooks_client(api_key: str) -> httpx.AsyncClient:
-    from wahooks.client import DEFAULT_BASE_URL
-
-    return httpx.AsyncClient(base_url=f"{DEFAULT_BASE_URL}/api", timeout=FETCH_TIMEOUT_S,
-                             headers={"Authorization": f"Bearer {api_key}"})
-
-
 def _cdn_client() -> httpx.AsyncClient:
     from utils.ssrf import guarded_async_client
 
@@ -196,10 +189,10 @@ def _refreshing(pool, connection_id: str, jids: List[str]) -> Set[asyncio.Task]:
 
 
 async def _refresh(pool, connection_id: str, jids: List[str]) -> None:
-    from utils.wahooks_connections import get_wahooks_api_key
+    from utils.wahooks_connections import get_wahooks_api_key, wahooks_http
 
     gate = asyncio.Semaphore(_CONCURRENCY)
-    async with _wahooks_client(get_wahooks_api_key()) as wahooks:
+    async with wahooks_http(get_wahooks_api_key(), timeout=FETCH_TIMEOUT_S) as wahooks:
         names = await _group_names(wahooks, connection_id, [j for j in jids if is_group(j)])
 
         async def one(jid: str) -> None:

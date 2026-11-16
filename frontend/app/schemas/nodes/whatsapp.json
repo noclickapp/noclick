@@ -48,6 +48,105 @@
       "x-credential-instructions": "1. Go to Meta Developer Console\n2. Select your app -> WhatsApp -> API Setup\n3. Copy Phone Number ID and Access Token\n4. For permanent token: Business Settings -> System Users -> Generate New Token",
       "x-credential-url": "https://developers.facebook.com/apps"
     },
+    "WhatsAppAddGroupParticipantsConfig": {
+      "description": "Add people to a WhatsApp group you're an admin of. Answers, per person, whether they were added, were already in it, or weren't added and why: someone whose privacy settings let only their contacts add them, or who left recently, can join by the group's invite link instead; a number not on WhatsApp can't (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "add_group_participants",
+          "default": "add_group_participants",
+          "title": "Add Group Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Add Group Participants",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add members",
+            "add people to group",
+            "invite"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group to add them to, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        },
+        "participants": {
+          "description": "People, each a phone number in international form (e.g. +12025550100) or a WhatsApp id (\u2026@c.us or \u2026@lid, as a message or get_group names them); at most 256",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "People",
+          "type": "array"
+        }
+      },
+      "required": [
+        "group_id",
+        "participants"
+      ],
+      "title": "WhatsAppAddGroupParticipantsConfig",
+      "type": "object"
+    },
+    "WhatsAppCreateGroupConfig": {
+      "description": "Create a WhatsApp group with you as its admin, adding the people named. Answers the new group's id and, per person, who was added and who wasn't and why (someone whose privacy settings let only their contacts add them gets the invite link instead) (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-creates-resource": true,
+          "x-display-name": "Create Group",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new group",
+            "start a group",
+            "group chat"
+          ],
+          "x-resource-id-path": "data.group_id",
+          "x-resource-type": "whatsapp_group",
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "name": {
+          "description": "The group's name",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Group Name",
+          "type": "string"
+        },
+        "participants": {
+          "description": "People, each a phone number in international form (e.g. +12025550100) or a WhatsApp id (\u2026@c.us or \u2026@lid, as a message or get_group names them); at most 256",
+          "items": {
+            "type": "string"
+          },
+          "title": "People",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WhatsAppCreateGroupConfig",
+      "type": "object"
+    },
     "WhatsAppCreateTemplateConfig": {
       "description": "Create a new message template",
       "properties": {
@@ -442,6 +541,108 @@
       "title": "WhatsAppGetChatsConfig",
       "type": "object"
     },
+    "WhatsAppGetGroupConfig": {
+      "description": "Read a WhatsApp group: its name and description, how many members it has and who they are (each one's name, number where WhatsApp shows it, id, and admin or member), and whether you're one of its admins (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "group members",
+            "who is in the group",
+            "participants",
+            "admins"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        },
+        "refresh": {
+          "default": "false",
+          "description": "Read it from WhatsApp now rather than from the copy kept for up to a minute",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Fresh Read",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "WhatsAppGetGroupConfig",
+      "type": "object"
+    },
+    "WhatsAppGetGroupInviteLinkConfig": {
+      "description": "Get a WhatsApp group's invite link, which lets anyone who has it join (an admin's) (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "get_group_invite_link",
+          "default": "get_group_invite_link",
+          "title": "Get Group Invite Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group Invite Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "join link",
+            "invite link",
+            "share group"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "WhatsAppGetGroupInviteLinkConfig",
+      "type": "object"
+    },
     "WhatsAppGetMediaUrlConfig": {
       "description": "Retrieve media URL from media ID",
       "properties": {
@@ -545,6 +746,48 @@
         "template_id"
       ],
       "title": "WhatsAppGetTemplateConfig",
+      "type": "object"
+    },
+    "WhatsAppLeaveGroupConfig": {
+      "description": "Leave a WhatsApp group: the account stops getting its messages and can't rejoin without an invite. A group whose last member leaves is gone (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "leave_group",
+          "default": "leave_group",
+          "title": "Leave Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Leave Group",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "exit group",
+            "quit group"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group to leave, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "WhatsAppLeaveGroupConfig",
       "type": "object"
     },
     "WhatsAppListContactsConfig": {
@@ -1032,6 +1275,109 @@
       "title": "WhatsAppRegisterPhoneConfig",
       "type": "object"
     },
+    "WhatsAppRemoveGroupParticipantsConfig": {
+      "description": "Remove people from a WhatsApp group you're an admin of. Answers, per person, whether they were removed or weren't in it (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "remove_group_participants",
+          "default": "remove_group_participants",
+          "title": "Remove Group Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Remove Group Participants",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kick",
+            "remove members",
+            "remove from group"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group to remove them from, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        },
+        "participants": {
+          "description": "People, each a phone number in international form (e.g. +12025550100) or a WhatsApp id (\u2026@c.us or \u2026@lid, as a message or get_group names them); at most 256",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "People",
+          "type": "array"
+        }
+      },
+      "required": [
+        "group_id",
+        "participants"
+      ],
+      "title": "WhatsAppRemoveGroupParticipantsConfig",
+      "type": "object"
+    },
+    "WhatsAppRenameGroupConfig": {
+      "description": "Rename a WhatsApp group (an admin's, when the group is locked to admins) (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "rename_group",
+          "default": "rename_group",
+          "title": "Rename Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Rename Group",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "group name",
+            "change group subject"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group to rename, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        },
+        "name": {
+          "description": "The group's new name",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "WhatsAppRenameGroupConfig",
+      "type": "object"
+    },
     "WhatsAppRequestCodeConfig": {
       "description": "Request verification code via SMS or voice",
       "properties": {
@@ -1071,6 +1417,48 @@
         }
       },
       "title": "WhatsAppRequestCodeConfig",
+      "type": "object"
+    },
+    "WhatsAppRevokeGroupInviteLinkConfig": {
+      "description": "Revoke a WhatsApp group's invite link so it no longer lets anyone join, and get its new one (an admin's) (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "revoke_group_invite_link",
+          "default": "revoke_group_invite_link",
+          "title": "Revoke Group Invite Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Revoke Group Invite Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reset invite link",
+            "new invite link"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "group_id": {
+          "description": "The group, by its id (\u2026@g.us)",
+          "placeholder": "120000000000000001@g.us",
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a group id (\u2026@g.us)",
+            "field_name": "group_id",
+            "placeholder": "Select a group...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_group"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "WhatsAppRevokeGroupInviteLinkConfig",
       "type": "object"
     },
     "WhatsAppSendAudioConfig": {
@@ -2235,6 +2623,8 @@
       "description": "Node-specific configuration",
       "discriminator": {
         "mapping": {
+          "add_group_participants": "#/$defs/WhatsAppAddGroupParticipantsConfig",
+          "create_group": "#/$defs/WhatsAppCreateGroupConfig",
           "create_message_template": "#/$defs/WhatsAppCreateTemplateConfig",
           "delete_media": "#/$defs/WhatsAppDeleteMediaConfig",
           "delete_message_template": "#/$defs/WhatsAppDeleteTemplateConfig",
@@ -2244,9 +2634,12 @@
           "get_account_profile": "#/$defs/WhatsAppGetProfileConfig",
           "get_business_profile": "#/$defs/WhatsAppGetBusinessProfileConfig",
           "get_chat_messages": "#/$defs/WhatsAppGetChatMessagesConfig",
+          "get_group": "#/$defs/WhatsAppGetGroupConfig",
+          "get_group_invite_link": "#/$defs/WhatsAppGetGroupInviteLinkConfig",
           "get_media_url": "#/$defs/WhatsAppGetMediaUrlConfig",
           "get_message_template": "#/$defs/WhatsAppGetTemplateConfig",
           "get_phone_number_info": "#/$defs/WhatsAppGetPhoneInfoConfig",
+          "leave_group": "#/$defs/WhatsAppLeaveGroupConfig",
           "list_account_phone_numbers": "#/$defs/WhatsAppListPhoneNumbersConfig",
           "list_contacts": "#/$defs/WhatsAppListContactsConfig",
           "list_message_templates": "#/$defs/WhatsAppListTemplatesConfig",
@@ -2257,7 +2650,10 @@
           "receive_message": "#/$defs/WhatsAppReceiveMessageConfig",
           "receive_status_update": "#/$defs/WhatsAppReceiveStatusConfig",
           "register_phone_number": "#/$defs/WhatsAppRegisterPhoneConfig",
+          "remove_group_participants": "#/$defs/WhatsAppRemoveGroupParticipantsConfig",
+          "rename_group": "#/$defs/WhatsAppRenameGroupConfig",
           "request_verification_code": "#/$defs/WhatsAppRequestCodeConfig",
+          "revoke_group_invite_link": "#/$defs/WhatsAppRevokeGroupInviteLinkConfig",
           "send_audio_message": "#/$defs/WhatsAppSendAudioConfig",
           "send_catalog_message": "#/$defs/WhatsAppSendCatalogConfig",
           "send_contact_card": "#/$defs/WhatsAppSendContactConfig",
@@ -2388,6 +2784,30 @@
         },
         {
           "$ref": "#/$defs/WhatsAppGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppRenameGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppAddGroupParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppRemoveGroupParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppLeaveGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetGroupInviteLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppRevokeGroupInviteLinkConfig"
         },
         {
           "$ref": "#/$defs/WhatsAppReceiveMessageConfig"

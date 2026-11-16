@@ -104,6 +104,18 @@ def test_non_message_wahooks_envelope_never_fires_a_run():
     }
     assert WhatsAppNode.filter_trigger_payload(payload, RECEIVE) is False
 
+def test_a_groups_membership_events_never_fire_a_run():
+    # NoClick's WAHooks webhooks don't subscribe to group events, but one that reaches a trigger (a subscription
+    # widened at WAHooks, a replayed delivery) is a group's change, never a message: it wakes no turn, whether the
+    # envelope names its session, only its connection, or neither.
+    change = {"group": {"id": "120000000000000001@g.us"}, "participants": [{"id": "12025550107@c.us"}],
+              "action": "add"}
+    for event in ("group.v2.join", "group.v2.participants", "group.v2.update", "group.v2.leave"):
+        for shape in ({"session": "u_abc_s_def"}, {"connectionId": "conn-1"}, {}):
+            payload = {"event": event, **shape, "payload": change}
+            assert WhatsAppNode.filter_trigger_payload(payload, RECEIVE) is False
+            assert WhatsAppNode.filter_trigger_payload(payload, {**RECEIVE, "include_group_messages": "true"}) is False
+
 
 def test_non_wahooks_shapes_still_pass_through():
     # Meta Cloud API envelopes (no event/session keys) keep passing through.

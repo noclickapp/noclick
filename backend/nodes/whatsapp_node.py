@@ -11,6 +11,7 @@ Provides comprehensive workflow integration for WhatsApp Business Platform with 
 - Message Management: Mark as read
 - Webhooks: Receive messages and status updates (via webhook trigger)
 - Chats (QR credentials only): List chats/contacts, read message history, edit sent messages
+- Groups (QR credentials only): Read members, create, rename, add/remove people, leave, invite link
 
 Authentication: Meta Access Token (temporary 60-day or permanent system user token)
 or WAHooks QR scan (a phone's WhatsApp or WhatsApp Business app, linked as a device;
@@ -27,13 +28,14 @@ import json
 from datetime import datetime, timezone
 import uuid
 from typing import Dict, Any, ClassVar, Optional, List, Literal, Tuple, Union, Annotated
-from pydantic import BaseModel, Field, Discriminator, ConfigDict
+from pydantic import BaseModel, Field, Discriminator, ConfigDict, field_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.whatsapp_trigger_config import CHAT_PICKER_OPTIONS, WhatsAppReceiveMessageConfig
 from utils import redis_client
-from utils.phone_numbers import is_noclick_number, noclick_line_refusal
+from utils.phone_numbers import NOCLICK_LINE_REFUSAL, is_noclick_number
+from utils.wahooks_groups import members_note
 from utils.self_echo import is_self_post, record_self_post, self_post_verdict
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 from utils.webhook_signatures import verify_wahooks
@@ -148,6 +150,17 @@ _RECIPIENT_DESC = (
 
 # WAHooks ops addressed by a chat id rather than a send recipient.
 _WAHOOKS_CHAT_ID_OPS = frozenset({"get_chat_messages", "edit_message", "mark_chat_read"})
+# A linked phone's groups (``utils.wahooks_groups``); the Cloud API has none.
+GROUP_OPERATIONS = frozenset({
+    "get_group",
+    "create_group",
+    "rename_group",
+    "add_group_participants",
+    "remove_group_participants",
+    "leave_group",
+    "get_group_invite_link",
+    "revoke_group_invite_link",
+})
 # What a QR link (WAHooks, a linked phone) can run; the Cloud API runs the rest.
 QR_OPERATIONS = frozenset({
     "send_text_message",
@@ -165,8 +178,9 @@ QR_OPERATIONS = frozenset({
     "edit_message",
     "mark_chat_read",
     "get_account_profile",
+    *GROUP_OPERATIONS,
 })
-# Chat reads only a linked phone has: the Cloud API has no chat or message history.
+# What only a linked phone has: the Cloud API has no chat or message history, and no groups.
 QR_ONLY_OPERATIONS = frozenset({
     "list_recent_chats",
     "get_chat_messages",
@@ -175,6 +189,7 @@ QR_ONLY_OPERATIONS = frozenset({
     "edit_message",
     "mark_chat_read",
     "get_account_profile",
+    *GROUP_OPERATIONS,
 })
 _TRIGGER_OPERATIONS = frozenset({"receive_message", "receive_status_update"})
 
@@ -322,6 +337,43 @@ async def _read_recent_messages(api_key: str, conn_id: str, config: "WhatsAppRea
         "message_count": sum(len(c["messages"]) for c in out),
         "truncated": truncated,
     }
+
+
+async def _run_group_op(op_config, conn_id: str, group_id: Optional[str], people: List[str]) -> Dict[str, Any]:
+    """A group operation (``utils.wahooks_groups``), answered as the agent relays it: who's in, who isn't and why,
+    in its ``summary`` line."""
+    from utils import wahooks_groups as groups
+
+    action = op_config.operation
+    if action == "get_group":
+        return groups.summary(await groups.get_group(conn_id, group_id, refresh=op_config.refresh == "true"))
+    if action == "create_group":
+        made = await groups.create_group(conn_id, op_config.name, people)
+        out = groups.summary(made)
+        named = ", ".join(groups.member_label(m) for m in out["members"])
+        line = f'Created the group "{out["name"] or op_config.name}" ({out["group_id"]}).'
+        line += f" In it besides you: {named}." if named else " No one else is in it yet."
+        missed = [e for e in made.get("notAdded") or [] if isinstance(e, dict)]
+        not_added, why = groups.people_results(missed, add=True)
+        return {**out, "not_added": not_added, "summary": f"{line} {why}" if missed else line}
+    if action == "rename_group":
+        renamed = await groups.rename_group(conn_id, group_id, op_config.name)
+        name = (renamed or {}).get("name") or op_config.name
+        return {"group_id": group_id, "name": name, "summary": f'Renamed the group to "{name}".'}
+    if action in ("add_group_participants", "remove_group_participants"):
+        add = action == "add_group_participants"
+        entries = await groups.change_participants(conn_id, group_id, people, add=add)
+        results, line = groups.people_results(entries, add=add)
+        return {"group_id": group_id, "people": results, "summary": line}
+    if action == "leave_group":
+        await groups.leave_group(conn_id, group_id)
+        return {"group_id": group_id, "left": True,
+                "summary": "Left the group: this account no longer gets its messages or sends to it."}
+    revoke = action == "revoke_group_invite_link"
+    link = await groups.invite_link(conn_id, group_id, revoke=revoke)
+    return {"group_id": group_id, "invite_link": link,
+            "summary": ("Revoked the old invite link, which no longer lets anyone join; this is the new one."
+                        if revoke else "Anyone with this link can join the group.")}
 
 
 def _chat_key(chat_id: Any) -> str:
@@ -1796,6 +1848,137 @@ class WhatsAppGetProfileConfig(BaseModel):
 
 
 # ============================================================================
+# Group Operations (QR credentials: WAHooks' group routes, utils.wahooks_groups)
+# ============================================================================
+
+GROUP_RESOURCE = "whatsapp_group"
+NOCLICK_LINE_IN_GROUP = (
+    "Not changed: one of those numbers is NoClick's own line, where the owner texts their NoClick assistant. It isn't "
+    "one of their contacts and never goes in a group: leave it out and name the people themselves."
+)
+_PARTICIPANTS_DESC = (
+    "People, each a phone number in international form (e.g. +12025550100) or a WhatsApp id (…@c.us or …@lid, "
+    "as a message or get_group names them); at most 256"
+)
+
+
+def _group_op(name: str, display: str, keywords: List[str], **extra: Any) -> Any:
+    return Field(
+        name,
+        json_schema_extra={
+            "const": name,
+            "ui:hidden": True,
+            "x-supported-credential-types": ["whatsapp_qr"],
+            "x-category": "Groups",
+            "x-is-trigger": False,
+            "x-display-name": display,
+            "x-keywords": keywords,
+            **extra,
+        },
+        title=display,
+    )
+
+
+def _group_picker_field(description: str) -> Any:
+    """A group of the account's (``load_field_options`` lists its group chats)."""
+    return Field(
+        ...,
+        title="Group",
+        description=description,
+        json_schema_extra={
+            "placeholder": "120000000000000001@g.us",
+            "x-dynamic-options": {**CHAT_PICKER_OPTIONS, "placeholder": "Select a group...",
+                                  "custom_placeholder": "Or enter a group id (…@g.us)", "field_name": "group_id"},
+            "x-resource-type": GROUP_RESOURCE,
+        },
+    )
+
+
+class _GroupPeopleConfig(BaseModel):
+    @field_validator("participants", mode="before", check_fields=False)
+    @classmethod
+    def _listed(cls, value: Any) -> Any:
+        # A template or a model may name them as one comma- or line-separated string.
+        if isinstance(value, str):
+            return [p for p in (s.strip() for s in value.replace("\n", ",").split(",")) if p]
+        return value
+
+
+class WhatsAppGetGroupConfig(BaseModel):
+    """Read a WhatsApp group: its name and description, how many members it has and who they are (each one's name, number where WhatsApp shows it, id, and admin or member), and whether you're one of its admins (QR credentials)"""
+
+    operation: Literal["get_group"] = _group_op("get_group", "Get Group",
+                                                ["group members", "who is in the group", "participants", "admins"])
+    group_id: str = _group_picker_field("The group, by its id (…@g.us)")
+    refresh: str = Field(
+        "false",
+        title="Fresh Read",
+        description="Read it from WhatsApp now rather than from the copy kept for up to a minute",
+        json_schema_extra={"enum": ["false", "true"], "enumNames": ["No", "Yes"], "x-enum-searchable": True},
+    )
+
+
+class WhatsAppCreateGroupConfig(_GroupPeopleConfig):
+    """Create a WhatsApp group with you as its admin, adding the people named. Answers the new group's id and, per person, who was added and who wasn't and why (someone whose privacy settings let only their contacts add them gets the invite link instead) (QR credentials)"""
+
+    operation: Literal["create_group"] = _group_op(
+        "create_group", "Create Group", ["new group", "start a group", "group chat"],
+        **{"x-creates-resource": True, "x-resource-type": GROUP_RESOURCE, "x-resource-id-path": "data.group_id"})
+    name: str = Field(..., min_length=1, max_length=100, title="Group Name", description="The group's name")
+    participants: List[str] = Field(default_factory=list, title="People", description=_PARTICIPANTS_DESC)
+
+
+class WhatsAppRenameGroupConfig(BaseModel):
+    """Rename a WhatsApp group (an admin's, when the group is locked to admins) (QR credentials)"""
+
+    operation: Literal["rename_group"] = _group_op("rename_group", "Rename Group",
+                                                   ["group name", "change group subject"])
+    group_id: str = _group_picker_field("The group to rename, by its id (…@g.us)")
+    name: str = Field(..., min_length=1, max_length=100, title="New Name", description="The group's new name")
+
+
+class WhatsAppAddGroupParticipantsConfig(_GroupPeopleConfig):
+    """Add people to a WhatsApp group you're an admin of. Answers, per person, whether they were added, were already in it, or weren't added and why: someone whose privacy settings let only their contacts add them, or who left recently, can join by the group's invite link instead; a number not on WhatsApp can't (QR credentials)"""
+
+    operation: Literal["add_group_participants"] = _group_op(
+        "add_group_participants", "Add Group Participants", ["add members", "add people to group", "invite"])
+    group_id: str = _group_picker_field("The group to add them to, by its id (…@g.us)")
+    participants: List[str] = Field(..., min_length=1, title="People", description=_PARTICIPANTS_DESC)
+
+
+class WhatsAppRemoveGroupParticipantsConfig(_GroupPeopleConfig):
+    """Remove people from a WhatsApp group you're an admin of. Answers, per person, whether they were removed or weren't in it (QR credentials)"""
+
+    operation: Literal["remove_group_participants"] = _group_op(
+        "remove_group_participants", "Remove Group Participants", ["kick", "remove members", "remove from group"])
+    group_id: str = _group_picker_field("The group to remove them from, by its id (…@g.us)")
+    participants: List[str] = Field(..., min_length=1, title="People", description=_PARTICIPANTS_DESC)
+
+
+class WhatsAppLeaveGroupConfig(BaseModel):
+    """Leave a WhatsApp group: the account stops getting its messages and can't rejoin without an invite. A group whose last member leaves is gone (QR credentials)"""
+
+    operation: Literal["leave_group"] = _group_op("leave_group", "Leave Group", ["exit group", "quit group"])
+    group_id: str = _group_picker_field("The group to leave, by its id (…@g.us)")
+
+
+class WhatsAppGetGroupInviteLinkConfig(BaseModel):
+    """Get a WhatsApp group's invite link, which lets anyone who has it join (an admin's) (QR credentials)"""
+
+    operation: Literal["get_group_invite_link"] = _group_op(
+        "get_group_invite_link", "Get Group Invite Link", ["join link", "invite link", "share group"])
+    group_id: str = _group_picker_field("The group, by its id (…@g.us)")
+
+
+class WhatsAppRevokeGroupInviteLinkConfig(BaseModel):
+    """Revoke a WhatsApp group's invite link so it no longer lets anyone join, and get its new one (an admin's) (QR credentials)"""
+
+    operation: Literal["revoke_group_invite_link"] = _group_op(
+        "revoke_group_invite_link", "Revoke Group Invite Link", ["reset invite link", "new invite link"])
+    group_id: str = _group_picker_field("The group, by its id (…@g.us)")
+
+
+# ============================================================================
 # Webhook Operations (receive-only via webhook trigger)
 # ============================================================================
 
@@ -1889,6 +2072,15 @@ WhatsAppConfig = Annotated[
         WhatsAppEditMessageConfig,
         WhatsAppMarkChatReadConfig,
         WhatsAppGetProfileConfig,
+        # Groups (8 operations, QR)
+        WhatsAppGetGroupConfig,
+        WhatsAppCreateGroupConfig,
+        WhatsAppRenameGroupConfig,
+        WhatsAppAddGroupParticipantsConfig,
+        WhatsAppRemoveGroupParticipantsConfig,
+        WhatsAppLeaveGroupConfig,
+        WhatsAppGetGroupInviteLinkConfig,
+        WhatsAppRevokeGroupInviteLinkConfig,
         # Webhooks (2 operations)
         WhatsAppReceiveMessageConfig,
         WhatsAppReceiveStatusConfig,
@@ -2130,8 +2322,7 @@ class WhatsAppNode(WorkflowNode):
                 identity.append(f"phone +{sender_phone}")
             group = chat_id.endswith("@g.us")
             seen_chat, seen_sender = cls._seen_profiles(output)
-            # The delivery doesn't carry the group's name: it's the one kept for the chat, if any.
-            group_name = (seen_chat.get("name") or None) if group else None
+            group_name = cls._group_name(output) if group else None
             header = f"WhatsApp message from {chat_id}"
             if owner:
                 header = ("WhatsApp message from the account's owner, to you, in their own \"Message yourself\" "
@@ -2207,9 +2398,9 @@ class WhatsAppNode(WorkflowNode):
             # Reacting to a message or quoting it takes its id; without it the agent had to page the chat first.
             id_note = (f" This message's id is {message_id}: pass it as message_id to react to it, or as "
                        f"reply_to_message_id to quote it." if message_id else "")
-            # WAHooks lists no group's members, so the agent is told it can't see them rather than left to assume.
-            group_note = (" Everyone in the group reads what you send to it, and its member list isn't available to "
-                          "you." if group else "")
+            # Who's in it, as its delivery read them (``_stamp_profiles``), or that they're unknown.
+            group_note = (" Everyone in the group reads what you send to it." + members_note(output.get("group"))
+                          if group else "")
             text = (
                 f"{header}:\n{body}{media_note}\n\n"
                 f"To reply, call a send tool with to={chat_id} "
@@ -2283,7 +2474,7 @@ class WhatsAppNode(WorkflowNode):
             found = {"kind": "contact", "url": None, "duration": None, "transcript": None}
         quoted = p.get("replyTo") if isinstance(p.get("replyTo"), dict) else {}
         return event_summary(
-            chat_name=seen_chat.get("name") if group else name, chat_avatar=seen_chat.get("avatar_url"),
+            chat_name=cls._group_name(output) if group else name, chat_avatar=seen_chat.get("avatar_url"),
             sender_avatar=seen_sender.get("avatar_url"), chat_kind="self" if cls._owner_note(output) else
             "group" if group else "direct", chat_number=None if group else number, sender_name=name,
             sender_id=participant or chat, sender_number=number, text=p.get("body") or p.get("caption"),
@@ -2401,6 +2592,13 @@ class WhatsAppNode(WorkflowNode):
         """The chat's and its writer's profiles ``transform_trigger_payload`` put on a delivery (``{}`` for none)."""
         profiles = output.get("profiles") if isinstance(output.get("profiles"), dict) else {}
         return profiles.get("chat") or {}, profiles.get("sender") or {}
+
+    @classmethod
+    def _group_name(cls, output: Dict[str, Any]) -> Optional[str]:
+        """A group message's group name, which the message doesn't carry: the one kept for the chat, else the one its
+        delivery read with the members (``payload["group"]``)."""
+        group = output.get("group") if isinstance(output.get("group"), dict) else {}
+        return cls._seen_profiles(output)[0].get("name") or group.get("name") or None
 
     @staticmethod
     def _message_chat(p: Dict[str, Any]) -> Tuple[str, str]:
@@ -2600,12 +2798,14 @@ class WhatsAppNode(WorkflowNode):
             return (config or {}).get("include_self_chat") == "true" and cls._owner_note(payload)
         event_payload = payload.get("payload")
         if payload.get("event") != "message" or not isinstance(event_payload, dict):
-            # A WAHooks envelope (event+session keys) that isn't a message is
-            # control-plane traffic (session.status, …) — normally consumed by
+            # A WAHooks envelope (event + session or connectionId) that isn't a
+            # message is control-plane traffic (session.status, a group's
+            # group.v2.* membership changes, …) — normally consumed by
             # handle_control_event before this filter; dropping it here too
             # means a missed control event can never fire the workflow as a
             # ghost trigger. Non-WAHooks shapes (Meta Cloud API) pass through.
-            if "event" in payload and "session" in payload:
+            if "event" in payload and ("session" in payload or "connectionId" in payload
+                                       or str(payload["event"] or "").startswith("group.")):
                 return False
             return True
 
@@ -2794,7 +2994,10 @@ class WhatsAppNode(WorkflowNode):
         (``utils.whatsapp_profiles``; a group's ``name`` too), which fetches
         what isn't kept yet in the background. It holds the delivery only for
         a group it has no name for, within ``PROFILE_READ_TIMEOUT_S``: the
-        agent's turn names the group by it. False when nothing could be read."""
+        agent's turn names the group by it. A group message's
+        ``payload["group"]`` is who's in the group (``_group_members``), read
+        alongside within the same budget; without it the turn says they're
+        unknown. False when nothing could be read."""
         if payload.get("event") not in _MESSAGE_EVENTS or not workflow_id:
             return False
         chat, participant = cls._message_chat(payload.get("payload") or {})
@@ -2814,13 +3017,36 @@ class WhatsAppNode(WorkflowNode):
                 if not connection_id:
                     return False
                 # Half a second of the budget stays for reading back what the wait found.
-                found = await chat_profiles(pool, connection_id, [chat, writer],
-                                            name_wait_s=max(0.0, deadline - loop.time() - 0.5))
+                reads = [chat_profiles(pool, connection_id, [chat, writer],
+                                       name_wait_s=max(0.0, deadline - loop.time() - 0.5))]
+                if chat.endswith("@g.us"):
+                    reads.append(cls._group_members(connection_id, chat, writer, deadline - 0.25))
+                found, *members = await asyncio.gather(*reads)
         except Exception as e:
             logger.warning(f"[WhatsApp] Chat profiles not read for workflow {workflow_id}: {type(e).__name__}: {e}")
             return False
         payload["profiles"] = {"chat": found[chat].as_dict(), "sender": found[writer].as_dict()}
+        if members and members[0] is not None:
+            payload["group"] = members[0]
         return True
+
+    @staticmethod
+    async def _group_members(connection_id: str, group_id: str, sender: str, deadline: float):
+        """Who's in the group a message came from (``utils.wahooks_groups.turn_record``), read by ``deadline``
+        (WAHooks keeps a group up to a minute and drops it on any change, so a busy group costs it little). None,
+        logged, when it can't be read in time: the turn then says its members are unknown and goes on."""
+        from utils import wahooks_groups
+
+        loop = asyncio.get_running_loop()
+        try:
+            async with asyncio.timeout_at(deadline):
+                group = await wahooks_groups.get_group(connection_id, group_id,
+                                                       timeout=max(0.1, deadline - loop.time()))
+        except Exception as e:
+            logger.warning(f"[WhatsApp] Members of group {group_id} on {connection_id} not read: "
+                           f"{type(e).__name__}: {e}")
+            return None
+        return wahooks_groups.turn_record(group, sender)
 
     @classmethod
     async def _rehost_media(cls, payload, config, *, pool, workflow_id, node_id):
@@ -3154,15 +3380,16 @@ class WhatsAppNode(WorkflowNode):
         page_token: Optional[str] = None,
         search: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Load chat options for recipient/chat picker fields.
+        """Load chat options for recipient/chat picker fields, and group chats alone for ``group_id``.
 
         QR credentials list the account's chats via WAHooks (offset-paginated;
         search delegates to load_paginated_options' paginate-and-filter). The
         Cloud API has no chat listing, so non-QR credentials get an empty set —
         allow_custom on the field keeps manual phone entry working.
         """
-        if field_name not in ("to", "chat_id"):
+        if field_name not in ("to", "chat_id", "group_id"):
             return {"options": [], "next_page_token": None}
+        groups_only = field_name == "group_id"
 
         from nodes.core.dynamic_options import load_paginated_options, normalize_search
 
@@ -3201,13 +3428,13 @@ class WhatsAppNode(WorkflowNode):
             # Contacts fill two gaps chats can't: names for number-only chats,
             # and people with no chat history at all (contacts > chats on real
             # accounts). One fetch per load; appended after the final chats page.
-            contacts = await asyncio.to_thread(_fetch_contacts) if last_page else []
+            contacts = await asyncio.to_thread(_fetch_contacts) if last_page and not groups_only else []
             contact_names = {c.get("jid"): c.get("name") for c in contacts if c.get("jid")}
             seen = set()
             options = []
             for chat in chats:
                 cid = chat.get("id")
-                if not cid:
+                if not cid or (groups_only and not (chat.get("isGroup") or str(cid).endswith("@g.us"))):
                     continue
                 seen.add(cid)
                 options.append({
@@ -3439,7 +3666,9 @@ class WhatsAppNode(WorkflowNode):
             return self.no_event_output("receive_status_update")
 
         if action.startswith("send_"):
-            await self._refuse_noclick_line(op_config, credentials)
+            await self._refuse_noclick_line([getattr(op_config, "to", "")], credentials)
+        elif action in ("create_group", "add_group_participants"):
+            await self._refuse_noclick_line(op_config.participants, credentials, NOCLICK_LINE_IN_GROUP)
 
         # Route to WAHooks handler for QR scan credentials
         if isinstance(credentials, WhatsAppQRCredential):
@@ -3515,15 +3744,18 @@ class WhatsAppNode(WorkflowNode):
         raise ValueError(f"Unknown WhatsApp action: {action}")
 
     @staticmethod
-    async def _refuse_noclick_line(op_config, credentials) -> None:
-        """A send to NoClick's own line fails the call, its error telling the agent why and what to do instead. A
-        @lid counts once a delivery has said whose it is (``handle_control_event``)."""
-        to = str(getattr(op_config, "to", "") or "").strip()
-        if to.endswith("@lid") and isinstance(credentials, WhatsAppQRCredential):
+    async def _refuse_noclick_line(recipients: List[Any], credentials, refusal: str = NOCLICK_LINE_REFUSAL) -> None:
+        """A send to NoClick's own line, or a group change bringing it in, fails the call, its error (``refusal``)
+        telling the agent why and what to do instead. A @lid counts once a delivery has said whose it is
+        (``handle_control_event``)."""
+        named = [str(r or "").strip() for r in recipients]
+        lids = [r for r in named if r.endswith("@lid")]
+        if lids and isinstance(credentials, WhatsAppQRCredential):
             from utils import whatsapp_lids
 
-            to = (await whatsapp_lids.phones(credentials.connection_id, [to])).get(to, to)
-        if refusal := noclick_line_refusal(to):
+            known = await whatsapp_lids.phones(credentials.connection_id, lids)
+            named = [known.get(r, r) for r in named]
+        if any(is_noclick_number(r) for r in named):
             raise ValueError(refusal)
 
     async def _execute_wahooks(
@@ -3550,6 +3782,10 @@ class WhatsAppNode(WorkflowNode):
             chat_id = wahooks_chat_id(op_config.chat_id)
         elif action.startswith("send_"):
             chat_id = wahooks_chat_id(op_config.to)
+        from utils import wahooks_groups
+
+        group_id = wahooks_groups.group_jid(op_config.group_id) if hasattr(op_config, "group_id") else None
+        people = wahooks_groups.participant_ids(op_config.participants) if hasattr(op_config, "participants") else []
 
         start_time = time.time()
         try:
@@ -3662,7 +3898,9 @@ class WhatsAppNode(WorkflowNode):
                             contact_phone=op_config.contact_phone,
                         )
 
-            if action == "read_recent_messages":
+            if action in GROUP_OPERATIONS:
+                result = await _run_group_op(op_config, conn_id, group_id, people)
+            elif action == "read_recent_messages":
                 result = await _read_recent_messages(api_key, conn_id, op_config)
             else:
                 result = await asyncio.to_thread(_run_wahooks_op)
@@ -3690,13 +3928,13 @@ class WhatsAppNode(WorkflowNode):
                 "timing_ms": {"api_request": round(api_time, 2)},
             }
 
-        except WAHooksError as e:
+        except (WAHooksError, wahooks_groups.GroupError) as e:
             api_time = (time.time() - start_time) * 1000
             return {
                 "status": "error",
                 "action": action,
                 "error": str(e),
-                "error_code": getattr(e, "status_code", None),
+                "error_code": getattr(e, "status_code", None) or getattr(e, "status", None),
                 "provider": "wahooks",
                 "timing_ms": {"api_request": round(api_time, 2)},
             }

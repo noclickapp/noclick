@@ -326,6 +326,70 @@
    "needs_account": true
   },
   {
+   "name": "get_group",
+   "display_name": "Get Group",
+   "category": "Groups",
+   "description": "Read a WhatsApp group: its name and description, how many members it has and who they are (each one's name, number where WhatsApp shows it, id, and admin or member), and whether you're one of its admins (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "create_group",
+   "display_name": "Create Group",
+   "category": "Groups",
+   "description": "Create a WhatsApp group with you as its admin, adding the people named. Answers the new group's id and, per person, who was added and who wasn't and why (someone whose privacy settings let only their contacts add them gets the invite link instead) (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "rename_group",
+   "display_name": "Rename Group",
+   "category": "Groups",
+   "description": "Rename a WhatsApp group (an admin's, when the group is locked to admins) (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "add_group_participants",
+   "display_name": "Add Group Participants",
+   "category": "Groups",
+   "description": "Add people to a WhatsApp group you're an admin of. Answers, per person, whether they were added, were already in it, or weren't added and why: someone whose privacy settings let only their contacts add them, or who left recently, can join by the group's invite link instead; a number not on WhatsApp can't (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "remove_group_participants",
+   "display_name": "Remove Group Participants",
+   "category": "Groups",
+   "description": "Remove people from a WhatsApp group you're an admin of. Answers, per person, whether they were removed or weren't in it (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "leave_group",
+   "display_name": "Leave Group",
+   "category": "Groups",
+   "description": "Leave a WhatsApp group: the account stops getting its messages and can't rejoin without an invite. A group whose last member leaves is gone (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "get_group_invite_link",
+   "display_name": "Get Group Invite Link",
+   "category": "Groups",
+   "description": "Get a WhatsApp group's invite link, which lets anyone who has it join (an admin's) (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
+   "name": "revoke_group_invite_link",
+   "display_name": "Revoke Group Invite Link",
+   "category": "Groups",
+   "description": "Revoke a WhatsApp group's invite link so it no longer lets anyone join, and get its new one (an admin's) (QR credentials)",
+   "is_trigger": false,
+   "needs_account": true
+  },
+  {
    "name": "receive_message",
    "display_name": "Receive Message",
    "category": null,

@@ -27,6 +27,16 @@ def get_wahooks_api_key() -> Optional[str]:
     return os.environ.get("WAHOOKS_API_KEY") or None
 
 
+def wahooks_http(api_key: str, *, timeout: float = 15.0):
+    """An async client on WAHooks' API with NoClick's key, for routes read off the event loop's thread (the
+    ``wahooks`` package's client is sync). Tests fake it."""
+    import httpx
+    from wahooks.client import DEFAULT_BASE_URL
+
+    return httpx.AsyncClient(base_url=f"{DEFAULT_BASE_URL}/api", timeout=timeout,
+                             headers={"Authorization": f"Bearer {api_key}"})
+
+
 def drop_webhook_configs(client, connection_id: str, url: Optional[str] = None) -> int:
     """Delete ``connection_id``'s webhook configs (only ``url``'s when given)
     through an open sync client. A connection or config WAHooks no longer
