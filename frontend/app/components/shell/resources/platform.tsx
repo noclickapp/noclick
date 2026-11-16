@@ -82,11 +82,12 @@ export interface PlatformResources {
     /** Why a kind's own way of getting one can't be used on this deployment yet, in a sentence: its button is greyed
      *  out with these words (a computer of yours while agents don't run on machines here). */
     unavailable?: Partial<Record<KindId, string>>;
-    /** Making one of a kind here (?kind=&new=1, over its list): `onDone` takes the new item's id, or null when it was left. */
-    Create?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void }>>>;
+    /** Making one of a kind here (?kind=&new=1, over its list), started on `way` where one was picked (?way=): `onDone`
+     *  takes the new item's id, or null when it was left. */
+    Create?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void; way?: string }>>>;
     /** The ways to get one, drawn in an empty kind's place of its button (a machine: renting one, or a computer of
-     *  yours, each with its price); `onDone` takes the new item's id, or null. */
-    Empty?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void }>>>;
+     *  yours, each with its price). A pick opens that kind's Create on it, so its dialog outlives the list filling in. */
+    Empty?: Partial<Record<KindId, ComponentType<{ onPick: (way: string) => void }>>>;
     /** A notice above a kind's list, where something about the whole kind waits (machines: NoClick's company check). */
     Notice?: Partial<Record<KindId, ComponentType>>;
     /** A live figure a platform item's row shows beside its price (a website's requests this week), or nothing. */

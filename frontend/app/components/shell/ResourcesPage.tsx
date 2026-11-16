@@ -266,11 +266,13 @@ export function ResourcesView() {
     const platform = usePlatformResources();
     // Numbers and domains are sold by the hosted service with a recurring charge, so buying one by hand needs billing.
     const { billing } = useInstanceCapabilities();
-    const openBuy = (kind: KindId) =>
+    const openBuy = (kind: KindId, way?: string) =>
         setParams((prev) => {
             const next = new URLSearchParams(prev);
             next.set('kind', kind);
             next.set('new', '1');
+            if (way) next.set('way', way);
+            else next.delete('way');
             next.delete('resource');
             return next;
         });
@@ -294,6 +296,7 @@ export function ResourcesView() {
                 // Where a body was inside an item (a repo's path, a database's table) belongs to that item, and a buy page to its kind.
                 for (const inner of INNER_PARAMS) next.delete(inner);
                 next.delete('new');
+                next.delete('way');
                 return next;
             },
             { replace: !push }
@@ -421,12 +424,12 @@ export function ResourcesView() {
                         ))}
                     </List>
                 ) : (
-                    <EmptyKind kind={kind} manual={manualFor(kind.id)} ways={Ways && manualFor(kind.id) && !manualFor(kind.id)!.refusal ? <Ways onDone={(id) => go(activeKind, id)} /> : undefined} />
+                    <EmptyKind kind={kind} manual={manualFor(kind.id)} ways={Ways && manualFor(kind.id) && !manualFor(kind.id)!.refusal ? <Ways onPick={(way) => openBuy(activeKind, way)} /> : undefined} />
                 )}
                 {!loading && platform?.trash[activeKind]?.length ? (
                     <TrashSection entries={platform.trash[activeKind]!} now={now} onRestore={platform.restore} onPurge={platform.purge} />
                 ) : null}
-                {Create && <Create onDone={(id) => go(activeKind, id)} />}
+                {Create && <Create way={params.get('way') ?? undefined} onDone={(id) => go(activeKind, id)} />}
             </PageFrame>
         );
     }
