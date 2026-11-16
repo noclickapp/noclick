@@ -59,8 +59,8 @@ export interface Removal {
 export interface PlatformResources {
     /** Every platform resource the account holds, by kind: its own, and its users' (each with its `owner`). */
     items: Partial<Record<KindId, ResourceItem[]>>;
-    /** True until every kind's first read has answered. */
-    loading: boolean;
+    /** By kind: true until the reads its list is drawn from first answer. Each kind draws on its own, never waiting on another's. */
+    loading: Partial<Record<KindId, boolean>>;
     /** Why a kind couldn't be read, in a sentence (its list is then empty). */
     errors: Partial<Record<KindId, string>>;
     /** What a kind billed by use has cost so far this month, in US dollars, where its items don't say each. */

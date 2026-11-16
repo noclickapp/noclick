@@ -175,10 +175,15 @@ export function useResourceItems() {
     // A platform registers before anything renders, so the kinds are fixed for the page's life.
     const kinds = useMemo(() => visibleKinds({ platform: hasPlatformResources() }), []);
 
+    // Each kind draws once its own source answers: the overview (numbers, files, an automation's tables), the platform's reads for the rest.
+    const overviewLoading = !overview && loading;
+    const kindLoading = Object.fromEntries(KINDS.map((k) => [k.id, (!k.platform && overviewLoading) || !!platform?.loading[k.id]])) as Record<KindId, boolean>;
+
     return {
         items,
         kinds,
-        loading: (!overview && loading) || !!platform?.loading,
+        /** By kind: true until what its list is drawn from has answered. */
+        loading: kindLoading,
         /** Why a platform kind couldn't be read. */
         errors: platform?.errors ?? {},
         now: overview?.generatedAt ?? new Date().toISOString(),

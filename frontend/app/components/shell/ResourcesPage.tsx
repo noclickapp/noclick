@@ -321,7 +321,7 @@ export function ResourcesView() {
         }
         return (
             <PageFrame title={kindDef(activeKind).label}>
-                {loading ? (
+                {loading[activeKind] ? (
                     <LoadingList />
                 ) : (
                     <p className="text-[14px] text-muted-foreground">
@@ -408,7 +408,7 @@ export function ResourcesView() {
                 }
             >
                 {Notice && <Notice />}
-                {loading ? (
+                {loading[activeKind] ? (
                     <LoadingList />
                 ) : error ? (
                     <p role="alert" className="text-[14px] text-muted-foreground">
@@ -426,7 +426,7 @@ export function ResourcesView() {
                 ) : (
                     <EmptyKind kind={kind} manual={manualFor(kind.id)} ways={Ways && manualFor(kind.id) && !manualFor(kind.id)!.refusal ? <Ways onPick={(way) => openBuy(activeKind, way)} /> : undefined} />
                 )}
-                {!loading && platform?.trash[activeKind]?.length ? (
+                {!loading[activeKind] && platform?.trash[activeKind]?.length ? (
                     <TrashSection entries={platform.trash[activeKind]!} now={now} onRestore={platform.restore} onPurge={platform.purge} />
                 ) : null}
                 {Create && <Create way={params.get('way') ?? undefined} onDone={(id) => go(activeKind, id)} />}
@@ -435,58 +435,57 @@ export function ResourcesView() {
     }
 
     // Every tile keeps its place, the way the sidebar lists them: an overview you learn once.
-    // What it costs a month: the kinds with a set price each (what use-billed kinds spent shows on their tiles).
-    const total = kinds.filter((k) => k.billed === 'item').reduce((sum, k) => sum + (costs.kindMonthly[k.id] ?? 0), 0);
+    // What it costs a month: the kinds with a set price each (what use-billed kinds spent shows on their tiles), once they've all answered.
+    const priced = kinds.filter((k) => k.billed === 'item');
+    const total = priced.some((k) => loading[k.id]) ? 0 : priced.reduce((sum, k) => sum + (costs.kindMonthly[k.id] ?? 0), 0);
     return (
         <PageFrame
             title="Resources"
             description={costs.shown && total ? `What your account owns, what uses it, and what it costs: ${formatUsd(total)} a month.` : 'What your account owns, and what uses it.'}
         >
-            {loading ? (
-                <TileSkeletons count={kinds.length} />
-            ) : (
-                <div className={TILE_GRID} data-testid="resources-overview">
-                    {kinds.map((k) => {
-                        const KindIcon = k.icon;
-                        const list = items[k.id];
-                        const broken = list.filter((i) => i.attention).length;
-                        const line = kindLine(k, list);
-                        return (
-                            <Tile
-                                key={k.id}
-                                mark={
-                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-foreground/[0.05]">
-                                        <KindIcon className="h-5 w-5 text-foreground/75" strokeWidth={1.75} />
-                                    </span>
-                                }
-                                title={k.label}
-                                detail={broken ? <span className="text-red-600 dark:text-red-400">{broken} not reachable</span> : line}
-                                label={`${k.label}: ${line}`}
-                                onOpen={() => go(k.id, null, true)}
-                                testId={`kind-tile-${k.id}`}
-                                trailing={
-                                    manualFor(k.id) && !list.length ? (
-                                        <button
-                                            type="button"
-                                            disabled={!!manualFor(k.id)!.refusal}
-                                            title={manualFor(k.id)!.refusal}
-                                            onClick={(event) => {
-                                                event.stopPropagation();
-                                                manualFor(k.id)!.run();
-                                            }}
-                                            className={BUTTON_OUTLINE_SM}
-                                        >
-                                            {manualFor(k.id)!.short}
-                                        </button>
-                                    ) : (
-                                        <KindPrice kind={k} costs={costs} />
-                                    )
-                                }
-                            />
-                        );
-                    })}
-                </div>
-            )}
+            {/* Each tile fills in as its own reads answer, in its place from the start. */}
+            <div className={TILE_GRID} data-testid="resources-overview">
+                {kinds.map((k) => {
+                    const KindIcon = k.icon;
+                    const list = items[k.id];
+                    const waiting = loading[k.id];
+                    const broken = list.filter((i) => i.attention).length;
+                    const line = waiting ? 'Loading' : kindLine(k, list);
+                    return (
+                        <Tile
+                            key={k.id}
+                            mark={
+                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-foreground/[0.05]">
+                                    <KindIcon className="h-5 w-5 text-foreground/75" strokeWidth={1.75} />
+                                </span>
+                            }
+                            title={k.label}
+                            detail={waiting ? <Skeleton data-testid={`kind-tile-${k.id}-loading`} className="h-3 w-24" /> : broken ? <span className="text-red-600 dark:text-red-400">{broken} not reachable</span> : line}
+                            label={`${k.label}: ${line}`}
+                            onOpen={() => go(k.id, null, true)}
+                            testId={`kind-tile-${k.id}`}
+                            trailing={
+                                waiting ? undefined : manualFor(k.id) && !list.length ? (
+                                    <button
+                                        type="button"
+                                        disabled={!!manualFor(k.id)!.refusal}
+                                        title={manualFor(k.id)!.refusal}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            manualFor(k.id)!.run();
+                                        }}
+                                        className={BUTTON_OUTLINE_SM}
+                                    >
+                                        {manualFor(k.id)!.short}
+                                    </button>
+                                ) : (
+                                    <KindPrice kind={k} costs={costs} />
+                                )
+                            }
+                        />
+                    );
+                })}
+            </div>
         </PageFrame>
     );
 }
