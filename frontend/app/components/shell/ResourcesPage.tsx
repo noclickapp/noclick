@@ -122,7 +122,7 @@ function List({ children }: { children: ReactNode }) {
     return <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card dark:divide-foreground/[0.06] dark:border-foreground/[0.08] dark:bg-foreground/[0.02]">{children}</div>;
 }
 
-/** One kind, empty: what it is and the ways to get one (by hand, where there is a way, or by asking NoClick). */
+/** One kind, empty: the ways to get one (by hand, where there is a way, or by asking NoClick). What the kind is, the page's own line already says. */
 function EmptyKind({ kind, manual, ways }: { kind: KindDef; manual?: { label: string; run: () => void; refusal?: string }; ways?: ReactNode }) {
     const Icon = kind.icon;
     return (
@@ -131,7 +131,6 @@ function EmptyKind({ kind, manual, ways }: { kind: KindDef; manual?: { label: st
                 <Icon className="h-5 w-5 text-foreground/70" strokeWidth={1.75} />
             </span>
             <p className="mt-4 text-[15px] font-semibold text-foreground">No {kind.label.toLowerCase()} yet</p>
-            <p className="mt-1 max-w-sm text-[14px] leading-relaxed text-muted-foreground">{kind.empty}</p>
             {ways ?? (
                 <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                     {manual && (
