@@ -810,14 +810,13 @@ async def test_an_owner_with_no_email_is_texted_what_they_must_act_on(real_datab
 
 @pytest.mark.asyncio
 async def test_a_channel_connected_again_closes_its_disconnect_window(real_database, monkeypatch):
-    """A phone re-scanned the same day it died: its next death is news again. The 24 h window kept a second death
-    silent, and a reconnected notice ("it recovered on its own") followed a re-scan the owner made themselves."""
+    """A phone re-scanned the same day it died: its next death is news again. The death's open alert kept a second
+    death silent, and a reconnected notice ("it recovered on its own") followed a re-scan the owner made themselves."""
     import uuid
 
     from utils.notifications import (
-        CHANNEL_DISCONNECTED_SUPPRESS_S,
         channel_disconnected_key,
-        close_alert_window,
+        close_alert_windows,
         send_channel_disconnected_alert,
         send_channel_reconnected_notice,
     )
@@ -837,8 +836,165 @@ async def test_a_channel_connected_again_closes_its_disconnect_window(real_datab
 
     assert await died() and not await died() and len(sent) == 1
     key = channel_disconnected_key(credential)
-    assert await close_alert_window(owner, key, CHANNEL_DISCONNECTED_SUPPRESS_S, pool=db.pool)
-    assert not await close_alert_window(owner, key, CHANNEL_DISCONNECTED_SUPPRESS_S, pool=db.pool)
+    assert await close_alert_windows([(owner, key)], pool=db.pool) == 1
+    assert await close_alert_windows([(owner, key)], pool=db.pool) == 0
     # Its window closed by the re-scan, nothing retracts the email the owner already acted on.
     assert not await send_channel_reconnected_notice(credential, provider_label="WhatsApp", pool=db.pool)
     assert await died() and len(sent) == 2
+
+
+# ── a dead channel's schedule ────────────────────────────────────────────────
+
+
+async def _channel_credential(db, monkeypatch, credential_type="whatsapp_qr", metadata=None):
+    """An owner with an email and one channel credential; every email sent is captured."""
+    import json
+    import uuid
+
+    monkeypatch.setenv("EMAIL_RELAY_SECRET", "test-secret")
+    owner = str(uuid.uuid4())
+    await db.execute("INSERT INTO auth.users (id, email) VALUES ($1::uuid, $2)", owner, f"{owner}@example.com")
+    credential = str(await db.fetchval(
+        "INSERT INTO credentials (owner_id, name, credential_type, credential, metadata) "
+        "VALUES ($1::uuid, 'Shop line', $2, 'x', ($3::text)::jsonb) RETURNING id",
+        owner, credential_type, json.dumps(metadata or {})))
+    emails = []
+    monkeypatch.setattr(notifications, "_send_email", lambda to, subject, html, text, *a, **k: emails.append(
+        {"to": to, "subject": subject, "html": html, "text": text}) or True)
+    return owner, credential, emails
+
+
+async def _days_pass(db, credential, days):
+    """The notification log runs on the database clock: a day passing is the owner's whole log a day older."""
+    await db.execute(
+        "UPDATE user_notifications SET created_at = created_at - make_interval(days => $2), "
+        "last_seen_at = last_seen_at - make_interval(days => $2) "
+        "WHERE user_id = (SELECT owner_id FROM credentials WHERE id = $1::uuid)",
+        credential, days)
+
+
+@pytest.mark.asyncio
+async def test_a_dead_channel_is_emailed_at_once_at_3_days_and_at_10_then_never_again(real_database, monkeypatch):
+    """A phone link that can't come back on its own was emailed every day or two for as long as it stayed dead. One
+    death now gets three emails: when it's found, a reminder 3 days in, and a last one at 10 days that says so and
+    where to reconnect. After that it stays quiet however long the link stays dead."""
+    from utils.notifications import send_channel_disconnected_alert
+
+    db = real_database
+    owner, credential, emails = await _channel_credential(db, monkeypatch)
+    key = notifications.channel_disconnected_key(credential)
+
+    async def seen_dead():
+        return await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="stopped",
+                                                     pool=db.pool)
+
+    async def quiet_for(days):
+        for _ in range(days):
+            await _days_pass(db, credential, 1)
+            assert not await seen_dead()
+
+    async def dated_from_first_sighting():
+        first, latest = await db.fetchval("SELECT min(created_at) FROM user_notifications WHERE dedupe_key = $1", key), \
+            await db.fetchval("SELECT metadata->>'dead_since' FROM user_notifications WHERE dedupe_key = $1 "
+                              "ORDER BY created_at DESC LIMIT 1", key)
+        return latest == first.isoformat()
+
+    assert await seen_dead() and await dated_from_first_sighting()
+    assert emails[-1]["subject"] == "Your WhatsApp connection is disconnected"
+    assert not await seen_dead()  # the same day: a push and the sweep, or two pushes
+    await quiet_for(2)
+
+    await _days_pass(db, credential, 1)
+    assert await seen_dead() and await dated_from_first_sighting()
+    assert emails[-1]["subject"] == "Reminder: your WhatsApp connection is still disconnected"
+    assert 'connection "Shop line" is still disconnected, since ' in emails[-1]["text"]
+    await quiet_for(6)
+
+    await _days_pass(db, credential, 1)
+    assert await seen_dead() and await dated_from_first_sighting()
+    last = emails[-1]
+    assert last["subject"] == "Last reminder: your WhatsApp connection is still disconnected"
+    assert "This is the last reminder: we won't email about it again." in last["text"]
+    assert "reconnect it any time from the link below or from Settings → Credentials" in last["text"]
+    assert "This is the last reminder" in last["html"] and "Settings → Credentials" in last["html"]
+    assert "Reconnect Now: " in last["text"] and last["text"].split("Reconnect Now: ")[1].startswith(
+        f"{notifications.FRONTEND_URL}/dashboard?tab=settings&section=credentials")
+
+    await quiet_for(30)
+    await _days_pass(db, credential, 200)
+    assert not await seen_dead()
+    assert len(emails) == 3
+
+    rows = await db.fetch("SELECT metadata, email_sent, suppressed_count, last_seen_at > now() - interval '1 minute' "
+                          "AS seen_now FROM user_notifications WHERE dedupe_key = $1 ORDER BY created_at", key)
+    assert [r["metadata"]["alert_index"] for r in rows] == [0, 1, 2]
+    assert all(r["email_sent"] for r in rows)
+    # Each quiet sighting folds into the death's latest row, and keeps every row of it out of the prune.
+    assert [r["suppressed_count"] for r in rows] == [3, 6, 31]
+    assert all(r["seen_now"] for r in rows)
+
+
+@pytest.mark.asyncio
+async def test_a_channel_that_reconnects_and_dies_again_starts_its_emails_over(real_database, monkeypatch):
+    """A death ends when the link is connected again, however long after its last email (the window used to close
+    only within a day of it); the next death is news and starts from the first email."""
+    from utils import capabilities
+    from utils.notifications import send_channel_disconnected_alert
+    from utils.whatsapp_qr import session_moved
+
+    monkeypatch.delitem(capabilities._providers, capabilities.CREDENTIAL_LINK_MOVED, raising=False)
+    db = real_database
+    owner, credential, emails = await _channel_credential(db, monkeypatch)
+
+    async def seen_dead():
+        return await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="failed",
+                                                     pool=db.pool)
+
+    assert await seen_dead()
+    await _days_pass(db, credential, 3)
+    assert await seen_dead()
+    await _days_pass(db, credential, 7)
+    assert await seen_dead()
+    await _days_pass(db, credential, 20)
+    assert not await seen_dead() and len(emails) == 3
+
+    await session_moved(db.pool, credential, up=True)  # re-scanned, a month in
+    assert await db.fetchval("SELECT count(*) FROM user_notifications WHERE dedupe_key = $1 AND "
+                             f"{notifications.OPEN_WINDOW_SQL}", notifications.channel_disconnected_key(credential)) == 0
+
+    assert await seen_dead()
+    assert emails[-1]["subject"] == "Your WhatsApp connection is disconnected"
+    assert not await seen_dead()
+    await _days_pass(db, credential, 3)
+    assert await seen_dead()
+    assert emails[-1]["subject"] == "Reminder: your WhatsApp connection is still disconnected"
+    assert len(emails) == 5
+
+
+@pytest.mark.asyncio
+async def test_the_daily_cap_and_the_opt_out_still_decide_each_scheduled_email(real_database, monkeypatch):
+    """The schedule bounds how often one death is raised; the owner's daily cap and opt-out decide each email as
+    before. A withheld email is still one of the death's three: an owner with many dead links isn't emailed about
+    them for days on end."""
+    from utils.notifications import send_channel_disconnected_alert, set_category_enabled
+
+    db = real_database
+    owner, credential, emails = await _channel_credential(db, monkeypatch)
+    await set_category_enabled(owner, "channel_disconnected", False, pool=db.pool)
+
+    async def seen_dead():
+        return await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="failed",
+                                                     pool=db.pool)
+
+    assert not await seen_dead()
+    await set_category_enabled(owner, "channel_disconnected", True, pool=db.pool)
+    assert not await seen_dead()  # the first email's turn was taken by the opt-out
+    await _days_pass(db, credential, 3)
+    for _ in range(ALERT_DAILY_CAPS["channel_disconnected"]):
+        await send_system_alert(owner, "channel_disconnected", **ALERT_KWARGS, pool=db.pool)
+    sent_today = len(emails)
+    assert not await seen_dead() and len(emails) == sent_today  # capped
+    await _days_pass(db, credential, 7)
+    assert await seen_dead() and emails[-1]["subject"].startswith("Last reminder")
+    await _days_pass(db, credential, 30)
+    assert not await seen_dead()

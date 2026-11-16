@@ -93,7 +93,7 @@ def texts_owner_without_email(category: str) -> bool:
     return category not in NOT_TEXTED
 # An alert that reached the owner: by email, or texted to one with no email (``metadata.texted``: the app).
 DELIVERED_SQL = "(email_sent OR metadata ? 'texted')"
-# A dedupe window still open: one its alert's cause ending hasn't closed (``close_alert_window``).
+# A dedupe window still open: one its alert's cause ending hasn't closed (``close_alert_windows``).
 OPEN_WINDOW_SQL = "NOT (metadata ? 'window_closed_at')"
 
 # Suppression window after a run-failure email per workflow — a cron flow
@@ -101,8 +101,10 @@ OPEN_WINDOW_SQL = "NOT (metadata ? 'window_closed_at')"
 # window are counted and folded into the next email.
 RUN_FAILURE_SUPPRESS_S = 6 * 3600
 CREDITS_EXHAUSTED_SUPPRESS_S = 24 * 3600
-# One disconnect email per channel credential a day, until it's connected again (``close_alert_window``).
-CHANNEL_DISCONNECTED_SUPPRESS_S = 24 * 3600
+# A dead channel credential is raised on a schedule from when it was first seen dead: at once, a reminder 3 days in,
+# a last one at 10 days, then never again while it stays dead (``_schedule_acquire``). Connected again, its next
+# death starts over (``close_alert_windows``).
+CHANNEL_DISCONNECTED_SCHEDULE_S = (0, 3 * 86400, 10 * 86400)
 # One pause email per trigger per day: the breaker re-trips on the first
 # identical failure after a re-enable, and that is the same news.
 SCHEDULE_PAUSED_SUPPRESS_S = 24 * 3600
@@ -274,17 +276,12 @@ async def _window_acquire(
 
     Falls back to the in-process window when the DB errors: (local_acquired,
     0, None) — the caller's `_record_notification` then INSERTs as before."""
-    import json
-
     local_acquired = _local_acquire(dedupe_key, ttl_s)
     try:
         pool = _resolve_pool(pool)
         async with pool.acquire() as conn:
             async with conn.transaction():
-                await conn.execute(
-                    "SELECT pg_advisory_xact_lock(hashtextextended($1 || '|' || $2, 0))",
-                    user_id, dedupe_key,
-                )
+                await _lock_alert_key(conn, user_id, dedupe_key)
                 bumped = await conn.fetchrow(
                     f"""WITH recent AS (
                          SELECT id FROM user_notifications
@@ -306,13 +303,9 @@ async def _window_acquire(
                         ORDER BY created_at DESC LIMIT 1""",
                     user_id, dedupe_key,
                 )
-                claimed = await conn.fetchrow(
-                    """INSERT INTO user_notifications
-                           (user_id, category, dedupe_key, title, body, cta_text, cta_url, metadata, email_sent)
-                       VALUES ($1, $2, $3, $4, $5, $6, $7, ($8::text)::jsonb, false)
-                       RETURNING id""",
-                    user_id, category, dedupe_key, title, body, cta_text, cta_url,
-                    json.dumps(metadata or {}),
+                claimed = await _claim_alert_row(
+                    conn, user_id, category, dedupe_key, title=title, body=body,
+                    cta_text=cta_text, cta_url=cta_url, metadata=metadata,
                 )
         return True, int(prior["suppressed_count"] or 0) if prior else 0, claimed["id"]
     except Exception as e:
@@ -320,20 +313,89 @@ async def _window_acquire(
         return local_acquired, 0, None
 
 
-async def close_alert_window(user_id: str, dedupe_key: str, ttl_s: int, pool=None) -> bool:
-    """Close ``dedupe_key``'s open window before its TTL, because what it alerted about is over (a channel is
-    connected again): the next occurrence is news and alerts again, within the category's daily cap. Its row stays,
-    as the record. True iff one was open."""
-    _LOCAL_WINDOWS.pop(dedupe_key, None)
-    closed = await _fetch_row(
-        pool,
-        f"""UPDATE user_notifications SET metadata = metadata || jsonb_build_object('window_closed_at', now())
-             WHERE user_id = $1 AND dedupe_key = $2 AND {OPEN_WINDOW_SQL}
-               AND created_at > now() - make_interval(secs => $3)
-            RETURNING id""",
-        user_id, dedupe_key, float(ttl_s),
+async def _lock_alert_key(conn, user_id: str, dedupe_key: str) -> None:
+    """Serializes every claim on one (user, key) for the rest of the transaction."""
+    await conn.execute("SELECT pg_advisory_xact_lock(hashtextextended($1 || '|' || $2, 0))", user_id, dedupe_key)
+
+
+async def _claim_alert_row(conn, user_id: str, category: str, dedupe_key: str, *, title: str = "", body: str = "",
+                           cta_text: Optional[str] = None, cta_url: Optional[str] = None,
+                           metadata: Optional[dict] = None):
+    """The claimed alert's row (email_sent=false), which ``_record_notification`` fills in after the send."""
+    import json
+
+    return await conn.fetchrow(
+        """INSERT INTO user_notifications
+               (user_id, category, dedupe_key, title, body, cta_text, cta_url, metadata, email_sent)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, ($8::text)::jsonb, false)
+           RETURNING id, created_at""",
+        user_id, category, dedupe_key, title, body, cta_text, cta_url, json.dumps(metadata or {}),
     )
-    return closed is not None
+
+
+# A daily sweep lands minutes either side of its hour and a push at any hour, so a step is due on the sweep nearest it.
+_SCHEDULE_SLACK_S = 12 * 3600
+
+
+async def _schedule_acquire(user_id: str, category: str, dedupe_key: str, schedule_s: tuple, pool=None):
+    """Claim the next alert about a condition that lasts until something ends it (a dead connection), when
+    ``schedule_s`` (offsets from when it began; the first is 0) says one is due. The key's open rows are the episode,
+    one row per alert claimed — sent, capped or opted out alike: the schedule bounds how often one episode is
+    raised, the cap and the opt-out still decide each alert. Alert n is due ``schedule_s[n] - schedule_s[n-1]`` after
+    the episode's last row; after the last one it stays quiet until ``close_alert_windows`` ends the episode.
+
+    A sighting that isn't due is folded into the episode: the latest row's suppressed_count, and every row's
+    last_seen_at, which is what keeps a long episode's rows from the notification prune (a pruned episode would
+    start over and alert again).
+
+    Returns ``(alert_index, began_at, claim_id)``, or None when nothing is due. A DB error is None too: the condition
+    is seen again (a dead connection by the next daily sweep), where a guess could raise it again and again."""
+    try:
+        async with _resolve_pool(pool).acquire() as conn:
+            async with conn.transaction():
+                await _lock_alert_key(conn, user_id, dedupe_key)
+                episode = await conn.fetchrow(
+                    f"""SELECT count(*) AS alerts, min(created_at) AS began_at, max(created_at) AS last_at,
+                               (array_agg(id ORDER BY created_at DESC))[1] AS latest_id, now() AS now
+                          FROM user_notifications
+                         WHERE user_id = $1 AND dedupe_key = $2 AND {OPEN_WINDOW_SQL}""",
+                    user_id, dedupe_key,
+                )
+                n = int(episode["alerts"])
+                due = n == 0 or (n < len(schedule_s) and episode["now"] >= episode["last_at"] + timedelta(
+                    seconds=schedule_s[n] - schedule_s[n - 1] - _SCHEDULE_SLACK_S))
+                if not due:
+                    await conn.execute(
+                        f"""UPDATE user_notifications
+                               SET last_seen_at = now(), suppressed_count = suppressed_count + (id = $3)::int
+                             WHERE user_id = $1 AND dedupe_key = $2 AND {OPEN_WINDOW_SQL}""",
+                        user_id, dedupe_key, episode["latest_id"],
+                    )
+                    return None
+                claimed = await _claim_alert_row(conn, user_id, category, dedupe_key)
+        return n, episode["began_at"] or claimed["created_at"], claimed["id"]
+    except Exception as e:
+        logger.warning(f"[Notify] schedule check failed for {dedupe_key}: {e}")
+        return None
+
+
+async def close_alert_windows(keys, pool=None) -> int:
+    """Close the open windows of these ``(user_id, dedupe_key)`` pairs, at any age, because what they alerted about
+    is over (a channel is connected again): the next occurrence is news and alerts again (a scheduled episode starts
+    from its first alert), within the category's daily cap. Rows stay, as the record. How many rows it closed."""
+    keys = list(keys)
+    if not keys:
+        return 0
+    for _, dedupe_key in keys:
+        _LOCAL_WINDOWS.pop(dedupe_key, None)
+    closed = await _resolve_pool(pool).fetch(
+        f"""UPDATE user_notifications n SET metadata = metadata || jsonb_build_object('window_closed_at', now())
+              FROM unnest($1::uuid[], $2::text[]) AS k(user_id, dedupe_key)
+             WHERE n.user_id = k.user_id AND n.dedupe_key = k.dedupe_key AND {OPEN_WINDOW_SQL}
+            RETURNING n.id""",
+        [u for u, _ in keys], [k for _, k in keys],
+    )
+    return len(closed)
 
 
 async def _emails_sent_today(user_id: str, category: str, pool=None) -> int:
@@ -382,9 +444,10 @@ async def _record_notification(
             # inserting a second one.
             await _execute(
                 pool,
+                # Merged, not replaced: a window closed between the claim and the send stays closed.
                 """UPDATE user_notifications
                       SET title = $2, body = $3, cta_text = $4, cta_url = $5,
-                          metadata = ($6::text)::jsonb, email_sent = $7
+                          metadata = metadata || ($6::text)::jsonb, email_sent = $7
                     WHERE id = $1""",
                 claim_id, title, body, cta_text, cta_url,
                 json.dumps(metadata or {}), email_sent,
@@ -1242,8 +1305,9 @@ async def send_channel_disconnected_alert(
     behind it is gone and messages stop arriving silently. ``hint`` is the
     health registry's fix-it guidance for that credential type; without one
     the WhatsApp re-scan advice applies (the push path's caller). Fired from
-    provider control events and the daily sweep backstop (shared dedupe key,
-    so at most one email per credential per window either way)."""
+    provider control events and the daily sweep backstop, which share one
+    schedule per death (``CHANNEL_DISCONNECTED_SCHEDULE_S``): the first email,
+    a reminder, a last one that says so, then nothing until it reconnects."""
     fix_text = hint or (
         f"Open the credential and re-scan the QR code to reconnect this same "
         f"{provider_label} connection. Don't create a second credential — "
@@ -1258,6 +1322,15 @@ async def send_channel_disconnected_alert(
         return False
 
     owner_id = str(row["owner_id"])
+    dedupe_key = channel_disconnected_key(credential_id)
+    claim = await _schedule_acquire(owner_id, "channel_disconnected", dedupe_key, CHANNEL_DISCONNECTED_SCHEDULE_S,
+                                    pool=pool)
+    if claim is None:
+        logger.info(f"[Notify] {dedupe_key}: no disconnect email due")
+        return False
+    alert_index, dead_since, claim_id = claim
+    last = alert_index == len(CHANNEL_DISCONNECTED_SCHEDULE_S) - 1
+
     name = row["name"] or f"{provider_label} connection"
     name_html = html_lib.escape(name)
     label_html = html_lib.escape(provider_label)
@@ -1269,9 +1342,11 @@ async def send_channel_disconnected_alert(
     rows = [("Connection", name_html), ("Service", label_html), ("Status", html_lib.escape(session_status))]
     if workflow_name:
         rows.append(("Workflow", html_lib.escape(workflow_name)))
+    state = (f"is still disconnected, since {dead_since.day} {dead_since:%B %Y}" if alert_index
+             else "has disconnected")
     blocks = (
         para(
-            f"Your {label_html} connection {strong(name_html)} has disconnected. "
+            f"Your {label_html} connection {strong(name_html)} {state}. "
             "Incoming messages are NOT reaching your workflows and sends will "
             "fail until you reconnect."
         )
@@ -1279,29 +1354,41 @@ async def send_channel_disconnected_alert(
         + para(f"To fix it: {html_lib.escape(fix_text)}")
     )
     text_body = (
-        f'Your {provider_label} connection "{name}" has disconnected '
+        f'Your {provider_label} connection "{name}" {state} '
         f"(status {session_status}). Incoming messages are not reaching your "
         "workflows and sends will fail until you reconnect it.\n"
         f"To fix it: {fix_text}"
     )
-
+    if last:
+        final = ("This is the last reminder: we won't email about it again. It stays marked disconnected in NoClick, "
+                 "and you can reconnect it any time from {} or from Settings → Credentials.")
+        blocks += para(strong(final.format("the button below")))
+        text_body += "\n" + final.format("the link below")
+        subject = f"Last reminder: your {provider_label} connection is still disconnected"
+    elif alert_index:
+        subject = f"Reminder: your {provider_label} connection is still disconnected"
+    else:
+        subject = f"Your {provider_label} connection is disconnected"
     return await send_system_alert(
         owner_id, "channel_disconnected",
-        subject=f"Your {provider_label} connection is disconnected",
-        heading=f"{provider_label} disconnected",
-        eyebrow="Connection alert",
+        subject=subject,
+        heading=f"{provider_label} {'still disconnected' if alert_index else 'disconnected'}",
+        eyebrow="Last reminder" if last else "Connection alert",
         blocks_html=blocks,
         text_body=text_body,
-        preheader=f"{name} disconnected — reconnect to keep your workflows running",
+        preheader=f"{name} {'is still disconnected' if alert_index else 'disconnected'} — reconnect to keep your "
+                  "workflows running",
         cta_text="Reconnect Now",
         cta_url=cta_url,
-        dedupe_key=channel_disconnected_key(credential_id),
-        dedupe_ttl_s=CHANNEL_DISCONNECTED_SUPPRESS_S,
+        dedupe_key=dedupe_key,
+        claim_id=claim_id,
         metadata={
             "credential_id": credential_id,
             "provider": provider_label,
             "session_status": session_status,
             "workflow_id": workflow_id,
+            "alert_index": alert_index,
+            "dead_since": dead_since.isoformat(),
         },
         pool=pool,
     )

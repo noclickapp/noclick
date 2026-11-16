@@ -609,15 +609,15 @@ async def test_a_session_back_up_closes_what_its_death_opened_and_tells_the_owne
 
     redis = rescanned["redis"]
     redis.store["conn:down:cred-1"] = int(time.time()) - 400
-    closed, told = AsyncMock(return_value=True), AsyncMock()
-    monkeypatch.setattr("utils.notifications.close_alert_window", closed)
+    closed, told = AsyncMock(return_value=1), AsyncMock()
+    monkeypatch.setattr("utils.notifications.close_alert_windows", closed)
     monkeypatch.setitem(capabilities._providers, capabilities.CREDENTIAL_LINK_MOVED, told)
     pool = _CredentialPool({"owner_id": "owner-1", "metadata": {"connection_id": "conn-1"}})
 
     await whatsapp_qr.session_moved(pool, "cred-1", up=True)
     assert whatsapp_qr._status_moved_key("conn-1") in redis.store
     assert "conn:down:cred-1" not in redis.store
-    closed.assert_awaited_once_with("owner-1", "channel_disconnected:cred-1", 24 * 3600, pool=pool)
+    closed.assert_awaited_once_with([("owner-1", "channel_disconnected:cred-1")], pool=pool)
     told.assert_awaited_once_with(pool, "owner-1", "cred-1")
 
     # Found dead: read again everywhere and the pages told, but its alert's window stays open.
@@ -785,11 +785,16 @@ async def test_sweep_alerts_only_referenced_dead_credentials(monkeypatch):
         fake_refs,
     )
     monkeypatch.setattr("utils.notifications.send_channel_disconnected_alert", alert)
+    closed = AsyncMock(return_value=0)
+    monkeypatch.setattr("utils.notifications.close_alert_windows", closed)
 
     summary = await alert_dead_credentials(pool)
 
     assert summary["alerted"] == ["cred-dead", "cred-discord-gone"]
     assert summary["dead_unreferenced"] == ["cred-unused"]
+    # Credentials seen healthy end their deaths; unknown and mid-rescan ones are left as they are.
+    closed.assert_awaited_once_with(
+        [("u1", "channel_disconnected:cred-live"), ("u2", "channel_disconnected:cred-discord-ok")], pool=pool)
     whatsapp_call, discord_call = alert.await_args_list
     assert whatsapp_call.args == ("cred-dead",)
     assert whatsapp_call.kwargs["provider_label"] == "WhatsApp"
@@ -829,13 +834,18 @@ async def test_sweep_tells_the_owner_of_a_link_closed_days_ago_to_rescan(monkeyp
     monkeypatch.setattr("repositories.credentials.CredentialsRepo.list_workflows_referencing_credential", refs)
     monkeypatch.setattr("utils.notifications._fetch_row", AsyncMock(
         return_value={"owner_id": "u1", "name": "WhatsApp (Shop)", "credential_type": "whatsapp_qr"}))
+    # The first email of this death (the schedule itself is pinned against Postgres in test_notifications).
+    from datetime import datetime, timezone
+    monkeypatch.setattr("utils.notifications._schedule_acquire",
+                        AsyncMock(return_value=(0, datetime.now(timezone.utc), "claim-1")))
+    monkeypatch.setattr("utils.notifications.close_alert_windows", AsyncMock(return_value=0))
     sent = AsyncMock(return_value=True)
     monkeypatch.setattr("utils.notifications.send_system_alert", sent)
 
     assert (await alert_dead_credentials(pool))["alerted"] == ["cred-closed"]
     assert sent.await_args.args == ("u1", "channel_disconnected")
     email = sent.await_args.kwargs
-    assert email["dedupe_key"] == "channel_disconnected:cred-closed"
+    assert email["dedupe_key"] == "channel_disconnected:cred-closed" and email["claim_id"] == "claim-1"
     assert 'Your WhatsApp connection "WhatsApp (Shop)" has disconnected (status stopped).' in email["text_body"]
     assert ("To fix it: This WhatsApp phone link was closed on 9 November 2026 after WhatsApp logged the phone "
             "out, and it can't come back on its own. Re-scan the QR code for THIS credential with the same phone"

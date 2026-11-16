@@ -247,11 +247,10 @@ async def session_moved(pool, credential_id: str, *, up: bool) -> None:
         owner_id = str(row["owner_id"])
         if up:
             from utils.connection_grace import up_signal
-            from utils.notifications import CHANNEL_DISCONNECTED_SUPPRESS_S, channel_disconnected_key, close_alert_window
+            from utils.notifications import channel_disconnected_key, close_alert_windows
 
             await up_signal(credential_id)
-            await close_alert_window(owner_id, channel_disconnected_key(credential_id),
-                                     CHANNEL_DISCONNECTED_SUPPRESS_S, pool=pool)
+            await close_alert_windows([(owner_id, channel_disconnected_key(credential_id))], pool=pool)
         if told := capability(CREDENTIAL_LINK_MOVED):
             await told(pool, owner_id, credential_id)
     except Exception:

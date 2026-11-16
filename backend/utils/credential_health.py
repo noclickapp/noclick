@@ -227,13 +227,15 @@ DEAD_ALERT_EXEMPTIONS: Dict[str, Callable[[Any, CredentialHealth], Awaitable[boo
 
 async def alert_dead_credentials(pool) -> Dict[str, Any]:
     """Daily backstop for connection deaths no push path reported: owners of
-    every in-use credential whose provider session is definitively dead get
-    ONE email per credential per dedupe window (shared with any push path).
-    Verdicts come from the same registry every picker and validator reads —
-    a divergent rule here would email about a credential everyone else
-    renders connected, or stay silent on one everyone renders dead."""
+    every in-use credential whose provider session is definitively dead are
+    emailed on the per-death schedule they share with any push path
+    (``send_channel_disconnected_alert``), and every credential seen healthy
+    ends its death, so dying again is a new one. Verdicts come from the same
+    registry every picker and validator reads — a divergent rule here would
+    email about a credential everyone else renders connected, or stay silent
+    on one everyone renders dead."""
     from repositories.credentials import CredentialsRepo
-    from utils.notifications import send_channel_disconnected_alert
+    from utils.notifications import channel_disconnected_key, close_alert_windows, send_channel_disconnected_alert
 
     async with pool.acquire() as conn:
         rows = await conn.fetch(
@@ -244,7 +246,7 @@ async def alert_dead_credentials(pool) -> Dict[str, Any]:
     health = await get_credential_health(rows)
 
     repo = CredentialsRepo(pool)
-    alerted, dead_unreferenced = [], []
+    alerted, not_sent, dead_unreferenced = [], [], []
     for row in rows:
         cred_id = str(_row_field(row, "id"))
         verdict = health.get(cred_id)
@@ -261,7 +263,7 @@ async def alert_dead_credentials(pool) -> Dict[str, Any]:
         if not referencing:
             dead_unreferenced.append(cred_id)
             continue
-        await send_channel_disconnected_alert(
+        told = await send_channel_disconnected_alert(
             cred_id,
             provider_label=CREDENTIAL_HEALTH_LABELS.get(ctype, ctype),
             session_status=verdict.status,
@@ -270,9 +272,16 @@ async def alert_dead_credentials(pool) -> Dict[str, Any]:
             workflow_name=referencing[0]["workflow_name"],
             pool=pool,
         )
-        alerted.append(cred_id)
+        (alerted if told else not_sent).append(cred_id)
 
-    summary = {"credentials": len(rows), "alerted": alerted, "dead_unreferenced": dead_unreferenced}
+    # Seen connected: its death is over, and dying again is a new one.
+    healthy = [row for row in rows if (v := health.get(str(_row_field(row, "id")))) and v.healthy]
+    closed = await close_alert_windows(
+        [(str(_row_field(row, "owner_id")), channel_disconnected_key(str(_row_field(row, "id")))) for row in healthy],
+        pool=pool,
+    )
+    summary = {"credentials": len(rows), "alerted": alerted, "not_sent": not_sent,
+               "dead_unreferenced": dead_unreferenced, "closed_alert_rows": closed}
     logger.info(f"[CredentialHealth] Dead-credential alert sweep: {summary}")
     return summary
 

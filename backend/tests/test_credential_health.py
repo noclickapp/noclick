@@ -5,11 +5,14 @@ describe_workflow) reads this one seam, so its contract is pinned here:
 verdicts only for definitively-known sessions, unknown is NEVER dead.
 """
 
+import uuid
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
 
+from tests.fixtures.real_db_fixture import real_database  # noqa: F401  (a fixture)
+from tests.test_notifications import _channel_credential, _days_pass
 from utils.credential_health import CredentialHealth, get_credential_health
 
 
@@ -248,3 +251,97 @@ def test_an_unhealthy_verdict_must_carry_repair_guidance():
     with pytest.raises(ValueError, match="carries no hint"):
         CredentialHealth("removed", False, None)
     assert CredentialHealth("installed", True, None).healthy is True
+
+
+# ── the dead-credential sweep against the notification log ──────────────────
+
+
+
+def _in_use(monkeypatch, credential, workflow_id="5f0c8a3e-1d2b-4c6a-9e7f-0a1b2c3d4e5f"):
+    """Only this test's credential is in a workflow: the sweep reads every credential in the shared test database."""
+    async def refs(self, credential_id, owner_id, org_id):
+        return [{"workflow_id": workflow_id, "workflow_name": "Shop bot"}] if credential_id == credential else []
+
+    monkeypatch.setattr("repositories.credentials.CredentialsRepo.list_workflows_referencing_credential", refs)
+
+
+@pytest.mark.asyncio
+async def test_a_push_and_the_sweep_share_one_schedule_per_death(real_database, monkeypatch):
+    """The WhatsApp push path and the daily sweep both raise a death; together they send the schedule's emails once,
+    including when they land at the same moment."""
+    import asyncio
+    from unittest.mock import AsyncMock
+
+    from utils.credential_health import alert_dead_credentials
+    from utils.notifications import send_channel_disconnected_alert
+
+    db = real_database
+    connection = f"conn-{uuid.uuid4()}"
+    owner, credential, emails = await _channel_credential(db, monkeypatch, metadata={"connection_id": connection})
+    _in_use(monkeypatch, credential)
+    monkeypatch.setattr("utils.whatsapp_qr.get_connection_statuses", AsyncMock(return_value={connection: "failed"}))
+
+    async def pushed():  # what WhatsAppNode.handle_control_event sends once the death is verified
+        return await send_channel_disconnected_alert(credential, provider_label="WhatsApp", session_status="failed",
+                                                     workflow_id="wf-1", workflow_name="Shop bot", pool=db.pool)
+
+    async def swept():
+        summary = await alert_dead_credentials(db.pool)
+        return credential in summary["alerted"]
+
+    assert sorted(await asyncio.gather(swept(), pushed())) == [False, True]
+    assert [e["subject"] for e in emails] == ["Your WhatsApp connection is disconnected"]
+    assert not await pushed() and not await swept()
+
+    await _days_pass(db, credential, 1)
+    assert not await swept() and not await pushed()
+    await _days_pass(db, credential, 2)
+    assert await swept()
+    assert not await pushed()
+    await _days_pass(db, credential, 7)
+    assert await pushed()
+    assert not await swept()
+    await _days_pass(db, credential, 5)
+    assert not await swept() and not await pushed()
+    assert [e["subject"].split(":")[0] for e in emails] == [
+        "Your WhatsApp connection is disconnected", "Reminder", "Last reminder"]
+
+
+@pytest.mark.asyncio
+async def test_a_discord_bot_removed_again_after_coming_back_is_a_new_death(real_database, monkeypatch):
+    """Discord has no push: the sweep alone sees a bot removed from a server, on the same schedule, and seeing it back
+    in the server ends that death, so a later removal is emailed from the first email again."""
+    from utils.credential_health import alert_dead_credentials
+
+    db = real_database
+    guild = {"id": f"g-{uuid.uuid4()}", "status": 404}
+    owner, credential, emails = await _channel_credential(
+        db, monkeypatch, credential_type="discord_bot_install", metadata={"guild_id": guild["id"], "guild_name": "Shop"})
+    _in_use(monkeypatch, credential)
+
+    async def probe(client, guild_id):
+        return guild["status"] if guild_id == guild["id"] else None  # other tests' servers: unknown
+
+    monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
+    monkeypatch.setattr("utils.credential_health._probe_discord_guild", probe)
+
+    async def swept():
+        return await alert_dead_credentials(db.pool)
+
+    assert (await swept())["alerted"] == [credential]
+    assert emails[-1]["subject"] == "Your Discord connection is disconnected"
+    assert "Install bot" in emails[-1]["text"]
+    for day in range(1, 11):
+        await _days_pass(db, credential, 1)
+        await swept()
+    await _days_pass(db, credential, 30)
+    assert (await swept())["not_sent"] == [credential]
+    assert [e["subject"].split(":")[0] for e in emails] == [
+        "Your Discord connection is disconnected", "Reminder", "Last reminder"]
+
+    guild["status"] = 200  # the bot is back in the server
+    summary = await swept()
+    assert summary["alerted"] == [] and summary["closed_alert_rows"] == 3
+    guild["status"] = 404  # and removed again
+    assert (await swept())["alerted"] == [credential]
+    assert emails[-1]["subject"] == "Your Discord connection is disconnected" and len(emails) == 4
