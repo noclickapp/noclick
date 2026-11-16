@@ -205,7 +205,7 @@ def test_resolve_agent_event_group_participant_carries_phone():
     event = _wahooks_event("120000000000000001@g.us", participant="12025550103@lid")
     event["payload"]["senderPhone"] = "12025550107"
     header = WhatsAppNode.resolve_agent_event(event)["text"].split("\n", 1)[0]
-    assert header.startswith("WhatsApp message from 120000000000000001@g.us (sent by 12025550103@lid")
+    assert header.startswith("WhatsApp message in a group (120000000000000001@g.us), sent by 12025550103@lid")
     assert "phone +12025550107" in header
 
 

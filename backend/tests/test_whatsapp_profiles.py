@@ -289,3 +289,47 @@ async def test_the_agent_event_carries_the_chats_profiles_for_the_page_never_the
         "sender": {"jid": PERSON, "name": None, "avatar_url": writer_url}}))
     assert direct["chat"] == {"key": PERSON, "name": "Asha", "avatar": writer_url, "kind": "direct"}
     assert direct["sender"]["avatar"] == writer_url and "conversation_title" not in direct
+
+
+async def test_only_a_group_without_a_name_holds_a_read_that_waits_for_names(postgres_pool, whatsapp, storage, line):
+    """A group's name is in none of its messages, so a delivery waits for it the first time (``name_wait_s``); a
+    person's picture, or a group already named, is never waited for."""
+    whatsapp.pictures[PERSON] = b"photo"
+    assert (await whatsapp_profiles.chat_profiles(postgres_pool, line, [PERSON], name_wait_s=5))[PERSON] \
+        .avatar_url is None
+    whatsapp.chats = [{"id": GROUP, "name": "Bakery orders"}]
+    assert (await whatsapp_profiles.chat_profiles(postgres_pool, line, [GROUP], name_wait_s=5))[GROUP].name == \
+        "Bakery orders"
+
+    # Named, and due a refresh: read as kept while the refresh runs in the background.
+    whatsapp.chats = [{"id": GROUP, "name": "Bakery orders (new)"}]
+    await _expire(postgres_pool, line, GROUP)
+    assert (await whatsapp_profiles.chat_profiles(postgres_pool, line, [GROUP], name_wait_s=5))[GROUP].name == \
+        "Bakery orders"
+    await drain_spawned_tasks(timeout=5)
+    assert (await whatsapp_profiles.chat_profiles(postgres_pool, line, [GROUP]))[GROUP].name == "Bakery orders (new)"
+
+
+async def test_a_groups_first_message_reaches_its_agent_named(postgres_pool, whatsapp, storage, line, monkeypatch):
+    """The delivery waits for a group's name it hasn't kept, so the turn names the group, and says the agent can't
+    see who's in it (WAHooks lists no group's members), instead of handing it a bare group id."""
+    from utils import inbound_media
+
+    async def credential(pool, config, workflow_id, credential_type):
+        assert credential_type == "whatsapp_qr"
+        return {"connection_id": line}, None
+
+    monkeypatch.setattr(inbound_media, "resolve_delivery_credential", credential)
+    whatsapp.chats = [{"id": GROUP, "name": "Bakery orders"}]
+    payload = _wahooks_message(GROUP, participant=WRITER)
+    assert await WhatsAppNode._stamp_profiles(payload, {}, pool=postgres_pool, workflow_id=str(uuid.uuid4()))
+    assert payload["profiles"]["chat"]["name"] == "Bakery orders"
+
+    text = WhatsAppNode.resolve_agent_event(payload)["text"]
+    assert text.startswith(f'WhatsApp message in the group "Bakery orders" ({GROUP}), sent by {WRITER} (Ravi):\n')
+    assert f"to={GROUP}" in text and "its member list isn't available to you" in text
+    unnamed = WhatsAppNode.resolve_agent_event(_wahooks_message(GROUP, participant=WRITER))["text"]
+    assert unnamed.startswith(f"WhatsApp message in a group ({GROUP}), sent by {WRITER} (Ravi):\n")
+    # A direct chat says nothing of groups.
+    direct = WhatsAppNode.resolve_agent_event(_wahooks_message(PERSON, push_name="Asha"))["text"]
+    assert direct.startswith(f"WhatsApp message from {PERSON} (Asha):\n") and "group" not in direct

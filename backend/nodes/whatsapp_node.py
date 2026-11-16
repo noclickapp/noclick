@@ -2141,10 +2141,21 @@ class WhatsAppNode(WorkflowNode):
             identity = [push_name] if push_name else []
             if phone_shown:
                 identity.append(f"phone +{sender_phone}")
+            group = chat_id.endswith("@g.us")
+            seen_chat, seen_sender = cls._seen_profiles(output)
+            # The delivery doesn't carry the group's name: it's the one kept for the chat, if any.
+            group_name = (seen_chat.get("name") or None) if group else None
             header = f"WhatsApp message from {chat_id}"
             if owner:
                 header = ("WhatsApp message from the account's owner, to you, in their own \"Message yourself\" "
                           f"chat {chat_id}")
+            elif group:
+                named = f'the group "{group_name}"' if group_name else "a group"
+                header = f"WhatsApp message in {named} ({chat_id})"
+                if participant and participant != chat_id:
+                    header += f", sent by {participant}"
+                if identity:
+                    header += f" ({', '.join(identity)})"
             elif participant and participant != chat_id:
                 header += f" (sent by {', '.join([participant, *identity])})"
             elif identity:
@@ -2209,17 +2220,18 @@ class WhatsAppNode(WorkflowNode):
             # Reacting to a message or quoting it takes its id; without it the agent had to page the chat first.
             id_note = (f" This message's id is {message_id}: pass it as message_id to react to it, or as "
                        f"reply_to_message_id to quote it." if message_id else "")
+            # WAHooks lists no group's members, so the agent is told it can't see them rather than left to assume.
+            group_note = (" Everyone in the group reads what you send to it, and its member list isn't available to "
+                          "you." if group else "")
             text = (
                 f"{header}:\n{body}{media_note}\n\n"
                 f"To reply, call a send tool with to={chat_id} "
-                f"(pass this chat id exactly — do not convert it to a phone number).{identity_note}{id_note}"
+                f"(pass this chat id exactly — do not convert it to a phone number).{group_note}{identity_note}"
+                f"{id_note}"
             )
-            group = chat_id.endswith("@g.us")
             # Who wrote it, by number when WhatsApp gives no name. A group's conversation is the group's, never its
-            # first writer's; the delivery doesn't carry the group's name, so it's the one kept for the chat, if any.
+            # first writer's.
             title = push_name or cls._number_label(sender_id, sender_phone)
-            seen_chat, seen_sender = cls._seen_profiles(output)
-            group_name = (seen_chat.get("name") or None) if group else None
             # Never a group's: there the reply reaches everyone in it.
             number = (None if owner or participant or group or not cls._verified(output)
                       else cls._sender_number(output))
@@ -2793,8 +2805,9 @@ class WhatsAppNode(WorkflowNode):
         """``payload["profiles"]``: the chat's and its writer's ``{jid, name,
         avatar_url}`` as kept for the node's own connection
         (``utils.whatsapp_profiles``; a group's ``name`` too), which fetches
-        what isn't kept yet in the background, never holding the delivery.
-        False when nothing could be read."""
+        what isn't kept yet in the background. It holds the delivery only for
+        a group it has no name for, within ``PROFILE_READ_TIMEOUT_S``: the
+        agent's turn names the group by it. False when nothing could be read."""
         if payload.get("event") not in _MESSAGE_EVENTS or not workflow_id:
             return False
         chat, participant = cls._message_chat(payload.get("payload") or {})
@@ -2804,14 +2817,18 @@ class WhatsAppNode(WorkflowNode):
         from utils.whatsapp_profiles import chat_profiles
 
         writer = participant or chat
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + cls.PROFILE_READ_TIMEOUT_S
         try:
-            async with asyncio.timeout(cls.PROFILE_READ_TIMEOUT_S):
+            async with asyncio.timeout_at(deadline):
                 # The credential's own connection, never the one a delivery names.
                 credential, _ = await resolve_delivery_credential(pool, config, str(workflow_id), "whatsapp_qr")
                 connection_id = str((credential or {}).get("connection_id") or "")
                 if not connection_id:
                     return False
-                found = await chat_profiles(pool, connection_id, [chat, writer])
+                # Half a second of the budget stays for reading back what the wait found.
+                found = await chat_profiles(pool, connection_id, [chat, writer],
+                                            name_wait_s=max(0.0, deadline - loop.time() - 0.5))
         except Exception as e:
             logger.warning(f"[WhatsApp] Chat profiles not read for workflow {workflow_id}: {type(e).__name__}: {e}")
             return False

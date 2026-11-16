@@ -10,8 +10,9 @@ loads in a browser. ``whatsapp_chat_profiles`` keeps one row per (connection,
 chat id) until its refresh window ends.
 
 A read never waits on WhatsApp unless asked to (``wait_s``): a delivery takes
-what is kept and leaves a refresh running for the next message. Any gateway or
-storage failure is logged and reads as nothing known.
+what is kept and leaves a refresh running for the next message, waiting briefly
+only for a group it has no name for (``name_wait_s``). Any gateway or storage
+failure is logged and reads as nothing known.
 
 Callers gate access: a connection id comes here only from a credential the
 caller may use. The URLs are capabilities for the connection's owner and their
@@ -75,10 +76,11 @@ def _cdn_client() -> httpx.AsyncClient:
 
 
 async def chat_profiles(pool, connection_id: str, jids: Iterable[str], *,
-                        wait_s: float = 0.0) -> Dict[str, ChatProfile]:
+                        wait_s: float = 0.0, name_wait_s: float = 0.0) -> Dict[str, ChatProfile]:
     """What is kept of each chat id's picture and (a group's) name on ``connection_id``. Ids never fetched or past
     their refresh window are fetched in the background; ``wait_s`` waits that long for them, else they read as
-    they were (nothing, the first time)."""
+    they were (nothing, the first time). ``name_wait_s`` waits that long only when a group due a fetch has no name
+    kept: none of its messages carry it, so its first one would otherwise reach its agent unnamed."""
     from utils.wahooks_connections import get_wahooks_api_key
 
     wanted = list(dict.fromkeys(j.strip() for j in jids if isinstance(j, str) and j.strip()))[:MAX_JIDS]
@@ -92,6 +94,8 @@ async def chat_profiles(pool, connection_id: str, jids: Iterable[str], *,
     stale = [j for j in wanted if j not in rows or rows[j]["stale"]]
     if stale and get_wahooks_api_key():
         tasks = _refreshing(pool, connection_id, stale)
+        if any(is_group(j) and not (rows.get(j) or {}).get("name") for j in stale):
+            wait_s = max(wait_s, name_wait_s)
         if wait_s > 0:
             _, pending = await asyncio.wait(tasks, timeout=wait_s)
             if pending:
