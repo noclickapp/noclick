@@ -1969,25 +1969,12 @@ def _wahooks_drop_webhooks(api_key: str, connection_id: str, webhook_url: str) -
     delivers to ``webhook_url``. Needs only the platform key, never the
     credential. A connection or webhook WAHooks no longer knows is already
     gone; any other failure raises. Returns how many were removed."""
-    from wahooks import WAHooks, WAHooksError
+    from wahooks import WAHooks
 
-    def _gone(e: Exception) -> bool:
-        return getattr(e, "status_code", None) == 404
+    from utils.wahooks_connections import drop_webhook_configs
 
     with WAHooks(api_key=api_key) as client:
-        try:
-            ours = [w for w in client.list_webhooks(connection_id) if w.get("url") == webhook_url]
-        except WAHooksError as e:
-            if _gone(e):
-                return 0
-            raise
-        for w in ours:
-            try:
-                client.delete_webhook(w["id"])
-            except WAHooksError as e:
-                if not _gone(e):
-                    raise
-        return len(ours)
+        return drop_webhook_configs(client, connection_id, webhook_url)
 
 
 class WhatsAppNode(WorkflowNode):

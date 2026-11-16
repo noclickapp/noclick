@@ -27,10 +27,36 @@ def get_wahooks_api_key() -> Optional[str]:
     return os.environ.get("WAHOOKS_API_KEY") or None
 
 
+def drop_webhook_configs(client, connection_id: str, url: Optional[str] = None) -> int:
+    """Delete ``connection_id``'s webhook configs (only ``url``'s when given)
+    through an open sync client. A connection or config WAHooks no longer
+    knows is already gone; any other failure raises. Returns how many were
+    removed."""
+    from wahooks import WAHooksError
+
+    def gone(e: Exception) -> bool:
+        return getattr(e, "status_code", None) == 404
+
+    try:
+        ours = [w for w in client.list_webhooks(connection_id) if url is None or w.get("url") == url]
+    except WAHooksError as e:
+        if gone(e):
+            return 0
+        raise
+    for w in ours:
+        try:
+            client.delete_webhook(w["id"])
+        except WAHooksError as e:
+            if not gone(e):
+                raise
+    return len(ours)
+
+
 async def delete_wahooks_connection(connection_id: str, pool=None) -> None:
-    """Delete one connection at WAHooks, then what NoClick kept of its chats
-    (``pool``, else the native pool). Raises on a failed teardown — callers
-    decide whether their surrounding operation may proceed without it."""
+    """Delete one connection at WAHooks, its webhook configs first, then what
+    NoClick kept of its chats (``pool``, else the native pool). Raises on a
+    failed teardown — callers decide whether their surrounding operation may
+    proceed without it."""
     api_key = get_wahooks_api_key()
     if not api_key:
         raise RuntimeError("WAHooks API key not configured")
@@ -39,6 +65,10 @@ async def delete_wahooks_connection(connection_id: str, pool=None) -> None:
     def _delete():
         # wahooks ships only a sync httpx client; keep it off the event loop.
         with WAHooks(api_key=api_key) as client:
+            # WAHooks only stops a deleted connection and keeps its configs, on
+            # a connection list_connections never returns again: nothing could
+            # find them to remove later.
+            drop_webhook_configs(client, connection_id)
             client.delete_connection(connection_id)
 
     await asyncio.to_thread(_delete)

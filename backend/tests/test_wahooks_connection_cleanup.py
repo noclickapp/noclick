@@ -75,9 +75,15 @@ def test_orphan_selection():
 # ── Sweep ──────────────────────────────────────────────────────────────────────
 
 class FakeWAHooksClient:
-    def __init__(self, connections):
+    """WAHooks as it deletes: a deleted connection is only stopped, it keeps
+    its webhook configs, and list_connections never returns it again."""
+
+    def __init__(self, connections, webhooks=None, fail_webhook_delete=None):
         self.connections = connections
+        self.webhooks = {cid: list(hooks) for cid, hooks in (webhooks or {}).items()}
+        self.fail_webhook_delete = fail_webhook_delete
         self.deleted = []
+        self.calls = []
 
     def __enter__(self):
         return self
@@ -86,9 +92,22 @@ class FakeWAHooksClient:
         pass
 
     def list_connections(self):
-        return self.connections
+        return [c for c in self.connections if c["id"] not in self.deleted]
+
+    def list_webhooks(self, cid):
+        return list(self.webhooks.get(cid, []))
+
+    def delete_webhook(self, webhook_id):
+        from wahooks import WAHooksError
+
+        if self.fail_webhook_delete:
+            raise WAHooksError("webhook delete failed", self.fail_webhook_delete)
+        self.calls.append(("delete_webhook", webhook_id))
+        for cid, hooks in self.webhooks.items():
+            self.webhooks[cid] = [h for h in hooks if h["id"] != webhook_id]
 
     def delete_connection(self, cid):
+        self.calls.append(("delete_connection", cid))
         self.deleted.append(cid)
 
 
@@ -106,12 +125,75 @@ async def test_sweep_deletes_orphans_and_keeps_credentialed(monkeypatch):
          patch("utils.wahooks_connections.live_credential_connection_ids",
                new=AsyncMock(return_value={"c-live"})), \
          patch("utils.wahooks_connections._has_active_reservation",
-               new=AsyncMock(return_value=False)):
+               new=AsyncMock(return_value=False)), \
+         patch("utils.whatsapp_profiles.forget_connection", new=AsyncMock(return_value=0)):
         summary = await sweep_orphan_connections(pool)
 
     assert fake.deleted == ["c-orphan"]
     assert summary["deleted"] == ["c-orphan"]
     assert summary["failed"] == []
+
+
+@pytest.mark.asyncio
+async def test_sweep_leaves_no_webhook_configs_on_a_deleted_orphan(monkeypatch):
+    """WAHooks keeps a deleted connection's configs, on a connection no later
+    sweep can list: the sweep's delete removes them first, so a re-scan's old
+    link can't keep the trigger's URL registered beside the new one."""
+    monkeypatch.setenv("WAHOOKS_API_KEY", "test-key")
+    url = "https://11111111-2222-3333-4444-555555555555.hooks.example.test"
+    fake = FakeWAHooksClient(
+        [{"id": "c-live", "status": "connected"}, {"id": "c-old-link", "status": "failed"}],
+        webhooks={"c-live": [{"id": "wh-live", "url": url}],
+                  "c-old-link": [{"id": "wh-old-1", "url": url}, {"id": "wh-old-2", "url": url}]},
+    )
+
+    with patch("wahooks.WAHooks", return_value=fake), \
+         patch("utils.wahooks_connections.live_credential_connection_ids",
+               new=AsyncMock(return_value={"c-live"})), \
+         patch("utils.wahooks_connections._has_active_reservation",
+               new=AsyncMock(return_value=False)), \
+         patch("utils.whatsapp_profiles.forget_connection", new=AsyncMock(return_value=0)):
+        summary = await sweep_orphan_connections(MagicMock())
+
+    assert summary["deleted"] == ["c-old-link"]
+    assert fake.list_webhooks("c-old-link") == []
+    assert fake.calls == [("delete_webhook", "wh-old-1"), ("delete_webhook", "wh-old-2"),
+                          ("delete_connection", "c-old-link")]
+    assert fake.list_webhooks("c-live") == [{"id": "wh-live", "url": url}]
+
+
+@pytest.mark.asyncio
+async def test_connection_teardown_tolerates_a_config_already_gone(monkeypatch):
+    monkeypatch.setenv("WAHOOKS_API_KEY", "test-key")
+    fake = FakeWAHooksClient([{"id": "c-1", "status": "failed"}],
+                             webhooks={"c-1": [{"id": "wh-1", "url": "https://x.hooks.example.test"}]},
+                             fail_webhook_delete=404)
+    from utils.wahooks_connections import delete_wahooks_connection
+
+    with patch("wahooks.WAHooks", return_value=fake), \
+         patch("utils.whatsapp_profiles.forget_connection", new=AsyncMock(return_value=0)):
+        await delete_wahooks_connection("c-1", MagicMock())
+
+    assert fake.deleted == ["c-1"]
+
+
+@pytest.mark.asyncio
+async def test_connection_teardown_keeps_the_connection_when_its_configs_cant_go(monkeypatch):
+    """A config WAHooks refuses to delete fails the teardown before the
+    connection goes, so the connection stays listed and the next sweep retries
+    both, instead of hiding the config on a stopped connection."""
+    monkeypatch.setenv("WAHOOKS_API_KEY", "test-key")
+    fake = FakeWAHooksClient([{"id": "c-1", "status": "failed"}],
+                             webhooks={"c-1": [{"id": "wh-1", "url": "https://x.hooks.example.test"}]},
+                             fail_webhook_delete=503)
+    from wahooks import WAHooksError
+
+    from utils.wahooks_connections import delete_wahooks_connection
+
+    with patch("wahooks.WAHooks", return_value=fake), pytest.raises(WAHooksError):
+        await delete_wahooks_connection("c-1", MagicMock())
+
+    assert fake.deleted == []
 
 
 @pytest.mark.asyncio
