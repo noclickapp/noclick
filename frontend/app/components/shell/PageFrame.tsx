@@ -23,7 +23,8 @@ export function PageFrame({
 }) {
     const inPhone = useInPhoneShell();
     return (
-        <div className="h-full overflow-y-auto scrollbar-subtle">
+        // Relative: what a page positions (a screen-reader live region) lays out in its scroll, not the shell's.
+        <div className="relative h-full overflow-y-auto scrollbar-subtle">
             <div className="mx-auto w-full max-w-[1080px] px-5 pb-24 pt-5 sm:px-8 sm:pt-10">
                 {back &&
                     (inPhone ? (

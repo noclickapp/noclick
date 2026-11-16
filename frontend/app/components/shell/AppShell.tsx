@@ -115,8 +115,9 @@ function LaptopShell({ sidebar, collapsed, onCollapsedChange, builder, builderSh
         <>
             <AppSidebar {...sidebar} collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
             <div className={builderShown ? undefined : 'hidden'}>{builder}</div>
+            {/* Clip, not hidden: hidden on one axis makes the other scroll, and pages own their scrolling. */}
             <div
-                className="fixed inset-y-0 right-0 flex flex-col overflow-x-hidden bg-background"
+                className="fixed inset-y-0 right-0 flex flex-col overflow-x-clip bg-background"
                 style={{
                     left: sidebarWidthFor(collapsed, sidebarWidth) + (builderShown ? builderWidth : 0),
                     transition: animate && !resizing ? 'left 200ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',

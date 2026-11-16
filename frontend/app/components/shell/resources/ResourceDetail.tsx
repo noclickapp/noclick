@@ -390,7 +390,8 @@ export function ResourcePageFrame({
 }) {
     const inPhone = useInPhoneShell();
     return (
-        <div className="h-full overflow-y-auto scrollbar-subtle" data-testid="resource-detail">
+        // Relative: what a page positions (a screen-reader live region) lays out in its scroll, not the shell's.
+        <div className="relative h-full overflow-y-auto scrollbar-subtle" data-testid="resource-detail">
             <div className={cn('mx-auto w-full px-5 pb-24 pt-4 sm:px-8 sm:pt-8', wide ? 'max-w-[1200px]' : 'max-w-[960px]')}>
                 {inPhone ? (
                     <PhoneBarBack label={inner?.label ?? kindLabel} onBack={inner?.onBack ?? (() => onBack('kind'))} />
