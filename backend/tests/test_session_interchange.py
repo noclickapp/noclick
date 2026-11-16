@@ -307,6 +307,16 @@ class TestClaudeCodeRead:
         assert (call.tool_name, call.tool_call_id, call.tool_input) == ("Grep", "toolu_01", {"pattern": "auth_callback", "path": "tests"})
         assert str(call.provenance).startswith("record ") and "(assistant) block 0" in str(call.provenance)
 
+    def test_the_title_is_the_newest_the_cli_recorded_the_persons_own_first(self, tmp_path):
+        home = _claude_home(tmp_path)
+        assert ic.read_thread(_store("claude_code", home)).title == "Auth callback tests"
+        [path] = home.rglob("*.jsonl")
+        with path.open("a") as f:
+            for record in ({"type": "custom-title", "customTitle": "auth: callback"},
+                           {"type": "ai-title", "aiTitle": "Auth callback coverage"}):
+                f.write(json.dumps({**record, "sessionId": SESSION}) + "\n")
+        assert ic.read_thread(_store("claude_code", home)).title == "auth: callback"
+
     def test_a_compacted_session_starts_from_the_summary(self, tmp_path):
         thread = ic.read_thread(_store("claude_code", _claude_home(tmp_path, compacted=True)))
         turns = [(e.role, e.text) for e in thread.events if e.is_turn]

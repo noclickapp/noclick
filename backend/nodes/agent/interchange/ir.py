@@ -109,6 +109,8 @@ class Thread:
     #: What the reader could not carry into events, by drop key — the
     #: source harness's own bookkeeping mostly, listed so the manifest is honest.
     dropped: Counter = field(default_factory=Counter)
+    #: The session's name as its harness lists it, where it records one.
+    title: Optional[str] = None
 
     def summary(self) -> Dict[str, Any]:
         kinds = Counter(e.kind for e in self.events)

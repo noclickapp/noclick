@@ -12,7 +12,7 @@ others are rejoined by ``message.id``.
 ``tool_use``, ``tool_result``, ``thinking``, ``image``. Around the
 conversation the CLI writes bookkeeping the thread does not need
 (``attachment``, ``queue-operation``, ``last-prompt``, ``mode``,
-``bridge-session``, ``cost-state``, titles, PR links, file-history
+``bridge-session``, ``cost-state``, titles (kept as the thread's ``title``), PR links, file-history
 snapshots, hook ``system`` records) and, after compaction, a ``system`` compact boundary
 followed by a user record flagged ``isCompactSummary`` whose text IS the
 carried history.
@@ -46,6 +46,9 @@ BOOKKEEPING_TYPES = frozenset({
     "attachment", "queue-operation", "last-prompt", "atis-latch", "mode", "bridge-session",
     "ai-title", "custom-title", "pr-link", "file-history-snapshot", "file-history-delta", "summary", "cost-state",
 })
+#: The session's names the CLI records (and re-appends as it runs), each
+#: record's field: the one the person gave it (``/rename``) wins over its own.
+TITLE_RECORDS = {"custom-title": "customTitle", "ai-title": "aiTitle"}
 
 
 def project_directory_name(cwd: Path) -> str:
@@ -83,9 +86,13 @@ class ClaudeCodeFormat(ThreadFormat):
         meta: Dict[str, Optional[str]] = {"session_id": None, "cwd": None, "version": None, "started_at": None}
         leaf: Optional[str] = None
         last_candidate: Optional[str] = None
+        titles: Dict[str, str] = {}
         for index, value in records:
             if not isinstance(value, dict):
                 continue
+            named = TITLE_RECORDS.get(string(value.get("type")) or "")
+            if named and string(value.get(named)):
+                titles[value["type"]] = value[named]
             rid = string(value.get("uuid"))
             if rid and rid not in by_uuid:
                 by_uuid[rid] = (index, value)
@@ -131,6 +138,7 @@ class ClaudeCodeFormat(ThreadFormat):
             harness=self.harness, source=str(path), session_id=meta["session_id"], cwd=meta["cwd"],
             started_at=meta["started_at"], cli_version=meta["version"], model=model,
             events=events, records=total, sha256=digest,
+            title=titles.get("custom-title") or titles.get("ai-title"),
         )
         thread.dropped = count_drops(events)
         inactive = len(by_uuid) - len(chain)

@@ -15,7 +15,7 @@ can always be traced to what produced it.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -149,9 +149,7 @@ def cut(thread: Thread, *, before: Optional[str] = None, turns: Optional[int] = 
         if wanted or turns is not None:
             raise InterchangeError("cut_not_found", "no user message of the thread is where the conversation went back to")
         return thread
-    return Thread(harness=thread.harness, source=thread.source, session_id=thread.session_id, cwd=thread.cwd,
-                  started_at=thread.started_at, cli_version=thread.cli_version, model=thread.model,
-                  events=thread.events[:end], records=thread.records, sha256=thread.sha256, dropped=thread.dropped)
+    return replace(thread, events=thread.events[:end])
 
 
 def copy_thread(source: StoreRef, target: StoreRef, identity: Optional[TargetIdentity] = None, *,
