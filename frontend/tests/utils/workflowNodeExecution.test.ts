@@ -82,3 +82,34 @@ describe('single-node run of a tool provider', () => {
         expect(result.success).toBe(true);
     });
 });
+
+describe('single-node run of a step whose parent has not run', () => {
+    // A step that reads its parent through `$('id')` needs the parent's output
+    // just as `{{id.field}}` does; without it the parent used to run for real.
+    const step = (id: string, value: string) =>
+        createWorkflowNode(id, 'test-dummy', { x: 0, y: 0 }, { stringValue: value });
+    const edge: Edge = { id: 'e', source: 'shape', target: 'upload' };
+
+    it.each([
+        ["{{ $('shape').stringValue }}"],
+        ['{{ $("shape").stringValue }}'],
+        ['{{shape.stringValue}}'],
+    ])('stops and names the parent for %s', (value) => {
+        const result = prepareNodeExecution('upload', [step('shape', 'x'), step('upload', value)], [edge]);
+        expect(result).toEqual({ success: false, error: 'Missing output from previous nodes: shape' });
+    });
+
+    it('still runs when the step does not read the parent', () => {
+        const other = "{{ $('shape_v2').stringValue }} costs $('shape')";
+        const result = prepareNodeExecution('upload', [step('shape', 'x'), step('upload', other)], [edge]);
+        expect(result.success).toBe(true);
+    });
+
+    it('sends the parent output as its mock once it has one', () => {
+        const shape = step('shape', 'x');
+        shape.data = { ...shape.data, output: { stringValue: 'Ada' } };
+        const result = prepareNodeExecution('upload', [shape, step('upload', "{{ $('shape').stringValue }}")], [edge]);
+        if (!result.success) throw new Error(result.error);
+        expect(result.nodes.find((n) => n.id === 'shape')?.config.mockedOutput).toEqual({ stringValue: 'Ada' });
+    });
+});

@@ -7,6 +7,7 @@
 import type { Node, Edge } from '@xyflow/react';
 import { filterConfigForExecution, getToolProviderConsumerTypes } from '~/utils/nodeSchemas';
 import { buildSaveConfig } from '~/lib/applyNodeUpdate';
+import { scanBlocks } from '~/components/workflow/expressionSyntax';
 
 // Re-export for convenience
 export { filterConfigForExecution };
@@ -69,13 +70,22 @@ export type PrepareNodeExecutionResult =
     | { success: true; nodes: WorkflowNode[]; edges: WorkflowEdge[] }
     | { success: false; error: string };
 
+// A `$('id')` accessor's id, as the backend's expression evaluator reads it.
+const ACCESSOR_ARG_RE = /\$\(\s*['"]([^'"]+)['"]\s*\)/g;
+
 /**
- * Check if a node's config contains any {{nodeId...}} references to a given source node.
+ * Check if a node's config references a given source node, as {{nodeId...}}
+ * or through a {{ $('nodeId') }} accessor.
  */
 function configReferencesNode(config: Record<string, any>, sourceNodeId: string): boolean {
     const pattern = `{{${sourceNodeId}`;
     const check = (val: unknown): boolean => {
-        if (typeof val === 'string') return val.includes(pattern);
+        if (typeof val === 'string') {
+            if (val.includes(pattern)) return true;
+            return scanBlocks(val).some((b) =>
+                [...b.inner.matchAll(ACCESSOR_ARG_RE)].some((m) => m[1] === sourceNodeId)
+            );
+        }
         if (Array.isArray(val)) return val.some(check);
         if (val && typeof val === 'object') return Object.values(val).some(check);
         return false;
@@ -176,6 +186,9 @@ export function providerRunBlocker(consumers: ReadonlyArray<'agent' | 'mcp-serve
  * 2. Identifies all previous nodes (nodes with edges pointing to target)
  * 3. Validates that referenced previous nodes have output data
  * 4. Builds the subset graph with previous nodes having mockedOutput set
+ *
+ * Any other node a step references resolves server-side from its latest stored
+ * output, judged against the replay graph sent alongside this subset.
  *
  * @param nodeId - The ID of the node to execute
  * @param nodes - All nodes in the workflow

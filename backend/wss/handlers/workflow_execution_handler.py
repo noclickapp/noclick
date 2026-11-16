@@ -1032,10 +1032,16 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
             # filter above reassigns executable_nodes without refreshing
             # executable_node_ids, and the stale set made the excluded list empty,
             # hiding restored trigger snapshots from forward-only runs.
+            # A run is also sliced when its executed graph leaves out nodes of its
+            # replay graph (a single-step test, a scoped run): `$('X')` must then
+            # resolve for every X outside the slice, not just the slice's parents.
+            # The executed graph's nodes come first, so the mocks it carries win.
+            sent_ids = {n.get('id') for n in nodes}
+            left_out = [n for n in snapshot_nodes if n.get('id') not in sent_ids]
             preloaded_outputs: Dict[str, Any] = {}
-            if request.start_node_id:
+            if request.start_node_id or left_out:
                 preloaded_outputs = await self._preload_excluded_node_outputs(
-                    pool, request.workflow_id, nodes,
+                    pool, request.workflow_id, nodes + left_out,
                     {n['id'] for n in executable_nodes},
                 )
 
@@ -3170,8 +3176,8 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         """
         Load latest stored outputs for nodes excluded from the execution slice.
 
-        Used when ``forward_only=True`` + ``start_node_id`` causes upstream
-        predecessors to be skipped — downstream ``{{node.path}}`` references
+        Used when ``start_node_id`` or a subset graph (a single-step test)
+        leaves nodes out of the slice — ``{{node.path}}`` references
         would otherwise resolve to None and the literal ``{{...}}`` token would
         leak into the resolved config. Preloading their last-persisted outputs
         preserves the user's expectation that "run from here" sees the
