@@ -86,6 +86,14 @@ def _no_redis(monkeypatch):
     monkeypatch.setattr("utils.redis_client.get_shared_redis", lambda: None)
 
 
+@pytest.fixture(autouse=True)
+def _no_list_hold(monkeypatch):
+    """A failed list fetch holds off the next in its process; each test starts with none held."""
+    from utils import whatsapp_qr
+
+    monkeypatch.setattr(whatsapp_qr, "_list_held_until", 0.0)
+
+
 def _event(status):
     return {"event": "session.status", "session": "s", "payload": {"status": status}}
 
@@ -434,6 +442,146 @@ async def test_unseen_connection_forces_a_refetch_instead_of_missing(status_cach
     # The refreshed map is cached in turn.
     assert await dead_session_status("conn-new") is None
     assert len(status_cache) == 1
+
+
+# ── a failed list fetch is remembered: callers after it don't each ask again ──
+
+
+@pytest.fixture
+def throttled(monkeypatch):
+    """WAHooks refusing the list ``refusals`` more times (its per-minute limit spent), then answering ``live``."""
+    from utils import whatsapp_qr
+
+    monkeypatch.setenv("WAHOOKS_API_KEY", "k")
+    monkeypatch.setattr(whatsapp_qr, "_status_cache", None)
+    state = {"refusals": 1_000, "fetches": [],
+             "live": [{"id": "conn-1", "status": "failed"}, {"id": "conn-2", "status": "connected"}]}
+
+    class _Throttling(_ListClient):
+        def list_connections(self):
+            from wahooks import WAHooksError
+
+            self._fetches.append(1)
+            if state["refusals"]:
+                state["refusals"] -= 1
+                raise WAHooksError("ThrottlerException: Too Many Requests", 429)
+            return state["live"]
+
+    monkeypatch.setattr("wahooks.WAHooks", lambda api_key: _Throttling(None, state["fetches"]))
+    return state
+
+
+def _fetch_warnings(caplog):
+    return [r for r in caplog.records if "Connection status fetch failed" in r.getMessage()]
+
+
+@pytest.mark.asyncio
+async def test_a_throttled_list_is_asked_once_not_once_per_caller(throttled, caplog):
+    """2026-11-16: the hourly billing pass judged each WhatsApp row with a status read of its own, and a failed read
+    was never remembered: with WAHooks throttling the list, every row asked again, was throttled again and read
+    unknown, every hour, so a connection that had died was never forgiven."""
+    import logging
+
+    from utils.credential_health import get_credential_health
+    from utils.whatsapp_qr import dead_session_status, get_connection_statuses
+
+    caplog.set_level(logging.WARNING, logger="utils.whatsapp_qr")
+    for n in range(10):
+        assert await dead_session_status(f"conn-{n}") is None  # unknown, never dead
+    assert await get_connection_statuses(require=["conn-1"]) is None
+    assert await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-1"}}]) == {}
+    assert len(throttled["fetches"]) == 1
+    assert len(_fetch_warnings(caplog)) == 1
+
+
+@pytest.mark.asyncio
+async def test_callers_missing_the_cache_together_share_one_fetch(throttled):
+    import asyncio
+
+    from utils.whatsapp_qr import get_connection_statuses
+
+    assert await asyncio.gather(*(get_connection_statuses(require=["conn-1"]) for _ in range(6))) == [None] * 6
+    assert len(throttled["fetches"]) == 1
+
+    # And when WAHooks answers, the one map is everyone's.
+    from utils import whatsapp_qr
+
+    throttled["refusals"] = 0
+    whatsapp_qr._list_held_until = 0.0
+    answers = await asyncio.gather(*(get_connection_statuses(require=["conn-1"]) for _ in range(6)))
+    assert all(a == {"conn-1": "failed", "conn-2": "connected"} for a in answers)
+    assert len(throttled["fetches"]) == 2
+
+
+@pytest.mark.asyncio
+async def test_a_throttle_holds_off_a_minute_and_any_other_failure_less(throttled, monkeypatch):
+    """WAHooks counts the list per caller per minute; its Retry-After never passes a minute, and its SDK drops it."""
+    from utils import whatsapp_qr
+    from utils.whatsapp_qr import get_connection_statuses
+
+    assert await get_connection_statuses(require=["conn-1"]) is None
+    assert whatsapp_qr._THROTTLED_HOLD_S - 1 < whatsapp_qr._list_held_until - time.monotonic() <= 60
+
+    class _Down(_ListClient):
+        def list_connections(self):
+            raise ConnectionError("WAHooks unreachable")
+
+    monkeypatch.setattr("wahooks.WAHooks", lambda api_key: _Down(None, []))
+    whatsapp_qr._list_held_until = 0.0
+    assert await get_connection_statuses(require=["conn-1"]) is None
+    assert 0 < whatsapp_qr._list_held_until - time.monotonic() <= whatsapp_qr._FAILED_HOLD_S < 60
+
+
+@pytest.mark.asyncio
+async def test_once_the_hold_lapses_the_next_read_asks_and_is_used(throttled):
+    from utils import whatsapp_qr
+    from utils.whatsapp_qr import dead_session_status
+
+    assert await dead_session_status("conn-1") is None and len(throttled["fetches"]) == 1
+    throttled["refusals"] = 0
+    whatsapp_qr._list_held_until = time.monotonic() - 1  # the minute passes
+    assert await dead_session_status("conn-1") == "failed"
+    assert await dead_session_status("conn-2") is None
+    assert len(throttled["fetches"]) == 2 and whatsapp_qr._list_held_until == 0.0
+
+
+@pytest.mark.asyncio
+async def test_a_hold_never_serves_a_map_that_lacks_a_required_id(throttled):
+    """The require-miss rule outlives a hold: a cached map without the id is never its verdict, only unknown."""
+    from utils import whatsapp_qr
+    from utils.whatsapp_qr import dead_session_status, get_connection_statuses
+
+    whatsapp_qr._status_cache = (time.monotonic(), {"conn-1": "failed"})
+    assert await dead_session_status("conn-1") == "failed" and throttled["fetches"] == []  # a cache hit asks nothing
+    assert await get_connection_statuses(require=["conn-new"]) is None and len(throttled["fetches"]) == 1
+    assert await get_connection_statuses(require=["conn-new", "conn-1"]) is None
+    assert len(throttled["fetches"]) == 1
+
+
+@pytest.mark.asyncio
+async def test_retry_waits_the_hold_out_and_asks_once_more(throttled, monkeypatch):
+    from utils import whatsapp_qr
+    from utils.whatsapp_qr import get_connection_statuses
+
+    monkeypatch.setattr(whatsapp_qr, "_THROTTLED_HOLD_S", 0.05)
+    throttled["refusals"] = 1
+    assert await get_connection_statuses(require=["conn-1"], retry=True) == {
+        "conn-1": "failed", "conn-2": "connected"}
+    assert len(throttled["fetches"]) == 2
+
+
+@pytest.mark.asyncio
+async def test_retry_is_one_more_ask_and_no_more(throttled, monkeypatch, caplog):
+    import logging
+
+    from utils import whatsapp_qr
+    from utils.whatsapp_qr import get_connection_statuses
+
+    caplog.set_level(logging.WARNING, logger="utils.whatsapp_qr")
+    monkeypatch.setattr(whatsapp_qr, "_THROTTLED_HOLD_S", 0.05)
+    assert await get_connection_statuses(require=["conn-1"], retry=True) is None
+    assert len(throttled["fetches"]) == 2 and len(_fetch_warnings(caplog)) == 2
 
 
 class _ReadsOneByOne(_ListClient):

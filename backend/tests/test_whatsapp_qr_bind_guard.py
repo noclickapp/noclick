@@ -311,6 +311,7 @@ class TestConnectionStatuses:
     def _fresh_cache(self, monkeypatch):
         import utils.whatsapp_qr as wq
         monkeypatch.setattr(wq, "_status_cache", None)
+        monkeypatch.setattr(wq, "_list_held_until", 0.0)
 
     async def test_maps_ids_to_statuses(self, monkeypatch):
         _stub_wahooks_list(monkeypatch, lambda: [

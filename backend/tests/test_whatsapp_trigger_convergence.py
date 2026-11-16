@@ -104,6 +104,7 @@ def wahooks(monkeypatch):
     monkeypatch.setitem(sys.modules, "wahooks", module)
     monkeypatch.setenv("WAHOOKS_API_KEY", "wh_test")
     monkeypatch.setattr(whatsapp_qr, "_status_cache", None)
+    monkeypatch.setattr(whatsapp_qr, "_list_held_until", 0.0)
     return FakeWAHooks
 
 

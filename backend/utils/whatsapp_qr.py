@@ -31,6 +31,7 @@ import asyncio
 import logging
 import os
 import time
+import weakref
 from typing import Any, Iterable, NamedTuple, Optional
 
 import asyncpg
@@ -69,6 +70,14 @@ NO_QR_MESSAGE = ("WhatsApp's linking service didn't send a QR code in time; it m
 # provider sessions visible to this installation; cache it briefly.
 _STATUS_CACHE_TTL_S = 60
 _status_cache: Optional[tuple[float, dict[str, str]]] = None
+# A failed list fetch holds off the next one in this process until ``_list_held_until`` (``time.monotonic``), so the
+# callers after it answer unknown at once instead of each asking again, which kept WAHooks' per-minute limit spent. A
+# throttled fetch waits out that window (WAHooks' Retry-After is never longer, and its SDK doesn't pass it on).
+_THROTTLED_HOLD_S = 60.0
+_FAILED_HOLD_S = 15.0
+_list_held_until = 0.0
+# Per event loop: the lock list fetches are made under, so callers that miss the cache together share one fetch.
+_list_locks: "weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Lock]" = weakref.WeakKeyDictionary()
 # When a connection's session last moved (``connection_status_moved``), in wall time, shared by every process: each
 # keeps its own cached map, and a move seen in one (a scan landing, WAHooks pushing WORKING) must not leave another
 # judging the connection by a map read before it. Outlives any map that could predate it.
@@ -130,7 +139,7 @@ async def connection_status_moved(connection_id: str) -> None:
 
 
 async def get_connection_statuses(
-    require: Optional[Iterable[str]] = None,
+    require: Optional[Iterable[str]] = None, *, retry: bool = False,
 ) -> Optional[dict[str, str]]:
     """connection_id → WAHooks session status ('connected', 'scan_qr',
     'pending', 'failed', 'stopped', 'missing') for the installation. None =
@@ -145,15 +154,53 @@ async def get_connection_statuses(
     session is in every container's map as the ``failed`` it was. A required id
     a FRESH list leaves out is read on its own (``_read_unlisted``): the list
     never returns a stopped connection. An id neither answers is absent from the
-    map: unknown, never dead."""
-    global _status_cache
-    now = time.monotonic()
+    map: unknown, never dead.
+
+    A failed list fetch holds off the next (``_list_held_until``): until then a
+    call the cache can't serve answers None without asking WAHooks. ``retry``:
+    such a call waits the hold out and asks once more, for a background pass
+    that would otherwise judge everything unknown for its run; an interactive
+    caller never waits (the hold can be a minute)."""
     required = list(dict.fromkeys(require or ()))
-    if _status_cache and now - _status_cache[0] < _STATUS_CACHE_TTL_S:
-        cached = _status_cache[1]
-        read_at = time.time() - (now - _status_cache[0])
-        if all(cid in cached for cid in required) and not await _moved_since(required, read_at):
+    statuses = await _statuses(required)
+    if statuses is None and retry and (wait := _list_held_until - time.monotonic()) > 0:
+        await asyncio.sleep(wait)
+        statuses = await _statuses(required, past_hold=True)
+    return statuses
+
+
+async def _statuses(required: list[str], *, past_hold: bool = False) -> Optional[dict[str, str]]:
+    """The cached map when it serves ``required``, else one list fetch at a time per process, never while a failed
+    one's hold lasts (``past_hold``: the caller waited it out)."""
+    if (cached := await _cached_statuses(required)) is not None:
+        return cached
+    if not past_hold and time.monotonic() < _list_held_until:
+        return None
+    loop = asyncio.get_running_loop()
+    if (lock := _list_locks.get(loop)) is None:
+        lock = _list_locks[loop] = asyncio.Lock()
+    async with lock:
+        # Whoever held the lock may have just read the map, or failed to.
+        if (cached := await _cached_statuses(required)) is not None:
             return cached
+        if not past_hold and time.monotonic() < _list_held_until:
+            return None
+        return await _fetch_statuses(required)
+
+
+async def _cached_statuses(required: list[str]) -> Optional[dict[str, str]]:
+    """The map read under ``_STATUS_CACHE_TTL_S`` ago, when it holds every required id and none of them moved since."""
+    if not _status_cache:
+        return None
+    read, cached = _status_cache
+    age = time.monotonic() - read
+    if age >= _STATUS_CACHE_TTL_S or any(cid not in cached for cid in required):
+        return None
+    return None if await _moved_since(required, time.time() - age) else cached
+
+
+async def _fetch_statuses(required: list[str]) -> Optional[dict[str, str]]:
+    global _status_cache, _list_held_until
     try:
         api_key = get_wahooks_api_key()
     except ValueError:
@@ -165,15 +212,20 @@ async def get_connection_statuses(
         with WAHooks(api_key=api_key) as client:
             return client.list_connections()
 
+    read = time.monotonic()
     try:
         connections = await asyncio.wait_for(asyncio.to_thread(_list_connections), timeout=5)
     except Exception as e:
-        logger.warning(f"[WhatsAppQR] Connection status fetch failed: {e}")
+        hold = _THROTTLED_HOLD_S if getattr(e, "status_code", None) == 429 else _FAILED_HOLD_S
+        _list_held_until = time.monotonic() + hold
+        logger.warning(f"[WhatsAppQR] Connection status fetch failed: {type(e).__name__}: {e} "
+                       f"(statuses unknown here; not asked again for {hold:g}s)")
         return None
+    _list_held_until = 0.0
     statuses = {c["id"]: c.get("status", "") for c in connections if c.get("id")}
     if unlisted := [cid for cid in required if cid not in statuses]:
         statuses.update(await _read_unlisted(api_key, unlisted))
-    _status_cache = (now, statuses)
+    _status_cache = (read, statuses)
     return statuses
 
 
@@ -266,13 +318,17 @@ def get_wahooks_api_key() -> str:
     return key
 
 
-async def dead_session_status(connection_id: str) -> Optional[str]:
-    """The definitively-dead session status for one connection, or None when
-    connected/unknown. Unknown (WAHooks unreachable) is NEVER dead — the
-    non-definitive-signal doctrine every consumer of this rule must share."""
-    statuses = await get_connection_statuses(require=(connection_id,))
+def dead_status(statuses: Optional[dict[str, str]], connection_id: str) -> Optional[str]:
+    """The definitively-dead session status ``statuses`` (a ``get_connection_statuses`` map) holds for one
+    connection, or None when connected/unknown. Unknown (no map: WAHooks unreachable; or absent from it) is NEVER
+    dead — the non-definitive-signal doctrine every consumer of this rule must share."""
     status = (statuses or {}).get(connection_id)
     return None if status in (None, "connected") else status
+
+
+async def dead_session_status(connection_id: str) -> Optional[str]:
+    """``dead_status`` for one connection, read now."""
+    return dead_status(await get_connection_statuses(require=(connection_id,)), connection_id)
 
 
 class QrAnswer(NamedTuple):
