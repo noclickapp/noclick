@@ -157,8 +157,10 @@ async def test_a_held_call_tells_its_owner_once_a_window(approval_db, monkeypatc
                           config=NodeConfig[MailConfig, None](config=MailConfig(to="other@example.test")), user_id=USER)
     held = []
     for node in (first, second):
+        # Only the notices this run spawned: another test's leftover (a patched create_task's mock) isn't awaitable.
+        before = set(tasks._bg_tasks)
         held.append(await node.run({}))
-        await asyncio.gather(*list(tasks._bg_tasks))
+        await asyncio.gather(*(set(tasks._bg_tasks) - before))
 
     assert [result["status"] for result in held] == ["pending_approval", "pending_approval"]
     assert len(sent) == 1
