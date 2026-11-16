@@ -14,6 +14,7 @@ layering cycle.
 """
 
 import asyncio
+import hashlib
 import json
 import logging
 import mimetypes
@@ -203,6 +204,44 @@ async def create_resource_from_bytes(
         resource_id=resource_id, storage_ref=storage_ref, size_bytes=len(body), content_type=content_type,
         filename=filename, resource_type=resource_type, metadata=metadata, connection=connection,
     )
+
+
+async def store_file_once(
+    *,
+    user_id: str,
+    workflow_id: str,
+    node_id: Optional[str] = None,
+    organization_id: Optional[str] = None,
+    body: bytes,
+    content_type: str,
+    filename: str,
+    resource_type: Optional[str] = None,
+) -> Dict[str, Any]:
+    """:func:`create_resource_from_bytes` for a file an agent publishes (``upload_file``): the workflow's resource
+    already holding these exact bytes under this name and type, else a new one, which keeps its bytes' ``sha256``
+    to be found by. Each upload of the same file (a picture sent again in a later turn) stored another copy."""
+    digest = hashlib.sha256(body).hexdigest()
+    row = await database_pool.get_native_pool().fetchrow(
+        """SELECT id, name, mime_type, size_bytes, storage_ref FROM workflow_resources
+            WHERE owner_id = $1::uuid AND workflow_id = $2::uuid AND name = $3 AND mime_type = $4 AND size_bytes = $5
+              AND metadata->>'sha256' = $6
+            ORDER BY created_at DESC LIMIT 1""",
+        str(user_id), str(workflow_id), filename, content_type, len(body), digest,
+    )
+    if row is None:
+        return await create_resource_from_bytes(
+            user_id=user_id, workflow_id=workflow_id, node_id=node_id, organization_id=organization_id, body=body,
+            content_type=content_type, filename=filename, resource_type=resource_type, metadata={"sha256": digest},
+        )
+    logger.info(f"[resource_store] {filename} is resource {row['id']} already ({len(body)} bytes)")
+    return {
+        "resource_id": str(row["id"]),
+        "name": row["name"],
+        "mime_type": row["mime_type"],
+        "size_bytes": row["size_bytes"],
+        "storage_ref": row["storage_ref"],
+        "download_url": get_public_download_url(row["storage_ref"]),
+    }
 
 
 async def create_resource_from_stream(

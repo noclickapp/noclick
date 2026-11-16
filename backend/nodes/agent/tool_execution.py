@@ -916,14 +916,14 @@ async def _execute_filesystem_tool(
         return {"success": False, "error": f"Could not read file: {file_path}"}
 
     try:
-        from utils.resource_store import create_resource_from_bytes, uploaded
+        from utils.resource_store import store_file_once, uploaded
 
         wf_row = await get_native_pool().fetchrow(
             "SELECT organization_id FROM workflows WHERE id = $1", node.workflow_id
         )
         org_id = wf_row["organization_id"] if wf_row else None
 
-        ref = await create_resource_from_bytes(
+        ref = await store_file_once(
             user_id=node.user_id,
             workflow_id=node.workflow_id,
             node_id=node.node_id,
