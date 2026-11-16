@@ -1,12 +1,14 @@
 /**
  * Settings: one page, its sections listed in groups in a column of their own
  * beside the open one on a laptop (rows like the app sidebar's). On a phone the
- * list is the page and a section opens over it, the shell's bar going back. The
+ * list is the page and a section opens over it, the shell's bar going back; the
+ * open one is the address's `?section=`, so a link to a section lands on it. The
  * organization section only appears in an organization or a personal workspace
  * that has one.
  */
 
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
+import { useSearchParams } from 'react-router';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { HAIRLINE } from '~/components/dashboard/primitives';
@@ -58,12 +60,6 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
   const narrow = useIsMobile(640);
   const isMobile = inPhone || narrow;
 
-  // On mobile, null means "show the menu page"; a value means drill into that section.
-  // Only pre-select a section if explicitly deep-linked (i.e. not the default 'usage').
-  const [mobileSection, setMobileSection] = useState<SettingsSection | null>(
-    initialSection && initialSection !== 'usage' ? initialSection : null
-  );
-
   // Use the standardized hook for URL-synced tab state (drives desktop)
   const [activeSection, setActiveSection] = useUrlSyncedTab<SettingsSection>({
     param: 'section',
@@ -75,17 +71,28 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
     clearParamsOn: { usage: ['orgTab'] },
   });
 
-  // If org/workspace section becomes unavailable, reset both
+  // If the org/workspace section becomes unavailable, open Usage (a phone shows the list until it's back).
   useEffect(() => {
-    if (activeSection === 'organization' && !hasOrg && !personalWsOrgId) {
+    if (!isMobile && activeSection === 'organization' && !hasOrg && !personalWsOrgId) {
       setActiveSection('usage');
     }
-    if (mobileSection === 'organization' && !hasOrg && !personalWsOrgId) {
-      setMobileSection(null);
-    }
-  }, [activeSection, mobileSection, hasOrg, personalWsOrgId, setActiveSection]);
+  }, [isMobile, activeSection, hasOrg, personalWsOrgId, setActiveSection]);
 
   const sections = useSettingsSections(hiddenSections);
+  // A phone's open section is the address's, whenever a link (an email's, a notice's) sets it, Usage included; none,
+  // or one this account doesn't have here, is the list.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const phoneSection = sections.find((item) => item.id === searchParams.get('section'))?.id ?? null;
+  const closePhoneSection = () =>
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete('section');
+        next.delete('orgTab');
+        return next;
+      },
+      { replace: true }
+    );
   const groups = SETTINGS_GROUPS.map((g) => ({ label: g.label, items: sections.filter((item) => g.sections.includes(item.id)) })).filter((g) => g.items.length);
 
   const renderSection = (currentSection: SettingsSection | null) => (
@@ -114,7 +121,7 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
   );
 
   // ── Phone: the sections as one list ───────────────────────────────────────
-  if (isMobile && mobileSection === null) {
+  if (isMobile && phoneSection === null) {
     return (
       <div className="h-full overflow-y-auto scrollbar-subtle">
         <div className="mx-auto w-full max-w-[640px] px-4 pb-24 pt-3">
@@ -130,7 +137,7 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
                       <button
                         key={item.id}
                         type="button"
-                        onClick={() => setMobileSection(item.id)}
+                        onClick={() => setActiveSection(item.id)}
                         className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03] focus-visible:bg-foreground/[0.03] focus-visible:outline-none"
                       >
                         <Icon className="h-5 w-5 shrink-0 text-foreground/75" strokeWidth={1.6} />
@@ -153,22 +160,22 @@ export function Settings({ initialSection, hiddenSections }: SettingsProps) {
   }
 
   // ── Phone: one section, the bar going back to the list ─────────────────────
-  if (isMobile && mobileSection !== null) {
+  if (isMobile && phoneSection !== null) {
     return (
       <div className="h-full overflow-y-auto scrollbar-subtle">
-        <PhoneBarBack label="Settings" onBack={() => setMobileSection(null)} />
+        <PhoneBarBack label="Settings" onBack={closePhoneSection} />
         <div className="px-4 pb-24 pt-3">
           {!inPhone && (
             <button
               type="button"
-              onClick={() => setMobileSection(null)}
+              onClick={closePhoneSection}
               className="-ml-1 mb-4 inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
             >
               <ChevronRight className="h-3.5 w-3.5 rotate-180" />
               Settings
             </button>
           )}
-          {renderSection(mobileSection)}
+          {renderSection(phoneSection)}
         </div>
       </div>
     );

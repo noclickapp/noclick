@@ -302,13 +302,14 @@ export function createTabSwitchHandler(callbacks: {
       }
 
       // The event path owns the settings section in the URL (there's no Settings
-      // component round-trip to set it, unlike a NavBar click).
+      // component round-trip to set it, unlike a NavBar click). Settings without
+      // one opens on Usage on a laptop and on its list on a phone.
       if (tab === 'settings') {
-        const resolvedSection = section ?? 'usage';
-        newParams.set('section', resolvedSection);
+        if (section) newParams.set('section', section);
+        else newParams.delete('section');
         if (orgTab) {
           newParams.set('orgTab', orgTab);
-        } else if (resolvedSection !== 'organization') {
+        } else if (section !== 'organization') {
           newParams.delete('orgTab');
         }
       }
