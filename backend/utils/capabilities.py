@@ -437,12 +437,11 @@ AGENT_WORKFLOW = "agent.workflow"
 ACCOUNT_AGENT = "account.agent"
 
 # What would have woken the coordinator, handed to the agent that answers the
-# account's owner in its place (``ACCOUNT_AGENT``): async (pool, user_id, note,
-# *, from_outside=False) -> the wake-up's id, or None when no agent answers the
-# account. The agent is made first where the account is meant to have one, and
-# its turn reads ``note`` in its owner's conversation (``from_outside``: the
-# note quotes what someone outside the account wrote). Without one, the
-# coordinator is woken.
+# account's owner in its place (``ACCOUNT_AGENT``): async (pool, user_id, note)
+# -> the wake-up's id, or None when no agent answers the account. The agent is
+# made first where the account is meant to have one, and its turn reads ``note``
+# in its owner's conversation as the account's own news (never as someone
+# outside the account talking). Without one, the coordinator is woken.
 ACCOUNT_AGENT_HANDOVER = "account.agent_handover"
 
 # The email of the agent that answers an account's owner in the coordinator's

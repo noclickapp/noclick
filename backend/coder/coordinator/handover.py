@@ -24,12 +24,12 @@ async def agent_answers(pool, user_id: str) -> bool:
     return agent is not None and await agent(pool, user_id, ensure=True) is not None
 
 
-async def hand_over(pool, user_id: str, note: str, *, from_outside: bool = False) -> bool:
+async def hand_over(pool, user_id: str, note: str) -> bool:
     """``note`` as a wake-up of the agent that answers the account's owner; False where none does."""
     from utils.capabilities import ACCOUNT_AGENT_HANDOVER, capability
 
     hand = capability(ACCOUNT_AGENT_HANDOVER)
-    return hand is not None and await hand(pool, user_id, note[:NOTE_CHARS], from_outside=from_outside) is not None
+    return hand is not None and await hand(pool, user_id, note[:NOTE_CHARS]) is not None
 
 
 def _fitting(value: Any, room: int) -> str:
@@ -44,12 +44,10 @@ def _fitting(value: Any, room: int) -> str:
 
 
 async def hand_over_wakeup(pool, event: Dict[str, Any]) -> bool:
-    """A coordinator wake-up handed to the agent that answers its account (its note composed only then)."""
-    from coder.coordinator.agent import UNTRUSTED_WAKEUPS
-
+    """A coordinator wake-up handed to the agent that answers its account (its note composed only then). A failed run,
+    a job's result or an operation's report is the account's own news, never someone outside talking."""
     user_id = str(event["user_id"])
-    return await agent_answers(pool, user_id) and await hand_over(
-        pool, user_id, wakeup_note(event), from_outside=event["source"] in UNTRUSTED_WAKEUPS)
+    return await agent_answers(pool, user_id) and await hand_over(pool, user_id, wakeup_note(event))
 
 
 def wakeup_note(event: Dict[str, Any]) -> str:
