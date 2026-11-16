@@ -67,13 +67,13 @@ function show(url: string, initialSection: SettingsSection = 'usage') {
 }
 
 const opened = () => screen.queryAllByTestId(/^section-/).map((el) => el.dataset.testid);
-const list = () => screen.queryByRole('button', { name: /Plan and billing/ });
+const list = () => screen.queryByRole('button', { name: /Popups/ });
 const address = () => new URLSearchParams(screen.getByTestId('address').textContent ?? '');
 
 describe('Settings on a phone', () => {
     it('opens the section a link names', () => {
-        show('/dashboard?tab=settings&section=billing', 'billing');
-        expect(opened()).toEqual(['section-billing']);
+        show('/dashboard?tab=settings&section=popups', 'popups');
+        expect(opened()).toEqual(['section-popups']);
         expect(list()).toBeNull();
     });
 
@@ -83,8 +83,8 @@ describe('Settings on a phone', () => {
     });
 
     it('opens the linked section when Settings opened before the link was read', () => {
-        show('/dashboard?tab=settings&section=billing', 'usage');
-        expect(opened()).toEqual(['section-billing']);
+        show('/dashboard?tab=settings&section=popups', 'usage');
+        expect(opened()).toEqual(['section-popups']);
     });
 
     it('follows a link to another section while Settings is already open', async () => {
@@ -98,8 +98,8 @@ describe('Settings on a phone', () => {
         show('/dashboard?tab=settings');
         expect(opened()).toEqual([]);
         fireEvent.click(list()!);
-        expect(opened()).toEqual(['section-billing']);
-        expect(address().get('section')).toBe('billing');
+        expect(opened()).toEqual(['section-popups']);
+        expect(address().get('section')).toBe('popups');
         fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
         expect(opened()).toEqual([]);
         expect(list()).toBeTruthy();
@@ -108,7 +108,7 @@ describe('Settings on a phone', () => {
     });
 
     it('goes back to the list from a linked section', () => {
-        show('/dashboard?tab=settings&section=billing');
+        show('/dashboard?tab=settings&section=popups');
         fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
         expect(list()).toBeTruthy();
         expect(address().get('section')).toBeNull();

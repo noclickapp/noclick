@@ -86,7 +86,7 @@ async def test_an_upload_named_without_its_extension_keeps_its_files(monkeypatch
 async def test_the_same_file_uploaded_again_is_the_resource_it_already_is(builder_request_db, monkeypatch):
     """An agent that sent one picture in two turns uploaded it in each, and each upload stored another copy under a
     new link. The same bytes under the same name are the workflow's resource already; changed bytes or another name
-    are a new one. Over PostgreSQL, with only the object store's PUT replaced."""
+    are a new one. Over PostgreSQL, with only the object store's PUT and link replaced."""
     from types import SimpleNamespace
 
     from nodes.agent.tool_execution import _execute_filesystem_tool
@@ -103,6 +103,7 @@ async def test_the_same_file_uploaded_again_is_the_resource_it_already_is(builde
         return files[path]
 
     monkeypatch.setattr(resource_store, "upload_bytes_to_r2_async", put)
+    monkeypatch.setattr(resource_store, "get_public_download_url", lambda key: f"https://files.test/{key}")
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: pool)
     node = SimpleNamespace(_active_agent=SimpleNamespace(_runtime=SimpleNamespace(read_file=read_file)),
                            workflow_id=workflow_id, user_id=USER, node_id="agent", conversation_id="ck:wf:agent:k")
