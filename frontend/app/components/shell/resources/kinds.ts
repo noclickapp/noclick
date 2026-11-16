@@ -135,7 +135,7 @@ export const KINDS: KindDef[] = [
         billed: 'item',
         platform: true,
         keywords: 'machine machines sandbox sandboxes compute computer computers server servers vm laptop',
-        manual: { label: 'Add your computer', short: 'Add', bought: false },
+        manual: { label: 'Add machine', short: 'Add', bought: false },
     },
     {
         id: 'secrets',

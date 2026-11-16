@@ -123,7 +123,7 @@ function List({ children }: { children: ReactNode }) {
 }
 
 /** One kind, empty: what it is and the ways to get one (by hand, where there is a way, or by asking NoClick). */
-function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; run: () => void; refusal?: string } }) {
+function EmptyKind({ kind, manual, ways }: { kind: KindDef; manual?: { label: string; run: () => void; refusal?: string }; ways?: ReactNode }) {
     const Icon = kind.icon;
     return (
         <div className="flex flex-col items-center px-6 py-16 text-center">
@@ -132,20 +132,22 @@ function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; 
             </span>
             <p className="mt-4 text-[15px] font-semibold text-foreground">No {kind.label.toLowerCase()} yet</p>
             <p className="mt-1 max-w-sm text-[14px] leading-relaxed text-muted-foreground">{kind.empty}</p>
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                {manual && (
-                    <button type="button" onClick={manual.run} disabled={!!manual.refusal} title={manual.refusal} className={BUTTON_PRIMARY}>
-                        <Plus className="h-4 w-4" />
-                        {manual.label}
-                    </button>
-                )}
-                {kind.ask && (
-                    <button type="button" onClick={() => askNoClick(kind.ask!)} className={cn('group', manual ? BUTTON_SECONDARY : BUTTON_PRIMARY)}>
-                        Ask NoClick
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                    </button>
-                )}
-            </div>
+            {ways ?? (
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+                    {manual && (
+                        <button type="button" onClick={manual.run} disabled={!!manual.refusal} title={manual.refusal} className={BUTTON_PRIMARY}>
+                            <Plus className="h-4 w-4" />
+                            {manual.label}
+                        </button>
+                    )}
+                    {kind.ask && (
+                        <button type="button" onClick={() => askNoClick(kind.ask!)} className={cn('group', manual ? BUTTON_SECONDARY : BUTTON_PRIMARY)}>
+                            Ask NoClick
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                        </button>
+                    )}
+                </div>
+            )}
             {manual?.refusal && <p className="mt-3 max-w-sm text-[13px] text-muted-foreground">{manual.refusal}</p>}
         </div>
     );
@@ -383,6 +385,8 @@ export function ResourcesView() {
         const error = errors[activeKind];
         // Made here, over its list (a skill, a memory, a computer of yours): it opens once it's made.
         const Create = params.get('new') === '1' ? platform?.Create?.[activeKind] : undefined;
+        const Ways = platform?.Empty?.[activeKind];
+        const Notice = platform?.Notice?.[activeKind];
         return (
             <PageFrame
                 title={kind.label}
@@ -400,6 +404,7 @@ export function ResourcesView() {
                     ) : undefined
                 }
             >
+                {Notice && <Notice />}
                 {loading ? (
                     <LoadingList />
                 ) : error ? (
@@ -416,7 +421,7 @@ export function ResourcesView() {
                         ))}
                     </List>
                 ) : (
-                    <EmptyKind kind={kind} manual={manualFor(kind.id)} />
+                    <EmptyKind kind={kind} manual={manualFor(kind.id)} ways={Ways && manualFor(kind.id) && !manualFor(kind.id)!.refusal ? <Ways onDone={(id) => go(activeKind, id)} /> : undefined} />
                 )}
                 {!loading && platform?.trash[activeKind]?.length ? (
                     <TrashSection entries={platform.trash[activeKind]!} now={now} onRestore={platform.restore} onPurge={platform.purge} />
