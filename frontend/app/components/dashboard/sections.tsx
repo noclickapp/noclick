@@ -874,6 +874,14 @@ const TRIGGER_LABEL: Record<TriggerSource, string> = {
     builder_event: 'Builder',
     agent_email_reply: 'Email reply',
     error_handler: 'Error handler',
+    phone_call: 'Phone call',
+    coordinator: 'Assistant',
+    agent_message: 'Message',
+    agent_text: 'Text',
+    agent_event: 'Trigger',
+    agent_schedule: 'Schedule',
+    agent_wakeup: 'Wake-up',
+    agent_test: 'Test run',
 };
 
 function runVerdict(status: RunStatus): VerdictStatus {

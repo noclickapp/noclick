@@ -38,7 +38,16 @@ export type TriggerSource =
     | 'shared_agent'
     | 'builder_event'
     | 'agent_email_reply'
-    | 'error_handler';
+    | 'error_handler'
+    | 'phone_call'
+    | 'coordinator'
+    // A hosted platform agent's turn, by what started it.
+    | 'agent_message'
+    | 'agent_text'
+    | 'agent_event'
+    | 'agent_schedule'
+    | 'agent_wakeup'
+    | 'agent_test';
 
 // ---------------------------------------------------------------------------
 // Attention — everything waiting on a human.

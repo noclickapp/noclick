@@ -540,6 +540,14 @@ TRIGGER_SOURCE_LABELS = {
     "email": "Inbound email",
     "mcp": "MCP call",
     "api": "API call",
+    "agent_turn": "Agent turn",
+    # A hosted platform agent's turn, by what started it.
+    "agent_message": "Message to an agent",
+    "agent_text": "Text, call or email to an agent",
+    "agent_event": "An agent's trigger",
+    "agent_schedule": "An agent's schedule",
+    "agent_wakeup": "An agent waking itself",
+    "agent_test": "An agent's test run",
 }
 
 
