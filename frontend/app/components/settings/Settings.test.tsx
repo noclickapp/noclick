@@ -54,7 +54,7 @@ function show(url: string, initialSection: SettingsSection = 'usage') {
                 path: '*',
                 element: (
                     <PhoneBar>
-                        <Settings initialSection={initialSection} hiddenSections={['credentials', 'published']} />
+                        <Settings initialSection={initialSection} hiddenSections={['credentials']} />
                         <Address />
                     </PhoneBar>
                 ),
@@ -131,12 +131,12 @@ describe('a jump to Settings', () => {
     };
 
     it('names the section it opens', () => {
-        expect(after({ tab: 'settings', section: 'billing' }).get('section')).toBe('billing');
+        expect(after({ tab: 'settings', section: 'notifications' }).get('section')).toBe('notifications');
         expect(after({ tab: 'settings', section: 'usage' }).get('section')).toBe('usage');
     });
 
     it('names none without one, so a phone opens the list', () => {
-        const params = after({ tab: 'settings' }, 'tab=settings&section=billing&orgTab=sso');
+        const params = after({ tab: 'settings' }, 'tab=settings&section=notifications&orgTab=sso');
         expect(params.get('tab')).toBe('settings');
         expect(params.has('section')).toBe(false);
         expect(params.has('orgTab')).toBe(false);
