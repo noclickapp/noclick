@@ -73,6 +73,25 @@ _status_cache: Optional[tuple[float, dict[str, str]]] = None
 # keeps its own cached map, and a move seen in one (a scan landing, WAHooks pushing WORKING) must not leave another
 # judging the connection by a map read before it. Outlives any map that could predate it.
 _STATUS_MOVED_TTL_S = 2 * _STATUS_CACHE_TTL_S
+# WAHooks' list never returns a stopped (deleted) connection, so an id it leaves out is read on its own, this many
+# at once, each given this long.
+_UNLISTED_READS = 8
+_UNLISTED_READ_TIMEOUT_S = 5
+
+
+class EndedConnection(NamedTuple):
+    """A connection WAHooks stopped (deleted). It never comes back: neither its QR nor a restart can revive it."""
+    reason: str = ""  # WAHooks' own words for why, when it recorded any
+    at: str = ""  # when, ISO 8601, when it recorded it
+
+
+# Stopped is final at WAHooks, so each process reads a stopped connection once.
+_ended: dict[str, EndedConnection] = {}
+
+
+def ended_connection(connection_id: str) -> Optional[EndedConnection]:
+    """What WAHooks said when it stopped this connection, once a status read has found it stopped."""
+    return _ended.get(connection_id)
 
 
 def _status_moved_key(connection_id: str) -> str:
@@ -100,6 +119,7 @@ async def connection_status_moved(connection_id: str) -> None:
     ever taken from WAHooks' list."""
     if _status_cache:
         _status_cache[1].pop(connection_id, None)  # a required id the map lacks is a miss
+    _ended.pop(connection_id, None)
     client = get_shared_redis()
     if client is None:
         return
@@ -113,8 +133,8 @@ async def get_connection_statuses(
     require: Optional[Iterable[str]] = None,
 ) -> Optional[dict[str, str]]:
     """connection_id → WAHooks session status ('connected', 'scan_qr',
-    'pending', 'failed', 'stopped') for the installation. None = unknown
-    (WAHooks unreachable/misconfigured) — callers must treat unknown as
+    'pending', 'failed', 'stopped', 'missing') for the installation. None =
+    unknown (WAHooks unreachable/misconfigured) — callers must treat unknown as
     healthy, never dead (non-definitive-signal doctrine).
 
     ``require``: the connection ids the caller is about to judge. A cached
@@ -122,13 +142,15 @@ async def get_connection_statuses(
     connection the cache predates, and serving that map would flag a just-
     connected credential "(disconnected)" for up to a minute. So is one that
     moved since the map was read (``connection_status_moved``): a re-scan's
-    session is in every container's map as the ``failed`` it was. Absence from
-    a FRESH list is the only definitive "gone"."""
+    session is in every container's map as the ``failed`` it was. A required id
+    a FRESH list leaves out is read on its own (``_read_unlisted``): the list
+    never returns a stopped connection. An id neither answers is absent from the
+    map: unknown, never dead."""
     global _status_cache
     now = time.monotonic()
+    required = list(dict.fromkeys(require or ()))
     if _status_cache and now - _status_cache[0] < _STATUS_CACHE_TTL_S:
         cached = _status_cache[1]
-        required = list(require or ())
         read_at = time.time() - (now - _status_cache[0])
         if all(cid in cached for cid in required) and not await _moved_since(required, read_at):
             return cached
@@ -149,8 +171,61 @@ async def get_connection_statuses(
         logger.warning(f"[WhatsAppQR] Connection status fetch failed: {e}")
         return None
     statuses = {c["id"]: c.get("status", "") for c in connections if c.get("id")}
+    if unlisted := [cid for cid in required if cid not in statuses]:
+        statuses.update(await _read_unlisted(api_key, unlisted))
     _status_cache = (now, statuses)
     return statuses
+
+
+def _stop_record(connection: dict[str, Any]) -> EndedConnection:
+    """Why and when WAHooks stopped a connection, from its ``statusReason`` (a JSON string)."""
+    import json
+
+    try:
+        recorded = json.loads(connection.get("statusReason") or "{}")
+    except (TypeError, ValueError):
+        recorded = {}
+    if not isinstance(recorded, dict):
+        recorded = {}
+    return EndedConnection(reason=str(recorded.get("reason") or ""), at=str(recorded.get("at") or ""))
+
+
+async def _read_unlisted(api_key: str, connection_ids: list[str]) -> dict[str, str]:
+    """The statuses of connections WAHooks' list left out, each read on its
+    own: ``stopped`` (WAHooks deleted it), ``missing`` (WAHooks answered 404:
+    it has no such connection), or whatever else it says. Anything else (no
+    answer, an error, another account's connection) answers nothing for that
+    id: unknown, never dead."""
+    from wahooks import WAHooks, WAHooksError
+
+    def _read(connection_id: str) -> Optional[str]:
+        if connection_id in _ended:
+            return "stopped"
+        try:
+            with WAHooks(api_key=api_key) as client:
+                connection = client.get_connection(connection_id)
+        except WAHooksError as e:
+            if e.status_code == 404:
+                return "missing"
+            logger.warning(f"[WhatsAppQR] Connection {connection_id} unreadable ({e.status_code}): {e}")
+            return None
+        status = str(connection.get("status") or "")
+        if status == "stopped":
+            _ended[connection_id] = _stop_record(connection)
+        return status or None
+
+    gate = asyncio.Semaphore(_UNLISTED_READS)
+
+    async def read(connection_id: str) -> Optional[str]:
+        async with gate:
+            try:
+                return await asyncio.wait_for(asyncio.to_thread(_read, connection_id), _UNLISTED_READ_TIMEOUT_S)
+            except Exception as e:
+                logger.warning(f"[WhatsAppQR] Connection {connection_id} unreadable: {type(e).__name__}: {e}")
+                return None
+
+    answers = await asyncio.gather(*(read(cid) for cid in connection_ids))
+    return {cid: status for cid, status in zip(connection_ids, answers) if status}
 
 
 async def session_moved(pool, credential_id: str, *, up: bool) -> None:
@@ -197,10 +272,8 @@ async def dead_session_status(connection_id: str) -> Optional[str]:
     connected/unknown. Unknown (WAHooks unreachable) is NEVER dead — the
     non-definitive-signal doctrine every consumer of this rule must share."""
     statuses = await get_connection_statuses(require=(connection_id,))
-    if statuses is None:
-        return None
-    status = statuses.get(connection_id, "missing")
-    return None if status == "connected" else status
+    status = (statuses or {}).get(connection_id)
+    return None if status in (None, "connected") else status
 
 
 class QrAnswer(NamedTuple):
@@ -284,8 +357,8 @@ async def _reconnect_qr(
     pool, api_key: str, owner_id: str, credential_id: str
 ) -> Optional[dict[str, Any]]:
     """QR for re-scanning INTO an existing credential's own connection, or
-    None to fall through to a fresh scan (finalize's same-phone rebind then
-    repairs the credential in place). A failed session is restarted first, so
+    None to fall through to a fresh scan (finalize then rebinds the credential
+    to it). A failed session is restarted first, so
     the scan relinks the same session and finalize resolves it as the
     idempotent own-binding success — credential id and webhooks survive untouched."""
     from wahooks import WAHooks
@@ -310,7 +383,7 @@ async def _reconnect_qr(
     if not answer.qr:
         logger.warning(
             f"[WhatsAppQR] Reconnect via connection {own_conn_id} yielded no QR ({answer.why}) — "
-            f"falling back to a fresh scan (finalize rebinds by phone)"
+            f"falling back to a fresh scan (finalize rebinds credential {credential_id} to it)"
         )
         await _release(owner_id, own_conn_id)
         return None
@@ -429,9 +502,10 @@ async def start_qr_connection(
     idempotent own-binding success, so the credential id (and its webhooks,
     workflows) survives untouched. Minting a fresh connection during reconnect
     can create duplicate credentials and device links, so reconnect must reuse
-    the existing binding. If the old connection is gone at WAHooks, falls
-    through to a fresh scan — finalize's same-phone rebind then repairs the
-    credential in place.
+    the existing binding. A connection WAHooks stopped can't be restarted, so
+    then the scan is of a fresh connection, remembered as this credential's
+    re-scan: finalize rebinds THIS credential to it (``_rebind_target``) and
+    carries its triggers' webhooks over, even before WAHooks knows the phone.
 
     A new connection is billed by the hour once scanned, so it needs the
     owner's credit gate first; a re-scan of an existing one starts no new
@@ -466,6 +540,7 @@ async def start_qr_connection(
     ):
         return reconnected
     if shown := await _still_shown(pool, api_key, owner_id):
+        await _remember_reconnect(shown["connection_id"], reconnect_credential_id)
         return shown
 
     def _create_fresh_connection():
@@ -504,6 +579,7 @@ async def start_qr_connection(
         return {"success": False, "message": NO_QR_MESSAGE}
 
     await _remember_shown(owner_id, connection_id)
+    await _remember_reconnect(connection_id, reconnect_credential_id)
     logger.info(f"[WhatsAppQR] QR code ready for owner {owner_id}, connection {connection_id}")
     return {
         "success": True,
@@ -585,6 +661,38 @@ async def _recycled_qr(
 
 def _shown_key(owner_id: str) -> str:
     return f"whatsapp:qr:shown:{owner_id}"
+
+
+def _reconnect_key(connection_id: str) -> str:
+    return f"whatsapp:qr:reconnect:{connection_id}"
+
+
+async def _remember_reconnect(connection_id: str, credential_id: Optional[str]) -> None:
+    """The credential a scan of this fresh connection re-scans (its own
+    connection couldn't show a QR), for finalize to rebind; a start that
+    re-scans nothing clears it. Without Redis, finalize rebinds by phone alone."""
+    client = get_shared_redis()
+    if client is None:
+        return
+    try:
+        if credential_id:
+            await client.set(_reconnect_key(connection_id), credential_id, ex=QR_RESERVATION_TTL_S)
+        else:
+            await client.delete(_reconnect_key(connection_id))
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Re-scan mark for connection {connection_id} not written: {e}")
+
+
+async def _reconnect_target(connection_id: str) -> Optional[str]:
+    client = get_shared_redis()
+    if client is None:
+        return None
+    try:
+        value = await client.get(_reconnect_key(connection_id))
+    except Exception as e:
+        logger.warning(f"[WhatsAppQR] Re-scan mark for connection {connection_id} unreadable: {e}")
+        return None
+    return None if value is None else _text(value)
 
 
 async def _remember_shown(owner_id: str, connection_id: str) -> None:
@@ -672,6 +780,23 @@ async def _discard(pool, connection_id: str) -> None:
             f"[WhatsAppQR] Connection {connection_id} not deleted after its flow failed ({e}); "
             f"left for the orphan sweep"
         )
+
+
+async def _rebind_target(conn, owner_id: str, phone_number: str, reconnecting: Optional[str]):
+    """The owner's credential a scanned phone repairs: the one this scan
+    re-scans (``reconnecting``) unless WAHooks reports another number than the
+    one it holds, else the newest one holding the scanned number."""
+    from repositories.credentials import listed_to_owner_sql
+
+    return await conn.fetchrow(
+        f"""SELECT id, name, metadata FROM credentials
+           WHERE credential_type = 'whatsapp_qr' AND owner_id = $1 AND {listed_to_owner_sql('credentials')}
+             AND ((NULLIF($2, '') IS NOT NULL AND metadata->>'phone_number' = $2)
+                  OR (id::text = $3 AND (NULLIF($2, '') IS NULL
+                                         OR COALESCE(metadata->>'phone_number', '') IN ('', $2))))
+           ORDER BY id::text = COALESCE($3, '') DESC, updated_at DESC LIMIT 1""",
+        owner_id, phone_number or "", reconnecting,
+    )
 
 
 async def finalize_qr_connection(
@@ -805,24 +930,18 @@ async def _bind_scanned_connection(
                     "message": "This WhatsApp connection is already linked to a credential.",
                 }
 
-            # Same-owner same-phone REBIND: a fresh scan for a phone that
-            # already has a credential repairs that credential in place
-            # instead of minting a duplicate. Duplicate bindings can create
-            # multiple provider-side device links. The newest
-            # row wins; its replaced connection is deleted best-effort (the
-            # nightly orphan sweep backstops a failed delete).
-            # Rows held for someone else are never rebound: that would merge
-            # this scan into a credential its holder alone uses.
-            if phone_number and not held_for_someone_else:
-                from repositories.credentials import listed_to_owner_sql
-
-                prior = await conn.fetchrow(
-                    f"""SELECT id, name, metadata FROM credentials
-                       WHERE credential_type = 'whatsapp_qr' AND owner_id = $1
-                         AND metadata->>'phone_number' = $2 AND {listed_to_owner_sql('credentials')}
-                       ORDER BY updated_at DESC LIMIT 1""",
-                    owner_id, phone_number,
-                )
+            # Same-owner REBIND: a fresh scan for a phone that already has a
+            # credential repairs that credential in place instead of minting a
+            # duplicate (duplicate bindings can create multiple provider-side
+            # device links), and so does a re-scan of a credential whose own
+            # connection WAHooks stopped, even before WAHooks knows the phone.
+            # Its replaced connection is deleted best-effort (the nightly orphan
+            # sweep backstops a failed delete). Rows held for someone else are
+            # never rebound: that would merge this scan into a credential its
+            # holder alone uses.
+            target = None if held_for_someone_else else await _reconnect_target(connection_id)
+            if (phone_number or target) and not held_for_someone_else:
+                prior = await _rebind_target(conn, owner_id, phone_number, target)
                 if prior:
                     from utils.credentials import credential_metadata
 
@@ -835,9 +954,10 @@ async def _bind_scanned_connection(
 
                     rows_updated, persist_err = await update_credential_data_detailed(
                         str(prior["id"]), owner_id, credential_data,
+                        # A number WAHooks hasn't resolved yet never blanks the one on record.
                         metadata_updates={
                             "connection_id": connection_id,
-                            "phone_number": phone_number,
+                            **({"phone_number": phone_number} if phone_number else {}),
                         },
                         pool=pool,
                     )

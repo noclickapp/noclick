@@ -359,3 +359,87 @@ class TestFinalizeSamePhoneRebind:
         row = await postgres_db.fetchrow("SELECT credential, metadata FROM credentials WHERE id = $1", own)
         assert row["credential"] == "enc-old" and row["metadata"]["connection_id"] == "conn-own"
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+
+@pytest.mark.asyncio
+class TestRescanOfAStoppedConnection:
+    """WAHooks stopped (deleted) the credential's connection: no QR or restart revives it, so the re-scan shows a
+    fresh connection's QR and finalize rebinds THIS credential to it, carrying its triggers' webhooks over."""
+
+    TRIGGER = {"id": "wh-old", "url": "https://wh-1.hooks.example.test", "events": ["message", "session.status"]}
+
+    async def _rescan(self, postgres_db, stub, owner, cred_id, *, phone):
+        start = await start_qr_connection(
+            _PoolShim(postgres_db), owner_id=str(owner), reconnect_credential_id=str(cred_id))
+        assert start["success"] is True and start["connection_id"] == "conn-virgin"
+        assert stub["restarted"] == [] and "conn-stopped" not in stub["get_qr"]
+        stub["connections"]["conn-virgin"] = {"status": "connected", "phoneNumber": phone}
+
+        async def _delete(connection_id):
+            stub["seq"].append(("delete", connection_id))
+
+        with patch("utils.wahooks_connections.delete_wahooks_connection", AsyncMock(side_effect=_delete)), \
+             patch("utils.credentials.get_encryption", return_value=_StubEncryption()):
+            return await finalize_qr_connection(
+                _PoolShim(postgres_db), owner_id=str(owner), connection_id="conn-virgin",
+                user_tier="plus", encryption=_StubEncryption(),
+            )
+
+    def _stopped(self, stub):
+        stub["connections"]["conn-stopped"] = {"status": "stopped", "phoneNumber": "12025550105"}
+        stub["webhooks"]["conn-stopped"] = [dict(self.TRIGGER)]
+
+    async def test_rescan_rebinds_the_credential_before_wahooks_knows_the_phone(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-stopped", phone="12025550105")
+        self._stopped(stub_wahooks_reconnect)
+
+        result = await self._rescan(postgres_db, stub_wahooks_reconnect, owner, cred_id, phone="")
+
+        assert result["success"] is True and result["created"] is False
+        assert result["credential_id"] == str(cred_id)
+        row = await postgres_db.fetchrow("SELECT credential, metadata FROM credentials WHERE id = $1", cred_id)
+        assert row["credential"] == "enc:conn-virgin"
+        assert row["metadata"]["connection_id"] == "conn-virgin"
+        assert row["metadata"]["phone_number"] == "12025550105"  # not blanked by a number not resolved yet
+        # The trigger's webhook moves to the new connection before the stopped one is deleted.
+        assert [w["url"] for w in stub_wahooks_reconnect["webhooks"]["conn-virgin"]] == [self.TRIGGER["url"]]
+        assert stub_wahooks_reconnect["seq"] == [("create_webhook", "conn-virgin"), ("delete", "conn-stopped")]
+        assert await postgres_db.fetchval(
+            "SELECT count(*) FROM credentials WHERE credential_type = 'whatsapp_qr'") == 1
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_rescan_repairs_the_credential_asked_for_not_a_newer_one_with_the_number(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-stopped", phone="12025550105")
+        newer = await _seed_credential(postgres_db, owner, "conn-other", phone="12025550105")
+        await postgres_db.execute(
+            "UPDATE credentials SET updated_at = now() + interval '1 hour' WHERE id = $1", newer)
+        self._stopped(stub_wahooks_reconnect)
+
+        result = await self._rescan(postgres_db, stub_wahooks_reconnect, owner, cred_id, phone="12025550105")
+
+        assert result["credential_id"] == str(cred_id)
+        assert (await postgres_db.fetchrow(
+            "SELECT metadata FROM credentials WHERE id = $1", newer))["metadata"]["connection_id"] == "conn-other"
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
+
+    async def test_a_rescan_with_another_phone_never_moves_the_credential_to_that_number(
+        self, postgres_db, fake_redis, stub_wahooks_reconnect  # noqa: F811
+    ):
+        owner = await _seed_user(postgres_db)
+        cred_id = await _seed_credential(postgres_db, owner, "conn-stopped", phone="12025550105")
+        self._stopped(stub_wahooks_reconnect)
+
+        result = await self._rescan(postgres_db, stub_wahooks_reconnect, owner, cred_id, phone="12025550107")
+
+        assert result["success"] is True and result["created"] is True
+        assert result["credential_id"] != str(cred_id)
+        row = await postgres_db.fetchrow("SELECT metadata FROM credentials WHERE id = $1", cred_id)
+        assert row["metadata"]["connection_id"] == "conn-stopped"
+        assert "conn-virgin" not in stub_wahooks_reconnect["webhooks"]
+        await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")

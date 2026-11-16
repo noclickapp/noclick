@@ -35,9 +35,39 @@ async def test_statuses_map_to_health_verdicts():
     assert health["cred-dead"].status == "failed"
     # The hint must steer recovery toward re-scan of the SAME credential.
     assert "do not create a new credential" in health["cred-dead"].hint
-    # Absent from a FRESH WAHooks list = definitively gone.
-    assert health["cred-gone"].status == "missing"
-    assert health["cred-gone"].healthy is False
+    # The seam reads an id its list leaves out on its own; one it still has no
+    # answer for is unknown, never dead.
+    assert "cred-gone" not in health
+
+
+@pytest.mark.asyncio
+async def test_a_link_whatsapp_closed_days_ago_is_dead_and_says_when_and_why(monkeypatch):
+    """WAHooks stops (deletes) a connection for good and its list never returns it again; the per-id read finds it
+    stopped, and the owner reads when it closed and why, in words that fit a link that died days ago."""
+    from utils import whatsapp_qr
+
+    monkeypatch.setattr(whatsapp_qr, "_ended", {
+        "c1": whatsapp_qr.EndedConnection("removed: logged out on WhatsApp", "2026-11-09T06:12:00.000Z"),
+        "c2": whatsapp_qr.EndedConnection("removed: stale duplicate of a number working on another connection",
+                                          "2026-11-09T06:12:00.000Z"),
+    })
+    rows = [_qr_row("cred-out", "c1"), _qr_row("cred-dup", "c2"), _qr_row("cred-404", "c3")]
+    with patch("utils.whatsapp_qr.get_connection_statuses",
+               return_value={"c1": "stopped", "c2": "stopped", "c3": "missing"}):
+        health = await get_credential_health(rows)
+
+    out = health["cred-out"]
+    assert out.status == "stopped" and out.healthy is False
+    assert "closed on 9 November 2026 after WhatsApp logged the phone out" in out.hint
+    assert "can't come back on its own" in out.hint
+    assert "Re-scan the QR code for THIS credential with the same phone" in out.hint
+    assert "Do not create a new credential" in out.hint
+    # A duplicate's number is live on another link: re-scanning would add a second one.
+    assert "use that one here instead" in health["cred-dup"].hint
+    assert "logged the phone out" not in health["cred-dup"].hint
+    # WAHooks has no record at all: dead, with no date to give.
+    assert health["cred-404"].healthy is False
+    assert health["cred-404"].hint.startswith("This WhatsApp phone link was closed, and it can't come back")
 
 
 @pytest.mark.asyncio

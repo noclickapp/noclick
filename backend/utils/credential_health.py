@@ -80,6 +80,35 @@ _RECONNECT_HINT = (
 )
 
 
+_RESCAN_ADVICE = (
+    "Re-scan the QR code for THIS credential with the same phone to restore it. Do not create a new "
+    "credential: repeated fresh scans can get all of the phone's links logged out by WhatsApp."
+)
+
+
+def _ended_link_hint(connection_id: str) -> str:
+    """The hint for a phone link WAHooks closed for good, saying when and, in plain words, why."""
+    from datetime import datetime
+
+    from utils.whatsapp_qr import EndedConnection, ended_connection
+
+    ended = ended_connection(connection_id) or EndedConnection()
+    try:
+        day = datetime.fromisoformat(ended.at.replace("Z", "+00:00"))
+        when = f" on {day.day} {day:%B %Y}"
+    except ValueError:
+        when = ""
+    reason = ended.reason.lower()
+    if "duplicate" in reason:
+        return (
+            f"This WhatsApp phone link was closed{when} because the same number was linked again on another "
+            "connection, and it can't come back on its own. If another of your WhatsApp credentials holds this "
+            "number and is connected, use that one here instead. Otherwise: " + _RESCAN_ADVICE
+        )
+    why = " after WhatsApp logged the phone out" if ("logged out" in reason or "no linked device" in reason) else ""
+    return f"This WhatsApp phone link was closed{when}{why}, and it can't come back on its own. " + _RESCAN_ADVICE
+
+
 async def _whatsapp_qr_health(rows: Sequence[Any]) -> Dict[str, CredentialHealth]:
     from utils.whatsapp_qr import get_connection_statuses
 
@@ -95,16 +124,16 @@ async def _whatsapp_qr_health(rows: Sequence[Any]) -> Dict[str, CredentialHealth
 
     out: Dict[str, CredentialHealth] = {}
     for cred_id, conn_id in bound.items():
-        if not conn_id:
-            continue  # legacy row without a connection binding — unknown, not dead
-        # Absent from a FRESH WAHooks list = the connection is definitively gone.
-        status = statuses.get(conn_id, "missing")
+        status = statuses.get(conn_id) if conn_id else None
+        if status is None:
+            continue  # no binding, or WAHooks answered nothing for it: unknown, not dead
         healthy = status == "connected"
-        out[cred_id] = CredentialHealth(
-            status=status,
-            healthy=healthy,
-            hint=None if healthy else _RECONNECT_HINT.format(status=status),
-        )
+        hint = None
+        if not healthy:
+            # stopped/missing: WAHooks deleted it or has no such connection; it never comes back.
+            hint = (_ended_link_hint(conn_id) if status in ("stopped", "missing")
+                    else _RECONNECT_HINT.format(status=status))
+        out[cred_id] = CredentialHealth(status=status, healthy=healthy, hint=hint)
     return out
 
 

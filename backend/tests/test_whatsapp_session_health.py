@@ -436,11 +436,86 @@ async def test_unseen_connection_forces_a_refetch_instead_of_missing(status_cach
     assert len(status_cache) == 1
 
 
+class _ReadsOneByOne(_ListClient):
+    """WAHooks' list (which never returns a stopped connection) and its per-id read, by connection."""
+
+    answers: dict = {}
+    reads: list = []
+
+    def get_connection(self, connection_id):
+        from wahooks import WAHooksError
+
+        self.reads.append(connection_id)
+        answer = self.answers[connection_id]
+        if isinstance(answer, Exception):
+            raise answer
+        if isinstance(answer, int):
+            raise WAHooksError("Connection not found" if answer == 404 else "Bad gateway", answer)
+        return answer
+
+
+@pytest.fixture
+def unlisted(monkeypatch, status_cache):
+    """The list answers conn-1 only; ``answers`` says what the per-id read answers for the rest."""
+    from utils import whatsapp_qr
+
+    monkeypatch.setattr(whatsapp_qr, "_ended", {})
+    _ReadsOneByOne.answers, _ReadsOneByOne.reads = {}, []
+    live = [{"id": "conn-1", "status": "connected"}]
+    monkeypatch.setattr("wahooks.WAHooks", lambda api_key: _ReadsOneByOne(live, status_cache))
+    return _ReadsOneByOne
+
+
 @pytest.mark.asyncio
-async def test_absent_from_a_fresh_list_is_still_definitively_gone(status_cache):
+async def test_a_connection_the_list_leaves_out_is_read_on_its_own_and_stopped_is_dead(unlisted):
+    """2026-11-16: the list never returns a stopped connection, so a credential on one read "missing"; WAHooks' own
+    read of the connection says it was stopped, and why."""
+    from utils import whatsapp_qr
+    from utils.credential_health import get_credential_health
     from utils.whatsapp_qr import dead_session_status
 
+    unlisted.answers["conn-stopped"] = {
+        "id": "conn-stopped", "status": "stopped",
+        "statusReason": '{"via":"migration","reason":"removed: logged out on WhatsApp","at":"2026-11-09T06:12:00Z"}',
+    }
+    assert await dead_session_status("conn-stopped") == "stopped"
+    assert whatsapp_qr.ended_connection("conn-stopped") == whatsapp_qr.EndedConnection(
+        "removed: logged out on WhatsApp", "2026-11-09T06:12:00Z")
+    [verdict] = (await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-stopped"}}])).values()
+    assert not verdict.healthy and verdict.status == "stopped" and "9 November 2026" in verdict.hint
+    # Stopped is final: the merged map answers from the cache, and a refetched list never reads it again.
+    assert unlisted.reads == ["conn-stopped"]
+    whatsapp_qr._status_cache = None
+    assert await dead_session_status("conn-stopped") == "stopped" and unlisted.reads == ["conn-stopped"]
+
+
+@pytest.mark.asyncio
+async def test_a_connection_wahooks_has_no_record_of_is_dead(unlisted):
+    from utils.whatsapp_qr import dead_session_status
+
+    unlisted.answers["conn-deleted"] = 404
     assert await dead_session_status("conn-deleted") == "missing"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("answer", [503, 403, ConnectionError("WAHooks unreachable")])
+async def test_an_unlisted_connection_that_cant_be_read_is_unknown_never_dead(unlisted, answer):
+    from utils.credential_health import get_credential_health
+    from utils.whatsapp_qr import dead_session_status
+
+    unlisted.answers["conn-x"] = answer
+    assert await dead_session_status("conn-x") is None
+    assert await get_credential_health(
+        [{"id": "cred-1", "credential_type": "whatsapp_qr", "metadata": {"connection_id": "conn-x"}}]) == {}
+
+
+@pytest.mark.asyncio
+async def test_an_unlisted_connection_wahooks_says_is_up_is_healthy(unlisted):
+    from utils.whatsapp_qr import dead_session_status
+
+    unlisted.answers["conn-late"] = {"id": "conn-late", "status": "connected"}
+    assert await dead_session_status("conn-late") is None
 
 
 @pytest.fixture
@@ -666,6 +741,8 @@ async def test_sweep_alerts_only_referenced_dead_credentials(monkeypatch):
          "metadata": {"connection_id": "conn-unused"}},
         {"id": "cred-rescanning", "owner_id": "u1", "organization_id": None, "credential_type": "whatsapp_qr",
          "metadata": {"connection_id": "conn-rescan"}},
+        {"id": "cred-unknown", "owner_id": "u1", "organization_id": None, "credential_type": "whatsapp_qr",
+         "metadata": {"connection_id": "conn-unreadable"}},
         {"id": "cred-discord-gone", "owner_id": "u2", "organization_id": None, "credential_type": "discord_bot_install",
          "metadata": {"guild_id": "g-gone", "guild_name": "Old Server"}},
         {"id": "cred-discord-ok", "owner_id": "u2", "organization_id": None, "credential_type": "discord_bot_install",
@@ -691,11 +768,13 @@ async def test_sweep_alerts_only_referenced_dead_credentials(monkeypatch):
     monkeypatch.setenv("DISCORD_BOT_TOKEN", "platform-token")
     monkeypatch.setattr("utils.credential_health._probe_discord_guild", probe)
     # The sweep reads the SAME cached status seam as every other health
-    # consumer — one dead/alive rule everywhere. conn-unused absent → 'missing';
-    # a bound connection mid-rescan holds a reservation and is not dead.
+    # consumer — one dead/alive rule everywhere. conn-unused was stopped by
+    # WAHooks; conn-unreadable got no answer (unknown, never dead); a bound
+    # connection mid-rescan holds a reservation and is not dead.
     monkeypatch.setattr(
         "utils.whatsapp_qr.get_connection_statuses",
-        AsyncMock(return_value={"conn-dead": "failed", "conn-live": "connected", "conn-rescan": "scan_qr"}),
+        AsyncMock(return_value={"conn-dead": "failed", "conn-live": "connected", "conn-rescan": "scan_qr",
+                                "conn-unused": "stopped"}),
     )
     monkeypatch.setattr(
         "utils.wahooks_connections._has_active_reservation",
@@ -721,3 +800,43 @@ async def test_sweep_alerts_only_referenced_dead_credentials(monkeypatch):
     assert discord_call.kwargs["provider_label"] == "Discord"
     assert discord_call.kwargs["session_status"] == "removed"
     assert "Old Server" in discord_call.kwargs["hint"] and "Install bot" in discord_call.kwargs["hint"]
+
+
+@pytest.mark.asyncio
+async def test_sweep_tells_the_owner_of_a_link_closed_days_ago_to_rescan(monkeypatch, unlisted):
+    """WAHooks stopped the connection days ago and its list stopped returning it: the daily sweep reads it on its
+    own and the owner's email says it was closed, when and why, and to re-scan this same credential."""
+    from utils.credential_health import alert_dead_credentials
+
+    unlisted.answers["conn-stopped"] = {
+        "id": "conn-stopped", "status": "stopped",
+        "statusReason": '{"via":"migration","reason":"removed: logged out on WhatsApp","at":"2026-11-09T06:12:00Z"}',
+    }
+    conn = MagicMock()
+    conn.fetch = AsyncMock(return_value=[
+        {"id": "cred-closed", "owner_id": "u1", "organization_id": None, "credential_type": "whatsapp_qr",
+         "metadata": {"connection_id": "conn-stopped"}},
+    ])
+    acquire = MagicMock()
+    acquire.__aenter__ = AsyncMock(return_value=conn)
+    acquire.__aexit__ = AsyncMock(return_value=False)
+    pool = MagicMock()
+    pool.acquire = MagicMock(return_value=acquire)
+
+    async def refs(self, credential_id, owner_id, org_id):
+        return [{"workflow_id": "wf-1", "workflow_name": "Shop bot"}]
+
+    monkeypatch.setattr("repositories.credentials.CredentialsRepo.list_workflows_referencing_credential", refs)
+    monkeypatch.setattr("utils.notifications._fetch_row", AsyncMock(
+        return_value={"owner_id": "u1", "name": "WhatsApp (Shop)", "credential_type": "whatsapp_qr"}))
+    sent = AsyncMock(return_value=True)
+    monkeypatch.setattr("utils.notifications.send_system_alert", sent)
+
+    assert (await alert_dead_credentials(pool))["alerted"] == ["cred-closed"]
+    assert sent.await_args.args == ("u1", "channel_disconnected")
+    email = sent.await_args.kwargs
+    assert email["dedupe_key"] == "channel_disconnected:cred-closed"
+    assert 'Your WhatsApp connection "WhatsApp (Shop)" has disconnected (status stopped).' in email["text_body"]
+    assert ("To fix it: This WhatsApp phone link was closed on 9 November 2026 after WhatsApp logged the phone "
+            "out, and it can't come back on its own. Re-scan the QR code for THIS credential with the same phone"
+            ) in email["text_body"]
