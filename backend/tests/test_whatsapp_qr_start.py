@@ -9,7 +9,8 @@ while the session's worker starts, 404 for a connection it doesn't have;
 ``GET /connections/{id}`` answers the row (``status`` scan_qr / pending /
 failed / connected / stopped = deleted, ``phoneNumber`` once a phone linked);
 ``POST /connections/{id}/restart`` fully resets a session to scan_qr;
-``POST /connections`` answers the new connection with no QR.
+``POST /connections`` answers the new connection with no QR; ``GET
+/connections/{id}/webhooks`` lists the webhook configs a delete drops first.
 
 Before: a pending answer was a failure with nothing logged, every fetched QR was
 read from a ``qr`` key the API never sends (so a fresh connection and a
@@ -62,6 +63,11 @@ def wahooks(monkeypatch):
         yield api
 
 
+def _no_webhooks(api, connection_id):
+    """Its webhook configs: none, since a QR start never registers one."""
+    return api.get(f"/connections/{connection_id}/webhooks").mock(return_value=httpx.Response(200, json=[]))
+
+
 async def _start(postgres_db, owner=None, **kwargs):
     return await start_qr_connection(_PoolShim(postgres_db), owner_id=owner or str(uuid.uuid4()), **kwargs)
 
@@ -108,6 +114,7 @@ async def test_no_qr_in_time_says_why_logs_it_and_deletes_the_connection(
         return_value=httpx.Response(201, json={"id": "conn-stuck", "status": "pending", "qr": None}))
     wahooks.get("/connections/conn-stuck").mock(return_value=_row("conn-stuck", "pending"))
     wahooks.get("/connections/conn-stuck/qr").mock(return_value=STARTING)
+    listed = _no_webhooks(wahooks, "conn-stuck")
     deleted = wahooks.delete("/connections/conn-stuck").mock(return_value=httpx.Response(200, json={}))
     with caplog.at_level(logging.WARNING, logger="utils.whatsapp_qr"):
         result = await _start(postgres_db)
@@ -115,8 +122,8 @@ async def test_no_qr_in_time_says_why_logs_it_and_deletes_the_connection(
     assert "try again" in result["message"]
     [record] = [r for r in caplog.records if "No QR" in r.getMessage()]
     assert "conn-stuck" in record.getMessage() and "Worker is starting up" in record.getMessage()
-    # Never handed to the next start: it's gone.
-    assert deleted.call_count == 1
+    # Never handed to the next start: it's gone, its webhook configs looked up first.
+    assert listed.call_count == 1 and deleted.call_count == 1
 
 
 async def test_a_connection_a_credential_binds_is_never_deleted(postgres_db, fake_redis, funded_owner, wahooks,
@@ -127,12 +134,13 @@ async def test_a_connection_a_credential_binds_is_never_deleted(postgres_db, fak
         return_value=httpx.Response(201, json={"id": "conn-mine", "status": "pending", "qr": None}))
     wahooks.get("/connections/conn-mine").mock(return_value=_row("conn-mine", "pending"))
     wahooks.get("/connections/conn-mine/qr").mock(return_value=STARTING)
+    listed = _no_webhooks(wahooks, "conn-mine")
     deleted = wahooks.delete("/connections/conn-mine").mock(return_value=httpx.Response(200, json={}))
     try:
         result = await _start(postgres_db, str(owner))
     finally:
         await postgres_db.execute("DELETE FROM credentials WHERE credential_type = 'whatsapp_qr'")
-    assert result["success"] is False and deleted.call_count == 0
+    assert result["success"] is False and listed.call_count == deleted.call_count == 0
 
 
 async def test_wahooks_not_answering_is_a_failure_with_its_reason(postgres_db, fake_redis, funded_owner, wahooks,
@@ -210,10 +218,11 @@ async def test_a_422_from_a_session_mid_restart_is_waited_out(postgres_db, fake_
     wahooks.get("/connections/conn-cycling").mock(return_value=_row("conn-cycling", "scan_qr"))
     qr = wahooks.get("/connections/conn-cycling/qr").mock(
         side_effect=[NOT_AS_EXPECTED, NOT_AS_EXPECTED, STARTING, _qr("QR-CYCLING")])
+    listed = _no_webhooks(wahooks, "conn-cycling")
     deleted = wahooks.delete("/connections/conn-cycling")
     result = await _start(postgres_db)
     assert result["success"] is True and result["qr_code"] == "QR-CYCLING"
-    assert qr.call_count == 4 and deleted.call_count == 0
+    assert qr.call_count == 4 and listed.call_count == deleted.call_count == 0
 
 
 async def test_get_or_create_tripping_on_a_session_mid_restart_mints_a_fresh_connection(
@@ -253,6 +262,7 @@ async def _failed_first_scan(postgres_db, wahooks, owner):
     return {
         "qr_a": wahooks.get("/connections/conn-a/qr"),
         "restart_a": wahooks.post("/connections/conn-a/restart"),
+        "listed_a": _no_webhooks(wahooks, "conn-a"),
         "deleted_a": wahooks.delete("/connections/conn-a").mock(return_value=httpx.Response(200, json={})),
     }
 
@@ -266,7 +276,7 @@ async def test_a_retry_after_the_status_poll_saw_the_scan_fail_starts_on_another
         _PoolShim(postgres_db), owner_id=owner, connection_id="conn-a", user_tier="free", encryption=None)
     assert poll["success"] is False and poll["status"] == "error"
     # Let go of and deleted, so nothing hands it out again.
-    assert routes["deleted_a"].call_count == 1
+    assert routes["listed_a"].call_count == routes["deleted_a"].call_count == 1
     assert fake_redis.store.get("whatsapp:qr:reserved:conn-a") is None
     assert fake_redis.store.get(f"whatsapp:qr:shown:{owner}") is None
 
@@ -285,7 +295,7 @@ async def test_a_retry_never_reshows_a_connection_whose_session_failed(postgres_
     retry = await _start(postgres_db, owner)
     assert retry["success"] is True and retry["connection_id"] == "conn-b" and retry["qr_code"] == "QR-B"
     assert routes["qr_a"].call_count == 0 and routes["restart_a"].call_count == 0
-    assert routes["deleted_a"].call_count == 1
+    assert routes["listed_a"].call_count == routes["deleted_a"].call_count == 1
     assert fake_redis.store.get("whatsapp:qr:reserved:conn-a") is None
     assert fake_redis.store[f"whatsapp:qr:shown:{owner}"] == b"conn-b"
 
@@ -303,6 +313,7 @@ async def test_a_recycled_connection_holding_a_whatsapp_login_is_never_shown(
     row = wahooks.get("/connections/conn-linked").mock(return_value=_row("conn-linked", status, phone))
     restart = wahooks.post("/connections/conn-linked/restart")
     linked_qr = wahooks.get("/connections/conn-linked/qr")
+    listed = _no_webhooks(wahooks, "conn-linked")
     deleted = wahooks.delete("/connections/conn-linked")
     wahooks.post("/connections").mock(return_value=httpx.Response(201, json={"id": "conn-fresh", "status": "pending"}))
     wahooks.get("/connections/conn-fresh/qr").mock(return_value=_qr("QR-FRESH"))
@@ -311,7 +322,7 @@ async def test_a_recycled_connection_holding_a_whatsapp_login_is_never_shown(
 
     assert result["success"] is True and result["connection_id"] == "conn-fresh" and result["qr_code"] == "QR-FRESH"
     assert "QR-LINKED" not in str(result)
-    assert restart.call_count == linked_qr.call_count == deleted.call_count == 0
+    assert restart.call_count == linked_qr.call_count == listed.call_count == deleted.call_count == 0
     assert fake_redis.store.get("whatsapp:qr:reserved:conn-linked") is None
 
     row.mock(return_value=_row("conn-linked", "connected", "15550100001"))
