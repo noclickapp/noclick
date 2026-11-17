@@ -300,6 +300,11 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
     config directory is left alone, so the CLI the operator is already signed
     into on this machine keeps working, which is the point of running these
     locally.
+
+    The CLI gets the sign-in's access token alone, never its refresh token:
+    the refresh token rotates, and NoClick renews the sign-in before each
+    dispatch (``harness_oauth.ensure_fresh_harness_tokens``), so a CLI that
+    renewed it too would spend the token NoClick holds behind its back.
     """
     from nodes.agent.harness_oauth import oauth_expires_ms
 
@@ -309,10 +314,8 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
         creds = home / ".credentials.json"
         creds.write_text(json.dumps({
             "claudeAiOauth": {
+                # No refreshToken key: Claude Code then never renews it (an empty one would mean signed out).
                 "accessToken": env["CLAUDE_CODE_ACCESS_TOKEN"],
-                "refreshToken": env.get("CLAUDE_CODE_REFRESH_TOKEN", ""),
-                # The real expiry from the credential row, which the server keeps
-                # fresh. A fabricated one suppresses the CLI's own refresh.
                 "expiresAt": oauth_expires_ms(
                     env, "CLAUDE_CODE_EXPIRES_AT", "CLAUDE_CODE_EXPIRES_IN",
                     default_expires_in=28800,
@@ -337,7 +340,7 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
             "tokens": {
                 "id_token": env.get("CODEX_ID_TOKEN", ""),
                 "access_token": env["CODEX_ACCESS_TOKEN"],
-                "refresh_token": env.get("CODEX_REFRESH_TOKEN", ""),
+                "refresh_token": "",
             },
             "last_refresh": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }))

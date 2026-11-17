@@ -1353,17 +1353,23 @@ class AgentNode(WorkflowNode):
             else:
                 bundle = {k: v for k, v in data.items() if k != "credential_type"}
 
-        # Subscription-OAuth tokens (Claude Pro/Max, ChatGPT) expire within
-        # hours and the sandbox can never persist a rotation, so freshen them
-        # against the credential row of record before every dispatch.
-        from nodes.agent.harness_oauth import ensure_fresh_harness_tokens
-
-        bundle = await ensure_fresh_harness_tokens(
-            bundle,
-            user_id=user_id,
-            credential_id=match_id,
-            caller_path="execute",
+        # A plan's sign-in (Claude Pro/Max, ChatGPT) rotates as it's renewed. A harness that renews it itself, from
+        # its own container, is handed it as stored and refreshes it there; for any other, NoClick refreshes it
+        # against the credential row before every dispatch.
+        from nodes.agent.harness_oauth import (
+            ensure_fresh_harness_tokens, needs_healing, renewed_in_container, without_bookkeeping,
         )
+
+        if renewed_in_container(model_type, bundle.get("credential_type") or _match_type) \
+                and not needs_healing(bundle):
+            bundle = without_bookkeeping(dict(bundle))
+        else:
+            bundle = await ensure_fresh_harness_tokens(
+                bundle,
+                user_id=user_id,
+                credential_id=match_id,
+                caller_path="execute",
+            )
 
         bundle = filter_provider_credential_env(
             bundle,

@@ -1,13 +1,21 @@
-"""Server-side token freshness for harness subscription-OAuth credentials.
+"""Token freshness for harness subscription-OAuth credentials (plan sign-ins).
 
 The Claude Code / Codex OAuth handlers mint short-lived access tokens (Claude:
-~8h, ChatGPT: JWT exp) with refresh tokens, stored as ``{"credentials":
-{ENV_VAR: value}}`` blobs (credential types ``agent_claude_code_oauth`` /
-``agent_codex_oauth``). Runners receive a *snapshot* of those environment
-variables and cannot persist a rotation back, so the credential row must be
-the chain of record: ``ensure_fresh_harness_tokens`` refreshes it HERE, at
-env-build time in ``AgentNode.execute()``, before every dispatch — the one
-choke point all execution paths (canvas run, trigger, MCP, chat) converge on.
+~8h, ChatGPT: JWT exp) with refresh tokens that rotate, stored as
+``{"credentials": {ENV_VAR: value}}`` blobs (credential types
+``agent_claude_code_oauth`` / ``agent_codex_oauth``). The credential row is the
+chain of record, and a sign-in has one writer at a time:
+
+- Where a harness renews the sign-in itself, from its own container
+  (``renewed_in_container``; hosted, through the container's refresh gate,
+  ``cloud.agent.sign_in``), NoClick never refreshes it at dispatch: the harness
+  does, on its own timing, and its refresh is written back to the row.
+- Everywhere else NoClick refreshes it here (``ensure_fresh_harness_tokens``):
+  at dispatch for a harness given no refresh token (OpenClaw; the open edition's
+  local CLIs), the credential proxy's subscription upstreams, a connection's
+  check. Each such refresh runs under the sign-in's one refresh lease
+  (``register_refresh_lease``; the open edition's single process needs none), so
+  it never races a container's.
 
 All lock / re-read / CAS-persist / audit semantics come from
 ``nodes.core.oauth_refresh.ensure_fresh_oauth_token``; this module only adapts
@@ -22,11 +30,12 @@ the wss auth handlers import them from here.
 
 import base64
 import binascii
+import contextlib
 import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, AsyncContextManager, Callable, Dict, List, Optional, Tuple
 
 import httpx
 
@@ -38,7 +47,73 @@ from nodes.core.oauth_refresh import (
     TokenEndpointError,
     ensure_fresh_oauth_token,
     is_token_expired,
+    request_never_sent,
 )
+
+# Whether a harness renews a plan's sign-in itself, from its own container: (model type, credential type) -> bool. The
+# hosted runtime registers its refresh gate's harnesses; unregistered (the open edition), NoClick refreshes before
+# every dispatch and the harness is given no refresh token.
+_renewed_in_container: Callable[[str, str], bool] = lambda model_type, credential_type: False
+# The lease every refresh NoClick makes of a plan's sign-in runs under: ``lease(pool, credential_id, caller_path=...)``
+# -> an async context manager yielding a ``RefreshAttempt``. None: the open edition, whose one process the in-process
+# lock serializes.
+_refresh_lease: Optional[Callable[..., AsyncContextManager["RefreshAttempt"]]] = None
+
+
+def register_container_renewal(predicate: Callable[[str, str], bool]) -> None:
+    global _renewed_in_container
+    _renewed_in_container = predicate
+
+
+def renewed_in_container(model_type: str, credential_type: Optional[str]) -> bool:
+    """Whether the harness renews this plan's sign-in itself, so NoClick must not refresh it at dispatch."""
+    return bool(credential_type) and _renewed_in_container(model_type, credential_type)
+
+
+def register_refresh_lease(lease: Callable[..., AsyncContextManager["RefreshAttempt"]]) -> None:
+    global _refresh_lease
+    _refresh_lease = lease
+
+
+class LeaseMoved(RuntimeError):
+    """The refresh would present a token other than its lease's: the sign-in moved on since the lease was granted."""
+
+
+class RefreshAttempt:
+    """What a refresh under the lease did, for the lease to judge whether the refresh token may have been presented:
+    whether the token endpoint was called, and what it failed with. ``refresh_token`` is the leased version's: no
+    other is presented under the lease."""
+
+    def __init__(self, refresh_token: Optional[str] = None) -> None:
+        self.refresh_token = refresh_token
+        self.attempted = False
+        self.failure: Optional[BaseException] = None
+
+    def watch(self, refresh):
+        async def watched(token: str):
+            if self.refresh_token is not None and token != self.refresh_token:
+                raise LeaseMoved("the sign-in moved on since its refresh lease was granted")
+            self.attempted = True
+            try:
+                return await refresh(token)
+            except Exception as exc:
+                self.failure = exc
+                raise
+        return watched
+
+    @property
+    def presented(self) -> bool:
+        """Whether the provider may have taken the refresh token: called, and not failed in a way that says it
+        wasn't (never sent; or refused as NoClick's own client, before the grant is looked at). A 5xx says nothing
+        either way, so it counts, as does a refresh that succeeded but whose successor wasn't kept."""
+        if not self.attempted:
+            return False
+        failure = self.failure
+        if failure is None:
+            return True
+        if request_never_sent(failure):
+            return False
+        return not any(code in str(failure) for code in CLIENT_SETUP_CODES)
 
 logger = logging.getLogger(__name__)
 
@@ -286,6 +361,7 @@ class HarnessCredentialsStore(CredentialsTableStore):
 @dataclass(frozen=True)
 class _HarnessOAuthSpec:
     provider: str
+    credential_type: str
     access_key: str
     refresh_key: str
     expires_at_key: str
@@ -304,31 +380,39 @@ class _HarnessOAuthSpec:
         return _make_codex_refresh(env)
 
     def stale(self, row: Dict[str, Any]) -> bool:
-        """Refresh even though the access token is fine: a legacy blob with no
-        expiry (the persist upgrades it in place, once), or a codex sign-in
-        whose id token is missing/expired — codex picks the ChatGPT backend
-        from that token's claims, so a stale one strands the CLI in API-key
-        mode; the refresh grant requests ``openid`` and re-mints it."""
+        """Refresh even though the access token is fine: a legacy blob with no expiry (the persist upgrades it in
+        place, once), or a ChatGPT sign-in with no id token, which Codex reads its mode and account from (the refresh
+        grant requests ``openid`` and mints one). An id token past its hourly end still names them (Codex never
+        judges its expiry), so that alone is no reason to rotate the sign-in."""
         if not row.get(self.expires_at_key):
             return True
-        return self.provider == "codex_chatgpt" and codex_id_token_stale(row.get("CODEX_ID_TOKEN"))
+        return self.provider == "codex_chatgpt" and codex_id_token_missing(row.get("CODEX_ID_TOKEN"))
 
 
 HARNESS_OAUTH_SPECS = (
     _HarnessOAuthSpec(
         provider="claude_code",
+        credential_type="agent_claude_code_oauth",
         access_key="CLAUDE_CODE_ACCESS_TOKEN",
         refresh_key="CLAUDE_CODE_REFRESH_TOKEN",
         expires_at_key="CLAUDE_CODE_EXPIRES_AT",
     ),
     _HarnessOAuthSpec(
         provider="codex_chatgpt",
+        credential_type="agent_codex_oauth",
         access_key="CODEX_ACCESS_TOKEN",
         refresh_key="CODEX_REFRESH_TOKEN",
         expires_at_key="CODEX_EXPIRES_AT",
         companion_keys=("CODEX_ID_TOKEN",),
     ),
 )
+# A plan's env keys, by its credential type.
+PLAN_SPECS = {spec.credential_type: spec for spec in HARNESS_OAUTH_SPECS}
+# Every env key a plan's sign-in holds that changes as it's renewed: never what a warm container is keyed on.
+PLAN_TOKEN_KEYS = frozenset(
+    key for spec in HARNESS_OAUTH_SPECS
+    for key in (spec.access_key, spec.refresh_key, spec.expires_at_key, *spec.companion_keys)
+) | {"CLAUDE_CODE_EXPIRES_IN"}
 
 
 async def ensure_fresh_harness_tokens(
@@ -364,28 +448,38 @@ async def ensure_fresh_harness_tokens(
         )
         before = env.get(spec.access_key)
         said: Dict[str, Optional[str]] = {}
+        due = force_refresh or spec.stale(env) or is_token_expired(
+            env.get(spec.expires_at_key), buffer_minutes=_EXPIRY_BUFFER_MINUTES)
+        if due and _refresh_lease is not None and store is None:
+            raise ValueError(f"A {spec.provider} sign-in is refreshed only against its credential row.")
+        lease = (_refresh_lease(pool, credential_id, caller_path=caller_path)
+                 if due and _refresh_lease is not None else contextlib.nullcontext(None))
         try:
-            await ensure_fresh_oauth_token(
-                pool=pool,
-                credential_id=credential_id,
-                user_id=user_id,
-                credential=env,
-                refresh=spec.build_refresh(env, said),
-                access_token_key=spec.access_key,
-                refresh_token_key=spec.refresh_key,
-                expires_at_key=spec.expires_at_key,
-                is_expired=lambda expires_at: is_token_expired(
-                    expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
-                ),
-                stale=spec.stale,
-                # A refresh rotates the id token too; adopting a sibling's row must
-                # carry it, or the sandbox boots in API-key mode on a stale one.
-                additional_token_fields=spec.companion_keys,
-                force_refresh=force_refresh,
-                provider=spec.provider,
-                caller_path=caller_path,
-                store=store,
-            )
+            async with lease as attempt:
+                refresh = spec.build_refresh(env, said)
+                await ensure_fresh_oauth_token(
+                    pool=pool,
+                    credential_id=credential_id,
+                    user_id=user_id,
+                    credential=env,
+                    refresh=attempt.watch(refresh) if attempt is not None else refresh,
+                    access_token_key=spec.access_key,
+                    refresh_token_key=spec.refresh_key,
+                    expires_at_key=spec.expires_at_key,
+                    is_expired=lambda expires_at: is_token_expired(
+                        expires_at, buffer_minutes=_EXPIRY_BUFFER_MINUTES
+                    ),
+                    stale=spec.stale,
+                    # A refresh rotates the id token too; adopting a sibling's row must carry it.
+                    additional_token_fields=spec.companion_keys,
+                    force_refresh=force_refresh,
+                    provider=spec.provider,
+                    caller_path=caller_path,
+                    store=store,
+                    # The refresh token rotates: a request that may have reached the provider is never sent again
+                    # (a second presentation can end the sign-in).
+                    retry_unsent_only=True,
+                )
         except OAuthRefreshError as e:
             if e.provider_error_code in CLIENT_SETUP_CODES:
                 # The client is NoClick's (the CLI's own), so this is our setup, never the person's sign-in.
@@ -401,9 +495,13 @@ async def ensure_fresh_harness_tokens(
             if codex or email:
                 spawn(store_sign_in(pool, credential_id, spec.provider, dict(env), email),
                       name="harness_oauth.sign_in")
-    for key in _BOOKKEEPING_KEYS:
+    return without_bookkeeping(env)
+
+
+def without_bookkeeping(env: Dict[str, Any]) -> Dict[str, Any]:
+    """The env a runtime receives: the row-level keys the refresh machinery reads stripped (in place)."""
+    for key in (*_BOOKKEEPING_KEYS, "credential_type"):
         env.pop(key, None)
-    env.pop("credential_type", None)
     return env
 
 
@@ -515,20 +613,17 @@ def chatgpt_account_of(env: Dict[str, Any]) -> Optional[str]:
     return env.get("CODEX_ACCOUNT_ID") or chatgpt_account_id(env.get("CODEX_ID_TOKEN"))
 
 
-def codex_id_token_stale(id_token: Optional[str], *, buffer_s: int = 60) -> bool:
-    """True when a codex sign-in's id token cannot serve the ChatGPT backend:
-    absent, unparseable, or past its ``exp`` claim. Codex picks its auth mode
-    from this token, so a stale one strands the CLI in API-key auth exactly
-    like a missing one. An id token without an ``exp`` claim is trusted."""
-    import time
+def codex_id_token_missing(id_token: Optional[str]) -> bool:
+    """True when a ChatGPT sign-in has no id token Codex can read its claims from (absent or unparseable): Codex
+    then runs signed out. One past its ``exp`` still names its plan and account."""
+    return _chatgpt_id_token_claims(id_token) is None
 
-    claims = _chatgpt_id_token_claims(id_token)
-    if claims is None:
-        return True
-    exp = claims.get("exp")
-    if isinstance(exp, (int, float)):
-        return exp <= time.time() + buffer_s
-    return False
+
+def needs_healing(env: Optional[Dict[str, Any]]) -> bool:
+    """Whether a plan's stored sign-in is one a harness can't run on as it is (``_HarnessOAuthSpec.stale``): NoClick
+    refreshes it once before handing it over, even to a harness that renews it itself from then on."""
+    return any(env and env.get(spec.access_key) and env.get(spec.refresh_key) and spec.stale(env)
+               for spec in HARNESS_OAUTH_SPECS)
 
 
 def codex_chatgpt_ineligible(id_token: Optional[str]) -> Optional[str]:

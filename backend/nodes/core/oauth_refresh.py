@@ -410,6 +410,7 @@ async def ensure_fresh_oauth_token(
     provider: str = "unknown",
     caller_path: str = "unknown",
     store=None,
+    retry_unsent_only: bool = False,
 ) -> str:
     """Return a valid OAuth access token, refreshing + persisting if expired.
 
@@ -442,6 +443,8 @@ async def ensure_fresh_oauth_token(
         caller_path: where the refresh was initiated from (execute, freshen,
             dropdown, trigger_register, trigger_test, mcp, hydrate, propagate).
             Defaults to 'unknown' with a WARNING log so we can hunt callers.
+        retry_unsent_only: retry only a refresh request that never left (``request_never_sent``), for a provider
+            whose rotating refresh token must never be presented twice.
         store: row-of-record adapter (load / persist / mark_revoked /
             lock_key). Defaults to the credentials table; the Slack workspace
             bot chain passes a ``SlackInstallationStore`` so the shared
@@ -503,6 +506,7 @@ async def ensure_fresh_oauth_token(
                 force_refresh=force_refresh,
                 stale=stale,
                 store=store,
+                retry_unsent_only=retry_unsent_only,
             )
         except Exception as exc:
             span.record_exception(exc)
@@ -533,10 +537,20 @@ async def _maybe_auto_revoke(**_kwargs: Any) -> None:
     return None
 
 
+def request_never_sent(exc: BaseException) -> bool:
+    """Whether a refresh failed before its request could reach the provider (no connection was made), so its
+    refresh token was certainly not presented."""
+    import httpx
+
+    return isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout))
+
+
 async def _call_refresh(
     refresh: Callable[[str], Awaitable[Any]],
     token: str,
     builder: CredentialRefreshAuditBuilder,
+    *,
+    unsent_only: bool = False,
 ) -> Any:
     """Call the provider's ``refresh(token)`` with a bounded per-attempt timeout,
     retrying transient transport failures with backoff.
@@ -546,7 +560,9 @@ async def _call_refresh(
     the caller's classifier (``_classify_refresh_exception``) tags the audit row
     by the genuine failure mode. Never retries a ``ValueError`` (an HTTP-level
     provider rejection — deterministic, and for rotating providers a retry would
-    only burn time, not rotations).
+    only burn time, not rotations). ``unsent_only`` retries only a request that
+    never left (``request_never_sent``): one that may have reached the provider
+    would present a rotating refresh token a second time.
     """
     attempt = 0
     while True:
@@ -562,7 +578,8 @@ async def _call_refresh(
         except Exception as exc:
             builder.request_duration_ms = int((time.monotonic() - t0) * 1000)
             builder.refresh_attempts = attempt
-            if attempt < _REFRESH_MAX_ATTEMPTS and is_retryable_network_exception(exc):
+            retryable = request_never_sent(exc) if unsent_only else is_retryable_network_exception(exc)
+            if attempt < _REFRESH_MAX_ATTEMPTS and retryable:
                 backoff = _REFRESH_RETRY_BACKOFF_S[
                     min(attempt - 1, len(_REFRESH_RETRY_BACKOFF_S) - 1)
                 ]
@@ -604,10 +621,13 @@ def _classify_refresh_exception(
 
 # The codes that mean the person's grant ended (signed out, revoked, reused, their account gone): their sign-in is over
 # until they sign in again. NoClick's own client setup is refused with the others, which say nothing about the person.
+# A plan's refresh token NoClick won't present again: an earlier refresh may have used it with no successor kept (the
+# refresh gate's ``spent``), and a second presentation can end the sign-in. Over until the person signs in again.
+REFRESH_TOKEN_SPENT = "refresh_token_spent"
 SIGN_IN_ENDED_CODES = frozenset({
     "invalid_grant", "invalid_refresh_token", "refresh_token_reused", "refresh_token_expired",
     "refresh_token_invalidated", "token_revoked", "account_inactive", "account_disabled", "account_deleted",
-    "user_not_found",
+    "user_not_found", REFRESH_TOKEN_SPENT,
 })
 CLIENT_SETUP_CODES = frozenset({
     "invalid_client", "unauthorized_client", "invalid_scope", "unsupported_grant_type", "invalid_request",
@@ -686,6 +706,7 @@ async def _run_refresh(
     force_refresh: bool,
     store,
     stale: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    retry_unsent_only: bool = False,
 ) -> str:
     """Core refresh logic with the builder threaded through every branch.
 
@@ -716,7 +737,7 @@ async def _run_refresh(
             "[oauth_refresh] refreshed token not persisted (missing credential_id/user_id)"
         )
         try:
-            tokens = await _call_refresh(refresh, refresh_token, builder)
+            tokens = await _call_refresh(refresh, refresh_token, builder, unsent_only=retry_unsent_only)
         except Exception as e:
             _classify_refresh_exception(builder, e)
             raise _build_refresh_failure(builder, e) from e
@@ -772,7 +793,7 @@ async def _run_refresh(
         # with its real type, so a retried-then-still-failing timeout is tagged
         # network_error / F08, not provider_4xx.
         try:
-            tokens = await _call_refresh(refresh, current_refresh, builder)
+            tokens = await _call_refresh(refresh, current_refresh, builder, unsent_only=retry_unsent_only)
         except Exception as e:
             _classify_refresh_exception(builder, e)
 

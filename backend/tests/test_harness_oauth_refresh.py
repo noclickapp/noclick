@@ -323,68 +323,57 @@ async def test_a_codex_blob_missing_its_id_token_forces_refresh():
     assert persist_calls[0]["new_data"]["credentials"]["CODEX_ID_TOKEN"] == "minted-id-token"
 
 
-def test_codex_id_token_staleness_verdicts():
-    """Stale = cannot serve the ChatGPT backend: absent, unparseable, or past
-    exp. A token without an exp claim is trusted (no forced refresh loop)."""
+def test_codex_id_token_missing_verdicts():
+    """Missing = Codex can't read its claims: absent or unparseable. One past its exp still names the plan and the
+    account, as does one with no exp."""
     import base64, json, time
-    from nodes.agent.harness_oauth import codex_id_token_stale
+    from nodes.agent.harness_oauth import codex_id_token_missing
 
     def token(claims):
         b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
         return b64({"alg": "RS256"}) + "." + b64(claims) + ".sig"
 
-    assert codex_id_token_stale(None)
-    assert codex_id_token_stale("")
-    assert codex_id_token_stale("not-a-jwt")
-    assert codex_id_token_stale(token({"exp": int(time.time()) - 10}))
-    assert not codex_id_token_stale(token({"exp": int(time.time()) + 3600}))
-    assert not codex_id_token_stale(token({"sub": "user"}))
+    assert codex_id_token_missing(None)
+    assert codex_id_token_missing("")
+    assert codex_id_token_missing("not-a-jwt")
+    assert not codex_id_token_missing(token({"exp": int(time.time()) - 10}))
+    assert not codex_id_token_missing(token({"exp": int(time.time()) + 3600}))
+    assert not codex_id_token_missing(token({"sub": "user"}))
 
 
-async def test_a_codex_blob_with_an_expired_id_token_forces_refresh():
-    """An id token past its exp strands codex in API-key mode just like a
-    missing one — the access-token expiry that normally gates refresh is much
-    longer-lived, so without this check the stale id token would sit for days."""
+async def test_an_expired_id_token_alone_never_rotates_the_sign_in():
+    """The ChatGPT id token lives an hour, the access token days. Re-minting it hourly rotated the sign-in's refresh
+    token every hour; Codex reads only its claims, which an expired one still carries. No call, nothing persisted."""
     import base64 as _b64, json as _json, time as _time
     b64 = lambda d: _b64.urlsafe_b64encode(_json.dumps(d).encode()).decode().rstrip("=")
     expired = b64({"alg": "RS256"}) + "." + b64({"exp": int(_time.time()) - 60}) + ".sig"
     env = {
-        "CODEX_ACCESS_TOKEN": "stale-access",
+        "CODEX_ACCESS_TOKEN": "fresh-enough-access",
         "CODEX_REFRESH_TOKEN": "refresh-1",
         "CODEX_ID_TOKEN": expired,
-        # Not expiring: the stale id token alone must trigger the refresh.
         "CODEX_EXPIRES_AT": _iso(+4),
     }
     db_blob = {"credentials": dict(env), "token_version": 2}
     with ExitStack() as stack:
-        persist_calls = _patches(
-            stack, db_blob=db_blob,
-            responses=[_FakeResponse({
-                "access_token": "fresh-access", "refresh_token": "refresh-2",
-                "id_token": "minted-id-token", "expires_in": 864000,
-            })],
-        )
+        persist_calls = _patches(stack, db_blob=db_blob, responses=[])
         out = await ensure_fresh_harness_tokens(
             env, user_id="uid", credential_id="cid-codex-expired-id"
         )
-    assert out["CODEX_ID_TOKEN"] == "minted-id-token"
-    assert persist_calls[0]["new_data"]["credentials"]["CODEX_ID_TOKEN"] == "minted-id-token"
+    assert _FakeAsyncClient.calls == []
+    assert persist_calls == []
+    assert out["CODEX_ID_TOKEN"] == expired
 
 
-async def test_a_sibling_run_that_already_re_minted_the_id_token_is_adopted_not_repeated():
-    """Concurrent deliveries each loaded the same lapsed id token (the ChatGPT
-    id token lives 1h, the access token 10d). The staleness verdict must be
-    re-judged against the in-lock row of record: the first run's refresh has
-    landed there, so the others adopt its tokens — id token included — instead
-    of minting their own. Three tokens for one credential churned the warm
-    sandbox's env fingerprint and got a booting sandbox terminated (2026-09-13)."""
+async def test_a_sibling_run_that_already_minted_the_id_token_is_adopted_not_repeated():
+    """Concurrent deliveries each loaded the same legacy sign-in with no id token. The staleness verdict must be
+    re-judged against the in-lock row of record: the first run's refresh has landed there, so the others adopt its
+    tokens — id token included — instead of minting their own (each mint rotates the sign-in)."""
     import base64 as _b64, json as _json, time as _time
     b64 = lambda d: _b64.urlsafe_b64encode(_json.dumps(d).encode()).decode().rstrip("=")
     jwt = lambda exp: b64({"alg": "RS256"}) + "." + b64({"exp": int(_time.time()) + exp}) + ".sig"
     env = {
         "CODEX_ACCESS_TOKEN": "stale-access",
         "CODEX_REFRESH_TOKEN": "refresh-1",
-        "CODEX_ID_TOKEN": jwt(-60),
         "CODEX_EXPIRES_AT": _iso(+4),
     }
     # The row of record already carries the sibling's refresh.

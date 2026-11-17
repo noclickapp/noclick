@@ -8,6 +8,7 @@ bypassing the WebSocket routing system.
 import json
 import logging
 import uuid as _uuid
+from contextlib import asynccontextmanager
 from typing import Dict, Any, List, Optional, Tuple
 from repositories.credentials import credential_access_predicate, listed_to_owner_sql
 from repositories.workflow import WorkflowRepo
@@ -164,6 +165,11 @@ def strip_non_blob_keys(data: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in data.items() if k not in _NON_BLOB_KEYS}
 
 
+@asynccontextmanager
+async def _held(conn):
+    yield conn
+
+
 async def update_credential_data_detailed(
     credential_id: str,
     user_id: str,
@@ -174,6 +180,7 @@ async def update_credential_data_detailed(
     credential_name: Optional[str] = None,
     expected_owner_id: Optional[str] = None,
     expected_credential_type: Optional[str] = None,
+    conn=None,
 ) -> tuple[int, Optional[str]]:
     """Persist a credential update and return ``(rows_affected, error_class)``.
 
@@ -191,6 +198,7 @@ async def update_credential_data_detailed(
       reconnect into atomic identity checks. A transferred/deleted credential
       cannot be overwritten between authorization and persistence.
     - ``user_id`` is logged only.
+    - ``conn`` writes on a connection the caller holds (inside its transaction) instead of one from ``pool``.
     - Merges ``new_data`` into the existing encrypted blob; metadata is
       merged as JSONB ``||``.
     - ``credential_name`` optionally refreshes the display name alongside a
@@ -211,13 +219,10 @@ async def update_credential_data_detailed(
         ``expected_token_version`` set, that the CAS guard failed.
     """
     try:
-        if pool is None:
-            pool = get_native_pool()
-
         encryption = get_encryption()
         encrypted_data = encryption.encrypt_credential(strip_non_blob_keys(new_data))
 
-        async with pool.acquire() as conn:
+        async with (_held(conn) if conn is not None else (pool or get_native_pool()).acquire()) as conn:
             # Clearing revoked_at on every successful write is intentional: a
             # successful refresh OR a fresh re-authorization means the credential
             # is good again, so the auto-revoke flag set by oauth_refresh.py
