@@ -96,7 +96,9 @@ def test_claude_token_becomes_the_file_the_cli_reads(tmp_path: pathlib.Path):
     creds = pathlib.Path(env["CLAUDE_CONFIG_DIR"]) / ".credentials.json"
     payload = json.loads(creds.read_text())["claudeAiOauth"]
     assert payload["accessToken"] == "acc"
-    assert payload["refreshToken"] == "ref"
+    # NoClick renews the sign-in before each dispatch; a CLI holding the rotating refresh token would spend it behind
+    # NoClick's back. No key at all: an empty one tells Claude Code it is signed out.
+    assert "refreshToken" not in payload
     # The real expiry, not one fabricated at launch: a fabricated one tells the
     # CLI a stale token is fresh and suppresses its own refresh.
     assert payload["expiresAt"] == 1893456000000
@@ -109,7 +111,8 @@ def test_chatgpt_token_becomes_the_file_the_cli_reads(tmp_path: pathlib.Path):
 
     auth = pathlib.Path(env["CODEX_HOME"]) / "auth.json"
     payload = json.loads(auth.read_text())
-    assert payload["tokens"] == {"id_token": "idt", "access_token": "acc", "refresh_token": "ref"}
+    # The access token alone: the rotating refresh token stays with NoClick, which renews it before each dispatch.
+    assert payload["tokens"] == {"id_token": "idt", "access_token": "acc", "refresh_token": ""}
     assert payload["OPENAI_API_KEY"] is None
     assert auth.stat().st_mode & 0o777 == 0o600
 
