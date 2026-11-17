@@ -205,7 +205,8 @@ while IFS= read -r whatsapp_jid; do
     12025550102@lid|12025550103@lid|\
     12025550104@s.whatsapp.net|120000000000000001@g.us|\
     120000000000000002@newsletter|12025550107@c.us|\
-    12025550108@c.us) ;;
+    12025550108@c.us|\
+    120363000000000001@g.us|15550000001@c.us) ;;
     *)
       echo "Community boundary violation: unreviewed account-shaped WhatsApp fixture: $whatsapp_jid" >&2
       exit 1
