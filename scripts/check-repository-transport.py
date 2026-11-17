@@ -109,6 +109,9 @@ MAX_PORTABLE_COMPONENT_BYTES = 255
 MAX_DECOMPRESSED_PROBE_BYTES = 16 * 1024 * 1024
 MAX_EMBEDDED_COMPRESSION_CANDIDATES = 128
 MAX_CONTAINER_CANDIDATES = 4096
+# Checksum-shaped octal runs are common in large JSON fixtures (4,271 in one); every
+# candidate is still checked, so this bounds only the work.
+MAX_TAR_CHECKSUM_CANDIDATES = 65536
 MAX_CONTAINER_BLOCKS = 4096
 MAX_TOTAL_SYMLINK_BYTES = 64 * 1024 * 1024
 TAR_CHECKSUM_ANCHOR_PATTERN = re.compile(rb"(?:[ \x00][0-7]|[0-7][ \x00]|[0-7]{8})")
@@ -518,7 +521,7 @@ def _contains_tar_archive(data: bytes) -> bool:
             if _tar_octal_value(data[field_start : field_start + 8]) is None:
                 continue
             checksum_fields += 1
-            if checksum_fields > MAX_CONTAINER_CANDIDATES:
+            if checksum_fields > MAX_TAR_CHECKSUM_CANDIDATES:
                 raise TransportGateError("too many candidate tar checksum fields")
             candidate_starts.add(field_start - 148)
         next_field_start = max(next_field_start, last + 1)
