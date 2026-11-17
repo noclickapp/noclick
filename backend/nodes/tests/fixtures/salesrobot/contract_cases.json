@@ -2218,7 +2218,7 @@
               "condition": null
             },
             "executionTime": "2025-11-25T19:02:20.683+0000",
-            "timeZone": "Asia/Calcutta",
+            "timeZone": "Asia/Kolkata",
             "executableSequenceStepStageActionUuid": "9143a343-04ed-4550-996e-4d78dbcb7b0e"
           },
           {
@@ -2262,7 +2262,7 @@
               "condition": null
             },
             "executionTime": "2025-11-26T08:58:08.219+0000",
-            "timeZone": "Asia/Calcutta",
+            "timeZone": "Asia/Kolkata",
             "executableSequenceStepStageActionUuid": "db69aa55-f696-40ae-a8b1-7cc4c504228f"
           },
           {
@@ -2306,7 +2306,7 @@
               "condition": null
             },
             "executionTime": "2025-11-25T23:21:07.139+0000",
-            "timeZone": "Asia/Calcutta",
+            "timeZone": "Asia/Kolkata",
             "executableSequenceStepStageActionUuid": "ea954664-ffb1-4a01-ba89-ba2fea1c1b5f"
           }
         ]
@@ -2610,7 +2610,7 @@
           "maxProspectsToReach": 100,
           "startTime": "09:01",
           "endTime": "21:00",
-          "timeZoneString": "Asia/Calcutta",
+          "timeZoneString": "Asia/Kolkata",
           "safeModeEnabled": true,
           "dayOfWeeks": [
             "MONDAY",
@@ -2633,7 +2633,7 @@
         "maxProspectsToReach": 100,
         "startTime": "09:01",
         "endTime": "21:00",
-        "timeZoneString": "Asia/Calcutta",
+        "timeZoneString": "Asia/Kolkata",
         "safeModeEnabled": true,
         "dayOfWeeks": [
           "MONDAY",

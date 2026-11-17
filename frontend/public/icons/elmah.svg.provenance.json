@@ -6,7 +6,7 @@
   "found_at": "https://app.elmah.io/ (public sign-in page, img[src=\"/Images/svg/logo-inverse.svg\"])",
   "retrieved": "2026-11-10",
   "license": "elmah.io brand mark, used nominatively to identify the connected service; trademark rights remain with elmah.io.",
-  "sha256": "e60e26156cbe844a34d4903a89e7cd81812adab31e3fe2d1cbd2e151669d1a68",
+  "sha256": "c7b3178fc34cc05a5d47c743bc0e6f987be5f63e80cc592fafc45056aba1ac6d",
   "edits": [],
   "notes": "Unmodified first-party SVG app mark: the brand's own green cloud with white bug, not a wordmark. Its original viewBox is already cropped to the cloud. All three paths, exact #00A68E/#FFFFFF fills, and open counters are retained. The green cloud reads on both themes, with no added background, CSS filters or recolouring. The PR branch has no ThemedBrandImg component; one unfiltered img serves both themes."
 }
