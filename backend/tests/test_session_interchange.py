@@ -310,7 +310,7 @@ class TestClaudeCodeRead:
     def test_the_title_is_the_newest_the_cli_recorded_the_persons_own_first(self, tmp_path):
         home = _claude_home(tmp_path)
         assert ic.read_thread(_store("claude_code", home)).title == "Auth callback tests"
-        [path] = home.rglob("*.jsonl")
+        [path] = tmp_path.rglob("*.jsonl")
         with path.open("a") as f:
             for record in ({"type": "custom-title", "customTitle": "auth: callback"},
                            {"type": "ai-title", "aiTitle": "Auth callback coverage"}):
