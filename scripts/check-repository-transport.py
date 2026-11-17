@@ -99,10 +99,9 @@ MAX_HISTORY_TOTAL_BLOB_BYTES = 16 * 1024 * 1024 * 1024
 MAX_HISTORY_COMMITS = 100_000
 MAX_HISTORY_TREES = 250_000
 MAX_HISTORY_BLOBS = 250_000
-MAX_HISTORY_TREE_ENTRIES = 1_000_000
+MAX_HISTORY_TREE_ENTRIES = 64_000_000
 MAX_TREE_ENTRIES_PER_OBJECT = 100_000
 MAX_HISTORY_PATHS_PER_SNAPSHOT = 250_000
-MAX_HISTORY_SNAPSHOT_PATHS = 50_000_000
 MAX_HISTORY_TREE_DEPTH = 256
 MAX_PORTABLE_PATH_BYTES = 4096
 MAX_PORTABLE_COMPONENT_BYTES = 255
@@ -160,7 +159,7 @@ class BlobSample:
     size: int
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class TreeEntry:
     mode: str
     oid: str
@@ -1311,7 +1310,9 @@ def _tree_entries(
             raise TransportGateError(f"invalid entry object id in tree {oid}")
         seen.add(name)
         folded_seen[folded] = name
-        entries.append(TreeEntry(mode=mode, oid=entry_oid, name=name))
+        entries.append(
+            TreeEntry(mode=sys.intern(mode), oid=sys.intern(entry_oid), name=sys.intern(name))
+        )
         if len(entries) > MAX_TREE_ENTRIES_PER_OBJECT:
             raise TransportGateError(
                 f"tree {oid} exceeds the per-object entry audit limit"
@@ -1330,43 +1331,109 @@ def _register_expected_type(
     expected[oid] = object_type
 
 
-def _snapshot_entries(
-    root_tree: str,
-    trees: dict[str, tuple[TreeEntry, ...]],
-    *,
-    remaining_budget: int,
-) -> tuple[dict[str, IndexEntry], int]:
-    by_path: dict[str, IndexEntry] = {}
-    visited_paths = 0
-    stack: list[tuple[str, str, frozenset[str]]] = [(root_tree, "", frozenset())]
-    while stack:
-        tree_oid, prefix, ancestors = stack.pop()
-        if tree_oid in ancestors:
-            raise TransportGateError(f"cycle in historical tree graph: {tree_oid}")
-        if len(ancestors) >= MAX_HISTORY_TREE_DEPTH:
-            raise TransportGateError(
-                "historical tree depth exceeds the repository audit limit"
-            )
-        next_ancestors = ancestors | {tree_oid}
-        for entry in trees[tree_oid]:
-            path = f"{prefix}/{entry.name}" if prefix else entry.name
-            if len(path.encode("utf-8")) > MAX_PORTABLE_PATH_BYTES:
-                raise TransportGateError(
-                    f"non-portable historical path is too long: {path!r}"
-                )
-            visited_paths += 1
-            if (
-                visited_paths > remaining_budget
-                or visited_paths > MAX_HISTORY_PATHS_PER_SNAPSHOT
-            ):
-                raise TransportGateError(
-                    "historical snapshot paths exceed the repository audit limit"
-                )
-            if entry.mode == "040000":
-                stack.append((entry.oid, path, next_ancestors))
-            else:
-                by_path[path] = IndexEntry(mode=entry.mode, oid=entry.oid, path=path)
-    return by_path, visited_paths
+@dataclass(frozen=True, slots=True)
+class _TreeSummary:
+    paths: int  # entries in the subtree, directories included
+    longest_path: int  # UTF-8 bytes of its longest path, relative to the tree
+    height: int  # trees on its deepest chain, itself included
+    symlinks: tuple[str, ...]  # its symlinks' paths, relative to the tree
+
+
+def _tree_summaries(
+    roots: Iterable[str], trees: dict[str, tuple[TreeEntry, ...]]
+) -> dict[str, _TreeSummary]:
+    """Summarise every tree reachable from ``roots`` once, children before parents."""
+    done: dict[str, _TreeSummary] = {}
+    for root in roots:
+        if root in done:
+            continue
+        stack: list[tuple[str, bool]] = [(root, False)]
+        open_trees: set[str] = set()
+        while stack:
+            oid, children_done = stack.pop()
+            if children_done:
+                open_trees.discard(oid)
+                paths = 0
+                longest = 0
+                height = 1
+                symlinks: list[str] = []
+                for entry in trees[oid]:
+                    name_bytes = len(entry.name.encode("utf-8"))
+                    paths += 1
+                    longest = max(longest, name_bytes)
+                    if entry.mode == "040000":
+                        child = done[entry.oid]
+                        paths += child.paths
+                        if child.paths:
+                            longest = max(longest, name_bytes + 1 + child.longest_path)
+                        height = max(height, child.height + 1)
+                        symlinks.extend(f"{entry.name}/{path}" for path in child.symlinks)
+                    elif entry.mode == "120000":
+                        symlinks.append(entry.name)
+                done[oid] = _TreeSummary(paths, longest, height, tuple(symlinks))
+                continue
+            if oid in done:
+                continue
+            if oid in open_trees:
+                raise TransportGateError(f"cycle in historical tree graph: {oid}")
+            open_trees.add(oid)
+            stack.append((oid, True))
+            for entry in trees[oid]:
+                if entry.mode == "040000" and entry.oid not in done:
+                    if entry.oid in open_trees:
+                        raise TransportGateError(
+                            f"cycle in historical tree graph: {entry.oid}"
+                        )
+                    stack.append((entry.oid, False))
+    return done
+
+
+class _SnapshotFiles:
+    """A snapshot's non-directory entries by path, read through its trees on demand.
+
+    It answers ``path in files`` and ``files[path]`` exactly as the snapshot's full
+    path map would, without building that map.
+    """
+
+    def __init__(
+        self,
+        root_tree: str,
+        trees: dict[str, tuple[TreeEntry, ...]],
+        names: dict[str, dict[str, TreeEntry]] | None = None,
+    ):
+        self._root = root_tree
+        self._trees = trees
+        # Trees are content-addressed, so snapshots can share one name index.
+        self._names = {} if names is None else names
+
+    def _entry(self, path: str) -> IndexEntry | None:
+        oid = self._root
+        parts = path.split("/")
+        for index, part in enumerate(parts):
+            names = self._names.get(oid)
+            if names is None:
+                names = {entry.name: entry for entry in self._trees[oid]}
+                self._names[oid] = names
+            entry = names.get(part)
+            if entry is None:
+                return None
+            if index == len(parts) - 1:
+                if entry.mode == "040000":
+                    return None
+                return IndexEntry(mode=entry.mode, oid=entry.oid, path=path)
+            if entry.mode != "040000":
+                return None
+            oid = entry.oid
+        return None
+
+    def __contains__(self, path: object) -> bool:
+        return isinstance(path, str) and self._entry(path) is not None
+
+    def __getitem__(self, path: str) -> IndexEntry:
+        entry = self._entry(path)
+        if entry is None:
+            raise KeyError(path)
+        return entry
 
 
 def verify_history(root: Path, rev: str) -> HistoryStats:
@@ -1504,21 +1571,32 @@ def verify_history(root: Path, rev: str) -> HistoryStats:
                     )
                 symlink_samples[blob_oid] = BlobSample(prefix=blob, size=len(blob))
 
+    # Every snapshot is judged from summaries of its trees, each tree summarised once:
+    # listing every path of every snapshot grew with commits times files.
+    summaries = _tree_summaries(unique_root_trees, tree_cache)
+    names: dict[str, dict[str, TreeEntry]] = {}
     snapshot_paths = 0
     symlink_snapshots = 0
     for root_tree in unique_root_trees:
-        by_path, visited = _snapshot_entries(
-            root_tree,
-            tree_cache,
-            remaining_budget=MAX_HISTORY_SNAPSHOT_PATHS - snapshot_paths,
-        )
-        snapshot_paths += visited
-        for entry in by_path.values():
-            if entry.mode != "120000":
-                continue
+        summary = summaries[root_tree]
+        if summary.height > MAX_HISTORY_TREE_DEPTH:
+            raise TransportGateError(
+                "historical tree depth exceeds the repository audit limit"
+            )
+        if summary.longest_path > MAX_PORTABLE_PATH_BYTES:
+            raise TransportGateError(
+                f"non-portable historical path is too long in root tree {root_tree}"
+            )
+        if summary.paths > MAX_HISTORY_PATHS_PER_SNAPSHOT:
+            raise TransportGateError(
+                "historical snapshot paths exceed the repository audit limit"
+            )
+        snapshot_paths += summary.paths
+        files = _SnapshotFiles(root_tree, tree_cache, names)
+        for path in summary.symlinks:
             symlink_snapshots += 1
             try:
-                _resolve_symlink(entry.path, by_path, symlink_samples)
+                _resolve_symlink(path, files, symlink_samples)
             except TransportGateError as exc:
                 raise TransportGateError(
                     f"root tree {root_tree} has an unsafe symlink: {exc}"
