@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { AIAgentNode } from '~/components/workflow/nodes/AIAgentNode';
+import { CometAPINode } from '~/components/workflow/nodes/integrations/cometapi';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { matchAgentQuery } from '~/lib/agentModelMatch';
 import {
     buildNodeSearchIndexEntry,
+    getAgentQueryScore,
     getNodeSearchScore,
     getOperationSearchMatch,
     type NodeSearchIndexEntry,
@@ -141,5 +145,30 @@ describe('node palette search ranking bands', () => {
         expect(opMatch).not.toBeNull();
         expect(descScore).not.toBeNull();
         expect(opMatch!.score).toBeGreaterThan(descScore!);
+    });
+});
+
+// Claude, GPT, Gemini and the coding harnesses are picked inside the AI Agent
+// node, so its label and description never name them. Its keywords must, or a
+// search for a model finds only integrations that happen to mention it.
+describe('AI Agent search by the models and harnesses picked inside it', () => {
+    const agent = buildNodeSearchIndexEntry(AIAgentNode, false);
+    const cometApi = buildNodeSearchIndexEntry(CometAPINode, false);
+
+    it.each(['claude', 'gpt', 'chatgpt', 'gemini', 'deepseek', 'llm', 'chatbot', 'claude code', 'codex', 'openclaw'])(
+        'finds the AI Agent for "%s" from its definition alone',
+        (query) => {
+            expect(getNodeSearchScore(agent, query)).not.toBeNull();
+        },
+    );
+
+    it('never ranks CometAPI, which also lists claude, above the AI Agent for "claude"', () => {
+        const cometScore = getNodeSearchScore(cometApi, 'claude')!;
+        expect(cometScore).not.toBeNull();
+        // The palette's Agent tile scores a harness query through matchAgentQuery...
+        expect(getAgentQueryScore(matchAgentQuery('claude')!)).toBeGreaterThan(cometScore);
+        // ...and on the name path a keyword tie sorts by label, AI Agent first.
+        expect(getNodeSearchScore(agent, 'claude')!).toBeGreaterThanOrEqual(cometScore);
+        expect(AIAgentNode.label.localeCompare(CometAPINode.label)).toBeLessThan(0);
     });
 });

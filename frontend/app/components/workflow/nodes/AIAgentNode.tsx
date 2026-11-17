@@ -842,6 +842,8 @@ export const AIAgentNode: NodeDefinition = {
     type: 'agent',
     label: 'AI Agent',
     description: 'Add an AI agent',
+    // Models and coding harnesses are picked inside this node, so their names find it.
+    keywords: ['claude', 'anthropic', 'gpt', 'chatgpt', 'openai', 'gemini', 'deepseek', 'grok', 'mistral', 'llama', 'llm', 'language model', 'model', 'chatbot', 'assistant', 'claude code', 'codex', 'opencode', 'openclaw', 'hermes'],
     Icon: Bot,
     iconColor: 'text-purple-600 dark:text-purple-400',
     dimensions: { width: 200, height: 140, iconSize: 56 },
