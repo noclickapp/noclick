@@ -1,4 +1,5 @@
 import { reactRouter } from '@react-router/dev/vite';
+import { existsSync, realpathSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
@@ -13,10 +14,25 @@ export const alias = [
  *  node_modules, which may be another project's install lent to the app. */
 export const cacheDir = '.vite';
 
+/**
+ * What the development server may serve files from. This repository: the SDK's source is outside the app's folder.
+ * And, where the app's packages are another project's install lent through a link beside the app (`../node_modules`),
+ * the folder that link leads to: the server serves a file a package's stylesheet names (a font) by its real path, and
+ * refuses a path outside what it's told, so the page would fall back to the system's fonts.
+ */
+export function served(): string[] {
+    const repository = resolve(import.meta.dirname, '..');
+    const lent = resolve(repository, 'node_modules');
+    return existsSync(lent) ? [repository, realpathSync(lent)] : [repository];
+}
+
 export default defineConfig({
     plugins: [reactRouter()],
     resolve: { alias },
     cacheDir,
-    // The SDK's source is outside the app's folder.
-    server: { fs: { allow: [resolve(import.meta.dirname, '..')] } },
+    server: { fs: { allow: served() } },
+    // The development server bundles the packages the app imports before it serves a page, and finds them by reading
+    // these files. Left to find them as pages open (the console loads each of its pages on demand), it bundles again
+    // mid-visit and reloads the page, and a page caught in between draws with two copies of React and crashes once.
+    optimizeDeps: { entries: ['src/**/*.{ts,tsx}', '!src/**/*.test.{ts,tsx}', '!src/**/*.server.ts'] },
 });
