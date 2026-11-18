@@ -27,7 +27,12 @@ does.
 - `@/…` imports from `src/…`.
 - `noclick` is the SDK's source in `../sdk/typescript/src`, not the package from npm, so the app always runs on the SDK
   as this repository has it, with no build step between them.
-- Tailwind CSS 3, configured in `tailwind.config.ts`.
+- Tailwind CSS 3. `src/ui/` is the design foundation every screen builds on: `tokens.css` (the colour tokens for
+  the light and dark themes, dark by default, and the base styles), the primitives (dialogs, menus, popovers,
+  buttons, inputs, …), `cn` in `utils.ts`, and the class strings for the app's buttons, fields, menus and titles.
+  `tailwind.preset.ts` is the theme that reads those tokens (`bg-background`, `text-muted-foreground`, …), the type
+  faces and the animations; `tailwind.config.ts` uses it and says which files to scan. The faces are Inter, Outfit
+  and Instrument Serif, installed from Fontsource.
 - `test/imports.test.ts` keeps the app buildable from this repository alone: no file imports a path outside it, and
   every package a file imports is one `package.json` names.
 

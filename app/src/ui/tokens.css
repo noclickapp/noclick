@@ -1,0 +1,175 @@
+/* The design tokens and base styles. Every colour the app paints is one of these custom properties, read through the
+   Tailwind preset (tailwind.preset.ts: `bg-background`, `text-muted-foreground`, `border-border`, …) or as
+   `hsl(var(--token))` where a class can't reach (SVG, inline styles). `:root` is the light theme and `.dark` the dark
+   one, which is the default: the document carries `class="dark"` unless someone picks light.
+
+   Import this file before the `@tailwind` directives (an `@import` has to come first). Its `@layer base` blocks land
+   where `@tailwind base` is, in the order they are written. */
+
+@layer base {
+    /* A zinc-hued light palette to pair with the zinc dark chrome. The page is slightly off-white, so white cards and
+       popovers read as raised; accent sits below muted, so a hover stays visible. */
+    :root {
+        --background: 240 10% 98%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        /* Where you type to the assistant: a raised card in light, a near-black slab in dark. */
+        --composer: 0 0% 100%;
+        /* A recessed surface (a folder rail, setup views, logs): white in light like a card; in dark, zinc-950, the
+           third near-black between --card (zinc-900) and --background (#000). */
+        --sunken: 0 0% 100%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        /* Light's inverted call to action is a soft charcoal, lighter than near-black; dark's is white. */
+        --primary: 240 6% 22%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 94%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        /* Input placeholders. Light matches muted-foreground; dark is dimmer than muted-foreground (zinc-600, not
+           zinc-400), so a placeholder recedes instead of reading as muted text. */
+        --placeholder: 240 3.8% 46.1%;
+        --accent: 240 5% 91%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 10% 3.9%;
+        /* Syntax colours for code the app shows (repository files, READMEs), after GitHub's light palette so code
+           reads the way people know it. */
+        --code-comment: 212 8% 47%;
+        --code-keyword: 356 72% 47%;
+        --code-string: 216 83% 23%;
+        --code-function: 262 69% 59%;
+        --code-number: 213 94% 35%;
+        --code-tag: 137 71% 23%;
+        --code-variable: 23 100% 29%;
+        --code-punctuation: 213 13% 16%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        /* The usage chart's panel, for chart props that take a colour rather than a class. A badge's text mixes its
+           hue toward --usage-badge-mix to stay legible. */
+        --usage-chart-bg: 0 0% 100%;
+        --usage-badge-mix: black;
+        /* The workflow canvas: soft grey edges and grid in light, white edges and a zinc-800 grid in dark. */
+        --canvas-edge: 240 5% 62%;
+        --canvas-grid: 240 6% 82%;
+        /* The canvas surface: a hair darker than the page in light, so white (bg-card) steps read as raised;
+           zinc-950 in dark. */
+        --canvas-bg: 240 6% 95%;
+        /* Scales the black shadows of raised chrome (the canvas's round buttons): full strength in dark, softened on
+           light surfaces. */
+        --shadow-scale: 0.2;
+        /* Step icons' drop shadows: a depth cue on the dark canvas, none in light. */
+        --icon-shadow-scale: 0;
+        /* The send button's focus ring: none in light (its fill carries the emphasis), white in dark. */
+        --send-ring: 0 0% 98% / 0;
+        /* The running send button's spinner beam sits just outside the charcoal fill, on the panel: a mid-grey reads
+           on the light panel and stays distinct from the fill. White in dark. */
+        --send-beam: 240 4% 46%;
+        /* The canvas's round buttons' dome gradient, for inline styles. Light uses the neutral surface ladder; dark
+           is metallic, zinc-600 to zinc-700 to zinc-900. */
+        --fab-top: 240 4.8% 94%;
+        --fab-mid: 240 4.8% 95.9%;
+        --fab-base: 0 0% 100%;
+        --fab-pill-from: 240 4.8% 94%;
+        --fab-pill-to: 0 0% 100%;
+        /* The "thinking" shimmer: a muted-grey resting text with a charcoal crest sweeping across in light, the
+           counterpart of dark's white gleam. */
+        --pulse-base: 240 4% 46%;
+        --pulse-crest: 240 6% 16%;
+        --radius: 0.5rem;
+    }
+    /* Dark: background pure black (the page, canvas, navigation and chat), card zinc-900, popover #1a1a1a for menus
+       and dialogs, accent, secondary and muted a ladder of near-black fills, border zinc-800, muted-foreground
+       zinc-400. A panel that wants zinc-950 (#09090b) opts in with `dark:bg-zinc-950`: one token can't be both #000
+       and #09090b. */
+    .dark {
+        --background: 0 0% 0%;
+        --foreground: 0 0% 98%;
+        --card: 240 6% 10%;
+        --card-foreground: 0 0% 98%;
+        --composer: 0 0% 7%;
+        --sunken: 240 10% 3.9%; /* zinc-950 #09090b */
+        --popover: 0 0% 10%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 4% 15%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 4% 13%;
+        --muted-foreground: 240 5% 64.9%;
+        --placeholder: 240 5% 34%; /* zinc-600: a dim placeholder (see :root) */
+        --accent: 240 5% 17%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --code-comment: 210 10% 51%;
+        --code-keyword: 4 86% 68%;
+        --code-string: 207 100% 79%;
+        --code-function: 272 88% 86%;
+        --code-number: 210 100% 71%;
+        --code-tag: 120 53% 70%;
+        --code-variable: 28 90% 64%;
+        --code-punctuation: 210 18% 73%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --usage-chart-bg: 240 10% 3.9%; /* zinc-950 */
+        --usage-badge-mix: white;
+        --canvas-edge: 0 0% 98%;
+        --canvas-grid: 240 4% 16%;
+        --canvas-bg: 240 10% 3.9%; /* zinc-950 */
+        --shadow-scale: 1;
+        --icon-shadow-scale: 1;
+        --send-ring: 0 0% 98% / 0.5;
+        --send-beam: 0 0% 98%; /* a white beam on the dark panel and fill */
+        --fab-top: 240 5% 34%; /* #52525b */
+        --fab-mid: 240 5% 25%; /* #3f3f46 */
+        --fab-base: 240 6% 10%; /* #18181b */
+        --fab-pill-from: 240 5% 26% / 0.4; /* rgba(63,63,70,0.4) */
+        --fab-pill-to: 240 10% 4% / 0.95; /* rgba(9,9,11,0.95) */
+        --pulse-base: 220 9% 65%; /* gray-400 */
+        --pulse-crest: 0 0% 100%; /* a white gleam */
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    ::selection {
+        background: hsl(var(--foreground) / 0.16);
+    }
+    /* The browser's own search-box ✕ (WebKit's blue one) and glyph slots: a box clears with SearchClearButton. */
+    input[type='search']::-webkit-search-cancel-button,
+    input[type='search']::-webkit-search-decoration,
+    input[type='search']::-webkit-search-results-button,
+    input[type='search']::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+}

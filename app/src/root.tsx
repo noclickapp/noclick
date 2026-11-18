@@ -1,18 +1,21 @@
 // The document every page renders in, and the root route around them.
 import type { ReactNode } from 'react';
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import '@fontsource-variable/inter/index.css';
+import '@fontsource-variable/outfit/index.css';
 import './app.css';
 
 export function Layout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en">
+        // Dark is the default theme (src/ui/tokens.css).
+        <html lang="en" className="dark">
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <Meta />
                 <Links />
             </head>
-            <body className="bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100">
+            <body className="antialiased">
                 {children}
                 <ScrollRestoration />
                 <Scripts />
