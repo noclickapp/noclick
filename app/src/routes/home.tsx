@@ -1,5 +1,6 @@
 // The app's one page until its screens move in: what the app is, and where the SDK it runs on is documented.
 import { VERSION } from 'noclick';
+import { PAGE_TITLE } from '@/ui/titles';
 import type { Route } from './+types/home';
 
 export const meta: Route.MetaFunction = () => [
@@ -10,7 +11,7 @@ export const meta: Route.MetaFunction = () => [
 export default function Home() {
     return (
         <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-4 px-6 py-16 leading-relaxed">
-            <h1 className="text-2xl font-semibold">NoClick</h1>
+            <h1 className={PAGE_TITLE}>NoClick</h1>
             <p>
                 This is NoClick’s app: the screens for working with a NoClick account, built only on the TypeScript SDK
                 (<code>noclick</code> {VERSION}).
