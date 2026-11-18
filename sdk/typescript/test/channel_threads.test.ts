@@ -176,6 +176,17 @@ test("star, mute, leave and reopen a channel", async () => {
   assert.deepEqual([room.mentionCount, room.unreadCount], [1, 1]);
 });
 
+test("saying you're typing, then that you stopped, answers nothing back", async () => {
+  const { api } = setup();
+  const typing = api.on("POST", "/v1/channels/ch_1/typing", new Response(null, { status: 204 }));
+  const room = nc.Channel.fromId("ch_1");
+  assert.equal(await room.typing(), undefined);
+  assert.deepEqual(typing.last.body, { typing: true });
+  await room.typing(false);
+  assert.deepEqual(typing.last.body, { typing: false });
+  assert.equal(typing.calls.length, 2);
+});
+
 test("your own sections of your channels read, save against their version, and lose to a newer save", async () => {
   const { api } = setup();
   const LAYOUT = {

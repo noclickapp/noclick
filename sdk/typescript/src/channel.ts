@@ -1280,6 +1280,16 @@ export class Channel extends ApiObject {
     return this;
   }
 
+  /**
+   * Say you're typing in the channel (`on`), or that you stopped: the other people reading it see so for a few
+   * seconds, under the name the channel knows you by, and nothing is kept. Send it again every few seconds while keys
+   * are pressed, and `false` once the message is sent or the box is cleared. For the account itself, or a person in one
+   * of its workspaces; at most once a second per channel.
+   */
+  async typing(on = true): Promise<void> {
+    await this._request("POST", `${await this.path()}/typing`, { json: { typing: on } });
+  }
+
   /** @deprecated Use `stream`. */
   listen(options: { after?: string; waitS?: number; signal?: AbortSignal } = {}): AsyncGenerator<ChannelMessage> {
     return this.stream(options);

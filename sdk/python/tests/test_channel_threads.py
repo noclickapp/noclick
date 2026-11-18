@@ -167,6 +167,16 @@ def test_star_mute_leave_and_reopen_a_channel(api, client):
     assert (room.join().mention_count, room.unread_count) == (1, 1) and joined.called
 
 
+def test_saying_youre_typing_then_that_you_stopped_answers_nothing_back(api, client):
+    typing = api.post("/v1/channels/ch_1/typing").respond(status_code=204)
+    room = nc.Channel.from_id("ch_1")
+    assert room.typing() is None
+    assert body(typing.calls.last.request) == {"typing": True}
+    room.typing(False)
+    assert body(typing.calls.last.request) == {"typing": False}
+    assert typing.call_count == 2
+
+
 def test_your_own_sections_read_save_against_their_version_and_lose_to_a_newer_save(api, client):
     layout = {"object": "channel_sections", "workspace_id": "ws_1", "version": 2, "folded": ["channels"],
               "updated_at": "2026-11-14T10:00:00Z", "sections": [

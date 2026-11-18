@@ -1761,6 +1761,25 @@ class Channel(_Object):
                                         json=compact(message_id=_message_id(message)))
         return self
 
+    @synced
+    async def typing(self, on: bool = True) -> None:
+        """Say you're typing in the channel (``on``), or that you stopped: the other people reading it see so for a
+        few seconds, under the name the channel knows you by, and nothing is kept. Send it again every few seconds
+        while keys are pressed, and ``False`` once the message is sent or the box is cleared. For the account itself,
+        or a person in one of its workspaces; at most once a second per channel.
+
+        Returns:
+            ``None``.
+
+        Usage::
+
+            room = noclick.Channel.get(channel_id)
+            room.typing()
+            room.post("On it.")
+            room.typing(False)
+        """
+        await self._request("POST", f"{await self._id_path()}/typing", json={"typing": on})
+
     async def _page(self, path: str, after: Optional[str], wait_s: Optional[int], *, before: Optional[str] = None,
                     newest: bool = False, limit: Optional[int] = None) -> List[ChannelMessage]:
         """The timeline's messages (``path`` its messages), or a thread's (its replies)."""
