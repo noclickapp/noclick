@@ -1,0 +1,28 @@
+{
+    "include": ["**/*.ts", "**/*.tsx", "**/.server/**/*.ts", "**/.server/**/*.tsx", "**/.client/**/*.ts", "**/.client/**/*.tsx", ".react-router/types/**/*"],
+    "exclude": ["node_modules", "build"],
+    "compilerOptions": {
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "types": ["@react-router/node", "vite/client"],
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "jsx": "react-jsx",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        // React Router's typegen writes each route's types (`./+types/home`) under .react-router/types.
+        "rootDirs": [".", "./.react-router/types"],
+        "resolveJsonModule": true,
+        // The SDK's source imports its own files with their .ts extensions.
+        "allowImportingTsExtensions": true,
+        "target": "ES2022",
+        "strict": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "paths": {
+            "@/*": ["./src/*"],
+            "noclick": ["../sdk/typescript/src/index.ts"]
+        },
+        // Vite builds; tsc only checks.
+        "noEmit": true
+    }
+}

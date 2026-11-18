@@ -1,0 +1,36 @@
+{
+  "name": "noclick-app",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@react-router/node": "7.18.2",
+    "@react-router/serve": "7.18.2",
+    "isbot": "^5.2.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router": "7.18.2"
+  },
+  "devDependencies": {
+    "@react-router/dev": "7.18.2",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "autoprefixer": "^10.4.20",
+    "happy-dom": "^21.0.4",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.6.3",
+    "typescript-7": "npm:typescript@7.0.2",
+    "vite": "8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "packageManager": "pnpm@10.34.4"
+}

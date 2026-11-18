@@ -1,6 +1,9 @@
 node_modules/
 dist/
 build/
+# React Router's generated route types, and Vite's cache.
+.react-router/
+.vite/
 *.egg-info/
 __pycache__/
 .pytest_cache/
