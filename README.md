@@ -66,13 +66,6 @@ Each SDK's README has the full tour: [Python](sdk/python/README.md), [TypeScript
 `scripts/check.sh` needs `python3`, Node 22.12 or later and pnpm 10 (`corepack enable pnpm`); CI runs it on
 Python 3.12 and Node 22.
 
-## History
-
-Until November 2026 this repository held NoClick's self-hosted workflow engine. That code is no longer
-updated. It remains in this repository's history, under the licence it was published with (AGPL-3.0):
-its last commit is [`ee0da77`](https://github.com/noclickapp/noclick/tree/ee0da77f444f2b59d68b65845415240eca68de4a)
-and its last release [v0.4.2](https://github.com/noclickapp/noclick/releases/tag/v0.4.2).
-
 ## Licence
 
 Apache-2.0: see [LICENSE](LICENSE). Contributions are welcome ([CONTRIBUTING.md](CONTRIBUTING.md));
