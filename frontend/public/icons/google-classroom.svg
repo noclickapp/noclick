@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Google Classroom">
-  <path fill="#0F9D58" d="M4 8h40v30H4z"/>
-  <path fill="#57BB8A" d="M8 12h32v22H8z"/>
-  <circle cx="24" cy="21" r="5" fill="#F4B400"/>
-  <path fill="#F4B400" d="M14 33c0-5.5 4.5-9 10-9s10 3.5 10 9z"/>
-  <path fill="#FFFFFF" d="M8 12h32v3H8z" opacity=".65"/>
-  <path fill="#0B8043" d="M4 38h40v3H4z"/>
-</svg>

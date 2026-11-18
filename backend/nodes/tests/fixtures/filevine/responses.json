@@ -1,5 +1,0 @@
-{
-  "projects": {"Items": [{"ProjectId": {"Native": 100}, "ProjectName": "Smith matter"}], "Offset": 10, "Limit": 1, "Count": 1, "HasMore": true, "Links": {"next": "https://untrusted.example/never-follow"}},
-  "user": {"OrgUserId": {"Native": 300}, "UserName": "fixture-api-user", "Email": "api@example.test", "Password": "must-not-escape", "Org": {"Name": "Fixture firm"}},
-  "note": {"NoteId": {"Native": 123}, "ProjectId": {"Native": 100}, "Body": "Discussed case strategy and next steps.", "Subject": "Client intake call"}
-}

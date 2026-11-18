@@ -1,8 +1,0 @@
-{
-  "lookup_domain": {
-    "config": {
-      "domain": "locaproxy.com"
-    },
-    "source": "https://www.ip2whois.com/developers-api"
-  }
-}

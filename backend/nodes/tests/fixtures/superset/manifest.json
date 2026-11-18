@@ -1,7 +1,0 @@
-{
-  "source": "https://raw.githubusercontent.com/apache/superset/master/docs/static/resources/openapi.json",
-  "version": "v1",
-  "contract_sha256": "399468df0ae31dcc821ef93cdd493b2e2e93ad28aa53a66f8e4f9ec9461ae08a",
-  "kind": "synthetic-schema-shaped",
-  "description": "Test values authored for these tests; field names and envelopes follow DashboardRestApi.get_list and ChartRestApi.get_list. These are not provider-authored examples or live recordings."
-}

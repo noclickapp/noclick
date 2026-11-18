@@ -76,4 +76,4 @@ For manual setup, troubleshooting, and other MCP clients, see the
 
 ## License
 
-AGPL-3.0-only. See the repository's [LICENSE](../../LICENSE).
+Apache-2.0. See the repository's [LICENSE](../../LICENSE).

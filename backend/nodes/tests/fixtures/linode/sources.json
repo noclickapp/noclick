@@ -1,8 +1,0 @@
-{
-  "profile": "https://techdocs.akamai.com/linode-api/reference/get-profile",
-  "instances": "https://techdocs.akamai.com/linode-api/reference/get-linode-instances",
-  "contract": "https://raw.githubusercontent.com/linode/linode-api-docs/ffe9841fd4578f66ffef52e656ac5c83852175a4/openapi.json",
-  "version": "4.215.0",
-  "events": "https://techdocs.akamai.com/linode-api/reference/get-events",
-  "filtering": "https://techdocs.akamai.com/linode-api/reference/filtering-and-sorting"
-}

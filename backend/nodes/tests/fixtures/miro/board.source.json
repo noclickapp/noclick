@@ -1,8 +1,0 @@
-{
-  "source": "https://github.com/miroapp/api-clients/blob/main/packages/generator/spec.json",
-  "schemas": [
-    "Board",
-    "UserInfoShort"
-  ],
-  "note": "Values copied from the provider OpenAPI property examples."
-}

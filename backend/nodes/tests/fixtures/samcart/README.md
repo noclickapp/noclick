@@ -1,1 +1,0 @@
-Customer property examples copied from the provider contract, CustomerService schema: https://developer.samcart.com/specs/openapi.yaml (version 1.0.0). Pagination uses its documented null next/prev values. Tests use synthetic credentials.

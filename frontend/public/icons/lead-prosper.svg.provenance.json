@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/lead-prosper.svg",
-  "source": "https://api.leadprosper.io/docs/assets/lp-mark.svg (official API documentation favicon at https://api.leadprosper.io/public/docs)",
-  "license": "Lead Prosper brand mark used nominatively to identify the connected service; trademark rights remain with Lead Prosper.",
-  "sha256": "577f8dd45d5e341b51c337b08c6ab930784faf5b317c5cb7021e0d5beff061ef"
-}

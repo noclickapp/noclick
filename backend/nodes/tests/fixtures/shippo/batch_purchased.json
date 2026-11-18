@@ -1,5 +1,0 @@
-{
-  "event": "batch_purchased",
-  "test": true,
-  "data": "batch # processing complete"
-}

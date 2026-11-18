@@ -1,9 +1,0 @@
-{
-  "agents": [
-    {
-      "agentId": "cradl:agent:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "name": "Invoice extraction"
-    }
-  ],
-  "nextToken": null
-}

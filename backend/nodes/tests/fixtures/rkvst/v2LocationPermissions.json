@@ -1,9 +1,0 @@
-{
-  "location_identity": "locations/08838336-c357-460d-902a-3aba9528dd22",
-  "permissions": {
-    "subject_identities": [
-      "bob@example.com",
-      "orgb"
-    ]
-  }
-}

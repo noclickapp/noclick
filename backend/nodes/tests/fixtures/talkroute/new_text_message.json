@@ -1,7 +1,0 @@
-{
-  "datetime": "2026-06-12T20:09:52+00:00",
-  "direction": "incoming",
-  "from_number": "+16308910180",
-  "to_number": "+17086010517",
-  "body": "Test with webhook 3"
-}

@@ -1,8 +1,0 @@
-{
-  "id": "tXn3nKq8Zs4pLm9vRb2xJc",
-  "operation_id": "task-abc123",
-  "operation_url": "https://api.audienceful.com/v2/operations/task-abc123",
-  "status": "pending",
-  "draft": "july-newsletter",
-  "email": "person@example.com"
-}

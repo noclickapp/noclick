@@ -1,4 +1,0 @@
-{
-  "package_show.json": "https://raw.githubusercontent.com/bcgov/bcdc2bcdc/master/data/bc-parks-ecological-reserves-and-protected-areas_PROD.json",
-  "package_search.json": "https://raw.githubusercontent.com/bcgov/sae-virtual-display/46e403d6431d92a3cf196c87f9065f9572864af8/hub/ui/src/components/search/__tests__/data.js"
-}

@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/bitly.svg",
-  "source": "https://github.com/simple-icons/simple-icons/blob/13.21.0/icons/bitly.svg",
-  "license": "CC0-1.0; Bitly trademark used to identify the integration.",
-  "sha256": "a3cb87b8c87e8073c941e8985160648fa2e6413f89e353dd3b836f03184b1454",
-  "modifications": "Added the Bitly orange fill (#EE6123) to the Simple Icons artwork."
-}

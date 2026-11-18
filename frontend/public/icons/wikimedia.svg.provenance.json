@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/wikimedia.svg",
-  "source": "https://upload.wikimedia.org/wikipedia/commons/8/81/Wikimedia-logo.svg",
-  "license": "Public domain (PD-ineligible) per https://commons.wikimedia.org/wiki/File:Wikimedia-logo.svg; Wikimedia Foundation trademark, subject to https://foundation.wikimedia.org/wiki/Policy:Trademark_policy",
-  "sha256": "d45fb5aaf057349e750d382b19d20f09f9201a87d38e725091d0ac1bf0f0a99f",
-  "modifications": "Removed trailing whitespace from the upstream SVG."
-}

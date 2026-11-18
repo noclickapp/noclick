@@ -1,9 +1,0 @@
-{
-  "config": {
-    "operation": "create_bulk_run",
-    "robotId": "c3689adb-50aa-44af-b265-a7e0d4e5846e",
-    "title": "Bulk Run Title",
-    "inputParameters_json": "[{\"originUrl\": \"https://www.ycombinator.com/companies/airbnb\", \"companies_skip\": 0, \"companies_limit\": 10}, {\"originUrl\": \"https://www.ycombinator.com/companies/coinbase\", \"companies_skip\": 0, \"companies_limit\": 20}]"
-  },
-  "source": "https://docs.browse.ai/api/"
-}

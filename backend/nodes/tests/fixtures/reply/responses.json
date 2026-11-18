@@ -1,9 +1,0 @@
-{
-  "source": "https://docs.reply.io/api-reference/bundled.yaml",
-  "account": {"userId": 42, "username": "sales@example.test", "teamId": 7},
-  "contact": {"id": 42, "email": "john.doe@company.com", "firstName": "John", "lastName": "Doe"},
-  "contact_list": {"id": 42, "name": "Conference leads", "isShared": false},
-  "sequence": {"id": 42, "name": "Follow up"},
-  "task": {"id": 42, "taskType": "toDo", "status": "finished"},
-  "bulk": {"added": [42], "notProcessed": [], "notProcessedByReason": {}}
-}

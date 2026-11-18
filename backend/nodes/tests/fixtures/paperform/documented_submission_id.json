@@ -1,9 +1,0 @@
-{
-  "id": "5d40fdaf174b4c0007043072",
-  "sources": [
-    "https://paperform.readme.io/reference/getsubmission",
-    "https://paperform.readme.io/reference/deletesubmission",
-    "https://paperform.readme.io/reference/getpartialsubmission"
-  ],
-  "note": "The provider's examples use a 24-character identifier despite the OpenAPI uuid format. Preserve the supplied identifier verbatim."
-}

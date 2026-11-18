@@ -1,7 +1,0 @@
-{
-  "hello-world.png": {
-    "source": "https://documentation.image-charts.com/qr-codes/",
-    "image_url": "https://image-charts.com/chart?chs=150x150&cht=qr&chl=Hello%20world&choe=UTF-8",
-    "description": "Provider documentation example image; public, unsigned request, no account used."
-  }
-}

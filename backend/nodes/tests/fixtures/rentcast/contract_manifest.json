@@ -1,7 +1,0 @@
-{
-  "file": "openapi.json",
-  "sha256": "698eceebb531459e03dfe09b516d2a0e9af0ce89579e49550ea1183227827a41",
-  "version": "1.0",
-  "source_url": "https://developers.rentcast.io/openapi/rentcast-api.json",
-  "node_type": "automation-rentcast"
-}

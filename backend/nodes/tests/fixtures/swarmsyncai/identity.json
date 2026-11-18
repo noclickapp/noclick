@@ -1,8 +1,0 @@
-{
-  "kind": "agent",
-  "agentId": "00000000-0000-4000-8000-000000000001",
-  "agent": {"id": "00000000-0000-4000-8000-000000000001", "name": "Fixture Agent", "slug": "fixture-agent", "claimed": true},
-  "walletId": null,
-  "scopes": ["agent"],
-  "apiKeyExpiresAt": "2026-12-01T00:00:00Z"
-}

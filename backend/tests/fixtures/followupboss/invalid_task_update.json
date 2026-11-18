@@ -1,4 +1,0 @@
-{
-  "source": "https://docs.followupboss.com/reference/tasks-id-put",
-  "body": "{\n  \"id\": 4066,\n  \"created\": \"2016-12-07T15:50:47Z\",\n  \"updated\": \"2016-12-07T15:50:47Z\",\n  \"completed:\" null,\n  \"createdBy\": \"Gerald Leenerts\",\n  \"updatedBy\": \"Gerald Leenerts\",\n  \"personId\": 15013,\n  \"AssignedTo\": \"Gerald Leenerts\",\n  \"assignedUserId\": 1,\n  \"name\": \"Follow Up\",\n  \"type\": \"Follow Up\",\n  \"isCompleted\": 0,\n  \"dueDate\": null,\n  \"dueDateTime\": null,\n  \"person\": {\n    \"id\": 15013,\n    \"name\": \"William Riker\"\n  }\n}"
-}

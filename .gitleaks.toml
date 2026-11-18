@@ -1,125 +1,42 @@
+# gitleaks' default rules, with the made-up values the SDKs' docstrings and tests use allowed
+# for the one rule they trip, and only in the files that use them.
 [extend]
 useDefault = true
 
 [[allowlists]]
-description = "Dependency caches and generated build output are not repository content"
-paths = [
-  '''(^|/)node_modules/''',
-  '''(^|/)build/''',
-  '''(^|/)dist/''',
-  '''(^|/)__pycache__/''',
-  '''(^|/)\.pytest_cache/''',
-]
-
-[[allowlists]]
-description = "LinkedIn SVG component names collide with secret rule keywords"
-targetRules = ["linkedin-client-id", "linkedin-client-secret"]
-paths = ['''^frontend/app/components/workflow/nodes/(?:LinkedInNode|integrations/linkedin)\.tsx$''']
-
-[[allowlists]]
-description = "OAuth hook name is not a LinkedIn client id"
-targetRules = ["linkedin-client-id"]
-regexes = ['''^useRedditOAuth$''']
-
-[[allowlists]]
-description = "Service-account validation checks PEM delimiters but contains no key material"
-targetRules = ["private-key"]
-paths = ['''^backend/nodes/agent/config/providers\.py$''']
-
-[[allowlists]]
-description = """
-Test fixtures. A node's mock tests construct its credential object, so every
-one of them contains something shaped exactly like that provider's key —
-`api_key="cal_test_key_12345"`, `SK1234567890abcdef…`, an sk-ant key spelling
-DEADBEEF. Scoped to the rules that fire on those shapes rather than switched
-off wholesale: an AWS key or a Slack token committed to a test still fails.
-"""
-targetRules = [
-  "generic-api-key",
-  "twilio-api-key",
-  "discord-client-id",
-  "anthropic-api-key",
-  "curl-auth-user",
-]
-paths = [
-  '''^backend/tests/''',
-  '''^backend/nodes/tests/''',
-  '''^frontend/tests/''',
-]
-
-[[allowlists]]
-description = """
-The onboarding walkthrough is a deterministic synthetic fixture. Its fixed
-UUIDs exercise the `credentialIds` rendering path but do not identify rows in
-any deployment. The generic rule still fires on a UUID next to that field.
-"""
+description = "An example connection id in docstrings and tests"
 targetRules = ["generic-api-key"]
-paths = ['''^frontend/app/components/design/onboarding/liveWorkflow\.ts$''']
-
-[[allowlists]]
-description = """
-The compaction tests hand a conversation a made-up Stripe-style key, to check
-that a summary never copies a key a tool printed. Neither value is a key: a
-live Stripe secret key is far longer. Exact values, so a real key in these
-files still fails.
-"""
 condition = "AND"
-targetRules = ["stripe-access-token"]
-paths = ['''^backend/tests/test_(compaction_model_eval|coordinator_compaction)\.py$''']
-regexes = ['''^sk_live_(?:51Hx9INCIDENTAL0001|INJECTED7777)$''']
-
-[[allowlists]]
-description = """
-SimplyRETS publishes simplyrets:simplyrets as the login for its demo API, and
-the node's docs quote it. Exact value, so other credentials there still fail.
-"""
-condition = "AND"
-targetRules = ["curl-auth-user"]
-paths = [
-  '''^backend/nodes/simplyrets_node\.py$''',
-  '''^frontend/app/schemas/nodes/simplyrets\.json$''',
-]
-regexes = ['''^simplyrets:simplyrets$''']
-
-[[allowlists]]
-description = """
-Field and enum names the generic and LinkedIn rules read as keys: an S3 key
-field, an API error code, credential field names in node metadata, LinkedIn id
-fields and a platform enum. Exact names only.
-"""
-condition = "AND"
-targetRules = ["generic-api-key", "linkedin-client-id", "linkedin-client-secret"]
-paths = [
-  '''^backend/nodes/''',
-  '''^frontend/app/schemas/nodeMeta/''',
-]
-regexes = [
-  '''^(?:recording_s3_key|INVALID_API_KEYS_001|msg91_api_key|route4me_api_key|signal8_api_key)$''',
-  '''^(?:linkedinUserId|creditsCharged|linkedinEntityI[dD]|LinkedInPlatform)$''',
-]
-
-[[allowlists]]
-description = """
-An icon's provenance file records the public URL its mark was downloaded from:
-a docs host's file link carries its storage download token, a press kit's share
-link its key. Both are part of a link the company published.
-"""
-targetRules = ["generic-api-key"]
-paths = ['''^frontend/public/icons/[^/]+\.provenance\.json$''']
-
-[[allowlists]]
-description = "The SDK trigger tests' made-up credential id."
-condition = "AND"
-targetRules = ["generic-api-key"]
-paths = ['''^sdk/(?:python/tests/test_triggers\.py|typescript/test/triggers\.test\.ts)$''']
 regexes = ['''^9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e$''']
+paths = [
+  '''(?:^|/)sdk/python/noclick/(?:connection|workflow)\.py$''',
+  '''(?:^|/)sdk/python/tests/test_(?:connect|triggers|workflow_graph)\.py$''',
+  '''(?:^|/)sdk/typescript/test/(?:connection_plan_usage|connections_app|triggers|workflow_graph)\.test\.ts$''',
+]
 
 [[allowlists]]
-description = """
-Dromo's OpenAPI document gives an SFTP private key field an example that is a
-cut-off stub with an ellipsis, not a key. Only such stubs pass.
-"""
+description = "An example secret's id in tests"
+targetRules = ["generic-api-key"]
 condition = "AND"
-targetRules = ["private-key"]
-paths = ['''^backend/nodes/tests/fixtures/dromo/openapi\.json$''']
-regexes = ['''(?:\.\.\.|…)''']
+regexes = ['''^2a7f0c3e-9d1b-4e6a-8c5f-3b0e7d2a9c14$''']
+paths = [
+  '''(?:^|/)sdk/python/tests/test_designed_volumes_secrets\.py$''',
+  '''(?:^|/)sdk/typescript/test/designed_volumes_secrets\.test\.ts$''',
+]
+
+[[allowlists]]
+description = "A fake webhook signing secret in tests"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexes = ['''^nk_whsec_3f9c2a7e5b1d4c8a$''']
+paths = [
+  '''(?:^|/)sdk/python/tests/test_webhooks\.py$''',
+  '''(?:^|/)sdk/typescript/test/webhooks\.test\.ts$''',
+]
+
+[[allowlists]]
+description = "A fake API key in the CLI's tests"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexes = ['''^nk_live_cli9f2c1a77$''']
+paths = ['''(?:^|/)sdk/python/tests/test_cli\.py$''']

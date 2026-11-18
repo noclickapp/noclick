@@ -1,12 +1,15 @@
 name: Publish SDK
 
-# Manually increments the patch version and publishes to npm and/or PyPI.
+# Publishes each SDK at the version its source names: sdk/typescript/package.json
+# to npm, sdk/python/pyproject.toml to PyPI. A release is a commit that raises
+# that version (package.json with its package-lock.json; pyproject.toml with
+# noclick/_version.py), then a run of this workflow on main.
 #
-# Publishing happens HERE, from the public repository, and not from a private
-# one: what npm and PyPI receive is then exactly what anyone can read, and no
-# packaging mistake can put private code in a public tarball.
-# Manual only, deliberately. Publishing to a registry is a public act; a merge
-# to main must not be able to pre-empt it.
+# Manual only, deliberately: publishing to a registry is a public act, and a
+# commit to main must never start one. It refuses a version that isn't newer
+# than every version the registry already has, so a run can't republish or go
+# backwards. Publishing happens here, from the public repository, so what npm
+# and PyPI receive is built from exactly what anyone can read here.
 on:
   workflow_dispatch:
     inputs:
@@ -20,16 +23,14 @@ permissions:
   contents: read
 
 concurrency:
-  # Registry-derived patch versions must be serialized across dispatches.
+  # One release at a time: each run reads what the registries already have.
   group: sdk-release-${{ github.repository }}
   cancel-in-progress: false
 
 jobs:
   detect-changes:
-    # OIDC publishing is a public side effect. Keep the workflow reviewable in
-    # the private candidate while making repository visibility and the protected
-    # main ref joint launch gates.
-    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main'
+    # Only this repository's main branch publishes; a fork has no trusted publisher anyway.
+    if: github.repository == 'noclickapp/noclick' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -60,49 +61,57 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - name: Upgrade npm
         # OIDC trusted publishing requires npm >= 11.5.1; the runner ships npm 10.x.
         run: npm install -g npm@11.5.1
 
-      - name: Install dependencies
+      - name: Check the version is newer than npm's
         working-directory: sdk/typescript
-        run: npm ci
-
-      - name: Run tests
-        working-directory: sdk/typescript
-        run: npm test
-
-      - name: Set next version from the npm registry
-        working-directory: sdk/typescript
-        # Derive from what's actually published, not the source baseline. This
-        # workflow never writes generated version bumps directly to main.
         run: |
           set -euo pipefail
-          PUBLISHED=$(npm view noclick version)
-          if [[ ! "$PUBLISHED" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
-            echo "::error::npm returned a non-canonical version: $PUBLISHED"
+          VERSION=$(node -p "require('./package.json').version")
+          LOCKED=$(node -p "require('./package-lock.json').version")
+          if [ "$LOCKED" != "$VERSION" ]; then
+            echo "::error::package.json is version $VERSION but package-lock.json says $LOCKED"
             exit 1
           fi
-          # The source names its own release line: never publish an older line's
-          # code as the next patch of a newer one.
-          OWN=$(node -p "require('./package.json').version")
-          if [[ "${OWN%.*}" != "${PUBLISHED%.*}" ]]; then
-            echo "::error::sdk/typescript is version $OWN but npm serves $PUBLISHED: this source isn't that release line"
-            exit 1
-          fi
-          npm version "$PUBLISHED" --no-git-tag-version --allow-same-version
-          npm version patch --no-git-tag-version
-          echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+          npm view noclick versions --json > "$RUNNER_TEMP/npm-versions.json"
+          VERSION="$VERSION" LISTED="$RUNNER_TEMP/npm-versions.json" node <<'JS'
+          const plain = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+          const parts = (v) => v.split(".").map(Number);
+          const newer = (a, b) => {
+            const [x, y] = [parts(a), parts(b)];
+            for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
+            return false;
+          };
+          const own = process.env.VERSION;
+          // One published version comes back as a string, more as a list.
+          const listed = [].concat(JSON.parse(require("fs").readFileSync(process.env.LISTED, "utf8")));
+          const fail = (why) => { console.log(`::error::${why}`); process.exit(1); };
+          if (!plain.test(own)) fail(`sdk/typescript is version ${own}: publish plain X.Y.Z versions only`);
+          const odd = listed.filter((v) => !plain.test(v));
+          if (odd.length) fail(`npm lists versions this check cannot order: ${odd.join(", ")}`);
+          const newest = listed.reduce((a, b) => (newer(b, a) ? b : a));
+          if (!newer(own, newest)) fail(`sdk/typescript is version ${own}, and npm already has ${newest}: raise the version first`);
+          console.log(`Publishing ${own}; npm has ${newest}.`);
+          JS
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Check the packed license is the SDK's own
+      - name: Build and test everything
+        run: scripts/check.sh
+
+      - name: Check the packed licence is the SDK's own
         working-directory: sdk/typescript
-        # The SDK is Apache-2.0 so that code built against it carries no AGPL
-        # obligation. The root LICENSE is the AGPL and must never be packed here.
+        # npm packs sdk/typescript/LICENSE: it must be the Apache-2.0 text the package declares.
         run: head -n 2 LICENSE | grep -q 'Apache License'
 
       - name: Build
@@ -123,6 +132,10 @@ jobs:
             exit 1
           fi
           package_name="$(basename "${packages[0]}")"
+          if [ "$package_name" != "noclick-$VERSION.tgz" ]; then
+            echo "::error::packed $package_name, expected noclick-$VERSION.tgz"
+            exit 1
+          fi
           smoke_dir="$RUNNER_TEMP/npm-import-smoke"
           npm install --prefix "$smoke_dir" --ignore-scripts "${packages[0]}"
           (cd "$smoke_dir" && node --input-type=module -e "await import('noclick')")
@@ -154,33 +167,59 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install build tool
-        run: pip install build==1.3.0 twine==6.2.0
+      # scripts/check.sh tests the TypeScript SDK too, which checks its API against this one.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
 
-      - name: Set next version from PyPI
+      - name: Check the version is newer than PyPI's
         working-directory: sdk/python
-        # Derive from the published version, not the source baseline. This
-        # workflow never writes generated version bumps directly to main.
         run: |
           set -euo pipefail
-          PUBLISHED=$(curl -fsSL https://pypi.org/pypi/noclick/json | python -c "import sys,json; print(json.load(sys.stdin)['info']['version'])")
-          if [[ ! "$PUBLISHED" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
-            echo "::error::PyPI returned a non-canonical version: $PUBLISHED"
+          VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml)
+          MODULE=$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' noclick/_version.py)
+          if [ -z "$VERSION" ] || [ "$MODULE" != "$VERSION" ]; then
+            echo "::error::pyproject.toml is version '$VERSION' but noclick/_version.py says '$MODULE'"
             exit 1
           fi
-          # The source names its own release line, as for npm.
-          OWN=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml)
-          if [[ "${OWN%.*}" != "${PUBLISHED%.*}" ]]; then
-            echo "::error::sdk/python is version $OWN but PyPI serves $PUBLISHED: this source isn't that release line"
-            exit 1
-          fi
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$PUBLISHED"
-          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
-          sed -i "s/^version = \".*\"/version = \"$NEW\"/" pyproject.toml
-          sed -i "s/^__version__ = \".*\"/__version__ = \"$NEW\"/" noclick/__init__.py
-          grep -Fqx "version = \"$NEW\"" pyproject.toml
-          grep -Fqx "__version__ = \"$NEW\"" noclick/__init__.py
-          echo "VERSION=$NEW" >> "$GITHUB_ENV"
+          curl -fsSL https://pypi.org/pypi/noclick/json > "$RUNNER_TEMP/pypi.json"
+          python - "$VERSION" "$RUNNER_TEMP/pypi.json" <<'PY'
+          import json
+          import re
+          import sys
+
+          own, path = sys.argv[1], sys.argv[2]
+          plain = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+
+
+          def fail(why):
+              print(f"::error::{why}")
+              sys.exit(1)
+
+
+          def parts(version):
+              return tuple(int(part) for part in version.split("."))
+
+
+          if not plain.match(own):
+              fail(f"sdk/python is version {own}: publish plain X.Y.Z versions only")
+          with open(path) as f:
+              listed = list(json.load(f)["releases"])
+          odd = [v for v in listed if not plain.match(v)]
+          if odd:
+              fail(f"PyPI lists versions this check cannot order: {', '.join(odd)}")
+          newest = max(listed, key=parts)
+          if parts(own) <= parts(newest):
+              fail(f"sdk/python is version {own}, and PyPI already has {newest}: raise the version first")
+          print(f"Publishing {own}; PyPI has {newest}.")
+          PY
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Build and test everything
+        run: scripts/check.sh
+
+      - name: Install build tool
+        run: pip install build==1.3.0 twine==6.2.0
 
       - name: Build and verify the Python distributions
         working-directory: sdk/python
@@ -195,9 +234,6 @@ jobs:
             echo "::error::expected one wheel and one sdist"
             exit 1
           fi
-          SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
-          export SOURCE_DATE_EPOCH
-          python ../../scripts/normalize_python_sdist.py "${sdists[0]}"
           python -m twine check "${wheels[0]}" "${sdists[0]}"
           (cd dist && sha256sum -- *.whl *.tar.gz > SHA256SUMS)
           python -m pip install --force-reinstall "${wheels[0]}"
@@ -210,8 +246,8 @@ jobs:
           assert noclick.__version__ == os.environ["VERSION"]
           PY
           )
-          # Installing the exact rewritten sdist proves it still builds and
-          # imports, rather than checking only the independently-built wheel.
+          # Installing the exact sdist proves it builds and imports too, not only
+          # the wheel built beside it.
           python -m pip install --force-reinstall "${sdists[0]}"
           (cd "$RUNNER_TEMP" && python - <<'PY'
           import os
@@ -249,7 +285,7 @@ jobs:
     steps:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - name: Upgrade npm
@@ -321,7 +357,7 @@ jobs:
 
       - name: Publish to PyPI
         # No token: auth comes from the OIDC trusted publisher configured on PyPI
-        # (noclick project → Publishing → noclickapp/noclick / publish-sdk.yml).
+        # for this repository's publish-sdk.yml.
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
         with:
           packages-dir: ${{ runner.temp }}/python-package

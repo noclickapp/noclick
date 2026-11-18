@@ -1,9 +1,0 @@
-{
-  "path": "frontend/public/icons/linkace.svg",
-  "source": "https://www.linkace.org/favicon.svg",
-  "license": "Official LinkAce brand mark, used to identify the connected service; trademark rights remain with its owner.",
-  "sha256": "fb8147ccedcdc5795fa062910626deb5a6f3bc80754498f059b4288a6fb8f0df",
-  "edits": [
-    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
-  ]
-}

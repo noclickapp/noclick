@@ -1,6 +1,0 @@
-{
-  "source": "https://apidocs.xamatech.com/openapi/bombpot.yaml",
-  "version": "0.1",
-  "client": {"account_id": "my_fancy_account_id", "type": "COMPANY", "id": "my_client_1234", "enabled": true},
-  "contact": {"first_name": "Karl", "last_name": "August", "email": "test@test.com", "phone": "030 123456", "date_of_birth": "1990-06-15"}
-}

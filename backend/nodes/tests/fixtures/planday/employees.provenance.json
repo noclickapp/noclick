@@ -1,5 +1,0 @@
-{
-  "source": "https://openapi.planday.com/hr/swagger/v1.0/swagger.json",
-  "pointer": "/paths/~1hr~1v1.0~1employees/get/responses/200/content/application~1json/example",
-  "edits": []
-}

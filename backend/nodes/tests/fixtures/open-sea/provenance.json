@@ -1,6 +1,0 @@
-{
-  "source": "https://api.opensea.io/api/v2/openapi.json",
-  "version": "2.0.0",
-  "upstream_sha256": "0d11db89f73ed18e9829d023bb059f55d44fd2bf94cf0a194c8f40f98da6de93",
-  "description": "Unmodified selected paths and transitively referenced schemas from the pinned provider contract. Test values are synthetic unless explicitly marked as a provider example."
-}

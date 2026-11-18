@@ -1,2 +1,0 @@
-https://dash.readme.com/api/v1/api-registry/c0rxrwmemvz5k6am
-https://scalr.io/api/iacp/v3/examples/get-run.yml

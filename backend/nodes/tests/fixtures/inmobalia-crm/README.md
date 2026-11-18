@@ -1,1 +1,0 @@
-Schema-shaped unit fixtures for Inmobalia CRM v1. Field names and dated/email/phone/source/reference examples come from https://api-crm.inmobalia.com/docs/api-docs (WebLeadResponseDTO, ContactPageContentDTO, PropertyPageContentDTO). IDs, agent names, and other literals are synthetic test values. These are not live recordings or conformance witness overrides.

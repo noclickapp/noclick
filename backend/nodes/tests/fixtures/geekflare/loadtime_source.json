@@ -1,4 +1,0 @@
-{
-  "source": "https://docs.geekflare.com/endpoint/load-time.md",
-  "contract_defect": "Missing LoadTimeResponseDto in pinned OpenAPI 1.0.0"
-}

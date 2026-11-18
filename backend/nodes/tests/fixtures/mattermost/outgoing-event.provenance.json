@@ -1,5 +1,0 @@
-{
-  "source": "https://docs.mattermost.com/developers/integrate/webhooks/outgoing",
-  "retrieved": "2026-11-11",
-  "notes": "Documented form request decoded to the alternative JSON transport documented by the same page."
-}

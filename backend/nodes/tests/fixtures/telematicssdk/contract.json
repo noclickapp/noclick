@@ -1,7 +1,0 @@
-{
-  "source": "https://user.telematicssdk.com/swagger/v1/swagger.json",
-  "note": "Schema-shaped synthetic user-page fixture; not a recorded response. Every field is declared by UsersPageDtoDataContractBaseResponse and UserDtoDataContract.",
-  "page": {"Status":200,"Title":"","Errors":[],"Result":{"Users":[{"DeviceToken":"00000000-0000-4000-8000-000000000001","DateCreated":"2026-11-11T00:00:00Z","UserProfile":{"FirstName":"Test","LastName":"Driver"}}],"HasNextPage":false}},
-  "acknowledgement": {"Status":200,"Title":"","Errors":[]},
-  "acknowledgement_source": "https://docs.damoov.com/docs/python_users"
-}

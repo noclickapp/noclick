@@ -1,9 +1,0 @@
-{
-  "source": "https://s1.dev/docs/utility/usage",
-  "body": {
-    "usage": 0,
-    "user_id": "string",
-    "credential_type": "api_key",
-    "client_id": "string"
-  }
-}

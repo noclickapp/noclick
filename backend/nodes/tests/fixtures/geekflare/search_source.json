@@ -1,4 +1,0 @@
-{
-  "source": "https://docs.geekflare.com/endpoint/search.md",
-  "contract_defect": "Missing SearchSerpResponseDto in pinned OpenAPI 1.0.0"
-}

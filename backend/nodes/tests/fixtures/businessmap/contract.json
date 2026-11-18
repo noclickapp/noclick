@@ -1,8 +1,0 @@
-{
-  "evidence": "openapi",
-  "source": "https://demo.kanbanize.com/openapi/json",
-  "version": "1.0.0",
-  "sha256": "0ce278f6e57d4eea0caf12ee21f9b645ed37619b2340c00321c3052531243beb",
-  "webhook_documentation": "https://knowledgebase.businessmap.io/hc/en-us/articles/360015393251-Businessmap-Webhooks",
-  "webhook_documentation_api": "https://knowledgebase.businessmap.io/api/v2/help_center/en-us/articles/360015393251.json"
-}

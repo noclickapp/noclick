@@ -1,6 +1,0 @@
-{
-  "GET /": {
-    "body": "{\n  \"response\": \"OK\",\n  \"countryCode\": \"JP\",\n  \"countryName\": \"Japan\",\n  \"regionName\": \"Tokyo\",\n  \"cityName\": \"Tokyo\",\n  \"isp\": \"Amazon Technologies Inc.\",\n  \"domain\": \"amazon.com\",\n  \"usageType\": \"DCH\",\n  \"asn\": \"14618\",\n  \"as\": \"Amazon.com Inc.\",\n  \"lastSeen\": 20,\n  \"proxyType\": \"DCH\",\n  \"isProxy\": \"NO\",\n  \"threat\": \"SPAM\",\n  \"provider\": \"NordVPN\",\n  \"creditsConsumed\": 11\n}\n",
-    "source": "https://www.ip2location.com/web-service/ip2proxy"
-  }
-}

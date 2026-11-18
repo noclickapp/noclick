@@ -10,7 +10,7 @@
   },
   "homepage": "https://docs.noclick.com/mcp/setup",
   "repository": "https://github.com/noclickapp/noclick",
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "keywords": [
     "noclick",
     "mcp",

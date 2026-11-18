@@ -1,8 +1,0 @@
-{
-  "kind": "books#annotation",
-  "id": "A String",
-  "updated": "A String",
-  "volumeId": "A String",
-  "data": "A String",
-  "selectedText": "A String"
-}

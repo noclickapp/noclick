@@ -1,9 +1,0 @@
-{
-  "path": "frontend/public/icons/feathr.svg",
-  "source": "https://docs.feathr.co/img/favicon.svg",
-  "license": "Feathr trademark; used to identify the Feathr integration",
-  "sha256": "9f01f920644a4608a3b4e671754381defd902ada58d8268b9feb25aed48a98cd",
-  "edits": [
-    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
-  ]
-}

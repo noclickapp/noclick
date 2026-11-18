@@ -1,168 +1,20 @@
-# Contributing to NoClick
+# Contributing
 
-Thanks for being here. This guide covers getting a working checkout, the two
-most common contributions, and the conventions this codebase enforces.
+Issues and pull requests are welcome. Open an issue for a bug (with the version and the smallest
+code that shows it) or to discuss a change before you make it; send a pull request for a fix.
 
-If anything here is wrong or missing, that's a bug worth reporting —
-[Discord](https://discord.com/invite/sHC2mrnss8) is the fastest way to ask.
+## How a change lands
 
-## Sign your commits
+This repository is copied, commit by commit, from a folder of NoClick's main repository, so
+nothing is merged here directly. An accepted pull request is applied in the main repository and
+comes back here as a commit with you as its author. The pull request is then closed as landed,
+not merged with the merge button.
 
-Every commit needs a `Signed-off-by` line. `git commit -s` adds it, and it means
-you agree to the [Developer Certificate of Origin](https://developercertificate.org/):
-that you wrote the change, or have the right to submit it under this project's
-licence.
+Before you send one, run `scripts/check.sh`: it builds and tests everything, as CI does.
 
-```
-Signed-off-by: Your Name <you@example.com>
-```
+## Licence
 
-It is not a copyright assignment and it does not transfer anything — it is a
-statement that you are entitled to contribute what you are contributing.
-`git config alias.ci "commit -s"` makes it the default. CI checks each commit in
-a pull request, and `git rebase --signoff main` fixes a branch that predates it.
+This repository is Apache-2.0, and so is what you contribute to it (section 5 of the
+[licence](LICENSE)). There is no contributor agreement to sign.
 
-## Sign the CLA, once
-
-Your first pull request gets a comment from the CLA bot asking you to sign the
-[Contributor License Agreement](./CLA.md) by replying with one sentence. It is
-a license, not an assignment: you keep the copyright in your work, and you
-grant NoClick the right to distribute it under the project's licenses and
-under commercial terms. NoClick runs this same code as a hosted service and
-sells commercial licenses to companies that cannot accept the AGPL, and
-without that grant an outside contribution would bind those uses to the AGPL.
-The signature is recorded on the `cla-signatures` branch and covers every
-later contribution. Contributing on behalf of an employer? Make sure you are
-authorized to sign for them; the agreement says what that means.
-
-## Setup
-
-Prerequisites: Docker, the [Supabase CLI](https://supabase.com/docs/guides/cli),
-Python 3.12 (3.13 isn't supported — some pinned wheels don't build on it), and
-Node.js 22.12 or newer with pnpm 10.34.4.
-
-```bash
-pip install -r requirements.txt
-make local
-```
-
-That starts a local Supabase, applies migrations, and runs both processes.
-Sign up with any email — local auth confirms instantly.
-
-Details, environment variables, and how to connect model providers and OAuth
-apps: **[docs/self-hosting.md](./docs/self-hosting.md)**.
-
-## Adding an integration node
-
-The most useful contribution, and the least code. The editor UI is generated
-from your Pydantic model, so you write Python and the interface appears.
-
-1. Copy the closest existing node in `backend/nodes/` — one with the same auth
-   style (API key vs OAuth) and a similar operation shape.
-2. Define operations as Pydantic config models. Field metadata drives the UI:
-   see the schema-extension table in [CLAUDE.md](./CLAUDE.md).
-3. Register the node in `backend/nodes/core/registry.py`.
-4. Regenerate schemas: `cd backend && python scripts/generate_socket_types.py`
-   (the pre-commit hook does this too).
-5. Add tests under `backend/nodes/tests/`. Mock the provider's HTTP calls —
-   tests must not need real credentials. A test that has to hit a live API
-   carries `pytestmark = pytest.mark.integration`; the default run excludes
-   it, and `pytest -m ""` opts back in.
-
-For OAuth nodes, declare the scopes each operation needs in
-`backend/nodes/scopes/<provider>.py` and point the node at that registry.
-`backend/tests/test_oauth_scope_coverage.py` enforces it: a node that requests a
-scope it never uses, or uses one it never requested, fails CI. Adding a scope
-forces every existing user to re-authorize, so treat scope changes as migrations
-rather than edits.
-
-## Adding a socket event or handler
-
-1. Define the event as a Pydantic model in `backend/wss/sender/events.py`.
-2. Route it in `backend/wss/receiver/event_routing.py`.
-3. Implement the handler in `backend/wss/handlers/`.
-4. Regenerate types so the frontend sees it.
-
-Always send through `send_event()` with a typed model — never a bare
-`sio.emit()`.
-
-## Tests
-
-```bash
-make test-backend-community
-make check-community-boundary
-pnpm --dir frontend install --frozen-lockfile
-pnpm --dir frontend typecheck
-pnpm --dir frontend build
-pnpm --dir frontend test
-```
-
-Focused tests are fine while iterating; the backend suite, boundary gate,
-whole-tree TypeScript check, production build, and frontend suite should all
-pass before you open a PR. A few structural tests are worth knowing because they
-fail in ways that look confusing at first:
-
-| Test | What it protects |
-|---|---|
-| `scripts/check-repository-transport.py` | Current and historical content cannot hide behind a submodule, archive, LFS pointer, nested Git store, or unsafe symlink |
-| `test_no_dangling_imports.py` | Every first-party import resolves — catches deferred imports that a boot check can't |
-| `test_oauth_scope_coverage.py` | Requested OAuth scopes match what the code actually calls |
-| `test_config_unset_marker_guard.py` | Every node's defaulted fields survive empty values |
-
-If one fails, it's usually pointing at something real rather than being
-pedantic. Ask if the message isn't clear.
-
-## Conventions worth internalizing
-
-- **No fallbacks.** Fail loudly rather than degrading silently. A default that
-  "happens to work" is how a broken config reaches production looking healthy.
-- **Reuse before adding.** Generalize the existing helper instead of writing a
-  near-duplicate.
-- **Never edit a test to get past something you don't understand.** Work out
-  what the code does first.
-- **Comment the why**, not the what.
-- Match the surrounding code's naming, density, and idiom.
-
-## Changing the database schema
-
-`infra/supabase/migrations/` here is not the monorepo's migration history. It is
-a squashed initial schema plus the migrations added since, and the export
-reproduces it — so **a migration file added in a pull request to this repository
-is replaced by the next re-sync**, along with everything else under that
-directory.
-
-That is not a reason to avoid schema work; it is a reason to raise it as an
-issue first. A maintainer lands the migration in the monorepo and it arrives
-here on the next export, in the same shape you proposed. What does not survive
-is a migration authored only here.
-
-The same holds for anything else the export produces, which is most of the tree.
-Where a file is edition-specific — a different implementation on each side —
-the export keeps both, and a maintainer will say so on the issue.
-
-## Working with coding agents
-
-[CLAUDE.md](./CLAUDE.md) (symlinked as `AGENTS.md`) carries the architecture and
-conventions in the form agents read, and `.claude/skills/` has task-specific
-guides — adding a node, adding a handler, writing handler tests, building custom
-interface components. Pointing Claude Code or Codex at a checkout should produce
-changes that fit the codebase rather than plausible-looking ones. If an agent
-gets something consistently wrong, improving those files is a genuinely useful PR.
-
-## Pull requests
-
-- One concern per PR; a focused diff gets reviewed faster.
-- Say what you verified and how. "Tests pass" is weaker than "ran the workflow
-  end to end on a local install and the trigger fired twice".
-- Regenerated files (schemas, socket types) belong in the same commit as the
-  change that caused them.
-
-## License
-
-NoClick Community is licensed under the [GNU AGPL, version 3](./LICENSE)
-(`AGPL-3.0-only`), and the SDKs under `sdk/` under the
-[Apache License 2.0](./sdk/typescript/LICENSE). A contribution lands under the
-license of the directory it touches, and the [CLA](./CLA.md) is what lets
-NoClick also ship it under commercial terms. Signing off a commit says you may
-submit it; signing the CLA says on what terms. Both are needed for a pull
-request to merge.
+To report a vulnerability, follow [SECURITY.md](SECURITY.md) rather than opening an issue.

@@ -1,7 +1,0 @@
-{
-  "enterprise": {"meta": {"type": "Enterprise"}, "data": {"enterprise_id": "6399e4ab6f66431300e1cf9a", "name": "Acme Inc.", "status": "active", "accounts": []}},
-  "account": {"meta": {"type": "Account"}, "data": {"account_id": "8aca3b99b4ee99db2c0fb6b7", "company": "Snippet Factory", "owneremail": "admin@snippetfactory.com"}},
-  "bulk": {"meta": {"type": "AccountBulkOperations"}, "data": {"status": "PARTIAL", "operations": [{"operation_id": "0", "action": "UPDATE", "result": {"status": "FAILED", "error": {"message": "Account unavailable"}}}]}},
-  "list": {"meta": {"type": "Pipeline", "page": {"next": null, "previous": null}}, "data": []},
-  "schemas": {"meta": {"type": "PipelineNode"}, "data": {}}
-}

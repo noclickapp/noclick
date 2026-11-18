@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Lemlist">
-  <defs><linearGradient id="lem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FE6E4F"/><stop offset="1" stop-color="#F43F75"/></linearGradient></defs>
-  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#lem)"/>
-  <path d="M23 17v30h20" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="43" cy="22" r="5" fill="#fff"/>
-</svg>

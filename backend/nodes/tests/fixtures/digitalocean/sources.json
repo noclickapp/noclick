@@ -1,4 +1,0 @@
-{
-  "alert_instances.json": "https://api-engineering.nyc3.cdn.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml",
-  "uptime_create_check.json": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/resources/uptime/examples/curl/check_create.yml"
-}

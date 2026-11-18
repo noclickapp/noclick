@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Google Chat">
-  <path fill="#34A853" d="M10 10h33a8 8 0 0 1 8 8v21a8 8 0 0 1-8 8H26L14 57V47h-4a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8Z"/>
-  <path fill="#0F9D58" d="M14 20h40a8 8 0 0 1 8 8v19a8 8 0 0 1-8 8H34L22 63V55h-8a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8Z"/>
-  <path fill="#fff" d="M22 32h25v5H22zm0 11h17v5H22z"/>
-  <path fill="#4285F4" d="M10 10h14v10H10a8 8 0 0 0-4 1V18a8 8 0 0 1 4-8Z"/>
-  <path fill="#FBBC04" d="M43 10h3a8 8 0 0 1 8 8v2H43Z"/>
-</svg>

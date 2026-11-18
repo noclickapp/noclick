@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/billetweb.svg",
-  "source": "https://www.billetweb.fr/resources/favicon/favicon.svg",
-  "license": "Billetweb brand mark used nominatively to identify the connected service; trademark rights remain with Billetweb.",
-  "sha256": "01a7155473b375a0fc90d803ce96ac19c38cb8ac2eb850cd33c5291a00ebf165",
-  "modifications": "Trailing whitespace removed; artwork unchanged."
-}

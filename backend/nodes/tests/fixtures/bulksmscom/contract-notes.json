@@ -1,9 +1,0 @@
-{
-  "official_source_checked": "https://www.bulksms.com/developer/json/v1/swagger.yaml",
-  "official_source_sha256": "dd2a6fcf93eb8857d2d7bf0f757a3d203abef5bfb5e62b4c982d61cdbab700ba",
-  "response_schema_defect": {
-    "operation": "GET /blocked-numbers",
-    "description": "The response description says a list of BlockedNumber objects, but the schema references a single BlockedNumber. The node parses the documented list; the conformance generator produces a single object.",
-    "source": "https://www.bulksms.com/developer/json/v1/swagger.yaml"
-  }
-}

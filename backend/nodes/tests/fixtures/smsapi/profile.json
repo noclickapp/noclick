@@ -1,9 +1,0 @@
-{
-  "name": "Example account",
-  "email": "john.doe@example.com",
-  "username": "example-account",
-  "phone_number": "44123456789",
-  "payment_type": "prepaid",
-  "user_type": "native",
-  "points": 12.5
-}

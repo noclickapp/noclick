@@ -1,6 +1,0 @@
-{
-  "source": "https://www.weatherbit.io/api/lightning-current",
-  "retrieved": "2026-11-11",
-  "sha256": "3f32ce1fbbb69e021b0912632ecea42cab1e9763199afbb1c79761510747ec7f",
-  "notes": "Complete JSON response example copied from the provider documentation; no response values changed."
-}

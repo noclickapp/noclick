@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     // Default to node; DOM-dependent specs opt in with `// @vitest-environment jsdom`.
     environment: 'node',
-    include: ['test/**/*.test.ts'],
+    // The bridge's suite; the client's runs under node --test (npm run test:client).
+    include: ['test/embed/**/*.test.ts'],
   },
 });

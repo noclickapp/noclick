@@ -1,6 +1,0 @@
-{
-  "GET /items": {
-    "body": {"items": [{"id": "itm_1", "name": "First item"}]},
-    "source": "https://provider.example/docs/items"
-  }
-}

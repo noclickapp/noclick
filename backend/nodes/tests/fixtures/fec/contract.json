@@ -1,7 +1,0 @@
-{
-  "source_url": "https://api.open.fec.gov/swagger",
-  "version": "1.0",
-  "sha256": "7829636fcfa69fc75158a141cb0595b809c28baab875098e89e23323183fc0a7",
-  "format": "Swagger 2.0",
-  "evidence": "openapi"
-}

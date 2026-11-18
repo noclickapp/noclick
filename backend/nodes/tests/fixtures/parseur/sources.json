@@ -1,6 +1,0 @@
-{
-  "mailboxes.json": {
-    "source": "https://api.parseur.com/openapi.json#/paths/~1parser/get/responses/200",
-    "normalization": "Removed comment and abbreviated second row from published string example; count adjusted to the retained row."
-  }
-}

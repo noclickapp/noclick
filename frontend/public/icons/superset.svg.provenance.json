@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/superset.svg",
-  "source": "https://raw.githubusercontent.com/apache/superset/master/docs/static/img/logo.svg",
-  "license": "Apache-2.0; Apache Superset trademarks belong to the Apache Software Foundation. Source: https://github.com/apache/superset/blob/master/LICENSE.txt",
-  "sha256": "11db095c01e686649daa511aa00cdf4779f10c0d54d922c0d23547dd46b78520"
-}

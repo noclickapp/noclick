@@ -1,8 +1,0 @@
-{
-  "source": "https://github.com/cyberark/conjur-openapi-spec/blob/main/spec/authentication.yml",
-  "body": {
-    "protected": "eyJhbGciOiJjb25qdXIub3.....g0In0=",
-    "payload": "eyJzdWIiOiJhZG1pbiIsImlhdCI6MTU5ODc2OTU0MH0=",
-    "signature": "NrknEA762z0x-FVdQjFGeTT.....AFjHc0"
-  }
-}

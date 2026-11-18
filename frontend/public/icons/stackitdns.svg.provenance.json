@@ -1,9 +1,0 @@
-{
-  "path": "frontend/public/icons/stackitdns.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/commit/17c4bc706df18a069bfe25a9799c5dde54060850 (STACKIT mark supplied by the original integration)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "edits": [
-    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
-  ],
-  "sha256": "6ca54c0b47d76730f240de2c8ae0fc451386a41b69f65c550a4632c516a453ee"
-}

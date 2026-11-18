@@ -1,6 +1,0 @@
-# Default review ownership for the community repository.
-* @dhruvyad
-
-/.github/ @dhruvyad
-/infra/supabase/migrations/ @dhruvyad
-/SECURITY.md @dhruvyad

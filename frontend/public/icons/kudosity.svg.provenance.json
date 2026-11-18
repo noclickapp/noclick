@@ -1,9 +1,0 @@
-{
-  "path": "frontend/public/icons/kudosity.svg",
-  "source": "https://kudosity.com/favicon/favicon.svg",
-  "license": "Kudosity trademark; official publisher icon used to identify the integration.",
-  "sha256": "aea4fd67a23f815373dee82cfbf40ba6c44e96063556f02f16b6588d2eabc5ef",
-  "edits": [
-    "removed its @media (prefers-color-scheme: dark) rules, so it draws the colours reviewed here whatever the computer's own light/dark setting"
-  ]
-}

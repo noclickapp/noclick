@@ -1,6 +1,0 @@
-{
-  "source": "https://developer.junglescout.com/api-docs/v1/swagger.json",
-  "version": "v1",
-  "sha256": "ebebc0da796810c1a948eee00b72f3d92e0578c71b70f383420bc5b95d496e44",
-  "description": "Verbatim 200 response examples from the pinned provider contract, keyed by NoClick operation."
-}

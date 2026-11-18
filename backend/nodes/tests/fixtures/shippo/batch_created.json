@@ -1,5 +1,0 @@
-{
-  "event": "batch_created",
-  "test": true,
-  "data": "batch # created"
-}

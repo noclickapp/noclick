@@ -1,9 +1,0 @@
-{
-  "get_me": {"id": 42, "email": "ada@example.test", "first_name": "Ada", "last_name": "Lovelace"},
-  "list_templates": {"count": 1, "next": null, "previous": null, "results": [{"id": 42, "title": "Invoice"}]},
-  "get_template_schema": [{"name": "customer", "type": "string"}],
-  "generate_document": {"file_name": "Invoice.pdf", "file_url": "https://files.example.test/Invoice.pdf"},
-  "test_document_generation": {"file_name": "Invoice.pdf", "file_url": "https://files.example.test/test.pdf"},
-  "list_folders": [{"id": 7, "name": "Invoices"}],
-  "list_template_deliveries": []
-}

@@ -1,4 +1,0 @@
-{
-  "GET /v3/businesses/search": "https://docs.developer.yelp.com/reference/v3_business_search.md",
-  "GET /v3/businesses/{business_id_or_alias}": "https://docs.developer.yelp.com/reference/v3_business_info.md"
-}

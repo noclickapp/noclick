@@ -1,6 +1,0 @@
-{
-  "generate.json": "https://fungenerators.com/api/uuid/",
-  "parse.json": "https://fungenerators.com/api/uuid/",
-  "legacy_get.json": "https://fungenerators.com/yaml/uuid.yaml",
-  "legacy_post.json": "https://fungenerators.com/yaml/uuid.yaml"
-}

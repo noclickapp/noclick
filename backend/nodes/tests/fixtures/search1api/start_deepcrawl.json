@@ -1,7 +1,0 @@
-{
-  "source": "https://s1.dev/docs/advanced/deepcrawl",
-  "body": {
-    "taskId": "string",
-    "status": "queued"
-  }
-}

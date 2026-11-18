@@ -1,4 +1,0 @@
-{
-  "source": "https://docs.clover.com/dev/docs/managing-item-availability.md",
-  "note": "Restored the missing final outer-object closing brace and removed the dangling comma in the official code block; all fields and values are verbatim."
-}

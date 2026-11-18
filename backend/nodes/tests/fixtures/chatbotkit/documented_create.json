@@ -1,9 +1,0 @@
-{
-  "source": "https://docs.cbk.ai/conversations",
-  "body": {
-    "name": "Customer Support Session",
-    "description": "Support conversation for user inquiry",
-    "botId": "bot_abc123",
-    "contactId": "contact_xyz789"
-  }
-}

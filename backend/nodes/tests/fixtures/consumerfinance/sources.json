@@ -1,8 +1,0 @@
-{
-  "public_search.json": {
-    "source": "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/?size=1&sort=created_date_desc&no_aggs=true&no_highlight=true",
-    "recorded_at": "2026-11-10",
-    "description": "Unmodified anonymous public API response. No account or test key required."
-  },
-  "contract": "https://raw.githubusercontent.com/cfpb/ccdb5-api/main/swagger-config.yaml"
-}

@@ -1,3 +1,0 @@
-document_accepted.json is the example POST body from https://developer.cling.se/api/partner/webhooks.html (comments removed). The company webhook documentation identifies the same envelope at https://developer.cling.se/api/document/webhooks.html. Optional authType/authData are omitted at registration, so deliveries have no signature.
-
-contract_pin.json identifies the published contract used for offline conformance; conformance_report.json and conformance_verdict.json record the resulting request and trigger checks. Action responses are generated from the pinned schema, not recorded from a live account. No Cling key was available in this run.
