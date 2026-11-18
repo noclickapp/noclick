@@ -131,7 +131,7 @@ from .project import (
 )
 from .queues import Queue, QueueDepth, QueueMessage
 from .region import Region, regions
-from .repo import Branch, Commit, CommitDiff, FileChange, Repo, RepoBackup, RepoCheckout, RepoFile
+from .repo import Branch, Commit, CommitDiff, FileChange, Repo, RepoBackup, RepoCheckout, RepoFile, RepoImport
 from .sandbox import ExecResult, Sandbox, SandboxFiles
 from .secret import Secret
 from .session import Session
@@ -203,7 +203,7 @@ __all__ = [
     "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",
     "ProjectLive", "LiveStatus", "LiveSession", "LiveEditCounts", "LiveDataCopy", "LiveEdit", "LiveEdits",
     "LiveExecResult", "LiveEnterLink", "LiveEnd",
-    "Repo", "Commit", "CommitDiff", "FileChange", "Branch", "RepoBackup", "RepoFile", "RepoCheckout",
+    "Repo", "Commit", "CommitDiff", "FileChange", "Branch", "RepoBackup", "RepoFile", "RepoCheckout", "RepoImport",
     "Database", "DatabaseOperations", "QueryResult", "Migration", "MigrationResult", "Table", "Column",
     "Bucket", "BucketObject", "ObjectVersion", "BucketOperations", "BucketUpload", "S3Credentials",
     "Volume", "VolumeEntry", "Dict", "DictItem", "DictChange", "Queue", "QueueMessage", "QueueDepth", "Secret",

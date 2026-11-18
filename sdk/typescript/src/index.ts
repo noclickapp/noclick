@@ -106,10 +106,10 @@ export type {
   BucketCreateOptions, BucketData, BucketNotification, BucketObject, BucketObjectsOptions, BucketPartUrlsOptions,
   BucketPutOptions, BucketSignedUrlOptions, BucketTool, BucketUpload, BucketUploadOptions, ObjectVersion, S3Credentials,
 } from "./bucket.ts";
-export { Repo, RepoCheckout } from "./repo.ts";
+export { Repo, RepoCheckout, RepoImport } from "./repo.ts";
 export type {
   Branch, CheckoutOptions, Commit, CommitDiff, FileChange, FileSource, RepoBackup, RepoCommitOptions, RepoCreateOptions,
-  RepoFile,
+  RepoFile, RepoImportOptions,
 } from "./repo.ts";
 export { Cron } from "./cron.ts";
 export type { CronOptions } from "./cron.ts";

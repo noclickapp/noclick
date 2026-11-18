@@ -218,6 +218,49 @@ test("export and exportToGithub resolve typed; an unconnected GitHub connection 
   assert.deepEqual(exp.last.body, { to: "github", connection: "github", owner: "acme", name: "tools", private: false });
 });
 
+test("Repo.create with fromUrl resolves to the import, whose wait() gives the copied repo", async () => {
+  const { api } = setup();
+  const create = api.on(
+    "POST", "/v1/repos",
+    json({ ...REPO, name: "blog", last_commit: null,
+           operation: operation({ id: "op_i", kind: "repo.import", status: "queued", repo_id: "repo_1" }) }),
+    json({ ...REPO, operation: operation({ id: "op_j", kind: "repo.import", status: "queued", repo_id: "repo_2" }) }),
+  );
+  api.on("GET", "/v1/operations/op_i/wait", json(operation({
+    id: "op_i", kind: "repo.import", status: "succeeded", repo_id: "repo_1",
+    result: { object: "repo_import", repo: { ...REPO, name: "blog", default_branch: "trunk" }, default_branch: "trunk",
+              head: COMMIT, branches: 2, tags: 3, size_bytes: 48213 },
+  })));
+  api.on("GET", "/v1/operations/op_j/wait", json(operation({
+    id: "op_j", kind: "repo.import", status: "failed", repo_id: "repo_2",
+    error: { type: "invalid_request", message: "https://example.com/acme/private asked for a sign-in.",
+             next_step: "Make the repository public.", field: "source.url" },
+  })));
+
+  const copy = await nc.Repo.create("blog", { fromUrl: "https://github.com/acme/blog" });
+  assert.deepEqual(create.last.body, { name: "blog", source: { url: "https://github.com/acme/blog" } });
+  assert.ok(copy instanceof nc.RepoImport && copy instanceof nc.Operation);
+  assert.deepEqual([copy.id, copy.repoId, copy.repo._known("id")], ["op_i", "repo_1", "repo_1"]);
+  const repo = await copy.wait();
+  assert.ok(repo instanceof nc.Repo);
+  assert.deepEqual([repo.id, repo.name, repo.defaultBranch], ["repo_1", "blog", "trunk"]);
+
+  const refused = await nc.Repo.create("v2", { fromUrl: "https://example.com/acme/private", ref: "v2.0.0", defaultBranch: "main" });
+  assert.deepEqual(create.last.body, {
+    name: "v2", default_branch: "main", source: { url: "https://example.com/acme/private", ref: "v2.0.0" },
+  });
+  await assert.rejects(refused.wait(), (err: unknown) => {
+    assert.ok(err instanceof nc.InvalidRequest);
+    assert.equal(err.details.field, "source.url");
+    return true;
+  });
+  await assert.rejects(
+    nc.Repo.create("blog", { fromUrl: "https://github.com/acme/blog", allowExisting: true } as nc.RepoImportOptions),
+    TypeError,
+  );
+  assert.equal(create.count, 2);
+});
+
 // --- projects ------------------------------------------------------------------
 
 test("Project.fromName creates its repo first, then converges only what differs", async () => {

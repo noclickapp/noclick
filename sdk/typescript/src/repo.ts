@@ -1,9 +1,11 @@
 /**
  * Repos: git repositories for the code your agents and apps write. A repo is plain git: clone
- * it, push to it, or move it to GitHub whole. A project (`Project`) deploys one to a URL.
+ * it, push to it, copy one in from a public URL, or move it to GitHub whole. A project (`Project`)
+ * deploys one to a URL.
  */
 
 import { TrashItem, trashed } from "./trash.ts";
+import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { Conflict, NotFound } from "./errors.ts";
 import type { UsedBy } from "./database.ts";
@@ -15,7 +17,7 @@ import {
 import type { AllowExisting, CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
-import type { UserRef } from "./scope.ts";
+import type { UserOption, UserRef } from "./scope.ts";
 
 /** One commit, and how many files it added, changed or deleted. */
 /**
@@ -237,9 +239,12 @@ function branchGlobs(push: string | string[]): string[] {
 }
 
 const readGithubUrl = (result: unknown): string | null => str(asObject(result).url);
+/** An import settles with `{ repo: <the repo's view>, ... }`. */
+const readImport = (result: unknown, op: Operation<unknown>): Repo => Repo._fromImport(result, op);
 
 registerResult("repo.export", toExportBundle);
 registerResult("repo.export_to_github", readGithubUrl);
+registerResult("repo.import", readImport);
 
 /**
  * A file NoClick reads for a commit, byte for byte, rather than one you send: one of the account's files
@@ -315,6 +320,20 @@ export interface RepoCreateOptions extends CallOptions {
   defaultBranch?: string;
 }
 
+/** A repo made as a copy of a public git repository (`Repo.create(name, { fromUrl })`). */
+export interface RepoImportOptions extends CallOptions {
+  /** The https URL you'd `git clone`, with no login in it. */
+  fromUrl: string;
+  /** One branch, tag or commit (its full sha) to copy alone, with its history; every branch and tag when omitted. */
+  ref?: string;
+  /**
+   * The branch a project deploys to production (`main` unless set). Copying, it's one of the source's branches
+   * (the source's own default when omitted), or with `ref` the branch the copy lands on (the branch's own name,
+   * else `main`).
+   */
+  defaultBranch?: string;
+}
+
 export interface RepoCommitOptions {
   message: string;
   /** The default branch when omitted; created from the default branch's head if it doesn't exist. */
@@ -337,13 +356,47 @@ export class Repo extends ApiObject {
   /**
    * Create an empty repo (unique per user; a duplicate throws `Conflict` with `existingId`, or with
    * `allowExisting: true` returns the repo already there, commits and all).
+   *
+   * With `fromUrl`, the repo is a copy of a public git repository, history and all, and this resolves
+   * to the `RepoImport` doing the copy, whose `wait()` resolves to the repo once it's copied. Every
+   * branch and tag is copied, the repo's default branch the source's own unless `defaultBranch` names
+   * another of its branches; `ref` copies one branch, tag or commit (its full sha) instead, as the
+   * repo's one branch. Submodules and LFS files aren't copied (their pointers are, as committed). The
+   * copy takes up to 5 GiB of history and 15 minutes. That size is measured as git transfers the
+   * history (compressed), which isn't the same figure as the repo's `sizeBytes` afterwards. The copy is
+   * charged what it uses: its seconds of compute and the bytes it stores, at NoClick's vendors'
+   * prices. An import always makes a new repo, so it takes no `allowExisting`.
+   *
+   *     const copy = await Repo.create("blog", { fromUrl: "https://github.com/acme/blog" });
+   *     const repo = await copy.wait(); // its error, if NoClick can't copy it (the repo is deleted)
+   *     console.log(repo.defaultBranch, repo.lastCommit?.sha);
    */
-  static async create(name: string, options: RepoCreateOptions & AllowExisting = {}): Promise<Repo> {
+  static async create(name: string, options: RepoImportOptions): Promise<RepoImport>;
+  static async create(name: string, options?: RepoCreateOptions & AllowExisting): Promise<Repo>;
+  static async create(
+    name: string,
+    options: (RepoCreateOptions & AllowExisting) | RepoImportOptions = {},
+  ): Promise<Repo | RepoImport> {
     const scope = resolveScope(options.user);
-    const raw = await createNamed("/v1/repos", compact({ name, default_branch: options.defaultBranch }), {
-      allowExisting: options.allowExisting, user: scope, client: options.client,
-    });
-    return new Repo({ raw, client: options.client, user: scope });
+    if (!("fromUrl" in options) || options.fromUrl === undefined) {
+      const raw = await createNamed("/v1/repos", compact({ name, default_branch: options.defaultBranch }), {
+        allowExisting: (options as AllowExisting).allowExisting, user: scope, client: options.client,
+      });
+      return new Repo({ raw, client: options.client, user: scope });
+    }
+    if ((options as AllowExisting).allowExisting) {
+      throw new TypeError("an import always makes a new repo, so allowExisting doesn't apply to it");
+    }
+    const raw = await createNamed("/v1/repos", compact({
+      name, default_branch: options.defaultBranch, source: compact({ url: options.fromUrl, ref: options.ref }),
+    }), { user: scope, client: options.client });
+    return RepoImport._fromResponse(raw.operation, { client: options.client, user: scope });
+  }
+
+  /** @internal What an import settles with, as its `Repo`. */
+  static _fromImport(result: unknown, op: Operation<unknown>): Repo {
+    const raw = asObject(asObject(result).repo);
+    return new Repo({ raw, hints: { id: str(op._known("repo_id")) ?? str(raw.id) ?? "" }, client: op._client, user: op._scope });
   }
 
   /**
@@ -633,5 +686,36 @@ export class Repo extends ApiObject {
    */
   async delete(): Promise<TrashItem> {
     return trashed(await this._request("DELETE", await this._repoPath()), this);
+  }
+}
+
+/**
+ * A public git repository being copied, history and all, into a new repo: the operation
+ * `Repo.create(name, { fromUrl })` returns. The repo is listed at once (`repo`) but takes no commits or
+ * pushes until the copy succeeds. `wait()` resolves to the `Repo` then: its `defaultBranch` the source's
+ * own (or the one you named) and its `lastCommit` that branch's head. A copy that can't finish (no
+ * repository at the URL, one that asks for a sign-in, over 5 GiB of history as git transfers it, which
+ * isn't the repo's `sizeBytes` afterwards, longer than 15 minutes) rejects from `wait()` saying why, and
+ * the repo is deleted; so is one you `cancel()`. `progress` shows how far it got.
+ */
+export class RepoImport extends Operation<Repo> {
+  protected constructor(init: ObjectInit) {
+    super(init);
+  }
+
+  /** @internal */
+  static _fromResponse(payload: unknown, init: { client?: NoClick; user?: UserOption }): RepoImport {
+    const made = new RepoImport(Operation._init(payload, { ...init, kind: "repo.import" }));
+    made._reader = readImport;
+    return made;
+  }
+
+  /** The new repo's id. */
+  get repoId(): string | null {
+    return str(this._known("repo_id"));
+  }
+  /** The new repo: it reads while the copy runs, and takes writes once `wait()` resolves. */
+  get repo(): Repo {
+    return Repo.fromId(String(this._known("repo_id")), { client: this._client, user: this._callScope() });
   }
 }

@@ -197,6 +197,44 @@ def test_repo_diff_reads_what_a_commit_changed(api, client):
     assert (logo.path, logo.patch, logo.additions) == ("public/logo.png", None, None)
 
 
+def test_repo_create_from_url_returns_the_import_whose_wait_gives_the_copied_repo(api, client):
+    create = api.post("/v1/repos").mock(side_effect=[
+        httpx.Response(201, json={**REPO, "name": "blog", "last_commit": None,
+                                  "operation": operation(op_id="op_i", kind="repo.import", status="queued",
+                                                         repo_id="repo_1")}),
+        httpx.Response(201, json={**REPO, "operation": operation(op_id="op_j", kind="repo.import", status="queued",
+                                                                 repo_id="repo_2")}),
+    ])
+    api.get("/v1/operations/op_i/wait").respond(json=operation(
+        op_id="op_i", kind="repo.import", status="succeeded", repo_id="repo_1",
+        result={"object": "repo_import", "repo": {**REPO, "name": "blog", "default_branch": "trunk"},
+                "default_branch": "trunk", "head": REPO["last_commit"], "branches": 2, "tags": 3,
+                "size_bytes": 48213}))
+    api.get("/v1/operations/op_j/wait").respond(json=operation(
+        op_id="op_j", kind="repo.import", status="failed", repo_id="repo_2",
+        error={"type": "invalid_request", "message": "https://example.com/acme/private asked for a sign-in.",
+               "next_step": "Make the repository public.", "field": "source.url"}))
+
+    copy = nc.Repo.create("blog", from_url="https://github.com/acme/blog")
+    assert body(create.calls.last.request) == {"name": "blog", "source": {"url": "https://github.com/acme/blog"}}
+    assert isinstance(copy, nc.RepoImport) and isinstance(copy, nc.Operation)
+    assert (copy.id, copy.repo_id, copy.repo._known("id")) == ("op_i", "repo_1", "repo_1")
+    repo = copy.wait()
+    assert isinstance(repo, nc.Repo) and (repo.id, repo.name, repo.default_branch) == ("repo_1", "blog", "trunk")
+
+    with pytest.raises(nc.InvalidRequest) as refused:
+        nc.Repo.create("v2", from_url="https://example.com/acme/private", ref="v2.0.0", default_branch="main").wait()
+    assert body(create.calls.last.request) == {
+        "name": "v2", "default_branch": "main", "source": {"url": "https://example.com/acme/private", "ref": "v2.0.0"}}
+    assert refused.value.details["field"] == "source.url"
+
+    with pytest.raises(ValueError):
+        nc.Repo.create("blog", from_url="https://github.com/acme/blog", allow_existing=True)
+    with pytest.raises(ValueError):
+        nc.Repo.create("blog", ref="main")
+    assert create.call_count == 2
+
+
 def test_repo_export_and_export_to_github(api, client):
     export = api.post("/v1/repos/repo_1/export").mock(side_effect=[
         httpx.Response(202, json=operation(op_id="op_e", kind="repo.export", status="running")),

@@ -6,7 +6,9 @@
     print(repo.read("src/index.ts").decode())
     print(repo.clone_url())   # plain git over HTTPS, a short-lived token inside
 
-A repo is plain git: clone it, push to it, or move it to GitHub whole.
+    site = noclick.Repo.create("site", from_url="https://github.com/acme/site").wait()   # a copy, history and all
+
+A repo is plain git: clone it, push to it, copy one in from a public URL, or move it to GitHub whole.
 A project (``noclick.Project``) deploys one to a URL.
 """
 
@@ -18,7 +20,7 @@ import hashlib
 import os
 from dataclasses import dataclass, field as dc_field
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Union, overload
 from urllib.parse import quote
 
 from ._attachment import Attachment
@@ -230,8 +232,33 @@ def _read_github(result: Any, op: Operation) -> Optional[str]:
     return result.get("url") if isinstance(result, dict) else None
 
 
+def _read_import(result: Any, op: Operation) -> "Repo":
+    raw = result.get("repo") if isinstance(result, dict) else None
+    return Repo._new(raw=raw if isinstance(raw, dict) else None, hints={"id": op._known("repo_id")},
+                     client=op._client, user=op._call_scope())
+
+
 register_result("repo.export", _read_export)
 register_result("repo.export_to_github", _read_github)
+register_result("repo.import", _read_import)
+
+
+class RepoImport(Operation):
+    """A public git repository being copied, history and all, into a new repo: the operation
+    ``Repo.create(..., from_url=...)`` returns. The repo is listed at once (``repo``) but takes no
+    commits or pushes until the copy succeeds. ``wait()`` gives the ``Repo`` then: its
+    ``default_branch`` is the source's own (or the one you named) and its ``last_commit`` that branch's
+    head. A copy that can't finish (no repository at the URL, one that asks for a sign-in, over 5 GiB
+    of history as git transfers it, which isn't the repo's ``size_bytes`` afterwards, longer than 15
+    minutes) raises from ``wait()`` saying why, and the repo is deleted; so is one you ``cancel()``.
+    ``progress`` shows how far it got."""
+
+    repo_id: Optional[str] = field("repo_id", doc="The new repo's id.")
+
+    @property
+    def repo(self) -> "Repo":
+        """The new repo: it reads while the copy runs, and takes writes once ``wait()`` returns."""
+        return Repo._new(hints={"id": self.repo_id}, client=self._client, user=self._call_scope())
 
 
 def _blob_sha(data: bytes) -> str:
@@ -304,6 +331,20 @@ class Repo(_Object):
 
     # --- construction ----------------------------------------------------
 
+    @overload
+    @classmethod
+    async def create(
+        cls, name: str, *, default_branch: Optional[str] = None, from_url: None = None, ref: None = None,
+        allow_existing: bool = False, user: Any = AMBIENT, client: Optional[Client] = None,
+    ) -> "Repo": ...
+
+    @overload
+    @classmethod
+    async def create(
+        cls, name: str, *, from_url: str, ref: Optional[str] = None, default_branch: Optional[str] = None,
+        allow_existing: bool = False, user: Any = AMBIENT, client: Optional[Client] = None,
+    ) -> RepoImport: ...
+
     @synced
     @classmethod
     async def create(
@@ -311,16 +352,34 @@ class Repo(_Object):
         name: str,
         *,
         default_branch: Optional[str] = None,
+        from_url: Optional[str] = None,
+        ref: Optional[str] = None,
         allow_existing: bool = False,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
-    ) -> "Repo":
-        """Create an empty repo called ``name`` (unique per user; a duplicate
-        raises ``noclick.Conflict`` with ``existing_id``, or with ``allow_existing=True``
-        returns the repo already there, commits and all).
+    ) -> Union["Repo", RepoImport]:
+        """Create a repo called ``name`` (unique per user; a duplicate raises
+        ``noclick.Conflict`` with ``existing_id``, or with ``allow_existing=True``
+        returns the repo already there, commits and all): empty, or with
+        ``from_url`` a copy of a public git repository, history and all.
+
+        ``from_url`` is the https URL you'd ``git clone``, with no login in it.
+        Every branch and tag is copied, and the repo's default branch is the
+        source's own unless ``default_branch`` names another of its branches.
+        ``ref`` copies one branch, tag or commit (its full sha) instead, with its
+        history, as the repo's one branch: named ``default_branch``, else the
+        branch's own name, else ``main``. Submodules and LFS files aren't copied
+        (their pointers are, as committed). The copy takes up to 5 GiB of history
+        and 15 minutes. That size is measured as git transfers the history
+        (compressed), which isn't the same figure as the repo's ``size_bytes``
+        afterwards. The copy is charged what it uses: its seconds of compute and the
+        bytes it stores, at NoClick's vendors' prices. An import always makes a new
+        repo, so ``allow_existing`` doesn't apply to it.
 
         Returns:
-            The new repo, loaded, with no commits yet.
+            The new repo, loaded, with no commits yet; with ``from_url``, a
+            ``RepoImport``: the operation doing the copy, whose ``wait()`` gives
+            the repo once it's copied.
 
         Usage:
             Create one for your account's own code::
@@ -332,11 +391,39 @@ class Repo(_Object):
 
                 with noclick.as_user("user_42"):
                     site = noclick.Repo.create("portfolio", default_branch="production")
+
+            Copy a public repository, then deploy it::
+
+                copy = noclick.Repo.create("blog", from_url="https://github.com/acme/blog")
+                repo = copy.wait()
+                print(repo.default_branch, repo.last_commit.sha)
+                app = noclick.Project.create("blog", repo=repo)
+
+            Copy one release of it, as the branch ``main``::
+
+                repo = noclick.Repo.create("blog-v2", from_url="https://github.com/acme/blog", ref="v2.0.0").wait()
+
+            A source NoClick can't copy raises from ``wait()``, and the repo is deleted::
+
+                try:
+                    noclick.Repo.create("private", from_url="https://github.com/acme/private").wait()
+                except noclick.InvalidRequest as refused:
+                    print(refused.message)   # ... asked for a sign-in: NoClick copies public repositories only.
         """
         scope = resolve_scope(user)
-        raw = await cls._create_named("/v1/repos", compact(name=name, default_branch=default_branch),
-                                      allow_existing=allow_existing, user=scope, client=client)
-        return cls._new(raw=raw, client=client, user=scope)
+        if from_url is None:
+            if ref is not None:
+                raise ValueError("ref names what to copy from from_url: pass from_url too")
+            raw = await cls._create_named("/v1/repos", compact(name=name, default_branch=default_branch),
+                                          allow_existing=allow_existing, user=scope, client=client)
+            return cls._new(raw=raw, client=client, user=scope)
+        if allow_existing:
+            raise ValueError("an import always makes a new repo, so allow_existing doesn't apply to it")
+        raw = await cls._create_named("/v1/repos", compact(name=name, default_branch=default_branch,
+                                                           source=compact(url=from_url, ref=ref)),
+                                      allow_existing=False, user=scope, client=client)
+        return RepoImport._from_payload(raw.get("operation"), client=client, user=scope, kind="repo.import",
+                                        reader=_read_import)
 
     @classmethod
     def from_name(
