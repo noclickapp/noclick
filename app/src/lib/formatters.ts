@@ -41,6 +41,14 @@ export function fmtBytes(n: number): string {
     return `${(n / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }
 
+/** A file's size as its card prints it: "512 B", "3.4 KB", "1.2 MB"; nothing for none. */
+export function formatSize(bytes?: number): string {
+    if (!bytes) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function fmtDuration(ms: number | null): string {
     if (ms == null) return '';
     if (ms < 1000) return `${ms}ms`;
