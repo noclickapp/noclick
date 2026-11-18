@@ -420,6 +420,25 @@ export function fixtureAccount(set: FixtureSet, tier = 'member') {
     };
 }
 
+/** `/v1/status` per set: the account, and the plan it's on as NoClick names it. On the Free and Member plans a paying
+ *  account is a Member, whichever paid tier `/v1/account` stores for it; one still on an older plan is on that plan. */
+export function fixtureStatus(set: FixtureSet, plan = 'member') {
+    const account = fixtureAccount(set);
+    return {
+        object: 'status',
+        account: { id: account.id, name: null, email: account.email, acting_for: null },
+        user_id: null,
+        plan: { name: plan, billing: plan === 'enterprise' ? 'contract' : plan === 'free' || plan === 'member' ? 'at_cost' : 'credits' },
+        balance: account.balance,
+        month: account.month,
+        caps: [],
+        caller: { key_id: CONSOLE_KEY_ID, cap_usd: null },
+        approvals_pending: [],
+        failing: { operations: [], connections: [] },
+        operations: { running: account.counts.operations_running, held: account.counts.operations_held, recent: [] },
+    };
+}
+
 /** Objects the palette resolves by id, key prefix or user id. */
 function resolveRef(ref: string): { type: string; id: string; user_id: string | null } | null {
     const user = USERS.find((u) => u.id === ref);
@@ -432,11 +451,17 @@ function resolveRef(ref: string): { type: string; id: string; user_id: string | 
     return null;
 }
 
-/** Answers `/v1/account` as a Free account's, for tests that pin the plan. */
-export const FREE_ACCOUNT_ROUTE: FixtureRoute = { method: 'GET', path: '/v1/account', reply: (r) => ok(fixtureAccount(r.set, 'free')) };
+/** Answers `/v1/account` as an account storing `tier` and `/v1/status` as one on `plan`, for tests that pin the plan. */
+export function planRoutes(tier: string, plan: string): FixtureRoute[] {
+    return [
+        { method: 'GET', path: '/v1/account', reply: (r) => ok(fixtureAccount(r.set, tier)) },
+        { method: 'GET', path: '/v1/status', reply: (r) => ok(fixtureStatus(r.set, plan)) },
+    ];
+}
 
 export const CORE_ROUTES: readonly FixtureRoute[] = [
     { method: 'GET', path: '/v1/account', reply: (r) => ok(fixtureAccount(r.set)) },
+    { method: 'GET', path: '/v1/status', reply: (r) => ok(fixtureStatus(r.set)) },
     {
         method: 'GET',
         path: '/v1/objects/:ref',

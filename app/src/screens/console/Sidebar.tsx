@@ -12,7 +12,7 @@ import { AccountMenuBody } from '@/ui/AccountMenuBody';
 import { planLabel } from '@/ui/accountParts';
 import { SIDEBAR_ITEM, SidebarAccountButton, SidebarHeader, SidebarItem } from '@/ui/sidebarParts';
 import { cn } from '@/ui/utils';
-import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
+import { useAccountPlan, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { docsUrl } from '@/screens/console/lib/site';
 import { openConsolePalette } from './ConsolePalette';
 import { useOwnerOnly } from './ownerOnly';
@@ -32,14 +32,14 @@ function BackToApp({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?:
 
 function Account({ collapsed }: { collapsed: boolean }) {
     const { user, signOut } = useConsole();
-    const tier = useAccount().data?.plan.tier ?? null;
+    const plan = useAccountPlan() ?? null;
     const account = { email: user.email ?? '' };
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <SidebarAccountButton user={account} plan={tier ? planLabel(tier) : ''} collapsed={collapsed} />
+                <SidebarAccountButton user={account} plan={plan ? planLabel(plan) : ''} collapsed={collapsed} />
             </DropdownMenuTrigger>
-            <AccountMenuBody user={account} plan={tier} onLogout={signOut} side={collapsed ? 'right' : 'top'} align={collapsed ? 'end' : 'start'} />
+            <AccountMenuBody user={account} plan={plan} onLogout={signOut} side={collapsed ? 'right' : 'top'} align={collapsed ? 'end' : 'start'} />
         </DropdownMenu>
     );
 }

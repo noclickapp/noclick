@@ -18,7 +18,7 @@ import { formatCount } from '@/screens/console/lib/format';
 import { INSTALL_TABS, MCP_URL, envExport } from '@/screens/console/lib/snippets';
 import { docsLinks, pricingUrl } from '@/screens/console/lib/site';
 import { useOwnerOnly } from '../ownerOnly';
-import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
+import { useAccount, useAccountPlan, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { updateAccount } from '@/sdk/owner';
 import { resolvePage, settingsPages, type ConsolePageProps } from '../sections';
@@ -269,6 +269,7 @@ function Overview({ install }: { install: boolean }) {
     const { site } = useConsole();
     const ownerCan = useOwnerOnly();
     const account = useAccount().data;
+    const plan = useAccountPlan();
     const tools = account?.meta.mcp_tools ?? [];
     useEffect(() => {
         if (install) document.getElementById('install')?.scrollIntoView({ block: 'start' });
@@ -337,11 +338,15 @@ function Overview({ install }: { install: boolean }) {
                     </ul>
                 </Row>
                 <Row title="Plan" sub="Every plan includes the platform API. Usage is charged to your account's balance, in dollars: what your plan includes each month, plus funds you add.">
-                    {account ? (
+                    {account && plan !== undefined ? (
                         <>
                             <p className="m-0">
-                                <span className="font-medium text-foreground">{planLabel(account.plan.tier)}</span>.
-                                {account.email && <span className="text-muted-foreground"> Signed in as {account.email}.</span>}
+                                {plan && (
+                                    <>
+                                        <span className="font-medium text-foreground">{planLabel(plan)}</span>.{' '}
+                                    </>
+                                )}
+                                {account.email && <span className="text-muted-foreground">Signed in as {account.email}.</span>}
                             </p>
                             <div>
                                 <a href={pricingUrl(site)} target="_blank" rel="noopener noreferrer" className={consoleButtonClass('soft', 'sm')}>

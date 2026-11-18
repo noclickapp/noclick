@@ -4,7 +4,8 @@ import { createContext, useContext, type ReactNode } from 'react';
 import type { WorkLive } from '@/sdk/live';
 import type { NoClick } from 'noclick';
 import type { AccountView } from '@/sdk/owner';
-import type { V1State } from '@/sdk/useV1';
+import { useV1, type V1State } from '@/sdk/useV1';
+import { readAccountStatus } from '@/screens/account/status';
 
 export type HrefParams = Record<string, string | null | undefined>;
 
@@ -67,4 +68,14 @@ export function useAccount(): V1State<AccountView> {
     const value = useContext(AccountContext);
     if (!value) throw new Error('useAccount() must be used inside <DeveloperConsole>.');
     return value;
+}
+
+/** The plan the account is on, as `/v1/status` names it: undefined until read, null when it names none or can't be
+ *  read. Not `/v1/account`'s `plan.tier`, the tier stored for the account: on the Free and Member plans an account
+ *  that pays is a Member whichever paid tier is stored. */
+export function useAccountPlan(): string | null | undefined {
+    const { client } = useConsole();
+    const status = useV1('status', (signal) => readAccountStatus(client, signal));
+    if (status.data) return status.data.plan?.name ?? null;
+    return status.error === undefined ? undefined : null;
 }
