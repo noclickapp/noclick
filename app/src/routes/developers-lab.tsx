@@ -4,6 +4,7 @@
 // app answers 404 and carries none of it: the lab is imported only where `import.meta.env.DEV` is true.
 import { lazy, Suspense } from 'react';
 import { data, useParams } from 'react-router';
+import { useLocaleCountry } from '@/lib/localeCountry';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
 import type { Route } from './+types/developers-lab';
 
@@ -20,10 +21,11 @@ const ConsoleLab = import.meta.env.DEV ? lazy(() => import('@/screens/console/la
 
 export default function DevelopersLab() {
     const params = useParams();
+    const country = useLocaleCountry();
     if (!ConsoleLab) return null;
     return (
         <Suspense>
-            <ConsoleLab section={params['*']} basePath={LAB_PATH} site={NOCLICK_SITE} home="/" />
+            <ConsoleLab section={params['*']} basePath={LAB_PATH} site={NOCLICK_SITE} home="/" country={country} />
         </Suspense>
     );
 }

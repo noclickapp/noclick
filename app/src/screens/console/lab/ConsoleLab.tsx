@@ -17,6 +17,8 @@ export interface ConsoleLabProps {
     /** NoClick's own site and the app "back" leads to, as `ConsoleContextValue` has them. */
     site: string;
     home: string;
+    /** The country to open a country's choice on, where the host knows the person's. */
+    country?: string;
     /** What stands atop the sidebar. */
     workspace?: ReactNode;
 }
@@ -51,7 +53,7 @@ function LabNote({ actsAs }: { actsAs: ActsAs }) {
     );
 }
 
-export default function ConsoleLab({ section, basePath, site, home, workspace }: ConsoleLabProps) {
+export default function ConsoleLab({ section, basePath, site, home, country, workspace }: ConsoleLabProps) {
     const set = parseFixtureSet(useSticky('fixture'));
     const actsAs = parseActsAs(useSticky('as'));
     const client = useMemo(() => fixtureClient({ set, actsAs }), [set, actsAs]);
@@ -66,6 +68,7 @@ export default function ConsoleLab({ section, basePath, site, home, workspace }:
                 apiUrl={client.baseUrl}
                 site={site}
                 home={home}
+                country={country}
                 user={FIXTURE_USER}
                 now={fixedNow}
                 lab

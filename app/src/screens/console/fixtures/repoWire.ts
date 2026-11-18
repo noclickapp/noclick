@@ -1,7 +1,6 @@
 // The repos API's answers as production gave them on 2026-10-09, read from a throwaway repo
-// (the API's own views): the builders below make every fake repo answer
-// in those shapes, for the console's fixtures and Resources' tests alike, and repoWire.test.ts pins
-// them to the recorded answers, so a fake can't drift from what the pages really get.
+// (the API's own views): the builders below make every fake repo answer in those shapes, wherever a
+// page that shows a repo is tested, so a fake doesn't drift from what the pages really get.
 //
 // What the recording showed that a page must not assume otherwise: a commit made through the API says
 // how many files it changed, a listed one doesn't (files_changed null); a listed commit's branch is the
