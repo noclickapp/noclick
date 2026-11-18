@@ -106,6 +106,10 @@ jobs:
           JS
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
+      # scripts/check.sh builds the app too, which installs with the pnpm its package.json names.
+      - name: Enable pnpm
+        run: corepack enable pnpm
+
       - name: Build and test everything
         run: scripts/check.sh
 
@@ -214,6 +218,10 @@ jobs:
           print(f"Publishing {own}; PyPI has {newest}.")
           PY
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      # scripts/check.sh builds the app too, which installs with the pnpm its package.json names.
+      - name: Enable pnpm
+        run: corepack enable pnpm
 
       - name: Build and test everything
         run: scripts/check.sh
