@@ -159,7 +159,11 @@ describe('the app', () => {
 
     it('imports nothing from outside this repository, and only packages it declares', () => {
         const files = appFiles();
-        expect(Object.keys(files).length).toBeGreaterThan(5);
+        // What it reads is the app's own source and configs (122 files on 2026-11-19), so a move can't leave it none.
+        expect(Object.keys(files).length).toBeGreaterThan(50);
+        expect(Object.keys(files).map((path) => relative(APP, path).split(sep).join('/'))).toEqual(
+            expect.arrayContaining(['src/root.tsx', 'src/routes.ts', 'vite.config.ts']),
+        );
         expect(outsideImports(files, packages).join('\n')).toBe('');
     });
 });
