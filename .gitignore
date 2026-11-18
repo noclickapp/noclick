@@ -9,6 +9,10 @@ __pycache__/
 .pytest_cache/
 .venv/
 .DS_Store
+# Settings with secrets in them; app/.env.example names the app's.
+.env
+.env.*
+!.env.example
 
 # The Claude Code plugin ships its MCP server config.
 !plugins/noclick/.mcp.json
