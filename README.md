@@ -1,7 +1,7 @@
 # NoClick
 
-NoClick's SDKs for Python and TypeScript, both published as `noclick` (on PyPI and npm), and the
-example programs built on them. The app built on the SDKs will join them here.
+NoClick's SDKs for Python and TypeScript, both published as `noclick` (on PyPI and npm), the
+example programs built on them, and the start of the app built on them (`app`).
 
 With the SDKs, your product acts for its own users on NoClick's hosted platform: connect their
 accounts, give your LLM tools, reach a person for an answer or an approval, and run hosted agents
@@ -58,11 +58,13 @@ Each SDK's README has the full tour: [Python](sdk/python/README.md), [TypeScript
 | `sdk/python` | The Python SDK (Python 3.10+) |
 | `sdk/typescript` | The TypeScript SDK (Node 20+, Bun, Deno, Cloudflare Workers), and `noclick/embed`, the bridge custom interface components use |
 | `sdk/examples` | Complete programs on the Python SDK, each also a page at [noclick.com/docs/examples](https://noclick.com/docs/examples) |
+| `app` | NoClick's app, built only on the TypeScript SDK. So far it is the app's shell, a React Router project with one page; NoClick's screens move into it one at a time ([app/README.md](app/README.md)) |
 | `plugins/noclick` | The Claude Code plugin for NoClick's hosted MCP server (`/plugin marketplace add noclickapp/noclick`); `.claude-plugin/marketplace.json` lists it |
 | `glama.json` | This repository's listing in the Glama MCP directory |
 | `scripts/check.sh` | Builds and tests everything here, as CI does |
 
-`scripts/check.sh` needs `python3` and Node 22.6 or later; CI runs it on Python 3.12 and Node 22.
+`scripts/check.sh` needs `python3`, Node 22.12 or later and pnpm 10 (`corepack enable pnpm`); CI runs it on
+Python 3.12 and Node 22.
 
 ## History
 
