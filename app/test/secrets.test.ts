@@ -5,13 +5,17 @@
 //   - only src/server/config.server.ts reads the environment (`process`, `globalThis`, another runtime's env, or
 //     `import.meta` beyond the build's own flags DEV, PROD, SSR, MODE and BASE_URL), and no module runs code from a
 //     string (`eval`, `Function`) or reaches around names (`Reflect`);
+//   - a module may import others by pattern (`import.meta.glob(…)`: the console finds its pages so, and the root
+//     route whatever a fork puts under src/custom/) only with patterns written out as strings, none of which takes in
+//     a module that holds a secret;
 //   - only the modules that need them import what hands out a secret from config.server.ts (`noclickApiKey`: the key
 //     proxy and the server client; `appConfigContext`, which holds the password and session secret: the gate, the
 //     proxy, sign-in and the session; `checkConfig`: the gate), nothing imports config.server.ts whole, and nothing
 //     passes any of them on;
-//   - only the browser's client (src/sdk/proxied.ts) and the server client make an SDK client, under any name;
-//     nothing uses the SDK's default client (`configure`, `defaultClient`), which reads the key from the environment
-//     by itself, nothing imports the SDK whole, and nothing reads a client's `apiKey`;
+//   - only the browser's client (src/sdk/proxied.ts), the server client and the console lab's client (which answers
+//     from canned data and holds no key) make an SDK client, under any name; nothing uses the SDK's default client
+//     (`configure`, `defaultClient`), which reads the key from the environment by itself, nothing imports the SDK
+//     whole, and nothing reads a client's `apiKey`;
 //   - no route, and no module, is a test file (which this guard doesn't read).
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -25,12 +29,44 @@ const ENV_READER = 'src/server/config.server.ts';
 /** Who may import each thing config.server.ts hands a secret out with. */
 const SECRET_HOLDERS: Record<string, ReadonlySet<string>> = {
     noclickApiKey: new Set(['src/server/proxy.server.ts', 'src/server/client.server.ts']),
-    appConfigContext: new Set(['src/server/gate.server.ts', 'src/server/proxy.server.ts', 'src/server/signIn.server.ts', 'src/server/session.server.ts']),
+    appConfigContext: new Set([
+        'src/server/gate.server.ts',
+        'src/server/proxy.server.ts',
+        'src/server/signIn.server.ts',
+        'src/server/session.server.ts',
+    ]),
     checkConfig: new Set(['src/server/gate.server.ts']),
 };
-const CLIENT_MAKERS = new Set(['src/sdk/proxied.ts', 'src/server/client.server.ts']);
+const CLIENT_MAKERS = new Set(['src/sdk/proxied.ts', 'src/server/client.server.ts', 'src/screens/console/fixtures/client.ts']);
 const BUILD_FLAGS = new Set(['DEV', 'PROD', 'SSR', 'MODE', 'BASE_URL']);
 const TEST_FILE = /\.test\.[cm]?[jt]sx?$/;
+/** Every module that reads or is handed a secret: what no pattern of imports may take in. */
+const SECRET_MODULES = [ENV_READER, ...new Set(Object.values(SECRET_HOLDERS).flatMap((holders) => [...holders]))];
+
+/**
+ * Whether a pattern of `import.meta.glob` in `file` takes in `module` (both paths from the app), reading the pattern
+ * as Vite does: from the file's folder, the app (`/…`) or src (`@/…`), with `*`, `**`, `?` and `{a,b}`. Null for a
+ * pattern written with anything else, which the guard can't read.
+ */
+function globTakesIn(pattern: string, file: string, module: string): boolean | null {
+    if (!/^[\w@./*?{},-]+$/.test(pattern)) return null;
+    const from = pattern.startsWith('@/') ? join('src', pattern.slice(2)) : pattern.startsWith('/') ? pattern.slice(1) : join(dirname(file), pattern);
+    let test = '';
+    for (let i = 0; i < from.length; i++) {
+        const char = from[i];
+        if (char === '*' && from[i + 1] === '*') {
+            const whole = from[i + 2] === '/';
+            test += whole ? '(?:.*/)?' : '.*';
+            i += whole ? 2 : 1;
+        } else if (char === '*') test += '[^/]*';
+        else if (char === '?') test += '[^/]';
+        else if (char === '{') test += '(?:';
+        else if (char === '}') test += ')';
+        else if (char === ',') test += '|';
+        else test += char === '.' ? '\\.' : char;
+    }
+    return new RegExp(`^${test}$`).test(module);
+}
 
 /** The module a specifier in `file` names, as a path from the app without its extension; null for a package. */
 function target(specifier: string, file: string): string | null {
@@ -58,7 +94,19 @@ function breaches(files: Record<string, string>): string[] {
             if (ts.isMetaProperty(node) && node.keywordToken === ts.SyntaxKind.ImportKeyword) {
                 const env = node.parent;
                 const flag = ts.isPropertyAccessExpression(env) && env.name.text === 'env' && ts.isPropertyAccessExpression(env.parent) && env.parent.expression === env ? env.parent.name.text : null;
-                if (flag === null || !BUILD_FLAGS.has(flag)) breach(`reads import.meta${flag ? `.env.${flag}` : ts.isPropertyAccessExpression(env) ? `.${env.name.text}` : ''}`);
+                const glob = ts.isPropertyAccessExpression(env) && env.name.text === 'glob' && ts.isCallExpression(env.parent) && env.parent.expression === env ? env.parent : null;
+                if (glob) {
+                    // Imports by pattern: each pattern a string, none taking in a module that holds a secret.
+                    const first = glob.arguments[0];
+                    const written = first && ts.isArrayLiteralExpression(first) ? [...first.elements] : first ? [first] : [];
+                    const patterns = written.filter(ts.isStringLiteral).map((literal) => literal.text);
+                    if (!written.length || patterns.length !== written.length) breach('imports by a pattern it doesn’t write out');
+                    for (const pattern of patterns.filter((p) => !p.startsWith('!'))) {
+                        const taken = SECRET_MODULES.map((module) => globTakesIn(pattern, file, module));
+                        if (taken.includes(null)) breach(`imports by a pattern the guard can’t read ('${pattern}')`);
+                        else if (taken.includes(true)) breach(`imports by a pattern that takes in a module holding a secret ('${pattern}')`);
+                    }
+                } else if (flag === null || !BUILD_FLAGS.has(flag)) breach(`reads import.meta${flag ? `.env.${flag}` : ts.isPropertyAccessExpression(env) ? `.${env.name.text}` : ''}`);
             }
             if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
                 const specifier = node.moduleSpecifier.text;
@@ -138,6 +186,9 @@ describe('the guard', () => {
                 'src/sdk/proxied.ts': "import { NoClick, type ClientOptions } from 'noclick';\nnew NoClick({ apiKey: 'x' });",
                 'src/routes/login.tsx': "import type { AppConfig } from '@/server/config.server';\nimport type * as Config from '@/server/config.server';\nif (import.meta.env.DEV) {}",
                 'src/screens/page.tsx': "import { APIConnectionError, type NoClick } from 'noclick';",
+                'src/screens/console/fixtures/client.ts': "import { NoClick } from 'noclick';\nnew NoClick({});",
+                'src/screens/console/sections.ts': "const pages = import.meta.glob(['./pages/*.tsx', '!./pages/*.test.tsx']);",
+                'src/root.tsx': "import.meta.glob('./custom/*.{ts,tsx}', { eager: true });\nimport.meta.glob('./server/*.md');",
             }),
         ).toEqual([]);
     });
@@ -169,6 +220,16 @@ describe('the guard', () => {
                     "const s = Client.forSession('nk_sess_x');",
                     'const leaked = c.apiKey;',
                     "import { helper } from './helper.test';",
+                    'const find = import.meta.glob;',
+                    "const named = './pages/*.tsx';",
+                    'import.meta.glob(named);',
+                    'import.meta.glob();',
+                    "import.meta.glob(['./pages/*.tsx', named]);",
+                    "import.meta.glob('../server/*.ts');",
+                    "import.meta.glob('@/**/*.server.ts', { eager: true });",
+                    "import.meta.glob('/src/server/{config,gate}.server.ts');",
+                    "import.meta.glob(['./pages/[a-c]*.ts']);",
+                    "import.meta.glob(['../ui/*.tsx', '!../server/*.ts']);",
                 ].join('\n'),
                 'src/server/proxy.server.ts': "import { noclickApiKey } from './config.server';\nexport { noclickApiKey };",
             }),
@@ -199,6 +260,14 @@ describe('the guard', () => {
             'src/routes/page.tsx: imports the SDK whole',
             'src/routes/page.tsx: reads a client’s apiKey',
             'src/routes/page.tsx: imports a test file',
+            'src/routes/page.tsx: reads import.meta.glob',
+            'src/routes/page.tsx: imports by a pattern it doesn’t write out',
+            'src/routes/page.tsx: imports by a pattern it doesn’t write out',
+            'src/routes/page.tsx: imports by a pattern it doesn’t write out',
+            "src/routes/page.tsx: imports by a pattern that takes in a module holding a secret ('../server/*.ts')",
+            "src/routes/page.tsx: imports by a pattern that takes in a module holding a secret ('@/**/*.server.ts')",
+            "src/routes/page.tsx: imports by a pattern that takes in a module holding a secret ('/src/server/{config,gate}.server.ts')",
+            "src/routes/page.tsx: imports by a pattern the guard can’t read ('./pages/[a-c]*.ts')",
             'src/routes/page.tsx: makes an SDK client',
             'src/routes/page.tsx: makes an SDK client',
             'src/server/proxy.server.ts: passes noclickApiKey on',

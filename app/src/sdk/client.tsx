@@ -9,6 +9,11 @@ export function ClientProvider({ client, children }: { client: NoClick; children
     return <ClientContext.Provider value={client}>{children}</ClientContext.Provider>;
 }
 
+/** The client a provider above gives, or null when there is none: for code that may be handed one another way. */
+export function useProvidedClient(): NoClick | null {
+    return useContext(ClientContext);
+}
+
 /** The SDK client for this screen's calls: pass it as `{ client }`, or call its methods. */
 export function useClient(): NoClick {
     const client = useContext(ClientContext);
