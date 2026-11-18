@@ -135,7 +135,7 @@ NoClick's screens are moving into it one at a time, the developer console first.
 | `app` | NoClick's app, built only on the TypeScript SDK: a React Router project that so far signs its owner in, keeps the NoClick key on its server and shows the account ([app/README.md](app/README.md)) |
 | `plugins/noclick` | The Claude Code plugin for NoClick's hosted MCP server (`/plugin marketplace add noclickapp/noclick`); `.claude-plugin/marketplace.json` lists it |
 | `glama.json` | This repository's listing in the Glama MCP directory |
-| `docs/assets` | The pictures in this README |
+| `docs/assets` | The pictures in this README; its `NOTICE.md` credits the icons and typefaces in them |
 | `scripts/check.sh` | Builds and tests everything here, as CI does |
 
 `scripts/check.sh` needs `python3`, Node 22.12 or later and pnpm 10 (`corepack enable pnpm`); CI runs it on
