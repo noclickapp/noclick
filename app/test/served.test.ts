@@ -206,8 +206,8 @@ describe('the developer console, under the production server', () => {
         expect((await get(configured, '/developers-lab/usage?fixture=populated', { headers: { cookie } })).status).toBe(404);
         const files = builtFiles();
         expect(files.length).toBeGreaterThan(20);
-        // The lab's own note, and a value only its fixtures hold.
-        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|fixture-owner-token/.test(readFileSync(file, 'utf8')));
+        // The lab's own note, and a value only its fixtures hold (the moment they are set at).
+        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05/.test(readFileSync(file, 'utf8')));
         expect(carrying.map((file) => file.slice(APP.length + 1))).toEqual([]);
     });
 });

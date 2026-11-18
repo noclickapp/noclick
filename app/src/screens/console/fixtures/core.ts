@@ -29,12 +29,6 @@ export function fixtureId(kind: number, n: number): string {
 
 export const FIXTURE_USER = { id: fixtureId(9, 1), email: 'dev@acme.test' };
 
-/** The lab's session: a token that never expires (fixtures don't read it). */
-export const FIXTURE_AUTH = {
-    getSession: async () => ({ data: { session: { access_token: 'fixture-owner-token' } } }),
-    refreshSession: async () => ({ data: { session: { access_token: 'fixture-owner-token' } } }),
-};
-
 export interface FixtureRequest {
     set: FixtureSet;
     method: string;
