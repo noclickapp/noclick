@@ -119,11 +119,17 @@ export interface WatchOptions extends WatchTokenOptions {
 }
 
 /** The close codes the room sends: renew (lifetime reached), refused (token or access), too many connections. */
-const WATCH_CLOSE = { renew: 4000, refused: 4401, authTimeout: 4408, tooMany: 4429 } as const;
+const WATCH_CLOSE = { renew: 4000, refused: 4401, tooMany: 4429 } as const;
+/** The socket's subprotocol; the token rides beside it, never in the URL. */
+const WATCH_PROTOCOL = "noclick.watch";
 
 const PING_MS = 30_000;
 const BACKOFF_MS = [500, 1_000, 2_000, 5_000, 10_000, 30_000];
 const TOO_MANY_MS = 30_000;
+// After a refusal, past a revoke's `before` (the backend's clock rounded up to the second, plus REVOKE_MARGIN_S, 5 s)
+// by a token clock up to a second behind: the next token opens, unless access really ended, which a second refusal
+// says.
+const REFUSED_WAIT_MS = 8_000;
 // Messages held for a reader slower than the room: past this many, they give way to one `reset`.
 const MAX_QUEUED = 1_000;
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
@@ -146,6 +152,14 @@ function socketUrl(url: string): string {
   throw new NoClickError("The watch socket's address isn't a wss:// URL, so its token was not sent.", {
     nextStep: "Check that the token comes from NoClick's API (or your server passes its url on as it is).",
   });
+}
+
+/** The socket's address, resuming after `after` (a cursor, never a secret). */
+function withCursor(url: string, after: string | null): string {
+  if (!after) return url;
+  const at = new URL(url);
+  at.searchParams.set("after", after);
+  return at.toString();
 }
 
 function pageOrigin(): string | undefined {
@@ -256,11 +270,11 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
         await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
         continue;
       }
-      const ws = new Socket(socketUrl(token.url));
+      // The token is offered as the socket's subprotocol: the edge checks it before the room ever sees the socket.
+      const ws = new Socket(withCursor(socketUrl(token.url), after), [WATCH_PROTOCOL, token.token]);
       socket = ws;
       let lastHeard = Date.now();
       ws.onopen = () => {
-        ws.send(JSON.stringify({ type: "auth", token: token.token, after }));
         pinger = setInterval(() => {
           if (Date.now() - lastHeard > 2 * PING_MS) ws.close(4000, "no answer");
           else ws.send("ping");
@@ -304,7 +318,8 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
           }
           status("reconnecting");
           if (code === WATCH_CLOSE.tooMany) await sleep(spread(TOO_MANY_MS));
-          else if (code !== WATCH_CLOSE.renew && code !== WATCH_CLOSE.refused) {
+          else if (code === WATCH_CLOSE.refused) await sleep(REFUSED_WAIT_MS * (1 + Math.random() / 2));
+          else if (code !== WATCH_CLOSE.renew) {
             await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
           }
           break;

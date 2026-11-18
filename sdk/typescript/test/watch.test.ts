@@ -1,5 +1,6 @@
-// Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token goes in the
-// first message (never the URL), a reconnect resumes after the last change, and only what retrying can't fix ends it.
+// Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token is offered as
+// the socket's subprotocol (never the URL), a reconnect resumes after the last change (the URL's `after`), and only
+// what retrying can't fix ends it.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -21,9 +22,11 @@ class FakeSocket {
   onerror?: () => void;
   closedWith?: number;
   readonly url: string;
+  readonly protocols: string[];
 
-  constructor(url: string) {
+  constructor(url: string, protocols: string[] = []) {
     this.url = url;
+    this.protocols = protocols;
     FakeSocket.opened.push(this);
     queueMicrotask(() => this.onopen?.());
   }
@@ -42,6 +45,18 @@ class FakeSocket {
 }
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+/** Every wait `watch` makes takes no time; the list is how long each would have been. */
+function noWaits(t: { mock: { method: (...args: never[]) => unknown } }): number[] {
+  const realSetTimeout = globalThis.setTimeout;
+  const waits: number[] = [];
+  (t.mock.method as (o: object, m: string, f: unknown) => unknown)(globalThis, "setTimeout",
+    ((fn: () => void, ms?: number) => {
+      waits.push(ms ?? 0);
+      return realSetTimeout(fn, 0);
+    }) as typeof setTimeout);
+  return waits;
+}
 
 async function opened(n: number): Promise<FakeSocket> {
   for (let i = 0; i < 100 && FakeSocket.opened.length < n; i++) await tick();
@@ -77,7 +92,8 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
 
   const first = await opened(1);
   assert.equal(first.url, "wss://api.test/v1/watch/socket/r_1");
-  assert.deepEqual(JSON.parse(first.sent[0]), { type: "auth", token: "tok_1", after: null });
+  assert.deepEqual(first.protocols, ["noclick.watch", "tok_1"], "the token rides the protocol, beside its name");
+  assert.deepEqual(first.sent, [], "and nothing is sent first");
   assert.deepEqual(minted.last.body, { objects: ["deployment"] });
   first.receive({ type: "ready", resumed: false });
   first.receive({ type: "change", id: "c_1", at: "2026-11-18T10:00:00Z", object: "deployment", object_id: "d1",
@@ -87,7 +103,8 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
   first.end(4000, "lifetime");
 
   const second = await opened(2);
-  assert.deepEqual(JSON.parse(second.sent[0]), { type: "auth", token: "tok_2", after: "c_1" });
+  assert.equal(second.url, "wss://api.test/v1/watch/socket/r_2?after=c_1");
+  assert.deepEqual(second.protocols, ["noclick.watch", "tok_2"]);
   second.receive({ type: "ready", resumed: true });
   second.receive({ type: "reset" });
   await tick();
@@ -102,8 +119,9 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
   assert.deepEqual(statuses, ["connecting", "live", "reconnecting", "live", "stopped"]);
 });
 
-test("a refused socket gets one fresh token; refused again before it's ready, watch throws", async () => {
+test("a refused socket gets one fresh token, after waiting out a revoke's margin; refused again, watch throws", async (t) => {
   FakeSocket.opened = [];
+  const waits = noWaits(t);
   const { api } = setup();
   api.on("POST", "/v1/watch/tokens", json(TOKEN(1), { status: 201 }), json(TOKEN(2), { status: 201 }),
     json(TOKEN(3), { status: 201 }));
@@ -116,6 +134,7 @@ test("a refused socket gets one fresh token; refused again before it's ready, wa
   const second = await opened(2);
   second.end(4401, "That token was used already");
   await assert.rejects(run, (err: unknown) => err instanceof nc.WatchRefused && /used already/.test(String(err)));
+  assert.ok(waits.some((ms) => ms >= 8_000 && ms <= 12_000), `waited ${JSON.stringify(waits.filter((ms) => ms > 0))}`);
 });
 
 test("a token call refused for good ends watch with its error; a custom token source is used instead of the client", async () => {
@@ -227,7 +246,7 @@ test("on this machine a plain ws:// socket will do", async () => {
     for await (const _ of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) { /* reading */ }
   })();
   const socket = await opened(1);
-  assert.deepEqual(JSON.parse(socket.sent[0]).token, "tok_1");
+  assert.deepEqual(socket.protocols, ["noclick.watch", "tok_1"]);
   controller.abort();
   await run;
 });
@@ -254,7 +273,7 @@ test("frames that are not JSON objects, or carry wrong types, never reach the re
   for (const message of seen) assert.ok(["ready", "change", "typing", "reset"].includes(message.type));
 });
 
-test("the token rides the first frame, never the URL, and a browser's origin is sent with the token call", async () => {
+test("the token rides the socket's protocol, never the URL, and a browser's origin is sent with the token call", async () => {
   FakeSocket.opened = [];
   const { api } = setup();
   const minted = api.on("POST", "/v1/watch/tokens", json(TOKEN(1), { status: 201 }));
@@ -266,7 +285,7 @@ test("the token rides the first frame, never the URL, and a browser's origin is 
     })();
     const socket = await opened(1);
     assert.ok(!socket.url.includes("tok_1"));
-    assert.deepEqual(JSON.parse(socket.sent[0]), { type: "auth", token: "tok_1", after: null });
+    assert.deepEqual(socket.protocols, ["noclick.watch", "tok_1"]);
     assert.deepEqual(minted.last.body, { origin: "https://app.example" });
     controller.abort();
     await run;
@@ -275,8 +294,9 @@ test("the token rides the first frame, never the URL, and a browser's origin is 
   }
 });
 
-test("a room that refuses twice ends the watch instead of looping on fresh tokens", async () => {
+test("a room that refuses twice ends the watch instead of looping on fresh tokens", async (t) => {
   FakeSocket.opened = [];
+  noWaits(t);
   const { api } = setup();
   const minted = api.on("POST", "/v1/watch/tokens", ...Array.from({ length: 6 }, (_, i) => json(TOKEN(i + 1), { status: 201 })));
   const run = (async () => {
@@ -333,4 +353,86 @@ test("a room turned away waits half a minute, spread, before trying again", asyn
     t.mock.restoreAll();
     assert.ok(waits.includes(wait), `waited ${JSON.stringify(waits.filter((w) => w > 0))}, not ${wait}`);
   }
+});
+
+async function firstOutcome(url: string): Promise<{ opened: FakeSocket[]; error: unknown }> {
+  FakeSocket.opened = [];
+  const controller = new AbortController();
+  let error: unknown = null;
+  const run = (async () => {
+    try {
+      for await (const _ of nc.watch({
+        WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal,
+        token: async () => ({ url, token: "tok_secret" }),
+      })) break;
+    } catch (err) {
+      error = err;
+    }
+  })();
+  for (let i = 0; i < 20 && !FakeSocket.opened.length && !error; i++) await tick();
+  controller.abort();
+  await run;
+  return { opened: [...FakeSocket.opened], error };
+}
+
+for (const url of ["wss://api.noclick.com/v1/watch/socket/r_1", "ws://localhost:8787/x", "ws://LOCALHOST/x",
+                   "ws://127.0.0.1/x", "ws://[::1]:9/x", "ws://user:pw@localhost/x"]) {
+  test(`a token goes to ${url}`, async () => {
+    const { opened: sockets, error } = await firstOutcome(url);
+    assert.equal(error, null);
+    assert.equal(sockets.length, 1);
+    assert.deepEqual(sockets[0].protocols, ["noclick.watch", "tok_secret"]);
+  });
+}
+
+for (const url of ["ws://api.noclick.com/x", "ws://localhost.evil.com/x", "ws://localhost@evil.com/x",
+                   "ws://evil.com#@localhost", "ws://127.0.0.1.nip.io/x", "https://api.noclick.com/x", "not a url",
+                   "ws://localhost./x"]) {
+  test(`no token goes to ${url}`, async () => {
+    const { opened: sockets, error } = await firstOutcome(url);
+    assert.deepEqual(sockets, []);
+    assert.ok(error instanceof nc.NoClickError, String(error));
+    assert.ok(!String((error as Error).message).includes("tok_secret"));
+    assert.ok(!JSON.stringify(error).includes("tok_secret"));
+  });
+}
+
+test("a reader behind by more than the queue gets one reset, then everything after it", async () => {
+  FakeSocket.opened = [];
+  const controller = new AbortController();
+  const iterator = nc.watch({
+    WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal,
+    token: async () => ({ url: "wss://api.test/x", token: "tok" }),
+  })[Symbol.asyncIterator]();
+  const first = iterator.next();
+  const socket = await opened(1);
+  socket.receive({ type: "ready", resumed: false });
+  assert.equal(((await first).value as nc.WatchMessage).type, "ready");
+  for (let i = 0; i < 1_500; i++) socket.receive({ type: "change", id: `c_${i}`, object: "domain", object_id: `d${i}` });
+  const seen: nc.WatchMessage[] = [];
+  for (let i = 0; i < 501; i++) seen.push((await iterator.next()).value as nc.WatchMessage);
+  assert.equal(seen[0].type, "reset");
+  assert.equal((seen[seen.length - 1] as nc.WatchChange).objectId, "d1499", "the last change after the reset still arrives");
+  controller.abort();
+  await iterator.return(undefined);
+});
+
+test("a resume rides the URL; a URL with a query keeps it", async () => {
+  FakeSocket.opened = [];
+  const { api } = setup();
+  api.on("POST", "/v1/watch/tokens", json({ ...TOKEN(1), url: "wss://api.test/v1/watch/socket/r_1?x=1" }, { status: 201 }),
+    json({ ...TOKEN(2), url: "wss://api.test/v1/watch/socket/r_1?x=1" }, { status: 201 }));
+  const controller = new AbortController();
+  const run = (async () => {
+    for await (const _ of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) { /* reading */ }
+  })();
+  const first = await opened(1);
+  assert.equal(first.url, "wss://api.test/v1/watch/socket/r_1?x=1");
+  first.receive({ type: "ready", resumed: false });
+  first.receive({ type: "change", id: "c_AbCdEfGh_7", at: "2026-11-18T10:00:00Z", object: "domain", object_id: "d1" });
+  first.end(4000, "lifetime");
+  const second = await opened(2);
+  assert.equal(second.url, "wss://api.test/v1/watch/socket/r_1?x=1&after=c_AbCdEfGh_7");
+  controller.abort();
+  await run;
 });

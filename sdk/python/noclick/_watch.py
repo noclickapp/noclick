@@ -27,7 +27,7 @@ import json
 import random
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple, Union
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from ._client import Client, resolve_client
 from ._object import parse_time
@@ -36,9 +36,15 @@ from ._sync import synced
 from .exceptions import Error
 
 # The room's close codes: renew (lifetime reached: reconnect), refused (the token, or access), too many connections.
-CLOSE_RENEW, CLOSE_REFUSED, CLOSE_AUTH_TIMEOUT, CLOSE_TOO_MANY = 4000, 4401, 4408, 4429
+CLOSE_RENEW, CLOSE_REFUSED, CLOSE_TOO_MANY = 4000, 4401, 4429
+# The socket's subprotocol; the token rides beside it, never in the URL.
+WATCH_PROTOCOL = "noclick.watch"
 _BACKOFF_S = (0.5, 1.0, 2.0, 5.0, 10.0, 30.0)
 _TOO_MANY_S = 30.0
+# After a refusal, past a revoke's `before` (the backend's clock rounded up to the second, plus REVOKE_MARGIN_S, 5 s)
+# by a token clock up to a second behind: the next token opens, unless access really ended, which a second refusal
+# says.
+_REFUSED_WAIT_S = 8.0
 _LOCAL_HOSTS = ("localhost", "127.0.0.1", "::1")
 
 
@@ -56,6 +62,15 @@ def _socket_url(url: str) -> str:
         return url
     raise Error("The watch socket's address isn't a wss:// URL, so its token was not sent.",
                 next_step="Check that the token comes from NoClick's API (or your server passes its url on as it is).")
+
+
+def _with_cursor(url: str, after: Optional[str]) -> str:
+    """The socket's address, resuming after ``after`` (a cursor, never a secret)."""
+    if not after:
+        return url
+    parts = urlsplit(url)
+    query = urlencode([*parse_qsl(parts.query), ("after", after)])
+    return urlunsplit(parts._replace(query=query))
 _PING_S = 30.0
 
 TokenSource = Callable[[], Union[Tuple[str, str], Awaitable[Tuple[str, str]]]]
@@ -250,9 +265,9 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
             code: Optional[int] = None
             reason = ""
             try:
-                async with connect(_socket_url(url), ping_interval=_PING_S, ping_timeout=_PING_S,
-                                   max_size=2 ** 16) as socket:
-                    await socket.send(json.dumps({"type": "auth", "token": secret, "after": after}))
+                # The token is offered as the socket's subprotocol: the edge checks it before the room sees it.
+                async with connect(_with_cursor(_socket_url(url), after), subprotocols=[WATCH_PROTOCOL, secret],
+                                   ping_interval=_PING_S, ping_timeout=_PING_S, max_size=2 ** 16) as socket:
                     async for frame in socket:
                         if frame == "pong":
                             continue
@@ -287,7 +302,9 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
             status("reconnecting")
             if code == CLOSE_TOO_MANY:
                 await asyncio.sleep(_spread(_TOO_MANY_S))
-            elif code not in (CLOSE_RENEW, CLOSE_REFUSED):
+            elif code == CLOSE_REFUSED:
+                await asyncio.sleep(_REFUSED_WAIT_S * (1 + random.random() / 2))
+            elif code != CLOSE_RENEW:
                 await asyncio.sleep(_spread(_BACKOFF_S[min(failures, len(_BACKOFF_S) - 1)]))
                 failures += 1
     finally:

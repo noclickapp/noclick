@@ -1,5 +1,6 @@
-"""Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token goes in the
-first frame (never the URL), a reconnect resumes after the last change, and only what retrying can't fix ends it."""
+"""Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token is offered as
+the socket's subprotocol (never the URL), a reconnect resumes after the last change (the URL's ``after``), and only
+what retrying can't fix ends it."""
 
 import json
 import sys
@@ -41,9 +42,10 @@ class FakeConnect:
         self.planned = list(connections)
         self.opened = []
 
-    def __call__(self, url, **_):
+    def __call__(self, url, **options):
         frames, code = self.planned.pop(0)
         socket = FakeSocket(url, frames, code)
+        socket.subprotocols = list(options.get("subprotocols") or [])
         self.opened.append(socket)
 
         class Context:
@@ -99,8 +101,9 @@ def test_watch_authenticates_first_yields_what_it_knows_and_resumes_after_a_rene
     assert seen[3].resumed is True
     first, second = connect.opened
     assert first.url == "wss://api.test/v1/watch/socket/r_1"
-    assert first.sent == [{"type": "auth", "token": "tok_1", "after": None}]
-    assert second.sent == [{"type": "auth", "token": "tok_2", "after": "c_1"}]
+    assert first.subprotocols == ["noclick.watch", "tok_1"] and first.sent == [], "the token rides the protocol"
+    assert second.url == "wss://api.test/v1/watch/socket/r_2?after=c_1"
+    assert second.subprotocols == ["noclick.watch", "tok_2"]
     assert statuses == ["connecting", "live", "reconnecting", "live", "stopped"]
 
 
@@ -248,3 +251,79 @@ def test_a_server_error_on_the_token_call_backs_off_and_a_refusal_ends_it(api, c
             pass
     own = [w for w in no_waits if w in _watch._BACKOFF_S]
     assert own[:3] == [0.5, 1.0, 2.0], f"each failed token call waits longer than the last: {no_waits}"
+
+
+@pytest.mark.parametrize("url", [
+    "wss://api.noclick.com/v1/watch/socket/r_1", "WSS://api.noclick.com/x", "ws://localhost:8787/x",
+    "ws://LOCALHOST/x", "ws://127.0.0.1/x", "ws://[::1]:9/x", "ws://user:pw@localhost/x",
+    # A backslash is userinfo to urllib (host: localhost); websockets refuses the URI outright, so nothing leaves.
+    "ws://evil.com\\@localhost/x",
+])
+def test_a_token_goes_to_wss_or_this_machine(url):
+    assert _watch._socket_url(url) == url
+
+
+@pytest.mark.parametrize("url", [
+    "ws://api.noclick.com/x", "ws://localhost.evil.com/x", "ws://localhost@evil.com/x", "ws://evil.com#@localhost",
+    "ws://127.0.0.1.nip.io/x", "wss:///x", "wss://", "https://api.noclick.com/x",
+    "ws://0x7f000001/x", "ws://[::ffff:127.0.0.1]/x", "", "localhost",
+])
+def test_and_nowhere_else(url):
+    with pytest.raises(nc.Error) as refused:
+        _watch._socket_url(url)
+    assert "tok_" not in str(refused.value)
+
+
+@pytest.mark.parametrize("frame", ["5", "[1,2]", '"x"', "null", "true", '{"type": 5}', '{"type": "change", "parent": 3}'])
+def test_odd_frames_are_skipped_or_read_safely(frame):
+    message = _watch._message(json.loads(frame))
+    assert message is None or (message.type == "change" and message.parent is None)
+
+
+async def test_a_token_for_a_plain_socket_is_never_sent(monkeypatch):
+    opened = []
+
+    def connect(url, **_):
+        opened.append(url)
+        raise AssertionError("connected")
+
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    with pytest.raises(nc.Error) as refused:
+        async for _ in nc.watch.aio(token=lambda: ("ws://relay.evil.com/x", "tok_secret")):
+            pass
+    assert opened == [] and "tok_secret" not in str(refused.value) and "tok_secret" not in repr(refused.value)
+
+
+def test_a_tokens_repr_holds_no_token():
+    minted = _watch.WatchToken(url="wss://a/b", token="tok_secret", expires_at=None, connection_ends_at=None,
+                               objects=[], user_id=None, origin=None, raw={"token": "tok_secret"})
+    assert "tok_secret" not in repr(minted)
+
+
+def test_a_refused_socket_waits_out_a_revokes_margin_before_its_next_token(api, client, monkeypatch, no_waits):
+    """A token minted within a revoke's margin (a user suspended and reactivated at once) is refused once: the
+    next, asked for after the margin, opens."""
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    connect = FakeConnect(([], _watch.CLOSE_REFUSED), ([{"type": "ready", "resumed": False}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    for message in nc.watch():
+        assert message.type == "ready"
+        break
+    assert len(no_waits) == 1 and 8.0 <= no_waits[0] <= 12.0, no_waits
+
+
+def test_a_resume_rides_the_url_and_the_token_the_protocol(api, client, monkeypatch, no_waits):
+    api.post("/v1/watch/tokens").respond(201, json={**token(1), "url": "wss://api.test/v1/watch/socket/r_1?x=1"})
+    change = {"type": "change", "id": "c_AbCdEfGh_7", "at": "2026-11-18T10:00:00Z", "object": "domain",
+              "object_id": "d1"}
+    connect = FakeConnect(([{"type": "ready", "resumed": False}, change], 4000),
+                          ([{"type": "ready", "resumed": True}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    seen = 0
+    for _message in nc.watch():
+        seen += 1
+        if seen == 3:
+            break
+    assert connect.opened[0].url == "wss://api.test/v1/watch/socket/r_1?x=1"
+    assert connect.opened[1].url == "wss://api.test/v1/watch/socket/r_1?x=1&after=c_AbCdEfGh_7"
+    assert all("tok_1" not in socket.url for socket in connect.opened)
