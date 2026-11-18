@@ -1,5 +1,5 @@
 // The document every page renders in, and the root route around them.
-import { useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import {
     isRouteErrorResponse,
     Links,
@@ -8,6 +8,7 @@ import {
     Scripts,
     ScrollRestoration,
     useLoaderData,
+    useLocation,
     type LoaderFunctionArgs,
     type MiddlewareFunction,
 } from 'react-router';
@@ -17,8 +18,17 @@ import { isSetupData, SetupScreen } from '@/screens/setup/SetupScreen';
 import { ClientProvider } from '@/sdk/client';
 import { proxiedClient } from '@/sdk/proxied';
 import { gate, securityHeaders } from '@/server/gate.server';
+import { applyTheme, themeInitScript, watchSystemTheme } from '@/ui/theme';
 import { PAGE_TITLE } from '@/ui/titles';
 import './app.css';
+
+// What a fork adds without editing the app's own files: every module under src/custom/ runs once, before any page
+// renders, which is where it fills the app's slots (src/slots.ts; src/custom/README.md shows how).
+import.meta.glob('./custom/*.{ts,tsx}', { eager: true });
+
+/** Applies the stored theme before the first paint, so a page a person set to light never flashes dark. Inline: it
+ *  runs before any bundle. */
+const THEME_INIT_SCRIPT = themeInitScript();
 
 /** The gate inside React Router: the app's settings, then the owner's session (src/server/gate.server.ts), with the
  *  security headers on every answer, the error pages' included. The server's entry has run the same gate first. */
@@ -38,11 +48,13 @@ function pageOrigin(loaded: { origin: string } | undefined): string {
 
 export function Layout({ children }: { children: ReactNode }) {
     return (
-        // Dark is the default theme (src/ui/tokens.css).
-        <html lang="en" className="dark">
+        // Dark is the default theme (src/ui/tokens.css); the script below takes the class off for a person who chose
+        // light (src/ui/theme.ts), which is why React is told not to mind the difference.
+        <html lang="en" className="dark" suppressHydrationWarning>
             <head>
                 <meta charSet="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
                 <Meta />
                 <Links />
             </head>
@@ -55,7 +67,15 @@ export function Layout({ children }: { children: ReactNode }) {
     );
 }
 
+/** Keeps the page in the theme its person chose: on every page they move to, and when their system's own changes. */
+function useTheme(): void {
+    const { pathname } = useLocation();
+    useEffect(() => applyTheme(pathname), [pathname]);
+    useEffect(() => watchSystemTheme(), []);
+}
+
 export default function App() {
+    useTheme();
     const origin = pageOrigin(useLoaderData<typeof loader>() as { origin: string } | undefined);
     // Screens read NoClick through this client (useClient()): it calls this app's server, which holds the key.
     const client = useMemo(() => proxiedClient(origin), [origin]);

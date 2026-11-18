@@ -2,7 +2,8 @@
 
 NoClick's app: the screens for working with a NoClick account, built only on the TypeScript SDK in
 [`../sdk/typescript`](../sdk/typescript). It runs with your NoClick key on its server, behind a password only you
-know, and so far shows your account at a glance; NoClick's screens move in here one at a time.
+know. So far it has your account at a glance and NoClick's developer console; NoClick's screens move in here one
+at a time.
 
 ## Configuration
 
@@ -38,14 +39,85 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server. `scripts/check.sh` at the repository's root installs, typechecks, tests and builds the app along
-with the SDKs, as CI does; the tests need neither a key nor the network.
+app's own server; **Developer console** on it opens the console at `/developers`. `scripts/check.sh` at the
+repository's root installs, typechecks, tests and builds the app along with the SDKs, as CI does; the tests need
+neither a key nor the network.
+
+To look at the console's pages without touching an account, run `pnpm dev` and open
+`http://localhost:5173/developers-lab`: the same pages over made-up data. The app still wants its settings and your
+sign-in first, though the lab calls nothing. See [the lab](#the-lab).
 
 To deploy it, set the four variables in your host's settings and serve it over **https**: away from `localhost` the
 sign-in cookie is `Secure`, so a browser keeps it only over https, and the app tells browsers to come back over
 https only (`Strict-Transport-Security`, for a year). A proxy you put in front of the app must pass the original
 `Host` header on (with nginx, `proxy_set_header Host $host;`), since signing in checks that the form came from the
 app's own address, and should say which scheme it took the request over (`X-Forwarded-Proto`).
+
+## The developer console
+
+`/developers` is NoClick's developer console (`src/screens/console`): the account's agents, users and resources
+(connections, numbers, inboxes, apps, databases, storage and the rest), logs of everything that ran, usage and its
+caps, and settings. They are the same files NoClick's own app renders; here they run on the SDK client this app
+hands every screen, so each call goes through the app's server and is made with its key.
+
+**It isn't finished.** The console starts by reading the account (`GET /v1/account`), which NoClick's API has so
+far answered only to a person signed in to NoClick. The change that answers it to one of the account's own secret
+keys is still on its way to `api.noclick.com`. Until the API you call has it, `/developers` shows one page saying
+that the API refused the key that read, and none of its pages, because without the account a page would say you
+lack what it only couldn't read.
+
+**It acts as a key, and a key can't do everything.** NoClick's API keeps a few operations for a person signed in
+to NoClick, and refuses them to any key (403 `permission_denied`). The console here doesn't offer what rests on
+them; `src/screens/console/ownerOnly.ts` is the one list, read by the sidebar, the search palette and each page:
+
+- **API keys**: listing, making, changing and revoking keys, and the apps connected over MCP. The section isn't
+  listed, and its address says why. Make keys in NoClick's own console.
+- **Signing in the command line** (`noclick login`): approving it is done signed in to NoClick.
+- **The setup prompt for a coding agent**, which carries a one-time code that becomes a key. Quickstart shows the
+  steps to do by hand.
+- **The account's defaults** (its region, what a paused user is told): read here, changed in NoClick's console.
+- **Jumping to an object by pasting its id** in the search palette. Sections and recent objects still work.
+- **Asking for machines**, and **the card issuer's form**: where the request or application stands is shown, with
+  who can go on with it.
+
+A key's own limits apply as well: give the app a key with the scopes its pages need, and a spending cap.
+
+**What else differs from NoClick's own console**, because it comes from NoClick's app and not from the API:
+
+- No live updates. Lists refresh when you return to the tab and on their own slow re-read.
+- A connection is drawn with a plain mark and a name read from its type, not its service's logo.
+- An app's Durable Object classes aren't listed, and the apps in the trash are a plain list.
+- Links to the docs, pricing, adding funds and the usage policies open `noclick.com`.
+- No terms are named under the buttons: say your own through a slot (below).
+
+### Slots, and your own additions
+
+A screen leaves named places for whoever runs it: **slots** (`src/slots.ts`). Each has something that stands in it
+by default, so the app is whole with every slot left alone. The console's are in `src/screens/console/slots.ts`:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `console.terms` | Under a button that makes a key, approves a command line's sign-in or copies the setup prompt | Nothing |
+| `console.connection.mark` | Beside a connection's or an integration's name: its mark and what it is called | A plain mark, and the name read from its type |
+| `console.cards.issuerForm` | The cards onboarding page, for the signed-in owner | A link to where the application is finished |
+| `console.apps.trash` | Under the Apps list | A plain list, each app to restore or purge |
+| `console.app.durableObjects` | An app's drawer, after its bindings | Nothing |
+
+Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
+file there runs before any page renders, and nothing else in the app imports from it, so pulling a newer version
+of the app leaves your additions alone. Its README has a worked example.
+
+### The lab
+
+`/developers-lab` is the console over made-up data (`src/screens/console/fixtures`): the real pages and the real SDK
+client, answered from canned `/v1` responses, with no account and no network. It exists **in development only**
+(`pnpm dev`); a built app answers 404 there and carries none of it.
+
+- `?fixture=populated|empty|first-run|error` picks the data, and sticks as you move around.
+- `?as=key` answers as the API answers a key, which is the console as this app serves it; without it the lab shows
+  what a signed-in owner sees.
+- It also draws what is designed and not built yet, each tagged "designed". The console at `/developers` never
+  shows those.
 
 ## How it reaches NoClick
 
@@ -125,7 +197,10 @@ It doesn't:
 - React Router 7 in framework mode, with Vite, middleware turned on. `src/` is the app directory: `root.tsx` is the
   document and the root route, `entry.server.tsx` renders documents on the server, `routes.ts` is the route table,
   `routes/` the pages and resource routes, `server/` the server-only modules (sign-in, the gate, the key proxy),
-  `sdk/` the client the screens use, `screens/` the screens, `ui/` the design tokens and components.
+  `sdk/` the client the screens use and how they read through it, `screens/` the screens, `ui/` the design tokens
+  and components, `slots.ts` the places a screen leaves for its host, and `custom/` your own additions.
+- The theme (light, dark or the system's) is the one a person picks in the console's account menu, kept in the
+  browser and applied before the first paint (`src/ui/theme.ts`). Dark is the default.
 - Server code uses web standards only (`Request`, `Response`, `fetch`, Web Crypto, web streams), so it runs on Node
   today and on runtimes that offer only those.
 - `@/…` imports from `src/…`.
@@ -136,5 +211,8 @@ It doesn't:
   every package a file imports is one `package.json` names. `test/server.test.ts` runs the app's server through React
   Router's own request handler against a fake NoClick API on a local port; `test/served.test.ts` builds the app and
   runs it under `react-router-serve`, as `pnpm start` does.
+- `test/sockets.test.ts` keeps every screen on the SDK client it is handed: none opens a connection of its own.
+  `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
+  opens every page of the console as a key and fails if one asks the API for something only the owner may have.
 
 Apache-2.0, as the rest of this repository.

@@ -35,11 +35,17 @@ export function AccountScreen() {
             )}
             {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
             {reading.state === 'ready' && <Account status={reading.status} />}
-            <form method="post" action="/logout">
-                <button type="submit" className={BUTTON_SECONDARY}>
-                    Sign out
-                </button>
-            </form>
+            <div className="flex flex-wrap items-center gap-3">
+                {/* Where the account is worked on: its agents, users, resources, logs and usage. */}
+                <a className={BUTTON_PRIMARY} href="/developers">
+                    Developer console
+                </a>
+                <form method="post" action="/logout">
+                    <button type="submit" className={BUTTON_SECONDARY}>
+                        Sign out
+                    </button>
+                </form>
+            </div>
         </main>
     );
 }

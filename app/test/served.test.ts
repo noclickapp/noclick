@@ -1,9 +1,10 @@
 // The app as `npm start` serves it: built, then run by react-router-serve on a local port, against a fake NoClick
 // API. Pins that the gate sees every request React Router answers (the ones it answers without middleware too), what
 // the server answers without the gate (static files, React Router's manifest, and the few requests the HTTP server
-// refuses before React Router), that none of those answers carries anything of the app's, and that events stream.
+// refuses before React Router), that none of those answers carries anything of the app's, that events stream, and
+// that the built app serves the developer console and nothing of its lab.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { connect, createServer, type AddressInfo } from 'node:net';
 import { dirname, join, resolve } from 'node:path';
@@ -41,13 +42,17 @@ async function freePort(): Promise<number> {
     return port;
 }
 
+/** The shell's environment without the app's settings and without NODE_ENV, which the test runner sets to `test`: the
+ *  build and the server then run as `pnpm build` and `pnpm start` run them. */
+function shellEnv(): Record<string, string | undefined> {
+    return Object.fromEntries(Object.entries(process.env).filter(([name]) => !['NOCLICK_API_KEY', 'NOCLICK_API_URL', 'APP_PASSWORD', 'SESSION_SECRET', 'NODE_ENV'].includes(name)));
+}
+
 /** Runs the built app on a port of its own with `env` as its settings, and waits until it answers. */
 async function serve(env: Record<string, string>): Promise<Served> {
     const port = await freePort();
     // Only the settings given: none from the shell running the tests.
-    const inherited = Object.fromEntries(
-        Object.entries(process.env).filter(([name]) => !['NOCLICK_API_KEY', 'NOCLICK_API_URL', 'APP_PASSWORD', 'SESSION_SECRET', 'NODE_ENV'].includes(name)),
-    );
+    const inherited = shellEnv();
     const child = spawn(process.execPath, [cli('@react-router/serve'), 'build/server/index.js'], {
         cwd: APP,
         env: { ...inherited, ...env, PORT: String(port), HOST: '127.0.0.1' },
@@ -89,7 +94,7 @@ async function get(served: Served, path: string, init: RequestInit = {}) {
 }
 
 beforeAll(async () => {
-    const built = spawnSync(process.execPath, [cli('@react-router/dev'), 'build'], { cwd: APP, encoding: 'utf8' });
+    const built = spawnSync(process.execPath, [cli('@react-router/dev'), 'build'], { cwd: APP, encoding: 'utf8', env: shellEnv() });
     if (built.status !== 0) throw new Error(`the build failed:\n${built.stdout}\n${built.stderr}`);
     api = await startFakeApi();
     const settings = { NOCLICK_API_KEY: KEY, APP_PASSWORD: PASSWORD, SESSION_SECRET: SECRET, NOCLICK_API_URL: api.url };
@@ -170,6 +175,40 @@ describe('the gate, under the production server', () => {
         api.streams.at(-1)!.release();
         await reader.cancel();
         expect(api.requests.at(-1)!.headers.authorization).toBe(`Bearer ${KEY}`);
+    });
+});
+
+describe('the developer console, under the production server', () => {
+    /** Every file the build made, by its path under build/. */
+    function builtFiles(dir = join(APP, 'build')): string[] {
+        return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => (entry.isDirectory() ? builtFiles(join(dir, entry.name)) : [join(dir, entry.name)]));
+    }
+
+    async function signedInCookie(): Promise<string> {
+        const signedIn = await get(configured, '/login', { method: 'POST', body: new URLSearchParams({ password: PASSWORD }), headers: { origin: configured.url } });
+        return signedIn.headers.get('set-cookie')!.split(';')[0];
+    }
+
+    it('is behind the sign-in, and served to the owner at /developers and every page under it', async () => {
+        expect((await get(configured, '/developers')).headers.get('location')).toBe('/login?next=%2Fdevelopers');
+        const cookie = await signedInCookie();
+        for (const path of ['/developers', '/developers/usage', '/developers/resources/apps']) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain('<title>Developers · NoClick</title>');
+            expect(page.headers.get('x-frame-options'), path).toBe('DENY');
+        }
+    });
+
+    it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
+        const cookie = await signedInCookie();
+        expect((await get(configured, '/developers-lab', { headers: { cookie } })).status).toBe(404);
+        expect((await get(configured, '/developers-lab/usage?fixture=populated', { headers: { cookie } })).status).toBe(404);
+        const files = builtFiles();
+        expect(files.length).toBeGreaterThan(20);
+        // The lab's own note, and a value only its fixtures hold.
+        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|fixture-owner-token/.test(readFileSync(file, 'utf8')));
+        expect(carrying.map((file) => file.slice(APP.length + 1))).toEqual([]);
     });
 });
 

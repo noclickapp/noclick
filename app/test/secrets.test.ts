@@ -10,8 +10,8 @@
 //     a module that holds a secret;
 //   - only the modules that need them import what hands out a secret from config.server.ts (`noclickApiKey`: the key
 //     proxy and the server client; `appConfigContext`, which holds the password and session secret: the gate, the
-//     proxy, sign-in and the session; `checkConfig`: the gate), nothing imports config.server.ts whole, and nothing
-//     passes any of them on;
+//     proxy, sign-in, the session, and the module that hands a page the API's address and nothing else;
+//     `checkConfig`: the gate), nothing imports config.server.ts whole, and nothing passes any of them on;
 //   - only the browser's client (src/sdk/proxied.ts), the server client and the console lab's client (which answers
 //     from canned data and holds no key) make an SDK client, under any name; nothing uses the SDK's default client
 //     (`configure`, `defaultClient`), which reads the key from the environment by itself, nothing imports the SDK
@@ -34,6 +34,7 @@ const SECRET_HOLDERS: Record<string, ReadonlySet<string>> = {
         'src/server/proxy.server.ts',
         'src/server/signIn.server.ts',
         'src/server/session.server.ts',
+        'src/server/apiUrl.server.ts',
     ]),
     checkConfig: new Set(['src/server/gate.server.ts']),
 };
@@ -186,6 +187,7 @@ describe('the guard', () => {
                 'src/sdk/proxied.ts': "import { NoClick, type ClientOptions } from 'noclick';\nnew NoClick({ apiKey: 'x' });",
                 'src/routes/login.tsx': "import type { AppConfig } from '@/server/config.server';\nimport type * as Config from '@/server/config.server';\nif (import.meta.env.DEV) {}",
                 'src/screens/page.tsx': "import { APIConnectionError, type NoClick } from 'noclick';",
+                'src/server/apiUrl.server.ts': "import { appConfigContext } from './config.server';",
                 'src/screens/console/fixtures/client.ts': "import { NoClick } from 'noclick';\nnew NoClick({});",
                 'src/screens/console/sections.ts': "const pages = import.meta.glob(['./pages/*.tsx', '!./pages/*.test.tsx']);",
                 'src/root.tsx': "import.meta.glob('./custom/*.{ts,tsx}', { eager: true });\nimport.meta.glob('./server/*.md');",
