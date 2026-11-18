@@ -365,7 +365,7 @@ const ZERO_COUNTS = {
 };
 
 /** `/v1/account` per set: first-run has nothing, empty has a key but no activity. Every plan has the platform. */
-export function fixtureAccount(set: FixtureSet, tier = 'plus') {
+export function fixtureAccount(set: FixtureSet, tier = 'member') {
     const populated = set === 'populated' || set === 'error';
     return {
         object: 'account',
