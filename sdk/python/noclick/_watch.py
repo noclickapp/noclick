@@ -27,6 +27,7 @@ import json
 import random
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from urllib.parse import urlsplit
 
 from ._client import Client, resolve_client
 from ._object import parse_time
@@ -38,6 +39,23 @@ from .exceptions import Error
 CLOSE_RENEW, CLOSE_REFUSED, CLOSE_AUTH_TIMEOUT, CLOSE_TOO_MANY = 4000, 4401, 4408, 4429
 _BACKOFF_S = (0.5, 1.0, 2.0, 5.0, 10.0, 30.0)
 _TOO_MANY_S = 30.0
+_LOCAL_HOSTS = ("localhost", "127.0.0.1", "::1")
+
+
+def _spread(seconds: float) -> float:
+    """A wait spread over half to one and a half of ``seconds``, so sockets that dropped together don't all come
+    back at once."""
+    return seconds * (0.5 + random.random())
+
+
+def _socket_url(url: str) -> str:
+    """The socket's address, if the token's answer named one a token is sent to: wss://, or ws:// on this
+    machine. Anything else is refused before the token leaves."""
+    parts = urlsplit(url)
+    if parts.scheme == "wss" and parts.hostname or parts.scheme == "ws" and parts.hostname in _LOCAL_HOSTS:
+        return url
+    raise Error("The watch socket's address isn't a wss:// URL, so its token was not sent.",
+                next_step="Check that the token comes from NoClick's API (or your server passes its url on as it is).")
 _PING_S = 30.0
 
 TokenSource = Callable[[], Union[Tuple[str, str], Awaitable[Tuple[str, str]]]]
@@ -95,7 +113,6 @@ class WatchChange:
     workspace_id: Optional[str] = None
     message_id: Optional[str] = None
     thread_id: Optional[str] = None
-    conversation: Optional[str] = None
     raw: Dict[str, Any] = field(default_factory=dict, repr=False)
     type: str = "change"
 
@@ -124,7 +141,9 @@ class WatchReset:
 WatchMessage = Union[WatchReady, WatchChange, WatchTyping, WatchReset]
 
 
-def _message(raw: Dict[str, Any]) -> Optional[WatchMessage]:
+def _message(raw: Any) -> Optional[WatchMessage]:
+    if not isinstance(raw, dict):  # JSON that isn't an object: ignored, as an unknown type is
+        return None
     kind = raw.get("type")
     if kind == "ready":
         return WatchReady(resumed=raw.get("resumed") is True)
@@ -140,7 +159,7 @@ def _message(raw: Dict[str, Any]) -> Optional[WatchMessage]:
             object_id=raw.get("object_id"), status=raw.get("status"),
             parent=dict(parent) if isinstance(parent, dict) else None, change=raw.get("change"),
             version=raw.get("version"), workspace_id=raw.get("workspace_id"), message_id=raw.get("message_id"),
-            thread_id=raw.get("thread_id"), conversation=raw.get("conversation"), raw=raw)
+            thread_id=raw.get("thread_id"), raw=raw)
     return None
 
 
@@ -231,7 +250,8 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
             code: Optional[int] = None
             reason = ""
             try:
-                async with connect(url, ping_interval=_PING_S, ping_timeout=_PING_S, max_size=2 ** 16) as socket:
+                async with connect(_socket_url(url), ping_interval=_PING_S, ping_timeout=_PING_S,
+                                   max_size=2 ** 16) as socket:
                     await socket.send(json.dumps({"type": "auth", "token": secret, "after": after}))
                     async for frame in socket:
                         if frame == "pong":
@@ -266,9 +286,9 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
                 refused_in_a_row = 0
             status("reconnecting")
             if code == CLOSE_TOO_MANY:
-                await asyncio.sleep(_TOO_MANY_S)
+                await asyncio.sleep(_spread(_TOO_MANY_S))
             elif code not in (CLOSE_RENEW, CLOSE_REFUSED):
-                await asyncio.sleep(_BACKOFF_S[min(failures, len(_BACKOFF_S) - 1)] * (0.5 + random.random()))
+                await asyncio.sleep(_spread(_BACKOFF_S[min(failures, len(_BACKOFF_S) - 1)]))
                 failures += 1
     finally:
         status("stopped")

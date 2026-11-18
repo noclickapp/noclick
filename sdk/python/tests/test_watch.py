@@ -58,10 +58,14 @@ class FakeConnect:
 
 @pytest.fixture
 def no_waits(monkeypatch):
-    async def instant(_seconds):
-        return None
+    """Waits take no time; the list is how long each would have been."""
+    waited = []
+
+    async def instant(seconds):
+        waited.append(seconds)
 
     monkeypatch.setattr(_watch.asyncio, "sleep", instant)
+    return waited
 
 
 def test_watch_token_asks_for_the_objects_the_origin_and_the_user(api, client):
@@ -135,3 +139,112 @@ def test_without_the_live_extra_watch_names_what_to_install(monkeypatch):
     with pytest.raises(ImportError, match=r'noclick\[live\]'):
         for _ in nc.watch():
             pass
+
+
+@pytest.mark.parametrize("frame", ["[]", "null", "42", '"text"', "[1, 2]"])
+def test_a_frame_of_json_that_isnt_an_object_is_ignored(api, client, monkeypatch, no_waits, frame):
+    """The stream can grow: what this version doesn't know (an unknown type, or JSON that isn't an object) is
+    skipped, never raised out of the watcher."""
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    connect = FakeConnect(([{"type": "ready", "resumed": False}, frame, {"type": "reset"}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    seen = []
+    for message in nc.watch():
+        seen.append(message.type)
+        if message.type == "reset":
+            break
+    assert seen == ["ready", "reset"]
+
+
+def test_frames_that_arent_json_or_carry_wrong_types_are_skipped(api, client, monkeypatch, no_waits):
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    hostile = ["{", "", "not json", {"type": "change", "at": 12, "id": 5, "object": None, "parent": "x"},
+               {"type": "change", "at": "never", "object": "deployment"}, {"type": "typing"}, {"type": ["change"]},
+               {"type": "ready", "resumed": "yes"}]
+    connect = FakeConnect(([{"type": "ready", "resumed": False}, *hostile, {"type": "reset"}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    seen = []
+    for message in nc.watch():
+        seen.append(message)
+        if message.type == "reset":
+            break
+    assert seen[0].type == "ready" and seen[-1].type == "reset"
+    assert all(m.type in ("ready", "change", "typing", "reset") for m in seen)
+
+
+@pytest.mark.parametrize("url", ["ws://relay.example/v1/watch/socket/r_1", "http://relay.example/x", "wss://",
+                                 "not a url"])
+def test_a_token_is_never_sent_to_an_address_that_isnt_wss(api, client, monkeypatch, no_waits, url):
+    api.post("/v1/watch/tokens").respond(201, json={**token(1), "url": url})
+    connect = FakeConnect(([{"type": "ready", "resumed": False}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    with pytest.raises(nc.Error, match="wss://"):
+        for _ in nc.watch():
+            break
+    assert connect.opened == [], f"the token went to {connect.opened[0].url}"
+
+
+def test_on_this_machine_a_plain_ws_socket_will_do(api, client, monkeypatch, no_waits):
+    for url in ("ws://localhost:8787/v1/watch/socket/r_1", "ws://127.0.0.1:8787/x", "ws://[::1]:8787/x"):
+        api.post("/v1/watch/tokens").respond(201, json={**token(1), "url": url})
+        connect = FakeConnect(([{"type": "ready", "resumed": False}], 1000))
+        monkeypatch.setattr(_watch, "_connector", lambda: connect)
+        for _ in nc.watch():
+            break
+        assert connect.opened[0].url == url
+
+
+def test_watchers_turned_away_together_come_back_spread_out(api, client, monkeypatch, no_waits):
+    """A room over its limits closes with 4429: each watcher waits about half a minute, spread, so they don't all
+    return (and spend a token use the room counts) at the same instant."""
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    waits = []
+    for _ in range(5):
+        no_waits.clear()
+        connect = FakeConnect(([], _watch.CLOSE_TOO_MANY), ([{"type": "ready", "resumed": False}], 1000))
+        monkeypatch.setattr(_watch, "_connector", lambda: connect)
+        for _message in nc.watch():
+            break
+        waits.append(no_waits[0])
+    assert len(set(waits)) > 1, f"five watchers all waited exactly {waits[0]} s"
+    assert all(_watch._TOO_MANY_S * 0.5 <= w <= _watch._TOO_MANY_S * 1.5 for w in waits)
+
+
+def test_a_dropped_socket_waits_a_spread_backoff(api, client, monkeypatch, no_waits):
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    monkeypatch.setattr(_watch.random, "random", lambda: 0.0)
+    connect = FakeConnect(([{"type": "ready", "resumed": False}], 1006), ([{"type": "ready", "resumed": False}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    seen = 0
+    for message in nc.watch():
+        seen += 1
+        if seen == 2:
+            break
+    assert no_waits == [_watch._BACKOFF_S[0] * 0.5]
+
+
+def test_the_token_never_appears_in_a_repr_an_error_or_the_url(api, client, monkeypatch, no_waits):
+    api.post("/v1/watch/tokens").respond(201, json=token(1))
+    minted = nc.watch_token()
+    assert "tok_1" not in repr(minted) and "tok_1" not in str(minted) and "tok_1" not in minted.url
+    connect = FakeConnect(([], _watch.CLOSE_REFUSED), ([], _watch.CLOSE_REFUSED))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    with pytest.raises(nc.WatchRefused) as refused:
+        for _ in nc.watch():
+            pass
+    assert "tok_1" not in str(refused.value) and "tok_1" not in repr(refused.value)
+    assert all("tok_1" not in socket.url for socket in connect.opened)
+
+
+def test_a_server_error_on_the_token_call_backs_off_and_a_refusal_ends_it(api, client, monkeypatch, no_waits):
+    # The client retries a 503 itself; each time it gives up, watch waits longer before asking again.
+    api.post("/v1/watch/tokens").mock(side_effect=[httpx.Response(503, json={"error": {"type": "upstream_error",
+                                                                                     "message": "x"}})] * 40
+                                      + [httpx.Response(401, json={"error": {"type": "unauthenticated",
+                                                                             "message": "revoked"}})])
+    monkeypatch.setattr(_watch, "_connector", lambda: FakeConnect())
+    with pytest.raises(nc.Error):
+        for _ in nc.watch():
+            pass
+    own = [w for w in no_waits if w in _watch._BACKOFF_S]
+    assert own[:3] == [0.5, 1.0, 2.0], f"each failed token call waits longer than the last: {no_waits}"

@@ -58,7 +58,6 @@ export interface WatchChange {
   workspaceId: string | null;
   messageId: string | null;
   threadId: string | null;
-  conversation: string | null;
   raw: JsonObject;
 }
 
@@ -125,6 +124,29 @@ const WATCH_CLOSE = { renew: 4000, refused: 4401, authTimeout: 4408, tooMany: 44
 const PING_MS = 30_000;
 const BACKOFF_MS = [500, 1_000, 2_000, 5_000, 10_000, 30_000];
 const TOO_MANY_MS = 30_000;
+// Messages held for a reader slower than the room: past this many, they give way to one `reset`.
+const MAX_QUEUED = 1_000;
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+/** A wait spread over half to one and a half of `ms`, so sockets that dropped together don't all come back at once. */
+function spread(ms: number): number {
+  return ms * (0.5 + Math.random());
+}
+
+/** The socket's address, if the token's answer named one this SDK sends a token to: wss://, or ws:// on this
+ * machine. Anything else is refused before the token leaves. */
+function socketUrl(url: string): string {
+  let parsed: URL | null = null;
+  try {
+    parsed = new URL(url);
+  } catch { /* refused below */ }
+  if (parsed && (parsed.protocol === "wss:" || (parsed.protocol === "ws:" && LOCAL_HOSTS.has(parsed.hostname)))) {
+    return url;
+  }
+  throw new NoClickError("The watch socket's address isn't a wss:// URL, so its token was not sent.", {
+    nextStep: "Check that the token comes from NoClick's API (or your server passes its url on as it is).",
+  });
+}
 
 function pageOrigin(): string | undefined {
   const location = (globalThis as { location?: { origin?: string } }).location;
@@ -157,7 +179,7 @@ function toMessage(raw: JsonObject): WatchMessage | null {
         objectId: str(raw.object_id), status: str(raw.status),
         parent: parent && str(parent.object) && str(parent.id) ? { object: str(parent.object)!, id: str(parent.id)! } : null,
         change: str(raw.change), version: num(raw.version), workspaceId: str(raw.workspace_id),
-        messageId: str(raw.message_id), threadId: str(raw.thread_id), conversation: str(raw.conversation), raw,
+        messageId: str(raw.message_id), threadId: str(raw.thread_id), raw,
       };
     }
     default:
@@ -197,6 +219,10 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
   const queue: (WatchMessage | { close: { code: number; reason: string } })[] = [];
   let wake: (() => void) | null = null;
   const push = (item: (typeof queue)[number]) => {
+    if (!("close" in item) && queue.length >= MAX_QUEUED) {
+      // The reader is behind for good: what's queued gives way to one reset (it reads everything again).
+      queue.splice(0, queue.length, { type: "reset" }, ...queue.filter((queued) => "close" in queued));
+    }
     queue.push(item);
     wake?.();
   };
@@ -227,10 +253,10 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
       } catch (err) {
         if (err instanceof NoClickError && err.status !== null && err.status < 500 && err.status !== 429) throw err;
         status("reconnecting");
-        await sleep(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]);
+        await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
         continue;
       }
-      const ws = new Socket(token.url);
+      const ws = new Socket(socketUrl(token.url));
       socket = ws;
       let lastHeard = Date.now();
       ws.onopen = () => {
@@ -277,9 +303,9 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
             refusedInARow = 0;
           }
           status("reconnecting");
-          if (code === WATCH_CLOSE.tooMany) await sleep(TOO_MANY_MS);
+          if (code === WATCH_CLOSE.tooMany) await sleep(spread(TOO_MANY_MS));
           else if (code !== WATCH_CLOSE.renew && code !== WATCH_CLOSE.refused) {
-            await sleep(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]);
+            await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
           }
           break;
         }
