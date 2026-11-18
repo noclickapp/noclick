@@ -186,7 +186,10 @@ export class WatchRefused extends NoClickError {
  * Follow your objects' changes until `signal` aborts or you stop reading. Reconnects by itself (a new token each
  * time), resuming after the last change it gave you; it throws only what can't be fixed by trying again: the token
  * call refused (a revoked key, a scope the key lacks, a deployment where watching isn't available) or the room
- * refusing two fresh tokens in a row.
+ * refusing two fresh tokens in a row (`WatchRefused`).
+ *
+ * A change can be lost (a deploy, a dropped connection, a busy second), and nothing says so but these: read again
+ * what you show on `reset`, on a `ready` that didn't resume, and on a slow timer of your own if it must never be stale.
  */
 export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMessage> {
   const Socket = options.WebSocket ?? globalThis.WebSocket;

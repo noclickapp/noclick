@@ -187,6 +187,10 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
     two fresh tokens in a row. ``token``: where tokens come from instead of this client, a function returning
     ``(url, token)``. ``on_status`` hears ``connecting``, ``live``, ``reconnecting`` and ``stopped``.
 
+    A change can be lost (a deploy, a dropped connection, a busy second), and nothing says so but these: read again
+    what you show on ``reset``, on a ``ready`` that didn't resume, and on a slow timer of your own if it must never be
+    stale.
+
     Returns:
         ``WatchMessage`` values: ``ready`` as each connection opens, ``change``, ``typing`` and ``reset``.
 
@@ -199,7 +203,8 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
     In async code::
 
         async for message in noclick.watch.aio(objects=["channel"]):
-            await websocket.send_json(message.raw)
+            if message.type == "change":
+                await websocket.send_json(message.raw)
     """
     connect = _connector()
     status = on_status or (lambda _s: None)
