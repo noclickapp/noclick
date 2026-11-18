@@ -1,6 +1,6 @@
 {
   "name": "noclick",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "NoClick SDK: users, connections, tools, humans and agents for your product, and the bridge custom interface components use",
   "type": "module",
   "main": "./dist/index.js",

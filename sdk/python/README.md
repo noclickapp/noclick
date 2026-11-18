@@ -165,6 +165,8 @@ noclick.User.list(client=client)                                        # or noc
 # Spend and caps
 noclick.usage(group_by="user")["user_42"].usd             # this month, per user / key / agent
 # any call can raise noclick.SpendCapExceeded (402) with .cap, .spent, .scope
+est = noclick.estimate([{"kind": "project", "runtime": "edge", "usage": {"requests": 100_000}}, {"kind": "bucket"}])
+print(est.monthly_usd, est.lines)                         # priced before anything is made; nothing is charged
 
 # Policy: deny wins, a user policy narrows the account's
 noclick.Policy.set(deny=["*.delete_*"], require_approval=["gmail.send_email_message"])
@@ -262,6 +264,9 @@ with noclick.Sandbox.create(region="eu") as sb:
 # Hosted MCP servers: a user's tools at one URL, for Claude, ChatGPT or Cursor
 server = noclick.McpServer.from_name("crm-tools", tools=["hubspot", "search"], create_if_missing=True, user="acme")
 print(server.url, server.tool_count, [c.name for c in server.clients()])
+
+# Repos: a copy of a public git repository, history and all (wait() gives the Repo once it's copied)
+blog = noclick.Repo.create("blog", from_url="https://github.com/acme/blog").wait()
 
 # A repository in a coding agent's workspace; NoClick refuses a push outside agent/*
 github = noclick.Connection.from_name("github", integration="github", create_if_missing=True)

@@ -161,6 +161,8 @@ await Agent.create("coder", { instructions: "...", harness: "claude_code", model
 await Policy.set({ deny: ["*.delete_*"], requireApproval: ["gmail.send_email_message"] }, { user: "user_42" });
 await Brand.set({ name: "Acme", color: "#0f766e", emailFromName: "Acme" });
 const month = await usage({ groupBy: "user" });                            // month.get(user.id)
+const est = await estimate([{ kind: "project", runtime: "edge", usage: { requests: 100_000 } }, { kind: "bucket" }]);
+console.log(est.monthlyUsd, est.lines);                                     // priced before anything is made; nothing is charged
 
 const channel = await Channel.create("orders", { members: [agent, "user"], mode: "mentions" });
 await channel.post("@sunrise-host what's on today?", { as: "user" });
@@ -254,6 +256,9 @@ const near = await Sandbox.create({ region: agent.region ?? undefined });
 // Hosted MCP servers: a user's tools at one URL, for Claude, ChatGPT or Cursor
 const server = McpServer.fromName("crm-tools", { tools: ["hubspot", "search"], createIfMissing: true, user: "acme" });
 console.log((await server.hydrate()).url, server.toolCount, (await server.clients()).map((c) => c.name));
+
+// Repos: a copy of a public git repository, history and all (wait() gives the Repo once it's copied)
+const blog = await (await Repo.create("blog", { fromUrl: "https://github.com/acme/blog" })).wait();
 
 // A repository in a coding agent's workspace; NoClick refuses a push outside agent/*
 const github = Connection.fromName("github", { integration: "github", createIfMissing: true });
