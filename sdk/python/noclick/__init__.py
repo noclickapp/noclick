@@ -149,6 +149,9 @@ from .estimate import (
     Estimate, EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateUsageField, estimate,
 )
 from .webhook import Event, EventType, Webhook, WebhookDelivery
+from ._watch import (
+    WatchChange, WatchMessage, WatchReady, WatchRefused, WatchReset, WatchToken, WatchTyping, watch, watch_token,
+)
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
     BuildQuestion, EditBatch, RunStep, Step, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint,
@@ -212,6 +215,8 @@ __all__ = [
     "Domain", "DomainOffer", "DomainContact", "DomainPurchase", "DomainTransfer", "DnsRecord", "DomainDns", "TransferCode",
     "TransferQuote", "DomainAgreement",
     "Webhook", "WebhookDelivery", "Event", "EventType",
+    "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
+    "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult", "WorkflowStep",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
     "RowsPage",

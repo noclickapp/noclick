@@ -30,6 +30,8 @@ Source = "https://github.com/noclickapp/noclick/tree/main/sdk/python"
 dev = ["pytest>=7", "pytest-asyncio>=0.21", "respx>=0.20"]
 # `noclick login` keeps its key in the OS keychain; `noclick machines ssh` speaks websockets.
 cli = ["keyring>=24", "websockets>=12"]
+# `noclick.watch` follows changes over a websocket.
+live = ["websockets>=13"]
 
 [project.scripts]
 noclick = "noclick.cli:main"

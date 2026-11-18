@@ -181,6 +181,11 @@ export type {
 export { McpServer } from "./mcpServer.ts";
 export type { McpClient, McpServerTools } from "./mcpServer.ts";
 export { Event, Webhook } from "./webhook.ts";
+export { WatchRefused, watch, watchToken } from "./watch.ts";
+export type {
+  WatchChange, WatchMessage, WatchOptions, WatchReady, WatchReset, WatchStatus, WatchToken, WatchTokenOptions,
+  WatchTyping, WatchedObject,
+} from "./watch.ts";
 export type {
   EventListOptions, EventType, WebhookChanges, WebhookCreateOptions, WebhookDelivery, WebhookDeliveryStatus,
   WebhookHeaders, WebhookStatus,
