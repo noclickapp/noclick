@@ -41,7 +41,7 @@ PAGE_OF_MODULE = {
     "coordination": "Agent", "workspace": "Channel", "machine": "Machine",
     "region": "Region", "_attachment": "Agent", "_feedback": "feedback", "trash": "TrashItem", "versions": "Secret",
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
-    "agent_move": "AgentMove",
+    "agent_move": "AgentMove", "estimate": "estimate",
 }
 # Module docstrings that describe internals rather than the page's names.
 NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "agent_conversations", "app_services", "cron", "live"}
@@ -61,7 +61,7 @@ GROUPS: List[Tuple[str, List[str]]] = [
     ("Acting in the world", ["Inbox", "PhoneNumber", "Browser", "BrowserProfile", "BrowserLogin", "Card", "Sandbox",
                              "Machine", "compute"]),
     ("Build and host", ["Project", "Deployment", "Schedule", "ProjectEmail", "ProjectPayments", "ProjectSignIn", "ProjectAI", "ProjectLive", "Repo",
-                        "Domain", "DomainPurchase", "Workflow"]),
+                        "Domain", "DomainPurchase", "Workflow", "estimate", "Estimate"]),
     ("Data", ["Database", "Bucket", "Volume", "Dict", "Queue", "Secret"]),
     ("In production", ["Operation", "TrashItem", "Event", "Webhook", "ToolCall", "ApiRequest", "usage", "Usage", "ExportBundle",
                        "feedback"]),

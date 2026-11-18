@@ -201,6 +201,10 @@ export { Skill, SkillLink } from "./skill.ts";
 export type { SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillFiles, SkillRef, SkillVersion } from "./skill.ts";
 export { compute } from "./compute.ts";
 export type { ComputeItem, ComputeRun } from "./compute.ts";
+export { Estimate, estimate } from "./estimate.ts";
+export type {
+  EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateRequestItem, EstimateUsageField,
+} from "./estimate.ts";
 export { Dict } from "./dict.ts";
 export type { DictChange, DictItem, DictListOptions, DictWriteOptions } from "./dict.ts";
 export { Queue, QueueMessage } from "./queue.ts";

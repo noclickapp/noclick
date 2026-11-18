@@ -48,6 +48,7 @@ from .agent_move import AgentMove
 from .bucket import Bucket
 from .database import Database
 from .domain import Domain, DomainContact
+from .estimate import Estimate, estimate
 from .exceptions import Conflict, Error, InvalidRequest, NotFound, OperationFailed, OperationTimeout, Unauthenticated
 from .machine import Machine
 from .operation import Operation
@@ -840,6 +841,57 @@ def cmd_domains_buy(args: argparse.Namespace) -> int:
     return 0
 
 
+# --- estimates ---------------------------------------------------------------
+
+
+def _estimate_items(path: str) -> List[Dict[str, Any]]:
+    """The items in ``path`` (``-``: stdin): a JSON list of them, or an object holding them under ``items``."""
+    text = sys.stdin.read() if path == "-" else Path(path).read_text()
+    try:
+        data = json.loads(text)
+    except ValueError as exc:
+        raise CommandError(f"{path} isn't JSON: {exc}.",
+                           next_step='Write a list of items, like [{"kind": "project", "usage": {"requests": 100000}}].')
+    items = data.get("items") if isinstance(data, dict) else data
+    if not isinstance(items, list):
+        raise CommandError(f"{path} holds no list of items.",
+                           next_step='Write a list of items, or {"items": [...]}.')
+    return items
+
+
+def cmd_estimate(args: argparse.Namespace) -> int:
+    if args.kinds:
+        kinds = Estimate.kinds(region=args.region)
+        if args.json:
+            _print_json(kinds)
+            return 0
+        _table(["KIND", "AS", "CHARGE", "UNIT PRICE", "PER", "USAGE (DEFAULT)"],
+               [(k.kind, ", ".join(f"{v}" for v in k.options.values() if v), p.charge, f"${p.unit_usd:g}", p.unit,
+                 ", ".join(f"{u.name} ({u.default:g})" for u in k.usage if u.name in p.usage_fields))
+                for k in kinds for p in k.prices], empty="Nothing to estimate.")
+        return 0
+    if not args.file:
+        raise CommandError("Name a JSON file of the items to estimate, or - to read them from stdin.",
+                           next_step="Run noclick estimate --kinds to see what each kind takes.")
+    est = estimate(_estimate_items(args.file))
+    if args.json:
+        _print_json(est)
+        return 0
+    _table(["ITEM", "CHARGE", "QUANTITY", "UNIT", "UNIT PRICE", "A MONTH"],
+           [(line.item or line.kind, line.charge + (" *" if line.assumed else ""), f"{line.quantity:g}", line.unit,
+             f"${line.unit_usd:g}", f"${line.usd:,.4f}") for line in est.lines], empty="Nothing was priced.")
+    print(f"Total: {_usd(est.monthly_usd)} a month")
+    for item in est.items:
+        if item.assumed:
+            _note(f"Assumed ({item.name or item.kind}): {', '.join(item.assumed)}")
+    if any(line.assumed for line in est.lines):
+        _note("* a default decided it: give that usage or option to price it as you expect.")
+    for item in est.items:
+        for left_out in item.not_included:
+            _note(f"Not included ({item.name or item.kind}): {left_out}")
+    return 0
+
+
 # --- webhooks and operations -------------------------------------------------
 
 
@@ -1428,6 +1480,15 @@ def build_parser() -> argparse.ArgumentParser:
                           "registration agreement), and optionally organization. Required with --user; "
                           "without it your account's default registrant is used.")
     buy.add_argument("--no-wait", action="store_true", help="Print the operation id instead of waiting.")
+
+    priced = command(commands, "estimate", cmd_estimate,
+                     "What apps, databases, buckets and repos would cost a month, before you make them.",
+                     parents=[as_json, user])
+    priced.add_argument("file", nargs="?", help='A JSON file of the items (- for stdin), like [{"kind": "project", '
+                                                '"usage": {"requests": 100000}}, {"kind": "database"}].')
+    priced.add_argument("--kinds", action="store_true",
+                        help="List what can be estimated: each kind's charges, unit prices and usage defaults.")
+    priced.add_argument("--region", help="With --kinds: price a container app in this region.")
 
     webhooks = group("webhooks", "Receive events on your machine.")
     listen = command(webhooks, "listen", cmd_webhooks_listen, "Forward events, signed, to a local URL.")

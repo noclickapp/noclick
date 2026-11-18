@@ -145,6 +145,9 @@ from .volume import Volume, VolumeEntry
 from .memory import Memory, MemoryLink
 from .skill import Skill, SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillLink, SkillVersion
 from .compute import ComputeItem, ComputeRun, compute
+from .estimate import (
+    Estimate, EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateUsageField, estimate,
+)
 from .webhook import Event, EventType, Webhook, WebhookDelivery
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
@@ -212,6 +215,7 @@ __all__ = [
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
+    "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",

@@ -884,3 +884,59 @@ def test_machines_ssh_needs_a_terminal(home, api, monkeypatch, capsys):
     monkeypatch.setattr(sys, "stdin", io.StringIO(""))
     assert run("machines", "ssh", "support-box") == 1
     assert "needs a terminal" in capsys.readouterr().err
+
+
+# --- estimate --------------------------------------------------------------------------
+
+
+_ESTIMATE_LINE = {"description": "d", "usage_fields": ["requests"]}
+_ESTIMATE = {
+    "object": "estimate", "estimated": True, "monthly_usd": 0.29,
+    "plan": {"name": "free", "billing": "at_cost"}, "included_usd_per_month": 5.0,
+    "items": [{"kind": "project", "label": "App on the edge", "name": "site", "options": {"runtime": "edge"},
+               "usage": {"requests": 100000.0}, "assumed": ["framework", "releases"], "monthly_usd": 0.29,
+               "lines": [{**_ESTIMATE_LINE, "charge": "front_door", "unit": "million requests", "unit_usd": 1.9,
+                          "quantity": 0.1, "usd": 0.19, "assumed": False},
+                         {**_ESTIMATE_LINE, "charge": "releases", "unit": "release-month", "unit_usd": 0.02,
+                          "quantity": 5, "usd": 0.1, "assumed": True}],
+               "not_included": ["The front door's CPU time."]}],
+}
+
+
+def test_estimate_prices_a_file_of_items_as_a_table_or_json(home, api, tmp_path, monkeypatch, capsys):
+    route = api.post("/v1/estimates").respond(json=_ESTIMATE)
+    items = [{"kind": "project", "name": "site", "usage": {"requests": 100000}}]
+    path = tmp_path / "stack.json"
+    path.write_text(json.dumps({"items": items}))
+    assert run("estimate", str(path)) == 0
+    assert body(route.calls.last.request) == {"items": items}
+    captured = capsys.readouterr()
+    out = captured.out.splitlines()
+    assert out[0].split() == ["ITEM", "CHARGE", "QUANTITY", "UNIT", "UNIT", "PRICE", "A", "MONTH"]
+    assert out[1].split() == ["site", "front_door", "0.1", "million", "requests", "$1.9", "$0.1900"]
+    assert out[2].split() == ["site", "releases", "*", "5", "release-month", "$0.02", "$0.1000"]
+    assert "Total: $0.29 a month" in captured.out and "cover" not in captured.out
+    assert "Assumed (site): framework, releases" in captured.err
+    assert "* a default decided it" in captured.err and "Not included (site)" in captured.err
+
+    monkeypatch.setattr(sys, "stdin", io.StringIO(json.dumps(items)))
+    assert run("estimate", "-", "--json") == 0
+    assert json.loads(capsys.readouterr().out)["monthly_usd"] == 0.29
+
+
+def test_estimate_lists_the_kinds_or_says_what_it_needs(home, api, tmp_path, capsys):
+    route = api.get("/v1/estimates/kinds").respond(json=listing({
+        "object": "estimate_kind", "kind": "bucket", "label": "Bucket", "description": "d", "options": {},
+        "usage": [{"name": "storage_gb", "unit": "GB", "description": "d", "default": 1.0, "most": None}],
+        "prices": [{"charge": "storage", "description": "d", "unit": "GB-month", "unit_usd": 0.015,
+                    "usage_fields": ["storage_gb"]}], "not_included": []}))
+    assert run("estimate", "--kinds", "--region", "eu") == 0
+    assert route.calls.last.request.url.params["region"] == "eu"
+    assert capsys.readouterr().out.splitlines()[1].split() == ["bucket", "storage", "$0.015", "GB-month",
+                                                               "storage_gb", "(1)"]
+    assert run("estimate") == 1
+    assert "Name a JSON file" in capsys.readouterr().err
+    path = tmp_path / "bad.json"
+    path.write_text("{not json")
+    assert run("estimate", str(path)) == 1
+    assert "isn't JSON" in capsys.readouterr().err
