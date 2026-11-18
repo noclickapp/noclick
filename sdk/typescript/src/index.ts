@@ -79,7 +79,7 @@ export type {
   ChannelMessage, ChannelPin, ChannelPostAs,
   ChannelReaction, ChannelSection, ChannelSections, ChannelSectionsList, ChannelThread, SubscriptionDelivery, SubscriptionDeliveryStatus, SubscriptionSource, SubscriptionWake,
 } from "./channel.ts";
-export { attachments } from "./attachment.ts";
+export { attachments, attachmentsPage, deleteAttachment } from "./attachment.ts";
 export type { Attachment, AttachmentsOptions, FileInput, UploadOptions } from "./attachment.ts";
 export { Sandbox, SandboxFiles } from "./sandbox.ts";
 export type { ExecOptions, ExecResult, NetworkAccess, SandboxCreateOptions, SandboxStatusFilter } from "./sandbox.ts";
@@ -192,6 +192,8 @@ export type {
   WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunOptions, WorkflowRunStatus, WorkflowStep,
   WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
+export { WorkflowFile, WorkflowTable } from "./workflowResources.ts";
+export type { KeptBy, TableRow, WorkflowResourceListOptions } from "./workflowResources.ts";
 export type { ExportBundle, ExportItem } from "./export.ts";
 export { Volume } from "./volume.ts";
 export type { VolumeData, VolumeEntry, VolumeListdirOptions, VolumeMount, VolumeRef } from "./volume.ts";

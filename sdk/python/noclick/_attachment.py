@@ -6,9 +6,10 @@ import mimetypes
 import os
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
+from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import compact
+from ._object import Page, compact, fetch_page
 from ._sync import synced
 from .exceptions import InvalidRequest
 
@@ -114,3 +115,45 @@ async def attachments(*, query: Optional[str] = None, limit: int = 30,
     page = await resolve_client(client).request("GET", "/v1/attachments", params=compact(query=query, limit=limit),
                                                 user=None) or {}
     return [Attachment._from(f) for f in page.get("data") or []]
+
+
+@synced
+async def attachments_page(*, query: Optional[str] = None, cursor: Optional[str] = None, limit: Optional[int] = None,
+                           client: Optional[Client] = None) -> Page:
+    """One page of the account's files, newest first; pass ``next_cursor`` back as ``cursor``.
+
+    Returns:
+        A page whose ``data`` holds each ``Attachment`` and whose ``next_cursor`` is ``None`` on the last page.
+
+    Usage::
+
+        page = noclick.attachments_page(limit=50)
+        while True:
+            for file in page.data:
+                print(file.name, file.size_bytes)
+            if page.next_cursor is None:
+                break
+            page = noclick.attachments_page(limit=50, cursor=page.next_cursor)
+    """
+    page = await fetch_page(resolve_client(client), "/v1/attachments", params=compact(query=query), user=None,
+                            cursor=cursor, limit=limit)
+    return Page([Attachment._from(f) for f in page.data], page.next_cursor)
+
+
+@synced
+async def delete_attachment(attachment: Any, *, client: Optional[Client] = None) -> None:
+    """Delete one of the account's files for good (an ``Attachment`` or its id):
+    its record and what it stored, with no trash to restore it from. A message
+    that carried it keeps its name, and its link stops working. The account's
+    own to do: acting for one of your users, or from an app's code, it's refused.
+
+    Usage::
+
+        for file in noclick.attachments(query="draft"):
+            noclick.delete_attachment(file)
+    """
+    attachment_id = attachment.id if isinstance(attachment, Attachment) else attachment
+    if not attachment_id:
+        raise TypeError("Pass one of the account's files (from noclick.attachments()) or its id.")
+    await resolve_client(client).request("DELETE", f"/v1/attachments/{quote(str(attachment_id), safe='')}",
+                                         user=None)

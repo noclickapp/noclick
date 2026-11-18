@@ -2,8 +2,8 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick, RequestOptions } from "./client.ts";
-import { asObject, str } from "./object.ts";
-import type { JsonObject } from "./object.ts";
+import { asObject, fetchPage, str } from "./object.ts";
+import type { JsonObject, Page, PageOptions } from "./object.ts";
 
 /**
  * A file on a message, kept as an account file at `url`. `kind` is `image`, `audio`, `video` or `file`; a
@@ -102,4 +102,34 @@ export async function attachments(options: AttachmentsOptions = {}): Promise<Att
     query: { query: options.query, limit: options.limit }, user: null,
   }));
   return toAttachments(page.data);
+}
+
+/**
+ * One page of the account's files, newest first; pass `nextCursor` back as `cursor`.
+ *
+ *     let page = await attachmentsPage({ limit: 50 });
+ *     for (;;) {
+ *       for (const file of page.data) console.log(file.name, file.sizeBytes);
+ *       if (!page.nextCursor) break;
+ *       page = await attachmentsPage({ limit: 50, cursor: page.nextCursor });
+ *     }
+ */
+export async function attachmentsPage(options: Omit<AttachmentsOptions, "limit"> & PageOptions = {}): Promise<Page<Attachment>> {
+  const page = await fetchPage(resolveClient(options.client), "/v1/attachments", {
+    query: { query: options.query }, user: null, cursor: options.cursor, limit: options.limit,
+  });
+  return { data: page.data.map(toAttachment), nextCursor: page.nextCursor };
+}
+
+/**
+ * Delete one of the account's files for good (an `Attachment` or its id): its record and what it stored, with no
+ * trash to restore it from. A message that carried it keeps its name, and its link stops working. The account's own
+ * to do: acting for one of your users, or from an app's code, it's refused.
+ *
+ *     for (const file of await attachments({ query: "draft" })) await deleteAttachment(file);
+ */
+export async function deleteAttachment(attachment: Attachment | string, options: { client?: NoClick } = {}): Promise<void> {
+  const id = typeof attachment === "string" ? attachment : attachment.id;
+  if (!id) throw new TypeError("Pass one of the account's files (from attachments()) or its id.");
+  await resolveClient(options.client).request("DELETE", `/v1/attachments/${encodeURIComponent(id)}`, { user: null });
 }
