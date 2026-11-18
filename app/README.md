@@ -71,14 +71,15 @@ to NoClick, and refuses them to any key (403 `permission_denied`). The console h
 them; `src/screens/console/ownerOnly.ts` is the one list, read by the sidebar, the search palette and each page:
 
 - **API keys**: listing, making, changing and revoking keys, and the apps connected over MCP. The section isn't
-  listed, and its address says why. Make keys in NoClick's own console.
-- **Signing in the command line** (`noclick login`): approving it is done signed in to NoClick.
+  listed; its address says why, with a link to the same page of NoClick's own console.
+- **Signing in the command line** (`noclick login`): approving it is done signed in to NoClick. The page links
+  there, keeping the code.
 - **The setup prompt for a coding agent**, which carries a one-time code that becomes a key. Quickstart shows the
   steps to do by hand.
 - **The account's defaults** (its region, what a paused user is told): read here, changed in NoClick's console.
 - **Jumping to an object by pasting its id** in the search palette. Sections and recent objects still work.
 - **Asking for machines**, and **the card issuer's form**: where the request or application stands is shown, with
-  who can go on with it.
+  who can go on with it and a link to where they do.
 
 A key's own limits apply as well: give the app a key with the scopes its pages need, and a spending cap.
 

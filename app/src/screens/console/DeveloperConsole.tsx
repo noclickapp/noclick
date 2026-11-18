@@ -2,14 +2,15 @@
 // the section picked from the route's splat. Pages are lazy and found by
 // sections.ts; a page not written yet renders a stub.
 import { useMemo, type ReactNode } from 'react';
-import { useSearchParams } from 'react-router';
+import { useLocation, useSearchParams } from 'react-router';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { ConsoleProviders } from './ConsoleProviders';
 import { ConsoleShell } from './ConsoleShell';
 import { PageActionsProvider, PageHeader } from './ui/PageHeader';
 import { ListStyleContext, parseListStyle } from './ui/DataTable';
+import { OwnerOnlyNote } from './ui/OwnerOnlyNote';
 import { PageFrame } from './ui/PageFrame';
-import { ownerOnlyWhy, useOwnerOnly } from './ownerOnly';
+import { ownerOnlyAt, useOwnerOnly } from './ownerOnly';
 import { pageName, parseSectionPath, resolvePage, type SectionDef } from './sections';
 
 /** What whoever renders the console hands it: everything in its context (`ConsoleContextValue` says what each is),
@@ -31,6 +32,22 @@ function NotBuilt({ section }: { section: SectionDef }) {
     );
 }
 
+/** A section only the owner opens, at its address in a console acting as a key: for each thing on it, why it isn't
+ *  here and a link to where its owner does it, with the address's own query (a key's id, a sign-in's code). */
+function OwnerOnlySection({ section }: { section: SectionDef }) {
+    const { search } = useLocation();
+    return (
+        <>
+            <PageHeader title={section.label} />
+            <div className="flex max-w-2xl flex-col gap-3">
+                {ownerOnlyAt(section.id).map((what) => (
+                    <OwnerOnlyNote key={what} what={what} search={search} className="text-[14px]" />
+                ))}
+            </div>
+        </>
+    );
+}
+
 function SectionPage({ splat }: { splat: string | undefined }) {
     const route = parseSectionPath(splat);
     const ownerCan = useOwnerOnly();
@@ -39,7 +56,7 @@ function SectionPage({ splat }: { splat: string | undefined }) {
     }
     // Opened by its address in a console acting as a key: the section isn't listed, and its page would only be refused.
     if (route.section.ownerOnly && !ownerCan(route.section.ownerOnly)) {
-        return <PageHeader title={route.section.label} purpose={ownerOnlyWhy(route.section.ownerOnly)} />;
+        return <OwnerOnlySection section={route.section} />;
     }
     const name = pageName(route)!;
     const Page = resolvePage(name);

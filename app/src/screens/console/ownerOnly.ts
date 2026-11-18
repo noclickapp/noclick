@@ -5,10 +5,22 @@
 // operations, 403 `permission_denied`: making and reading keys, approving a command line's sign-in, changing the
 // account, and a few more. Each row below names one thing the console does that rests on such operations. Everything
 // that offers it reads this table through `useOwnerOnly`: the sidebar and the palette (which leave an owner-only
-// section out), a section opened by its address (which says why it isn't here), and each page's own buttons and reads.
-// So a console acting as a key never calls an operation that would refuse it (test/consoleAsKey.test.ts holds that).
+// section out), a section opened by its address (which says why it isn't here, and links to where its owner does it),
+// and each page's own buttons and reads. So a console acting as a key never calls an operation that would refuse it
+// (consoleAsKey.test.tsx holds that).
 import { useCallback } from 'react';
 import { useConsole } from './hooks/useConsole';
+
+export interface OwnerOnlyRow {
+    what: string;
+    /** Why a key can't, in one sentence. */
+    why: string;
+    /** The operations it rests on, as `METHOD /v1/path/{param}`. */
+    operations: readonly string[];
+    /** Where its owner does it: the page of NoClick's own console, and what the link to it says. Absent where no page
+     *  there is the place for it. */
+    at?: { page: string; link: string };
+}
 
 export const OWNER_ONLY = {
     /** The API keys section, a key's cap on Usage, a key's name beside a call in Logs, and Quickstart's "Create key". */
@@ -16,18 +28,21 @@ export const OWNER_ONLY = {
         what: 'API keys',
         why: 'A key can’t list, make, change or revoke keys.',
         operations: ['GET /v1/keys', 'POST /v1/keys', 'PATCH /v1/keys/{key_id}', 'DELETE /v1/keys/{key_id}', 'GET /v1/public_endpoints'],
+        at: { page: 'keys', link: 'Manage API keys on NoClick' },
     },
     /** The apps a person connected over MCP, on the API keys page. */
     connectedApps: {
         what: 'Connected apps',
         why: 'A key can’t list or revoke the apps a person connected.',
         operations: ['GET /v1/connected_apps', 'DELETE /v1/connected_apps/{grant_id}'],
+        at: { page: 'keys', link: 'See connected apps on NoClick' },
     },
     /** The page `noclick login` opens, where a person approves a command line's sign-in. */
     cliSignIn: {
         what: 'Sign in the CLI',
         why: 'Only a person signed in to NoClick approves a command line’s sign-in.',
         operations: ['GET /v1/cli/logins/{user_code}', 'POST /v1/cli/logins/{user_code}/answer'],
+        at: { page: 'cli', link: 'Approve it on NoClick' },
     },
     /** The prompt for a coding agent, which carries a one-time code that becomes a key (Quickstart, New agent). */
     setupCode: {
@@ -58,8 +73,9 @@ export const OWNER_ONLY = {
         what: 'Asking for machines',
         why: 'Only a person signed in to NoClick asks for machines and accepts their usage policy.',
         operations: ['POST /v1/machines/vetting'],
+        at: { page: 'resources/machines', link: 'Ask on NoClick' },
     },
-} as const;
+} as const satisfies Record<string, OwnerOnlyRow>;
 
 export type OwnerOnly = keyof typeof OWNER_ONLY;
 
@@ -74,6 +90,11 @@ export function isOwnerOnly(method: string, path: string): boolean {
         const wanted = template.split('/').filter(Boolean);
         return verb === method.toUpperCase() && wanted.length === sent.length && wanted.every((part, i) => part.startsWith('{') || part === sent[i]);
     });
+}
+
+/** What only the owner can do that is done on `page` of NoClick's own console (`keys`: API keys and connected apps). */
+export function ownerOnlyAt(page: string): OwnerOnly[] {
+    return (Object.keys(OWNER_ONLY) as OwnerOnly[]).filter((what) => (OWNER_ONLY[what] as OwnerOnlyRow).at?.page === page);
 }
 
 /** Why `what` isn't here, for a console acting as a key to say in its place. */

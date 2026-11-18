@@ -10,7 +10,7 @@ import { MemoryRouter, Route, Routes, useParams } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { DeveloperConsole } from './DeveloperConsole';
 import { openConsolePalette } from './ConsolePalette';
-import { AGENTS, FIXTURE_NOW_MS, FIXTURE_USER, KEYS, USERS } from './fixtures/core';
+import { AGENTS, FIXTURE_NOW_MS, FIXTURE_USER, KEYS, USERS, type FixtureSet } from './fixtures/core';
 import { makeFixtureFetch } from './fixtures/fixtureFetch';
 import { TRY_IT_OPERATION_ID } from './fixtures/pages/b';
 import { BOOKING_APP_ID } from './fixtures/pages/e_build';
@@ -39,9 +39,9 @@ interface Calls {
     settled(): Promise<void>;
 }
 
-/** A console at `address` (a path under the console, with its query) acting as `actsAs`, over the fixtures. */
-function open(address: string, actsAs: 'owner' | 'key' = 'key'): Calls {
-    const answer = makeFixtureFetch({ set: 'populated', actsAs });
+/** A console at `address` (a path under the console, with its query) acting as `actsAs`, over the fixtures' `set`. */
+function open(address: string, actsAs: 'owner' | 'key' = 'key', set: FixtureSet = 'populated'): Calls {
+    const answer = makeFixtureFetch({ set, actsAs });
     const made: string[] = [];
     const ownerOnly: string[] = [];
     let flying = 0;
@@ -150,14 +150,41 @@ describe('a console acting as a key', () => {
         }
     });
 
-    it('lists no section only the owner opens, and says why at its address', async () => {
-        const calls = open('keys');
+    it('lists no section only the owner opens, and at its address says why with a link to do it on NoClick', async () => {
+        const calls = open(`keys?key=${KEYS[0].id}`);
         await calls.settled();
         const nav = screen.getByRole('navigation', { name: 'Developer console' });
         expect(nav.textContent).toContain('Usage');
         expect(nav.textContent).not.toContain('API keys');
-        expect(screen.getByText(ownerOnlyWhy('keys'))).toBeTruthy();
+        // API keys and the connected apps are both on that page of NoClick's console: a line and a link for each.
+        for (const [what, link] of [
+            ['keys', 'Manage API keys on NoClick'],
+            ['connectedApps', 'See connected apps on NoClick'],
+        ] as const) {
+            expect(screen.getByText(ownerOnlyWhy(what))).toBeTruthy();
+            const anchor = screen.getByRole('link', { name: link });
+            expect(anchor.getAttribute('href')).toBe(`https://noclick.com/dashboard/developers/keys?key=${KEYS[0].id}`);
+            expect(anchor.getAttribute('target')).toBe('_blank');
+        }
         expect(calls.made).not.toContain('GET /v1/keys');
+    });
+
+    it('sends a command line’s sign-in to NoClick with its code', async () => {
+        const calls = open('cli?code=ABCD-EFGH');
+        await calls.settled();
+        expect(screen.getByText(ownerOnlyWhy('cliSignIn'))).toBeTruthy();
+        const anchor = screen.getByRole('link', { name: 'Approve it on NoClick' });
+        expect(anchor.getAttribute('href')).toBe('https://noclick.com/dashboard/developers/cli?code=ABCD-EFGH');
+        expect(anchor.getAttribute('target')).toBe('_blank');
+    });
+
+    it('says who asks for machines, with a link, where the request would be made', async () => {
+        // An account that hasn't asked yet: the owner's console shows the request's form here.
+        const calls = open('resources/machines', 'key', 'empty');
+        await calls.settled();
+        expect(await screen.findByText(ownerOnlyWhy('machineAccess'))).toBeTruthy();
+        expect(screen.getByRole('link', { name: 'Ask on NoClick' }).getAttribute('href')).toBe('https://noclick.com/dashboard/developers/resources/machines');
+        expect(calls.made).not.toContain('POST /v1/machines/vetting');
     });
 
     it('offers no prompt that needs a setup code and no key to make, and still shows the steps', async () => {

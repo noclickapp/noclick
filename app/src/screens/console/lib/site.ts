@@ -17,6 +17,10 @@ export function docsLinks(site: string): readonly { id: string; title: string; h
     ];
 }
 
+/** A page of NoClick's own developer console, where a person signed in to NoClick does what a key can't. `search` is
+ *  a query to carry over (`?code=…`). */
+export const noclickConsoleUrl = (site: string, page: string, search = '') => `${site}/dashboard/developers/${page}${search}`;
+
 /** The plans and what each service costs. */
 export const pricingUrl = (site: string) => `${site}/pricing`;
 
