@@ -10,18 +10,22 @@ import type { UserOption } from "./scope.ts";
 
 export interface UsageOptions {
   period?: string;
-  groupBy?: "user" | "key" | "agent" | "project";
+  groupBy?: "user" | "key" | "agent" | "project" | "person";
   agent?: string | ApiObject;
   user?: UserOption;
   client?: NoClick;
 }
 
 /**
- * Spend for `period` (default `month`), optionally split `groupBy` user, key, agent or `project` (each
- * app), and narrowed to one `agent`. Needs the `usage` scope. Without `groupBy`, `groups` is empty.
+ * Spend for `period` (default `month`), optionally split `groupBy` user, key, agent, `project` (each
+ * app) or `person` (who each charge was for: the person whose message, click or key started the work; the
+ * account's owner for work nobody else started), and narrowed to one `agent`. Needs the `usage` scope. Without
+ * `groupBy`, `groups` is empty.
  *
  *     const month = await usage({ groupBy: "user" });
  *     console.log(month.totalUsd, month.groups);
+ *
+ *     for (const person of (await usage({ groupBy: "person" })).groups) console.log(person.name, person.usd);
  */
 export async function usage(options: UsageOptions = {}): Promise<Usage> {
   return await Usage.get(options);
@@ -29,6 +33,8 @@ export async function usage(options: UsageOptions = {}): Promise<Usage> {
 
 export interface UsageGroup {
   id: string | null;
+  /** A person's name, with `groupBy: "person"`; otherwise null. */
+  name: string | null;
   usd: number;
   events: number;
   raw: JsonObject;
@@ -41,10 +47,10 @@ export interface UsagePoint {
   events: number;
 }
 
-/** One key, user, agent, app or usage type's spend over the period. */
+/** One key, user, agent, app, person or usage type's spend over the period. */
 export interface UsageSeriesLine {
   id: string | null;
-  /** A key name (`Console` for the console key), a user's id, an agent name or a type label. */
+  /** A key name (`Console` for the console key), a user's id, an agent name, a person's name or a type label. */
   label: string | null;
   totalUsd: number;
   events: number;
@@ -66,8 +72,8 @@ export interface UsageSeriesOptions extends ReadOptions {
   from?: Date | string;
   to?: Date | string;
   interval?: "day";
-  /** `project`: one line per app. */
-  groupBy?: "key" | "user" | "agent" | "type" | "project";
+  /** `project`: one line per app; `person`: one per person each charge was for. */
+  groupBy?: "key" | "user" | "agent" | "type" | "project" | "person";
   /** A key id or prefix. */
   key?: string;
   /** An `Agent` or agent id. */
@@ -139,6 +145,7 @@ export class Usage {
     this.totalUsd = Number(raw.total_usd ?? 0);
     this.groups = (Array.isArray(raw.groups) ? (raw.groups as JsonObject[]) : []).map((group) => ({
       id: str(group.id),
+      name: str(group.name),
       usd: Number(group.usd ?? 0),
       events: Number(group.events ?? 0),
       raw: group,
@@ -156,11 +163,11 @@ export class Usage {
   }
 
   /**
-   * The spend of one user, key, agent or app id in a grouped usage (null is the account's own); an id
+   * The spend of one user, key, agent, app or person id in a grouped usage (null is the account's own); an id
    * that spent nothing reads as $0 with no events.
    */
   group(id: string | null): UsageGroup {
-    return this.get(id) ?? { id, usd: 0, events: 0, raw: {} };
+    return this.get(id) ?? { id, name: null, usd: 0, events: 0, raw: {} };
   }
 
   /** The group of an id that spent something in a grouped usage, else null. */
@@ -169,7 +176,7 @@ export class Usage {
     return this.groups.find((group) => group.id === id) ?? null;
   }
 
-  /** Daily spend between `from` and `to`, one line per key, user, agent or usage type. */
+  /** Daily spend between `from` and `to`, one line per key, user, agent, app, person or usage type. */
   static async series(options: UsageSeriesOptions = {}): Promise<UsageSeries> {
     const { user, userId } = await readScope(options);
     const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/series", {

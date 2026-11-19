@@ -149,7 +149,7 @@ test("usage() is the account's spend, and get() finds one group", async () => {
   assert.equal(read.last.query.get("group_by"), "agent");
   assert.equal(month.get("ag_1")?.usd, 25.04);
   assert.equal(month.get("ag_9"), null);
-  assert.deepEqual(month.group("ag_9"), { id: "ag_9", usd: 0, events: 0, raw: {} });
+  assert.deepEqual(month.group("ag_9"), { id: "ag_9", name: null, usd: 0, events: 0, raw: {} });
   // The 0.2.0 static reads the same.
   assert.equal((await nc.Usage.get({ groupBy: "agent" })).totalUsd, 25.04);
 });

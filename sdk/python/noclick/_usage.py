@@ -14,12 +14,14 @@ from ._scope import AMBIENT
 
 @dataclass(frozen=True)
 class UsageGroup:
-    """Spend of one user, key, agent or app (``id``) in the period."""
+    """Spend of one user, key, agent, app or person (``id``) in the period. ``name`` is a person's name, with
+    ``group_by="person"``."""
 
     id: Optional[str]
     usd: float
     events: int
     raw: Dict[str, Any] = dc_field(repr=False)
+    name: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -125,7 +127,7 @@ class Usage:
     raw: Dict[str, Any] = dc_field(repr=False)
 
     def __getitem__(self, group_id: Optional[str]) -> UsageGroup:
-        """The spend of one user, key, agent or app id in a grouped usage (``None`` is the account's own).
+        """The spend of one user, key, agent, app or person id in a grouped usage (``None`` is the account's own).
 
         Returns:
             That id's spend and event count; an id that spent nothing reads as ``$0`` with no events.
@@ -171,8 +173,8 @@ class Usage:
     ) -> UsageSeries:
         """Daily spend between ``from_`` and ``to`` (default: the current month,
         at most 92 days), one line per ``group_by`` ``key``, ``user``,
-        ``agent``, ``type`` or ``project`` (an app). ``key``
-        is a key id or prefix.
+        ``agent``, ``type``, ``project`` (an app) or ``person`` (who each
+        charge was for, labelled with their name). ``key`` is a key id or prefix.
 
         Returns:
             The lines, largest first, each with its ``label``, ``total_usd`` and daily ``points``.
@@ -269,11 +271,13 @@ async def usage(
     client: Optional[Client] = None,
 ) -> Usage:
     """Spend for ``period`` (``"month"``), optionally split ``group_by``
-    ``"user"``, ``"key"``, ``"agent"`` or ``"project"`` (each app), and narrowed to one ``agent`` (an ``Agent`` or its id). Needs the ``usage`` scope.
+    ``"user"``, ``"key"``, ``"agent"``, ``"project"`` (each app) or ``"person"`` (who each charge was for: the
+    person whose message, click or key started the work; the account's owner for work nobody else started), and
+    narrowed to one ``agent`` (an ``Agent`` or its id). Needs the ``usage`` scope.
 
     Returns:
-        The period's ``total_usd`` and, with ``group_by``, one group per user, key, agent or app
-        that spent, largest first. Without ``group_by``, ``groups`` is empty.
+        The period's ``total_usd`` and, with ``group_by``, one group per user, key, agent, app or person
+        that spent, largest first; a person's group has their ``name``. Without ``group_by``, ``groups`` is empty.
 
     Usage:
         See this month's spend per user::
@@ -299,6 +303,11 @@ async def usage(
             booking = noclick.Project.from_name("booking", user="user_42")
             by_app = noclick.usage(group_by="project")
             print(by_app[booking.id].usd)
+
+        Who on your team spent what::
+
+            for person in noclick.usage(group_by="person").groups:
+                print(person.name, person.usd)
     """
     params = {"period": period, "group_by": group_by, "agent_id": await ref_id(agent)}
     raw = await resolve_client(client).request("GET", "/v1/usage", params=params, user=user) or {}
@@ -306,7 +315,7 @@ async def usage(
         period=raw.get("period", period),
         total_usd=float(raw.get("total_usd") or 0),
         groups=[
-            UsageGroup(g.get("id"), float(g.get("usd") or 0), int(g.get("events") or 0), g)
+            UsageGroup(g.get("id"), float(g.get("usd") or 0), int(g.get("events") or 0), g, name=g.get("name"))
             for g in raw.get("groups") or []
         ],
         raw=raw,
