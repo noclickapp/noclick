@@ -15,6 +15,7 @@ import { useSlot } from '@/slots';
 import { useChanged } from '@/lib/useChanged';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { useClient } from '@/sdk/client';
+import { invalidateV1 } from '@/sdk/useV1';
 import { FilePreviewBody, fileDownloadHref } from './FilePreview';
 import { FileThumb } from './fileParts';
 import { useResources } from './context';
@@ -265,11 +266,26 @@ export function ResourceDetail({
         if (gone) onChanged();
     };
 
-    // Taken down by its own id, whether or not its automation is still there.
+    // Taken down by its own id, whether or not its automation is still there: to the trash, where Undo restores it
+    // at its address with its key.
     const unpublish = async () => {
         try {
-            await Project.fromId(item.id, { client }).unpublish();
-            toast.success(`Unpublished ${item.title}`);
+            const trashed = await Project.fromId(item.id, { client }).unpublish();
+            toast.success(`Unpublished ${item.title}`, {
+                description: 'In the trash for 30 days, its address kept for it.',
+                action: {
+                    label: 'Undo',
+                    onClick: () => {
+                        void trashed.restore().then(
+                            () => {
+                                invalidateV1('resources:');
+                                toast.success(`${item.title} is live again`);
+                            },
+                            (err: unknown) => toast.error(`Couldn’t restore ${item.title}: ${errorText(err)}`),
+                        );
+                    },
+                },
+            });
             onChanged();
         } catch (err) {
             toast.error(`Unpublish failed: ${errorText(err)}`);

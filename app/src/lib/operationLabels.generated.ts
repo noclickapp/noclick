@@ -444,7 +444,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "projects_subscriptions_get": ["Get Subscription", "GET", "read"],
     "projects_subscriptions_list": ["List Subscriptions", "GET", "read"],
     "projects_subscriptions_test": ["Send Test Event", "POST", "outbound"],
-    "projects_unpublish": ["Unpublish Project", "POST", "destructive"],
+    "projects_unpublish": ["Unpublish Project", "POST", "write"],
     "projects_update": ["Update Project", "PATCH", "write"],
     "projects_usage": ["Project Usage", "GET", "read"],
     "queues_clear": ["Clear Queue", "POST", "destructive"],

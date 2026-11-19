@@ -189,14 +189,14 @@ export interface BuildQuestion {
 /**
  * A finished build: what the builder says it did (`summary`), the workflow's `steps` as they now
  * stand, and, when it published the workflow's app, `published` (`state` is `published`,
- * `renamed` or `unpublished`).
+ * `renamed` or `unpublished`; unpublished, `trashId` restores it until `restorableUntil`).
  */
 export interface WorkflowBuildResult {
   workflowId: string | null;
   summary: string | null;
   steps: WorkflowStep[];
   appUrl: string | null;
-  published: { state: string; url: string | null } | null;
+  published: { state: string; url: string | null; trashId: string | null; restorableUntil: string | null } | null;
   raw: JsonObject;
 }
 
@@ -204,6 +204,11 @@ export interface WorkflowBuildResult {
 export interface PublishOptions {
   subdomain?: string;
   title?: string;
+}
+
+function toPublished(raw: JsonObject): NonNullable<WorkflowBuildResult["published"]> {
+  return { state: str(raw.state) ?? "published", url: str(raw.url), trashId: str(raw.trash_id),
+    restorableUntil: str(raw.restorable_until) };
 }
 
 function toStep(value: unknown): WorkflowStep {
@@ -243,9 +248,7 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
     summary: str(raw.summary),
     steps: Array.isArray(raw.steps) ? raw.steps.map(toStep) : [],
     appUrl: str(raw.app_url),
-    published: raw.published && typeof raw.published === "object"
-      ? { state: str(asObject(raw.published).state) ?? "published", url: str(asObject(raw.published).url) }
-      : null,
+    published: raw.published && typeof raw.published === "object" ? toPublished(asObject(raw.published)) : null,
     raw,
   };
 }
@@ -1441,7 +1444,11 @@ export class Workflow extends ApiObject {
     return await this.build(undefined, { publish: compact({ subdomain: options.subdomain, title: options.title }) });
   }
 
-  /** Take the workflow's app down: its public URL stops answering. */
+  /**
+   * Take the workflow's app down, to the trash: its public URL stops answering. For 30 days its address stays its own,
+   * and restoring it (or `publish()`) brings it back there with the same key; the result's `published` names the
+   * `trashId` that restores it and until when (`restorableUntil`).
+   */
   async unpublish(): Promise<WorkflowBuild> {
     return await this.build(undefined, { publish: { action: "unpublish" } });
   }
