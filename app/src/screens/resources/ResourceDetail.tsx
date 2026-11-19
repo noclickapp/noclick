@@ -12,6 +12,7 @@ import { CopyButton } from '@/ui/CopyButton';
 import { cn } from '@/ui/utils';
 import { PhoneBarBack, useInPhoneShell } from '@/ui/phoneBar';
 import { useSlot } from '@/slots';
+import { useChanged } from '@/lib/useChanged';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { useClient } from '@/sdk/client';
 import { FilePreviewBody, fileDownloadHref } from './FilePreview';
@@ -255,14 +256,9 @@ export function ResourceDetail({
     const client = useClient();
     const NumberActions = useSlot(NUMBER_ACTIONS);
     const [inner, setInner] = useState<InnerStep | null>(null);
-    // Taken when asked, so its preview is read once. Another item's page starts without it, put down as that page
-    // renders: an effect runs only after the page is drawn, and undid a Delete clicked before it ran.
+    // Taken when asked, so its preview is read once. Another item's page starts without it.
     const [removing, setRemoving] = useState<Removal | null>(null);
-    const [removingFor, setRemovingFor] = useState(item.id);
-    if (removingFor !== item.id) {
-        setRemovingFor(item.id);
-        setRemoving(null);
-    }
+    if (useChanged(item.id)) setRemoving(null);
     const removed =({ done, gone }: { done: string; gone: boolean }) => {
         toast.success(done);
         setRemoving(null);

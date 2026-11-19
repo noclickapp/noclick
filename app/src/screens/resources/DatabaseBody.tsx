@@ -18,6 +18,7 @@ import { DataGrid, GridPager, PAGE_ROWS, SECRET_NOTE, columnsOf, useReveal, type
 import { RecordDrawer, type RecordField } from './RecordDrawer';
 import { InnerLevel, PillSelect, Section, Surface } from './ui';
 import { saveCsv } from '@/lib/tableCsv';
+import { useChanged } from '@/lib/useChanged';
 import { cn } from '@/ui/utils';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
@@ -54,13 +55,14 @@ export function DatabaseBody({ database }: { database: Database }) {
     const [params, setParams] = useSearchParams();
     const tableName = params.get('table');
     const querying = params.get('view') === 'query';
-    // The query box keeps what was typed and what it ran while the page moves between tables.
+    // The query box keeps what was typed and what it ran while the page moves between tables; another database's
+    // page starts it empty.
     const [sql, setSql] = useState('');
     const [ran, setRan] = useState<{ result: QueryResult } | { error: string } | null>(null);
-    useEffect(() => {
+    if (useChanged(database.id)) {
         setSql('');
         setRan(null);
-    }, [database.id]);
+    }
 
     const go = (to: { table?: string; query?: boolean } | null) =>
         setParams((prev) => {
@@ -369,10 +371,11 @@ function TableRows({ database, table, onQuery }: { database: Database; table: Ta
 function ResultRows({ result, label }: { result: QueryResult; label: string }) {
     const [offset, setOffset] = useState(0);
     const [open, setOpen] = useState<number | null>(null);
-    useEffect(() => {
+    // Another result starts on its first page with no row open.
+    if (useChanged(result)) {
         setOffset(0);
         setOpen(null);
-    }, [result]);
+    }
     const columns = useMemo(() => columnsOf(result.rows, result.columns), [result]);
     const reveal = useReveal(result.columns.join('\u0000'), String(offset));
     const rows = result.rows.slice(offset, offset + PAGE_ROWS);

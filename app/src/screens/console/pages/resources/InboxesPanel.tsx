@@ -18,6 +18,7 @@ import { Inbox, type InboxMessage, type InboxSenders } from 'noclick';
 import { INBOXES_EMPTY } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
+import { useChanged } from '@/lib/useChanged';
 import { usePaged } from '@/sdk/usePaged';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
@@ -283,11 +284,12 @@ function InboxDrawer({
     const [loadingNewer, setLoadingNewer] = useState(false);
     const [newerError, setNewerError] = useState<string | null>(null);
     const [open, setOpen] = useState<string | null>(null);
-    useEffect(() => {
+    // Another inbox, or its mail read again, starts with nothing open.
+    if (useChanged(inboxId, messages.data)) {
         setOpen(null);
         setNewer(null);
         setNewerError(null);
-    }, [inboxId, messages.data]);
+    }
     const mail = messages.data
         ? [...messages.data.messages, ...(newer?.messages ?? [])]
         : [];

@@ -16,6 +16,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
 import { useWorkFrames } from '@/sdk/live';
+import { useChanged } from '@/lib/useChanged';
 import { SidewaysRow } from '../ui';
 import type { ChannelBookmark, ChannelPin, ChannelShelf, SharedFile, SharedLink } from './shelf';
 
@@ -55,12 +56,13 @@ export function useChannelTabs(channelId: string, shelf: ChannelShelf, compact =
             ),
         [shelf, channelId]
     );
-    useEffect(() => {
+    // Another channel starts on its messages, with nothing of the last one's.
+    if (useChanged(channelId)) {
         setView('messages');
         setPins([]);
         setBookmarks([]);
         setShared(null);
-    }, [channelId]);
+    }
     useEffect(() => {
         if (!ready) return;
         void readPins();
