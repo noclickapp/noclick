@@ -669,7 +669,8 @@ export class Workspace extends ApiObject {
   /**
    * The workspaces you see, signed in to NoClick: your account's active ones (`own`, role `owner`), then the active
    * ones you joined in other accounts, with your role and whose each is, then your account's archived ones
-   * (`status` archived), which `unarchive` brings back.
+   * (`status` archived), which `unarchive` brings back. One of the account's own secret keys reads the account's own
+   * ones, its personal space's included, never those you joined.
    */
   static async mine(options: { client?: NoClickClient } = {}): Promise<MyWorkspace[]> {
     const rows = asList(await resolveClient(options.client).request("GET", "/v1/me/workspaces", { user: null })) as JsonObject[];

@@ -26,8 +26,10 @@ import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Money } from '../../ui/Money';
+import { OwnerOnlyNote } from '../../ui/OwnerOnlyNote';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
+import { useOwnerOnly } from '../../ownerOnly';
 import { useAgentNames } from '../lookups';
 import { EditLimits, limitLine, merchantLabel, NewCard, RevealDetails, dollars } from './CardsDialogs';
 import { FundingBanner } from './CardsFunding';
@@ -191,6 +193,7 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
     const { client } = useConsole();
     const agents = useAgentNames();
     const href = useConsoleHref();
+    const ownerCan = useOwnerOnly();
     const fetched = useV1(cardId && !row ? `cards/${cardId}` : null, () => Card.get(cardId!, { client }));
     // Actions change the card in place: keep that object over a refetched row, and re-render.
     const [updated, setUpdated] = useState<Card | null>(null);
@@ -316,10 +319,16 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
                     <RecentCharges card={card} />
                     {open && (
                         <Section title="Card number">
-                            <p className="m-0 mb-2 text-[12px] text-muted-foreground">
-                                Agents pay without ever seeing the number. Reveal it only to pay with the card yourself; each reveal is audited.
-                            </p>
-                            <RevealDetails card={card} />
+                            {ownerCan('cardReveal') ? (
+                                <>
+                                    <p className="m-0 mb-2 text-[12px] text-muted-foreground">
+                                        Agents pay without ever seeing the number. Reveal it only to pay with the card yourself; each reveal is audited.
+                                    </p>
+                                    <RevealDetails card={card} />
+                                </>
+                            ) : (
+                                <OwnerOnlyNote what="cardReveal" />
+                            )}
                         </Section>
                     )}
                 </div>

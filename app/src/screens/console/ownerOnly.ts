@@ -1,13 +1,15 @@
 // What only the account's signed-in owner can do, in one table.
 //
-// A console is handed a client that acts either as the account's owner, signed in to NoClick, or as one of the
+// A screen is handed a client that acts either as the account's owner, signed in to NoClick, or as one of the
 // account's API keys (a server holding a key, as this app's does). NoClick's API refuses a key a handful of
 // operations, 403 `permission_denied`: making and reading keys, approving a command line's sign-in, changing the
-// account, and a few more. Each row below names one thing the console does that rests on such operations. Everything
-// that offers it reads this table through `useOwnerOnly`: the sidebar and the palette (which leave an owner-only
-// section out), a section opened by its address (which says why it isn't here, and links to where its owner does it),
-// and each page's own buttons and reads. So a console acting as a key never calls an operation that would refuse it
-// (consoleAsKey.test.tsx holds that).
+// account, and a few more; and a few others need a scope the account's `*` key doesn't hold (an agent's sandbox, a
+// card's number). Each row below names one thing a screen does that rests on such operations. Everything that offers
+// it reads this table through `useOwnerOnly`: the sidebar and the palette (which leave an owner-only section out), a
+// section opened by its address (which says why it isn't here, and links to where its owner does it), and each page's
+// own buttons and reads. So a screen acting as a key never calls an operation that would refuse it (consoleAsKey and
+// resourcesAsKey hold that; NoClick's own tests call every operation the screens make as a key, and hold the table to
+// what refuses one).
 import { useCallback } from 'react';
 import { useConsole } from './hooks/useConsole';
 
@@ -20,6 +22,10 @@ export interface OwnerOnlyRow {
     /** Where its owner does it: the page of NoClick's own console, and what the link to it says. Absent where no page
      *  there is the place for it. */
     at?: { page: string; link: string };
+    /** Where a key is refused the operations for only some of what they name, which: the screen asks each thing
+     *  whether it's one, and the operations are left out of `OWNER_ONLY_OPERATIONS`. Absent: refused whatever they
+     *  name. */
+    only?: string;
 }
 
 export const OWNER_ONLY = {
@@ -75,12 +81,48 @@ export const OWNER_ONLY = {
         operations: ['POST /v1/machines/vetting'],
         at: { page: 'resources/machines', link: 'Ask on NoClick' },
     },
+    /** A card's number, revealed on its page. */
+    cardReveal: {
+        what: 'Revealing a card’s number',
+        why: 'A key reveals a card’s number only with the cards:reveal scope, which an account’s key with every scope (*) doesn’t hold.',
+        operations: ['POST /v1/cards/{card_id}/reveal'],
+    },
+    /** Entering a space the owner joined in another account, and leaving it. */
+    joinedSpaces: {
+        what: 'Spaces you joined in other accounts',
+        why: 'A key is the account, not the person who joined someone else’s space.',
+        operations: ['POST /v1/me/workspaces/{workspace_id}/sessions', 'DELETE /v1/me/workspaces/{workspace_id}'],
+    },
+    /** Opening the personal space to people, so they can be invited into it. */
+    sharePersonalSpace: {
+        what: 'Sharing your personal space',
+        why: 'Only the account’s owner, signed in, opens their personal space to people.',
+        operations: ['POST /v1/me/personal_space'],
+    },
+    /** An agent's sandbox: its files, a command run there, and a shell of your own on it. */
+    agentSandbox: {
+        what: 'An agent’s sandbox',
+        why: 'A key reaches an agent’s sandbox only with the agents:terminal scope, which an account’s key with every scope (*) doesn’t hold.',
+        operations: [
+            'GET /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
+            'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/exec',
+            'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
+        ],
+    },
+    /** Approving or declining a call NoClick holds for the owner's yes. */
+    heldCalls: {
+        what: 'Approving a held call',
+        why: 'Only the account’s owner approves a call NoClick holds for their yes, signed in or from the link NoClick sends them.',
+        operations: ['POST /v1/humans/requests/{request_id}/answer'],
+        only: 'a held call (its request reads `owner_only`); a key answers the account’s other requests',
+    },
 } as const satisfies Record<string, OwnerOnlyRow>;
 
 export type OwnerOnly = keyof typeof OWNER_ONLY;
 
-/** Every operation the API refuses a key that this console can reach, as `METHOD /v1/path/{param}`. */
-export const OWNER_ONLY_OPERATIONS: readonly string[] = Object.values(OWNER_ONLY).flatMap((row) => row.operations);
+/** Every operation the API refuses a key whatever it names that a screen can reach, as `METHOD /v1/path/{param}`. A
+ *  row refused for only some of what it names (`only`) isn't here: its screen asks each thing. */
+export const OWNER_ONLY_OPERATIONS: readonly string[] = Object.values(OWNER_ONLY as Record<string, OwnerOnlyRow>).flatMap((row) => (row.only ? [] : row.operations));
 
 /** Whether an operation is one the API refuses a key: its method and its path as sent (`/v1/keys/9b2a…`). */
 export function isOwnerOnly(method: string, path: string): boolean {

@@ -81,6 +81,10 @@ them; `src/screens/console/ownerOnly.ts` is the one list, read by the sidebar, t
 - **Jumping to an object by pasting its id** in the search palette. Sections and recent objects still work.
 - **Asking for machines**, and **the card issuer's form**: where the request or application stands is shown, with
   who can go on with it and a link to where they do.
+- **Revealing a card's number**: it needs the `cards:reveal` scope, which a key with every scope (`*`) doesn't hold.
+
+The same list holds what later screens leave out for a key: spaces the owner joined in other accounts, sharing the
+personal space, an agent's sandbox (the `agents:terminal` scope), and approving a call NoClick holds for the owner.
 
 A key's own limits apply as well: give the app a key with the scopes its pages need, and a spending cap.
 
