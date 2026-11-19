@@ -34,7 +34,7 @@ export interface RequestView {
     details: Record<string, unknown>;
     answer: HumanRequestAnswer | null;
     answered_at: string | null;
-    answered_by: 'link' | 'owner' | 'code' | null;
+    answered_by: 'link' | 'owner' | 'person' | 'code' | null;
     expires_at: string | null;
     delivered_via: string[];
     url: string | null;
@@ -121,7 +121,12 @@ function getRequest(client: NoClick, requestId: string, signal: AbortSignal): Pr
     return client.request<RequestView>('GET', `/v1/humans/requests/${encodeURIComponent(requestId)}`, { user: null, signal });
 }
 
-const ANSWERED_BY: Record<string, string> = { link: 'through the link', owner: 'by you, in the console', code: 'from your code' };
+const ANSWERED_BY: Record<string, string> = {
+    link: 'through the link',
+    owner: 'by you, in the console',
+    person: 'through the link NoClick sent them',
+    code: 'from your code',
+};
 
 export function HumanRequestDrawer({
     requestId,
