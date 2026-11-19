@@ -232,17 +232,18 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
     Returns:
         ``WatchMessage`` values: ``ready`` as each connection opens, ``change``, ``typing`` and ``reset``.
 
-    Usage::
+    Usage:
+        Follow your deployments as they move::
 
-        for message in noclick.watch(objects=["deployment"]):
-            if message.type == "change":
-                print(message.object, message.object_id, message.status)
+            for message in noclick.watch(objects=["deployment"]):
+                if message.type == "change":
+                    print(message.object, message.object_id, message.status)
 
-    In async code::
+        In async code, relay it to your own UI::
 
-        async for message in noclick.watch.aio(objects=["channel"]):
-            if message.type == "change":
-                await websocket.send_json(message.raw)
+            async for message in noclick.watch.aio(objects=["channel"]):
+                if message.type == "change":
+                    await websocket.send_json(message.raw)
     """
     connect = _connector()
     status = on_status or (lambda _s: None)
