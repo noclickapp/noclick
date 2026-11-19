@@ -28,6 +28,28 @@ test("answerWith routes the owner's texts to an agent in a conversation, and nul
   await assert.rejects(new nc.Human({ email: "ana@example.com" }).answerWith(AGENT_ID), TypeError);
 });
 
+test("reach reads NoClick's numbers and whether a phone is linked, as the account", async () => {
+  const { api } = setup();
+  const read = api.on(
+    "GET",
+    "/v1/humans/owner/reach",
+    json({
+      object: "owner_reach",
+      phone_linked: true,
+      lines: [{ app: "whatsapp", number: "+14155550100" }, { app: "imessage", number: "+14155550101" }],
+    }),
+  );
+  const reach = await nc.asUser(USER_ID, () => nc.Human.owner().reach());
+  assert.equal(read.last.headers.get("NoClick-User"), null); // where the owner texts NoClick is the account's, never a user's
+  assert.deepEqual(reach, {
+    lines: [{ app: "whatsapp", number: "+14155550100" }, { app: "imessage", number: "+14155550101" }],
+    phoneLinked: true,
+  });
+  api.on("GET", "/v1/humans/owner/reach", json({ object: "owner_reach", lines: [], phone_linked: false }));
+  assert.deepEqual(await nc.Human.owner().reach(), { lines: [], phoneLinked: false });
+  await assert.rejects(new nc.Human({ email: "ana@example.com" }).reach(), TypeError);
+});
+
 test("the owner adds an email by code", async () => {
   const { api } = setup();
   const sent = api.on("POST", "/v1/humans/owner/email", json({ object: "owner_email", status: "code_sent", email: "maya@morrowbakery.com" }));

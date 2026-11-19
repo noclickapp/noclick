@@ -108,7 +108,7 @@ from .exceptions import (
     WebhookSignatureError,
 )
 from .export import ExportBundle, ExportItem
-from .human import Answer, Human, HumanOperations, HumanRequest, OwnerEmail
+from .human import Answer, Human, HumanOperations, HumanRequest, OwnerEmail, OwnerLine, OwnerReach
 from .inbox import Inbox, InboxMessage, InboxReply, InboxThread
 from .live import (
     LiveDataCopy, LiveEdit, LiveEditCounts, LiveEdits, LiveEnd, LiveEnterLink, LiveExecResult, LiveSession, LiveStatus,
@@ -172,7 +172,7 @@ __all__ = [
     "Plan", "PlanWindow", "PlanUsage", "PlanUsageSummary", "PlanNextStep",
     "IntegrationInfo", "IntegrationOperation", "IntegrationEvent",
     "Toolkit", "ToolResult",
-    "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail",
+    "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach",
     "Agent", "AgentConversation", "AgentStateRow", "CommandResult", "ConversationContext", "ConversationRevert",
     "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
     "Message", "HarnessInfo",

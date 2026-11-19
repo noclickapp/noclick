@@ -29,6 +29,20 @@ export interface OwnerEmail {
   merged: boolean;
 }
 
+/** One of NoClick's own numbers the owner texts it on (`Human.reach`): `app` is `whatsapp` or `imessage`. */
+export interface OwnerLine {
+  app: string;
+  number: string;
+}
+
+/** Where the owner texts NoClick (`Human.reach`). */
+export interface OwnerReach {
+  /** NoClick's own numbers, one for each app it answers on. */
+  lines: OwnerLine[];
+  /** Whether a phone of the owner's is linked to the account; which one is never said. */
+  phoneLinked: boolean;
+}
+
 /** `"auto"` or the channels to use, e.g. `["email", "web"]`. */
 export type Via = "auto" | string | string[];
 
@@ -288,6 +302,24 @@ export class Human {
     const raw = asObject(await resolveClient(this.client).request("GET", "/v1/humans/owner/answer", { user: null }));
     const found = str(raw.agent_id);
     return found ? Agent.fromId(found, { client: this.client, user: null }) : null;
+  }
+
+  /**
+   * NoClick's own numbers the owner texts it on, and whether a phone of theirs is linked (never which). Show
+   * a number only once one is: a text from a phone the account hasn't linked starts an account of its own,
+   * and linking one is the owner's, signed in to NoClick. Your account's own key reads it, never a user's.
+   *
+   *     const { lines, phoneLinked } = await Human.owner().reach();
+   *     if (phoneLinked) for (const line of lines) console.log(`${line.app}: ${line.number}`);
+   */
+  async reach(): Promise<OwnerReach> {
+    if (!this.to.owner) throw new TypeError("Only Human.owner() texts NoClick's own numbers.");
+    const raw = asObject(await resolveClient(this.client).request("GET", "/v1/humans/owner/reach", { user: null }));
+    const lines = Array.isArray(raw.lines) ? raw.lines.map(asObject) : [];
+    return {
+      lines: lines.map((line) => ({ app: str(line.app) ?? "", number: str(line.number) ?? "" })),
+      phoneLinked: Boolean(raw.phone_linked),
+    };
   }
 
   /**
