@@ -520,7 +520,10 @@ class Browser(_Object):
         "waiting_on", BrowserWaitingOn._from, doc="A step a person is asked to finish in it, while its ``act`` waits "
                                                   "on them.")
     live_url: Optional[str] = field(
-        "live_url", doc="A NoClick page where you watch it live and can take over; it works while the browser runs.",
+        "live_url", doc="A NoClick page where you watch it live and can take over; it works while the browser runs, "
+                        "with no sign-in, so treat it like a password. Only a caller that may take the browser over "
+                        "reads it: your account's keys (one acting for a user too) and its signed-in owner. An MCP "
+                        "connection, an agent's turn and an app's code read None.",
     )
     url: Optional[str] = field("url", doc="The page it is on.")
     title: Optional[str] = field("title")

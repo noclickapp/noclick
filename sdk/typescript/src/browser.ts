@@ -482,7 +482,11 @@ export class Browser extends ApiObject {
     const waiting = this._field<JsonObject | null>("waiting_on");
     return waiting ? { person: str(waiting.person) ?? "", forYou: waiting.for_you === true } : null;
   }
-  /** A NoClick page where you watch it live and can take over; it works while the browser runs. */
+  /**
+   * A NoClick page where you watch it live and can take over; it works while the browser runs, with no sign-in, so
+   * treat it like a password. Only a caller that may take the browser over reads it: your account's keys (one acting
+   * for a user too) and its signed-in owner. An MCP connection, an agent's turn and an app's code read null.
+   */
   get liveUrl(): string | null {
     return this._field("live_url");
   }
