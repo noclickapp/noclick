@@ -327,6 +327,15 @@ test("an app opts into auto, and a deployment says where it ran and why", async 
   assert.deepEqual([ran.runtime, ran.runtimeReason], ["container", "a Dockerfile describes its server"]);
 });
 
+test("a failed deployment names the change that fixes it", async () => {
+  const { api } = setup();
+  const fix = { kind: "next_upgrade", found: "15.3.2", needed: "16.4.1" };
+  api.on("GET", "/v1/deployments/dep_3", json({ ...DEPLOYMENT, id: "dep_3", status: "failed", fix }));
+  assert.deepEqual((await nc.Deployment.get("dep_3")).fix, fix);
+  api.on("GET", "/v1/deployments/dep_4", json({ ...DEPLOYMENT, id: "dep_4" }));
+  assert.equal((await nc.Deployment.get("dep_4")).fix, null);
+});
+
 test("secrets are set per environment", async () => {
   const { api } = setup();
   const put = api.on("PUT", "/v1/projects/prj_1/secrets/STRIPE_KEY", json({}));

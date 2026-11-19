@@ -1,7 +1,7 @@
 // `/resources`: what the account owns and what it costs (src/screens/resources), read with the app's key through the
-// app's own server, as every screen's calls are. Its links into the developer console open `/developers`. What only
-// the account's signed-in owner can do (src/screens/console/ownerOnly.ts) isn't offered here, and the kinds NoClick's
-// own app adds from its Work pages (agents, skills, memories, machines and secrets) aren't listed.
+// app's own server, as every screen's calls are. Its links into the developer console open `/developers`, and an
+// agent's into `/work`. What only the account's signed-in owner can do (src/screens/console/ownerOnly.ts) isn't
+// offered here.
 import { useMemo } from 'react';
 import { useLoaderData } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';

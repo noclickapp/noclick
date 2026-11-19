@@ -63,6 +63,22 @@ export type SecretEnvironment = DeploymentEnvironment | "all";
 export type ProjectRuntime = "auto" | "edge" | "container";
 /** Where one deployment runs. */
 export type DeploymentRuntime = "edge" | "container";
+/**
+ * A database a container release binds: where a Postgres one's connection URL reached it (`variable`), or, for a
+ * SQLite one (`variable` null), a `note` saying its code reaches it through the SDK.
+ */
+export interface DeploymentDatabase {
+  binding: string;
+  engine: "postgres" | "sqlite";
+  variable: string | null;
+  note?: string;
+}
+/** A known change that fixes a deployment's failure (`Deployment.fix`). */
+export interface DeploymentFix {
+  kind: "next_upgrade";
+  found: string;
+  needed: string;
+}
 /** What a push to an app's repo deploys by itself. */
 export type DeployOnPush = "off" | "production" | "all";
 /** `branch`: each preview branch gets its own copy of what its code names; `shared`: previews use production's. */
@@ -628,6 +644,14 @@ export class Deployment extends ApiObject {
   get errorId(): string | null {
     return this._field("error_id") ?? null;
   }
+  /**
+   * What fixes a failure when it's a known change to the app (null otherwise). Today only
+   * `{ kind: "next_upgrade", found: <the Next.js it asks for>, needed: <a release that builds> }`: its `next_step`
+   * says how to upgrade it, or to hand it to the app's coding agent.
+   */
+  get fix(): DeploymentFix | null {
+    return this._field("fix") ?? null;
+  }
   /** Where it runs: `edge` or `container`, chosen when its build starts (null until then). */
   get runtime(): DeploymentRuntime | null {
     return this._field("runtime");
@@ -725,6 +749,24 @@ export class Deployment extends ApiObject {
    */
   get previewData(): string | null {
     return this._field("preview_data") ?? null;
+  }
+  /**
+   * The names each of its releases was given in its environment, by the environment it was released to
+   * (`{ production: [...], preview: [...] }`): the app's settings and secrets, its bindings, a container's
+   * `DATABASE_URL` and NoClick's own. Never a value.
+   */
+  get variables(): Record<string, string[]> | null {
+    return this._field("variables") ?? null;
+  }
+  /**
+   * On the deployment a container's deploy's or promote's (a rollback's) `wait()` gives, when the app binds
+   * databases: `{ binding, engine, variable }` each. `variable` names where a Postgres database's connection URL
+   * reached the app (`DATABASE_URL`, or `<binding>_URL` when it binds several or sets `DATABASE_URL` itself), a login
+   * of the release's own that lasts as long as the release; a SQLite one has none (`variable` null), and its `note`
+   * says the code reaches it through the SDK. Null otherwise.
+   */
+  get databases(): DeploymentDatabase[] | null {
+    return this._field("databases") ?? null;
   }
 
   private get path(): string {
@@ -2025,11 +2067,13 @@ export class Project extends ApiObject {
   }
 
   /**
-   * Take down an app NoClick publishes (`published`), for good: its page's key is revoked, every address it answers
-   * at stops, and the app is deleted; publishing its automation's interface again makes a new one. Only the
-   * account's own key or session can: a key acting for one of your users gets `NotFound`. It can't be undone.
+   * Take down an app NoClick publishes (`published`), to the trash: its page's key stops working and every address it
+   * answers at stops at once. For 30 days no other app takes its address, and `restore()` (or publishing its
+   * automation's interface again) serves it where it was with the same key; then, or when the item is purged, it's
+   * deleted for good. Only the account's own key or session can: a key acting for one of your users gets `NotFound`.
+   * Returns its `TrashItem`.
    */
-  async unpublish(): Promise<void> {
-    await this._request("POST", await this._projectPath("unpublish"), { json: {} });
+  async unpublish(): Promise<TrashItem> {
+    return trashed(await this._request("POST", await this._projectPath("unpublish"), { json: {} }), this);
   }
 }

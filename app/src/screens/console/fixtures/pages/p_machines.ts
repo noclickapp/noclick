@@ -1,5 +1,5 @@
-// Machines: where the account's request for them stands, and its machines. Populated, it's approved with one;
-// empty and first-run, not asked yet; asking answers it under review with what was sent.
+// Machines: where the account's request for them stands, its machines, and what runs now (`/v1/compute`). Populated,
+// it's approved with one; empty and first-run, not asked yet; asking answers it under review with what was sent.
 import { FIXTURE_NOW, PAGE_ERROR, ok, pageList, type FixtureRoute } from '../core';
 import type { MachineAccessStatus, MachineAccessView } from '@/sdk/owner';
 
@@ -26,6 +26,7 @@ export const MACHINES = [
         object: 'machine',
         id: '6f1e2d3c-4b5a-4968-8776-a5b4c3d2e1f0',
         name: 'support-box',
+        kind: 'noclick',
         size: 'small',
         cpu: 2,
         memory_gb: 4,
@@ -47,8 +48,28 @@ export const MACHINES = [
     },
 ];
 
+/** A machine as `/v1/compute` lists it: priced as charged, with nothing running on it yet. */
+const asCompute = (m: (typeof MACHINES)[number]) => ({
+    object: 'compute',
+    kind: 'machine',
+    id: m.id,
+    name: m.name,
+    status: m.status,
+    user_id: m.user_id,
+    region: m.region,
+    cpu: m.cpu,
+    memory_gb: m.memory_gb,
+    started_at: m.created_at,
+    usd_per_hour: Math.round((m.monthly_usd / 730) * 1e6) / 1e6,
+    usd_per_month: m.monthly_usd,
+    spent_usd_today: null,
+    running: [],
+});
+
 export const routes: readonly FixtureRoute[] = [
-    { method: 'GET', path: '/v1/machines', reply: (r) => pageList(r, MACHINES) },
+    // `kind` narrows them: none of the account's machines is a computer of its own.
+    { method: 'GET', path: '/v1/machines', reply: (r) => pageList(r, MACHINES.filter((m) => !r.query.get('kind') || m.kind === r.query.get('kind'))) },
+    { method: 'GET', path: '/v1/compute', reply: (r) => pageList(r, MACHINES.map(asCompute)) },
     {
         method: 'GET',
         path: '/v1/machines/vetting',

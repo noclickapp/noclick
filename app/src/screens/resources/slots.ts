@@ -7,10 +7,8 @@ import type { ResourceItem } from './model';
 import type { PlatformResources } from './platform';
 import { NoMoreKinds, StandardMarkdown, StandardNumbers } from './slotStandards';
 
-/** Kinds, or items of a kind, a host adds to Resources, with what draws them. */
+/** Items of the kinds Resources lists, with what draws them: Work's kinds (workKinds.tsx), and what a host adds. */
 export interface MoreKinds {
-    /** The kinds it adds (`fromHost` in kinds.ts), listed only where they're added. */
-    kinds: readonly KindId[];
     items: Partial<Record<KindId, ResourceItem[]>>;
     loading: Partial<Record<KindId, boolean>>;
     errors: Partial<Record<KindId, string>>;
@@ -28,8 +26,8 @@ export interface MoreKinds {
     removal?: PlatformResources['removal'];
 }
 
-/** Around the page: what a host adds to its kinds, read by the host and handed on. Nothing stands there: Resources
- *  lists what the platform API reads. */
+/** Around the page: items a host adds to the kinds Resources lists, read by the host and handed on. Nothing stands
+ *  there: Resources lists what the platform API reads. */
 export const MORE_KINDS = slot<ComponentType<{ children: (more: MoreKinds) => ReactNode }>>('resources.kinds', NoMoreKinds);
 
 /** The account's numbers as Resources lists them. */

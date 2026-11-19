@@ -117,7 +117,7 @@ Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 
 | Slot | Where it is | By default |
 |---|---|---|
-| `resources.kinds` | Around the page: kinds, or items of a kind, the host adds, with what draws them | Nothing |
+| `resources.kinds` | Around the page: items the host adds to the kinds Resources lists, with what draws them | Nothing |
 | `resources.numbers` | Around the page: the account's phone numbers, each with what it costs a month, and how one is bought | The API's phone numbers, at their own monthly price, bought through the API |
 | `resources.number.actions` | A number's page, beside its facts | Nothing |
 | `resources.file.markdown` | A Markdown file's preview | Its text drawn as a repository's README is |
@@ -151,9 +151,11 @@ picks a view (its index lists them all), and `?as=key` answers as the API answer
 
 ## Resources
 
-`/resources` is what the account owns and what it costs (`src/screens/resources`): its phone numbers, domains, email
-addresses, websites, databases, storage, code, and what its workflows keep (their files and tables) beside its own
-files. The overview is one tile per kind; a kind lists its items with their prices; an item opens its own page, with
+`/resources` is what the account owns and what it costs (`src/screens/resources`): its agents, phone numbers, domains,
+email addresses, websites, databases, storage, skills, memories, machines, secrets, code, and what its workflows keep
+(their files and tables) beside its own files. Agents, skills, memories, machines and secrets are drawn by
+[Work](#work)'s own parts, so each reads and acts as it does in a space's Resources tab, and an agent's page opens it
+in Work. The overview is one tile per kind; a kind lists its items with their prices; an item opens its own page, with
 what it is, what uses it, and the thing itself (a repo's files, a domain's records, a database's tables, a file's
 preview). It is the same page NoClick's own app draws, reading through the client the app hands every screen, so it
 acts as the app's key: what only the owner may do is left out as in the console (`ownerOnly.ts`), and
@@ -161,8 +163,6 @@ acts as the app's key: what only the owner may do is left out as in the console 
 
 What differs from NoClick's own Resources:
 
-- No agents, skills, memories, machines or secrets among its kinds: NoClick's app adds those from its Work pages
-  through `resources.kinds`; here they are on [Work](#work)'s own pages.
 - No agents' workspaces among the files: an agent made on a workflow's canvas keeps its files where only NoClick's
   app reads them, so they appear there alone.
 - Every workflow the key reads is listed, not one workspace's.

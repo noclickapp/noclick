@@ -509,6 +509,11 @@ class Deployment(_Object):
     error_id: Optional[str] = field(
         "error_id", doc="The id NoClick's team finds a failure of its own by (None unless ``platform_error``).",
     )
+    fix: Optional[Dict[str, str]] = field(
+        "fix", doc="What fixes a failure when it's a known change to the app (None otherwise). Today only "
+        "``{\"kind\": \"next_upgrade\", \"found\": <the Next.js it asks for>, \"needed\": <a release that "
+        "builds>}``: its ``next_step`` says how to upgrade it, or to hand it to the app's coding agent.",
+    )
     runtime: Optional[str] = field(
         "runtime", doc="Where it runs: ``edge`` or ``container``, chosen when its build starts (None until then).",
     )
@@ -576,6 +581,18 @@ class Deployment(_Object):
         "``branch``: what the preview writes to (its own copies of what its code reaches, made at its first write), "
         "when the copies go to the trash, and that promoting never carries them to production. None for production, "
         "and for an app whose previews use production's resources.",
+    )
+    variables: Optional[Dict[str, List[str]]] = field(
+        "variables", doc="The names each of its releases was given in its environment, by the environment it was "
+        "released to (``{\"production\": [...], \"preview\": [...]}``): the app's settings and secrets, its bindings, "
+        "a container's ``DATABASE_URL`` and NoClick's own. Never a value.",
+    )
+    databases: Optional[List[Dict[str, Any]]] = field(
+        "databases", doc="On the deployment a container's deploy's or promote's (a rollback's) ``wait()`` gives, when "
+        "the app binds databases: ``{binding, engine, variable}`` each. ``variable`` names where a Postgres "
+        "database's connection URL reached the app (``DATABASE_URL``, or ``<binding>_URL`` when it binds several or "
+        "sets ``DATABASE_URL`` itself), a login of the release's own that lasts as long as the release; a SQLite one "
+        "has none (``variable`` None), and its ``note`` says the code reaches it through the SDK. None otherwise.",
     )
 
     @classmethod
@@ -2798,16 +2815,27 @@ class Project(_Object):
         return trashed(raw, client=self._client, user=self._call_scope())
 
     @synced
-    async def unpublish(self) -> None:
-        """Take down an app NoClick publishes (``published``), for good: its page's key is revoked, every address
-        it answers at stops, and the app is deleted; publishing its automation's interface again makes a new one.
-        Only the account's own key or session can: a key acting for one of your users gets ``noclick.NotFound``.
-        It can't be undone.
+    async def unpublish(self) -> TrashItem:
+        """Take down an app NoClick publishes (``published``), to the trash: its page's key stops working and every
+        address it answers at stops at once. For 30 days no other app takes its address, and ``restore()`` (or
+        publishing its automation's interface again) serves it where it was with the same key; then, or when the
+        item is purged, it's deleted for good. Only the account's own key or session can: a key acting for one of
+        your users gets ``noclick.NotFound``.
 
-        Usage::
+        Returns:
+            Its ``TrashItem``: ``restore()`` puts it back live.
 
-            for app in noclick.Project.list():
-                if app.published and app.workflow is None:
-                    app.unpublish()
+        Usage:
+            Take down the pages whose automation is gone::
+
+                for app in noclick.Project.list():
+                    if app.published and app.workflow is None:
+                        app.unpublish()
+
+            Or take one down, then change your mind::
+
+                item = noclick.Project.from_name("bakery").unpublish()
+                item.restore()
         """
-        await self._request("POST", f"{await self._project_path()}/unpublish", json={})
+        raw = await self._request("POST", f"{await self._project_path()}/unpublish", json={})
+        return trashed(raw, client=self._client, user=self._call_scope())

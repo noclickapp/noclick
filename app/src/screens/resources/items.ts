@@ -15,7 +15,7 @@ import type { WorkflowRef } from './files';
 import { countOf, fmtBytes } from '@/ui/primitives';
 import { servedNames, type ServedName } from '@/screens/console/pages/resources/appDomains';
 import { dayLabel, registeredHere, sourceLabel } from '@/screens/console/pages/resources/DomainsParts';
-import { NoClickError, type Bucket, type Database, type DnsRecord, type Domain, type Inbox, type Project, type Repo, type TrashItem, type UsedBy } from 'noclick';
+import { NoClickError, type Bucket, type NoClick, type Database, type DnsRecord, type Domain, type Inbox, type Project, type Repo, type TrashItem, type UsedBy } from 'noclick';
 import { authorName, decodeText, isBinaryPath, refFor } from '@/lib/repoText';
 
 
@@ -390,6 +390,11 @@ export function trashByKind(items: TrashItem[], names: ReadonlyMap<string, strin
 /** What the platform says `DELETE path` would do (`POST /v1/delete_previews`), asked as `user` (null: the account): a
  * user's resource is reached only by a call acting for that user. */
 export type DeletePreviewer = (path: string, user: string | null) => Promise<DeletionImpact>;
+
+/** The platform's own deletion preview, through `client`. */
+export function deletePreviewer(client: NoClick): DeletePreviewer {
+    return async (path, user) => (await client.request<{ impact: DeletionImpact }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path }, user })).impact;
+}
 
 /** How a kind's page removes it, the way the platform API does: a connected domain is disconnected (it stays
  * registered wherever it is), a domain registered here only lapses (auto-renew off), an app, an address, a database, a

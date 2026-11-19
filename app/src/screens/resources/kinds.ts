@@ -18,9 +18,6 @@ export interface KindDef {
     noun: [string, string];
     /** How it's charged: `item` at a set price each (a number's month, a domain's year), `use` by what it uses; the rest are included. */
     billed?: 'item' | 'use';
-    /** Listed only where whoever shows Resources adds what it holds (slots.ts MORE_KINDS): the kinds Work draws, until
-     * Work is part of this app. */
-    fromHost?: boolean;
     /** Other words people use for it, which the command palette matches. */
     keywords: string;
     /** Its page for getting one by hand (?kind=&new=1): `label` names it, `short` is the overview tile's button, and
@@ -31,7 +28,6 @@ export interface KindDef {
 export const KINDS: KindDef[] = [
     {
         id: 'agents',
-        fromHost: true,
         label: 'Agents',
         icon: UsersRound,
         empty: 'Every agent your account owns, wherever it works: what each is doing, the spaces it works in, and what it has cost this month.',
@@ -104,7 +100,6 @@ export const KINDS: KindDef[] = [
     },
     {
         id: 'skills',
-        fromHost: true,
         label: 'Skills',
         icon: BookOpen,
         empty: 'Ways of working any agent can follow: a SKILL.md and the scripts it uses. Each harness loads them its own way.',
@@ -114,7 +109,6 @@ export const KINDS: KindDef[] = [
     },
     {
         id: 'memories',
-        fromHost: true,
         label: 'Memories',
         icon: Brain,
         empty: 'Notes agents read every turn and, where you let them, add to as they learn. One memory can be shared by many agents.',
@@ -124,7 +118,6 @@ export const KINDS: KindDef[] = [
     },
     {
         id: 'machines',
-        fromHost: true,
         label: 'Machines',
         icon: Server,
         empty: 'Where your agents run: a machine kept on, the sandboxes up now, and computers of yours that run them.',
@@ -135,7 +128,6 @@ export const KINDS: KindDef[] = [
     },
     {
         id: 'secrets',
-        fromHost: true,
         label: 'Secrets',
         icon: KeyRound,
         empty: 'Keys and tokens your agents hold, in their environment or in a file, and the ones that came over when an agent moved from a computer. Only their names are shown, never a value.',

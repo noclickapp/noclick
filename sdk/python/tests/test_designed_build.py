@@ -345,6 +345,14 @@ def test_an_app_opts_into_auto_and_a_deployment_says_where_it_ran_and_why(api, c
     assert (ran.runtime, ran.runtime_reason) == ("container", "a Dockerfile describes its server")
 
 
+def test_a_failed_deployment_names_the_change_that_fixes_it(api, client):
+    fix = {"kind": "next_upgrade", "found": "15.3.2", "needed": "16.4.1"}
+    api.get("/v1/deployments/dep_3").respond(json={**DEPLOYMENT, "id": "dep_3", "status": "failed", "fix": fix})
+    assert nc.Deployment.get("dep_3").fix == fix
+    api.get("/v1/deployments/dep_4").respond(json={**DEPLOYMENT, "id": "dep_4"})
+    assert nc.Deployment.get("dep_4").fix is None
+
+
 def test_secrets_are_set_per_environment(api, client):
     put = api.put("/v1/projects/prj_1/secrets/STRIPE_KEY").respond(json={})
     listed = api.get("/v1/projects/prj_1/secrets").respond(json=listing(

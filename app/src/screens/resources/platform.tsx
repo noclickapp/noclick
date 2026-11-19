@@ -4,7 +4,7 @@
 import { createContext, useContext, type ComponentType } from 'react';
 import type { NumberPurchaseTransport } from '@/screens/numbers/usePhoneNumberPurchase';
 import type { DomainRegistrar } from '@/screens/domains/useDomainPurchase';
-import type { KindDef, KindId } from './kinds';
+import type { KindId } from './kinds';
 import type { ResourceItem, ResourceOwner } from './model';
 
 /** What a deletion does, as the platform previews it (`POST /v1/delete_previews`'s `impact`). */
@@ -100,10 +100,9 @@ export interface PlatformResources {
     Page?: Partial<Record<KindId, ComponentType<{ item: ResourceItem; now: string; onBack: (to: 'all' | 'kind') => void }>>>;
     /** A kind whose rows end in a ⋯ menu of the platform's own (an agent's Rename), beside the row it acts on. */
     RowMenu?: Partial<Record<KindId, ComponentType<{ item: ResourceItem }>>>;
-    /** The kinds listed: every kind but those only a host adds, where it adds them (`fromHost`). */
-    kinds: readonly KindDef[];
-    /** Whether a host added `item` (slots.ts MORE_KINDS): its lead, page and row menu above are for those alone. */
-    hostOwns(item: ResourceItem): boolean;
+    /** Whether `item` is drawn by parts of its own: one of Work's kinds (workKinds.tsx), or what a host adds (slots.ts
+     *  MORE_KINDS). Its lead, page and row menu above are for those alone. */
+    hasOwnParts(item: ResourceItem): boolean;
     /** How `item`'s page removes it, or null where it offers nothing. */
     removal(item: ResourceItem): Removal | null;
     /** What's in the trash, by kind (only kinds whose deletion goes there). */
