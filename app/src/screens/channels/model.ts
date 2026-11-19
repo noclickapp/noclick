@@ -164,24 +164,23 @@ export function handoffsOf(author: ChannelAuthor, mentions: string[], members: C
     return mentions.map((name) => members.find((m) => m.name === name && m.kind !== 'you')).filter((m): m is ChannelMember => !!m && !itself(m));
 }
 
-/** An agent from somewhere else the pickers offer (`MORE_AGENTS`): its workflow's agent node. */
+/** An agent from your Automations in a channel (put there before the pickers stopped offering them): its workflow's
+ *  agent node. */
 export function automationKey(workflowId: string, nodeId: string): string {
     return `${workflowId}:${nodeId}`;
 }
 
-/** Which agent a member is, as an `AgentChoice` names it: a platform agent's id, an automation's `automationKey`. */
+/** Which agent a member is: a platform agent's id (as an `AgentChoice` names it), an automation's `automationKey`. */
 export function agentKey(member: Pick<ChannelMember, 'agentId' | 'workflowId' | 'nodeId'>): string | undefined {
     if (member.agentId) return member.agentId;
     return member.workflowId && member.nodeId ? automationKey(member.workflowId, member.nodeId) : undefined;
 }
 
-/** Your agents as the pickers group them: NoClick's own first under no heading, then those from somewhere else under
- *  `more`'s heading (`MORE_AGENTS`; none when nothing fills it), then the platform's. */
-export function agentGroups(agents: AgentChoice[], more: string | null): { label: string; agents: AgentChoice[] }[] {
+/** Your agents as the pickers group them: NoClick's own first under no heading, then the platform's. */
+export function agentGroups(agents: AgentChoice[]): { label: string; agents: AgentChoice[] }[] {
     return [
         { label: '', agents: agents.filter((a) => a.noclick) },
-        ...(more ? [{ label: more, agents: agents.filter((a) => !a.noclick && a.source === 'automation') }] : []),
-        { label: 'Platform agents', agents: agents.filter((a) => !a.noclick && a.source === 'platform') },
+        { label: 'Platform agents', agents: agents.filter((a) => !a.noclick) },
     ].filter((group) => group.agents.length > 0);
 }
 

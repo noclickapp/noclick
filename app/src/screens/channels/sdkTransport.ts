@@ -1,11 +1,10 @@
 // The channels transport on the platform API, through the TypeScript SDK: the account's own workspaces and channels
 // (not its users'), or one space someone joined from another account. Every read maps the platform's objects into
 // the page's shapes; every failure becomes the sentence to show. Live changes are whatever the host hands `deliver`
-// (the account's changes, as it follows them); without any, the page's own re-reads keep it current. Agents from
-// somewhere other than the platform join through `MORE_AGENTS`; the API reads them back like any member.
+// (the account's changes, as it follows them); without any, the page's own re-reads keep it current. An agent from
+// your Automations a channel already holds reads like any member; only the platform's agents are offered to add.
 import { ChannelNameTaken, type ChannelChange, type ChannelHistoryPage, type ChannelsTransport, type VoiceClipInfo } from './transport';
 import { automationKey, hueFor } from './model';
-import type { MoreAgents } from './slots';
 import type { SendTyping } from './typing';
 import type { AgentChoice, Channel, ChannelAttachment, ChannelAuthor, ChannelMember, ChannelMembership, ChannelMessage, ChannelReaction, ChannelSchedule, ChannelWorkspace } from './types';
 import { agentMarkType } from '@/ui/primitives';
@@ -112,7 +111,7 @@ export function workspaceOf(workspace: Workspace): ChannelWorkspace {
 export function agentOf(agent: Agent): AgentChoice {
     const role = typeof agent.raw.role === 'string' && agent.raw.role ? agent.raw.role : undefined;
     const harness = agent.harness ?? 'sdk';
-    return { id: agent.id, source: 'platform', name: agent.name, markType: agentMarkType(harness.replace('_', '-')), harness, model: agent.model, ...(role ? { role } : {}), ...(agent.noclick ? { noclick: true } : {}) };
+    return { id: agent.id, name: agent.name, markType: agentMarkType(harness.replace('_', '-')), harness, model: agent.model, ...(role ? { role } : {}), ...(agent.noclick ? { noclick: true } : {}) };
 }
 
 export function attachmentOf(file: PlatformAttachment): ChannelAttachment {
@@ -257,8 +256,6 @@ export interface PlatformTransport extends ChannelsTransport {
 }
 
 export interface TransportOptions {
-    /** The agents from elsewhere the pickers offer, and putting one in a channel (`MORE_AGENTS`); null for none. */
-    moreAgents: MoreAgents | null;
     /** How you say you're typing: through the API (`sdkTyping`), or however the host says it. */
     sendTyping: SendTyping;
     /** One space someone joined from another account, read through their eyes (below). */
@@ -267,15 +264,10 @@ export interface TransportOptions {
 
 /**
  * The account's own channels and workspaces through `client`; or, with `person`, one space someone joined from
- * another account, through their session's client: its channels only, read through their eyes, with no agents of
- * their own to add from elsewhere.
+ * another account, through their session's client: its channels only, read through their eyes.
  */
-export function platformTransport(client: NoClick, { moreAgents, sendTyping, person }: TransportOptions): PlatformTransport {
+export function platformTransport(client: NoClick, { sendTyping, person }: TransportOptions): PlatformTransport {
     const listeners = new Set<(change: ChannelChange) => void>();
-    const addMore = (channelId: string, agent: Extract<AgentChoice, { source: 'automation' }>) => {
-        if (!moreAgents) throw new Error(`${agent.name} can’t be added here.`);
-        return moreAgents.add(channelId, agent);
-    };
     // The agents not yet in `workspace` join it; a personal space's agents are the ones in its channels, never added.
     const joinWorkspace = async (workspace: Workspace, agentIds: string[]) => {
         if (workspace.raw.personal === true) return;
@@ -303,9 +295,9 @@ export function platformTransport(client: NoClick, { moreAgents, sendTyping, per
         channels: () => said(async () => (await PlatformChannel.listPage({ client, ...scope, limit: LIST_LIMIT })).data.map(room)),
         agents: () =>
             said(async () => {
-                const [more, platform] = await Promise.all([person || !moreAgents ? [] : moreAgents.list(), Agent.listPage({ client, ...(person ? {} : { userFilter: NO_USER }), limit: LIST_LIMIT })]);
+                const platform = await Agent.listPage({ client, ...(person ? {} : { userFilter: NO_USER }), limit: LIST_LIMIT });
                 // NoClick's helpers work for it, not you: none is offered for a channel.
-                return [...more, ...platform.data.filter((a) => a.status !== 'expired' && !a.helper).map(agentOf)];
+                return platform.data.filter((a) => a.status !== 'expired' && !a.helper).map(agentOf);
             }),
         history: (channelId, before) =>
             said(async () => historyPage(await channel(channelId).messagesPage(before ? { before, limit: HISTORY_LIMIT } : { newest: true, limit: HISTORY_LIMIT }))),
@@ -323,7 +315,7 @@ export function platformTransport(client: NoClick, { moreAgents, sendTyping, per
             }),
         createChannel: ({ workspaceId, name, topic, agents, people = [] }) =>
             said(async () => {
-                const agentIds = agents.flatMap((a) => (a.source === 'platform' ? [a.id] : []));
+                const agentIds = agents.map((a) => a.id);
                 if (workspaceId) {
                     // A workspace's channel takes its platform agents from the workspace: those not yet in it join it first.
                     const workspace = await Workspace.get(workspaceId, { client, user: null });
@@ -339,18 +331,12 @@ export function platformTransport(client: NoClick, { moreAgents, sendTyping, per
                     // A space's people by their user ids; the personal space holds none.
                     members: [...agentIds.map((agentId) => ({ agentId })), ...(workspaceId ? people.map((id) => User.fromId(id, { client })) : [])],
                 });
-                const automated = agents.flatMap((a) => (a.source === 'automation' ? [a] : []));
-                for (const a of automated) await addMore(made.id, a);
-                return automated.length ? read(made.id) : room(made);
+                return room(made);
             }),
         updateChannel: (channelId, changes) => said(async () => room(await channel(channelId).update(changes))),
         schedules: (channelId) => said(async () => (await channel(channelId).triggers()).flatMap(scheduleOf)),
         addAgent: (room, agent) =>
             said(async () => {
-                if (agent.source === 'automation') {
-                    await addMore(room.id, agent);
-                    return read(room.id);
-                }
                 if (room.workspaceId) await joinWorkspace(await Workspace.get(room.workspaceId, { client, user: null }), [agent.id]);
                 await channel(room.id).add({ agentId: agent.id });
                 return read(room.id);

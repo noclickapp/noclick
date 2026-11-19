@@ -1,32 +1,15 @@
 // The channels transport over a fake API: what it reads (the account's own workspaces and its channels, open and
 // closed, history from the newest), how the platform's objects become the page's (your reactions, files, members),
-// what each write sends (an agent joins a workspace before its channel, an agent from elsewhere joins through
-// MORE_AGENTS, never the API), saying you're typing, and that a failure becomes the sentence to show.
+// what each write sends (an agent joins a workspace before its channel), that an agent from your Automations a
+// channel already holds reads like any member, saying you're typing, and that a failure becomes the sentence to show.
 import { describe, expect, it } from 'vitest';
 import { NoClick } from 'noclick';
 import { ChannelNameTaken } from './transport';
-import type { Channel } from './types';
-import type { MoreAgentChoice, MoreAgents } from './slots';
 import { changeOf, platformTransport, sdkTyping, typingChangeOf } from './sdkTransport';
 
 type Reply = unknown | ((body: unknown, url: URL) => unknown);
 
-const WRITER: MoreAgentChoice = { id: 'wf_1:writer', source: 'automation', name: 'Writer', markType: 'agent:claude-code', workflowId: 'wf_1', nodeId: 'writer', workflowName: 'Content' };
-
-/** Agents from elsewhere, faked: one to offer, and what it was asked to add. */
-function moreAgents(): MoreAgents & { added: [string, string][] } {
-    const added: [string, string][] = [];
-    return {
-        added,
-        label: 'Your agents',
-        list: async () => [WRITER],
-        add: async (channelId, agent) => {
-            added.push([channelId, agent.id]);
-        },
-    };
-}
-
-function api(routes: Record<string, Reply>, more: ReturnType<typeof moreAgents> | null = moreAgents()) {
+function api(routes: Record<string, Reply>) {
     const calls: { method: string; path: string; query: Record<string, string>; body: unknown }[] = [];
     const fetch: typeof globalThis.fetch = async (input, init = {}) => {
         const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
@@ -40,7 +23,7 @@ function api(routes: Record<string, Reply>, more: ReturnType<typeof moreAgents> 
         return new Response(JSON.stringify(reply), { status: 200, headers: { 'Content-Type': 'application/json' } });
     };
     const client = new NoClick({ apiKey: 'test-token', baseUrl: 'https://api.test', fetch, maxRetries: 0 });
-    return { transport: platformTransport(client, { moreAgents: more, sendTyping: sdkTyping(client) }), calls, more };
+    return { transport: platformTransport(client, { sendTyping: sdkTyping(client) }), calls };
 }
 
 const list = (...data: unknown[]) => ({ object: 'list', data, next_cursor: null });
@@ -171,16 +154,16 @@ describe('the platform transport', () => {
             'POST /v1/channels': { ...CHANNEL, id: 'ch_2', name: 'q4' },
         });
         const room = (await api({ 'GET /v1/channels': list(CHANNEL) }).transport.channels())[0];
-        await transport.addAgent(room, { id: 'agt_2', source: 'platform', name: 'Quill' });
+        await transport.addAgent(room, { id: 'agt_2', name: 'Quill' });
         expect(calls.map((c) => `${c.method} ${c.path}`)).toEqual(['GET /v1/workspaces/ws_1', 'POST /v1/workspaces/ws_1/members', 'POST /v1/channels/ch_1/members', 'GET /v1/channels/ch_1']);
         expect(calls[1].body).toEqual({ agent_id: 'agt_2' });
 
         calls.length = 0;
         const agents = [
-            { id: 'agt_1', source: 'platform', name: 'Scout' },
-            { id: 'agt_2', source: 'platform', name: 'Quill' },
-        ] as const;
-        await transport.createChannel({ workspaceId: 'ws_1', name: 'q4', topic: '', agents: [...agents] });
+            { id: 'agt_1', name: 'Scout' },
+            { id: 'agt_2', name: 'Quill' },
+        ];
+        await transport.createChannel({ workspaceId: 'ws_1', name: 'q4', topic: '', agents });
         expect(calls.map((c) => `${c.method} ${c.path}`)).toEqual(['GET /v1/workspaces/ws_1', 'POST /v1/workspaces/ws_1/members', 'POST /v1/channels']);
         expect(calls[2].body).toEqual({ name: 'q4', workspace_id: 'ws_1', members: [{ agent_id: 'agt_1' }, { agent_id: 'agt_2' }], mode: 'all' });
     });
@@ -192,41 +175,18 @@ describe('the platform transport', () => {
                 { object: 'agent', id: 'agt_2', name: 'shop-coder', harness: 'codex', status: 'idle', helper: true }
             ),
         });
-        expect((await transport.agents()).map((a) => a.name)).toEqual(['Writer', 'Scout']);
+        expect((await transport.agents()).map((a) => [a.id, a.name, a.markType])).toEqual([['agt_1', 'Scout', 'agent']]);
     });
 
-    it('offers the agents from elsewhere first, and puts one in a channel through MORE_AGENTS, never the API', async () => {
+    it('reads an agent from your Automations that a channel already holds as a member, with its workflow', async () => {
         const automationMember = { object: 'channel_member', id: 'mem_4', type: 'workflow_agent', name: 'Writer', agent_id: null, workflow_id: 'wf_1', node_id: 'writer', workflow_name: 'Content', busy: false };
-        const withWriter = { ...CHANNEL, members: [...CHANNEL.members, automationMember] };
-        const { transport, calls, more } = api({
-            'GET /v1/agents': list({ object: 'agent', id: 'agt_1', name: 'Scout', harness: 'sdk', status: 'idle' }),
-            'GET /v1/channels/ch_1': withWriter,
-            'POST /v1/channels': { ...CHANNEL, id: 'ch_2', name: 'q4', workspace_id: null, members: [] },
-            'GET /v1/channels/ch_2': { ...CHANNEL, id: 'ch_2', name: 'q4', workspace_id: null, members: [automationMember] },
-        });
-        const agents = await transport.agents();
-        expect(agents.map((a) => [a.source, a.id, a.name, a.markType])).toEqual([
-            ['automation', 'wf_1:writer', 'Writer', 'agent:claude-code'],
-            ['platform', 'agt_1', 'Scout', 'agent'],
-        ]);
-
-        const room = { id: 'ch_1', workspaceId: 'ws_1' } as Channel;
-        const after = await transport.addAgent(room, agents[0]);
-        expect(more!.added).toEqual([['ch_1', 'wf_1:writer']]);
-        // Read back through /v1, which holds it as any member: no workspace join, no /v1 member write.
-        expect(calls.slice(1).map((c) => `${c.method} ${c.path}`)).toEqual(['GET /v1/channels/ch_1']);
-        expect(after.members.at(-1)).toMatchObject({ kind: 'agent', name: 'Writer', workflowId: 'wf_1', nodeId: 'writer', workflowName: 'Content' });
-        expect(after.members.at(-1)?.agentId).toBeUndefined();
-
-        calls.length = 0;
-        const made = await transport.createChannel({ workspaceId: null, name: 'q4', topic: '', agents: [agents[0], agents[1]] });
-        expect(calls.map((c) => `${c.method} ${c.path}`)).toEqual(['POST /v1/channels', 'GET /v1/channels/ch_2']);
-        expect(calls[0].body).toEqual({ name: 'q4', members: [{ agent_id: 'agt_1' }], mode: 'all' });
-        expect(more!.added.at(-1)).toEqual(['ch_2', 'wf_1:writer']);
-        expect(made.members.map((m) => m.name)).toEqual(['Writer']);
+        const { transport } = api({ 'GET /v1/channels': list({ ...CHANNEL, members: [...CHANNEL.members, automationMember] }) });
+        const [channel] = await transport.channels();
+        expect(channel.members.at(-1)).toMatchObject({ id: 'mem_4', kind: 'agent', name: 'Writer', workflowId: 'wf_1', nodeId: 'writer', workflowName: 'Content' });
+        expect(channel.members.at(-1)?.agentId).toBeUndefined();
     });
 
-    it("reads the message of an agent from elsewhere as its own", async () => {
+    it("reads the message of an agent from your Automations as its own", async () => {
         const { transport } = api({
             'GET /v1/channels/ch_1/messages': list({ ...MESSAGE, author: { type: 'workflow_agent', id: 'mem_4', name: 'Writer' }, reactions: [] }),
         });
@@ -255,12 +215,6 @@ describe('the platform transport', () => {
             workspaceId: 'ws_1',
             typist: { id: 'usr_ana', name: 'Ana', typing: true },
         });
-    });
-
-    it('offers only the platform\'s agents where nothing adds others, and refuses one from elsewhere there', async () => {
-        const { transport } = api({ 'GET /v1/agents': list({ object: 'agent', id: 'agt_1', name: 'Scout', harness: 'sdk', status: 'idle' }) }, null);
-        expect((await transport.agents()).map((a) => [a.source, a.name])).toEqual([['platform', 'Scout']]);
-        await expect(transport.addAgent({ id: 'ch_1', workspaceId: null } as Channel, WRITER)).rejects.toThrow('Writer can’t be added here.');
     });
 
     it("says you're typing through the API, and that you stopped", async () => {

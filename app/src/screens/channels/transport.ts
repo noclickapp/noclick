@@ -36,7 +36,7 @@ export interface ChannelsTransport {
     workspaces(): Promise<ChannelWorkspace[]>;
     /** The account's open channels, in every workspace and none. */
     channels(): Promise<Channel[]>;
-    /** The account's agents, to add to a channel: those in its Automations and its platform agents. */
+    /** The account's agents, to add to a channel: its platform agents. */
     agents(): Promise<AgentChoice[]>;
     /** The newest messages, or those before `before`. */
     history(channelId: string, before?: string): Promise<ChannelHistoryPage>;

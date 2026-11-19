@@ -3,9 +3,7 @@
 // here, and Work leaving (or the page hiding) keeps it again.
 import { useEffect, useMemo, useState } from 'react';
 import type { NoClick } from 'noclick';
-import { useSlot } from '@/slots';
 import { WorkLiveContext, type WorkLive } from '@/sdk/live';
-import { MORE_AGENTS } from '@/screens/channels/slots';
 import { heldBy } from '@/screens/channels/useChannels';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { WorkClientContext } from './client';
@@ -26,8 +24,7 @@ export interface WorkScreenProps {
 }
 
 export function WorkScreen({ client, live, keptAs, user, work = {} }: WorkScreenProps) {
-    const more = useSlot(MORE_AGENTS);
-    const own = useMemo(() => transportFor(client, more, OWN, undefined), [client, more]);
+    const own = useMemo(() => transportFor(client, OWN, undefined), [client]);
     // What this browser kept is read before Work draws, unless this page already holds what Work read.
     const [restored, setRestored] = useState(() => keptAs === null || !!heldBy(own));
     useEffect(() => {

@@ -13,12 +13,8 @@ import { WorkClientContext } from '../client';
 import { fakeWork, sectionsKey, type FakeWork } from '../fixtures/workApi';
 import { WorkLiveContext } from '@/sdk/live';
 import { Work } from '../Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 /** The account's own sections of the NoClick space, as the fake server keeps them. */
 const KEY = sectionsKey(null, 'ws_noclick');
 const SECTION_ID = '0f4c2b8e-7d1a-4c3e-9b5f-2a6d8e1c4b70';

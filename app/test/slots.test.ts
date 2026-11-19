@@ -134,7 +134,6 @@ describe('the app', () => {
         const modules = appModules();
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
             'channels.agent.face',
-            'channels.picker.moreAgents',
             'connection.mark',
             'console.cards.issuerForm',
             'console.terms',

@@ -8,11 +8,6 @@ import { WorkClientContext } from './client';
 import { fakeWork, JOINED_SESSION } from './fixtures/workApi';
 import { WorkLiveContext } from '@/sdk/live';
 import { Work } from './Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
-
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 
 afterEach(() => {
     cleanup();

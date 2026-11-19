@@ -19,7 +19,7 @@ export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspa
     const noclick = useNoClickId();
     const ours = useSpaceNoClick(workspaceId, reading);
     const pairs = useMemo(
-        () => [...new Set(agents.flatMap((a) => (a.source === 'platform' && a.harness && !keptByNoClick(a) ? [`${a.harness} ${a.model ?? ''}`] : [])))].sort(),
+        () => [...new Set(agents.flatMap((a) => (a.harness && !keptByNoClick(a) ? [`${a.harness} ${a.model ?? ''}`] : [])))].sort(),
         [agents]
     );
     // The harnesses as the New agent picker reads them (the same key), then each model's name from its harness's list.
@@ -42,13 +42,13 @@ export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspa
     return useMemo(() => {
         const lead: AgentChoice[] = workspaceId
             ? ours
-                ? [{ id: ours.agentId, source: 'platform', name: ours.name, noclick: true, role: NOCLICK_LISTENS }]
+                ? [{ id: ours.agentId, name: ours.name, noclick: true, role: NOCLICK_LISTENS }]
                 : []
-            : agents.filter((a) => a.source === 'platform' && a.id === noclick).map((a) => ({ ...a, name: YOUR_NOCLICK, noclick: true, role: NOCLICK_LISTENS }));
+            : agents.filter((a) => a.id === noclick).map((a) => ({ ...a, name: YOUR_NOCLICK, noclick: true, role: NOCLICK_LISTENS }));
         const rest = agents
-            .filter((a) => a.source !== 'platform' || !keptByNoClick(a))
+            .filter((a) => !keptByNoClick(a))
             .map((a): AgentChoice => {
-                const line = a.source === 'platform' && a.harness ? names.data?.[`${a.harness} ${a.model ?? ''}`] : undefined;
+                const line = a.harness ? names.data?.[`${a.harness} ${a.model ?? ''}`] : undefined;
                 return line ? { ...a, modelLine: line } : a;
             });
         return [...lead, ...rest];

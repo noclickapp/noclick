@@ -11,12 +11,8 @@ import { COORDINATOR, fakeWork, type FakeWork } from './fixtures/workApi';
 import { HOME_NOCLICK_CHANNEL_TOPIC, NOCLICK_CHANNEL, NOCLICK_CHANNEL_TOPIC, noclickChannelTopic } from './intro';
 import { createWorkLive, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { Work } from './Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 /** Each request's round trip, as a network's: long enough that every state between them is drawn. */
 const ROUND_TRIP_MS = 25;
 

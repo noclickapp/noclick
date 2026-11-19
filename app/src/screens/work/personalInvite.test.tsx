@@ -10,12 +10,8 @@ import { WorkClientContext } from './client';
 import { fakeWork, type FakeWork } from './fixtures/workApi';
 import { WorkLiveContext } from '@/sdk/live';
 import { Work } from './Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 
 beforeEach(() => localStorage.clear());
 afterEach(cleanup);

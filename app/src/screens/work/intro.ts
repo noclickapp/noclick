@@ -144,7 +144,7 @@ export function makeHomeNoClickChannel(client: NoClick, noclickId: string, creat
     const making = (async () => {
         const holding = await Channel.list({ client, userFilter: NO_USER, agent: noclickId, kind: 'channel' });
         if (holding.some((c) => !c.workspaceId)) return null;
-        return await create({ workspaceId: null, name: NOCLICK_CHANNEL, topic: HOME_NOCLICK_CHANNEL_TOPIC, agents: [{ id: noclickId, source: 'platform', name: YOUR_NOCLICK, noclick: true }] });
+        return await create({ workspaceId: null, name: NOCLICK_CHANNEL, topic: HOME_NOCLICK_CHANNEL_TOPIC, agents: [{ id: noclickId, name: YOUR_NOCLICK, noclick: true }] });
     })();
     homeMade.set(client, making);
     making.catch(() => homeMade.delete(client));

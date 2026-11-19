@@ -11,12 +11,8 @@ import { fakeWork } from './fixtures/workApi';
 import { LIST_OPENS, LIST_ROOM } from './listRail';
 import { WorkLiveContext } from '@/sdk/live';
 import { Work } from './Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 const FOLDED_KEY = 'nc-work-list-folded';
 
 beforeEach(() => localStorage.clear());

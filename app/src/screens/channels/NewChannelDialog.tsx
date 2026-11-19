@@ -1,19 +1,16 @@
 // Starting a channel, in two steps. First its name (kept as Slack keeps them: lowercase words and dashes) and a
-// one-line topic; then who's in it: one searchable list of your agents (the NoClick of where it is first, then any the
-// app adds from elsewhere (MORE_AGENTS) and your platform agents) and the space's people, what's picked gathered above it. Agents in
-// it answer every message. In a workspace, a platform agent that isn't one of its members joins the workspace too.
+// one-line topic; then who's in it: one searchable list of your agents (the NoClick of where it is first, then your
+// platform agents) and the space's people, what's picked gathered above it. Agents in it answer every message. In a workspace, a platform agent that isn't one of its members joins the workspace too.
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { ArrowLeft, Check, Hash, Plus, Search, X } from 'lucide-react';
 import { ShellDialog } from '@/ui/ShellDialog';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '@/ui/buttons';
 import { FIELD_LABEL, PILL_FIELD } from '@/ui/fields';
-import { useSlot } from '@/slots';
 import { cn } from '@/ui/utils';
 import { AgentChoiceRow } from './AgentChoiceRow';
 import { MemberAvatar } from './avatars';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { agentGroups, channelSlug, hueFor } from './model';
-import { MORE_AGENTS } from './slots';
 import type { AgentChoice, PersonChoice } from './types';
 
 export interface NewChannelInput {
@@ -78,7 +75,6 @@ export function NewChannelDialog({
     user: AccountMenuUser;
     onCreate: (input: NewChannelInput) => Promise<void>;
 }) {
-    const more = useSlot(MORE_AGENTS);
     const [step, setStep] = useState<1 | 2>(1);
     const [name, setName] = useState('');
     const [topic, setTopic] = useState('');
@@ -126,9 +122,9 @@ export function NewChannelDialog({
         }
     };
 
-    // NoClick first, then any from elsewhere and your platform agents, as every agent picker orders them.
-    const ordered = agentGroups(agents, more?.label ?? null).flatMap((group) => group.agents);
-    const shownAgents = ordered.filter((a) => matches(query, [a.name, a.role, a.modelLine, a.source === 'automation' ? a.workflowName : ''].join(' ')));
+    // NoClick first, then your platform agents, as every agent picker orders them.
+    const ordered = agentGroups(agents).flatMap((group) => group.agents);
+    const shownAgents = ordered.filter((a) => matches(query, [a.name, a.role, a.modelLine].join(' ')));
     const shownPeople = people.filter((p) => matches(query, `${p.name} ${p.detail ?? ''}`));
     const pickedAgents = ordered.filter((a) => picked.has(a.id));
     const pickedPeople = people.filter((p) => picked.has(p.id));

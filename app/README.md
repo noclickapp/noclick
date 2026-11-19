@@ -127,7 +127,6 @@ The channels' (`src/screens/channels/slots.ts`; Work draws them):
 | Slot | Where it is | By default |
 |---|---|---|
 | `channels.agent.face` | An agent's face, wherever a channel draws one | Its initials on its own colour |
-| `channels.picker.moreAgents` | The pickers that put an agent in a channel: a group of agents from somewhere other than NoClick's, and adding one | Nothing: the platform's agents alone |
 
 Work's are listed under [Work](#work).
 

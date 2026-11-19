@@ -11,12 +11,8 @@ import { fakeWork, sectionsKey } from './fixtures/workApi';
 import { LIST_OPENS } from './listRail';
 import { WorkLiveContext } from '@/sdk/live';
 import { Work } from './Work';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { fill } from '@/slots';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
-// No agents from Automations in the pickers here (the hosted fill would ask the app's socket).
-fill(MORE_AGENTS, null);
 /** Keys a tooltip never shows (Rowan's rule: shortcuts work, they're never printed). */
 const SHORTCUT = /[⌘⇧⌥⌃]|\b(ctrl|cmd|shift|alt)\s*\+/i;
 

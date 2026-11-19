@@ -186,7 +186,7 @@ export function MembersPanel({
                 )}
                 {tab === 'agents' && (
                     <>
-                        {people.manages && <AddAgent agents={agents.filter((a) => a.source === 'platform' && !keptByNoClick(a) && !people.agents.some((m) => m.agentId === a.id))} onAdd={(id, name) => act(people.addAgent(id), `${name} joined ${space.name}`)} />}
+                        {people.manages && <AddAgent agents={agents.filter((a) => !keptByNoClick(a) && !people.agents.some((m) => m.agentId === a.id))} onAdd={(id, name) => act(people.addAgent(id), `${name} joined ${space.name}`)} />}
                         {people.agents.map((a) => {
                             const face = faces.get(a.agentId ?? '') ?? { id: a.id, kind: 'agent' as const, name: a.name ?? 'Agent' };
                             return (

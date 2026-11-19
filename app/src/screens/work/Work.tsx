@@ -15,8 +15,7 @@ import type { Channel, ChannelAuthor, ChannelMember, PersonChoice } from '@/scre
 import { WorkLoading, WorkNotice } from './notices';
 import { TooltipProvider } from '@/ui/tooltip';
 import { changeOf, platformTransport, sdkTyping, typingChangeOf, type Perspective, type PlatformTransport } from '@/screens/channels/sdkTransport';
-import { MORE_AGENTS, type MoreAgents } from '@/screens/channels/slots';
-import { standing, useSlot } from '@/slots';
+import { standing } from '@/slots';
 import { Channel as PlatformChannel, type NoClick } from 'noclick';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { useChannels, type Channels } from '@/screens/channels/useChannels';
@@ -66,18 +65,15 @@ function otherIn(channel: Channel): ChannelMember | null {
     return channel.members.find((m) => m.kind === 'human') ?? null;
 }
 
-/** One transport per client, agents from elsewhere (MORE_AGENTS: the agents in your Automations; a test fills its
- *  own) and perspective for the page's life, so what it held survives Work being left and opened again (useChannels
- *  keeps it per transport). */
-const transports = new WeakMap<NoClick, Map<MoreAgents | null, Map<string, PlatformTransport>>>();
+/** One transport per client and perspective for the page's life, so what it held survives Work being left and opened
+ *  again (useChannels keeps it per transport). */
+const transports = new WeakMap<NoClick, Map<string, PlatformTransport>>();
 
-export function transportFor(client: NoClick, more: MoreAgents | null, key: string, person: (Perspective & { workspaceId: string }) | undefined): PlatformTransport {
-    let byMore = transports.get(client);
-    if (!byMore) transports.set(client, (byMore = new Map()));
-    let byKey = byMore.get(more);
-    if (!byKey) byMore.set(more, (byKey = new Map()));
+export function transportFor(client: NoClick, key: string, person: (Perspective & { workspaceId: string }) | undefined): PlatformTransport {
+    let byKey = transports.get(client);
+    if (!byKey) transports.set(client, (byKey = new Map()));
     let transport = byKey.get(key);
-    if (!transport) byKey.set(key, (transport = platformTransport(client, person ? { moreAgents: more, sendTyping: standing(JOINED_TYPING)(client), person } : { moreAgents: more, sendTyping: sdkTyping(client) })));
+    if (!transport) byKey.set(key, (transport = platformTransport(client, person ? { sendTyping: standing(JOINED_TYPING)(client), person } : { sendTyping: sdkTyping(client) })));
     return transport;
 }
 
@@ -86,11 +82,10 @@ export const OWN = 'own';
 
 /** The channels a client reads (your account's own, or a joined space's through your eyes), followed live. */
 function useClientChannels(client: NoClick, space: WorkSpace | null, openId: string | null): { transport: PlatformTransport; channels: Channels } {
-    const more = useSlot(MORE_AGENTS);
     const person = space && !space.own && space.workspaceId && space.userId ? { me: space.userId, ownerName: space.accountName ?? 'The owner', workspaceId: space.workspaceId } : undefined;
     const key = person ? `${person.workspaceId}:${person.me}:${person.ownerName}` : OWN;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` names the perspective
-    const transport = useMemo(() => transportFor(client, more, key, person), [client, more, key]);
+    const transport = useMemo(() => transportFor(client, key, person), [client, key]);
     useWorkFrames('platform:channel', (frame) => transport.deliver(changeOf(frame)));
     useWorkFrames('platform:channel_typing', (frame) => transport.deliver(typingChangeOf(frame)));
     // The stream lost its place: the channels read everything they hold again (their own timer covers a backstop).

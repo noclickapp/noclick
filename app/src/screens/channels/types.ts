@@ -19,7 +19,8 @@ export interface ChannelMember {
     agentId?: string;
     /** A person's user id (in a space, the one their DM and role name them by). */
     userId?: string;
-    /** An agent from your Automations: its workflow and agent node, and the workflow's name. */
+    /** An agent from your Automations, put in the channel before the pickers stopped offering them: its workflow and
+     *  agent node, and the workflow's name. */
     workflowId?: string;
     nodeId?: string;
     workflowName?: string;
@@ -183,8 +184,9 @@ export interface ChannelWorkspace {
     agentIds?: string[];
 }
 
-interface AgentChoiceBase {
-    /** Which agent it is, as `agentKey` names a member: a platform agent's id, an automation's `workflowId:nodeId`. */
+/** One of your agents, to add to a channel: one made on the platform. */
+export interface AgentChoice {
+    /** Which agent it is, as `agentKey` names a member: its platform agent's id. */
     id: string;
     name: string;
     markType?: string;
@@ -199,9 +201,6 @@ interface AgentChoiceBase {
      *  pickers list the one that answers here first, in its mark. */
     noclick?: boolean;
 }
-
-/** One of your agents, to add to a channel: one made on the platform, or one in your Automations (an agent node of a workflow). */
-export type AgentChoice = (AgentChoiceBase & { source: 'platform' }) | (AgentChoiceBase & { source: 'automation'; workflowId: string; nodeId: string; workflowName: string });
 
 /** A person of the space, to add to a channel: their user id, their name, and a line under it (when they were last on). */
 export interface PersonChoice {

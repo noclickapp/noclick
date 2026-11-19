@@ -12,8 +12,6 @@ import { MENU_SURFACE } from '@/ui/menus';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
-import { MORE_AGENTS } from '@/screens/channels/slots';
-import { useSlot } from '@/slots';
 import { usePickerAgents } from './pickerAgents';
 import { SearchField } from './tabs';
 
@@ -61,8 +59,7 @@ export function ChannelMembers({
     const inRoom = members.filter((m) => m.kind === 'agent' || m.kind === 'outside');
     const shownAgents = inRoom.filter((m) => hit(m, m.role ?? ''));
     const choices = usePickerAgents(agents, open && adding, channel.workspaceId ?? null);
-    const moreLabel = useSlot(MORE_AGENTS)?.label ?? null;
-    const addable = agentGroups(choices.filter((a) => !members.some((m) => agentKey(m) === a.id) && hit(a, `${a.role ?? ''} ${a.modelLine ?? ''}`)), moreLabel);
+    const addable = agentGroups(choices.filter((a) => !members.some((m) => agentKey(m) === a.id) && hit(a, `${a.role ?? ''} ${a.modelLine ?? ''}`)));
     const closed = channel.status === 'closed';
     const pick = (m: ChannelMember) => {
         setOpen(false);

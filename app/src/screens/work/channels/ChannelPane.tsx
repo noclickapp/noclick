@@ -463,7 +463,7 @@ function ChannelPaneBody({
     // The space's NoClick channel, before anything's said in it (who joined says nothing): what to ask NoClick, each
     // ask a tap into the box. One names an agent of yours by its own name, never a NoClick (the platform flags each,
     // whatever space it's of) or one still called what new agents are; with none, it's left out.
-    const anAgent = channels.agents.find((a) => a.source === 'platform' && !keptByNoClick(a) && !/^(new )?agent( \d+)?$/i.test(a.name.trim()))?.name;
+    const anAgent = channels.agents.find((a) => !keptByNoClick(a) && !/^(new )?agent( \d+)?$/i.test(a.name.trim()))?.name;
     const firstAsks =
         !closed && theNoClickChannel && !messages.some((m) => !m.ephemeral && !m.membership)
             ? [
