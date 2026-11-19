@@ -10,6 +10,10 @@ export default [
     route('developers/*', 'routes/developers.tsx'),
     // The console over made-up data, with no account or network: development only (the route answers 404 otherwise).
     route('developers-lab/*', 'routes/developers-lab.tsx'),
+    // What the account owns and what it costs, acting as the app's key.
+    route('resources', 'routes/resources.tsx'),
+    // Resources over made-up data: development only, as the console's lab.
+    route('resources-lab', 'routes/resources-lab.tsx'),
     // Last, so every other path has a route too: middleware runs only for a path that matches one, and the gate (the
     // root route's middleware) must see every request.
     route('*', 'routes/notFound.tsx'),

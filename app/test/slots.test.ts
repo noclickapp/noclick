@@ -120,11 +120,13 @@ describe('the app', () => {
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
             'channels.agent.face',
             'channels.picker.moreAgents',
-            'console.app.durableObjects',
-            'console.apps.trash',
             'console.cards.issuerForm',
             'console.connection.mark',
             'console.terms',
+            'resources.file.markdown',
+            'resources.kinds',
+            'resources.number.actions',
+            'resources.numbers',
         ]);
         expect(problems(modules).join('\n')).toBe('');
     });

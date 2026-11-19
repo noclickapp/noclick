@@ -36,8 +36,11 @@ export function AccountScreen() {
             {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
             {reading.state === 'ready' && <Account status={reading.status} />}
             <div className="flex flex-wrap items-center gap-3">
-                {/* Where the account is worked on: its agents, users, resources, logs and usage. */}
-                <a className={BUTTON_PRIMARY} href="/developers">
+                {/* What the account owns and what it costs, then where it's worked on: its agents, users, logs and usage. */}
+                <a className={BUTTON_PRIMARY} href="/resources">
+                    Resources
+                </a>
+                <a className={BUTTON_SECONDARY} href="/developers">
                     Developer console
                 </a>
                 <form method="post" action="/logout">

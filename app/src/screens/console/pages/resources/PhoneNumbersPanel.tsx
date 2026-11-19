@@ -553,7 +553,7 @@ function NumberDrawer({
 
 /** The shared number purchase flow (``usePhoneNumberPurchase``) over ``/v1``: prices are the API's own dollars, and a
  *  purchase's ceilings are exactly the prices the row showed. */
-function useConsoleNumberTransport(client: ReturnType<typeof useConsole>['client'], buyer: { user: string | null; name: string }): NumberPurchaseTransport {
+export function useConsoleNumberTransport(client: ReturnType<typeof useConsole>['client'], buyer: { user: string | null; name: string }): NumberPurchaseTransport {
     const { site } = useConsole();
     const latest = useRef(buyer);
     latest.current = buyer;
