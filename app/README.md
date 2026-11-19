@@ -104,6 +104,13 @@ by default, so the app is whole with every slot left alone. The console's are in
 | `console.apps.trash` | Under the Apps list | A plain list, each app to restore or purge |
 | `console.app.durableObjects` | An app's drawer, after its bindings | Nothing |
 
+The channels' (`src/screens/channels/slots.ts`; the screens that use them come later):
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `channels.agent.face` | An agent's face, wherever a channel draws one | Its initials on its own colour |
+| `channels.picker.moreAgents` | The pickers that put an agent in a channel: a group of agents from somewhere other than NoClick's, and adding one | Nothing: the platform's agents alone |
+
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
 file there runs before any page renders, and nothing else in the app imports from it, so pulling a newer version
 of the app leaves your additions alone. Its README has a worked example.

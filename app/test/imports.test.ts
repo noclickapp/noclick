@@ -155,7 +155,9 @@ describe('reading imports', () => {
 
 describe('the app', () => {
     const manifest = JSON.parse(readFileSync(join(APP, 'package.json'), 'utf8'));
-    const packages = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.devDependencies ?? {})]);
+    // A types package declares the module it types, as TypeScript reads it: `@types/mdast` is `mdast`.
+    const typed = (name: string) => (name.startsWith('@types/') ? [name, name.slice('@types/'.length).replace(/^(.+)__(.+)$/, '@$1/$2')] : [name]);
+    const packages = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.devDependencies ?? {})].flatMap(typed));
 
     it('imports nothing from outside this repository, and only packages it declares', () => {
         const files = appFiles();

@@ -118,6 +118,8 @@ describe('the app', () => {
     it('declares each slot once, beside its screen, and fills none itself', () => {
         const modules = appModules();
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
+            'channels.agent.face',
+            'channels.picker.moreAgents',
             'console.app.durableObjects',
             'console.apps.trash',
             'console.cards.issuerForm',
