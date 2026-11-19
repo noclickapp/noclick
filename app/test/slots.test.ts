@@ -152,6 +152,7 @@ describe('the app', () => {
             'work.message.file',
             'work.model.name',
             'work.reply.markdown',
+            'work.teamWorkspace',
             'work.toolServer.signIn',
             'work.turn.cards',
         ]);

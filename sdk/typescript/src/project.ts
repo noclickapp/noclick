@@ -341,6 +341,84 @@ function toPreviewLink(value: unknown): PreviewLink {
   };
 }
 
+/**
+ * How each instance of an app runs in a container, by name, as `Project.create` and `update` take it: each one left
+ * out is the default (in `update`, keeps its value). Applies from the app's next release.
+ */
+export interface ContainerSettings {
+  /** vCPUs per instance: 0.5 to 8 (1, 2, 4, 6 or 8; under 1 in steps of 0.01, where each instance answers one request at a time). 1 unless set. */
+  cpu?: number;
+  /**
+   * Memory per instance, in MiB, from 512: up to 1024 under 1 vCPU, 4096 at 1, 8192 at 2, 2048 to 16384 at 4, 4096 to
+   * 24576 at 6 and 4096 to 32768 at 8. 512 unless set.
+   */
+  memory?: number;
+  /** Instances kept running while production serves it, whether or not anything calls it, so no request waits for one to start: 0 to 3. 0 unless set. */
+  minInstances?: number;
+  /** The most instances it runs at once: 1 to 10. 10 unless set. */
+  maxInstances?: number;
+  /**
+   * Whether its CPU runs between requests too, for work that goes on without one (a bot, a queue worker, a loop): each
+   * instance is then billed from start to stop. Takes 1 vCPU or more. False unless set.
+   */
+  cpuAlways?: boolean;
+  /** How long a request may take, in seconds: 1 to 3600. 300 unless set. */
+  requestTimeoutS?: number;
+}
+
+/**
+ * How each instance of an app runs in a container (`ContainerSettings`, each one set), and what its warm instances cost.
+ * Changed with `update({ container })`, they apply from the app's next release (a deploy, or a promote). An app on
+ * the edge has them too: they size its releases in a container.
+ */
+export interface ProjectContainer {
+  /** vCPUs per instance. */
+  cpu: number;
+  /** Memory per instance, in MiB. */
+  memory: number;
+  /** Instances kept running while production serves it, whether or not anything calls it. */
+  minInstances: number;
+  /** The most instances it runs at once. */
+  maxInstances: number;
+  /** Whether its CPU runs between requests too: each instance billed from start to stop. */
+  cpuAlways: boolean;
+  /** How long a request may take, in seconds. */
+  requestTimeoutS: number;
+  /** What its warm instances cost a month with nothing calling it, in US dollars, at the price where it runs: 0 with none kept warm. */
+  idleUsdPerMonth: number;
+  /**
+   * What its settings cost or change beyond each request, in a sentence: the instances kept warm and their price, that
+   * under 1 vCPU each instance answers one request at a time, or that an app pinned to the edge doesn't use them. Null
+   * when there's nothing to say.
+   */
+  note: string | null;
+  raw: JsonObject;
+}
+
+function toProjectContainer(value: unknown): ProjectContainer {
+  const raw = asObject(value);
+  return {
+    cpu: num(raw.cpu) ?? 1, memory: num(raw.memory) ?? 512, minInstances: num(raw.min_instances) ?? 0,
+    maxInstances: num(raw.max_instances) ?? 10, cpuAlways: raw.cpu_always === true,
+    requestTimeoutS: num(raw.request_timeout_s) ?? 300, idleUsdPerMonth: num(raw.idle_usd_per_month) ?? 0,
+    note: str(raw.note), raw,
+  };
+}
+
+/**
+ * Container settings on the wire: only those given (another app's `container` gives its settings alone).
+ * @internal
+ */
+export function containerWire(settings: ContainerSettings): JsonObject {
+  if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
+    throw new TypeError("container is an object of settings by name: cpu, memory, minInstances, maxInstances, cpuAlways, requestTimeoutS.");
+  }
+  return compact({
+    cpu: settings.cpu, memory: settings.memory, min_instances: settings.minInstances, max_instances: settings.maxInstances,
+    cpu_always: settings.cpuAlways, request_timeout_s: settings.requestTimeoutS,
+  });
+}
+
 /** One hour or day of an app's traffic: the requests from `at` on, and how many of them failed. */
 export interface TrafficInterval {
   at: Date | null;
@@ -1363,7 +1441,7 @@ const CONVERGED = [
   "check_paths",
 ] as const;
 
-async function wireBody(name: string, options: ProjectCreateOptions): Promise<JsonObject> {
+async function wireBody(name: string, options: ProjectCreateOptions & { container?: ContainerSettings }): Promise<JsonObject> {
   return {
     ...compact({
       name,
@@ -1375,6 +1453,7 @@ async function wireBody(name: string, options: ProjectCreateOptions): Promise<Js
       deploy_on_push: options.deployOnPush,
       preview_resources: options.previewResources,
       check_paths: options.checkPaths,
+      container: options.container === undefined ? undefined : containerWire(options.container),
     }),
     ...defined({ budget_usd_per_month: options.budgetUsdPerMonth }), // null: only an app NoClick publishes has none
   };
@@ -1410,15 +1489,22 @@ export class Project extends ApiObject {
   /**
    * Create a project (unique per user; a duplicate throws `Conflict` with `existingId`, or with
    * `allowExisting: true` returns the project already there, as it is) that deploys `repo`, or a new,
-   * empty repo of the same name when omitted. Nothing is deployed until `deploy()`.
+   * empty repo of the same name when omitted. Nothing is deployed until `deploy()`. `container` sizes each
+   * instance of its releases in a container (`ContainerSettings`: its `cpu`, `memory`, the `minInstances` kept
+   * running whether or not anything calls it, `maxInstances`, `cpuAlways` and `requestTimeoutS`, each one left out
+   * at its default). A setting out of bounds throws `InvalidRequest` naming it (`container.memory`), and so do warm
+   * instances whose cost alone passes the budget (`container.min_instances`, with their `idle_usd_per_month`).
    *
    * ```ts
    * const app = await Project.create("booking", {
    *   repo, previewResources: "branch", checkPaths: ["/", { path: "/api/health", status: 200 }],
    * });
+   * // A Discord bot that stays connected with nothing calling it: one instance kept running, its CPU on between requests.
+   * const bot = await Project.create("standup-bot", { repo, runtime: "container", container: { cpuAlways: true, minInstances: 1 } });
+   * console.log(bot.container.idleUsdPerMonth, bot.container.note);
    * ```
    */
-  static async create(name: string, options: ProjectCreateOptions & AllowExisting = {}): Promise<Project> {
+  static async create(name: string, options: ProjectCreateOptions & AllowExisting & { container?: ContainerSettings } = {}): Promise<Project> {
     const scope = resolveScope(options.user);
     const raw = await createNamed("/v1/projects", await wireBody(name, options), {
       allowExisting: options.allowExisting, user: scope, client: options.client,
@@ -1600,6 +1686,14 @@ export class Project extends ApiObject {
   get badgeCorner(): BadgeCorner {
     return this._field("badge_corner");
   }
+  /**
+   * How each of its instances runs in a container (`cpu`, `memory`, `minInstances`, `maxInstances`, `cpuAlways`,
+   * `requestTimeoutS`), and what its warm instances cost a month with nothing calling it (`idleUsdPerMonth`, with a
+   * `note` in words). Set with `create` or `update`; each release runs at the settings it was released with.
+   */
+  get container(): ProjectContainer {
+    return toProjectContainer(this._field("container"));
+  }
   get userId(): string | null {
     return this._field("user_id");
   }
@@ -1689,11 +1783,24 @@ export class Project extends ApiObject {
    * (`liveEditing`, see `app.live`), the corner its badge sits in (`badgeCorner`: away from a chat's composer or a
    * corner button, say), or who opens its previews (`previewAccess`: `public` or `link`, the paths a private
    * preview leaves open in `previewPublicPaths`; production is always public; while NoClick's front door doesn't keep
-   * previews private yet, the answer's `raw.notes` say so). A new repo, runtime, framework or branch applies from the
-   * next deployment
-   * (what's live keeps serving where it runs until then), the rest at once; its user's cap still
-   * applies either way. A field you leave out is unchanged. Pinning a runtime the app's framework
-   * doesn't run on throws `InvalidRequest`: change the framework with it.
+   * previews private yet, the answer's `raw.notes` say so), or how each of its instances runs in a container
+   * (`container`, `ContainerSettings`: a setting left out keeps its value, another app's `container` gives its
+   * settings, and `null` sets every one back to its default). A new repo, runtime, framework, branch or container
+   * settings apply from the next release (a deploy, or for container settings a promote of what production serves;
+   * the answer's `raw.notes` say so), and what's live keeps serving as it runs until then; the rest apply at once; its
+   * user's cap still applies either way. A field you leave out is unchanged. Pinning a runtime the app's framework
+   * doesn't run on throws `InvalidRequest`: change the framework with it. A container setting out of bounds throws
+   * `InvalidRequest` naming it (`container.memory`), and so do warm instances whose cost alone passes the app's budget
+   * (`container.min_instances`, with their `idle_usd_per_month`).
+   *
+   * ```ts
+   * // An app that loads a model at start gets more room, then deploys to run at it.
+   * const app = Project.fromName("transcriber");
+   * await app.update({ container: { cpu: 2, memory: 4096 } });
+   * await (await app.deploy()).wait();
+   * // Every setting back to its default.
+   * await app.update({ container: null });
+   * ```
    */
   async update(changes: {
     repo?: Repo | string;
@@ -1708,6 +1815,7 @@ export class Project extends ApiObject {
     badgeCorner?: BadgeCorner;
     previewAccess?: PreviewAccess;
     previewPublicPaths?: string[];
+    container?: ContainerSettings | null;
   }): Promise<this> {
     this._raw = await this._request<JsonObject>("PATCH", await this._projectPath(), {
       json: defined({
@@ -1723,6 +1831,7 @@ export class Project extends ApiObject {
         badge_corner: changes.badgeCorner,
         preview_access: changes.previewAccess,
         preview_public_paths: changes.previewPublicPaths,
+        container: changes.container == null ? changes.container : containerWire(changes.container),
       }),
     });
     return this;

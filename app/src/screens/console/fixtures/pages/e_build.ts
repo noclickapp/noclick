@@ -613,6 +613,72 @@ export const USAGE: Record<string, Json> = {
     },
 };
 
+// ── container settings ───────────────────────────────────────────────────
+
+/** How each instance of an app runs in a container unless set. */
+const CONTAINER_DEFAULTS = { cpu: 1, memory: 512, min_instances: 0, max_instances: 10, cpu_always: false, request_timeout_s: 300 };
+type ContainerSettings = typeof CONTAINER_DEFAULTS;
+const CONTAINER_NAMES = Object.keys(CONTAINER_DEFAULTS) as (keyof ContainerSettings)[];
+/** The memory each whole vCPU count takes, in MiB (under 1 vCPU, at most 1024). */
+const MEMORY_BY_CPU: Record<number, [number, number]> = { 1: [512, 4096], 2: [512, 8192], 4: [2048, 16384], 6: [4096, 24576], 8: [4096, 32768] };
+/** A warm instance's price a second where the fixtures' apps run, per vCPU and per GiB: idle between requests, or with its CPU always on. */
+const IDLE_USD_PER_S = { cpu: 0.0000025, gib: 0.0000025 };
+const ALWAYS_USD_PER_S = { cpu: 0.000018, gib: 0.000002 };
+const MONTH_S = 730 * 3600;
+const SETTINGS_APPLY =
+    'Its container settings apply from its next release: each release in a container runs at the settings it was released with. Deploy, or promote what production serves, to apply them now.';
+
+/** What the warm instances of `s` cost a month with nothing calling the app, in dollars. */
+function idleUsd(s: ContainerSettings): number {
+    const rate = s.cpu_always ? ALWAYS_USD_PER_S : IDLE_USD_PER_S;
+    return Math.round(s.min_instances * MONTH_S * (s.cpu * rate.cpu + (s.memory / 1024) * rate.gib) * 100) / 100;
+}
+
+/** An app's `container` as the API answers it: on the edge nothing runs in a container, so nothing is kept warm. */
+function containerView(s: ContainerSettings, runtime: string): Json {
+    const edge = runtime === 'edge';
+    const idle = edge ? 0 : idleUsd(s);
+    const said: string[] = [];
+    if (edge && CONTAINER_NAMES.some((n) => s[n] !== CONTAINER_DEFAULTS[n])) said.push("Its releases run on the edge, where these don't apply: they size its releases in a container.");
+    if (!edge && s.min_instances) said.push(`${s.min_instances} instance${s.min_instances === 1 ? '' : 's'} kept warm while production serves it: about $${idle.toFixed(2)} a month even with nothing calling it.`);
+    if (!edge && s.cpu_always) said.push('CPU always on: each instance is billed from start to stop, and an idle one runs up to 15 minutes after its last request.');
+    if (!edge && s.cpu < 1) said.push('Under 1 vCPU, each instance answers one request at a time.');
+    return { ...s, idle_usd_per_month: idle, note: said.join(' ') || null };
+}
+
+/** The settings an app's `container` view holds. */
+const settingsIn = (view: Json): ContainerSettings => Object.fromEntries(CONTAINER_NAMES.map((n) => [n, view[n] ?? CONTAINER_DEFAULTS[n]])) as ContainerSettings;
+
+/** Whether a merge was refused (its answer) rather than made. */
+const isRefusal = (merged: ContainerSettings | FixtureReply): merged is FixtureReply => 'status' in merged;
+
+/** `given` over `current` (null: every one back to its default), or the refusal naming the setting out of bounds. */
+function mergedContainer(current: ContainerSettings, given: unknown): ContainerSettings | FixtureReply {
+    if (given === null) return { ...CONTAINER_DEFAULTS };
+    if (typeof given !== 'object' || Array.isArray(given)) return invalid(`container is an object of settings by name: ${CONTAINER_NAMES.join(', ')}.`, 'container');
+    const unknownName = Object.keys(given).find((n) => !(CONTAINER_NAMES as string[]).includes(n));
+    if (unknownName) return invalid(`container has no '${unknownName}': it takes ${CONTAINER_NAMES.join(', ')}.`, `container.${unknownName}`);
+    const s = { ...current, ...Object.fromEntries(Object.entries(given).filter(([, v]) => v != null)) } as ContainerSettings;
+    const refuse = (name: keyof ContainerSettings, message: string) => invalid(message, `container.${name}`);
+    const whole = (name: keyof ContainerSettings, least: number, most: number, unit: string) =>
+        Number.isInteger(s[name]) && Number(s[name]) >= least && Number(s[name]) <= most ? null : refuse(name, `container.${name} is ${least} to ${most} ${unit}, not ${s[name]}.`);
+    if (!(s.cpu >= 0.5 && s.cpu <= 8)) return refuse('cpu', `container.cpu is 0.5 to 8 vCPUs, not ${s.cpu}.`);
+    const bound =
+        whole('memory', 512, 32768, 'MiB') ?? whole('min_instances', 0, 3, 'instances') ?? whole('max_instances', 1, 10, 'instances') ?? whole('request_timeout_s', 1, 3600, 'seconds');
+    if (bound) return bound;
+    if (s.min_instances > s.max_instances) return refuse('min_instances', `container.min_instances (${s.min_instances}) is more than its max_instances (${s.max_instances}).`);
+    if (s.cpu < 1) {
+        if (Math.round(s.cpu * 100) !== s.cpu * 100) return refuse('cpu', `container.cpu: Under 1 vCPU, cpu is 0.5 to 0.99 in steps of 0.01, not ${s.cpu}.`);
+        if (s.memory > 1024) return refuse('memory', `container.memory: ${s.cpu} vCPU takes at most 1024 MiB of memory, not ${s.memory}: give it 1 vCPU or more for more.`);
+        if (s.cpu_always) return refuse('cpu_always', `container.cpu_always: CPU always on takes 1 vCPU or more: under 1 vCPU (${s.cpu}) runs only while it answers a request.`);
+        return s;
+    }
+    const memory = MEMORY_BY_CPU[s.cpu];
+    if (!memory) return refuse('cpu', `container.cpu: From 1 vCPU up, cpu is 1, 2, 4, 6 or 8, not ${s.cpu}.`);
+    if (s.memory < memory[0] || s.memory > memory[1]) return refuse('memory', `container.memory: ${s.cpu} vCPU takes ${memory[0]} to ${memory[1]} MiB of memory, not ${s.memory}: change cpu with it.`);
+    return s;
+}
+
 /** An app's view. Its URL is the first domain serving it, else its own hostname. */
 function project(n: number, fields: Json & { id?: string; name: string; repo_id: string; user_id: string | null; domain_names?: string[] }) {
     const id = fields.id ?? buildId(n);
@@ -631,6 +697,7 @@ function project(n: number, fields: Json & { id?: string; name: string; repo_id:
         deploy_on_push: 'off',
         preview_access: 'public',
         preview_public_paths: [] as string[],
+        container: containerView(CONTAINER_DEFAULTS, String(fields.runtime ?? 'edge')),
         region: 'us-east',
         production: DEPLOYMENTS.find((d) => d.project_id === id && d.production) ?? null,
         created_at: ago(8 * DAY),
@@ -876,6 +943,37 @@ function projectRefusal(runtime: string, body: Json): FixtureReply | null {
     return null;
 }
 
+/**
+ * `app` after a PATCH of `body`, as the API answers it: its fields changed, and its container settings merged over its
+ * own (null: back to the defaults), refused by the setting out of bounds or when keeping its instances warm would
+ * cost more than its budget, and priced, the answer's notes saying they apply from its next release.
+ */
+export function patchApp(app: { region: string; runtime: string; budget_usd_per_month: number | null; container: Json }, body: Json): FixtureReply {
+    if (body.region != null && body.region !== app.region) {
+        return apiError(409, 'conflict', `The app runs in ${app.region}, fixed when it was created.`, 'Create another app in that region, or leave region out.', { region: app.region });
+    }
+    const refused = projectRefusal(app.runtime, body);
+    if (refused) return refused;
+    if (body.container === undefined) return ok({ ...app, ...body });
+    const { container, ...rest } = body;
+    const merged = mergedContainer(settingsIn(app.container), container);
+    if (isRefusal(merged)) return merged;
+    const runtime = String(rest.runtime ?? app.runtime);
+    const budget = (rest.budget_usd_per_month === undefined ? app.budget_usd_per_month : rest.budget_usd_per_month) as number | null;
+    const idle = runtime === 'edge' ? 0 : idleUsd(merged);
+    if (budget != null && idle > budget) {
+        const n = merged.min_instances;
+        return apiError(
+            400,
+            'invalid_request',
+            `Keeping ${n} instance${n === 1 ? '' : 's'} warm costs about $${idle.toFixed(2)} a month with nothing calling the app, more than its $${budget.toFixed(2)} budget: it would pause for it.`,
+            'Keep fewer warm, size them smaller, or raise budget_usd_per_month with it.',
+            { field: 'container.min_instances', idle_usd_per_month: idle }
+        );
+    }
+    return ok({ ...app, ...rest, container: containerView(merged, runtime), notes: [SETTINGS_APPLY] });
+}
+
 /** A link opening the newest serving preview of `app` (or `branch`'s), as POST /v1/projects/{id}/previews/link answers one. */
 function previewLink(r: FixtureRequest, app: App): FixtureReply {
     const branch = ((r.body ?? {}) as Json).branch as string | undefined;
@@ -1019,6 +1117,8 @@ const projectRoutes: FixtureRoute[] = [
             if (refused) return refused;
             const taken = PROJECTS.find((p) => p.name === name && p.user_id === actingUser(r));
             if (taken) return apiError(409, 'conflict', `A project named '${name}' already exists.`, 'Use that one (Project.from_name), or pick another name.', { existing_id: taken.id });
+            const container = body.container === undefined ? CONTAINER_DEFAULTS : mergedContainer(CONTAINER_DEFAULTS, body.container);
+            if (isRefusal(container)) return container;
             return {
                 status: 201,
                 body: project(209, {
@@ -1031,6 +1131,7 @@ const projectRoutes: FixtureRoute[] = [
                     budget_usd_per_month: (body.budget_usd_per_month as number | undefined) ?? 10,
                     deploy_on_push: (body.deploy_on_push as string | undefined) ?? 'off',
                     region: (body.region as string | undefined) ?? 'us-east',
+                    container: containerView(container, runtime),
                     user_id: actingUser(r),
                     created_at: NOW,
                 }),
@@ -1082,13 +1183,7 @@ const projectRoutes: FixtureRoute[] = [
     {
         method: 'PATCH',
         path: '/v1/projects/:id',
-        reply: onApp((r, app) => {
-            const body = (r.body ?? {}) as Json;
-            if (body.region != null && body.region !== app.region) {
-                return apiError(409, 'conflict', `The app runs in ${app.region}, fixed when it was created.`, 'Create another app in that region, or leave region out.', { region: app.region });
-            }
-            return projectRefusal(app.runtime, body) ?? ok({ ...app, ...body });
-        }),
+        reply: onApp((r, app) => patchApp(app, (r.body ?? {}) as Json)),
     },
     {
         method: 'GET',

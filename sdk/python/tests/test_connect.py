@@ -597,6 +597,29 @@ def test_accounts_connected_in_the_app_list_load_and_run_by_their_credential_ref
     assert body(direct.calls.last.request)["ref"] == f"{APP_ID}.send_email"
 
 
+TEAM = "5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70"
+
+
+def test_an_account_shared_with_a_team_is_read_and_run_in_that_teams_workspace(api, client):
+    shared = {**FROM_THE_APP, "access": "view", "organization_id": TEAM}
+    lst = api.get("/v1/connections").respond(json=listing(shared))
+    api.get(f"/v1/connections/{APP_ID}").respond(json=shared)
+    run = api.post(f"/v1/connections/{APP_ID}/operations/send_email/run").respond(
+        json={"object": "operation_result", "connection": APP_ID, "result": {"id": "msg_1"}})
+    [team_account] = nc.Connection.list(organization_id=TEAM)
+    assert lst.calls.last.request.url.params["organization_id"] == TEAM
+    assert (team_account.organization_id, team_account.access) == (TEAM, "view")
+    # What it does goes to the workspace it was read in, and one named by id with its workspace goes there too.
+    assert team_account.run("send_email", {"to": "a@b.c"}) == {"id": "msg_1"}
+    nc.Connection.from_id(APP_ID, organization_id=TEAM).run("send_email", {"to": "a@b.c"})
+    assert [c.request.url.params.get("organization_id") for c in run.calls] == [TEAM, TEAM]
+    assert nc.Connection.get(APP_ID, organization_id=TEAM).organization_id == TEAM
+    # The account's own carry none.
+    own = api.get("/v1/connections/gmail").respond(json={**CONN, "organization_id": None})
+    assert nc.Connection.get("gmail").organization_id is None
+    assert "organization_id" not in own.calls.last.request.url.params
+
+
 def test_an_account_agent_takes_an_app_connection_as_a_tool_by_its_id(api, client):
     from platform_helpers import agent_row
 

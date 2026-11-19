@@ -16,6 +16,8 @@
 import { resolveClient } from "./client.ts";
 import { asList, asObject, num, requiredNumber, str } from "./object.ts";
 import type { CallOptions, JsonObject } from "./object.ts";
+import { containerWire } from "./project.ts";
+import type { ContainerSettings } from "./project.ts";
 
 /** One thing to estimate: its `kind`, its options, and the usage you expect a month by name. */
 export interface EstimateRequestItem {
@@ -25,6 +27,11 @@ export interface EstimateRequestItem {
   name?: string;
   /** A project's: `edge` (the default) or `container`. */
   runtime?: "edge" | "container";
+  /**
+   * A container project's settings, as `Project.create` takes them (each one left out at its default): its item then
+   * says what its warm instances cost with nothing calling it (`idleUsdPerMonth`, its `warm_instances` line).
+   */
+  container?: ContainerSettings;
   /** A database's: `sqlite` (the default) or `postgres`. */
   engine?: "sqlite" | "postgres";
   /** Where a project (or its Durable Objects) would run; omitted, where a new one of yours would go. */
@@ -67,7 +74,10 @@ export interface EstimateItem {
   /** For people, e.g. `App on the edge`. */
   label: string;
   name: string | null;
-  /** What it was priced as: a project's `runtime`, `region` and `framework`, a database's `engine`. */
+  /**
+   * What it was priced as: a project's `runtime`, `region` and `framework` (and a container's `container` settings, as
+   * the API names them: `min_instances`, ...), a database's `engine`.
+   */
   options: JsonObject;
   /** Every usage it was priced at, by name: what you gave and the defaults for the rest. */
   usage: Record<string, number>;
@@ -77,6 +87,13 @@ export interface EstimateItem {
   lines: EstimateLine[];
   /** What its meters also charge that no usage here prices (an app's calls to AI, say), in words. */
   notIncluded: string[];
+  /**
+   * A container app's: what its warm instances (`minInstances`) cost a month with nothing calling it, in US dollars,
+   * counted in `monthlyUsd` too. Null for any other item.
+   */
+  idleUsdPerMonth: number | null;
+  /** A container app's: what its settings cost or change beyond each request, in a sentence (null when nothing). */
+  note: string | null;
   raw: JsonObject;
 }
 
@@ -135,7 +152,7 @@ function toItem(raw: JsonObject): EstimateItem {
     usage: Object.fromEntries(Object.entries(usage).map(([key, value]) => [key, Number(value)])),
     assumed: strings(raw.assumed), monthlyUsd: requiredNumber(raw, "monthly_usd"),
     lines: asList(raw.lines).map((line) => toLine(asObject(line), kind, name)),
-    notIncluded: strings(raw.not_included), raw,
+    notIncluded: strings(raw.not_included), idleUsdPerMonth: num(raw.idle_usd_per_month), note: str(raw.note), raw,
   };
 }
 
@@ -205,9 +222,11 @@ export class Estimate {
  * project's `runtime`, `region` and `framework`, a database's `engine`), an optional `name` of your own, and the
  * `usage` you expect a month by name (`Estimate.kinds()` lists each kind's). Usage you leave out is assumed from
  * the kind's defaults, and so is an option you leave out whose default changes a price (an edge app's `framework`
- * picks its build machine); every line a default decided says so (`assumed`). Prices are what each service costs
- * NoClick, nothing added, priced for your account's plan. Needs the `usage` scope; nothing is made, held or
- * charged. A kind, option or usage it can't price throws `InvalidRequest` naming the field.
+ * picks its build machine); every line a default decided says so (`assumed`). A container app (`runtime: "container"`)
+ * also takes the `container` settings `Project.create` takes: its item then says what its warm instances cost with
+ * nothing calling it (`idleUsdPerMonth`) and why (`note`). Prices are what each service costs NoClick, nothing added,
+ * priced for your account's plan. Needs the `usage` scope; nothing is made, held or charged. A kind, option or usage
+ * it can't price throws `InvalidRequest` naming the field.
  *
  *     const est = await estimate([
  *       { kind: "project", runtime: "edge", usage: { requests: 100_000 } },
@@ -219,11 +238,17 @@ export class Estimate {
  *       console.log(`${line.kind} ${line.charge}: ${line.quantity} ${line.unit} x $${line.unitUsd} = $${line.usd}${note}`);
  *     }
  *     console.log(`$${est.monthlyUsd.toFixed(2)} a month`);
+ *
+ *     // A bot in a container that stays connected, before you make it.
+ *     const [bot] = (await estimate([{ kind: "project", runtime: "container", container: { cpuAlways: true, minInstances: 1 } }])).items;
+ *     console.log(`$${bot.monthlyUsd.toFixed(2)} a month, $${bot.idleUsdPerMonth?.toFixed(2)} of it idle: ${bot.note}`);
  */
 export async function estimate(items: EstimateRequestItem[], options: CallOptions = {}): Promise<Estimate> {
   if (!Array.isArray(items)) throw new TypeError("items is a list, one entry per thing to estimate.");
+  // Each container's settings as the API names them; every other field is sent as it is.
+  const wire = items.map((item) => (item.container === undefined ? item : { ...item, container: containerWire(item.container) }));
   const raw = await resolveClient(options.client).request("POST", "/v1/estimates", {
-    json: { items }, user: options.user,
+    json: { items: wire }, user: options.user,
   });
   return new Estimate(asObject(raw));
 }

@@ -60,3 +60,29 @@ test("requireApproval sends the operations and keeps the answer", async () => {
   assert.deepEqual(route.last.body, { operations: ["send_email_message", "delete_message"] });
   assert.deepEqual(gmail.approvalOperations, ["delete_message", "send_email_message"]);
 });
+
+test("an account shared with a team is read and run in that team's workspace", async () => {
+  const { api } = setup();
+  const TEAM = "5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70";
+  const SHARED = { ...FROM_THE_APP, access: "view", organization_id: TEAM };
+  const list = api.on("GET", "/v1/connections", json(listing([SHARED])));
+  const runs = [...new Set([APP_ID, PATH_REF])].map((ref) => {
+    api.on("GET", `/v1/connections/${ref}`, json(SHARED));
+    return api.on("POST", `/v1/connections/${ref}/operations/send_email/run`,
+      json({ object: "operation_result", connection: APP_ID, result: { id: "msg_1" } }));
+  });
+  const [shared] = await nc.Connection.list({ organizationId: TEAM });
+  assert.equal(list.last.query.get("organization_id"), TEAM);
+  assert.deepEqual([shared.organizationId, shared.access], [TEAM, "view"]);
+  // What it does goes to the workspace it was read in, and one named by id with its workspace goes there too.
+  assert.deepEqual(await shared.run("send_email", { to: "a@b.c" }), { id: "msg_1" });
+  await nc.Connection.fromId(APP_ID, { organizationId: TEAM }).run("send_email", { to: "a@b.c" });
+  const ran = runs.flatMap((route) => route.calls);
+  assert.equal(ran.length, 2);
+  assert.ok(ran.every((call) => call.query.get("organization_id") === TEAM));
+  assert.equal((await nc.Connection.get(APP_ID, { organizationId: TEAM })).organizationId, TEAM);
+  // The account's own carry none.
+  api.on("GET", "/v1/connections/gmail", json(NAMED));
+  const own = await nc.Connection.get("gmail");
+  assert.equal(own.organizationId, null);
+});

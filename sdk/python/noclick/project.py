@@ -303,6 +303,64 @@ class PreviewLink:
                    raw.get("preview_access") or "", parse_time(raw.get("expires_at")), raw)
 
 
+# The settings ``container`` takes, by name (``ProjectContainer`` reads each back).
+_CONTAINER_SETTINGS = ("cpu", "memory", "min_instances", "max_instances", "cpu_always", "request_timeout_s")
+
+
+@dataclass(frozen=True)
+class ProjectContainer:
+    """How each instance of an app runs in a container, and what its warm instances cost: the ``cpu`` and
+    ``memory`` each instance gets, how many are kept running (``min_instances``) and how many it may grow to
+    (``max_instances``), whether its CPU runs between requests too (``cpu_always``), and how long a request may take
+    (``request_timeout_s``). Changed with ``update(container=...)``, they apply from the app's next release (a deploy,
+    or a promote). An app on the edge has them too: they size its releases in a container."""
+
+    #: vCPUs per instance: 0.5 to 8 (1, 2, 4, 6 or 8; under 1 in steps of 0.01, where each instance answers one
+    #: request at a time). 1 unless set.
+    cpu: float
+    #: Memory per instance, in MiB, from 512: up to 1024 under 1 vCPU, 4096 at 1, 8192 at 2, 2048 to 16384 at 4, 4096
+    #: to 24576 at 6 and 4096 to 32768 at 8. 512 unless set.
+    memory: int
+    #: Instances kept running while production serves it, whether or not anything calls it, so no request waits for
+    #: one to start: 0 to 3. 0 unless set.
+    min_instances: int
+    #: The most instances it runs at once: 1 to 10. 10 unless set.
+    max_instances: int
+    #: Whether its CPU runs between requests too, for work that goes on without one (a bot, a queue worker, a loop):
+    #: each instance is then billed from start to stop. Takes 1 vCPU or more. False unless set.
+    cpu_always: bool
+    #: How long a request may take, in seconds: 1 to 3600. 300 unless set.
+    request_timeout_s: int
+    #: What its warm instances cost a month with nothing calling it, in US dollars, at the price where it runs:
+    #: 0 with none kept warm.
+    idle_usd_per_month: float
+    #: What its settings cost or change beyond each request, in a sentence: the instances kept warm and their price,
+    #: that under 1 vCPU each instance answers one request at a time, or that an app pinned to the edge doesn't use
+    #: them. None when there's nothing to say.
+    note: Optional[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "ProjectContainer":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(float(raw.get("cpu") or 1), int(raw.get("memory") or 512), int(raw.get("min_instances") or 0),
+                   int(raw.get("max_instances") or 10), bool(raw.get("cpu_always")),
+                   int(raw.get("request_timeout_s") or 300), float(raw.get("idle_usd_per_month") or 0),
+                   raw.get("note"), raw)
+
+
+def _container(settings: Any) -> Optional[Dict[str, Any]]:
+    """Container settings on the wire: a mapping as it is, or a ``ProjectContainer``'s settings (None resets them)."""
+    if settings is None:
+        return None
+    if isinstance(settings, ProjectContainer):
+        return {name: getattr(settings, name) for name in _CONTAINER_SETTINGS}
+    if not isinstance(settings, Mapping):
+        raise TypeError("container is a mapping of settings by name: "
+                        "cpu, memory, min_instances, max_instances, cpu_always, request_timeout_s.")
+    return dict(settings)
+
+
 @dataclass(frozen=True)
 class TrafficInterval:
     """One hour or day of an app's traffic: the ``requests`` from ``at`` on, and how many of them failed
@@ -1530,6 +1588,12 @@ class Project(_Object):
         "badge_corner", doc="The corner of its pages the badge sits in, where it carries one: ``bottom-right`` unless "
         "set with ``update`` (``bottom-left``, ``top-right`` or ``top-left``).",
     )
+    container: ProjectContainer = field(
+        "container", ProjectContainer._from, doc="How each of its instances runs in a container (``cpu``, "
+        "``memory``, ``min_instances``, ``max_instances``, ``cpu_always``, ``request_timeout_s``), and what its warm "
+        "instances cost a month with nothing calling it (``idle_usd_per_month``, with a ``note`` in words). Set with "
+        "``create`` or ``update``; each release runs at the settings it was released with.",
+    )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
 
@@ -1623,6 +1687,7 @@ class Project(_Object):
         deploy_on_push: Optional[str] = None,
         preview_resources: Optional[str] = None,
         check_paths: Optional[Sequence[Union[str, Mapping[str, Any]]]] = None,
+        container: Optional[Union[Mapping[str, Any], ProjectContainer]] = None,
         allow_existing: bool = False,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
@@ -1666,6 +1731,16 @@ class Project(_Object):
         (``/pricing``), loaded in a browser, or what a plain request for a path
         must answer (``{"path": "/api/health", "status": 200}``, with
         ``"json": True`` for a JSON body), as ``update()`` takes them.
+        ``container`` sizes each instance of its releases in a container, by
+        name: ``cpu`` (vCPUs, 1 unless given), ``memory`` (MiB, 512),
+        ``min_instances`` kept running while production serves it whether or
+        not anything calls it (0), ``max_instances`` (10), ``cpu_always`` (CPU
+        between requests too, for a bot or a worker: each instance billed from
+        start to stop) and ``request_timeout_s`` (300); ``ProjectContainer``
+        says each one's bounds. A setting out of bounds raises
+        ``noclick.InvalidRequest`` naming it (``container.memory``), and so
+        do warm instances whose cost alone passes the budget
+        (``container.min_instances``, with their ``idle_usd_per_month``).
 
         Returns:
             The new project, loaded. Nothing is deployed until ``deploy()``.
@@ -1689,11 +1764,22 @@ class Project(_Object):
                     "booking", repo=repo, preview_resources="branch",
                     check_paths=["/", {"path": "/api/health", "status": 200}],
                 )
+
+            Run a Discord bot that stays connected with nothing calling it: one instance kept running, its CPU
+            on between requests::
+
+                bot = noclick.Project.create(
+                    "standup-bot", repo=repo, runtime="container",
+                    container={"cpu_always": True, "min_instances": 1},
+                )
+                print(bot.container.idle_usd_per_month, bot.container.note)
         """
         scope = resolve_scope(user)
         budget = UNSET if budget_usd_per_month is None else budget_usd_per_month
         body = await cls._wire(cls._body(name, repo, framework, production_branch, budget, region, runtime,
                                          deploy_on_push, preview_resources, check_paths))
+        if container is not None:
+            body["container"] = _container(container)
         raw = await cls._create_named("/v1/projects", body, allow_existing=allow_existing, user=scope, client=client)
         return cls._new(raw=raw, client=client, user=scope)
 
@@ -1962,6 +2048,7 @@ class Project(_Object):
         badge_corner: Any = UNSET,
         preview_access: Any = UNSET,
         preview_public_paths: Any = UNSET,
+        container: Any = UNSET,
     ) -> "Project":
         """Change the ``repo`` it deploys (a ``noclick.Repo`` or its id), its ``runtime``
         (``auto``, ``edge`` or ``container``), its ``framework``, its ``production_branch``, its
@@ -1976,9 +2063,17 @@ class Project(_Object):
         or a corner button, say), or who opens its previews (``preview_access``: ``public`` or
         ``link``, the paths a private preview leaves open in ``preview_public_paths``; production
         is always public; while NoClick's front door doesn't keep previews private yet the answer's
-        ``raw["notes"]`` say so). A new repo, runtime, framework
-        or branch applies from the next deployment (what's live keeps serving where it runs until
-        then), the rest at once. An app with code always has a budget: ``budget_usd_per_month=None``
+        ``raw["notes"]`` say so), or how each of its instances runs in a container (``container``:
+        a mapping of ``cpu``, ``memory``, ``min_instances``, ``max_instances``, ``cpu_always`` and
+        ``request_timeout_s``, where a setting left out keeps its value, or another app's
+        ``container``; ``container=None`` sets every one back to its default; ``ProjectContainer``
+        says each one's bounds). A new repo, runtime, framework, branch or container settings apply
+        from the next release (a deploy, or for container settings a promote of what production
+        serves; the answer's ``raw["notes"]`` say so), and what's live keeps serving as it runs until
+        then; the rest apply at once. A container setting out of bounds raises
+        ``noclick.InvalidRequest`` naming it (``container.memory``), and so do warm instances whose
+        cost alone passes the app's budget (``container.min_instances``, with their
+        ``idle_usd_per_month``). An app with code always has a budget: ``budget_usd_per_month=None``
         raises ``noclick.InvalidRequest`` (only an app NoClick publishes may have none). Its user's
         cap still applies either way. Pinning a runtime the app's framework doesn't run on raises
         ``noclick.InvalidRequest``: change the framework with it.
@@ -2039,6 +2134,22 @@ class Project(_Object):
                 app = noclick.Project.from_name("booking")
                 app.update(preview_access="link", preview_public_paths=["/api/webhooks/*"])
                 print(app.preview_link(branch="new-form").url)
+
+            Give an app that loads a model at start more room, then deploy to run at it::
+
+                app = noclick.Project.from_name("transcriber")
+                app.update(container={"cpu": 2, "memory": 4096})
+                app.deploy().wait()
+
+            Keep a bot connected with nothing calling it, seeing what that costs before it's live::
+
+                bot = noclick.Project.from_name("standup-bot")
+                bot.update(container={"cpu_always": True, "min_instances": 1})
+                print(bot.container.idle_usd_per_month, bot.raw["notes"])
+
+            Put every setting back to its default::
+
+                noclick.Project.from_name("standup-bot").update(container=None)
         """
         changes = {
             k: v for k, v in dict(
@@ -2049,6 +2160,7 @@ class Project(_Object):
                 preview_public_paths=list(preview_public_paths) if preview_public_paths not in (UNSET, None)
                 else preview_public_paths,
                 check_paths=_check_paths(check_paths) if check_paths not in (UNSET, None) else check_paths,
+                container=container if container is UNSET else _container(container),
             ).items()
             if v is not UNSET
         }

@@ -67,7 +67,8 @@ class EstimateItem:
     #: For people, e.g. ``App on the edge``.
     label: str
     name: Optional[str]
-    #: What it was priced as: a project's ``runtime``, ``region`` and ``framework``, a database's ``engine``.
+    #: What it was priced as: a project's ``runtime``, ``region`` and ``framework`` (and a container's ``container``
+    #: settings, each as an app's ``container`` reads it), a database's ``engine``.
     options: Dict[str, Any]
     #: Every usage it was priced at, by name: what you gave and the defaults for the rest.
     usage: Dict[str, float]
@@ -78,6 +79,11 @@ class EstimateItem:
     #: What its meters also charge that no usage here prices (an app's calls to AI, say), in words.
     not_included: List[str]
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: A container app's: what its warm instances (``min_instances``) cost a month with nothing calling it, in US
+    #: dollars, counted in ``monthly_usd`` too. None for any other item.
+    idle_usd_per_month: Optional[float] = None
+    #: A container app's: what its settings cost or change beyond each request, in a sentence (None when nothing).
+    note: Optional[str] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "EstimateItem":
@@ -85,7 +91,7 @@ class EstimateItem:
                    {k: float(v) for k, v in (raw.get("usage") or {}).items()}, list(raw.get("assumed") or []),
                    float(num(raw, "monthly_usd")),
                    [EstimateLine._from(line, raw["kind"], raw.get("name")) for line in raw.get("lines") or []],
-                   list(raw.get("not_included") or []), raw)
+                   list(raw.get("not_included") or []), raw, _maybe(raw.get("idle_usd_per_month")), raw.get("note"))
 
 
 @dataclass(frozen=True)
@@ -194,9 +200,12 @@ async def estimate(items: Sequence[Mapping[str, Any]], *, user: Any = AMBIENT,
     project's ``runtime``, ``region`` and ``framework``, a database's ``engine``), an optional ``name`` of your own,
     and the ``usage`` you expect a month by name (``noclick.Estimate.kinds()`` lists each kind's). Usage you leave
     out is assumed from the kind's defaults, and so is an option you leave out whose default changes a price (an
-    edge app's ``framework`` picks its build machine); every line a default decided says so (``assumed``). Prices
-    are what each service costs NoClick, nothing added, priced for your account's plan. Needs the ``usage`` scope;
-    nothing is made, held or charged.
+    edge app's ``framework`` picks its build machine); every line a default decided says so (``assumed``). A
+    container app (``"runtime": "container"``) also takes the ``container`` settings ``Project.create`` takes
+    (``cpu``, ``memory``, ``min_instances``, ``max_instances``, ``cpu_always``, ``request_timeout_s``): its item then
+    says what its warm instances cost with nothing calling it (``idle_usd_per_month``, its ``warm_instances`` line)
+    and why (``note``). Prices are what each service costs NoClick, nothing added, priced for your account's plan.
+    Needs the ``usage`` scope; nothing is made, held or charged.
 
     Returns:
         An ``Estimate``: ``monthly_usd``, every charge in ``lines`` (its ``unit``, ``unit_usd``, ``quantity`` and
@@ -221,6 +230,13 @@ async def estimate(items: Sequence[Mapping[str, Any]], *, user: Any = AMBIENT,
 
             est = noclick.estimate([{"kind": "database", "engine": "postgres",
                                      "usage": {"active_hours": 200, "compute_units": 0.25, "storage_gb": 2}}])
+
+        A bot in a container that stays connected, before you make it::
+
+            est = noclick.estimate([{"kind": "project", "runtime": "container",
+                                     "container": {"cpu_always": True, "min_instances": 1}}])
+            bot = est.items[0]
+            print(f"${bot.monthly_usd:.2f} a month, ${bot.idle_usd_per_month:.2f} of it idle: {bot.note}")
     """
     if isinstance(items, (str, bytes, Mapping)):
         raise TypeError("items is a list of dicts, one per thing to estimate.")
