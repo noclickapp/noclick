@@ -612,8 +612,8 @@ export class Deployment extends ApiObject {
     return this._field("serves") ?? null;
   }
   /**
-   * On the deployment a deploy's `wait()` gives: it went live, but its home page didn't load as a visitor's browser
-   * would (an answer other than 2xx, a redirect to another site, a script or stylesheet it names that doesn't load as
+   * On the deployment a deploy's or a promote's (a rollback's) `wait()` gives: it went live, but its home page didn't
+   * load as a visitor's browser would (an answer other than 2xx, a redirect to another site, a script or stylesheet it names that doesn't load as
    * one), another page answered 500 or more, one of the app's `checkPaths` answered other than it asks, or nothing
    * answered, with the error the app logged then. A site of files with no `index.html` gets one too, though it may
    * mean to serve only its files. It stays live (nothing is rolled back): `nextStep` says what to fix. Null when
@@ -623,19 +623,34 @@ export class Deployment extends ApiObject {
     return this._field("warning") ?? null;
   }
   /**
-   * On the deployment a deploy's `wait()` gives, beside its `warning`: what to fix, then deploy again. Null
-   * otherwise.
+   * On the deployment a deploy's or a promote's `wait()` gives, beside its `warning`: what to fix, then deploy again.
+   * Null otherwise.
    */
   get nextStep(): string | null {
     return this._field("next_step") ?? null;
   }
   /**
-   * On the deployment a deploy's `wait()` gives: its static files answered every path asked, so its server code
-   * never ran, and a broken API would pass unseen. Add a route its code answers to the app's `checkPaths` as a
-   * request entry (`{ path: "/api/health", status: 200 }`). Null otherwise.
+   * On the deployment a deploy's or a promote's `wait()` gives: its static files answered every path asked, so its
+   * server code never ran, and a broken API would pass unseen. Add a route its code answers to the app's `checkPaths`
+   * as a request entry (`{ path: "/api/health", status: 200 }`). Null otherwise.
    */
   get codeUnchecked(): string | null {
     return this._field("code_unchecked") ?? null;
+  }
+  /**
+   * On the deployment a rollback's `wait()` gives: the Durable Object classes production's objects have that this
+   * release is from before, parked rather than dropped. Their objects keep their data and answer that they're parked
+   * until a release that exports them serves production again, which takes them back. Null otherwise.
+   */
+  get parked(): string[] | null {
+    return this._field("parked") ?? null;
+  }
+  /**
+   * On the deployment a promote of one past the rollback window gives: that one's release was no longer kept, so its
+   * commit was built again with the app's settings and secrets as they are now, as this deployment. Null otherwise.
+   */
+  get rebuilt(): string | null {
+    return this._field("rebuilt") ?? null;
   }
   /**
    * On the deployment a preview's deploy gives, when the app's `previewResources` is `branch`: what the preview
@@ -729,15 +744,22 @@ export class Deployment extends ApiObject {
 
   /**
    * Make this `ready` deployment the production one; its URL starts serving this build within a
-   * minute. A preview is released again with production's secrets, without a build. Instant
-   * rollback covers the app's last 10 production deployments, and each branch's newest preview for
-   * 30 days; promoting an older one builds its commit again (a `project.deploy` operation). `wait()`
+   * minute. A preview, or an older production deployment (a rollback), is released again without a
+   * build, with production's settings, secrets and bindings as they are now, so a key revoked since
+   * never comes back with it. Once production serves it, its home page and the app's `checkPaths`
+   * are asked as a deploy asks them: the deployment's `warning` says what answered wrong (it stays
+   * live). A rollback to a release from before one of the app's Durable Object classes parks the
+   * class (`parked`). Rollback covers the app's last 10 production deployments, and each branch's
+   * newest preview for 30 days; promoting an older one builds its commit again, checked as a
+   * promote is (a `project.deploy` operation, whose deployment's `rebuilt` says so). `wait()`
    * resolves to the deployment now `production`.
    *
    * An app with `checkPaths` checks the deployment first and doesn't promote one that fails (the
    * operation fails with the check in its error; production keeps serving); `force: true` promotes
    * it without the check. The databases the app binds are bookmarked first: undoing the promote
-   * (`Operation.undo()`) puts them back as they were, with the release before.
+   * (`Operation.undo()`) puts them back as they were, with the release before, losing what was
+   * written to them since. The operation's `undoRewinds` says that before you undo, and the
+   * undo's result's `warning` says it again.
    */
   async promote(options: { force?: boolean } = {}): Promise<Operation<Deployment>> {
     const payload = await this._request("POST", `${this.path}/promote`, options.force ? { json: { force: true } } : {});
@@ -862,9 +884,9 @@ export interface DurableObjectInstance {
  * One of an app's Durable Object classes in one environment (production's, or a preview branch's): its `name`, the
  * `binding` its code reaches it by, how many objects it has (`objectsMore` when there were more than were counted) and
  * what they store (`storedBytes`, the latest the host reported; null when it couldn't be read). `status` is `trashed`
- * while it's in the trash, `parked` while no release that serves exports it (a live edit's release that never went
- * live added it), and `stopped` while its environment's objects are stopped (`stoppedFor`: the app in the trash, or
- * past its hard spending limit), their data kept.
+ * while it's in the trash, `parked` while no release that serves exports it (a rollback to a release from before
+ * it, or a live edit's release that added it and never went live), and `stopped` while its environment's objects are
+ * stopped (`stoppedFor`: the app in the trash, or past its hard spending limit), their data kept.
  */
 export class DurableObjectClass extends ApiObject {
   protected constructor(init: ObjectInit) {
@@ -1604,9 +1626,9 @@ export class Project extends ApiObject {
   }
 
   /**
-   * Serve an earlier `ready` deployment at `url` again, without rebuilding: one routing change, live
-   * within a minute (`to.promote()`). It covers the app's last 10 production deployments; an older one
-   * is built again from its commit.
+   * Serve an earlier `ready` deployment at `url` again, without rebuilding: released again with
+   * production's settings and secrets as they are now, then live within a minute (`to.promote()`). It
+   * covers the app's last 10 production deployments; an older one is built again from its commit.
    */
   async rollback(to: Deployment | string): Promise<Operation<Deployment>> {
     const deployment = typeof to === "string" ? Deployment.fromId(to, this.scope) : to;

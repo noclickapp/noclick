@@ -589,6 +589,12 @@ def test_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home
     assert run("ops", "wait", "op_d", "--json") == 1
     assert json.loads(capsys.readouterr().out)["result"]["warning"] == WARNED["warning"]
 
+    # A promote (a rollback too) is looked at as a deploy is, and a wait on one reads the same way.
+    api.get("/v1/operations/op_p/wait").respond(json=operation(
+        "op_p", kind="deployment.promote", status="succeeded", result=WARNED))
+    assert run("ops", "wait", "op_p") == 1
+    assert f"warning: {WARNED['warning']}" in capsys.readouterr().err
+
 
 def test_deploy_with_a_deploy_token_signs_in_with_it_alone(home, api, monkeypatch, capsys):
     monkeypatch.delenv("NOCLICK_API_KEY")  # an agent's shell: no key, no login

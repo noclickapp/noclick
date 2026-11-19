@@ -494,7 +494,8 @@ class Deployment(_Object):
         "it was built for.",
     )
     warning: Optional[str] = field(
-        "warning", doc="On the deployment a deploy's ``wait()`` gives: it went live, but its home page didn't load as "
+        "warning", doc="On the deployment a deploy's or a promote's (a rollback's) ``wait()`` gives: it went live, "
+        "but its home page didn't load as "
         "a visitor's browser would (an answer other than 2xx, a redirect to another site, a script or stylesheet it "
         "names that doesn't load as one), another page answered 500 or more, one of the app's ``check_paths`` "
         "answered other than it asks, or nothing answered, with the error the app logged then. A site of files with "
@@ -503,13 +504,25 @@ class Deployment(_Object):
         "read later.",
     )
     next_step: Optional[str] = field(
-        "next_step", doc="On the deployment a deploy's ``wait()`` gives, beside its ``warning``: what to fix, then "
-        "deploy again. None otherwise.",
+        "next_step", doc="On the deployment a deploy's or a promote's ``wait()`` gives, beside its ``warning``: what "
+        "to fix, then deploy again. None otherwise.",
     )
     code_unchecked: Optional[str] = field(
-        "code_unchecked", doc="On the deployment a deploy's ``wait()`` gives: its static files answered every path "
-        "asked, so its server code never ran, and a broken API would pass unseen. Add a route its code answers to the "
-        "app's ``check_paths`` as a request entry (``{\"path\": \"/api/health\", \"status\": 200}``). None otherwise.",
+        "code_unchecked", doc="On the deployment a deploy's or a promote's ``wait()`` gives: its static files "
+        "answered every path asked, so its server code never ran, and a broken API would pass unseen. Add a route its "
+        "code answers to the app's ``check_paths`` as a request entry (``{\"path\": \"/api/health\", \"status\": 200}``). "
+        "None otherwise.",
+    )
+    parked: Optional[List[str]] = field(
+        "parked", doc="On the deployment a rollback's ``wait()`` gives: the Durable Object classes production's objects "
+        "have that this release is from before, parked rather than dropped. Their objects keep their data and answer "
+        "that they're parked until a release that exports them serves production again, which takes them back. None "
+        "otherwise.",
+    )
+    rebuilt: Optional[str] = field(
+        "rebuilt", doc="On the deployment a promote of one past the rollback window gives: that one's release was no "
+        "longer kept, so its commit was built again with the app's settings and secrets as they are now, as this "
+        "deployment. None otherwise.",
     )
     preview_data: Optional[str] = field(
         "preview_data", doc="On the deployment a preview's deploy gives, when the app's ``preview_resources`` is "
@@ -710,20 +723,28 @@ class Deployment(_Object):
     async def promote(self, *, force: bool = False) -> Operation:
         """Make this ``ready`` deployment the project's production one: its
         URL starts serving this build within a minute. Promoting an older
-        production deployment is a rollback; a preview is released again with
-        production's secrets, without a build.
+        production deployment is a rollback. Either way it's released again,
+        without a build, with production's settings, secrets and bindings as
+        they are now, so a key revoked since never comes back with it. Once
+        production serves it, its home page and the app's ``check_paths`` are
+        asked as a deploy asks them: the deployment's ``warning`` says what
+        answered wrong (it stays live). A rollback to a release from before one
+        of the app's Durable Object classes parks the class (``parked``).
 
         An app with ``check_paths`` checks the deployment first (``check()``)
         and doesn't promote one that fails: the operation fails with the check
         in its error, and production keeps serving. ``force=True`` promotes it
         without the check. Before production switches, the databases the app
         binds are bookmarked: undoing the promote (``Operation.undo()``) puts
-        them back as they were, with the release before.
+        them back as they were, with the release before, losing what was
+        written to them since. The operation's ``undo_rewinds`` says that
+        before you undo, and the undo's result's ``warning`` says it again.
 
-        Instant rollback covers the app's last 10 production deployments, and
-        each branch's newest preview for 30 days. One older than that was retired:
-        promoting it builds its commit again, and the operation (``project.deploy``)
-        gives the new deployment.
+        Rollback covers the app's last 10 production deployments, and each
+        branch's newest preview for 30 days. One older than that was retired:
+        promoting it builds its commit again, checked as a promote is, and the
+        operation (``project.deploy``) gives the new deployment, whose
+        ``rebuilt`` says so.
 
         Returns:
             An operation whose ``.wait()`` gives this deployment (or, past the window, the one built
@@ -908,7 +929,8 @@ class DurableObjectClass(_Object):
     ``name``, the ``binding`` its code reaches it by, how many ``objects`` it has (``objects_more`` when there were
     more than were counted) and what they store (``stored_bytes``, the latest the host reported; None when it
     couldn't be read). ``status`` is ``trashed`` while it's in the trash, ``parked`` while no release that serves
-    exports it (a live edit's release that never went live added it), and ``stopped`` while its environment's objects
+    exports it (a rollback to a release from before it, or a live edit's release that added it and never went live),
+    and ``stopped`` while its environment's objects
     are stopped (``stopped_for``: the app in the trash, or past its hard spending limit), their data kept. Its
     objects' data is reached only by the app's own code."""
 
@@ -2013,8 +2035,9 @@ class Project(_Object):
     @synced
     async def rollback(self, *, to: Union[Deployment, str]) -> Operation:
         """Serve an earlier deployment (a ``Deployment`` or its id, still
-        ``ready``) at ``url`` again, without rebuilding: one routing change, live
-        within a minute. The same as ``to.promote()``. It covers the app's last 10
+        ``ready``) at ``url`` again, without rebuilding: released again with
+        production's settings and secrets as they are now, then live within a
+        minute. The same as ``to.promote()``. It covers the app's last 10
         production deployments; an older one is built again from its commit.
 
         Returns:

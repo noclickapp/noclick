@@ -501,8 +501,9 @@ def cmd_ops_wait(args: argparse.Namespace) -> int:
             print(result["text"])
         elif result is not None:
             print(json.dumps(result, indent=2, default=str))
-    # A deploy that went live but failed its check exits as a failure: the result says what to fix.
-    return 1 if op.kind == "project.deploy" and isinstance(result, dict) and _said_deployment(result) else 0
+    # A deploy or promote that went live but failed its check exits as a failure: the result says what to fix.
+    return 1 if op.kind in ("project.deploy", "deployment.promote") and isinstance(result, dict) \
+        and _said_deployment(result) else 0
 
 
 # --- databases and storage -------------------------------------------------------
@@ -1535,7 +1536,7 @@ def build_parser() -> argparse.ArgumentParser:
     ops = group("ops", "Wait on operations.")
     wait = command(ops, "wait", cmd_ops_wait, "Wait for an operation to finish and print its result.",
                    parents=[as_json])
-    wait.epilog = "A deploy that went live but failed its check (its result's warning) exits 1."
+    wait.epilog = "A deploy or promote that went live but failed its check (its result's warning) exits 1."
     wait.add_argument("operation_id")
     wait.add_argument("--timeout", type=float, metavar="SECONDS", help="Give up after this long (exit 124).")
     return parser

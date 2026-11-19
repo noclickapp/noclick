@@ -164,6 +164,11 @@ class Operation(_Object):
         "dict's clear, a database migration) not undone yet. ``None`` for kinds that record no undo.",
     )
     undone_at: Any = field("undone_at", parse_time, doc="When it was undone, if it was.")
+    undo_rewinds: Optional[str] = field(
+        "undo_rewinds",
+        doc="On a promote that bound databases, while it can be undone: what undoing it takes back from them (each "
+        "goes back to the moment before the promote, losing what was written since). ``None`` otherwise.",
+    )
 
     @property
     def transitions(self) -> List[OperationTransition]:

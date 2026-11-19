@@ -436,6 +436,13 @@ export class Operation<T = unknown> extends ApiObject {
   get undoneAt(): Date | null {
     return parseTime(this._field("undone_at"));
   }
+  /**
+   * On a promote that bound databases, while it can be undone: what undoing it takes back from them (each goes back
+   * to the moment before the promote, losing what was written since). `null` otherwise.
+   */
+  get undoRewinds(): string | null {
+    return this._field("undo_rewinds") ?? null;
+  }
 
   /**
    * Take back a reversible write, once: a deletion comes out of the trash, a dict's cleared keys
