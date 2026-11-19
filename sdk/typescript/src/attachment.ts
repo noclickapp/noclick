@@ -97,7 +97,8 @@ export interface AttachmentsOptions {
 
 /**
  * The account's files, newest first: what its messages carried, the images and videos it made, its calls'
- * recordings, each `url` a link that reads it for an hour. A message to an agent sends any of them again in its
+ * recordings, what its browsers downloaded and the pages they stopped on, each `url` a link that reads it for an
+ * hour. A message to an agent sends any of them again in its
  * `files`. The account's alone: read as a user, it's refused.
  *
  *     const [report] = await attachments({ query: "q3" });

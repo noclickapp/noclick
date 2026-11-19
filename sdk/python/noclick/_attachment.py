@@ -101,8 +101,9 @@ async def attachment_ids(files: Sequence[Any], upload_one: Callable[[Any], Await
 async def attachments(*, query: Optional[str] = None, limit: int = 30,
                       client: Optional[Client] = None) -> List[Attachment]:
     """The account's files, newest first: what its messages carried, the images
-    and videos it made, its calls' recordings. A message to an agent sends any of
-    them again in its ``files``. The account's alone: read as a user, it's refused.
+    and videos it made, its calls' recordings, what its browsers downloaded and the
+    pages they stopped on. A message to an agent sends any of them again in its
+    ``files``. The account's alone: read as a user, it's refused.
 
     Args:
         query: Keeps the files whose names contain it (any case).
