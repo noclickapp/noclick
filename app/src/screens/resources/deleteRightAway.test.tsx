@@ -11,6 +11,7 @@ import { fixtureConsole } from '@/screens/console/fixtures/context';
 import type { FixtureRequest } from '@/screens/console/fixtures/core';
 import { ACCOUNT_FILES } from '@/screens/console/fixtures/pages/q_workflow_files';
 import { ClientProvider } from '@/sdk/client';
+import { clickAsDrawn } from '@/lib/clickAsDrawn';
 import { ResourcesView } from './ResourcesPage';
 import { ResourcesReads } from './reads';
 
@@ -47,20 +48,12 @@ function page(address: string) {
 const previewed = () => requests.some((r) => r.method === 'POST' && r.path === '/v1/delete_previews');
 
 it('opens its delete when Delete is clicked as soon as the page is drawn', async () => {
-    // A mutation observer's callback runs right after the page is put in the document, before its effects run.
-    let clicked = false;
-    const observer = new MutationObserver(() => {
-        const button = screen.queryByRole('button', { name: 'Delete' });
-        if (!button || clicked) return;
-        clicked = true;
-        fireEvent.click(button);
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    const click = clickAsDrawn(() => screen.queryByRole('button', { name: 'Delete' }));
     try {
         page(fileAddress(ACCOUNT_FILES[0].id));
-        await waitFor(() => expect(clicked).toBe(true), { timeout: 5000 });
+        await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 5000 });
     } finally {
-        observer.disconnect();
+        click.stop();
     }
     expect(screen.getByTestId('removal-panel')).toBeTruthy();
     await waitFor(() => expect(previewed()).toBe(true), { timeout: 5000 });

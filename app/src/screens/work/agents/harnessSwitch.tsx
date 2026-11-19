@@ -3,9 +3,10 @@
 // choice where several do, and the app's own connect popup where none does, the move made once it lands. A move onto a
 // costly model on NoClick's key opens Add funds and is made once they land. A refusal says what it needs in plain
 // words, never the platform's own text.
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Agent, NoClickError, type HarnessInfo, type HarnessName } from 'noclick';
+import { useChanged } from '@/lib/useChanged';
 import { invalidateV1 } from '@/sdk/useV1';
 import { useWorkClient } from '../client';
 import { accountKinds, accountTitle, NOCLICK_KEY, NOCLICK_KEY_ACCOUNT, switchAccount, type ModelAccount } from '../newAgent/accounts';
@@ -102,7 +103,7 @@ export function useHarnessSwitch(agent: Agent | null, { onMoved, onRefused }: { 
         if (move) void run(move, landed);
     });
     // A choice left open belongs to the agent it was offered for.
-    useEffect(() => setChoosing(null), [agent?.id]);
+    if (useChanged(agent?.id)) setChoosing(null);
 
     return {
         start: (move) => {

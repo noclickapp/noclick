@@ -17,6 +17,7 @@ import { errorText } from '@/screens/console/pages/resources/shared';
 import { BrandIcon } from '@/ui/BrandIcon';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { scoreFields } from '@/lib/fuzzyRank';
+import { useChanged } from '@/lib/useChanged';
 import { cn } from '@/ui/utils';
 import { useSlot } from '@/slots';
 import { APPS, CONNECT_APP, TOOL_SERVER_SIGN_IN, type ToolApp } from '../slots';
@@ -132,7 +133,7 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
     const servers = useAgentToolServers(agent.id);
     // What was just written, shown until the agent read again says it.
     const [pending, setPending] = useState<ToolEntry[] | null>(null);
-    useEffect(() => setPending(null), [read.data]);
+    if (useChanged(read.data)) setPending(null);
     const tools = pending ?? (live.tools as ToolEntry[]);
     // A change reads the tools as they are when it's made (an account can land long after the panel drew).
     const latest = useRef(tools);

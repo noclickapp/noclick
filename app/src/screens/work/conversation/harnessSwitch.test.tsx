@@ -3,11 +3,16 @@
 // account it runs on there is picked for you: the one of yours that runs it with no question, a choice in the picker
 // where several do, and the connect popup where none does, the move made once what it connects lands. A refusal says
 // what it needs in plain words, never the platform's own text or a harness's id.
+import { useState } from 'react';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Toaster } from 'sonner';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { fill } from '@/slots';
+import { clickAsDrawn } from '@/lib/clickAsDrawn';
 import { WorkProviders } from '../agents/fixtures/providers';
+import { useHarnessSwitch } from '../agents/harnessSwitch';
+import { useAgents } from '../agents/reads';
+import { useHarnesses, useModelAccounts } from '../newAgent/catalog';
 import { CONNECT_MODEL } from '../slots';
 import { CONNECTION_MARK } from '@/ui/slots';
 import { AgentConversation } from './AgentConversation';
@@ -127,4 +132,43 @@ it('says why a move was refused in plain words, never the platform’s text or a
     expect(toast.textContent).not.toMatch(/claude_code|model connection|POST \/v1/);
     // It stays where it was.
     await waitFor(() => expect(screen.getByRole('button', { name: 'Runs on NoClick’s own agent' })).toBeTruthy());
+});
+
+it('keeps the choice of account a move asks for as the agent is read, the picker open', async () => {
+    // The box's picker can be open before the agent is read (its settings come first). A harness picked the moment the
+    // agent arrives, before that render's effects ran, still asks which account runs it: the hook put the choice down
+    // in an effect, which took it back unless the page happened to run its effects at once.
+    const fake = fakeWorkAgent({ agent: WHATSAPP, settings: { main: ON_SDK }, connections: [...CONNECTIONS, CLAUDE_KEY] });
+    let arrive = () => undefined as void;
+    function Picker() {
+        const agents = useAgents();
+        const harnesses = useHarnesses();
+        const { accounts } = useModelAccounts();
+        const [read, setRead] = useState(false);
+        arrive = () => setRead(true);
+        const agent = read ? (agents.data?.find((a) => a.id === AGENT_ID) ?? null) : null;
+        const moves = useHarnessSwitch(agent);
+        return (
+            <>
+                {agents.data && harnesses.data && accounts && <p>Accounts read</p>}
+                {agent && (
+                    <button type="button" onClick={() => moves.start({ harness: 'claude_code' })}>
+                        Claude Code
+                    </button>
+                )}
+                {moves.choosing && <p data-testid="choosing">{moves.choosing.accounts.map((a) => a.id).join(', ')}</p>}
+            </>
+        );
+    }
+    render(
+        <WorkProviders client={fake.client}>
+            <Picker />
+        </WorkProviders>
+    );
+    await screen.findByText('Accounts read', undefined, { timeout: 5000 });
+    const click = clickAsDrawn(() => screen.queryByRole('button', { name: 'Claude Code' }));
+    arrive();
+    await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 5000 });
+    expect((await screen.findByTestId('choosing')).textContent).toBe('anthropic-plan, claude-key');
+    expect(moves(fake)).toEqual([]);
 });
