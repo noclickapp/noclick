@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in the SDKs, the app or the plugin doesn't work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A problem with your NoClick account, a charge, or the hosted service is answered faster at support@noclick.com.
+        A suspected vulnerability goes to security@noclick.com, never here (see SECURITY.md).
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - Python SDK (sdk/python)
+        - TypeScript SDK (sdk/typescript)
+        - The app (app)
+        - Claude Code plugin (plugins/noclick)
+        - Examples or docs
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: The package version (`pip show noclick`, `npm ls noclick`) or the commit you're on.
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: The smallest code that shows it
+      description: Leave out your API key and any other secret.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened instead
+      description: Paste the error in full, with its request id if it has one.
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime
+      description: e.g. Python 3.12, Node 22, Bun, Deno, Cloudflare Workers.

@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/noclickapp/noclick/discussions
+    about: Ask how to do something, or share what you built.
+  - name: Documentation
+    url: https://noclick.com/docs
+    about: The guide, the SDK references and complete examples.
+  - name: Your account or the hosted service
+    url: mailto:support@noclick.com
+    about: Billing, sign-in, or something not working on noclick.com.

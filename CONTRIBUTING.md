@@ -18,3 +18,5 @@ This repository is Apache-2.0, and so is what you contribute to it (section 5 of
 [licence](LICENSE)). There is no contributor agreement to sign.
 
 To report a vulnerability, follow [SECURITY.md](SECURITY.md) rather than opening an issue.
+
+Everyone taking part here follows the [code of conduct](CODE_OF_CONDUCT.md).

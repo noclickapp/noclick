@@ -1,0 +1,25 @@
+name: Feature request
+description: Something the SDKs or the app should do that they don't.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What you're trying to do
+      description: The task itself, not the API you'd like. A few lines of the code you wish you could write help a lot.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today instead
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - Python SDK
+        - TypeScript SDK
+        - The app
+        - Claude Code plugin
+        - Not sure
