@@ -105,7 +105,8 @@ async def attachments(*, query: Optional[str] = None, limit: int = 30,
         limit: How many, 1 to 100.
 
     Returns:
-        Each file as an ``Attachment`` with its ``id``, ``name``, ``url``, ``mime_type`` and ``kind``.
+        Each file as an ``Attachment`` with its ``id``, ``name``, ``url`` (a link that reads it for an hour),
+        ``mime_type`` and ``kind``.
 
     Usage::
 

@@ -7,11 +7,12 @@
  *     console.log(orders.rowCount, (await orders.rows({ limit: 5 })).map((row) => row.data));
  *
  * A list holds what each workflow `Workflow.get` reads keeps: your account's own, those shared with it, and the
- * ones its agents run on. A call acting for one of your users reads the same workflows but none of your agents'.
- * An app's own code reads only what the workflows its code made keep, one workflow at a time (`workflow`).
+ * ones its agents run on. They're the account's, not any one user's: a call acting for one of your users (inside
+ * `asUser`, or with a key held to one) is refused with `PermissionDenied`. An app's own code reads only what the
+ * workflows its code made keep, one workflow at a time (`workflow`).
  * `organizationId` narrows a list to the workflows in a team workspace of the NoClick app your account belongs to
- * (`"none"`: those in no workspace). A file's `url` reads it for an hour after it's listed; a table's rows read in
- * pages of up to 10,000. Deleting either takes edit access to its workflow and is for good: nothing keeps a copy.
+ * (`"none"`: those in no workspace). A file's `url` reads it for an hour after it's listed (a picture, PDF, sound or
+ * video opens in place, anything else downloads); a table's rows read in pages of up to 10,000. Deleting either takes edit access to its workflow and is for good: nothing keeps a copy.
  */
 
 import { resolveClient } from "./client.ts";
@@ -47,8 +48,8 @@ async function filters(options: WorkflowResourceListOptions): Promise<Record<str
  * `urlExpiresAt`; list again for a fresh one. Tables are apart (`WorkflowTable`).
  *
  * You read the files of each workflow `Workflow.get` reads: your account's own, those shared with it, and the ones
- * its agents run on (acting for one of your users, none of your agents'). An app's own code reads only those of a
- * workflow its code made, named with `workflow`.
+ * its agents run on. They're the account's: acting for one of your users, it's refused. An app's own code reads
+ * only those of a workflow its code made, named with `workflow`.
  */
 export class WorkflowFile extends ApiObject {
   protected constructor(init: ObjectInit) {
@@ -102,7 +103,8 @@ export class WorkflowFile extends ApiObject {
   }
   /**
    * A link that reads the file until `urlExpiresAt` (an hour after it's listed), naming nothing of where it's
-   * stored; null for a file with nothing stored yet.
+   * stored: a picture, PDF, sound or video opens in place, anything else downloads. Null for a file with nothing
+   * stored yet.
    */
   get url(): string | null {
     return this._field("url");
@@ -123,7 +125,8 @@ export class WorkflowFile extends ApiObject {
 
   /**
    * Delete the file for good: its record and what it stored, with no trash to restore it from. A step that reads
-   * it by its id finds nothing there. Takes edit access to its workflow (`PermissionDenied` otherwise).
+   * it by its id finds nothing there. Takes edit access to its workflow, never one of your agents runs on
+   * (`PermissionDenied` otherwise: change that through the agent).
    */
   async delete(): Promise<void> {
     await this._request("DELETE", `/v1/workflows/files/${encodeURIComponent(String(this._known("id")))}`);
@@ -242,7 +245,8 @@ export class WorkflowTable extends ApiObject {
 
   /**
    * Delete the table and every row in it for good, with no trash to restore it from. A step or an interface that
-   * reads or adds to it fails on its next run. Takes edit access to its workflow (`PermissionDenied` otherwise).
+   * reads or adds to it fails on its next run. Takes edit access to its workflow, never one of your agents runs
+   * on (`PermissionDenied` otherwise).
    */
   async delete(): Promise<void> {
     await this._request("DELETE", this.path());

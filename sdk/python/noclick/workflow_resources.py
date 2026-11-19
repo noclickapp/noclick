@@ -7,15 +7,17 @@
     print(orders.row_count, [row.data for row in orders.rows(limit=5)])
 
 A list holds what each workflow ``Workflow.get`` reads keeps: your account's
-own, those shared with it, and the ones its agents run on. A call acting for
-one of your users reads the same workflows but none of your agents'. An app's
-own code reads only what the workflows its code made keep, one workflow at a
-time (``workflow=``). ``organization_id`` narrows a list to the workflows in a
+own, those shared with it, and the ones its agents run on. They're the
+account's, not any one user's: a call acting for one of your users (inside
+``as_user``, or with a key held to one) is refused with
+``noclick.PermissionDenied``. An app's own code reads only what the workflows its
+code made keep, one workflow at a time (``workflow=``). ``organization_id`` narrows a list to the workflows in a
 team workspace of the NoClick app your account belongs to (``"none"``: those
 in no workspace).
 
-A file's ``url`` reads it for an hour after it's listed. A table's rows read in
-pages of up to 10,000. Deleting either takes edit access to its workflow and is
+A file's ``url`` reads it for an hour after it's listed; a picture, PDF, sound
+or video opens in place, anything else downloads. A table's rows read in pages
+of up to 10,000. Deleting either takes edit access to its workflow and is
 for good: nothing keeps a copy, and there's no trash to restore it from.
 """
 
@@ -43,9 +45,9 @@ class WorkflowFile(_Object):
     one. Tables are apart (``WorkflowTable``).
 
     You read the files of each workflow ``Workflow.get`` reads: your account's
-    own, those shared with it, and the ones its agents run on (acting for one of
-    your users, none of your agents'). An app's own code reads only those of a
-    workflow its code made, named with ``workflow``."""
+    own, those shared with it, and the ones its agents run on. They're the
+    account's: acting for one of your users, it's refused. An app's own code reads
+    only those of a workflow its code made, named with ``workflow``."""
 
     _repr_keys = ("id", "name")
 
@@ -61,7 +63,8 @@ class WorkflowFile(_Object):
     size_bytes: int = field("size_bytes")
     url: Optional[str] = field("url", doc=(
         "A link that reads the file until ``url_expires_at`` (an hour after it's listed), naming nothing of where "
-        "it's stored; ``None`` for a file with nothing stored yet."))
+        "it's stored: a picture, PDF, sound or video opens in place, anything else downloads. ``None`` for a file "
+        "with nothing stored yet."))
     url_expires_at: Any = field("url_expires_at", parse_time)
     created_at: Any = field("created_at", parse_time)
     updated_at: Any = field("updated_at", parse_time)
@@ -119,8 +122,8 @@ class WorkflowFile(_Object):
     async def delete(self) -> None:
         """Delete the file for good: its record and what it stored, with no
         trash to restore it from. A step that reads it by its id finds nothing
-        there. Takes edit access to its workflow (``noclick.PermissionDenied``
-        otherwise).
+        there. Takes edit access to its workflow, never one of your agents runs on
+        (``noclick.PermissionDenied`` otherwise: change that through the agent).
 
         Usage::
 
@@ -267,8 +270,8 @@ class WorkflowTable(_Object):
     async def delete(self) -> None:
         """Delete the table and every row in it for good, with no trash to
         restore it from. A step or an interface that reads or adds to it fails
-        on its next run. Takes edit access to its workflow
-        (``noclick.PermissionDenied`` otherwise).
+        on its next run. Takes edit access to its workflow, never one of your
+        agents runs on (``noclick.PermissionDenied`` otherwise).
 
         Usage::
 
