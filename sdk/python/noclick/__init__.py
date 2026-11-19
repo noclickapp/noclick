@@ -43,6 +43,7 @@ from .app_services import (
     Broadcast, EmailSetup, PaymentsSetup, ProjectEmail, ProjectPayments, ProjectSignIn, SentEmail, SignInSetup,
 )
 from .api_request import ApiRequest
+from .approval import Approval
 from .brand import Brand
 from .browser import (
     ActResult, Browser, BrowserLiveView, BrowserLogin, BrowserProfile, BrowserWaitingOn, BrowserWatchedStep, PageState,
@@ -173,7 +174,7 @@ __all__ = [
     "Plan", "PlanWindow", "PlanUsage", "PlanUsageSummary", "PlanNextStep",
     "IntegrationInfo", "IntegrationOperation", "IntegrationEvent",
     "Toolkit", "ToolResult",
-    "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach",
+    "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach", "Approval",
     "Agent", "AgentConversation", "AgentStateRow", "CommandResult", "ConversationContext", "ConversationRevert",
     "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
     "Message", "HarnessInfo",

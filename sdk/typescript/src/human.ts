@@ -69,9 +69,9 @@ export interface HumanRequestFilters extends ReadOptions {
   kind?: OneOrMany<"ask" | "approve" | "notify">;
   /**
    * `"owner"`: only requests the signed-in account owner may answer; `"code"`: only those your code
-   * may answer with `approve` or `decline`, leaving out the calls NoClick holds for the account's owner
-   * (a purchase or a deletion, whose `request.owner_only` is true): only the owner answers those, from
-   * the link NoClick sends them.
+   * may answer with `approve` or `decline`. A call NoClick holds for the account's owner (a purchase or a
+   * deletion, whose `request.owner_only` is true) is listed only for a key that names the `approvals:answer`
+   * scope, and never one made with that key or one whose terms a person accepts (see `Approval`).
    */
   answerable?: "owner" | "code";
 }
@@ -191,7 +191,9 @@ export class HumanRequest<T> extends Operation<T> {
   /**
    * Approve it from your own code, as the person it waits on: with a key acting for your account,
    * an approval routed to your account; with a user's session or inside `asUser`, one addressed to
-   * that user (anyone else gets `PermissionDenied`). A held operation call then runs exactly as it
+   * that user; a call NoClick holds for the account's owner, only with a key that names the
+   * `approvals:answer` scope, as `Approval.approve` answers it (anyone else gets `PermissionDenied`).
+   * A held operation call then runs exactly as it
    * was held (a held shell command or other tool, the agent makes again itself), and the agent gets
    * a turn in the same conversation with its result, its reply going out where the conversation
    * lives: on an email thread, the same thread (the inbox agent's `reply` tool is bound to the

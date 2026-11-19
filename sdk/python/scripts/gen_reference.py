@@ -29,7 +29,7 @@ DISTRIBUTION = "noclick"
 # One page per module; private modules land on the page of the name they define.
 PAGE_OF_MODULE = {
     "_client": "Client", "_version": "Client", "_object": "Page", "_scope": "as_user", "_usage": "usage",
-    "agent": "Agent", "api_request": "ApiRequest", "brand": "Brand", "channel": "Channel",
+    "agent": "Agent", "api_request": "ApiRequest", "approval": "Approval", "brand": "Brand", "channel": "Channel",
     "connection": "Connection", "exceptions": "Error", "human": "Human", "inbox": "Inbox",
     "operation": "Operation", "phone_number": "PhoneNumber", "policy": "Policy",
     "sandbox": "Sandbox", "session": "Session", "tool_call": "ToolCall", "toolkit": "Toolkit", "user": "User",
@@ -58,7 +58,7 @@ GROUPS: List[Tuple[str, List[str]]] = [
                        "Channel", "Subscription",
                        "Workspace", "A2AMember"]),
     ("Tools for your own LLM", ["Toolkit", "ToolResult", "McpServer", "AI"]),
-    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Policy"]),
+    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Approval", "Policy"]),
     ("Acting in the world", ["Inbox", "PhoneNumber", "Browser", "BrowserProfile", "BrowserLogin", "Card", "Sandbox",
                              "Machine", "compute"]),
     ("Build and host", ["Project", "Deployment", "Schedule", "ProjectEmail", "ProjectPayments", "ProjectSignIn", "ProjectAI", "ProjectLive", "Repo",

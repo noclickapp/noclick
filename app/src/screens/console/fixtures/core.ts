@@ -260,12 +260,12 @@ export const AGENTS = [
 ] as const;
 
 const SCOPES = [
-    'agents', 'agents:terminal', 'ai', 'brand', 'channels', 'credentials:request', 'credentials:token', 'credentials:use', 'dicts', 'humans', 'inbox', 'mcp_servers', 'operations', 'phone', 'policy', 'queues', 'sandboxes', 'secrets', 'tools', 'usage', 'users',
+    'agents', 'agents:terminal', 'ai', 'approvals:answer', 'brand', 'channels', 'credentials:request', 'credentials:token', 'credentials:use', 'dicts', 'humans', 'inbox', 'mcp_servers', 'operations', 'phone', 'policy', 'queues', 'sandboxes', 'secrets', 'tools', 'usage', 'users',
     // Designed, not built yet.
     'apps', 'browsers', 'cards', 'cards:reveal', 'databases', 'domains', 'domains:buy', 'repos', 'storage', 'volumes',
     'webhooks', 'webhooks:reveal', 'workflows',
 ];
-const FULL_NO_TOKENS = SCOPES.filter((s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal'].includes(s));
+const FULL_NO_TOKENS = SCOPES.filter((s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer'].includes(s));
 
 export const KEYS = [
     {

@@ -117,7 +117,8 @@ export const OWNER_ONLY = {
     /** Approving or declining a call NoClick holds for the owner's yes. */
     heldCalls: {
         what: 'Approving a held call',
-        why: 'Only the account’s owner approves a call NoClick holds for their yes, signed in or from the link NoClick sends them.',
+        scope: 'approvals:answer',
+        why: 'A key answers a call NoClick holds for the owner’s yes only with the approvals:answer scope, which an account’s key with every scope (*) doesn’t hold, and never one made with it.',
         operations: ['POST /v1/humans/requests/{request_id}/answer'],
         only: 'a held call (its request reads `owner_only`); a key answers the account’s other requests',
     },

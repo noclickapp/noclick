@@ -59,7 +59,7 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
     { label: 'Admin', covers: 'Users, usage, policy, brand and the operations your calls started.', scopes: ['users', 'usage', 'policy', 'brand', 'operations'] },
     { label: 'Connect', covers: "Ask users to connect services, and use their connections.", scopes: ['credentials:request', 'credentials:use', TOKEN_SCOPE] },
     { label: 'Tools', covers: 'Run integration operations and toolkits, host them as MCP servers, call AI models and draw pictures for replies.', scopes: ['tools', 'mcp_servers', 'ai', 'render'] },
-    { label: 'People', covers: 'Ask, notify and request approvals from people.', scopes: ['humans'] },
+    { label: 'People', covers: 'Ask, notify and request approvals from people, and approve or decline the calls NoClick holds for your yes.', scopes: ['humans', 'approvals:answer'] },
     {
         label: 'Agents',
         covers: 'Hosted agents and the channels, inboxes, numbers and sandboxes they use, and taking over a coding agent’s terminal.',

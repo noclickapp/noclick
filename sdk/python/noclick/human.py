@@ -120,9 +120,10 @@ class HumanRequest(Operation):
         """Requests your code and agents sent, newest first (or the first ``limit``).
         ``answerable="owner"``: only those the signed-in account owner may answer;
         ``answerable="code"``: only those your code may answer with ``approve`` or
-        ``decline``, leaving out the calls NoClick holds for the account's owner (a
-        purchase or a deletion, whose ``request["owner_only"]`` is true): only the owner
-        answers those, from the link NoClick sends them.
+        ``decline``. A call NoClick holds for the account's owner (a purchase or a
+        deletion, whose ``request["owner_only"]`` is true) is listed only for a key that
+        names the ``approvals:answer`` scope, and never one made with that key or one
+        whose terms a person accepts (see ``noclick.Approval``).
 
         Returns:
             Every matching request, fetched page by page. Each is also the
@@ -246,7 +247,9 @@ class HumanRequest(Operation):
         itself), and the agent gets a turn in the same conversation with its result, its reply going
         out wherever the conversation lives (the chat, the call, or on an email thread the same
         thread: an inbox agent's ``reply`` tool is bound to the thread's latest message, not to the
-        message that woke a turn). Anyone else gets ``noclick.PermissionDenied``.
+        message that woke a turn). A call NoClick holds for the account's owner is answered only
+        with a key that names the ``approvals:answer`` scope, as ``noclick.Approval.approve`` answers
+        it. Anyone else gets ``noclick.PermissionDenied``.
 
         Returns:
             This request, answered: ``request_status`` is ``answered`` and ``note`` is yours.

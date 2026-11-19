@@ -44,6 +44,8 @@ export type {
   AnthropicToolResultBlock, ApprovalRequiredInfo, HandleOptions, NeedsConnectionInfo, OnApproval, OnConnect, OpenAIToolOutput, ToolFormat, ToolResult,
 } from "./toolkit.ts";
 export { Human, HumanOperations, HumanRequest } from "./human.ts";
+export { Approval } from "./approval.ts";
+export type { ApprovalListOptions, ApprovalStatus } from "./approval.ts";
 export type { Answer, HumanOptions, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";
 export { TERMINAL_CLOSED_FOR_GOOD, TERMINAL_RENEW, Terminal, TerminalConnection } from "./terminal.ts";

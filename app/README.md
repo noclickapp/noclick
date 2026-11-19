@@ -182,12 +182,12 @@ acts as the app's key.
 - **Spaces the owner joined in other accounts**: a key is the account, not the person who joined them.
 - **Opening the personal space to people.**
 - **Asking for machines** and accepting their usage policy.
-- **Approving or declining a call NoClick holds for the owner's yes**: its card links to NoClick's page for it.
 
 Anything else is offered, and the key's scopes decide: what a scope the key lacks would allow, the API refuses, and
 Work says so in the API's words where you tried. An agent's sandbox (its files, the `@` files in its box, a shell on it)
 is one: it needs the `agents:terminal` scope, which the account's key with every scope (`*`) doesn't hold, so give the
-app a key with that scope only if its password should carry it.
+app a key with that scope only if its password should carry it. Approving or declining a call NoClick holds for the
+owner's yes is another: it needs the `approvals:answer` scope, which `*` doesn't hold either.
 
 `src/screens/work/workAsKey.test.tsx` opens every view of Work over its fixtures as the owner and as a key, fails if
 the key's views ask for anything the API refuses every key, and keeps every call either makes in `workCalls.txt`.
@@ -204,13 +204,16 @@ an account's key do all of this, so anyone signed in here can:
 - make, change, message and delete agents, including agents that run commands in sandboxes of their own;
 - buy machines once the account may, and spend whatever else the key's scopes and spending cap allow;
 - drive an agent's browser from its live view;
-- with `agents:terminal`, read an agent's sandbox and open a shell on it.
+- with `agents:terminal`, read an agent's sandbox and open a shell on it;
+- with `approvals:answer`, approve or decline a call NoClick holds for your yes, unless the key made it: approving
+  one the key couldn't make itself, or one whose terms a person accepts, is refused.
 
 What stays yours, on NoClick's own pages, signed in or from the link NoClick sends you: approving a call held for your
-yes, raising the account's spending cap, adding funds, linking a phone, and what the console's list above names. The
-key's scopes are how you choose the rest: start with none that spend and without `agents:terminal`, widen them only
-knowingly, and give the key a spending cap. Use a long random password, and share it only with people you would hand
-what the key allows. Signing out drops this browser's copy of Work's channels and threads.
+yes (unless the key names `approvals:answer`), raising the account's spending cap, adding funds, linking a phone,
+and what the console's list above names. The key's scopes are how you choose the rest: start with none that spend
+and without `agents:terminal` or `approvals:answer`, widen them only knowingly, and give the key a spending cap.
+Use a long random password, and share it only with people you would hand what the key allows. Signing out drops
+this browser's copy of Work's channels and threads.
 
 What differs from NoClick's own Work:
 
