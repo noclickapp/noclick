@@ -422,6 +422,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "projects_logs_list": ["Project Logs", "GET", "read"],
     "projects_payments_create": ["Enable Payments", "POST", "write"],
     "projects_payments_list": ["Payments Status", "GET", "read"],
+    "projects_previews_link": ["Preview Link", "POST", "write"],
+    "projects_previews_links_revoke": ["Revoke Preview Links", "POST", "write"],
     "projects_schedules_create": ["Put Schedule", "POST", "write"],
     "projects_schedules_list": ["List Schedules", "GET", "read"],
     "projects_secrets_delete": ["Delete Secret", "DELETE", "destructive"],
