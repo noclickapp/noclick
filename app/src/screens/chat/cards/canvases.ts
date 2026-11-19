@@ -1,17 +1,17 @@
 // An automation is drawn in full once in a thread, on the newest card about it: an older card about the same
 // automation folds to a line (a build card a later build supersedes, a setup card a later one for another client
 // replaces), so the thread ends where the automation now stands rather than wherever it was first drawn. Each kind
-// of tool card says which automation a call draws; a host adds its own (a build started through the API, say). A
-// note's setup card is about the automation its setup names.
+// of tool card says which automation a call draws, registered by whoever registers the card (a build started through
+// the API, say). A note's setup card is about the automation its setup names.
 import { createContext, useContext } from 'react';
 import type { CoordinatorJobs } from '@/lib/threadJobs';
-import { str, type CoordinatorToolCall } from '@/lib/toolCalls';
+import type { CoordinatorToolCall } from '@/lib/toolCalls';
 import type { SetupRef as CoordinatorSetupRef } from '@/lib/agentThread/thread';
 
 /** The automation a call's card draws on its canvas, if it draws one; `jobs` are the thread's reads of its work. */
 export type CanvasOf = (call: CoordinatorToolCall, jobs: CoordinatorJobs) => string | undefined;
 
-const CANVASES: CanvasOf[] = [(call) => (call.tool === 'request_build' ? str(call.result, 'workflow_id') : undefined)];
+const CANVASES: CanvasOf[] = [];
 
 export function registerCanvasCard(canvasOf: CanvasOf): void {
     CANVASES.push(canvasOf);
