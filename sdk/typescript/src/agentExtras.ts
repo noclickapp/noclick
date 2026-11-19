@@ -445,7 +445,8 @@ export class AgentSandbox {
    * Your own shell (`bash -l`) on its running sandbox, in the agent's working directory, beside its work: the agent
    * isn't stopped, and the sandbox stays up while you type. Resolves to a single-use `token` for `url` (two minutes);
    * `connect()` it from the browser as a take-over's terminal is. It closes as bash exits, after `idleLimitS` with
-   * nothing typed, or when its connection closes. A stopped conversation throws `Conflict`.
+   * nothing typed, or when its connection closes; while it's open, `connect` renews it by asking for the shell
+   * again. A stopped conversation throws `Conflict`.
    *
    *     const shell = await coder.sandbox().shell();
    *     const connection = shell.connect({ cols: term.cols, rows: term.rows, onData: (bytes) => term.write(bytes) });
@@ -454,7 +455,7 @@ export class AgentSandbox {
   async shell(): Promise<SandboxShell> {
     return new SandboxShell(asObject(await this.agent._request("POST", await this.route("/shell"), {
       user: this.agent._talkScope(this.user),
-    })));
+    })), async () => (await this.shell()).token);
   }
 }
 
@@ -471,9 +472,11 @@ export class SandboxShell {
   readonly idleLimitS: number | null;
   readonly raw: JsonObject;
   private connected = false;
+  private readonly renew?: () => Promise<string>;
 
   /** @internal */
-  constructor(raw: JsonObject) {
+  constructor(raw: JsonObject, renew?: () => Promise<string>) {
+    this.renew = renew;
     this.agentId = String(raw.agent_id);
     this.conversation = String(raw.conversation);
     this.url = String(raw.url);
@@ -487,7 +490,7 @@ export class SandboxShell {
   connect(options: TerminalConnectOptions = {}): TerminalConnection {
     if (this.connected) throw new TypeError("A shell token opens it once: ask for another with sandbox.shell()");
     this.connected = true;
-    return new TerminalConnection(this.url, this.token, options);
+    return new TerminalConnection(this.url, this.token, { ...options, renew: options.renew ?? this.renew });
   }
 }
 

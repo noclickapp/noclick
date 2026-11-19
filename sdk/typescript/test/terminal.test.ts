@@ -129,3 +129,66 @@ test("a lost connection isn't final: take over again for a new token", async () 
   FakeSocket.last.onopen?.();
   assert.equal(JSON.parse(FakeSocket.last.sent[0] as string).token, "tok_2");
 });
+
+const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+test("asked to renew, a terminal takes over again and answers with the new token; the session goes on", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const take = api.on("POST", "/v1/agents/ag_1/conversations/main/terminal", json(TAKEN), json({ ...TAKEN, token: "tok_2" }));
+  const connection = (await nc.Agent.fromId("ag_1").takeOver("main")).connect({ WebSocket: FakeSocket as unknown as typeof WebSocket });
+  const socket = FakeSocket.last;
+  socket.onopen?.();
+  socket.receive(JSON.stringify({ type: "ready", state: "person" }));
+  socket.receive(JSON.stringify({ type: "renew" }));
+  await settle();
+  assert.equal(take.count, 2);
+  assert.equal(take.last.body, null);  // taking over again, asking nothing: never interrupts the agent
+  assert.deepEqual(JSON.parse(socket.sent.at(-1) as string), { type: "renew", token: "tok_2" });
+  socket.receive(JSON.stringify({ type: "renewed" }));
+  connection.write("ls\r");  // the same connection, still open
+  assert.equal(new TextDecoder().decode(socket.sent.at(-1) as Uint8Array), "ls\r");
+});
+
+test("a terminal with no way to renew closes at its time, to be opened again", async () => {
+  const closes: { code: number; final: boolean }[] = [];
+  const connection = new nc.TerminalConnection("wss://api.test/v1/terminals/attach", "tok_1", {
+    WebSocket: FakeSocket as unknown as typeof WebSocket, onClose: ({ code, final }) => closes.push({ code, final }) });
+  const socket = FakeSocket.last;
+  socket.onopen?.();
+  socket.receive(JSON.stringify({ type: "ready", state: "open" }));
+  socket.receive(JSON.stringify({ type: "renew" }));
+  await settle();
+  assert.equal(socket.sent.length, 1);  // the auth alone: nothing to renew with
+  socket.end(nc.TERMINAL_RENEW, "It wasn't renewed in time: open it again.");
+  assert.deepEqual(closes, [{ code: 4000, final: false }]);
+  connection.close();
+});
+
+test("a renew that can't get a token, or comes after the terminal closed, sends nothing", async () => {
+  let asked = 0;
+  new nc.TerminalConnection("wss://api.test/v1/terminals/attach", "tok_1", {
+    WebSocket: FakeSocket as unknown as typeof WebSocket,
+    renew: async () => { asked++; throw new Error("offline"); },
+  });
+  let socket = FakeSocket.last;
+  socket.onopen?.();
+  socket.receive(JSON.stringify({ type: "ready", state: "open" }));
+  socket.receive(JSON.stringify({ type: "renew" }));
+  await settle();
+  assert.deepEqual([asked, socket.sent.length], [1, 1]);
+
+  let release!: (token: string) => void;
+  new nc.TerminalConnection("wss://api.test/v1/terminals/attach", "tok_1", {
+    WebSocket: FakeSocket as unknown as typeof WebSocket,
+    renew: () => new Promise<string>((resolve) => { release = resolve; }),
+  });
+  socket = FakeSocket.last;
+  socket.onopen?.();
+  socket.receive(JSON.stringify({ type: "ready", state: "open" }));
+  socket.receive(JSON.stringify({ type: "renew" }));
+  socket.end(4410, "The shell ended.");
+  release("tok_late");
+  await settle();
+  assert.equal(socket.sent.length, 1);
+});

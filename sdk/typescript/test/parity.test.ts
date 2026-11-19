@@ -32,6 +32,7 @@ const ACCEPTED: Record<string, string> = {
   "ts:Terminal.connect": "A terminal is opened by a person's browser: Python's server hands it `url` and `token`.",
   "ts:TerminalConnection": "A terminal is opened by a person's browser: Python's server hands it `url` and `token`.",
   "ts:TERMINAL_CLOSED_FOR_GOOD": "A terminal is opened by a person's browser: Python's server hands it `url` and `token`.",
+  "ts:TERMINAL_RENEW": "A terminal is opened by a person's browser: Python's server hands it `url` and `token`.",
   "ts:SandboxShell.connect": "A shell is opened by a person's browser: Python's server hands it `url` and `token`.",
   "ts:Browser.view": "A live view is shown in a person's browser: Python's server hands it `url` and `token`.",
   "ts:BrowserLiveView.connect": "A live view is shown in a person's browser: Python's server hands it `url` and `token`.",

@@ -876,6 +876,62 @@ def test_machines_ssh_opens_the_machines_shell_in_this_terminal(home, api, monke
     assert "noclick@support-box:~$ df -h" in capsys.readouterr().out
 
 
+def test_machines_ssh_renews_its_shell_in_place_when_asked(home, api, monkeypatch, capsys):
+    import pty
+    import threading
+
+    from websockets.sync.server import serve
+
+    seen = {"other": []}
+
+    def shell(socket):
+        seen["auth"] = json.loads(socket.recv())
+        socket.send(json.dumps({"type": "ready", "state": "open", "cols": 100, "rows": 30}))
+        socket.send(json.dumps({"type": "renew"}))
+        while "renew" not in seen:  # what's typed meanwhile still comes in; no answer within seconds fails the test
+            message = socket.recv(timeout=5)
+            said = json.loads(message) if isinstance(message, str) else {}
+            if said.get("type") == "renew":
+                seen["renew"] = said
+            else:
+                seen["other"].append(message)
+        socket.send(json.dumps({"type": "renewed"}))
+        socket.send(b"still here\r\n")
+        socket.send(json.dumps({"type": "state", "state": "exited", "reason": "exited", "exit_code": 0}))
+        socket.close(4410, "The shell ended.")
+
+    server = serve(shell, "127.0.0.1", 0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    port = server.socket.getsockname()[1]
+    api.get("/v1/machines").respond(json=listing({"object": "machine", "id": MACHINE_ID, "name": "support-box",
+                                                  "kind": "noclick", "status": "running"}))
+    view = {"object": "machine_shell", "machine_id": MACHINE_ID, "url": f"ws://127.0.0.1:{port}/v1/terminals/attach",
+            "token_expires_at": "2026-11-16T10:02:00Z", "idle_limit_s": 900}
+    opened = api.post(f"/v1/machines/{MACHINE_ID}/shell").mock(side_effect=[
+        httpx.Response(200, json={**view, "token": "tok_1"}), httpx.Response(200, json={**view, "token": "tok_2"})])
+    master, slave = pty.openpty()
+    monkeypatch.setattr(sys, "stdin", _Tty(slave))
+
+    def screen():
+        try:
+            while os.read(master, 4096):
+                pass
+        except OSError:
+            return
+    threading.Thread(target=screen, daemon=True).start()
+    try:
+        assert run("machines", "ssh", "support-box") == 0
+    finally:
+        server.shutdown()
+        os.write(master, b"x\n")
+        time.sleep(0.2)
+        os.close(slave)
+        os.close(master)
+    assert opened.call_count == 2 and seen["auth"]["token"] == "tok_1"
+    assert seen["renew"] == {"type": "renew", "token": "tok_2"}
+    assert "still here" in capsys.readouterr().out
+
+
 def test_machines_ssh_needs_a_terminal(home, api, monkeypatch, capsys):
     api.get("/v1/machines").respond(json=listing({"object": "machine", "id": MACHINE_ID, "name": "support-box"}))
     api.post(f"/v1/machines/{MACHINE_ID}/shell").respond(json={

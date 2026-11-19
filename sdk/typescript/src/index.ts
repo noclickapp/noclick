@@ -46,7 +46,7 @@ export type {
 export { Human, HumanOperations, HumanRequest } from "./human.ts";
 export type { Answer, HumanOptions, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";
-export { TERMINAL_CLOSED_FOR_GOOD, Terminal, TerminalConnection } from "./terminal.ts";
+export { TERMINAL_CLOSED_FOR_GOOD, TERMINAL_RENEW, Terminal, TerminalConnection } from "./terminal.ts";
 export { AgentMove } from "./agentMove.ts";
 export type { AgentMoveArrived, AgentMoveCreateOptions, AgentMoveSource, AgentMoveStatus, AgentMoveStep } from "./agentMove.ts";
 export type { TerminalConnectOptions, TerminalEnd, TerminalState, TerminalStatus } from "./terminal.ts";

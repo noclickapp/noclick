@@ -16,6 +16,11 @@
  * A terminal shows its sandbox's keys and tokens, so only the account's owner opens one: signed in, or from your
  * server with the account's secret key holding the `agents:terminal` scope, which then hands `url` and `token` to
  * the browser that connects.
+ *
+ * An open terminal ends as soon as what opened it no longer may: its key is revoked or expires, its user isn't
+ * active, its agent or machine is deleted, or its take-over is handed back. It lasts 15 minutes at a time: in the
+ * minute before, the server asks for a new token for the same terminal, which `connect` gets itself (`renew`), and
+ * the session goes on unbroken.
  */
 
 import type { NoClick } from "./client.ts";
@@ -39,8 +44,12 @@ export interface TerminalStatus {
   raw: JsonObject;
 }
 
-/** The websocket's close codes that end it for good: the token was used or expired, nothing runs, or it's handed back. */
+/** The websocket's close codes that end it for good: the token was used or expired (or its key or user no longer
+ *  may), nothing runs, or it's handed back. */
 export const TERMINAL_CLOSED_FOR_GOOD = { unauthorized: 4401, notFound: 4404, ended: 4410 } as const;
+
+/** It closed with this when it wasn't renewed in time: open it again with a new token. */
+export const TERMINAL_RENEW = 4000;
 
 export interface TerminalConnectOptions {
   /** The terminal's size as it opens (else the one `takeOver` was given). */
@@ -55,6 +64,11 @@ export interface TerminalConnectOptions {
   /** It closed: `final` when it won't open again with this take-over (handed back, nothing running, or a used token);
    *  otherwise take over again for a new token and connect. */
   onClose?: (event: { code: number; reason: string; final: boolean }) => void;
+  /** A new token for this same terminal, asked for while it's open (it lasts 15 minutes at a time) so it goes on
+   *  unbroken. `Terminal.connect` takes over again and `SandboxShell.connect` asks for the shell again by
+   *  themselves; for a machine's shell, `async () => (await machine.shell()).token`. Without one, it closes with
+   *  `TERMINAL_RENEW` at its time. */
+  renew?: () => Promise<string>;
   /** A WebSocket class, where the runtime has none of its own (Node before 22). */
   WebSocket?: typeof WebSocket;
 }
@@ -89,6 +103,8 @@ export class TerminalConnection {
         options.onReady?.(status);
       } else if (message.type === "state") {
         options.onState?.(status);
+      } else if (message.type === "renew") {
+        void this.renew(options.renew);
       }
     };
     socket.onclose = (event: CloseEvent) => {
@@ -119,6 +135,18 @@ export class TerminalConnection {
 
   private send(data: string | Uint8Array): void {
     this.socket.send((typeof data === "string" ? this.encoder.encode(data) : data) as BufferSource);
+  }
+
+  /** Answer the server's ask with a new token; one that can't be had leaves it to close at its time. */
+  private async renew(renew: (() => Promise<string>) | undefined): Promise<void> {
+    if (!renew) return;
+    let token: string;
+    try {
+      token = await renew();
+    } catch {
+      return;
+    }
+    if (this.open) this.socket.send(JSON.stringify({ type: "renew", token }));
   }
 }
 
@@ -204,7 +232,8 @@ export class Terminal extends ApiObject {
     if (!url || !token) throw new TypeError("This terminal has no token: take it over (agent.takeOver) to open it");
     if (this.connected) throw new TypeError("A terminal token opens it once: take it over again for another");
     this.connected = true;
-    return new TerminalConnection(url, token, options);
+    const renew = async (): Promise<string> => String((await this._request<JsonObject>("POST", this.path)).token);
+    return new TerminalConnection(url, token, { ...options, renew: options.renew ?? renew });
   }
 
   /**

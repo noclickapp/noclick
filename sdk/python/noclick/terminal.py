@@ -9,6 +9,11 @@ once the agent has the conversation again. Hand the ``url`` and ``token`` to you
 TypeScript SDK's ``Terminal.connect``) from your server: a terminal needs the account's secret key with the
 ``agents:terminal`` scope, never a user's session.
 
+An open terminal ends as soon as what opened it no longer may: its key is revoked or expires (4401), its user isn't
+active (4401), its agent is deleted (4404), or its take-over ends (4410). It lasts 15 minutes at a time: in the minute
+before, the server sends ``{"type": "renew"}``; answer ``{"type": "renew", "token": ...}`` with a new token for the
+same terminal (``take_over`` again) and it goes on unbroken, else it closes with code 4000 (open it again).
+
     coder = noclick.Agent.from_name("coder")
     terminal = coder.take_over("main", interrupt=True)
     send_to_browser(terminal.url, terminal.token)   # within two minutes

@@ -247,7 +247,10 @@ class MachineShell:
     within two minutes. Its first message is ``{"type": "auth", "token": ..., "cols": ..., "rows": ...}``; then binary
     messages carry what you type and what it prints, a text ``{"type": "resize", "cols", "rows"}`` sizes it, and it
     sends ``{"type": "ready"}`` once and ``{"type": "state", "state": "exited", "reason"}`` as it closes (code 4410):
-    bash exited, ``idle_limit_s`` passed with nothing typed, or the socket closed."""
+    bash exited, ``idle_limit_s`` passed with nothing typed, or the socket closed. It closes 4401 once its key is
+    revoked or expires and 4404 once the machine is deleted. It lasts 15 minutes at a time: asked
+    ``{"type": "renew"}``, answer ``{"type": "renew", "token": ...}`` with a new ``machine.shell()`` token and bash
+    goes on, else it closes with code 4000."""
 
     machine_id: str
     url: str

@@ -1198,11 +1198,12 @@ SHELL_ENDED = 4410
 def cmd_machines_ssh(args: argparse.Namespace) -> int:
     machine = Machine.from_name(args.name)
     opened = machine.shell()
-    return _attach_shell(opened.url, opened.token)
+    return _attach_shell(opened.url, opened.token, renew=lambda: machine.shell().token)
 
 
-def _attach_shell(url: str, token: str) -> int:
-    """Your terminal on a machine's shell socket, raw, until its bash ends; returns bash's exit code."""
+def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
+    """Your terminal on a machine's shell socket, raw, until its bash ends; returns bash's exit code. When the
+    server asks (a shell lasts 15 minutes at a time), ``renew`` gets a new token for it, and bash goes on."""
     try:
         from websockets.exceptions import ConnectionClosed
         from websockets.sync.client import connect
@@ -1240,6 +1241,12 @@ def _attach_shell(url: str, token: str) -> int:
                 except ConnectionClosed:
                     return
 
+        def renewed() -> None:
+            try:
+                socket.send(json.dumps({"type": "renew", "token": renew()}))
+            except (Error, ConnectionClosed):
+                return  # unrenewed, it closes at its time
+
         previous = signal.signal(signal.SIGWINCH, lambda *_: socket.send(json.dumps({"type": "resize", **size()})))
         tty.setraw(stdin, termios.TCSANOW)  # what was typed while it connected still goes
         threading.Thread(target=typed, daemon=True).start()
@@ -1248,8 +1255,12 @@ def _attach_shell(url: str, token: str) -> int:
                 if isinstance(message, bytes):
                     sys.stdout.buffer.write(message)
                     sys.stdout.buffer.flush()
-                elif json.loads(message).get("state") == "exited":
-                    ended = json.loads(message)
+                    continue
+                said = json.loads(message)
+                if said.get("type") == "renew":
+                    threading.Thread(target=renewed, daemon=True).start()
+                elif said.get("state") == "exited":
+                    ended = said
         except ConnectionClosed:
             pass
         finally:

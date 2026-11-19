@@ -167,3 +167,22 @@ test("a shell is a token the terminal's connection opens once, ending for good a
   assert.deepEqual([seen.data, seen.states, seen.closed], [["logout\r\n"], ["exited:exited"], [{ code: 4410, final: true }]]);
   assert.throws(() => shell.connect({ WebSocket: ShellSocket as unknown as typeof WebSocket }), /once/);
 });
+
+test("asked to renew, an open shell asks for the shell again and answers with the new token", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const shellOf = (token: string) => json({
+    object: "sandbox_shell", agent_id: "ag_1", conversation: "main thread", url: "wss://api.test/v1/terminals/attach",
+    token, token_expires_at: "2026-11-09T10:02:00Z", idle_limit_s: 900,
+  });
+  const opened = api.on("POST", `${PATH}/shell`, shellOf("tok_sh"), shellOf("tok_sh2"));
+  const shell = await nc.Agent.fromId("ag_1").sandbox("main thread").shell();
+  shell.connect({ WebSocket: ShellSocket as unknown as typeof WebSocket });
+  const socket = ShellSocket.last;
+  socket.onopen?.();
+  socket.onmessage?.({ data: JSON.stringify({ type: "ready", state: "open" }) });
+  socket.onmessage?.({ data: JSON.stringify({ type: "renew" }) });
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  assert.equal(opened.count, 2);
+  assert.deepEqual(JSON.parse(socket.sent.at(-1) as string), { type: "renew", token: "tok_sh2" });
+});
