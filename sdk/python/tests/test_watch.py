@@ -327,3 +327,21 @@ def test_a_resume_rides_the_url_and_the_token_the_protocol(api, client, monkeypa
     assert connect.opened[0].url == "wss://api.test/v1/watch/socket/r_1?x=1"
     assert connect.opened[1].url == "wss://api.test/v1/watch/socket/r_1?x=1&after=c_AbCdEfGh_7"
     assert all("tok_1" not in socket.url for socket in connect.opened)
+
+
+def test_review3_FINDING_a_connection_that_drops_right_after_ready_never_backs_off(api, client, monkeypatch,
+                                                                                  no_waits):
+    """``ready`` resets the backoff, so a socket that opens and drops at once (a room failing every connection, a
+    middlebox cutting sockets after the handshake) is retried every 0.25 to 0.75 s forever, minting a token each
+    time: the backoff never climbs, however many times in a row it happens."""
+    flaps = 8
+    api.post("/v1/watch/tokens").mock(side_effect=[httpx.Response(201, json=token(n)) for n in range(flaps + 1)])
+    connect = FakeConnect(*[([{"type": "ready", "resumed": False}], 1006) for _ in range(flaps + 1)])
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    readies = 0
+    for message in nc.watch():
+        readies += message.type == "ready"
+        if readies > flaps:
+            break
+    assert len(no_waits) == flaps
+    assert max(no_waits) >= 5.0, f"{flaps} drops in a row, each retried within {max(no_waits):.2f} s: {no_waits}"

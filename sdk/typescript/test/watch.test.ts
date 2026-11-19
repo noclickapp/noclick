@@ -436,3 +436,33 @@ test("a resume rides the URL; a URL with a query keeps it", async () => {
   controller.abort();
   await run;
 });
+
+test("review3 FINDING: a connection that drops right after ready never backs off", async (t) => {
+  // `ready` resets the backoff, so a socket that opens and drops at once is retried every 0.25 to 0.75 s forever,
+  // minting a token each time: the backoff never climbs, however many times in a row it happens.
+  FakeSocket.opened = [];
+  const waits = noWaits(t);
+  const { api } = setup();
+  const flaps = 8;
+  api.on("POST", "/v1/watch/tokens", ...Array.from({ length: flaps + 1 }, (_, n) => json(TOKEN(n), { status: 201 })));
+  const controller = new AbortController();
+  const done = (async () => {
+    for await (const _message of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) {
+      // read everything
+    }
+  })();
+  for (let n = 1; n <= flaps; n++) {
+    const socket = await opened(n);
+    socket.receive({ type: "ready", resumed: false });
+    socket.end(1006);
+  }
+  await opened(flaps + 1);
+  controller.abort();
+  await done;
+  // The reconnect waits: spread over half to one and a half of a backoff step (the HTTP client's own timers, whole
+  // numbers, are not).
+  const backoffs = waits.filter((ms) => !Number.isInteger(ms));
+  assert.equal(backoffs.length, flaps, `waits: ${waits}`);
+  assert.ok(Math.max(...backoffs) >= 5_000,
+    `${flaps} drops in a row, each retried within ${Math.max(...backoffs).toFixed(0)} ms: ${backoffs.map((w) => w.toFixed(0))}`);
+});
