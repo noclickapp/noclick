@@ -128,24 +128,61 @@ test("view shows the page's size and pictures, and a watching view takes no inpu
   assert.equal(socket.closedWith, 1000);
 });
 
-test("a view that drives keeps a person's taps and typing until it's open, never their moves", async () => {
+test("a view that drives sends a person's input only once its connection has shown the page", async () => {
   FakeSocket.opened = [];
   const { api } = setup();
   const drive = api.on("POST", "/v1/browsers/br_1/live_control", json(VIEW(1, { control: true })));
   const view = nc.Browser.fromId("br_1").view({ control: true, WebSocket: Socket });
   assert.equal(view.control, true);
-  view.send({ type: "tap", x: 4, y: 5 });
-  view.send({ type: "mouse", action: "move", x: 6, y: 7 });
-  view.send({ type: "scroll", x: 1, y: 1, dx: 0, dy: 40 });
-  view.send({ type: "text", text: "hello" });
+  view.send({ type: "tap", x: 4, y: 5 });  // before any connection: dropped
   const socket = await opened(1);
   assert.equal(drive.count, 1);
   socket.open();
+  view.send({ type: "text", text: "hello" });  // open, but the page not shown yet: dropped
+  socket.show();
   view.send({ type: "key", key: "Enter" });
+  view.send({ type: "mouse", action: "move", x: 6, y: 7 });
   assert.deepEqual(socket.sent.map((s) => JSON.parse(s)), [
-    { type: "auth", token: "tok_1" }, { type: "tap", x: 4, y: 5 }, { type: "text", text: "hello" },
-    { type: "key", key: "Enter" },
+    { type: "auth", token: "tok_1" }, { type: "key", key: "Enter" }, { type: "mouse", action: "move", x: 6, y: 7 },
   ]);
+  view.close();
+});
+
+test("input reaches a view that opened again only once it has shown the page, never what came before", async (t) => {
+  FakeSocket.opened = [];
+  recordWaits(t);
+  const { api } = setup();
+  api.on("POST", "/v1/browsers/br_1/live_control", json(VIEW(1, { control: true })), json(VIEW(2, { control: true })));
+  const view = nc.Browser.fromId("br_1").view({ control: true, WebSocket: Socket });
+  const first = await opened(1);
+  first.open();
+  first.show();
+  view.send({ type: "tap", x: 1, y: 1 });
+  first.end(1011);
+  view.send({ type: "tap", x: 2, y: 2 });  // between connections: dropped
+  const second = await opened(2);
+  second.open();
+  view.send({ type: "tap", x: 3, y: 3 });  // open again, but showing what it last showed: dropped
+  second.show();
+  view.send({ type: "tap", x: 4, y: 4 });
+  assert.deepEqual(first.sent.slice(1).map((s) => JSON.parse(s).x), [1]);
+  assert.deepEqual(second.sent.map((s) => JSON.parse(s)), [{ type: "auth", token: "tok_2" }, { type: "tap", x: 4, y: 4 }]);
+  view.close();
+});
+
+test("a view turned away for too many waits half a minute, then opens again with a new token", async (t) => {
+  FakeSocket.opened = [];
+  const waits = recordWaits(t);
+  t.mock.method(Math, "random", () => 0.12345);  // so half a minute, spread, isn't a whole number of milliseconds
+  const { api } = setup();
+  const minted = api.on("POST", "/v1/browsers/br_1/live_view", json(VIEW(1)), json(VIEW(2)));
+  const ends: unknown[] = [];
+  const view = nc.Browser.fromId("br_1").view({ WebSocket: Socket, onEnd: (e) => ends.push(e) });
+  (await opened(1)).end(4429, "This browser already has 8 live views open.");
+  await opened(2);
+  assert.deepEqual(waits, [30_000 * (0.5 + 0.12345)]);
+  assert.deepEqual(ends, []);
+  assert.equal(minted.count, 2);
   view.close();
 });
 

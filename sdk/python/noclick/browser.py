@@ -498,9 +498,11 @@ class BrowserLiveView(_Object):
     then a JPEG of the page each time it changes; a ``control`` view also takes ``{"type": "tap", "x", "y"}``,
     ``{"type": "mouse", "action": "down" | "up" | "move", "x", "y"}``, ``{"type": "scroll", "x", "y", "dx", "dy"}``,
     ``{"type": "text", "text"}`` and ``{"type": "key", "key"}`` in the page's CSS pixels, while a watching one is
-    closed by anything it's sent. It closes 4000 after 15 minutes (open a new view to go on); 4401 (the token was
-    used, lapsed or its key ended), 4404, 4409 (a control view's browser was handed back), 4410 (the browser closed)
-    and 1008 are final. The TypeScript SDK's ``Browser.view`` does all of this in a page."""
+    closed by anything it's sent. Send input only once the socket has shown the page (its first JPEG), never input
+    from an earlier socket. It closes 4000 after 15 minutes (open a new view to go on) and 4429 when the browser or
+    the account already has as many views open as it may (try again later); 4401 (the token was used, lapsed or its
+    key ended), 4404, 4409 (a control view's take-over ended, or its step became another person's), 4410 (the browser
+    closed) and 1008 are final. The TypeScript SDK's ``Browser.view`` does all of this in a page."""
 
     _repr_keys = ("browser_id", "control", "thumb")
 

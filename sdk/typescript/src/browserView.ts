@@ -14,8 +14,13 @@
  * `Browser.view` asks for a single-use token (`Browser.liveView`) through its client and opens the socket itself,
  * sending the token as its first message, never in its URL. It opens again by itself, with a new token each time:
  * at once when a view ran its 15 minutes, and after a growing wait when the connection dropped (the wait starts over
- * once a view stayed up 30 seconds). It ends for good when the browser closes, a control view's browser is handed
- * back, the browser can't be found, or the token is refused twice in a row; `onEnd` says which.
+ * once a view stayed up 30 seconds), and after half a minute when the browser or the account has as many views open
+ * as it may. It ends for good when the browser closes, a control view's take-over ends (or its step becomes another
+ * person's), the browser can't be found, or the token is refused twice in a row; `onEnd` says which.
+ *
+ * What a person does reaches the page only over a connection that has shown it: input sent before a connection's
+ * first picture, or while it opens again, is dropped, never carried into the next one (where it would land on a page
+ * the person hasn't seen).
  *
  * In a page whose server holds the key, give the browser a client that goes through that server: it asks for the
  * token there, and opens the socket to NoClick's API itself.
@@ -45,9 +50,10 @@ export interface BrowserViewport {
 /** `connecting` until the first picture, `live` while pictures come (a view's renewal included), `ended` for good. */
 export type BrowserViewState = "connecting" | "live" | "ended";
 
-/** The close codes a view ends with; `renew` opens it again at once, `unauthorized` once more with a new token. */
+/** The close codes a view ends with; `renew` opens it again at once, `unauthorized` once more with a new token,
+ *  `tooMany` after half a minute. */
 export const BROWSER_VIEW_CLOSE = {
-  renew: 4000, unauthorized: 4401, notFound: 4404, released: 4409, ended: 4410, invalid: 1008,
+  renew: 4000, unauthorized: 4401, notFound: 4404, released: 4409, ended: 4410, tooMany: 4429, invalid: 1008,
 } as const;
 const FINAL: readonly number[] = [BROWSER_VIEW_CLOSE.notFound, BROWSER_VIEW_CLOSE.released, BROWSER_VIEW_CLOSE.ended,
   BROWSER_VIEW_CLOSE.invalid];
@@ -55,10 +61,8 @@ const FINAL: readonly number[] = [BROWSER_VIEW_CLOSE.notFound, BROWSER_VIEW_CLOS
 const BACKOFF_MS = [500, 1_000, 2_000, 5_000, 10_000, 30_000];
 // A view that stayed up this long starts the backoff again; one that drops sooner keeps it climbing.
 const STABLE_MS = 30_000;
-// What a person did while the view opened again, sent once it's open: their taps, presses and typing, at most this
-// many. A move or a scroll is only worth sending as it happens.
-const MAX_PENDING = 50;
-const PASSING = new Set(["scroll"]);
+// How long a view turned away for too many waits before it tries again.
+const TOO_MANY_MS = 30_000;
 
 export interface BrowserViewOptions {
   /** A view that drives the browser: it must be taken over (`takeOver`) first, and the view ends at its hand-back. */
@@ -87,13 +91,13 @@ export class BrowserViewConnection {
   readonly control: boolean;
   private readonly Socket: typeof WebSocket;
   private socket: WebSocket | null = null;
-  private authed = false;
+  /** The open socket has shown the page: what a person does on it may go to it. */
+  private showing = false;
   private stopped = false;
   private failures = 0;
   private refusedInARow = 0;
   private liveSince = 0;
   private retry: ReturnType<typeof setTimeout> | undefined;
-  private readonly pending: BrowserViewInput[] = [];
   private current: BrowserViewState = "connecting";
   private readonly token: () => Promise<Token>;
   private readonly options: BrowserViewConnectOptions;
@@ -115,17 +119,12 @@ export class BrowserViewConnection {
     return this.current;
   }
 
-  /** What a person did, on a view that drives the browser; while it opens again, their taps, presses and typing wait
-   *  for it. */
+  /** What a person did, on a view that drives the browser: sent once its connection has shown the page, dropped
+   *  before that (and while it opens again). */
   send(input: BrowserViewInput): void {
     if (!this.control) throw new TypeError("This view only watches: take the browser over and open one with control to drive it");
-    if (this.stopped) return;
     const ws = this.socket;
-    if (ws && this.authed && ws.readyState === this.Socket.OPEN) {
-      ws.send(JSON.stringify(input));
-    } else if (!(PASSING.has(input.type) || (input.type === "mouse" && input.action === "move")) && this.pending.length < MAX_PENDING) {
-      this.pending.push(input);
-    }
+    if (!this.stopped && ws && this.showing && ws.readyState === this.Socket.OPEN) ws.send(JSON.stringify(input));
   }
 
   /** Stop showing it: the socket closes and nothing opens it again. */
@@ -165,13 +164,8 @@ export class BrowserViewConnection {
     const ws = new this.Socket(url);
     ws.binaryType = "arraybuffer";
     this.socket = ws;
-    this.authed = false;
     let pictured = false;
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ type: "auth", token: token.token }));
-      this.authed = true;
-      for (const input of this.pending.splice(0)) ws.send(JSON.stringify(input));
-    };
+    ws.onopen = () => ws.send(JSON.stringify({ type: "auth", token: token.token }));
     ws.onmessage = (event: MessageEvent) => {
       if (typeof event.data === "string") {
         const message = JSON.parse(event.data) as JsonObject;
@@ -182,6 +176,7 @@ export class BrowserViewConnection {
       }
       if (!pictured) {
         pictured = true;
+        if (this.socket === ws) this.showing = true;
         this.refusedInARow = 0;
         if (this.current !== "live") this.liveSince = Date.now();
         this.set("live");
@@ -190,8 +185,10 @@ export class BrowserViewConnection {
     };
     ws.onerror = () => { /* a close follows */ };
     ws.onclose = (event: CloseEvent) => {
-      if (this.socket === ws) this.socket = null;
-      this.authed = false;
+      if (this.socket === ws) {
+        this.socket = null;
+        this.showing = false;
+      }
       if (!this.stopped) this.closed(event.code, event.reason, pictured);
     };
   }
@@ -213,11 +210,12 @@ export class BrowserViewConnection {
       return;
     }
     this.set("connecting");
-    this.later();
+    this.later(code === BROWSER_VIEW_CLOSE.tooMany ? TOO_MANY_MS : undefined);
   }
 
-  private later(): void {
-    this.retry = setTimeout(() => void this.open(), spread(BACKOFF_MS[Math.min(this.failures++, BACKOFF_MS.length - 1)]));
+  private later(waitMs?: number): void {
+    const wait = waitMs ?? BACKOFF_MS[Math.min(this.failures++, BACKOFF_MS.length - 1)];
+    this.retry = setTimeout(() => void this.open(), spread(wait));
   }
 
   private end(code: number, reason: string): void {
