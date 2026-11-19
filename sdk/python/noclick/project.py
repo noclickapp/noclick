@@ -1473,7 +1473,9 @@ class Project(_Object):
     preview_access: str = field(
         "preview_access", doc="Who opens its previews: ``public`` (every app's unless set: anyone with a preview's "
         "URL, while search engines are told not to list it) or ``link`` (only a link NoClick signs, from "
-        "``preview_link()`` or a preview's deploy; anyone else is told it's private). Production is always public.",
+        "``preview_link()`` or a preview's deploy, until ``revoke_preview_links()``; anyone else is told it's "
+        "private). Production is always public. ``link`` is refused for an app whose previews run in containers "
+        "until NoClick turns on front-door-only containers, since a container answers at its own address too.",
     )
     preview_public_paths: List[str] = field(
         "preview_public_paths", doc="With ``preview_access`` ``link``, the paths of a preview that stay open to anyone "
@@ -2109,7 +2111,8 @@ class Project(_Object):
     async def preview_link(self, *, branch: Optional[str] = None, expires_in: Optional[int] = None) -> PreviewLink:
         """Make a link that opens a preview of the app (``branch``'s, else the newest serving) to whoever holds it,
         for ``expires_in`` seconds (7 days unless given; 5 minutes to 30 days). It's what to hand people when the
-        app's ``preview_access`` is ``link``; nothing keeps a link to revoke, so it lasts until it expires.
+        app's ``preview_access`` is ``link``. It lasts until it expires, or until ``revoke_preview_links()`` stops
+        every link made before.
 
         Returns:
             The ``PreviewLink``. No preview serving (or one of the production branch, always public) raises
@@ -2126,6 +2129,25 @@ class Project(_Object):
             json=compact(branch=branch, expires_in=expires_in),
         )
         return PreviewLink._from(payload)
+
+    @synced
+    async def revoke_preview_links(self) -> "Project":
+        """Stop every link to the app's previews made before now, and the cookie each left in a browser: within 30
+        seconds none of them opens a preview, while links made after (``preview_link()``, a preview's deploy) open
+        them as before. For a link that reached someone who shouldn't have it. On an app whose previews are public
+        their URLs still open them, which ``raw["notes"]`` says.
+
+        Returns:
+            This app, as it is then.
+
+        Usage::
+
+            app = noclick.Project.from_name("booking")
+            app.revoke_preview_links()
+            print(app.preview_link(branch="new-form").url)   # a fresh link for the people who should keep it
+        """
+        self._raw = await self._request("POST", f"{await self._project_path()}/previews/links/revoke")
+        return self
 
     @synced
     async def rollback(self, *, to: Union[Deployment, str]) -> Operation:

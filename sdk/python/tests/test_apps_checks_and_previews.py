@@ -216,3 +216,13 @@ def test_an_apps_previews_are_kept_to_a_link_and_its_deploy_and_owner_hand_it_ou
     preview = app.deploy(branch="new-form").wait()
     assert (preview.url, preview.preview_link) == ("https://new-form--booking.noclick.site", link_url)
     assert nc.Deployment._new(raw=DEPLOYMENT).preview_link is None
+
+
+def test_stopping_an_apps_preview_links_answers_the_app_with_what_it_did(api, client):
+    said = "Every link to its previews made before now stops opening them within 30 seconds."
+    stop = api.post("/v1/projects/prj_1/previews/links/revoke").respond(
+        json={**PROJECT, "preview_access": "link", "notes": [said]})
+    app = nc.Project.from_id("prj_1")
+    assert app.revoke_preview_links() is app
+    assert stop.called and stop.calls.last.request.content in (b"", b"{}")
+    assert (app.preview_access, app.raw["notes"]) == ("link", [said])

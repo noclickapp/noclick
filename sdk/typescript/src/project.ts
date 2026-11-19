@@ -1506,8 +1506,10 @@ export class Project extends ApiObject {
   }
   /**
    * Who opens its previews: `public` (every app's unless set: anyone with a preview's URL, while search engines are
-   * told not to list it) or `link` (only a link NoClick signs, from `previewLink()` or a preview's deploy; anyone
-   * else is told it's private). Production is always public.
+   * told not to list it) or `link` (only a link NoClick signs, from `previewLink()` or a preview's deploy, until
+   * `revokePreviewLinks()`; anyone else is told it's private). Production is always public. `link` is refused for an
+   * app whose previews run in containers until NoClick turns on front-door-only containers, since a container answers
+   * at its own address too.
    */
   get previewAccess(): PreviewAccess {
     return this._field("preview_access") ?? "public";
@@ -1714,13 +1716,24 @@ export class Project extends ApiObject {
   /**
    * A link that opens a preview of the app (`branch`'s, else the newest serving) to whoever holds it, for `expiresIn`
    * seconds (7 days unless given; 5 minutes to 30 days): what to hand people when the app's `previewAccess` is `link`.
-   * Nothing keeps a link to revoke, so it lasts until it expires. No preview serving rejects with `NotFound`, and the
-   * production branch (always public) with `InvalidRequest`, each saying what to do.
+   * It lasts until it expires, or until `revokePreviewLinks()` stops every link made before. No preview serving
+   * rejects with `NotFound`, and the production branch (always public) with `InvalidRequest`, each saying what to do.
    */
   async previewLink(options: { branch?: string; expiresIn?: number } = {}): Promise<PreviewLink> {
     return toPreviewLink(await this._request("POST", await this._projectPath("previews", "link"), {
       json: compact({ branch: options.branch, expires_in: options.expiresIn }),
     }));
+  }
+
+  /**
+   * Stop every link to the app's previews made before now, and the cookie each left in a browser: within 30 seconds
+   * none of them opens a preview, while links made after (`previewLink()`, a preview's deploy) open them as before.
+   * For a link that reached someone who shouldn't have it. On an app whose previews are public their URLs still open
+   * them, which `raw.notes` says. Resolves to this app, as it is then.
+   */
+  async revokePreviewLinks(): Promise<this> {
+    this._raw = await this._request<JsonObject>("POST", await this._projectPath("previews", "links", "revoke"));
+    return this;
   }
 
   /**

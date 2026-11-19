@@ -1,5 +1,5 @@
 // The Apps drawer's Overview, Domains and Logs tabs: what the app is, what a push deploys and who opens its previews
-// (each a PATCH, with a link to make for a private preview), and what it spent
+// (each a PATCH, with a link to make for a private preview and a way to stop every link made), and what it spent
 // this month against its budget (with what stops its paid calls, and a budget
 // dialog); the domains that serve it, added (with the records a connected one
 // needs) and removed; and the lines it printed while serving.
@@ -196,10 +196,20 @@ function DeployOnPushSetting({ project }: { project: Project }) {
 }
 
 /** Who opens the app's previews; a change applies at once, and what NoClick adds to it (that it isn't in force yet) is
- * said with it. While they're private: the paths left open, and a link to make. */
+ * said with it, as is why it's refused (a container app's previews can't be kept to a link yet). While they're private:
+ * the paths left open, a link to make, and a way to stop every link made so far. */
 function PreviewAccessSetting({ project }: { project: Project }) {
     const [value, setValue] = useState<PreviewAccess>(project.previewAccess);
     const [busy, setBusy] = useState(false);
+    // Moved on when the links are stopped, so a link shown before (which no longer opens anything) is put away.
+    const [stopped, setStopped] = useState(0);
+    const stopLinks = async () => {
+        await project.revokePreviewLinks();
+        invalidateV1('projects');
+        setStopped((n) => n + 1);
+        const notes = Array.isArray(project.raw.notes) ? (project.raw.notes as string[]) : [];
+        toast(notes.join(' ') || 'Every preview link made before now stopped working.');
+    };
     useEffect(() => setValue(project.previewAccess), [project.previewAccess]);
     const change = async (next: PreviewAccess) => {
         if (busy || next === value) return;
@@ -233,7 +243,16 @@ function PreviewAccessSetting({ project }: { project: Project }) {
                             'A webhook or sign-in callback to a preview is turned away too, unless its path is left open (preview_public_paths).'
                         )}
                     </p>
-                    <PreviewLinkMaker project={project} />
+                    <div className="flex flex-wrap items-start gap-2">
+                        <PreviewLinkMaker key={stopped} project={project} />
+                        <ConfirmAction
+                            label="Stop all preview links"
+                            title="Stop every link to its previews?"
+                            description="Each link made so far, and what it left in a browser, stops opening the previews within 30 seconds. Links you make after open them as before."
+                            confirmLabel="Stop all links"
+                            onConfirm={stopLinks}
+                        />
+                    </div>
                 </>
             )}
         </div>

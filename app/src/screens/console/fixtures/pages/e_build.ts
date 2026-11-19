@@ -891,7 +891,7 @@ function previewLink(r: FixtureRequest, app: App): FixtureReply {
         object: 'preview_link',
         project_id: app.id,
         branch: serving.branch,
-        url: `https://${host}/?preview=p1~${Math.floor(Date.now() / 1000) + 7 * 86_400}~${app.id}~${host}~${'0'.repeat(64)}`,
+        url: `https://${host}/?preview=p2~${Math.floor(Date.now() / 1000) + 7 * 86_400}~0~${app.id}~${host}~${'0'.repeat(64)}`,
         preview_url: `https://${host}`,
         preview_access: app.preview_access,
         expires_at: plus(new Date().toISOString(), 7 * DAY),
@@ -1074,6 +1074,11 @@ const projectRoutes: FixtureRoute[] = [
         reply: (r) => ok({ object: 'trash_item', id: r.params.id, kind: 'project', purged: true }),
     },
     { method: 'POST', path: '/v1/projects/:id/previews/link', reply: onApp(previewLink) },
+    {
+        method: 'POST',
+        path: '/v1/projects/:id/previews/links/revoke',
+        reply: onApp((_r, app) => ok({ ...app, notes: ['Every link to its previews made before now, and the cookie each left in a browser, stops opening them within 30 seconds; links made from now on open them.'] })),
+    },
     {
         method: 'PATCH',
         path: '/v1/projects/:id',

@@ -221,3 +221,13 @@ test("an app's previews are kept to a link, and its deploy and owner hand the li
   assert.deepEqual([preview.url, preview.previewLink], ["https://new-form--booking.noclick.site", linkUrl]);
   assert.equal(app.production?.previewLink, null); // production is always public
 });
+
+test("stopping an app's preview links answers the app with what it did", async () => {
+  const { api } = setup();
+  const said = "Every link to its previews made before now stops opening them within 30 seconds.";
+  const stop = api.on("POST", "/v1/projects/prj_1/previews/links/revoke", json({ ...PROJECT, preview_access: "link", notes: [said] }));
+  const app = nc.Project.fromId("prj_1");
+  assert.equal(await app.revokePreviewLinks(), app);
+  assert.equal(stop.calls.length, 1);
+  assert.deepEqual([app.previewAccess, app.raw.notes], ["link", [said]]);
+});
