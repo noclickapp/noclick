@@ -662,8 +662,8 @@ class Dict(_Object):
 
     @synced
     async def delete(self) -> TrashItem:
-        """Delete the dict and every key in it: it goes to the trash, restorable for 30 days. A dict an app
-        still binds raises ``noclick.Conflict`` until you unbind it.
+        """Delete the dict and every key in it: it goes to the trash, restorable for 30 days. One an app
+        binds goes to the trash too: the app keeps its binding, reaching nothing until you restore the dict.
 
         Returns:
             Its ``TrashItem``: ``restore()`` puts it back, keys and all.

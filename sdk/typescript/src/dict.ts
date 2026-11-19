@@ -372,8 +372,9 @@ export class Dict extends ApiObject {
   }
 
   /**
-   * Delete the dict and every key in it: it goes to the trash, restorable for 30 days. A dict an
-   * app binds throws `Conflict`. Returns its `TrashItem`: `restore()` puts it back, keys and all.
+   * Delete the dict and every key in it: it goes to the trash, restorable for 30 days. One an app
+   * binds goes to the trash too: the app keeps its binding, reaching nothing until you restore the
+   * dict. Returns its `TrashItem`: `restore()` puts it back, keys and all.
    */
   async delete(): Promise<TrashItem> {
     return trashed(await this._request("DELETE", await this.route()), this);
