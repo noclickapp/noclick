@@ -582,6 +582,25 @@ export class Deployment extends ApiObject {
   get error(): string | null {
     return this._field("error");
   }
+  /**
+   * Whose its failure is (null unless `failed`): `app` (its code, settings or config), `limit` (one of the app's
+   * limits: the build's time or memory, the size of its source or output) or `platform`, NoClick's own, which changing
+   * the app won't fix and which isn't charged.
+   */
+  get failure(): "app" | "limit" | "platform" | null {
+    return this._field("failure") ?? null;
+  }
+  /**
+   * True when it failed on NoClick's side (`failure` is `platform`): don't change the app to work around it; tell
+   * whoever it's for, with `errorId`.
+   */
+  get platformError(): boolean {
+    return this._field("platform_error") === true;
+  }
+  /** The id NoClick's team finds a failure of its own by (null unless `platformError`). */
+  get errorId(): string | null {
+    return this._field("error_id") ?? null;
+  }
   /** Where it runs: `edge` or `container`, chosen when its build starts (null until then). */
   get runtime(): DeploymentRuntime | null {
     return this._field("runtime");
@@ -651,6 +670,14 @@ export class Deployment extends ApiObject {
    */
   get rebuilt(): string | null {
     return this._field("rebuilt") ?? null;
+  }
+  /**
+   * On the deployment a promote's (a rollback's) `wait()` gives: the app's settings changed since this release was
+   * built, named, so what its build read of them (a `VITE_` or `NEXT_PUBLIC_` value it put in its pages) is still as
+   * it was then; deploying production again builds with them. Null otherwise.
+   */
+  get settingsChanged(): string | null {
+    return this._field("settings_changed") ?? null;
   }
   /**
    * On the deployment a preview's deploy gives, when the app's `previewResources` is `branch`: what the preview

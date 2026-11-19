@@ -474,6 +474,18 @@ class Deployment(_Object):
     error: Optional[str] = field(
         "error", doc="Why the build failed, or why a push couldn't deploy, in one line (None unless ``failed``).",
     )
+    failure: Optional[str] = field(
+        "failure", doc="Whose its failure is (None unless ``failed``): ``app`` (its code, settings or config), "
+        "``limit`` (one of the app's limits: the build's time or memory, the size of its source or output) or "
+        "``platform``, NoClick's own, which changing the app won't fix and which isn't charged.",
+    )
+    platform_error: bool = field(
+        "platform_error", doc="True when it failed on NoClick's side (``failure`` is ``platform``): don't change the "
+        "app to work around it; tell whoever it's for, with ``error_id``.",
+    )
+    error_id: Optional[str] = field(
+        "error_id", doc="The id NoClick's team finds a failure of its own by (None unless ``platform_error``).",
+    )
     runtime: Optional[str] = field(
         "runtime", doc="Where it runs: ``edge`` or ``container``, chosen when its build starts (None until then).",
     )
@@ -523,6 +535,12 @@ class Deployment(_Object):
         "rebuilt", doc="On the deployment a promote of one past the rollback window gives: that one's release was no "
         "longer kept, so its commit was built again with the app's settings and secrets as they are now, as this "
         "deployment. None otherwise.",
+    )
+    settings_changed: Optional[str] = field(
+        "settings_changed", doc="On the deployment a promote's (a rollback's) ``wait()`` gives: the app's settings "
+        "changed since this release was built, named, so what its build read of them (a ``VITE_`` or ``NEXT_PUBLIC_`` "
+        "value it put in its pages) is still as it was then; deploying production again builds with them. None "
+        "otherwise.",
     )
     preview_data: Optional[str] = field(
         "preview_data", doc="On the deployment a preview's deploy gives, when the app's ``preview_resources`` is "
