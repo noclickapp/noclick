@@ -12,9 +12,10 @@ names the ``approvals:answer`` scope (a key with every scope, ``*``, holds it on
 A key never answers a call made with it (by its own code, through MCP, or by an agent or app acting as it), never
 approves one whose terms a person accepts (it may decline it), and approves only what it could make itself: the
 scopes the call needs (never a call only the owner and their NoClick assistant make), and a price that fits the key's
-own monthly cap beside what it spent and approved this month. NoClick then runs an approved call itself, once, exactly
-as it was held, with no scope the answering key lacks. While your account holds such a key, a call whose link reaches
-no person is still held, with an empty ``sent_to``, for your code to answer.
+own monthly cap beside what it spent and approved this month (what it approves also counts against what it may
+still spend itself). NoClick then runs an approved call itself, once, exactly as it was held, with no scope the
+answering key lacks. While your account holds a key that would approve it, a call whose link reaches no person is
+still held, with an empty ``sent_to``, for your code (or the owner, signed in) to answer.
 """
 
 from __future__ import annotations
