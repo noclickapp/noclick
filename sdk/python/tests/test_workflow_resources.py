@@ -7,13 +7,14 @@ import pytest
 import noclick as nc
 
 FILE = {
-    "object": "workflow_file", "id": "res_f1", "name": "invoice.pdf", "workflow": {"id": "wf_1", "name": "Intake"},
+    "object": "workflow_file", "id": "res_f1", "name": "invoice.pdf",
+    "workflow": {"id": "wf_1", "name": "Intake", "step_types": ["trigger-webhook", "agent:codex", "automation-gmail"]},
     "access": "editor", "step_id": "upload", "type": "document", "mime_type": "application/pdf", "size_bytes": 1024,
     "url": "https://api.noclick.com/f/sealed/invoice.pdf", "url_expires_at": "2026-11-19T11:00:00+00:00",
     "created_at": "2026-11-19T10:00:00+00:00", "updated_at": "2026-11-19T10:00:00+00:00",
 }
 TABLE = {
-    "object": "workflow_table", "id": "res_t1", "name": "Orders", "workflow": {"id": "wf_1", "name": "Intake"},
+    "object": "workflow_table", "id": "res_t1", "name": "Orders", "workflow": {"id": "wf_1", "name": "Intake", "step_types": []},
     "access": "owner", "step_id": "table", "row_count": 3, "database_id": "db_1",
     "created_at": "2026-11-19T10:00:00+00:00", "updated_at": "2026-11-19T10:00:00+00:00",
 }
@@ -35,7 +36,9 @@ def test_a_workflows_files_list_with_their_workflow_and_a_link_and_never_act_for
     assert dict(request.url.params) == {"workflow_id": "wf_1", "organization_id": "none"}
     assert "noclick-user" not in request.headers
     assert (invoice.id, invoice.name, invoice.workflow, invoice.access, invoice.step_id) == (
-        "res_f1", "invoice.pdf", {"id": "wf_1", "name": "Intake"}, "editor", "upload")
+        "res_f1", "invoice.pdf",
+        {"id": "wf_1", "name": "Intake", "step_types": ["trigger-webhook", "agent:codex", "automation-gmail"]}, "editor",
+        "upload")
     assert (invoice.type, invoice.size_bytes, invoice.url) == ("document", 1024, FILE["url"])
     assert invoice.url_expires_at.isoformat() == "2026-11-19T11:00:00+00:00"
     # A workflow named by id, and a page.
@@ -84,7 +87,7 @@ def test_a_tables_rows_read_by_page_and_whole(api, client):
     assert [dict(c.request.url.params) for c in rows.calls] == [{"limit": "10000"}, {"limit": "10000", "cursor": "2"}]
     page = orders.rows_page(limit=1)
     assert dict(rows.calls.last.request.url.params) == {"limit": "1"}
-    assert [r.index for r in page.data] == [0] and page.next_cursor == "1"
+    assert [r.index for r in page.data] == [0] and page.next_cursor == "1" and page.total_count == 3
 
 
 def test_rows_stop_at_a_limit(api, client):
@@ -99,11 +102,14 @@ def test_rows_stop_at_a_limit(api, client):
 def test_the_accounts_files_page_by_cursor_and_are_deleted_as_the_account(api, client):
     made = {"object": "attachment", "id": "res_1", "name": "cake.png", "mime_type": "image/png", "size_bytes": 900,
             "kind": "image", "voice": False, "url": "https://assets.example/u/account/res_1/cake.png",
-            "duration_ms": None, "peaks": None}
+            "duration_ms": None, "peaks": None, "created_at": "2026-11-19T10:00:00+00:00",
+            "updated_at": "2026-11-19T10:30:00+00:00"}
     listed = api.get("/v1/attachments").respond(json={"object": "list", "data": [made], "next_cursor": "res_1"})
     page = nc.attachments_page(query="cake", cursor="res_0", limit=1)
     assert dict(listed.calls.last.request.url.params) == {"query": "cake", "cursor": "res_0", "limit": "1"}
     assert [f.id for f in page.data] == ["res_1"] and page.next_cursor == "res_1"
+    assert (page.data[0].created_at.isoformat(), page.data[0].updated_at.isoformat()) == (
+        "2026-11-19T10:00:00+00:00", "2026-11-19T10:30:00+00:00")
     gone = api.delete("/v1/attachments/res_1").respond(json={"object": "attachment", "id": "res_1", "deleted": True})
     nc.delete_attachment(page.data[0])
     nc.delete_attachment("res_1")

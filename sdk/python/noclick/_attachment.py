@@ -5,11 +5,12 @@ from __future__ import annotations
 import mimetypes
 import os
 from dataclasses import dataclass, field as dc_field
+from datetime import datetime
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import Page, compact, fetch_page
+from ._object import Page, compact, fetch_page, parse_time
 from ._sync import synced
 from .exceptions import InvalidRequest
 
@@ -25,7 +26,8 @@ class Attachment:
     is kept as transcription reads it (a browser's WebM recording as MP3). A
     file an agent's conversation shows (in ``history``, or a ``file`` event)
     has its ``name``, ``url`` and ``mime_type``, and no ``id``: it was sent. The
-    account's files (``noclick.attachments()``) have their ``id``, to send again."""
+    account's files (``noclick.attachments()``) have their ``id``, to send again,
+    and when each was made (``created_at``) and last changed (``updated_at``)."""
 
     name: str
     url: str
@@ -37,13 +39,15 @@ class Attachment:
     duration_ms: Optional[int] = None
     peaks: Optional[List[float]] = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "Attachment":
         mime = raw.get("mime_type") or "application/octet-stream"
         return cls(raw.get("name") or "", raw.get("url") or "", mime, raw.get("id"), raw.get("size_bytes"),
                    raw.get("kind") or _kind(mime), bool(raw.get("voice")), raw.get("duration_ms"), raw.get("peaks"),
-                   raw)
+                   raw, parse_time(raw.get("created_at")), parse_time(raw.get("updated_at")))
 
 
 def _kind(mime: str) -> str:

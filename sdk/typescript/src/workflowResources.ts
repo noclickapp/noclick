@@ -17,7 +17,7 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { ApiObject, asObject, fetchPage, listAll, listPage, parseTime, refId } from "./object.ts";
+import { ApiObject, asList, asObject, listAll, listPage, parseTime, refId } from "./object.ts";
 import type { JsonObject, ObjectInit, Page, PageOptions } from "./object.ts";
 import type { Workflow } from "./workflow.ts";
 
@@ -28,6 +28,21 @@ const MAX_ROWS_PAGE = 10_000;
 export interface KeptBy {
   id: string;
   name: string;
+  /**
+   * What it's made of, at a glance: at most four of its step types, its triggers first, then its agents, then the
+   * rest in the order it holds them (`["trigger-cron", "agent:codex", "automation-hubspot"]`). An agent on a coding
+   * harness is `agent:<harness>`. Only step types and harness names, never a step's settings.
+   */
+  stepTypes: string[];
+}
+
+function keptBy(raw: unknown): KeptBy {
+  const found = asObject(raw);
+  return {
+    id: String(found.id ?? ""),
+    name: String(found.name ?? ""),
+    stepTypes: Array.isArray(found.step_types) ? found.step_types.map(String) : [],
+  };
 }
 
 /** Which of your workflows' files or tables a list holds. */
@@ -79,9 +94,9 @@ export class WorkflowFile extends ApiObject {
   get name(): string {
     return this._field("name");
   }
-  /** The workflow that keeps it. */
+  /** The workflow that keeps it, and what it's made of. */
   get workflow(): KeptBy {
-    return this._field("workflow");
+    return keptBy(this._field("workflow"));
   }
   /** Your account's access to that workflow: `owner`, `editor` or `viewer`. Deleting takes owner or editor. */
   get access(): string {
@@ -142,6 +157,11 @@ export interface TableRow {
   raw: JsonObject;
 }
 
+/** One page of a table's rows, with how many rows the table holds. */
+export interface RowsPage extends Page<TableRow> {
+  totalCount: number;
+}
+
 function toTableRow(raw: JsonObject): TableRow {
   return {
     id: String(raw.id ?? ""),
@@ -185,9 +205,9 @@ export class WorkflowTable extends ApiObject {
   get name(): string {
     return this._field("name");
   }
-  /** The workflow that keeps it. */
+  /** The workflow that keeps it, and what it's made of. */
   get workflow(): KeptBy {
-    return this._field("workflow");
+    return keptBy(this._field("workflow"));
   }
   /** Your account's access to that workflow: `owner`, `editor` or `viewer`. Deleting takes owner or editor. */
   get access(): string {
@@ -220,12 +240,19 @@ export class WorkflowTable extends ApiObject {
     return `/v1/workflows/tables/${encodeURIComponent(String(this._known("id")))}${suffix}`;
   }
 
-  /** One page of its rows in the order they were added (`limit`, 1 to 10,000; 100 when left out). */
-  async rowsPage(options: PageOptions = {}): Promise<Page<TableRow>> {
-    const page = await fetchPage(resolveClient(this._client), this.path("/rows"), {
-      user: null, cursor: options.cursor, limit: options.limit,
-    });
-    return { data: page.data.map(toTableRow), nextCursor: page.nextCursor };
+  /**
+   * One page of its rows in the order they were added (`limit`, 1 to 10,000; 100 when left out), with how many rows
+   * the table holds (`totalCount`).
+   */
+  async rowsPage(options: PageOptions = {}): Promise<RowsPage> {
+    const page = asObject(await resolveClient(this._client).request("GET", this.path("/rows"), {
+      query: { cursor: options.cursor, limit: options.limit }, user: null,
+    }));
+    return {
+      data: asList(page).map((raw) => toTableRow(asObject(raw))),
+      nextCursor: page.next_cursor ? String(page.next_cursor) : null,
+      totalCount: typeof page.total_count === "number" ? page.total_count : 0,
+    };
   }
 
   /** Its rows in the order they were added: every one, read 10,000 at a time, or the first `limit`. */
@@ -234,7 +261,7 @@ export class WorkflowTable extends ApiObject {
     let cursor: string | null = null;
     for (;;) {
       const limit: number = options.limit === undefined ? MAX_ROWS_PAGE : Math.min(options.limit - found.length, MAX_ROWS_PAGE);
-      const page: Page<TableRow> = await this.rowsPage({ cursor, limit });
+      const page: RowsPage = await this.rowsPage({ cursor, limit });
       found.push(...page.data);
       if (page.nextCursor === null || (options.limit !== undefined && found.length >= options.limit)) {
         return options.limit === undefined ? found : found.slice(0, options.limit);

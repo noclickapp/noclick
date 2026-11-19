@@ -154,7 +154,7 @@ from .workflow import (
     BuildQuestion, EditBatch, RunStep, Step, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint,
     WorkflowGraph, WorkflowRun, WorkflowStep, WorkflowVersion,
 )
-from .workflow_resources import TableRow, WorkflowFile, WorkflowTable
+from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
 
 __all__ = [
     "__version__",
@@ -214,6 +214,7 @@ __all__ = [
     "Webhook", "WebhookDelivery", "Event", "EventType",
     "Workflow", "WorkflowRun", "RunStep", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult", "WorkflowStep",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
+    "RowsPage",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",

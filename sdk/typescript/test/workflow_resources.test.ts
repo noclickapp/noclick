@@ -7,13 +7,14 @@ import * as nc from "../src/index.ts";
 import { apiError, json, listing, setup } from "./helpers.ts";
 
 const FILE = {
-  object: "workflow_file", id: "res_f1", name: "invoice.pdf", workflow: { id: "wf_1", name: "Intake" }, access: "editor",
+  object: "workflow_file", id: "res_f1", name: "invoice.pdf", access: "editor",
+  workflow: { id: "wf_1", name: "Intake", step_types: ["trigger-webhook", "agent:codex", "automation-gmail"] },
   step_id: "upload", type: "document", mime_type: "application/pdf", size_bytes: 1024,
   url: "https://api.noclick.com/f/sealed/invoice.pdf", url_expires_at: "2026-11-19T11:00:00+00:00",
   created_at: "2026-11-19T10:00:00+00:00", updated_at: "2026-11-19T10:00:00+00:00",
 };
 const TABLE = {
-  object: "workflow_table", id: "res_t1", name: "Orders", workflow: { id: "wf_1", name: "Intake" }, access: "owner",
+  object: "workflow_table", id: "res_t1", name: "Orders", workflow: { id: "wf_1", name: "Intake", step_types: [] }, access: "owner",
   step_id: "table", row_count: 3, database_id: "db_1",
   created_at: "2026-11-19T10:00:00+00:00", updated_at: "2026-11-19T10:00:00+00:00",
 };
@@ -30,7 +31,7 @@ test("a workflow's files list with their workflow and a link, and never act for 
   assert.deepEqual(params(listed.last.query), { workflow_id: "wf_1", organization_id: "none" });
   assert.equal(listed.last.headers.get("noclick-user"), null);
   assert.deepEqual([invoice.id, invoice.name, invoice.workflow, invoice.access, invoice.stepId],
-    ["res_f1", "invoice.pdf", { id: "wf_1", name: "Intake" }, "editor", "upload"]);
+    ["res_f1", "invoice.pdf", { id: "wf_1", name: "Intake", stepTypes: ["trigger-webhook", "agent:codex", "automation-gmail"] }, "editor", "upload"]);
   assert.deepEqual([invoice.type, invoice.sizeBytes, invoice.mimeType, invoice.url], ["document", 1024, "application/pdf", FILE.url]);
   assert.equal(invoice.urlExpiresAt?.toISOString(), "2026-11-19T11:00:00.000Z");
   const page = await nc.WorkflowFile.listPage({ workflow: "wf_2", cursor: "res_f0", limit: 10 });
@@ -80,7 +81,7 @@ test("a table's rows read by page and whole", async () => {
   assert.deepEqual(rows.calls.map((c) => params(c.query)), [{ limit: "10000" }, { cursor: "2", limit: "10000" }]);
   const page = await orders.rowsPage({ limit: 1 });
   assert.deepEqual(params(rows.last.query), { limit: "1" });
-  assert.deepEqual([page.data.map((r) => r.index), page.nextCursor], [[0], "1"]);
+  assert.deepEqual([page.data.map((r) => r.index), page.nextCursor, page.totalCount], [[0], "1", 3]);
 });
 
 test("rows stop at a limit", async () => {
@@ -96,11 +97,14 @@ test("rows stop at a limit", async () => {
 test("the account's files page by cursor and are deleted as the account", async () => {
   const { api } = setup();
   const made = { object: "attachment", id: "res_1", name: "cake.png", mime_type: "image/png", size_bytes: 900, kind: "image",
-    voice: false, url: "https://assets.example/u/account/res_1/cake.png", duration_ms: null, peaks: null };
+    voice: false, url: "https://assets.example/u/account/res_1/cake.png", duration_ms: null, peaks: null,
+    created_at: "2026-11-19T10:00:00+00:00", updated_at: "2026-11-19T10:30:00+00:00" };
   const listed = api.on("GET", "/v1/attachments", json(listing([made], "res_1")));
   const page = await nc.attachmentsPage({ query: "cake", cursor: "res_0", limit: 1 });
   assert.deepEqual(params(listed.last.query), { query: "cake", cursor: "res_0", limit: "1" });
   assert.deepEqual([page.data.map((f) => f.id), page.nextCursor], [["res_1"], "res_1"]);
+  assert.deepEqual([page.data[0].createdAt?.toISOString(), page.data[0].updatedAt?.toISOString()],
+    ["2026-11-19T10:00:00.000Z", "2026-11-19T10:30:00.000Z"]);
   const gone = api.on("DELETE", "/v1/attachments/res_1", json({ object: "attachment", id: "res_1", deleted: true }));
   await nc.deleteAttachment(page.data[0]);
   await nc.deleteAttachment("res_1");

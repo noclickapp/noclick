@@ -28,7 +28,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import Page, _Object, field, fetch_page, list_all, list_page, parse_time, ref_id
+from ._object import Page, _Object, field, list_all, list_page, parse_time, ref_id
 from ._sync import synced
 
 # The most rows one page of a table holds.
@@ -53,7 +53,11 @@ class WorkflowFile(_Object):
 
     id: str = field("id")
     name: str = field("name")
-    workflow: Dict[str, Any] = field("workflow", doc="The workflow that keeps it: ``{id, name}``.")
+    workflow: Dict[str, Any] = field("workflow", doc=(
+        "The workflow that keeps it: ``{id, name, step_types}``. ``step_types`` is what it's made of, at a glance: "
+        "at most four of its step types, its triggers first, then its agents, then the rest in the order it holds "
+        "them (``['trigger-cron', 'agent:codex', 'automation-hubspot']``); an agent on a coding harness is "
+        "``agent:<harness>``. Only step types and harness names, never a step's settings."))
     access: str = field("access", doc=(
         "Your account's access to that workflow: ``owner``, ``editor`` or ``viewer``. Deleting takes owner or "
         "editor."))
@@ -152,6 +156,15 @@ class TableRow:
                    parse_time(raw.get("created_at")), raw)
 
 
+@dataclass(frozen=True)
+class RowsPage(Page):
+    """One page of a table's rows; pass ``next_cursor`` back as ``cursor`` for
+    the next (None = the last page). ``total_count`` is how many rows the table
+    holds."""
+
+    total_count: int = 0
+
+
 class WorkflowTable(_Object):
     """A table one of your workflows keeps rows in (a Table step's, an
     interface's). Read its rows with ``rows()``, never by querying the database
@@ -163,7 +176,11 @@ class WorkflowTable(_Object):
 
     id: str = field("id")
     name: str = field("name")
-    workflow: Dict[str, Any] = field("workflow", doc="The workflow that keeps it: ``{id, name}``.")
+    workflow: Dict[str, Any] = field("workflow", doc=(
+        "The workflow that keeps it: ``{id, name, step_types}``. ``step_types`` is what it's made of, at a glance: "
+        "at most four of its step types, its triggers first, then its agents, then the rest in the order it holds "
+        "them (``['trigger-cron', 'agent:codex', 'automation-hubspot']``); an agent on a coding harness is "
+        "``agent:<harness>``. Only step types and harness names, never a step's settings."))
     access: str = field("access", doc=(
         "Your account's access to that workflow: ``owner``, ``editor`` or ``viewer``. Deleting takes owner or "
         "editor."))
@@ -227,12 +244,13 @@ class WorkflowTable(_Object):
         )
 
     @synced
-    async def rows_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None) -> Page:
+    async def rows_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None) -> RowsPage:
         """One page of its rows in the order they were added (``limit``, 1 to
         10,000; 100 when left out); pass ``next_cursor`` back as ``cursor``.
 
         Returns:
-            A page whose ``data`` holds each ``TableRow`` and whose ``next_cursor`` is ``None`` on the last page.
+            A page whose ``data`` holds each ``TableRow``, whose ``next_cursor`` is ``None`` on the last page and
+            whose ``total_count`` is how many rows the table holds.
 
         Usage::
 
@@ -240,9 +258,10 @@ class WorkflowTable(_Object):
             page = signups.rows_page(limit=500)
             print([row.data["email"] for row in page.data])
         """
-        page = await fetch_page(resolve_client(self._client), self._path("/rows"), user=None, cursor=cursor,
-                                limit=limit)
-        return Page([TableRow._from(row) for row in page.data], page.next_cursor)
+        page = await resolve_client(self._client).request(
+            "GET", self._path("/rows"), params={"cursor": cursor, "limit": limit}, user=None) or {}
+        return RowsPage([TableRow._from(row) for row in page.get("data") or []], page.get("next_cursor") or None,
+                        int(page.get("total_count") or 0))
 
     @synced
     async def rows(self, *, limit: Optional[int] = None) -> List[TableRow]:

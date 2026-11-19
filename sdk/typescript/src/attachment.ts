@@ -2,7 +2,7 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick, RequestOptions } from "./client.ts";
-import { asObject, fetchPage, str } from "./object.ts";
+import { asObject, fetchPage, parseTime, str } from "./object.ts";
 import type { JsonObject, Page, PageOptions } from "./object.ts";
 
 /**
@@ -10,7 +10,7 @@ import type { JsonObject, Page, PageOptions } from "./object.ts";
  * `voice` clip has its `durationMs` and its waveform's `peaks` (loudness 0-1). Audio is kept as
  * transcription reads it (a browser's WebM recording as MP3). A file an agent's conversation shows (in
  * `history`, or a `file` event) has its `name`, `url` and `mimeType`, and no `id`: it was sent. The account's
- * files (`attachments()`) have their `id`, to send again.
+ * files (`attachments()`) have their `id`, to send again, and when each was made and last changed.
  */
 export interface Attachment {
   id: string | null;
@@ -22,6 +22,10 @@ export interface Attachment {
   voice: boolean;
   durationMs: number | null;
   peaks: number[] | null;
+  /** When it was made: one of the account's files has it; a file on a message has none. */
+  createdAt: Date | null;
+  /** When it last changed, as `createdAt`. */
+  updatedAt: Date | null;
   raw: JsonObject;
 }
 
@@ -53,6 +57,8 @@ export function toAttachment(raw: JsonObject): Attachment {
     voice: raw.voice === true,
     durationMs: typeof raw.duration_ms === "number" ? raw.duration_ms : null,
     peaks: Array.isArray(raw.peaks) ? (raw.peaks as number[]) : null,
+    createdAt: parseTime(raw.created_at),
+    updatedAt: parseTime(raw.updated_at),
     raw,
   };
 }

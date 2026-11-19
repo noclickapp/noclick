@@ -193,7 +193,7 @@ export type {
   WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
 export { WorkflowFile, WorkflowTable } from "./workflowResources.ts";
-export type { KeptBy, TableRow, WorkflowResourceListOptions } from "./workflowResources.ts";
+export type { KeptBy, RowsPage, TableRow, WorkflowResourceListOptions } from "./workflowResources.ts";
 export type { ExportBundle, ExportItem } from "./export.ts";
 export { Volume } from "./volume.ts";
 export type { VolumeData, VolumeEntry, VolumeListdirOptions, VolumeMount, VolumeRef } from "./volume.ts";
