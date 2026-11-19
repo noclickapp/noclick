@@ -2648,3 +2648,18 @@ class Project(_Object):
             "DELETE", await self._project_path(), params={"delete_data": "true" if delete_data else None},
         )
         return trashed(raw, client=self._client, user=self._call_scope())
+
+    @synced
+    async def unpublish(self) -> None:
+        """Take down an app NoClick publishes (``published``), for good: its page's key is revoked, every address
+        it answers at stops, and the app is deleted; publishing its automation's interface again makes a new one.
+        Only the account's own key or session can: a key acting for one of your users gets ``noclick.NotFound``.
+        It can't be undone.
+
+        Usage::
+
+            for app in noclick.Project.list():
+                if app.published and app.workflow is None:
+                    app.unpublish()
+        """
+        await self._request("POST", f"{await self._project_path()}/unpublish", json={})

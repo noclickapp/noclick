@@ -1878,4 +1878,13 @@ export class Project extends ApiObject {
     return trashed(await this._request("DELETE", await this._projectPath(),
       { query: { delete_data: options.deleteData ? "true" : undefined } }), this);
   }
+
+  /**
+   * Take down an app NoClick publishes (`published`), for good: its page's key is revoked, every address it answers
+   * at stops, and the app is deleted; publishing its automation's interface again makes a new one. Only the
+   * account's own key or session can: a key acting for one of your users gets `NotFound`. It can't be undone.
+   */
+  async unpublish(): Promise<void> {
+    await this._request("POST", await this._projectPath("unpublish"), { json: {} });
+  }
 }
