@@ -13,6 +13,7 @@ import { openConsolePalette } from './ConsolePalette';
 import { AGENTS, FIXTURE_NOW_MS, FIXTURE_USER, KEYS, USERS, type FixtureSet } from './fixtures/core';
 import { makeFixtureFetch } from './fixtures/fixtureFetch';
 import { TRY_IT_OPERATION_ID } from './fixtures/pages/b';
+import { CARDS } from './fixtures/pages/h_identity';
 import { BOOKING_APP_ID } from './fixtures/pages/e_build';
 import { isOwnerOnly, OWNER_ONLY, OWNER_ONLY_OPERATIONS, ownerOnlyWhy } from './ownerOnly';
 import { visibleKinds } from './resourceKinds';
@@ -40,7 +41,7 @@ interface Calls {
 }
 
 /** A console at `address` (a path under the console, with its query) acting as `actsAs`, over the fixtures' `set`. */
-function open(address: string, actsAs: 'owner' | 'key' = 'key', set: FixtureSet = 'populated'): Calls {
+function open(address: string, actsAs: 'owner' | 'key' = 'key', set: FixtureSet = 'populated', lab = false): Calls {
     const answer = makeFixtureFetch({ set, actsAs });
     const made: string[] = [];
     const ownerOnly: string[] = [];
@@ -78,6 +79,7 @@ function open(address: string, actsAs: 'owner' | 'key' = 'key', set: FixtureSet 
                 now={() => FIXTURE_NOW_MS}
                 onSignOut={() => undefined}
                 live={null}
+                lab={lab}
             />
         );
     }
@@ -185,6 +187,18 @@ describe('a console acting as a key', () => {
         expect(await screen.findByText(ownerOnlyWhy('machineAccess'))).toBeTruthy();
         expect(screen.getByRole('link', { name: 'Ask on NoClick' }).getAttribute('href')).toBe('https://noclick.com/dashboard/developers/resources/machines');
         expect(calls.made).not.toContain('POST /v1/machines/vetting');
+    });
+
+    it('reveals no card’s number, and says why where the owner’s reveal is (cards are drawn in the lab)', async () => {
+        const calls = open(`resources/cards?card=${CARDS[0].id}`, 'key', 'populated', true);
+        await calls.settled();
+        expect(await screen.findByText(ownerOnlyWhy('cardReveal'))).toBeTruthy();
+        expect(screen.queryByRole('button', { name: 'Reveal details' })).toBeNull();
+        cleanup();
+
+        const owner = open(`resources/cards?card=${CARDS[0].id}`, 'owner', 'populated', true);
+        await owner.settled();
+        expect(await screen.findByRole('button', { name: 'Reveal details' })).toBeTruthy();
     });
 
     it('offers no prompt that needs a setup code and no key to make, and still shows the steps', async () => {
