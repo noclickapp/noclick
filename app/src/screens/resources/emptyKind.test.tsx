@@ -15,7 +15,7 @@ import { ResourcesReads } from './reads';
 
 afterEach(cleanup);
 
-it.each(KINDS.filter((k) => !k.fromHost).map((k) => [k.label, k] as const))('%s, empty, says what it is once', async (_, kind) => {
+it.each(KINDS.map((k) => [k.label, k] as const))('%s, empty, says what it is once', async (_, kind) => {
     const client = fixtureClient({ set: 'empty' }, { maxRetries: 0 });
     const Page = () => (
         <ResourcesReads>

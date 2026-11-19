@@ -6,7 +6,6 @@ import { ALL_USERS, Machine } from 'noclick';
 import { getMachineAccess } from '@/sdk/owner';
 import { listCompute, listOwnComputers } from '@/screens/resources/knowledge';
 import { placeItem } from '@/screens/resources/knowledgeItems';
-import { KINDS } from '@/screens/resources/kinds';
 import { PlatformResourcesContext, type PlatformResources } from '@/screens/resources/platform';
 import { useAgents, useWorkV1 } from '../../agents/reads';
 import {
@@ -58,8 +57,7 @@ export function MachinesPlatform({ children }: { children: ReactNode }) {
         Empty: { machines: MachineWays },
         Notice: { machines: MachinesNotice },
         Page: { machines: MachineResourcePage },
-        kinds: KINDS,
-        hostOwns: (item) => item.kind === 'machines',
+        hasOwnParts: (item) => item.kind === 'machines',
         removal: () => null,
         trash: {},
         restore: async () => undefined,

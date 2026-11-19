@@ -1156,10 +1156,10 @@ export const routes: readonly FixtureRoute[] = [
         path: '/v1/agents/:id/conversations/:conversation',
         reply: (r) => {
             if (r.set === 'error') return PAGE_ERROR;
-            const messages = ORCHESTRATION_TRANSCRIPTS[`${r.params.id}/${r.params.conversation}`] ?? TRANSCRIPTS[r.params.conversation];
-            return messages
-                ? ok({ object: 'conversation', id: r.params.conversation, agent_id: r.params.id, messages })
-                : apiError(404, 'not_found', `No conversation ${r.params.conversation}.`);
+            if (!agentById(r.params.id)) return apiError(404, 'not_found', `Agent ${r.params.id} not found.`);
+            // A conversation nobody has written in yet reads as empty, as the API answers it, in the agent's one session.
+            const messages = ORCHESTRATION_TRANSCRIPTS[`${r.params.id}/${r.params.conversation}`] ?? TRANSCRIPTS[r.params.conversation] ?? [];
+            return ok({ object: 'conversation', id: r.params.conversation, agent_id: r.params.id, session: 'main', messages });
         },
     },
     {

@@ -4,7 +4,8 @@
 // object acts for its user (the SDK sends its `user_id` as NoClick-User), so its page reads and changes it as that
 // user's own calls would. The reads are cached: a frame about a moved resource makes its reads stale
 // (ConsoleProviders), and while something is still settling (a domain, a deploy, a name's certificate) its list is read
-// again only as a slow backstop. The account's numbers and what a host adds (MORE_KINDS) come through their slots.
+// again only as a slow backstop. Work's kinds (agents, skills, memories, machines, secrets) are read beside them
+// (workKinds.tsx), and the account's numbers and what a host adds (MORE_KINDS) come through their slots.
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ALL_USERS, Bucket, Database, Domain, Inbox, Project, Repo, TrashItem, Usage, User, usage, type UsageSeries } from 'noclick';
 import { serveAppAt } from '@/screens/console/pages/resources/appDomains';
@@ -15,15 +16,17 @@ import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
 import { KINDS, type KindId } from './kinds';
 import type { ResourceItem } from './model';
-import { PlatformResourcesContext, type DeletionImpact, type PlatformResources } from './platform';
+import { PlatformResourcesContext, type PlatformResources } from './platform';
 import { MORE_KINDS, NUMBERS, type MoreKinds, type NumbersRead } from './slots';
 import { useAppsWeek } from './useAppTraffic';
+import { WorkKinds } from './workKinds';
 import {
     SETTLING_DOMAIN_STATUSES,
     appItem,
     awaitingCertificate,
     bucketItem,
     databaseItem,
+    deletePreviewer,
     domainItem,
     inboxItem,
     mailDomains,
@@ -32,7 +35,6 @@ import {
     servingRefusal,
     trashByKind,
     withOwner,
-    type DeletePreviewer,
 } from './items';
 import { platformRegistrar } from './registrar';
 import { AppRequestsFigure } from './AppAnalytics';
@@ -60,14 +62,31 @@ function AppRowFigure({ item }: { item: ResourceItem }) {
     return isApp && project ? <AppRequestsFigure project={project as Project} requests={week.requests?.get(item.id)} /> : null;
 }
 
-/** Resources' reads around the page: the numbers and what a host adds read through their slots, then the platform's. */
+/** Resources' reads around the page: the numbers and what a host adds read through their slots, Work's kinds, then
+ *  the platform's. */
 export function ResourcesReads({ children }: { children: ReactNode }) {
     const Numbers = useSlot(NUMBERS);
     const More = useSlot(MORE_KINDS);
-    return <Numbers>{(numbers) => <More>{(more) => <Reads numbers={numbers} more={more}>{children}</Reads>}</More>}</Numbers>;
+    return (
+        <Numbers>
+            {(numbers) => (
+                <WorkKinds>
+                    {(work) => (
+                        <More>
+                            {(more) => (
+                                <Reads numbers={numbers} work={work} more={more}>
+                                    {children}
+                                </Reads>
+                            )}
+                        </More>
+                    )}
+                </WorkKinds>
+            )}
+        </Numbers>
+    );
 }
 
-function Reads({ numbers, more, children }: { numbers: NumbersRead; more: MoreKinds; children: ReactNode }) {
+function Reads({ numbers, work, more, children }: { numbers: NumbersRead; work: MoreKinds; more: MoreKinds; children: ReactNode }) {
     const { client } = useConsole();
     // A domain registering or waiting on DNS, an app deploying or a name of one getting its certificate: frames say when it moves; this is the backstop.
     const [settling, setSettling] = useState({ domains: false, apps: false });
@@ -119,11 +138,7 @@ function Reads({ numbers, more, children }: { numbers: NumbersRead; more: MoreKi
     const userRows = users.data?.data;
     const names = useMemo(() => new Map((userRows ?? []).flatMap((u): [string, string][] => (u.name ? [[u.id, u.name]] : []))), [userRows]);
     const registrar = useMemo(() => platformRegistrar(client), [client]);
-    const previewDeletion = useMemo<DeletePreviewer>(
-        () => async (path, user) =>
-            (await client.request<{ impact: DeletionImpact }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path }, user })).impact,
-        [client]
-    );
+    const previewDeletion = useMemo(() => deletePreviewer(client), [client]);
     const objects = useMemo(
         () => ({
             byId: new Map<string, PlatformObject>(
@@ -147,28 +162,30 @@ function Reads({ numbers, more, children }: { numbers: NumbersRead; more: MoreKi
         ['storage', buckets],
         ['repos', repos],
     ];
-    const errors: Partial<Record<KindId, string>> = { ...more.errors, ...(numbers.error ? { numbers: numbers.error } : {}) };
-    const loading: Partial<Record<KindId, boolean>> = { ...more.loading, numbers: numbers.loading };
+    // Work's kinds and what a host adds, each item drawn by the parts of whichever of them holds it.
+    const owners = [work, more];
+    const parts = (item: ResourceItem) => owners.find((owner) => owner.owns(item)) ?? null;
+    const errors: Partial<Record<KindId, string>> = { ...work.errors, ...more.errors, ...(numbers.error ? { numbers: numbers.error } : {}) };
+    const loading: Partial<Record<KindId, boolean>> = { numbers: numbers.loading };
+    for (const owner of owners) for (const [kind, on] of Object.entries(owner.loading) as [KindId, boolean][]) loading[kind] ||= on;
     for (const [kind, read] of reads) {
         loading[kind] = read.loading;
         if (read.error !== undefined && read.data === undefined) errors[kind] = errorText(read.error);
     }
     const spent = appSpend.data;
     const listed = <T extends PlatformObject>(rows: T[] | undefined, item: (row: T) => ResourceItem) => (rows ?? []).map((row) => withOwner(item(row), row.userId, names));
-    // A host's items of a kind the platform lists too (an agent's workspace among the files) go beside its own.
-    const withMore = (kind: KindId, own: ResourceItem[]) => [...own, ...(more.items[kind] ?? [])];
-    const parts = (item: ResourceItem) => (more.owns(item) ? more : null);
+    const own: Partial<Record<KindId, ResourceItem[]>> = {
+        numbers: numbers.items,
+        domains: listed(domainRows, domainItem),
+        email: listed(inboxRows, inboxItem),
+        apps: listed(projectRows, (p) => appItem(p, spent ? spent.group(p.id).usd : undefined)),
+        databases: listed(databaseRows, databaseItem),
+        storage: listed(bucketRows, bucketItem),
+        repos: listed(repoRows, repoItem),
+    };
     const value: PlatformResources = {
-        items: {
-            ...more.items,
-            numbers: withMore('numbers', numbers.items),
-            domains: withMore('domains', listed(domainRows, domainItem)),
-            email: withMore('email', listed(inboxRows, inboxItem)),
-            apps: withMore('apps', listed(projectRows, (p) => appItem(p, spent ? spent.group(p.id).usd : undefined))),
-            databases: withMore('databases', listed(databaseRows, databaseItem)),
-            storage: withMore('storage', listed(bucketRows, bucketItem)),
-            repos: withMore('repos', listed(repoRows, repoItem)),
-        },
+        // Each kind's own items, then Work's and a host's of it (an agent's workspace among the files).
+        items: Object.fromEntries(KINDS.map((k) => [k.id, [...(own[k.id] ?? []), ...owners.flatMap((owner) => owner.items[k.id] ?? [])]])),
         loading,
         errors,
         spentThisMonth: typeSpend.data ? { databases: spentOn(typeSpend.data, 'databases'), storage: spentOn(typeSpend.data, 'storage') } : {},
@@ -208,16 +225,15 @@ function Reads({ numbers, more, children }: { numbers: NumbersRead; more: MoreKi
             const Own = parts(props.item)?.Actions;
             return Own ? <Own {...props} /> : null;
         },
-        Create: more.Create,
-        Empty: more.Empty,
-        Notice: more.Notice,
-        unavailable: more.unavailable,
+        Create: { ...work.Create, ...more.Create },
+        Empty: { ...work.Empty, ...more.Empty },
+        Notice: { ...work.Notice, ...more.Notice },
+        unavailable: { ...work.unavailable, ...more.unavailable },
         RowFigure: AppRowFigure,
-        Lead: more.Lead,
-        Page: more.Page,
-        RowMenu: more.RowMenu,
-        kinds: KINDS.filter((k) => !k.fromHost || more.kinds.includes(k.id)),
-        hostOwns: more.owns,
+        Lead: { ...work.Lead, ...more.Lead },
+        Page: { ...work.Page, ...more.Page },
+        RowMenu: { ...work.RowMenu, ...more.RowMenu },
+        hasOwnParts: (item) => !!parts(item),
         trash: trashByKind(trash.data?.data ?? [], names),
         // A user's entry is restored or purged acting for that user, as its resource was deleted.
         async restore(entry) {
