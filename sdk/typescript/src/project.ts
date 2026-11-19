@@ -2022,11 +2022,13 @@ export class Project extends ApiObject {
   }
 
   /**
-   * Take down an app NoClick publishes (`published`), for good: its page's key is revoked, every address it answers
-   * at stops, and the app is deleted; publishing its automation's interface again makes a new one. Only the
-   * account's own key or session can: a key acting for one of your users gets `NotFound`. It can't be undone.
+   * Take down an app NoClick publishes (`published`), to the trash: its page's key stops working and every address it
+   * answers at stops at once. For 30 days no other app takes its address, and `restore()` (or publishing its
+   * automation's interface again) serves it where it was with the same key; then, or when the item is purged, it's
+   * deleted for good. Only the account's own key or session can: a key acting for one of your users gets `NotFound`.
+   * Returns its `TrashItem`.
    */
-  async unpublish(): Promise<void> {
-    await this._request("POST", await this._projectPath("unpublish"), { json: {} });
+  async unpublish(): Promise<TrashItem> {
+    return trashed(await this._request("POST", await this._projectPath("unpublish"), { json: {} }), this);
   }
 }

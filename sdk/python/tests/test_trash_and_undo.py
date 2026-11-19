@@ -29,6 +29,20 @@ def test_a_delete_returns_its_trash_item_which_restores_and_purges(api, client):
     assert purge.call_count == 1
 
 
+def test_unpublishing_an_app_noclick_publishes_answers_its_trash_item(api, client):
+    """Unpublishing moves the app to the trash, so it comes back by its item, as a deleted app does."""
+    unpublished = {**trashed("project", "prj_1", "bakery"), "unpublished": True, "url": "https://bakery.noclick.app"}
+    del unpublished["deleted"]
+    unpublish = api.post("/v1/projects/prj_1/unpublish").respond(json=unpublished)
+    restore = api.post("/v1/trash/tr_1/restore").respond(json={"object": "project", "id": "prj_1", "restored": True})
+
+    item = nc.Project.from_id("prj_1").unpublish()
+    assert body(unpublish.calls.last.request) == {}
+    assert isinstance(item, nc.TrashItem)
+    assert (item.id, item.kind, item.resource_id, item.operation_id) == ("tr_1", "project", "prj_1", "op_del")
+    assert item.restore()["restored"] is True and restore.call_count == 1
+
+
 def test_the_trash_lists_by_kind_and_loads_an_item_by_id(api, client):
     listed = api.get("/v1/trash").respond(json=listing(trash_item("database", "db_1", "orders"),
                                                        trash_item("bucket", "bkt_1", "uploads", item_id="tr_2")))

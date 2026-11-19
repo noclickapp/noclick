@@ -28,6 +28,20 @@ test("a delete returns its trash item, which restores and purges", async () => {
   assert.equal(purge.count, 1);
 });
 
+test("unpublishing an app NoClick publishes answers its trash item", async () => {
+  const { api } = setup();
+  const { deleted: _, ...moved } = trashed("project", "prj_1", "bakery");
+  const unpublish = api.on("POST", "/v1/projects/prj_1/unpublish",
+    json({ ...moved, unpublished: true, url: "https://bakery.noclick.app" }));
+  const restore = api.on("POST", "/v1/trash/tr_1/restore", json({ object: "project", id: "prj_1", restored: true }));
+  const item = await nc.Project.fromId("prj_1").unpublish();
+  assert.deepEqual(unpublish.last.body, {});
+  assert.ok(item instanceof nc.TrashItem);
+  assert.deepEqual([item.id, item.kind, item.resourceId, item.operationId], ["tr_1", "project", "prj_1", "op_del"]);
+  assert.equal((await item.restore()).restored, true);
+  assert.equal(restore.count, 1);
+});
+
 test("the trash lists by kind and loads an item by id", async () => {
   const { api } = setup();
   const listed = api.on("GET", "/v1/trash", json(listing([trashItem("database", "db_1", "orders")])));
