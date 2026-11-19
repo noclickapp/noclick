@@ -35,7 +35,7 @@ function numberItem(number: PhoneNumber): ResourceItem {
     };
 }
 
-/** The account's numbers from the platform API, bought through it. */
+/** The account's numbers from the platform API, which lists every number the account holds, however it was bought. */
 export function StandardNumbers({ children }: { children: (numbers: NumbersRead) => ReactNode }) {
     const { client } = useConsole();
     const read = useV1('resources:numbers', () => PhoneNumber.listPage({ client, limit: 100 }));

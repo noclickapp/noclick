@@ -723,8 +723,8 @@ class TextingRegistration(_Object):
 
 
 class PhoneNumber(_Object):
-    """A number you own. ``release()`` gives it back (billing stops); a number you keep with
-    your own phone provider is ``disconnect()``ed instead."""
+    """A number you own, however you got it. ``release()`` gives it back (billing stops), as deleting it
+    in the NoClick app does; a number you keep with your own phone provider is ``disconnect()``ed instead."""
 
     _repr_keys = ("id", "number")
 
@@ -1262,7 +1262,9 @@ class PhoneNumber(_Object):
         cls, *, limit: Optional[int] = None, user_filter: Any = None, user: Any = AMBIENT,
         client: Optional[Client] = None,
     ) -> List["PhoneNumber"]:
-        """The numbers you own (the current user's inside ``as_user``, or those ``user_filter`` covers).
+        """The numbers you own, however you got them (bought here or in the NoClick app, or ported in): the
+        current user's inside ``as_user``, or those ``user_filter`` covers. A number bought in the app is your
+        account's own, with no ``user_id`` and no ``name`` until you give it one.
 
         Returns:
             Every matching number, newest first, fetched page by page. Released numbers aren't listed.

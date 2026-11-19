@@ -1043,7 +1043,11 @@ export class PhoneNumber extends ApiObject {
     return await PhoneNumber.fromId(numberId, options).hydrate();
   }
 
-  /** The numbers you own (the current user's inside `asUser`, or those `userFilter` covers). */
+  /**
+   * The numbers you own, however you got them (bought here or in the NoClick app, or ported in): the current user's
+   * inside `asUser`, or those `userFilter` covers. A number bought in the app is your account's own, with no `userId`
+   * and no `name` until you give it one.
+   */
   static async list(options: ReadOptions & { limit?: number } = {}): Promise<PhoneNumber[]> {
     return await listAll({ ...options, path: "/v1/phone_numbers" }, (raw, user) => new PhoneNumber({ raw, client: options.client, user }));
   }
