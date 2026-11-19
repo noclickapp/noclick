@@ -119,7 +119,8 @@ export type {
   DurableObjectClasses, DurableObjectInstance,
   CheckRequest, CheckReview, ConsoleError, DeployOnPush, DeploymentCheck, DeploymentCheckOptions,
   DeploymentEnvironment, DeploymentRuntime, DeploymentStatus, LogLine, LogLines, PathCheck, PathTraffic,
-  PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions, ProjectLogsOptions,
+  PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
+  ProjectLogsOptions,
   ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";
 export { ProjectEmail, ProjectPayments, ProjectSignIn } from "./appServices.ts";

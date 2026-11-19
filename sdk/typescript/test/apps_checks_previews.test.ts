@@ -189,3 +189,35 @@ test("sign-in commits without deploying when asked", async () => {
   await app.signIn.upgrade({ branch: "sign-in-update" });
   assert.deepEqual(upgrade.last.body, { branch: "sign-in-update" });
 });
+
+test("an app's previews are kept to a link, and its deploy and owner hand the link out", async () => {
+  const { api } = setup();
+  const said = "Its previews stay public until NoClick's front door is updated.";
+  const patch = api.on("PATCH", "/v1/projects/prj_1", (call: Call) => json({ ...PROJECT, ...(call.body as object), notes: [said] }));
+  const app = await nc.Project.fromId("prj_1").update({ previewAccess: "link", previewPublicPaths: ["/api/webhooks/*"] });
+  assert.deepEqual(patch.last.body, { preview_access: "link", preview_public_paths: ["/api/webhooks/*"] });
+  assert.deepEqual([app.previewAccess, app.previewPublicPaths, app.raw.notes], ["link", ["/api/webhooks/*"], [said]]);
+
+  const linkUrl = "https://new-form--booking.noclick.site/?preview=p1~1800604800~prj_1~new-form--booking.noclick.site~ab";
+  const made = api.on("POST", "/v1/projects/prj_1/previews/link", json({
+    object: "preview_link", project_id: "prj_1", branch: "new-form", url: linkUrl,
+    preview_url: "https://new-form--booking.noclick.site", preview_access: "link", expires_at: "2027-01-21T08:00:00Z",
+  }));
+  const link = await app.previewLink({ branch: "new-form", expiresIn: 3600 });
+  assert.deepEqual(made.last.body, { branch: "new-form", expires_in: 3600 });
+  assert.deepEqual([link.url, link.branch, link.previewUrl, link.previewAccess], [linkUrl, "new-form", "https://new-form--booking.noclick.site", "link"]);
+  assert.equal(link.expiresAt?.getUTCFullYear(), 2027);
+  await app.previewLink();
+  assert.deepEqual(made.last.body, {});
+
+  api.on("POST", "/v1/projects/prj_1/deployments", json(operation({ id: "op_p", kind: "project.deploy", status: "queued" }), { status: 202 }));
+  api.on("GET", "/v1/operations/op_p/wait", json(operation({
+    id: "op_p", kind: "project.deploy", status: "succeeded", result: {
+      ...DEPLOYMENT, id: "dep_3", branch: "new-form", production: false, environment: "preview",
+      url: "https://new-form--booking.noclick.site", preview_link: linkUrl,
+    },
+  })));
+  const preview = await (await app.deploy({ branch: "new-form" })).wait();
+  assert.deepEqual([preview.url, preview.previewLink], ["https://new-form--booking.noclick.site", linkUrl]);
+  assert.equal(app.production?.previewLink, null); // production is always public
+});

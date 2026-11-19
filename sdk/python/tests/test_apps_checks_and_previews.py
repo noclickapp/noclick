@@ -184,3 +184,35 @@ def test_sign_in_commits_without_deploying_when_asked(api, client):
     assert body(upgrade.calls.last.request) == {"deploy": False}
     app.sign_in.upgrade(branch="sign-in-update")
     assert body(upgrade.calls.last.request) == {"branch": "sign-in-update"}
+
+
+def test_an_apps_previews_are_kept_to_a_link_and_its_deploy_and_owner_hand_it_out(api, client):
+    said = "Its previews stay public until NoClick's front door is updated."
+    patch = api.patch("/v1/projects/prj_1").mock(
+        side_effect=lambda request: httpx.Response(200, json={**PROJECT, **body(request), "notes": [said]}))
+    app = nc.Project.from_id("prj_1").update(preview_access="link", preview_public_paths=("/api/webhooks/*",))
+    assert body(patch.calls.last.request) == {"preview_access": "link", "preview_public_paths": ["/api/webhooks/*"]}
+    assert (app.preview_access, app.preview_public_paths, app.raw["notes"]) == ("link", ["/api/webhooks/*"], [said])
+
+    link_url = "https://new-form--booking.noclick.site/?preview=p1~1800604800~prj_1~new-form--booking.noclick.site~ab"
+    made = api.post("/v1/projects/prj_1/previews/link").respond(json={
+        "object": "preview_link", "project_id": "prj_1", "branch": "new-form", "url": link_url,
+        "preview_url": "https://new-form--booking.noclick.site", "preview_access": "link",
+        "expires_at": "2027-01-21T08:00:00Z"})
+    link = app.preview_link(branch="new-form", expires_in=3600)
+    assert body(made.calls.last.request) == {"branch": "new-form", "expires_in": 3600}
+    assert (link.url, link.branch, link.preview_url, link.preview_access) == (
+        link_url, "new-form", "https://new-form--booking.noclick.site", "link")
+    assert link.expires_at.year == 2027
+    app.preview_link()
+    assert body(made.calls.last.request) == {}
+
+    api.post("/v1/projects/prj_1/deployments").respond(
+        202, json=operation(op_id="op_p", kind="project.deploy", status="queued"))
+    api.get("/v1/operations/op_p/wait").respond(json=operation(
+        op_id="op_p", kind="project.deploy", status="succeeded", result={
+            **DEPLOYMENT, "id": "dep_3", "branch": "new-form", "production": False, "environment": "preview",
+            "url": "https://new-form--booking.noclick.site", "preview_link": link_url}))
+    preview = app.deploy(branch="new-form").wait()
+    assert (preview.url, preview.preview_link) == ("https://new-form--booking.noclick.site", link_url)
+    assert nc.Deployment._new(raw=DEPLOYMENT).preview_link is None

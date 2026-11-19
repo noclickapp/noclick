@@ -281,6 +281,29 @@ class RequestOutcomes:
 
 
 @dataclass(frozen=True)
+class PreviewLink:
+    """A link that opens a preview of an app to whoever holds it, until ``expires_at``: the preview's address
+    carrying a token NoClick signed for it. The browser that opens it keeps a cookie for that preview alone. On an app
+    whose ``preview_access`` is ``link`` it's the only way in (but for its ``preview_public_paths``); on a public
+    app's preview the address alone opens it too."""
+
+    url: str
+    branch: str
+    #: The preview's own address, which tells anyone without the link that it's private.
+    preview_url: str
+    #: ``public`` or ``link``: the app's ``preview_access`` when the link was made.
+    preview_access: str
+    expires_at: Any
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "PreviewLink":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("url") or "", raw.get("branch") or "", raw.get("preview_url") or "",
+                   raw.get("preview_access") or "", parse_time(raw.get("expires_at")), raw)
+
+
+@dataclass(frozen=True)
 class TrafficInterval:
     """One hour or day of an app's traffic: the ``requests`` from ``at`` on, and how many of them failed
     (``errors``: an answer of 500 or more, or none)."""
@@ -541,6 +564,12 @@ class Deployment(_Object):
         "changed since this release was built, named, so what its build read of them (a ``VITE_`` or ``NEXT_PUBLIC_`` "
         "value it put in its pages) is still as it was then; deploying production again builds with them. None "
         "otherwise.",
+    )
+    preview_link: Optional[str] = field(
+        "preview_link", doc="On the deployment a preview's deploy gives, when the app's ``preview_access`` is "
+        "``link``: the link that opens the preview (its ``url`` with a token NoClick signed, good for 7 days), which "
+        "is what to hand people; anyone else opening the preview is told it's private. None otherwise "
+        "(``app.preview_link()`` makes one any time).",
     )
     preview_data: Optional[str] = field(
         "preview_data", doc="On the deployment a preview's deploy gives, when the app's ``preview_resources`` is "
@@ -1441,6 +1470,16 @@ class Project(_Object):
         "made the first time it writes to one (until then it reads production's), so preview data never reaches "
         "production; ``shared``: previews use production's resources. New apps start with ``branch``.",
     )
+    preview_access: str = field(
+        "preview_access", doc="Who opens its previews: ``public`` (every app's unless set: anyone with a preview's "
+        "URL, while search engines are told not to list it) or ``link`` (only a link NoClick signs, from "
+        "``preview_link()`` or a preview's deploy; anyone else is told it's private). Production is always public.",
+    )
+    preview_public_paths: List[str] = field(
+        "preview_public_paths", doc="With ``preview_access`` ``link``, the paths of a preview that stay open to anyone "
+        "(``/auth/callback`` exactly, or everything under ``/api/webhooks/*``): what calls a preview without a "
+        "person's browser, such as a webhook's sender or an OAuth provider's redirect. Empty unless set.",
+    )
     budget_usd_per_month: Optional[float] = field(
         "budget_usd_per_month", doc="The most it may spend in a calendar month, in US dollars: $10 unless its maker set "
                                     "another. An app with code always has one; None only for an app NoClick publishes.",
@@ -1902,6 +1941,8 @@ class Project(_Object):
         check_paths: Any = UNSET,
         live_editing: Any = UNSET,
         badge_corner: Any = UNSET,
+        preview_access: Any = UNSET,
+        preview_public_paths: Any = UNSET,
     ) -> "Project":
         """Change the ``repo`` it deploys (a ``noclick.Repo`` or its id), its ``runtime``
         (``auto``, ``edge`` or ``container``), its ``framework``, its ``production_branch``, its
@@ -1911,9 +1952,12 @@ class Project(_Object):
         answer, ``{"path": "/api/health", "status": 200}`` or ``{"path": ..., "json": True}``;
         ``[]`` stops checking promotes), whether previews get their own
         resources (``preview_resources``: ``branch`` or ``shared``), whether it's edited live
-        (``live_editing``, see ``app.live``) or the corner its badge sits in (``badge_corner``:
+        (``live_editing``, see ``app.live``), the corner its badge sits in (``badge_corner``:
         ``bottom-right``, ``bottom-left``, ``top-right`` or ``top-left``, away from a chat's composer
-        or a corner button, say). A new repo, runtime, framework
+        or a corner button, say), or who opens its previews (``preview_access``: ``public`` or
+        ``link``, the paths a private preview leaves open in ``preview_public_paths``; production
+        is always public; while NoClick's front door doesn't keep previews private yet the answer's
+        ``raw["notes"]`` say so). A new repo, runtime, framework
         or branch applies from the next deployment (what's live keeps serving where it runs until
         then), the rest at once. An app with code always has a budget: ``budget_usd_per_month=None``
         raises ``noclick.InvalidRequest`` (only an app NoClick publishes may have none). Its user's
@@ -1970,12 +2014,21 @@ class Project(_Object):
 
                 app = noclick.Project.from_name("inbox")
                 app.update(badge_corner="top-right")
+
+            Make an app's previews private, its Stripe webhook still reaching them, and hand its owner the link::
+
+                app = noclick.Project.from_name("booking")
+                app.update(preview_access="link", preview_public_paths=["/api/webhooks/*"])
+                print(app.preview_link(branch="new-form").url)
         """
         changes = {
             k: v for k, v in dict(
                 runtime=runtime, framework=framework, production_branch=production_branch,
                 budget_usd_per_month=budget_usd_per_month, deploy_on_push=deploy_on_push,
                 preview_resources=preview_resources, live_editing=live_editing, badge_corner=badge_corner,
+                preview_access=preview_access,
+                preview_public_paths=list(preview_public_paths) if preview_public_paths not in (UNSET, None)
+                else preview_public_paths,
                 check_paths=_check_paths(check_paths) if check_paths not in (UNSET, None) else check_paths,
             ).items()
             if v is not UNSET
@@ -2051,6 +2104,28 @@ class Project(_Object):
             user=self._call_scope(), limit=limit,
         )
         return [Deployment._new(raw=row, client=self._client, user=self._call_scope()) for row in rows]
+
+    @synced
+    async def preview_link(self, *, branch: Optional[str] = None, expires_in: Optional[int] = None) -> PreviewLink:
+        """Make a link that opens a preview of the app (``branch``'s, else the newest serving) to whoever holds it,
+        for ``expires_in`` seconds (7 days unless given; 5 minutes to 30 days). It's what to hand people when the
+        app's ``preview_access`` is ``link``; nothing keeps a link to revoke, so it lasts until it expires.
+
+        Returns:
+            The ``PreviewLink``. No preview serving (or one of the production branch, always public) raises
+            ``noclick.NotFound`` (``noclick.InvalidRequest``), saying what to deploy.
+
+        Usage::
+
+            app = noclick.Project.from_name("booking")
+            link = app.preview_link(branch="new-form", expires_in=24 * 3600)
+            print(link.url, link.expires_at)
+        """
+        payload = await self._request(
+            "POST", f"{await self._project_path()}/previews/link",
+            json=compact(branch=branch, expires_in=expires_in),
+        )
+        return PreviewLink._from(payload)
 
     @synced
     async def rollback(self, *, to: Union[Deployment, str]) -> Operation:

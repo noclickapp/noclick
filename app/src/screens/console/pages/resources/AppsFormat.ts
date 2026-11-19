@@ -2,7 +2,7 @@
 // framework and deploy-on-push choices with a sentence each, a cron
 // expression in plain English (through the schedule formatter the canvas
 // uses), and the empty states' first calls.
-import type { DeployOnPush, ProjectRuntime } from 'noclick';
+import type { DeployOnPush, PreviewAccess, ProjectRuntime } from 'noclick';
 import type { Snippet } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 export { describeCron } from '@/lib/scheduleFormat';
@@ -67,6 +67,12 @@ export function deployOnPushOptions(branch: string): readonly ChoiceOption<Deplo
         { value: 'all', label: 'Every branch', sentence: `A push to ${branch} deploys production, and a push to any other branch deploys its preview.` },
     ];
 }
+
+/** Who opens an app's previews (`Project.previewAccess`), with what each means. */
+export const PREVIEW_ACCESS: readonly ChoiceOption<PreviewAccess>[] = [
+    { value: 'public', label: 'Anyone with the URL', sentence: 'Anyone with a preview’s URL opens it; search engines are told not to list it.' },
+    { value: 'link', label: 'Link only', sentence: 'A preview opens only with a link made here or handed back by its deploy; anyone else is told it’s private. Production stays public.' },
+];
 
 /** `ProjectUsage.byType` ids as the Usage page names them, hosting being the `apps` type. */
 const SPEND_TYPES: Record<string, string> = {

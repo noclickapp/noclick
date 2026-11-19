@@ -69,6 +69,8 @@ export type DeployOnPush = "off" | "production" | "all";
 export type PreviewResources = "branch" | "shared";
 /** Where an app's pages carry NoClick's badge. */
 export type BadgeCorner = "bottom-right" | "bottom-left" | "top-right" | "top-left";
+/** Who opens an app's previews: `public`, anyone with a preview's URL; `link`, only a link NoClick signs. */
+export type PreviewAccess = "public" | "link";
 export type BindingKind = "database" | "bucket" | "connection" | "dict" | "queue" | "secret" | "agent";
 
 /** A resource the running app reads by `name`. */
@@ -296,6 +298,31 @@ export interface RequestOutcomes {
   since: Date | null;
   until: Date | null;
   raw: JsonObject;
+}
+
+/**
+ * A link that opens a preview of an app to whoever holds it, until `expiresAt`: the preview's address carrying a token
+ * NoClick signed for it. The browser that opens it keeps a cookie for that preview alone. On an app whose
+ * `previewAccess` is `link` it's the only way in (but for its `previewPublicPaths`); on a public app's preview the
+ * address alone opens it too.
+ */
+export interface PreviewLink {
+  url: string;
+  branch: string;
+  /** The preview's own address, which tells anyone without the link that it's private. */
+  previewUrl: string;
+  /** The app's `previewAccess` when the link was made. */
+  previewAccess: PreviewAccess;
+  expiresAt: Date | null;
+  raw: JsonObject;
+}
+
+function toPreviewLink(value: unknown): PreviewLink {
+  const raw = asObject(value);
+  return {
+    url: str(raw.url) ?? "", branch: str(raw.branch) ?? "", previewUrl: str(raw.preview_url) ?? "",
+    previewAccess: (str(raw.preview_access) ?? "public") as PreviewAccess, expiresAt: parseTime(raw.expires_at), raw,
+  };
 }
 
 /** One hour or day of an app's traffic: the requests from `at` on, and how many of them failed. */
@@ -678,6 +705,14 @@ export class Deployment extends ApiObject {
    */
   get settingsChanged(): string | null {
     return this._field("settings_changed") ?? null;
+  }
+  /**
+   * On the deployment a preview's deploy gives, when the app's `previewAccess` is `link`: the link that opens the
+   * preview (its `url` with a token NoClick signed, good for 7 days), which is what to hand people; anyone else
+   * opening the preview is told it's private. Null otherwise (`app.previewLink()` makes one any time).
+   */
+  get previewLink(): string | null {
+    return this._field("preview_link") ?? null;
   }
   /**
    * On the deployment a preview's deploy gives, when the app's `previewResources` is `branch`: what the preview
@@ -1469,6 +1504,22 @@ export class Project extends ApiObject {
   get previewResources(): PreviewResources {
     return this._field("preview_resources");
   }
+  /**
+   * Who opens its previews: `public` (every app's unless set: anyone with a preview's URL, while search engines are
+   * told not to list it) or `link` (only a link NoClick signs, from `previewLink()` or a preview's deploy; anyone
+   * else is told it's private). Production is always public.
+   */
+  get previewAccess(): PreviewAccess {
+    return this._field("preview_access") ?? "public";
+  }
+  /**
+   * With `previewAccess` `link`, the paths of a preview that stay open to anyone (`/auth/callback` exactly, or
+   * everything under `/api/webhooks/*`): what calls a preview without a person's browser, such as a webhook's sender
+   * or an OAuth provider's redirect. Empty unless set.
+   */
+  get previewPublicPaths(): string[] {
+    return (this._field("preview_public_paths") as string[] | undefined) ?? [];
+  }
   /** The most it may spend in a calendar month, in US dollars: $10 unless its maker set another; null only for an app NoClick publishes. */
   get budgetUsdPerMonth(): number | null {
     return num(this._field("budget_usd_per_month"));
@@ -1588,8 +1639,11 @@ export class Project extends ApiObject {
    * (`deployOnPush`), what deploys, promotes and checks ask (`checkPaths`, up to 10: a page's path, or what a plain
    * request for a path must answer, `{ path: "/api/health", status: 200 }`; `[]` stops checking promotes),
    * whether previews get their own resources (`previewResources`: `branch` or `shared`), whether it's edited live
-   * (`liveEditing`, see `app.live`) or the corner its badge sits in (`badgeCorner`: away from a chat's composer or a
-   * corner button, say). A new repo, runtime, framework or branch applies from the next deployment
+   * (`liveEditing`, see `app.live`), the corner its badge sits in (`badgeCorner`: away from a chat's composer or a
+   * corner button, say), or who opens its previews (`previewAccess`: `public` or `link`, the paths a private
+   * preview leaves open in `previewPublicPaths`; production is always public; while NoClick's front door doesn't keep
+   * previews private yet, the answer's `raw.notes` say so). A new repo, runtime, framework or branch applies from the
+   * next deployment
    * (what's live keeps serving where it runs until then), the rest at once; its user's cap still
    * applies either way. A field you leave out is unchanged. Pinning a runtime the app's framework
    * doesn't run on throws `InvalidRequest`: change the framework with it.
@@ -1605,6 +1659,8 @@ export class Project extends ApiObject {
     checkPaths?: CheckPath[];
     liveEditing?: boolean;
     badgeCorner?: BadgeCorner;
+    previewAccess?: PreviewAccess;
+    previewPublicPaths?: string[];
   }): Promise<this> {
     this._raw = await this._request<JsonObject>("PATCH", await this._projectPath(), {
       json: defined({
@@ -1618,6 +1674,8 @@ export class Project extends ApiObject {
         check_paths: changes.checkPaths,
         live_editing: changes.liveEditing,
         badge_corner: changes.badgeCorner,
+        preview_access: changes.previewAccess,
+        preview_public_paths: changes.previewPublicPaths,
       }),
     });
     return this;
@@ -1651,6 +1709,18 @@ export class Project extends ApiObject {
       limit: options.limit ?? 20,
     });
     return rows.map((raw) => Deployment._fromRaw(raw, this.scope));
+  }
+
+  /**
+   * A link that opens a preview of the app (`branch`'s, else the newest serving) to whoever holds it, for `expiresIn`
+   * seconds (7 days unless given; 5 minutes to 30 days): what to hand people when the app's `previewAccess` is `link`.
+   * Nothing keeps a link to revoke, so it lasts until it expires. No preview serving rejects with `NotFound`, and the
+   * production branch (always public) with `InvalidRequest`, each saying what to do.
+   */
+  async previewLink(options: { branch?: string; expiresIn?: number } = {}): Promise<PreviewLink> {
+    return toPreviewLink(await this._request("POST", await this._projectPath("previews", "link"), {
+      json: compact({ branch: options.branch, expires_in: options.expiresIn }),
+    }));
   }
 
   /**

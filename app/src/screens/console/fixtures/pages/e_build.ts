@@ -629,6 +629,8 @@ function project(n: number, fields: Json & { id?: string; name: string; repo_id:
         domain_names: domainNames,
         budget_usd_per_month: null as number | null,
         deploy_on_push: 'off',
+        preview_access: 'public',
+        preview_public_paths: [] as string[],
         region: 'us-east',
         production: DEPLOYMENTS.find((d) => d.project_id === id && d.production) ?? null,
         created_at: ago(8 * DAY),
@@ -868,7 +870,32 @@ function projectRefusal(runtime: string, body: Json): FixtureReply | null {
     if (body.deploy_on_push !== undefined && !['off', 'production', 'all'].includes(String(body.deploy_on_push))) {
         return invalid('deploy_on_push is off, production (a push to the production branch deploys it) or all (a push to any other branch deploys a preview too).', 'deploy_on_push');
     }
+    if (body.preview_access !== undefined && !['public', 'link'].includes(String(body.preview_access))) {
+        return invalid('preview_access is public (anyone with a preview’s URL opens it) or link (only a link NoClick signs opens it).', 'preview_access');
+    }
     return null;
+}
+
+/** A link opening the newest serving preview of `app` (or `branch`'s), as POST /v1/projects/{id}/previews/link answers one. */
+function previewLink(r: FixtureRequest, app: App): FixtureReply {
+    const branch = ((r.body ?? {}) as Json).branch as string | undefined;
+    if (branch === app.production_branch) {
+        return invalid(`${branch} is the production branch, which is always public at the app’s URL; a link opens a preview.`, 'branch');
+    }
+    const serving = DEPLOYMENTS.find((d) => d.project_id === app.id && d.status === 'ready' && d.branch !== app.production_branch && (branch === undefined || d.branch === branch));
+    if (!serving) {
+        return apiError(404, 'not_found', `${branch ? `No preview of ${branch}` : 'No preview of this app'} is serving: a link opens one that is.`, `Deploy a branch other than ${app.production_branch} as a preview first (POST /v1/projects/${app.id}/deployments with its branch); its deploy answers its link.`);
+    }
+    const host = `${serving.branch}--${app.hostname}`;
+    return ok({
+        object: 'preview_link',
+        project_id: app.id,
+        branch: serving.branch,
+        url: `https://${host}/?preview=p1~${Math.floor(Date.now() / 1000) + 7 * 86_400}~${app.id}~${host}~${'0'.repeat(64)}`,
+        preview_url: `https://${host}`,
+        preview_access: app.preview_access,
+        expires_at: plus(new Date().toISOString(), 7 * DAY),
+    });
 }
 
 /** A deploy refused because the app's budget is used up: paid work, like every build. */
@@ -1046,6 +1073,7 @@ const projectRoutes: FixtureRoute[] = [
         path: '/v1/trash/:id',
         reply: (r) => ok({ object: 'trash_item', id: r.params.id, kind: 'project', purged: true }),
     },
+    { method: 'POST', path: '/v1/projects/:id/previews/link', reply: onApp(previewLink) },
     {
         method: 'PATCH',
         path: '/v1/projects/:id',

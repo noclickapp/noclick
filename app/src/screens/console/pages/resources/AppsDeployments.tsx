@@ -16,7 +16,7 @@ import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { deploymentLook, deployOnPushOptions } from './AppsFormat';
-import { AppsLogLines, AppUrl, BranchName, Tag } from './AppsParts';
+import { AppsLogLines, AppUrl, BranchName, PreviewLinkMaker, Tag } from './AppsParts';
 import { errorText, Field, Section } from './shared';
 
 /** Start a deploy from the console: a toast, and the list re-read. */
@@ -104,6 +104,11 @@ function DeploymentDetail({ project, deploymentId, row, onBack }: { project: Pro
                             {deployment.commitMessage && <span className="text-muted-foreground"> · {deployment.commitMessage}</span>}
                         </Field>
                         <Field label="URL">{deployment.url ? <AppUrl url={deployment.url} /> : <span className="text-muted-foreground">None: it isn’t serving</span>}</Field>
+                        {project.previewAccess === 'link' && deployment.status === 'ready' && deployment.environment === 'preview' && deployment.url && (
+                            <Field label="Private link">
+                                <PreviewLinkMaker project={project} branch={deployment.branch} />
+                            </Field>
+                        )}
                         <Field label="Started">
                             <TimeCell value={deployment.createdAt} tier="absolute" />
                             <span className="text-muted-foreground"> · {deployment.startedBy === 'push' ? `by a push to ${deployment.branch}` : 'by a deploy'}</span>

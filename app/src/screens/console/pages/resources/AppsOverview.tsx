@@ -1,4 +1,5 @@
-// The Apps drawer's Overview, Domains and Logs tabs: what the app is, what a push deploys (a PATCH), and what it spent
+// The Apps drawer's Overview, Domains and Logs tabs: what the app is, what a push deploys and who opens its previews
+// (each a PATCH, with a link to make for a private preview), and what it spent
 // this month against its budget (with what stops its paid calls, and a budget
 // dialog); the domains that serve it, added (with the records a connected one
 // needs) and removed; and the lines it printed while serving.
@@ -6,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
-import { Repo, type DeployOnPush, type Domain, type Project } from 'noclick';
+import { Repo, type DeployOnPush, type Domain, type PreviewAccess, type Project } from 'noclick';
 import { formatCount, formatDuration, formatMoney } from '@/screens/console/lib/format';
 import { userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -20,8 +21,8 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
-import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, NOT_DEPLOYED, RUNTIMES, spendTypeLabel } from './AppsFormat';
-import { AppsLogLines, AppUrl, BranchName, Choice } from './AppsParts';
+import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, NOT_DEPLOYED, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel } from './AppsFormat';
+import { AppsLogLines, AppUrl, BranchName, Choice, PreviewLinkMaker } from './AppsParts';
 import { DnsRecordList, domainLook, sourceLabel } from './DomainsParts';
 import { domainName, isDomainName, servedNames, stopServing, useAddAppDomain, type ServedName } from './appDomains';
 import { ConfirmAction, errorText, Field, INPUT, LabeledInput, Section } from './shared';
@@ -194,6 +195,51 @@ function DeployOnPushSetting({ project }: { project: Project }) {
     return <Choice label="Deploy on push" options={options} value={value} onChange={(next) => void change(next)} />;
 }
 
+/** Who opens the app's previews; a change applies at once, and what NoClick adds to it (that it isn't in force yet) is
+ * said with it. While they're private: the paths left open, and a link to make. */
+function PreviewAccessSetting({ project }: { project: Project }) {
+    const [value, setValue] = useState<PreviewAccess>(project.previewAccess);
+    const [busy, setBusy] = useState(false);
+    useEffect(() => setValue(project.previewAccess), [project.previewAccess]);
+    const change = async (next: PreviewAccess) => {
+        if (busy || next === value) return;
+        const was = value;
+        setValue(next);
+        setBusy(true);
+        try {
+            await project.update({ previewAccess: next });
+            invalidateV1('projects');
+            const notes = Array.isArray(project.raw.notes) ? (project.raw.notes as string[]) : [];
+            toast([PREVIEW_ACCESS.find((o) => o.value === next)!.sentence, ...notes].join(' '));
+        } catch (e) {
+            setValue(was);
+            toast(errorText(e));
+        } finally {
+            setBusy(false);
+        }
+    };
+    const open = project.previewPublicPaths;
+    return (
+        <div className="flex flex-col gap-2">
+            <Choice label="Previews" options={PREVIEW_ACCESS} value={value} onChange={(next) => void change(next)} />
+            {value === 'link' && (
+                <>
+                    <p className="m-0 text-[12px] text-muted-foreground">
+                        {open.length ? (
+                            <>
+                                Open to anyone: <span className="font-mono text-foreground/85">{open.join(', ')}</span>
+                            </>
+                        ) : (
+                            'A webhook or sign-in callback to a preview is turned away too, unless its path is left open (preview_public_paths).'
+                        )}
+                    </p>
+                    <PreviewLinkMaker project={project} />
+                </>
+            )}
+        </div>
+    );
+}
+
 export function AppOverview({ project, usage }: { project: Project; usage: AppUsage }) {
     const { client } = useConsole();
     const href = useConsoleHref();
@@ -254,6 +300,7 @@ export function AppOverview({ project, usage }: { project: Project; usage: AppUs
                 </Field>
             </dl>
             {repoId !== null && <DeployOnPushSetting project={project} />}
+            {repoId !== null && <PreviewAccessSetting project={project} />}
             <Usage project={project} usage={usage} />
         </div>
     );

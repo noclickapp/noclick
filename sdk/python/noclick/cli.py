@@ -773,6 +773,8 @@ def cmd_deploy(args: argparse.Namespace) -> int:
                 _note(f"  {line.message}")
         raise
     print(deployment.url)
+    if deployment.raw.get("preview_link"):
+        _note(f"The preview is private: it opens with {deployment.raw['preview_link']}")
     where = "production" if deployment.production else "a preview of " + branch
     if _said_deployment(deployment.raw):
         _note(f"Live, but not working: {where} stays deployed (nothing was rolled back).")
