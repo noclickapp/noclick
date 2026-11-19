@@ -1,0 +1,181 @@
+// The kinds of thing an account owns, as Resources and the sidebar name them.
+// Kept apart from the model so the sidebar can list them without loading it.
+// An automation's published interface is one of its apps, and an automation's
+// tables are a database: there is one kind of each.
+import { AppWindow, BookOpen, Brain, Database, FileText, FolderGit2, Globe, HardDrive, KeyRound, Mail, Phone, Server, UsersRound, type LucideIcon } from 'lucide-react';
+
+export type KindId = 'agents' | 'numbers' | 'domains' | 'email' | 'apps' | 'databases' | 'storage' | 'skills' | 'memories' | 'machines' | 'secrets' | 'repos' | 'files';
+
+export interface KindDef {
+    id: KindId;
+    label: string;
+    icon: LucideIcon;
+    /** What this kind is for, where it has nothing yet. */
+    empty: string;
+    /** What to ask NoClick for when there is none. */
+    ask?: string;
+    /** One and many, for "2 numbers". */
+    noun: [string, string];
+    /** How it's charged: `item` at a set price each (a number's month, a domain's year), `use` by what it uses; the rest are included. */
+    billed?: 'item' | 'use';
+    /** Listed only where whoever shows Resources adds what it holds (slots.ts MORE_KINDS): the kinds Work draws, until
+     * Work is part of this app. */
+    fromHost?: boolean;
+    /** Other words people use for it, which the command palette matches. */
+    keywords: string;
+    /** Its page for getting one by hand (?kind=&new=1): `label` names it, `short` is the overview tile's button, and
+     * a `bought` one is sold with a recurring charge, so it needs billing. */
+    manual?: { label: string; short: string; bought: boolean };
+}
+
+export const KINDS: KindDef[] = [
+    {
+        id: 'agents',
+        fromHost: true,
+        label: 'Agents',
+        icon: UsersRound,
+        empty: 'Every agent your account owns, wherever it works: what each is doing, the spaces it works in, and what it has cost this month.',
+        noun: ['agent', 'agents'],
+        billed: 'use',
+        keywords: 'agent agents bots assistants ai workers spend costs',
+    },
+    {
+        id: 'numbers',
+        label: 'Numbers',
+        icon: Phone,
+        empty: 'Phone numbers your agents answer calls and texts on.',
+        ask: 'Get me a phone number my agents can answer calls and texts on.',
+        noun: ['number', 'numbers'],
+        billed: 'item',
+        keywords: 'phone phones phone number phone numbers calls texts sms telephone',
+        manual: { label: 'Buy a number', short: 'Buy', bought: true },
+    },
+    {
+        id: 'domains',
+        label: 'Domains',
+        icon: Globe,
+        empty: 'Domains for your websites and your agents’ email, registered in your name.',
+        ask: 'Help me find a domain for my website and buy it.',
+        noun: ['domain', 'domains'],
+        billed: 'item',
+        keywords: 'domain dns domain names nameservers registrar url',
+        manual: { label: 'Buy a domain', short: 'Buy', bought: true },
+    },
+    {
+        id: 'email',
+        label: 'Email',
+        icon: Mail,
+        empty: 'Email addresses on your domains: mail sent to one arrives here, and you answer it from the same address.',
+        ask: 'Set up an email address on my domain.',
+        noun: ['address', 'addresses'],
+        billed: 'use',
+        keywords: 'mail inbox inboxes email address mailbox',
+        manual: { label: 'New address', short: 'New', bought: false },
+    },
+    {
+        id: 'apps',
+        label: 'Websites',
+        icon: AppWindow,
+        empty: 'Websites at addresses of their own: the interfaces you publish from your automations, and sites deployed from your code.',
+        ask: 'Build a small website for my team and publish it.',
+        noun: ['website', 'websites'],
+        billed: 'use',
+        keywords: 'site sites website web pages hosting deploys deployments published interfaces apps',
+    },
+    {
+        id: 'databases',
+        label: 'Databases',
+        icon: Database,
+        empty: 'Where your automations keep their tables, and the SQL databases your websites and agents keep their data in.',
+        ask: 'Set up a table my automations can keep records in.',
+        noun: ['database', 'databases'],
+        billed: 'use',
+        keywords: 'database db sql tables data postgres sqlite',
+    },
+    {
+        id: 'storage',
+        label: 'Storage',
+        icon: HardDrive,
+        empty: 'Buckets of files your websites and agents keep, like uploads and exports. They make one when they need it, private unless you make it public.',
+        ask: 'Set up a bucket my website can keep its uploads in.',
+        noun: ['bucket', 'buckets'],
+        billed: 'use',
+        keywords: 'bucket buckets uploads s3 blobs object storage',
+    },
+    {
+        id: 'skills',
+        fromHost: true,
+        label: 'Skills',
+        icon: BookOpen,
+        empty: 'Ways of working any agent can follow: a SKILL.md and the scripts it uses. Each harness loads them its own way.',
+        noun: ['skill', 'skills'],
+        keywords: 'skill skills skill.md instructions playbooks how-to ways of working',
+        manual: { label: 'New skill', short: 'New', bought: false },
+    },
+    {
+        id: 'memories',
+        fromHost: true,
+        label: 'Memories',
+        icon: Brain,
+        empty: 'Notes agents read every turn and, where you let them, add to as they learn. One memory can be shared by many agents.',
+        noun: ['memory', 'memories'],
+        keywords: 'memory memories notes knowledge remember learned',
+        manual: { label: 'New memory', short: 'New', bought: false },
+    },
+    {
+        id: 'machines',
+        fromHost: true,
+        label: 'Machines',
+        icon: Server,
+        empty: 'Where your agents run: a machine kept on, the sandboxes up now, and computers of yours that run them.',
+        noun: ['machine', 'machines'],
+        billed: 'item',
+        keywords: 'machine machines sandbox sandboxes compute computer computers server servers vm laptop',
+        manual: { label: 'Add machine', short: 'Add', bought: false },
+    },
+    {
+        id: 'secrets',
+        fromHost: true,
+        label: 'Secrets',
+        icon: KeyRound,
+        empty: 'Keys and tokens your agents hold, in their environment or in a file, and the ones that came over when an agent moved from a computer. Only their names are shown, never a value.',
+        noun: ['secret', 'secrets'],
+        keywords: 'secret secrets env environment variables keys api keys tokens credentials dotenv moved',
+    },
+    {
+        id: 'repos',
+        label: 'Code',
+        icon: FolderGit2,
+        empty: 'The code your websites deploy from and your agents work on, each in a repository of its own.',
+        noun: ['repository', 'repositories'],
+        billed: 'use',
+        keywords: 'repo repos repository repositories git github source',
+    },
+    {
+        id: 'files',
+        label: 'Files',
+        icon: FileText,
+        empty: 'Uploads, outputs and what agents save in their workspaces show up here as they work.',
+        noun: ['file', 'files'],
+        keywords: 'file uploads documents outputs workspaces pdf',
+    },
+];
+
+export function kindDef(id: KindId): KindDef {
+    return KINDS.find((k) => k.id === id)!;
+}
+
+/** The search params a body keeps where it is inside its item: a repo's, a database's, an address's. */
+export const INNER_PARAMS = ['path', 'ref', 'view', 'sha', 'table', 'thread', 'compose'] as const;
+
+/** Resources' address for a kind (null: the overview), one of its items or its page for getting one, as
+ *  `navigateToTab` params: whatever belonged to the page before (an item, a buy page, a place inside an item) goes. */
+export function resourceAddress(kind: KindId | null, at: { resource?: string; manual?: boolean } = {}): Record<string, string | null> {
+    return {
+        kind,
+        resource: at.resource ?? null,
+        new: at.manual ? '1' : null,
+        name: null,
+        ...Object.fromEntries(INNER_PARAMS.map((p) => [p, null])),
+    };
+}

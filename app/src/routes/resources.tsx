@@ -1,0 +1,78 @@
+// `/resources`: what the account owns and what it costs (src/screens/resources), read with the app's key through the
+// app's own server, as every screen's calls are. Its links into the developer console open `/developers`. What only
+// the account's signed-in owner can do (src/screens/console/ownerOnly.ts) isn't offered here, and the kinds NoClick's
+// own app adds from its Work pages (agents, skills, memories, machines and secrets) aren't listed.
+import { useMemo } from 'react';
+import { useLoaderData } from 'react-router';
+import { useLocaleCountry } from '@/lib/localeCountry';
+import { readAccountStatus } from '@/screens/account/status';
+import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
+import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
+import { NOCLICK_SITE } from '@/screens/console/lib/site';
+import { ResourcesContext, type ResourcesContextValue } from '@/screens/resources/context';
+import { ResourcesView } from '@/screens/resources/ResourcesPage';
+import { ResourcesReads } from '@/screens/resources/reads';
+import { useClient } from '@/sdk/client';
+import { useV1 } from '@/sdk/useV1';
+import { apiUrl } from '@/server/apiUrl.server';
+import type { Route } from './+types/resources';
+
+/** Where the console's pages are, for Resources' links to them. */
+const CONSOLE_PATH = '/developers';
+
+export const meta: Route.MetaFunction = () => [{ title: 'Resources · NoClick' }];
+
+/** NoClick's API as code outside this app reaches it, for the commands a page prints. */
+export const loader = ({ context }: Route.LoaderArgs) => ({ apiUrl: apiUrl(context) });
+
+/** That address is the same for as long as the app runs: moving between Resources' pages doesn't read it again. */
+export const shouldRevalidate = () => false;
+
+/** Signs out as the app's own button does: a POST to /logout, which ends the session and leads to the sign-in page. */
+function signOut(): void {
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/logout';
+    document.body.appendChild(form);
+    form.submit();
+}
+
+export default function Resources() {
+    const { apiUrl: api } = useLoaderData<typeof loader>();
+    const client = useClient();
+    const country = useLocaleCountry();
+    // Whose account the key acts in; the page draws without it until it's read.
+    const status = useV1('status', (signal) => readAccountStatus(client, signal), { client });
+    const account = status.data?.account;
+    const consoleValue = useMemo<ConsoleContextValue>(
+        () => ({
+            client,
+            actsAs: 'key',
+            basePath: CONSOLE_PATH,
+            apiUrl: api,
+            site: NOCLICK_SITE,
+            home: '/',
+            country,
+            user: { id: account?.id ?? '', email: account?.email ?? null },
+            now: Date.now,
+            lab: false,
+            signOut,
+            live: null,
+        }),
+        [client, api, country, account?.id, account?.email]
+    );
+    // NoClick bills the account, so prices show and what's sold is offered; every workflow the key reads is listed.
+    const resources = useMemo<ResourcesContextValue>(() => ({ billing: true, country }), [country]);
+    return (
+        <ConsoleProviders value={consoleValue}>
+            <ResourcesContext.Provider value={resources}>
+                <ResourcesReads>
+                    {/* The page scrolls inside the window, as it does inside NoClick's own shell. */}
+                    <div className="h-dvh">
+                        <ResourcesView />
+                    </div>
+                </ResourcesReads>
+            </ResourcesContext.Provider>
+        </ConsoleProviders>
+    );
+}

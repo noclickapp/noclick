@@ -39,12 +39,13 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server; **Developer console** on it opens the console at `/developers`. `scripts/check.sh` at the
+app's own server; **Resources** on it opens `/resources`, and **Developer console** the console at `/developers`.
+`scripts/check.sh` at the
 repository's root installs, typechecks, tests and builds the app along with the SDKs, as CI does; the tests need
 neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
-`http://localhost:5173/developers-lab`: the same pages over made-up data. The app still wants its settings and your
+`http://localhost:5173/developers-lab` (or `/resources-lab` for Resources): the same pages over made-up data. The app still wants its settings and your
 sign-in first, though the lab calls nothing. See [the lab](#the-lab).
 
 To deploy it, set the four variables in your host's settings and serve it over **https**: away from `localhost` the
@@ -87,7 +88,6 @@ A key's own limits apply as well: give the app a key with the scopes its pages n
 
 - No live updates. Lists refresh when you return to the tab and on their own slow re-read.
 - A connection is drawn with a plain mark and a name read from its type, not its service's logo.
-- An app's Durable Object classes aren't listed, and the apps in the trash are a plain list.
 - Links to the docs, pricing, adding funds and the usage policies open `noclick.com`.
 - No terms are named under the buttons: say your own through a slot (below).
 
@@ -101,8 +101,15 @@ by default, so the app is whole with every slot left alone. The console's are in
 | `console.terms` | Under a button that makes a key, approves a command line's sign-in or copies the setup prompt | Nothing |
 | `console.connection.mark` | Beside a connection's or an integration's name: its mark and what it is called | A plain mark, and the name read from its type |
 | `console.cards.issuerForm` | The cards onboarding page, for the signed-in owner | A link to where the application is finished |
-| `console.apps.trash` | Under the Apps list | A plain list, each app to restore or purge |
-| `console.app.durableObjects` | An app's drawer, after its bindings | Nothing |
+
+Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `resources.kinds` | Around the page: kinds, or items of a kind, the host adds, with what draws them | Nothing |
+| `resources.numbers` | Around the page: the account's phone numbers, each with what it costs a month, and how one is bought | The API's phone numbers, at their own monthly price, bought through the API |
+| `resources.number.actions` | A number's page, beside its facts | Nothing |
+| `resources.file.markdown` | A Markdown file's preview | Its text drawn as a repository's README is |
 
 The channels' (`src/screens/channels/slots.ts`; the screens that use them come later):
 
@@ -126,6 +133,26 @@ client, answered from canned `/v1` responses, with no account and no network. It
   what a signed-in owner sees.
 - It also draws what is designed and not built yet, each tagged "designed". The console at `/developers` never
   shows those.
+
+## Resources
+
+`/resources` is what the account owns and what it costs (`src/screens/resources`): its phone numbers, domains, email
+addresses, websites, databases, storage, code, and what its workflows keep (their files and tables) beside its own
+files. The overview is one tile per kind; a kind lists its items with their prices; an item opens its own page, with
+what it is, what uses it, and the thing itself (a repo's files, a domain's records, a database's tables, a file's
+preview). It is the same page NoClick's own app draws, reading through the client the app hands every screen, so it
+acts as the app's key: what only the owner may do is left out as in the console (`ownerOnly.ts`), and
+`src/screens/resources/resourcesAsKey.test.tsx` opens every page of it as a key and fails if one asks for that.
+
+What differs from NoClick's own Resources:
+
+- No agents, skills, memories, machines or secrets: NoClick's app draws those from its Work pages, which aren't part
+  of this app yet (`resources.kinds` is where a host adds them).
+- No agents' workspaces among the files: an agent made on a workflow's canvas keeps its files where only NoClick's
+  app reads them, so they appear there alone.
+- Every workflow the key reads is listed, not one workspace's.
+- A workflow is named, not opened: this app has no canvas.
+- No "Ask NoClick", and nothing goes to a command palette.
 
 ## How it reaches NoClick
 
@@ -221,6 +248,7 @@ It doesn't:
   runs it under `react-router-serve`, as `pnpm start` does.
 - `test/sockets.test.ts` keeps every screen on the SDK client it is handed: none opens a connection of its own.
   `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
-  opens every page of the console as a key and fails if one asks the API for something only the owner may have.
+  opens every page of the console as a key and fails if one asks the API for something only the owner may have;
+  `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources.
 
 Apache-2.0, as the rest of this repository.

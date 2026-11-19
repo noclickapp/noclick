@@ -16,8 +16,9 @@ import { usePaged } from '@/sdk/usePaged';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
-import { useSlot } from '@/slots';
-import { APPS_TRASH, APP_DURABLE_OBJECTS, type TrashEntry } from '../../slots';
+import { TrashSection } from '@/screens/resources/TrashSection';
+import type { TrashEntry } from '@/screens/resources/platform';
+import { AppDurableObjectsSection } from './AppsDurableObjects';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
@@ -102,7 +103,6 @@ function RepoAppFooter({ project, onDeleted }: { project: Project; onDeleted: ()
 
 function AppDrawer({ appId, row, onClose }: { appId: string | null; row?: Project; onClose: () => void }) {
     const { client } = useConsole();
-    const DurableObjects = useSlot(APP_DURABLE_OBJECTS);
     const [params, setParams] = useSearchParams();
     const tab = params.get('tab');
     const setTab = (id: string) => setParams((prev) => withParams(prev, { tab: id === 'overview' ? null : id, deployment: null }), { replace: true, preventScrollReset: true });
@@ -143,7 +143,7 @@ function AppDrawer({ appId, row, onClose }: { appId: string | null; row?: Projec
                     {active === 'bindings' && (
                         <div className="flex flex-col gap-6">
                             <AppBindings project={project} />
-                            <DurableObjects project={project} />
+                            <AppDurableObjectsSection project={project} />
                         </div>
                     )}
                     {active === 'secrets' && (
@@ -270,7 +270,6 @@ function NewAppDialog({ open, onOpenChange, defaultUser, onCreated }: { open: bo
 /** The apps in the trash the page's user filter shows, each restorable or purged now. */
 function AppsTrash({ user }: { user: string }) {
     const { client } = useConsole();
-    const Trash = useSlot(APPS_TRASH);
     const [now] = useState(() => new Date().toISOString());
     const trash = useV1('trash?project', () => TrashItem.list({ client, kind: 'project' }));
     const shown = (trash.data ?? []).filter((t) => user === ALL_USERS || (user === NO_USER ? !t.userId : t.userId === user));
@@ -292,7 +291,7 @@ function AppsTrash({ user }: { user: string }) {
         invalidateV1('account');
         toast(`${done} ${entry.name}`);
     };
-    return <Trash entries={entries} now={now} onRestore={act('Restored', (item) => item.restore())} onPurge={act('Purged', (item) => item.purge())} />;
+    return <TrashSection entries={entries} now={now} onRestore={act('Restored', (item) => item.restore())} onPurge={act('Purged', (item) => item.purge())} />;
 }
 
 export function AppsPanel({ user, setUser }: PanelProps) {
