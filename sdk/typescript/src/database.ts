@@ -413,8 +413,10 @@ export class Database extends ApiObject {
 
   /**
    * Put the database back as it was at `at` (within its history: 30 days on SQLite, 7 on
-   * Postgres), in place. `wait()` resolves to this database, restored. To keep the present,
-   * `branch` at that time instead.
+   * Postgres), in place. What it held just before is kept in the trash for 30 days as a database
+   * copy (the operation's `keptCopyId`): `undo()` on the operation, or restoring that `TrashItem`,
+   * puts it back. `wait()` resolves to this database, restored. To look at the past without
+   * changing the present, `branch` at that time instead.
    */
   async restore(options: { at: Date | string }): Promise<Operation<Database>> {
     const payload = await this._request("POST", await this.route("/restore"), { json: { at: isoTime(options.at) } });

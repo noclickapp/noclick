@@ -167,7 +167,14 @@ class Operation(_Object):
     undo_rewinds: Optional[str] = field(
         "undo_rewinds",
         doc="On a promote that bound databases, while it can be undone: what undoing it takes back from them (each "
-        "goes back to the moment before the promote, losing what was written since). ``None`` otherwise.",
+        "goes back to the moment before the promote; what was written since is kept in the trash as a database "
+        "copy). ``None`` otherwise.",
+    )
+    kept_copy_id: Optional[str] = field(
+        "kept_copy_id",
+        doc="On a database's restore: the copy it keeps of what the database held just before, in the trash (a "
+        "``TrashItem`` of kind ``database_copy`` whose ``resource_id`` this is) once it's done. ``undo()`` puts it "
+        "back. ``None`` on other kinds.",
     )
 
     @property
@@ -505,9 +512,10 @@ class Operation(_Object):
     @synced
     async def undo(self) -> Dict[str, Any]:
         """Take back a reversible write, once: a deletion comes out of the trash, a dict's cleared keys come
-        back, a migrated database is restored to the moment before, a promote puts production back on the release
-        before with the app's databases as they were. What reached the world (an email sent, a payment) has no
-        undo: that raises ``noclick.Conflict``, as does undoing twice.
+        back, a migrated database is restored to the moment before, a restored database gets back what the restore
+        rewound, a promote puts production back on the release before with the app's databases as they were (each
+        restore keeping what it rewinds in the trash, named in the result's ``copies``). What reached the world (an
+        email sent, a payment) has no undo: that raises ``noclick.Conflict``, as does undoing twice.
 
         Returns:
             What the undo put back, as its own API shows it (a restore of a database is an operation of its own).

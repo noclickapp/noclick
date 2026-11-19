@@ -438,17 +438,27 @@ export class Operation<T = unknown> extends ApiObject {
   }
   /**
    * On a promote that bound databases, while it can be undone: what undoing it takes back from them (each goes back
-   * to the moment before the promote, losing what was written since). `null` otherwise.
+   * to the moment before the promote; what was written since is kept in the trash as a database copy). `null`
+   * otherwise.
    */
   get undoRewinds(): string | null {
     return this._field("undo_rewinds") ?? null;
   }
+  /**
+   * On a database's restore: the copy it keeps of what the database held just before, in the trash (a `TrashItem` of
+   * kind `database_copy` whose `resourceId` this is) once it's done. `undo()` puts it back. `null` on other kinds.
+   */
+  get keptCopyId(): string | null {
+    return this._field("kept_copy_id") ?? null;
+  }
 
   /**
    * Take back a reversible write, once: a deletion comes out of the trash, a dict's cleared keys
-   * come back, a migrated database is restored to the moment before. What reached the world (an
-   * email sent, a payment) has no undo: that throws `Conflict`, as does undoing twice. Returns what
-   * the undo put back, as its own API shows it.
+   * come back, a migrated database is restored to the moment before, a restored database gets back
+   * what the restore rewound, a promote puts the release before back with the app's databases as
+   * they were (each restore keeping what it rewinds in the trash, named in the result's `copies`).
+   * What reached the world (an email sent, a payment) has no undo: that throws `Conflict`, as does
+   * undoing twice. Returns what the undo put back, as its own API shows it.
    */
   async undo(): Promise<JsonObject> {
     const raw = asObject(await this._request("POST", `/v1/operations/${this._id()}/undo`));

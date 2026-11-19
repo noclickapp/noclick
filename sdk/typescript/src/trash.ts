@@ -1,15 +1,18 @@
 /**
  * The trash: what was deleted and can still be put back. Deleting an app, database, bucket, dict,
  * queue, repo, volume, inbox or agent moves it here, restorable for 30 days, then purged for good; each of
- * their `delete()` methods returns its `TrashItem`. While it's in the trash its name is free and its
- * storage is billed as before; restoring is free. `purge()` is the one deletion that can't be undone.
+ * their `delete()` methods returns its `TrashItem`. A database's restore lands what it rewound here too,
+ * as a `database_copy`: restoring that puts it back into its database. While it's in the trash its name
+ * is free and its storage is billed as before; restoring is free. `purge()` is the one deletion that
+ * can't be undone.
  */
 
 import { ApiObject, listAll, listPage, parseTime } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 
 export type TrashKind =
-  | "project" | "database" | "bucket" | "dict" | "queue" | "repo" | "volume" | "inbox" | "agent" | "skill" | "memory";
+  | "project" | "database" | "database_copy" | "bucket" | "dict" | "queue" | "repo" | "volume" | "inbox" | "agent"
+  | "skill" | "memory";
 
 export interface TrashListOptions extends ReadOptions {
   /** One kind; omitted, every kind. */
@@ -84,7 +87,9 @@ export class TrashItem extends ApiObject {
 
   /**
    * Put it back where it was, under its name, with everything in it; throws `Conflict` when
-   * something new has taken its name since. Returns the restored resource as its own API shows it.
+   * something new has taken its name since. A `database_copy` goes back into its database: a
+   * restore of its own (its `operation`), which keeps what the database holds now as a copy the
+   * same way. Returns the restored resource as its own API shows it.
    */
   async restore(): Promise<JsonObject> {
     return await this._request<JsonObject>("POST", this.path("/restore"));

@@ -784,9 +784,10 @@ export class Deployment extends ApiObject {
    * An app with `checkPaths` checks the deployment first and doesn't promote one that fails (the
    * operation fails with the check in its error; production keeps serving); `force: true` promotes
    * it without the check. The databases the app binds are bookmarked first: undoing the promote
-   * (`Operation.undo()`) puts them back as they were, with the release before, losing what was
-   * written to them since. The operation's `undoRewinds` says that before you undo, and the
-   * undo's result's `warning` says it again.
+   * (`Operation.undo()`) puts them back as they were, with the release before, taking out what was
+   * written to them since and keeping it in the trash for 30 days as a database copy each. The
+   * operation's `undoRewinds` says that before you undo, and the undo's result says it again
+   * (`warning`), with each copy and how it goes back (`copies`).
    */
   async promote(options: { force?: boolean } = {}): Promise<Operation<Deployment>> {
     const payload = await this._request("POST", `${this.path}/promote`, options.force ? { json: { force: true } } : {});

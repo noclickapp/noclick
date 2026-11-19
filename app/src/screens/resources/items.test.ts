@@ -499,6 +499,7 @@ describe('removing a resource from its page', () => {
                 item('project', 'tr_6'),
                 item('bucket', 'tr_7', 'wa-1'),
                 item('durable_object_class', 'tr_8'),
+                item('database_copy', 'tr_9'),
             ],
             names
         );
@@ -506,9 +507,11 @@ describe('removing a resource from its page', () => {
         expect(sorted.storage).toEqual([{ id: 'tr_7', name: 'bucket-tr_7', trashedAt: '2026-10-07T12:00:00.000Z', purgeAfter: '2026-11-06T12:00:00.000Z', owner: { id: 'wa-1', name: 'wa-1' } }]);
         // An app's Durable Object class comes back to the websites, beside the apps.
         expect(sorted.apps?.map((e) => e.name)).toEqual(['project-tr_6', 'durable_object_class-tr_8']);
+        // What a database's restore rewound goes back to the databases.
         expect(sorted.databases).toEqual([
             { id: 'tr_1', name: 'database-tr_1', trashedAt: '2026-10-07T12:00:00.000Z', purgeAfter: '2026-11-06T12:00:00.000Z' },
             { id: 'tr_5', name: 'database-tr_5', trashedAt: '2026-10-07T12:00:00.000Z', purgeAfter: '2026-11-06T12:00:00.000Z', owner: { id: 'user_42', name: 'Ana Silva' } },
+            { id: 'tr_9', name: 'database_copy-tr_9', trashedAt: '2026-10-07T12:00:00.000Z', purgeAfter: '2026-11-06T12:00:00.000Z' },
         ]);
     });
 });

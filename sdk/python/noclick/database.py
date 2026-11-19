@@ -721,9 +721,12 @@ class Database(_Object):
     @synced
     async def restore(self, *, at: Union[datetime, str]) -> Operation:
         """Put the database back as it was at ``at`` (a timezone-aware ``datetime``),
-        in place: anything written since is gone. ``at`` must be within its history:
-        30 days on SQLite, 7 on Postgres. While it runs, ``status`` is ``restoring``
-        and queries raise ``noclick.Conflict``. To look at the past without losing
+        in place: anything written since is taken out. ``at`` must be within its
+        history: 30 days on SQLite, 7 on Postgres. What it held just before is kept
+        in the trash for 30 days as a database copy (the operation's
+        ``kept_copy_id``): ``undo()`` on the operation, or restoring that
+        ``TrashItem``, puts it back. While it runs, ``status`` is ``restoring`` and
+        queries raise ``noclick.Conflict``. To look at the past without changing
         the present, ``branch`` at that time instead.
 
         Returns:

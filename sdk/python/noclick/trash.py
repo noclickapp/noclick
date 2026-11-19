@@ -7,9 +7,11 @@ them returns its ``TrashItem``::
     item = noclick.Dict.from_name("rates-cache").delete()
     item.restore()   # back under its name, every key with it
 
-While it's in the trash its name is free and its storage is billed as before;
-restoring is free. ``purge()`` deletes it for good now: the one deletion that
-can't be undone, so through MCP it waits for a person.
+A database's restore lands what it rewound here too, as a ``database_copy``:
+restoring that puts it back into its database. While it's in the trash its
+name is free and its storage is billed as before; restoring is free.
+``purge()`` deletes it for good now: the one deletion that can't be undone, so
+through MCP it waits for a person.
 """
 
 from __future__ import annotations
@@ -22,7 +24,8 @@ from ._object import Page, _Object, field, list_all, list_page, parse_time
 from ._sync import synced
 from ._scope import AMBIENT, resolve_scope
 
-KINDS = ("project", "database", "bucket", "dict", "queue", "repo", "volume", "inbox", "agent")
+KINDS = ("project", "database", "database_copy", "bucket", "dict", "queue", "repo", "volume", "inbox", "agent",
+         "skill", "memory")
 
 
 class TrashItem(_Object):
@@ -103,7 +106,9 @@ class TrashItem(_Object):
     @synced
     async def restore(self) -> Dict[str, Any]:
         """Put it back where it was, under its name, with everything in it. Refused with ``noclick.Conflict``
-        when something new has taken its name since (rename or delete that first).
+        when something new has taken its name since (rename or delete that first). A ``database_copy`` goes back
+        into its database: a restore of its own (its ``operation``), which keeps what the database holds now as a
+        copy the same way.
 
         Returns:
             The restored resource as its own API shows it, with ``restored: True``.

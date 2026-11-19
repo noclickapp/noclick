@@ -754,9 +754,11 @@ class Deployment(_Object):
         in its error, and production keeps serving. ``force=True`` promotes it
         without the check. Before production switches, the databases the app
         binds are bookmarked: undoing the promote (``Operation.undo()``) puts
-        them back as they were, with the release before, losing what was
-        written to them since. The operation's ``undo_rewinds`` says that
-        before you undo, and the undo's result's ``warning`` says it again.
+        them back as they were, with the release before, taking out what was
+        written to them since and keeping it in the trash for 30 days as a
+        database copy each. The operation's ``undo_rewinds`` says that before
+        you undo, and the undo's result says it again (``warning``), with each
+        copy and how it goes back (``copies``).
 
         Rollback covers the app's last 10 production deployments, and each
         branch's newest preview for 30 days. One older than that was retired:

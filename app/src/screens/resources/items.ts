@@ -361,12 +361,14 @@ export function repoReader(r: Repo): RepoReader {
     };
 }
 
-/** The trash's kinds as Resources lists them: an app's Durable Object class (`app/Class`) under the websites. */
+/** The trash's kinds as Resources lists them: an app's Durable Object class (`app/Class`) under the websites, and
+ * what a database's restore rewound (a database copy, which restoring puts back into it) under the databases. */
 const TRASH_KINDS: Partial<Record<string, KindId>> = {
     project: 'apps',
     durable_object_class: 'apps',
     inbox: 'email',
     database: 'databases',
+    database_copy: 'databases',
     bucket: 'storage',
     repo: 'repos',
     skill: 'skills',
