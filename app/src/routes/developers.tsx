@@ -10,6 +10,7 @@ import { DeveloperConsole } from '@/screens/console/DeveloperConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
+import { liveFromWatch, sdkLive } from '@/sdk/watchLive';
 import { apiUrl } from '@/server/apiUrl.server';
 import type { Route } from './+types/developers';
 
@@ -32,6 +33,8 @@ export default function Developers() {
     const status = useV1('status', (signal) => readAccountStatus(client, signal), { client });
     const account = status.data?.account;
     const user = useMemo(() => ({ id: account?.id ?? '', email: account?.email ?? null }), [account?.id, account?.email]);
+    // The account's change stream, where the API offers it: a resource that moved is read again.
+    const live = useMemo(() => liveFromWatch(sdkLive(client), { backstopMs: null }), [client]);
     return (
         <DeveloperConsole
             section={params['*']}
@@ -44,7 +47,7 @@ export default function Developers() {
             country={country}
             user={user}
             onSignOut={() => void signOut(account?.id)}
-            live={null}
+            live={live}
         />
     );
 }

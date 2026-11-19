@@ -6,9 +6,10 @@
 import { createContext, useContext, useEffect, useRef } from 'react';
 import type { PlatformAgentEvent, PlatformChannelEvent, PlatformChannelTypingEvent, PlatformCodingAgentEvent, PlatformResourceEvent } from '@/sdk/frames';
 
-/** Read again whatever is shown. `backstop`: a host with no live source, on its timer. */
+/** Read again whatever is shown. `backstop`: a host with no live source (or one not live yet), on its timer;
+ *  `stream`: the change stream said too much changed to name it, or opened without carrying on from its last change. */
 export interface WorkReset {
-    why: 'backstop';
+    why: 'backstop' | 'stream';
 }
 
 export interface WorkFrames {

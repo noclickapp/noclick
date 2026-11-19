@@ -37,7 +37,8 @@ export const useMove = (moveId: string | null) => useWorkV1(moveId ? `work:move:
 /** A conversation's tool servers as its harness last saw them. */
 export const useToolServers = (agentId: string, conversation: string | null) =>
     useWorkV1(conversation ? key(agentId, `tools:${conversation}`) : null, (client) => agent(client, agentId).conversation(conversation!).toolServers());
-export const rereadToolServers = (agentId: string, conversation: string) => invalidateV1(key(agentId, `tools:${conversation}`));
+/** Reads a conversation's tool servers again; with none named, every conversation's of the agent. */
+export const rereadToolServers = (agentId: string, conversation: string | null) => invalidateV1(key(agentId, `tools:${conversation ?? ''}`));
 
 /** The MCP servers it has as tools, each a step of its automation. */
 export const useAgentToolServers = (agentId: string) => useWorkV1(key(agentId, 'servers'), (client) => agent(client, agentId).toolServers());
@@ -55,10 +56,7 @@ export function useAgentProfileFrames(agentId: string): void {
     useWorkFrames('platform:agent', (frame) => {
         if (frame.agent_id !== agentId) return;
         if (frame.change === 'definition') return rereadAgent(agentId);
-        if (frame.change === 'tool_servers') {
-            if (frame.conversation) rereadToolServers(agentId, frame.conversation);
-            return;
-        }
+        if (frame.change === 'tool_servers') return rereadToolServers(agentId, frame.conversation ?? null);
         invalidateV1(key(agentId, 'turns'));
         invalidateV1(key(agentId, 'wakeups'));
     });

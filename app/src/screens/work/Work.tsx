@@ -93,6 +93,8 @@ function useClientChannels(client: NoClick, space: WorkSpace | null, openId: str
     const transport = useMemo(() => transportFor(client, more, key, person), [client, more, key]);
     useWorkFrames('platform:channel', (frame) => transport.deliver(changeOf(frame)));
     useWorkFrames('platform:channel_typing', (frame) => transport.deliver(typingChangeOf(frame)));
+    // The stream lost its place: the channels read everything they hold again (their own timer covers a backstop).
+    useWorkFrames('reset', (reset) => reset.why === 'stream' && transport.deliver({ kind: 'reset' }));
     return { transport, channels: useChannels(transport, openId) };
 }
 

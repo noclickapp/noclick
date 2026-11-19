@@ -17,7 +17,7 @@ export function useLoops(agentId: string | null, conversation: string | null, ru
         return [...running, ...stopped].filter(isLoop);
     });
     useWorkFrames('platform:agent', (frame) => {
-        if (key && frame.agent_id === agentId && (frame.change === 'turn' || (frame.change === 'wakeups' && frame.conversation === conversation))) invalidateV1(key);
+        if (key && frame.agent_id === agentId && (frame.change === 'turn' || (frame.change === 'wakeups' && (frame.conversation ?? conversation) === conversation))) invalidateV1(key);
     });
     return useMemo(() => (read.data ?? []).map((w) => loopItem(w, runningTurn)), [read.data, runningTurn]);
 }

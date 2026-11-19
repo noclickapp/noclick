@@ -1,10 +1,10 @@
 // `/work`: the account's spaces, their channels and DMs, its agents and the people it works with (src/screens/work),
 // read with the app's key through the app's own server, as every screen's calls are. What only the account's
 // signed-in owner can do (src/screens/console/ownerOnly.ts) isn't offered here, and whoever is signed in to this app is
-// the account: they post as it and read what it reads. Until the account's change stream reaches this app, what Work
-// shows is read again when the page is focused and every minute; an agent's open session is live through its own
-// stream either way.
-import { useEffect, useMemo } from 'react';
+// the account: they post as it and read what it reads. What it shows follows the account's change stream (@/sdk/watchLive)
+// where the API offers it; while the stream isn't live, it's read again when the page is focused and every minute. An
+// agent's open session is live through its own stream either way.
+import { useMemo } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
 import { openTabForLater } from '@/lib/oauthPopup';
@@ -17,7 +17,7 @@ import type { WorkContextValue } from '@/screens/work/context';
 import { WorkLoading, WorkNotice } from '@/screens/work/notices';
 import { WorkScreen } from '@/screens/work/WorkScreen';
 import { useClient } from '@/sdk/client';
-import { createWorkLive, resetEvery } from '@/sdk/live';
+import { liveFromWatch, sdkLive } from '@/sdk/watchLive';
 import { useV1 } from '@/sdk/useV1';
 import { apiUrl } from '@/server/apiUrl.server';
 import type { Route } from './+types/work';
@@ -41,9 +41,7 @@ export default function WorkRoute() {
     // Whose account the key acts in: Work is the account's, and what it keeps in this browser is kept under its id.
     const status = useV1('status', (signal) => readAccountStatus(client, signal), { client });
     const account = status.data?.account;
-    // No live frames reach this app yet: Work reads again on focus and every minute while the page is shown.
-    const live = useMemo(createWorkLive, []);
-    useEffect(() => resetEvery(live), [live]);
+    const live = useMemo(() => liveFromWatch(sdkLive(client)), [client]);
     const consoleValue = useMemo<ConsoleContextValue>(
         () => ({
             client,

@@ -24,15 +24,19 @@ function AccountProvider({ children }: { children: ReactNode }) {
     return <AccountContext.Provider value={account}>{children}</AccountContext.Provider>;
 }
 
-/** Every read showing a resource that moved is read again. */
+/** Every read showing a resource that moved is read again, and every read shown when too much moved to say. */
 function useResourceFrames(live: WorkLive | null): void {
-    useEffect(
-        () =>
-            live?.on('platform:resource', (frame) => {
-                for (const prefix of staleReads(frame)) invalidateV1(prefix);
-            }),
-        [live]
-    );
+    useEffect(() => {
+        if (!live) return;
+        const offResource = live.on('platform:resource', (frame) => {
+            for (const prefix of staleReads(frame)) invalidateV1(prefix);
+        });
+        const offReset = live.on('reset', () => invalidateV1(''));
+        return () => {
+            offResource();
+            offReset();
+        };
+    }, [live]);
 }
 
 /** The console's context, and its client for every read under it (`useV1`). A screen that hands the account in itself

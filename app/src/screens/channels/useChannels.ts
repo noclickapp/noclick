@@ -282,7 +282,11 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
         const onChange = (change: ChannelChange) => {
             const id = change.channelId;
             const loaded = id !== undefined && historiesRef.current[id] !== undefined;
-            if (change.kind === 'reaction' || change.kind === 'pin') {
+            if (change.kind === 'reset') {
+                // Anything may have moved: the lists, and what's new in every channel this holds.
+                pending.lists = true;
+                for (const held of Object.keys(historiesRef.current)) pending.fresh.add(held);
+            } else if (change.kind === 'reaction' || change.kind === 'pin') {
                 reread(id, change.messageId);
             } else if (change.kind === 'thread') {
                 // A reply moves its parent's counts, and what's unread.

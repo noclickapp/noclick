@@ -3,10 +3,10 @@
 import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMode, ChannelSchedule, ChannelWorkspace } from './types';
 
 /** Something moved in the account's channels: new messages, a thread's replies, one message's reactions or pin, its
- *  bookmarks, a channel itself, a workspace, or your own sections of its channels; or someone started or stopped
- *  typing in a channel (`typing`). */
+ *  bookmarks, a channel itself, a workspace, or your own sections of its channels; someone started or stopped typing
+ *  in a channel (`typing`); or so much may have moved that everything held is read again (`reset`). */
 export interface ChannelChange {
-    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace' | 'sections' | 'typing';
+    kind: 'message' | 'thread' | 'reaction' | 'pin' | 'bookmark' | 'channel' | 'workspace' | 'sections' | 'typing' | 'reset';
     channelId?: string;
     workspaceId?: string;
     messageId?: string;

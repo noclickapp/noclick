@@ -91,7 +91,8 @@ A key's own limits apply as well: give the app a key with the scopes its pages n
 
 **What else differs from NoClick's own console**, because it comes from NoClick's app and not from the API:
 
-- No live updates. Lists refresh when you return to the tab and on their own slow re-read.
+- Live where the API offers the account's change stream (see [Live updates](#live-updates)): a resource that moved is
+  read again. Without it, lists refresh when you return to the tab and on their own slow re-read.
 - A connection is drawn with a plain mark and a name read from its type, not its service's logo.
 - Links to the docs, pricing, adding funds and the usage policies open `noclick.com`.
 - No terms are named under the buttons: say your own through a slot (below).
@@ -214,8 +215,7 @@ what the key allows. Signing out drops this browser's copy of Work's channels an
 
 What differs from NoClick's own Work:
 
-- No live updates yet. What a page shows is read again when you come back to the tab and every minute while it's
-  shown; an agent's open conversation is live through its own stream.
+- Who is typing is named as the channel's members name them: the change stream says who by id alone.
 - No cards under an agent's turns (a purchase held for a yes, an account to connect, a build on its canvas): each
   call is a row of the turn's steps.
 - No "Ask NoClick", no search palette, and no opening a workflow's step: this app has no chat with NoClick and no
@@ -246,6 +246,17 @@ Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the chann
 | `work.address` | Where Work is, for its pieces drawn elsewhere | This app's `/work` |
 | `work.joinedSpace.typing` | Saying you're typing in a space you joined in another account | Through the API, as in your own spaces |
 
+## Live updates
+
+Every page follows the account's change stream (`watch` in the SDK) where NoClick's API offers it
+(`src/sdk/watchLive.ts`): one stream for the whole app, opened when a page follows it and closed half a minute after
+none does. Each change names an object and the page reads that object again; a change it can't name, or a stream that
+reopened without carrying on from where it was, has the page read everything it shows again. While the stream isn't
+live (opening, reconnecting, or refused because the API you call doesn't offer it yet), Work reads what it shows again
+when you come back to the tab and every minute while the page is shown, and the stream is asked for again every five
+minutes, so it turns on by itself once the API offers it. The console and Resources read again their own way meanwhile.
+An agent's open conversation is live through its own stream either way.
+
 ## How it reaches NoClick
 
 - **The key stays on the server.** The browser's SDK client calls the app's own `/api`, and the key proxy
@@ -275,8 +286,9 @@ Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the chann
   against an accidental change to any of that, by name: it is a check on mistakes, not a proof, and code set on
   getting around it (a name built at run time, a value passed along) gets past it.
 - **WebSockets don't go through the proxy.** It forwards HTTP, including streams of events, but not a WebSocket. A
-  machine's shell and a browser's live view open theirs at NoClick's API directly, with a single-use token the app
-  asks for through the proxy and sends as the socket's first message, so the key never reaches the browser.
+  machine's shell, a browser's live view and the change stream open theirs at NoClick's API directly, with a
+  single-use token the app asks for through the proxy (sent as the socket's first message, or offered beside its
+  protocol, never in its URL), so the key never reaches the browser. The SDK opens each; no screen opens one itself.
 
 ## What the sign-in protects, and what it doesn't
 

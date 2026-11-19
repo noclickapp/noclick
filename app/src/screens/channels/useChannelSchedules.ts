@@ -16,7 +16,7 @@ export function useChannelSchedules(transport: ChannelsTransport, channelId: str
             );
         void load();
         const stop = transport.subscribe((change) => {
-            if (change.kind === 'channel' && (!change.channelId || change.channelId === channelId)) void load();
+            if (change.kind === 'reset' || (change.kind === 'channel' && (!change.channelId || change.channelId === channelId))) void load();
         });
         return () => {
             live = false;

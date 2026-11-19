@@ -15,6 +15,7 @@ import { ResourcesView } from '@/screens/resources/ResourcesPage';
 import { ResourcesReads } from '@/screens/resources/reads';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
+import { liveFromWatch, sdkLive } from '@/sdk/watchLive';
 import { apiUrl } from '@/server/apiUrl.server';
 import type { Route } from './+types/resources';
 
@@ -36,6 +37,8 @@ export default function Resources() {
     // Whose account the key acts in; the page draws without it until it's read.
     const status = useV1('status', (signal) => readAccountStatus(client, signal), { client });
     const account = status.data?.account;
+    // The account's change stream, where the API offers it: a resource that moved is read again.
+    const live = useMemo(() => liveFromWatch(sdkLive(client), { backstopMs: null }), [client]);
     const consoleValue = useMemo<ConsoleContextValue>(
         () => ({
             client,
@@ -49,9 +52,9 @@ export default function Resources() {
             now: Date.now,
             lab: false,
             signOut: () => void signOut(account?.id),
-            live: null,
+            live,
         }),
-        [client, api, country, account?.id, account?.email]
+        [client, api, country, account?.id, account?.email, live]
     );
     // NoClick bills the account, so prices show and what's sold is offered; every workflow the key reads is listed.
     const resources = useMemo<ResourcesContextValue>(() => ({ billing: true, country }), [country]);

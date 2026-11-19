@@ -70,7 +70,11 @@ function openQuestion(messages: readonly ChannelMessage[], members: readonly Cha
 }
 
 /** A typist's face: their member in the channel, else (not in it yet, or the account's owner) their name alone. */
-const faceOf = (t: Typist, members: readonly ChannelMember[]): ChannelMember => members.find((m) => m.kind === 'human' && m.userId === t.id) ?? { id: `typist:${t.id}`, kind: 'human', name: t.name };
+const memberOf = (t: Typist, members: readonly ChannelMember[]) => members.find((m) => m.kind === 'human' && m.userId === t.id);
+/** A typist by name: as the change named them, else as the channel's members do (the account's change stream names no
+ *  one), else someone not among them yet. */
+const nameOf = (t: Typist, members: readonly ChannelMember[]): string => t.name || memberOf(t, members)?.name || 'Someone';
+const faceOf = (t: Typist, members: readonly ChannelMember[]): ChannelMember => memberOf(t, members) ?? { id: `typist:${t.id}`, kind: 'human', name: nameOf(t, members) };
 
 /** What the line says now. */
 export function workingLineOf({ channelId, members, busy, states, messages, typists }: WorkingLineInput): WorkingLineModel {
@@ -78,7 +82,7 @@ export function workingLineOf({ channelId, members, busy, states, messages, typi
     const typing = typists.length
         ? {
               faces: typists.slice(-3).map((t) => faceOf(t, members)),
-              names: typists.length > 3 ? 'Several people' : listed(typists.map((t) => t.name)),
+              names: typists.length > 3 ? 'Several people' : listed(typists.map((t) => nameOf(t, members))),
               verb: typists.length === 1 ? 'is typing' : 'are typing',
           }
         : null;
