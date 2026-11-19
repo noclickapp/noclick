@@ -11,6 +11,9 @@ export interface ChatReference {
      *  named connection. */
     id: string;
     label: string;
+    /** The team workspace an account connected in the app was picked in (its id), where it's used: one shared with
+     *  that team is the team's to use there alone. */
+    organizationId?: string;
 }
 
 /** An account reference's id for a named connection (the platform API's connection id). */
@@ -37,16 +40,18 @@ export function outOfFundsOf(value: unknown): Record<string, unknown> | undefine
 // /v1 takes no empty message; files sent on their own say so.
 const FILES_ONLY = '(Files attached.)';
 const ABOUT = /\n*\(About (.+)\.\)$/s;
-const NAMED = /the (automation|account) “([^”]*)” \((workflow |credential:|connection )([\w-]+)\)/g;
+const NAMED = /the (automation|account) “([^”]*)” \((workflow |credential:|connection )([\w-]+)(?:, organization_id ([\w-]+))?\)/g;
 
 function listed(items: string[]): string {
     return items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
 }
 
-/** How a message names what it points at, by the id the platform API looks each up by. */
+/** How a message names what it points at, by the id the platform API looks each up by (and the team workspace it
+ *  takes as `organization_id`, for an account picked in one). */
 function pointsAt(r: ChatReference): string {
     if (r.kind === 'automation') return `the automation “${r.label}” (workflow ${r.id})`;
-    return r.id.startsWith(NAMED_CONNECTION) ? `the account “${r.label}” (connection ${r.id.slice(NAMED_CONNECTION.length)})` : `the account “${r.label}” (credential:${r.id})`;
+    if (r.id.startsWith(NAMED_CONNECTION)) return `the account “${r.label}” (connection ${r.id.slice(NAMED_CONNECTION.length)})`;
+    return `the account “${r.label}” (credential:${r.id}${r.organizationId ? `, organization_id ${r.organizationId}` : ''})`;
 }
 
 /** The message the agent gets: the words, with what they point at named so the agent can look it up. */
@@ -61,7 +66,12 @@ export function readMessage(text: string): { text: string; references: ChatRefer
     if (text === FILES_ONLY) return { text: '', references: [] };
     const about = ABOUT.exec(text);
     const references = about
-        ? [...about[1].matchAll(NAMED)].map((m) => ({ kind: m[1] as ChatReference['kind'], label: m[2], id: m[3] === 'connection ' ? `${NAMED_CONNECTION}${m[4]}` : m[4] }))
+        ? [...about[1].matchAll(NAMED)].map((m) => ({
+              kind: m[1] as ChatReference['kind'],
+              label: m[2],
+              id: m[3] === 'connection ' ? `${NAMED_CONNECTION}${m[4]}` : m[4],
+              ...(m[5] ? { organizationId: m[5] } : {}),
+          }))
         : [];
     return about && references.length ? { text: text.slice(0, about.index), references } : { text, references: [] };
 }

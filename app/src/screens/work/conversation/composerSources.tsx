@@ -1,19 +1,22 @@
 // What the box's "+" can point a message at (`ComposerSources`, @/ui/chat/ComposerAddMenu), read through the platform
 // API: every automation the account can open, the most recently changed first, each in the mark of what it's made of;
 // and the account's own accounts that are connected, named connections and those connected in the app alike, the most
-// recently connected first, each named and marked as the host names accounts (the `connection.mark` slot). A message
-// names a named connection by its connection's id and one connected in the app by its credential's, as the API finds
-// each (lib/agentThread/messages.ts).
+// recently connected first, each named and marked as the host names accounts (the `connection.mark` slot), read in the
+// team workspace the page shows (`work.teamWorkspace`), where those shared with that team are too. A message names a
+// named connection by its connection's id and one connected in the app by its credential's (with the team workspace
+// it was read in), as the API finds each (lib/agentThread/messages.ts).
 import { useMemo } from 'react';
 import { Connection, Workflow } from 'noclick';
 import { relativeShort } from '@/lib/formatters';
 import { NAMED_CONNECTION } from '@/lib/agentThread/messages';
 import { useV1 } from '@/sdk/useV1';
+import { useSlot } from '@/slots';
 import { BrandIcon } from '@/ui/BrandIcon';
 import { MENU_LOGO, type AccountChoice, type AutomationChoice, type ComposerSources } from '@/ui/chat/ComposerAddMenu';
 import { useConnectionMarks } from '@/ui/connectionMark';
 import { NodeMark } from '@/ui/primitives';
 import { useWorkClient } from '../client';
+import { TEAM_WORKSPACE } from '../slots';
 
 const APP_REF = 'credential:';
 const ADDED = /^Added /;
@@ -38,7 +41,8 @@ function useAutomations() {
 function useAccounts(): { accounts: AccountChoice[]; loaded: boolean } {
     const client = useWorkClient();
     const marks = useConnectionMarks();
-    const read = useV1('work:composer:accounts', () => Connection.list({ client }), { client });
+    const organizationId = useSlot(TEAM_WORKSPACE)() ?? undefined;
+    const read = useV1(`work:composer:accounts:${organizationId ?? 'own'}`, () => Connection.list({ client, organizationId }), { client });
     const accounts = useMemo(
         () =>
             (read.data ?? [])
@@ -58,7 +62,12 @@ function useAccounts(): { accounts: AccountChoice[]; loaded: boolean } {
                         name: c.name,
                         mark: <BrandIcon Icon={Icon} iconColor={iconColor} className={MENU_LOGO} />,
                         // A line that only says when it was connected names nothing of the account.
-                        reference: { kind: 'account', id, label: line === app || ADDED.test(line) ? app : `${app} · ${line}` },
+                        reference: {
+                            kind: 'account',
+                            id,
+                            label: line === app || ADDED.test(line) ? app : `${app} · ${line}`,
+                            ...(c.organizationId ? { organizationId: c.organizationId } : {}),
+                        },
                     };
                 }),
         [read.data, marks]

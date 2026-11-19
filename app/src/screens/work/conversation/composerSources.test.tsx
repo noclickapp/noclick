@@ -3,16 +3,22 @@
 // the most recently changed first, in the mark of what it's made of; and the account's own accounts that are
 // connected, named connections and those connected in the app alike, the most recently connected first, each named as
 // the host names accounts. A named connection is pointed at by its connection's id, one connected in the app by its
-// credential's.
+// credential's. In a team workspace the accounts are read there, where those shared with the team are too, and each is
+// pointed at with the workspace it was read in.
 import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
-import { composeMessage } from '@/lib/agentThread/messages';
+import { composeMessage, readMessage } from '@/lib/agentThread/messages';
+import { fill } from '@/slots';
 import { WorkClientContext } from '../client';
 import { workFixtureClient } from '../fixtures/client';
+import { TEAM_WORKSPACE } from '../slots';
 import { COMPOSER_SOURCES } from './composerSources';
 
-afterEach(cleanup);
+afterEach(() => {
+    cleanup();
+    fill(TEAM_WORKSPACE, () => null);
+});
 
 const WORKFLOWS = [
     { object: 'workflow', id: 'wf-digest', name: 'Morning brief', step_types: ['trigger-cron', 'agent:codex'], updated_at: '2026-11-09T08:00:00Z' },
@@ -26,11 +32,16 @@ const CONNECTIONS = [
     { object: 'connection', id: 'conn-5', name: 'linear', integration: 'linear', credential_type: 'linear_oauth', status: 'pending', origin: 'api', account: null, created_at: '2026-11-02T09:00:00Z', connected_at: null },
 ];
 
+const TEAM = 'org-bakery-team';
+const TEAM_SHARED = { object: 'connection', id: 'credential:cred-docs', name: 'Docs', integration: 'google_docs', credential_type: 'google_docs_oauth', status: 'connected', origin: 'app', access: 'view', organization_id: TEAM, account: 'team@bakery.test', created_at: '2026-11-05T09:00:00Z', connected_at: '2026-11-05T09:00:00Z' };
+
 const asked: string[] = [];
 const client = workFixtureClient(async (input) => {
     const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
     asked.push(`${url.pathname}${url.search}`);
-    const data = url.pathname === '/v1/workflows' ? WORKFLOWS : url.pathname === '/v1/connections' ? CONNECTIONS : null;
+    const team = url.searchParams.get('organization_id');
+    const data =
+        url.pathname === '/v1/workflows' ? WORKFLOWS : url.pathname === '/v1/connections' ? (team ? CONNECTIONS.map((c) => (c.origin === 'app' ? { ...c, organization_id: team } : c)).concat(TEAM_SHARED) : CONNECTIONS) : null;
     return data ? Response.json({ object: 'list', data, next_cursor: null }) : Response.json({ error: { type: 'not_found', message: 'No route' } }, { status: 404 });
 });
 const wrapper = ({ children }: { children: ReactNode }) => <WorkClientContext.Provider value={client}>{children}</WorkClientContext.Provider>;
@@ -63,5 +74,23 @@ describe('what the "+" can point at', () => {
         expect(composeMessage('Use these', [named, mail], false)).toBe(
             `Use these\n\n(About the account “${named.label}” (connection conn-4) and the account “${mail.label}” (credential:cred-gmail).)`
         );
+    });
+
+    it('in a team workspace, lists its accounts there too and points at each with the workspace', async () => {
+        fill(TEAM_WORKSPACE, () => TEAM);
+        const { result } = renderHook(() => COMPOSER_SOURCES.useAccounts(), { wrapper });
+        await waitFor(() => expect(result.current.loaded).toBe(true));
+        expect(asked).toContain(`/v1/connections?organization_id=${TEAM}`);
+        const accounts = result.current.accounts;
+        expect(accounts.map((a) => [a.id, a.reference.organizationId])).toEqual([
+            ['cred-docs', TEAM],
+            ['connection:conn-4', undefined],
+            ['cred-gmail', TEAM],
+            ['cred-slack', TEAM],
+        ]);
+        const docs = accounts[0].reference;
+        const message = composeMessage('Summarise the plan', [docs], false);
+        expect(message).toBe(`Summarise the plan\n\n(About the account “${docs.label}” (credential:cred-docs, organization_id ${TEAM}).)`);
+        expect(readMessage(message)).toEqual({ text: 'Summarise the plan', references: [docs] });
     });
 });

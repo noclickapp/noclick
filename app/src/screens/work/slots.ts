@@ -81,6 +81,10 @@ export interface WorkApps {
  *  integrations the platform API lists and knows no account's app beyond its own name. */
 export const APPS = slot<WorkApps>('work.apps', { useToolApps: useV1ToolApps, serviceOf: () => undefined });
 
+/** The team workspace the page shows (its organization's id), in which the accounts a message points at are read and
+ *  used: one a teammate shared with that team is the team's, there alone. The standard is none: the account's own. */
+export const TEAM_WORKSPACE = slot<() => string | null>('work.teamWorkspace', () => null);
+
 export interface AppConnecting {
     /** The dialog that connects one of an app's accounts, handing back the account that lands (`credential:<id>`'s
      *  id) and closing itself as `onClose` says. */

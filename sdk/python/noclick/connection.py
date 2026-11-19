@@ -330,6 +330,12 @@ class Connection(_Object):
     ``model_connection``; a plan shared with you, or filled in by someone
     else, isn't.
 
+    One a teammate shared with a team workspace you're in is that team's to
+    use, in its workspace only: name the workspace (``organization_id=``)
+    to list, find and run it there. A connection read in a team workspace
+    carries it (``organization_id``), and everything it does goes there, as
+    the team's work.
+
     An app's preview only reads through a connection: an operation that writes
     in its account is refused (``noclick.PermissionDenied``) unless the
     connection is a test account (``mark_test_account()``)."""
@@ -344,6 +350,8 @@ class Connection(_Object):
     status: str = field("status")
     origin: str = field("origin", doc="``api`` for a named connection, ``app`` for an account connected in the app.")
     access: str = field("access", doc="Your account's access: ``owner``, or ``edit``/``view`` on one shared with it.")
+    organization_id: Optional[str] = field("organization_id", doc=(
+        "The team workspace it was read in (``organization_id=``), where it runs; ``None`` in your account's own."))
     approval_operations: List[str] = field(
         "approval_operations",
         doc="Operations its owner approves call by call wherever it runs (``*``: all of them); "
@@ -467,9 +475,14 @@ class Connection(_Object):
         return connection
 
     @classmethod
-    def from_id(cls, connection_id: str, *, client: Optional[Client] = None, user: Any = AMBIENT) -> "Connection":
+    def from_id(
+        cls, connection_id: str, *, organization_id: Optional[str] = None, client: Optional[Client] = None,
+        user: Any = AMBIENT,
+    ) -> "Connection":
         """A lazy reference to a connection by NoClick id, in the current (or
         given) user; ``credential:<id>`` for an account connected in the app.
+        ``organization_id`` names a team workspace you're in, where one shared
+        with that team is used.
 
         Returns:
             A connection that loads the first time you read a field. Nothing is sent yet.
@@ -482,7 +495,7 @@ class Connection(_Object):
             slack = noclick.Connection.from_id("credential:9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e")
             slack.run("send_message", {"channel": "#ops", "text": "Deployed."})
         """
-        return cls._new(hints={"id": connection_id}, client=client, user=user)
+        return cls._new(hints=compact(id=connection_id, organization_id=organization_id), client=client, user=user)
 
     @synced
     @classmethod
@@ -552,8 +565,11 @@ class Connection(_Object):
 
     @synced
     @classmethod
-    async def get(cls, ref: str, *, user: Any = AMBIENT, client: Optional[Client] = None) -> "Connection":
+    async def get(
+        cls, ref: str, *, organization_id: Optional[str] = None, user: Any = AMBIENT, client: Optional[Client] = None,
+    ) -> "Connection":
         """Load the connection with this id or name now; an unknown one raises ``noclick.NotFound``.
+        ``organization_id`` names a team workspace you're in, where one shared with that team is found.
 
         Returns:
             The connection, loaded.
@@ -564,20 +580,22 @@ class Connection(_Object):
                 gmail = noclick.Connection.get("gmail")
                 print(gmail.status, gmail.account)
         """
-        connection = cls._new(hints={"ref": ref}, client=client, user=user)
+        connection = cls._new(hints=compact(ref=ref, organization_id=organization_id), client=client, user=user)
         await connection._ensure()
         return connection
 
     @synced
     @classmethod
     async def list(
-        cls, *, integration: Any = None, origin: Optional[str] = None, limit: Optional[int] = None,
-        user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
+        cls, *, integration: Any = None, origin: Optional[str] = None, organization_id: Optional[str] = None,
+        limit: Optional[int] = None, user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> List["Connection"]:
         """The current user's connections (the account's own outside
         ``as_user``), or those ``user_filter`` covers: named ones newest first,
         then, in the account's own scope, the accounts connected in the app.
-        ``origin`` keeps only ``"api"`` or ``"app"`` ones.
+        ``origin`` keeps only ``"api"`` or ``"app"`` ones; ``organization_id``
+        reads in a team workspace you're in, where those shared with that team
+        are listed too (and each runs there).
 
         Returns:
             Every matching connection (or the first ``limit``), fetched page by page.
@@ -590,10 +608,12 @@ class Connection(_Object):
 
             every_gmail = noclick.Connection.list(integration="gmail", user_filter=noclick.ALL_USERS)
             from_the_app = noclick.Connection.list(origin="app")
+            the_teams = noclick.Connection.list(organization_id="5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70")
         """
         return await list_all(
             "/v1/connections", lambda raw, scope: cls._new(raw=raw, client=client, user=scope),
-            params={"integration": _integration_name(integration), "origin": origin}, user=user,
+            params={"integration": _integration_name(integration), "origin": origin,
+                    "organization_id": organization_id}, user=user,
             user_filter=user_filter, limit=limit, client=client,
         )
 
@@ -601,7 +621,8 @@ class Connection(_Object):
     @classmethod
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, integration: Any = None,
-        origin: Optional[str] = None, user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
+        origin: Optional[str] = None, organization_id: Optional[str] = None, user_filter: Any = None,
+        user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> Page:
         """One page of connections; pass ``next_cursor`` back as ``cursor``.
 
@@ -620,7 +641,8 @@ class Connection(_Object):
         """
         return await list_page(
             "/v1/connections", lambda raw, scope: cls._new(raw=raw, client=client, user=scope),
-            params={"integration": _integration_name(integration), "origin": origin}, user=user,
+            params={"integration": _integration_name(integration), "origin": origin,
+                    "organization_id": organization_id}, user=user,
             user_filter=user_filter, cursor=cursor, limit=limit, client=client,
         )
 
@@ -692,6 +714,13 @@ class Connection(_Object):
 
     def _path(self) -> str:
         return f"/v1/connections/{self._ref()}"
+
+    async def _request(self, method: str, path: str, **kwargs: Any) -> Any:
+        """Every call on the connection goes to the team workspace it was read in (``organization_id``)."""
+        organization_id = self._known("organization_id")
+        if organization_id is not None and path.startswith("/v1/connections/"):
+            kwargs["params"] = {**(kwargs.get("params") or {}), "organization_id": organization_id}
+        return await super()._request(method, path, **kwargs)
 
     async def _load(self) -> Dict[str, Any]:
         try:

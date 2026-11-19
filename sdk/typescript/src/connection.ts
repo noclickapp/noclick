@@ -18,7 +18,7 @@
  */
 
 import { resolveClient } from "./client.ts";
-import type { NoClick } from "./client.ts";
+import type { NoClick, RequestOptions } from "./client.ts";
 import { Conflict, InvalidRequest, NoClickError, NotFound, OperationCanceled, OperationExpired, OperationTimeout } from "./errors.ts";
 import { Database } from "./database.ts";
 import type { DatabaseOperations } from "./database.ts";
@@ -361,10 +361,17 @@ export type ConnectionAccess = "owner" | "edit" | "view";
 interface ConnectionFilters {
   integration?: string | { name: string };
   origin?: ConnectionOrigin;
+  /** A team workspace you're in (its id): read there, where those shared with that team are listed too. */
+  organizationId?: string;
+}
+
+/** Where a connection is used: a team workspace you're in (its id), where one shared with that team is reached. */
+export interface InWorkspace {
+  organizationId?: string;
 }
 
 function connectionQuery(options: ConnectionFilters): Record<string, string | undefined> {
-  return { integration: integrationName(options.integration), origin: options.origin };
+  return { integration: integrationName(options.integration), origin: options.origin, organization_id: options.organizationId };
 }
 
 export interface ConnectionCreateOptions extends LinkOptions, CallOptions {
@@ -394,6 +401,11 @@ export interface ConnectionCreateOptions extends LinkOptions, CallOptions {
  * A Claude or ChatGPT plan you signed in to in the app is one too, an account
  * agent's `modelConnection`; a plan shared with you, or filled in by someone
  * else, isn't.
+ *
+ * One a teammate shared with a team workspace you're in is that team's to use,
+ * in its workspace only: name the workspace (`organizationId`) to list, find
+ * and run it there. A connection read in a team workspace carries it
+ * (`organizationId`), and everything it does goes there, as the team's work.
  */
 export class Connection extends ApiObject {
   private _createWith: JsonObject | null = null;
@@ -460,22 +472,27 @@ export class Connection extends ApiObject {
     return connection;
   }
 
-  /** A lazy reference by NoClick id; `credential:<id>` for an account connected in the app. */
-  static fromId(connectionId: string, options: CallOptions = {}): Connection {
-    return new Connection({ hints: { id: connectionId }, client: options.client, user: options.user });
+  /**
+   * A lazy reference by NoClick id; `credential:<id>` for an account connected in the app. `organizationId` names a
+   * team workspace you're in, where one shared with that team is used.
+   */
+  static fromId(connectionId: string, options: CallOptions & InWorkspace = {}): Connection {
+    return new Connection({ hints: compact({ id: connectionId, organization_id: options.organizationId }), client: options.client, user: options.user });
   }
 
-  /** The connection with this id or name. */
-  static async get(ref: string, options: CallOptions = {}): Promise<Connection> {
-    return await new Connection({ hints: { ref }, client: options.client, user: options.user }).hydrate();
+  /** The connection with this id or name; in `organizationId`, a team workspace you're in, one shared with that team. */
+  static async get(ref: string, options: CallOptions & InWorkspace = {}): Promise<Connection> {
+    return await new Connection({ hints: compact({ ref, organization_id: options.organizationId }), client: options.client, user: options.user }).hydrate();
   }
 
   /**
    * The current user's connections (the account's own outside `asUser`), or those `userFilter` covers:
    * named ones newest first, then, in the account's own scope, the accounts connected in the app.
-   * `origin` keeps only `"api"` or `"app"` ones.
+   * `origin` keeps only `"api"` or `"app"` ones; `organizationId` reads in a team workspace you're in, where those
+   * shared with that team are listed too (and each runs there).
    *
    *     const fromTheApp = await Connection.list({ origin: "app" });
+   *     const theTeams = await Connection.list({ organizationId: "5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70" });
    */
   static async list(
     options: ReadOptions & ConnectionFilters & { limit?: number } = {},
@@ -542,6 +559,10 @@ export class Connection extends ApiObject {
   get access(): ConnectionAccess {
     return this._field("access");
   }
+  /** The team workspace it was read in (`organizationId`), where it runs; `null` in your account's own. */
+  get organizationId(): string | null {
+    return this._field<string | null | undefined>("organization_id") ?? null;
+  }
   /** Operations its owner approves call by call wherever it runs (`*`: all); `requireApproval` adds to them. */
   get approvalOperations(): string[] {
     const ops = this._field<unknown>("approval_operations");
@@ -602,6 +623,13 @@ export class Connection extends ApiObject {
 
   private get path(): string {
     return `/v1/connections/${encodeURIComponent(String(this._known("id") ?? this._hints.ref ?? this._hints.name))}`;
+  }
+
+  /** @internal Every call on the connection goes to the team workspace it was read in (`organizationId`). */
+  override _request<T = unknown>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
+    const organizationId = this._known("organization_id");
+    if (typeof organizationId !== "string" || !path.startsWith("/v1/connections/")) return super._request<T>(method, path, options);
+    return super._request<T>(method, path, { ...options, query: { ...options.query, organization_id: organizationId } });
   }
 
   protected async _load(): Promise<JsonObject> {
