@@ -345,3 +345,22 @@ def test_review3_FINDING_a_connection_that_drops_right_after_ready_never_backs_o
             break
     assert len(no_waits) == flaps
     assert max(no_waits) >= 5.0, f"{flaps} drops in a row, each retried within {max(no_waits):.2f} s: {no_waits}"
+
+
+def test_a_connection_that_stayed_up_starts_the_backoff_again(api, client, monkeypatch, no_waits):
+    """Four drops right after ``ready`` climb the backoff; a connection that then stays up 30 s and drops is tried
+    again at the first step."""
+    api.post("/v1/watch/tokens").mock(side_effect=[httpx.Response(201, json=token(n)) for n in range(7)])
+    connect = FakeConnect(*[([{"type": "ready", "resumed": False}], 1006) for _ in range(6)])
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    # Two clock reads a connection: at its ready, at its end. Up 1 s each, but the fifth: 42 s.
+    reads = iter([0, 1, 2, 3, 4, 5, 6, 7, 8, 50, 51, 52])
+    monkeypatch.setattr(_watch, "time", type("Clock", (), {"monotonic": staticmethod(lambda: next(reads))}))
+    readies = 0
+    for message in nc.watch():
+        readies += message.type == "ready"
+        if readies > 5:
+            break
+    assert len(no_waits) == 5
+    assert no_waits[3] >= 2.5, f"the fourth drop in a row waits a later step: {no_waits}"
+    assert no_waits[4] <= 0.75, f"after a connection that stayed up, the first step again: {no_waits}"

@@ -466,3 +466,34 @@ test("review3 FINDING: a connection that drops right after ready never backs off
   assert.ok(Math.max(...backoffs) >= 5_000,
     `${flaps} drops in a row, each retried within ${Math.max(...backoffs).toFixed(0)} ms: ${backoffs.map((w) => w.toFixed(0))}`);
 });
+
+test("a connection that stayed up starts the backoff again", async (t) => {
+  // Four drops right after ready climb the backoff; a connection that then stays up 30 s and drops is tried again
+  // at the first step.
+  FakeSocket.opened = [];
+  const waits = noWaits(t);
+  let now = 1_000_000;
+  t.mock.method(Date, "now", () => now);
+  const { api } = setup();
+  api.on("POST", "/v1/watch/tokens", ...Array.from({ length: 7 }, (_, n) => json(TOKEN(n), { status: 201 })));
+  const controller = new AbortController();
+  const done = (async () => {
+    for await (const _message of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) {
+      // read everything
+    }
+  })();
+  for (let n = 1; n <= 5; n++) {
+    const socket = await opened(n);
+    socket.receive({ type: "ready", resumed: false });
+    await new Promise((resolve) => setImmediate(resolve));
+    now += n === 5 ? 42_000 : 1_000;
+    socket.end(1006);
+  }
+  await opened(6);
+  controller.abort();
+  await done;
+  const backoffs = waits.filter((ms) => !Number.isInteger(ms));
+  assert.equal(backoffs.length, 5, `waits: ${waits}`);
+  assert.ok(backoffs[3] >= 2_500, `the fourth drop in a row waits a later step: ${backoffs}`);
+  assert.ok(backoffs[4] <= 750, `after a connection that stayed up, the first step again: ${backoffs}`);
+});
