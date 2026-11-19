@@ -349,7 +349,9 @@ class Connection(_Object):
         doc="Operations its owner approves call by call wherever it runs (``*``: all of them); "
         "``require_approval`` adds to them.",
     )
-    account: Optional[str] = field("account", doc="The connected account as the provider named it, when proven.")
+    account: Optional[str] = field("account", doc=(
+        "The account it reaches, as the app's Connections list names it: its login, else its email, else who a "
+        "check verified it as, else the number it links; ``None`` when none is known."))
     test_account: bool = field(
         "test_account", bool, doc="Whether it's a test account, which an app's preview writes through as well as reads.",
     )

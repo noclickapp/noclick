@@ -8,12 +8,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AgentCommands } from 'noclick';
 import { TooltipProvider } from '@/ui/tooltip';
 
-import { fill } from '@/slots';
-import { COMPOSER_SOURCES } from '../slots';
+import { WorkClientContext } from '../client';
+import { workFixtureClient } from '../fixtures/client';
 import { Composer, type ComposerProps } from './Composer';
 
-// The "+" lists no automations and no accounts.
-fill(COMPOSER_SOURCES, { useAutomations: () => ({ automations: [], loading: false }), useAccounts: () => ({ accounts: [], loaded: true }), when: (iso) => iso });
+// The account's /v1 lists no automations and no accounts for the "+".
+const NOTHING = workFixtureClient(async () => Response.json({ object: 'list', data: [], next_cursor: null }));
 import { CONTROL_NAMES } from './menus';
 
 afterEach(cleanup);
@@ -42,9 +42,11 @@ function box(over: Partial<ComposerProps> = {}) {
         ...over,
     };
     render(
-        <TooltipProvider>
-            <Composer {...props} />
-        </TooltipProvider>
+        <WorkClientContext.Provider value={NOTHING}>
+            <TooltipProvider>
+                <Composer {...props} />
+            </TooltipProvider>
+        </WorkClientContext.Provider>
     );
     return { props, text: screen.getByRole('textbox') as HTMLTextAreaElement };
 }

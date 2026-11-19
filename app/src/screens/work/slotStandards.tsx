@@ -1,11 +1,10 @@
 // What stands in Work's slots (slots.ts) when no host fills them: each works on the platform API alone.
 import { useContext, useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { ExternalLink, FileText, Loader2 } from 'lucide-react';
-import { Connection, Workflow, type NoClick } from 'noclick';
+import { Connection, type NoClick } from 'noclick';
 import { toast } from 'sonner';
 import { fileKindOf } from '@/lib/embedKind';
 import { openTabForLater } from '@/lib/oauthPopup';
-import { relTime } from '@/lib/formatters';
 import { useV1 } from '@/sdk/useV1';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { addFundsUrl, NOCLICK_SITE } from '@/screens/console/lib/site';
@@ -15,11 +14,8 @@ import type { PreviewParts } from '@/screens/resources/FilePreview';
 import type { FileEntry } from '@/screens/resources/files';
 import { StandardMarkdown } from '@/screens/resources/slotStandards';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '@/ui/buttons';
-import { useConnectionMarks } from '@/ui/connectionMark';
-import { BrandIcon } from '@/ui/BrandIcon';
 import { ShellDialog } from '@/ui/ShellDialog';
 import { cn } from '@/ui/utils';
-import { MENU_LOGO, type AccountChoice, type ComposerSources } from '@/ui/chat/ComposerAddMenu';
 import { useWorkClient } from './client';
 import type {
     AddFundsProps,
@@ -60,54 +56,6 @@ export function LinkedFileCard({ name, url }: { name: string; url: string }) {
 
 const sentence = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const words = (text: string) => text.replace(/_[0-9a-f]{8,}$/i, '').replace(/[_-]+/g, ' ').trim();
-
-// ── the box ────────────────────────────────────────────────────────────────
-
-function useV1Automations() {
-    const client = useWorkClient();
-    const read = useV1('work:composer:automations', () => Workflow.list({ client, limit: 200 }), { client });
-    const automations = useMemo(
-        () =>
-            (read.data ?? [])
-                .map((w) => ({ id: w.id, name: w.name || 'Untitled', updatedAt: w.updatedAt?.toISOString() }))
-                .sort((a, b) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? '')),
-        [read.data]
-    );
-    return { automations, loading: read.loading };
-}
-
-function useV1Accounts(): { accounts: AccountChoice[]; loaded: boolean } {
-    const client = useWorkClient();
-    const marks = useConnectionMarks();
-    const read = useV1('work:composer:accounts', () => Connection.list({ client, origin: 'app' }), { client });
-    const accounts = useMemo(
-        () =>
-            (read.data ?? [])
-                .filter((c) => c.connected)
-                .sort((a, b) => (b.createdAt?.toISOString() ?? '').localeCompare(a.createdAt?.toISOString() ?? ''))
-                .map((c): AccountChoice => {
-                    const app = marks.label(c.credentialType ?? c.integration);
-                    const line = c.account ?? app;
-                    const glyph = marks.accountGlyph({ credential_type: c.credentialType ?? c.integration });
-                    return {
-                        id: c.id,
-                        app,
-                        line,
-                        name: c.name,
-                        mark: <BrandIcon Icon={glyph.Icon} iconColor={glyph.iconColor} className={MENU_LOGO} />,
-                        reference: { kind: 'account', id: c.id.replace(/^credential:/, ''), label: line === app ? app : `${app} · ${line}` },
-                    };
-                }),
-        [read.data, marks]
-    );
-    return { accounts, loaded: read.data !== undefined || read.error !== undefined };
-}
-
-export const V1_COMPOSER_SOURCES: ComposerSources = {
-    useAutomations: useV1Automations,
-    useAccounts: useV1Accounts,
-    when: (iso) => relTime(iso, new Date().toISOString()),
-};
 
 // ── connecting ──────────────────────────────────────────────────────────────
 

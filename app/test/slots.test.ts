@@ -143,7 +143,6 @@ describe('the app', () => {
             'resources.numbers',
             'work.address',
             'work.apps',
-            'work.composer.sources',
             'work.connect.app',
             'work.connect.model',
             'work.file.preview',

@@ -14,8 +14,7 @@ import { ReferenceMark } from '@/ui/chat/references';
 import { ComposerAddMenu, type ComposerSessionActions } from '@/ui/chat/ComposerAddMenu';
 import type { ChatAttachment, ChatFile } from '@/ui/chat/useChatFiles';
 import type { ChatReference } from '@/lib/agentThread/messages';
-import { useSlot } from '@/slots';
-import { COMPOSER_SOURCES } from '../slots';
+import { COMPOSER_SOURCES } from './composerSources';
 import { composerPrimary } from '@/ui/composerPrimary';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
@@ -275,7 +274,6 @@ export interface ComposerProps {
 }
 
 export function Composer(p: ComposerProps) {
-    const sources = useSlot(COMPOSER_SOURCES);
     const [text, setText] = useState('');
     const [caret, setCaret] = useState(0);
     const [mod, setMod] = useState(false);
@@ -609,7 +607,7 @@ export function Composer(p: ComposerProps) {
                                     onAttach={p.listFiles ? attachStored : undefined}
                                     onReference={point}
                                     session={p.session}
-                                    sources={sources}
+                                    sources={COMPOSER_SOURCES}
                                 />
                             )}
                             <div className="ml-auto flex min-w-0 items-center justify-end gap-1">

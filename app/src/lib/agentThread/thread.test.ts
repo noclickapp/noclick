@@ -563,7 +563,14 @@ describe('what a message points at', () => {
     const refs = [
         { kind: 'automation' as const, id: 'wf-1', label: 'Morning brief' },
         { kind: 'account' as const, id: 'cred-9', label: 'ops@acme.test' },
+        { kind: 'account' as const, id: 'connection:conn-4', label: 'Notion · maya@notion.test' },
     ];
+
+    it('names each by the id the platform API looks it up by: a named connection by its connection id', () => {
+        expect(composeMessage('Use these', refs, false)).toBe(
+            'Use these\n\n(About the automation “Morning brief” (workflow wf-1), the account “ops@acme.test” (credential:cred-9) and the account “Notion · maya@notion.test” (connection conn-4).)'
+        );
+    });
 
     it('reads back as the words and their chips, the line naming them taken off; files alone show no words', () => {
         const thread = history({ role: 'user', text: composeMessage('Why did this fail?', refs, false), created_at: iso(0) }, { role: 'user', text: composeMessage('', [], true), created_at: iso(1) });

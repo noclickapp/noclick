@@ -547,7 +547,10 @@ export class Connection extends ApiObject {
     const ops = this._field<unknown>("approval_operations");
     return Array.isArray(ops) ? ops.map(String) : [];
   }
-  /** The connected account as the provider named it, when proven. */
+  /**
+   * The account it reaches, as the app's Connections list names it: its login, else its email, else who a
+   * check verified it as, else the number it links; `null` when none is known.
+   */
   get account(): string | null {
     return this._field("account");
   }

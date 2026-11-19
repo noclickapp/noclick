@@ -2,7 +2,8 @@
 import { Plug } from 'lucide-react';
 import { getNodeIconMeta } from '@/lib/nodeIconRegistry';
 import { NodeMark, nodeLabel, type MarkSize } from './primitives';
-import type { Glyph } from './slots';
+import { addedLabel } from '@/lib/formatters';
+import type { AccountFacts, AccountNames, Glyph } from './slots';
 
 /** The mark the icon registry holds for the service's node type: a plain cube when it holds none. */
 export function StandardCredentialMark({ nodeType, size = 'sm', className }: { credentialType: string; nodeType?: string | null; size?: MarkSize; className?: string }) {
@@ -19,3 +20,12 @@ export function standardCredentialLabel(credentialType: string, nodeType?: strin
 
 /** A plug in the ink around it, for any account. */
 export const plainGlyph = (): Glyph => ({ Icon: Plug, iconColor: 'text-muted-foreground' });
+
+/** An account named after its integration: the account it reaches, else the name it was given where that isn't its
+ *  app's, else when it was connected. */
+export function standardAccountNames({ credentialType, integration, name, account, connectedAt }: AccountFacts): AccountNames {
+    const app = standardCredentialLabel(credentialType, `automation-${integration.replace(/_/g, '-')}`);
+    const own = name.trim();
+    const line = account ?? (own && own.toLowerCase() !== app.toLowerCase() ? own : connectedAt ? addedLabel(connectedAt) : app);
+    return { app, line, aliases: [] };
+}

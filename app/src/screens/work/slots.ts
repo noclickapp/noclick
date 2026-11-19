@@ -6,7 +6,6 @@ import type { HarnessName, NoClick } from 'noclick';
 import { slot } from '@/slots';
 import type { ThreadJobs } from '@/lib/threadJobs';
 import type { BrandIconComponent } from '@/ui/BrandIcon';
-import type { ComposerSources } from '@/ui/chat/ComposerAddMenu';
 import type { Thread, TurnEntry } from '@/lib/agentThread/thread';
 import { StandardMarkdown } from '@/screens/resources/slotStandards';
 import type { PreviewParts } from '@/screens/resources/FilePreview';
@@ -19,7 +18,6 @@ import {
     NO_CARDS,
     useNoToolServerSignIn,
     useV1ToolApps,
-    V1_COMPOSER_SOURCES,
     workAddress,
     workspacePreviewParts,
     AppConnectLink,
@@ -56,12 +54,6 @@ export const MESSAGE_FILE = slot<ComponentType<{ name: string; url: string }>>('
 
 /** A model's name as people read it, by its id (`anthropic/claude-sonnet-5-5`); undefined where the host knows none. */
 export const MODEL_NAME = slot<(model: string) => string | undefined>('work.model.name', () => undefined);
-
-// ── the box ────────────────────────────────────────────────────────────────
-
-/** In the box's "+": the automations and accounts a message can point at. The standard reads the account's
- *  workflows and connections through the platform API. */
-export const COMPOSER_SOURCES = slot<ComposerSources>('work.composer.sources', V1_COMPOSER_SOURCES);
 
 // ── connecting ──────────────────────────────────────────────────────────────
 

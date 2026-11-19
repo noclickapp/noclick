@@ -7,6 +7,7 @@ from platform_helpers import body, operation
 FULL = {
     "object": "workflow", "id": "wf_1", "name": "Order intake", "description": None, "access": "owner",
     "inputs": {"type": "object"}, "app_url": "https://noclick.com/dashboard?tab=workflows&workflow=wf_1",
+    "step_types": ["trigger-webhook", "automation-linear"],
     "created_at": "2026-10-12T10:00:00Z", "updated_at": "2026-10-12T10:00:00Z",
     "steps": [
         {"id": "hook", "name": "Hook", "type": "trigger-webhook", "operation": None, "enabled": True,
@@ -29,6 +30,7 @@ def test_one_workflow_reads_in_full(api, client):
     api.get("/v1/workflows/wf_1").respond(json=FULL)
     workflow = nc.Workflow.get("wf_1")
     assert (workflow.access, workflow.paused, workflow.readiness["status"]) == ("owner", False, "needs_setup")
+    assert workflow.step_types == ["trigger-webhook", "automation-linear"]
     assert workflow.readiness["meaning"] == FULL["readiness"]["meaning"]
     hook, ticket = workflow.steps
     assert (hook.enabled, hook.settings, hook.trigger["error"], hook.connection) == (

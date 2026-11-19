@@ -4,13 +4,35 @@ import type { ComponentType } from 'react';
 import { slot } from '@/slots';
 import type { BrandIconComponent } from './BrandIcon';
 import type { MarkSize } from './primitives';
-import { plainGlyph, StandardCredentialMark, standardCredentialLabel } from './connectionMarkStandards';
+import { plainGlyph, standardAccountNames, StandardCredentialMark, standardCredentialLabel } from './connectionMarkStandards';
 
 /** A service's glyph and its colour, as `BrandIcon` draws it (a Tailwind `text-*` class, a CSS colour, or '' for a mark
  *  that paints its own). */
 export interface Glyph {
     Icon: BrandIconComponent;
     iconColor: string;
+}
+
+/** What a list of accounts knows of one (a connection as the platform API reads it). */
+export interface AccountFacts {
+    credentialType: string;
+    /** The integration it's a connection to (`google_sheets`). */
+    integration: string;
+    name: string;
+    /** The account it reaches, as the platform names it (its login, email, who a check verified it as, its number). */
+    account: string | null;
+    /** When it was connected, as an ISO time. */
+    connectedAt: string | null;
+}
+
+/** An account as a list names it. */
+export interface AccountNames {
+    /** Its app, else its kind of key. */
+    app: string;
+    /** What tells it apart from another of its app's. */
+    line: string;
+    /** More names a search finds its app by ("Anthropic" for a Claude account). */
+    aliases: string[];
 }
 
 export interface ConnectionMarks {
@@ -26,11 +48,14 @@ export interface ConnectionMarks {
     aiGlyph: (credentialType: string) => Glyph | undefined;
     /** The AI company an `agent_…` account is with, as it's called ("Claude"); undefined where none is known. */
     aiCompany: (credentialType: string) => string | undefined;
+    /** How an account reads in a list of accounts: its app and the line that tells it apart. */
+    account: (facts: AccountFacts) => AccountNames;
 }
 
 /** Beside a connection's, an integration's or an account's name: the service's mark, its glyph, and what it is called.
  *  The standard draws the mark the icon registry holds for it (a plain cube when it holds none), a plain plug for a
- *  glyph, and reads its name off its type. */
+ *  glyph, reads its name off its type, and names an account by the account it reaches, else its own name, else when it
+ *  was connected. */
 export const CONNECTION_MARK = slot<ConnectionMarks>('connection.mark', {
     Mark: StandardCredentialMark,
     label: standardCredentialLabel,
@@ -38,4 +63,5 @@ export const CONNECTION_MARK = slot<ConnectionMarks>('connection.mark', {
     accountGlyph: () => plainGlyph(),
     aiGlyph: () => undefined,
     aiCompany: () => undefined,
+    account: standardAccountNames,
 });

@@ -1152,6 +1152,14 @@ export class Workflow extends ApiObject {
   get access(): string {
     return this._field("access");
   }
+  /**
+   * What it's made of, at a glance, in a list too: at most four of its step types, its triggers first, then its
+   * agents (one on a coding harness as `agent:<harness>`, `agent:codex`), then the rest, never a note.
+   */
+  get stepTypes(): string[] {
+    const raw = this._field<unknown>("step_types");
+    return Array.isArray(raw) ? raw.map(String) : [];
+  }
   /** Its steps in order, each with its settings, connection and trigger state (read with one workflow, not in a list). */
   get steps(): WorkflowStep[] {
     const raw = this._field<unknown>("steps");

@@ -111,7 +111,7 @@ One is drawn by several screens, so it is in `src/ui/slots.ts`:
 
 | Slot | Where it is | By default |
 |---|---|---|
-| `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, and the AI company an AI account is with | A plain mark, the name read from its type, and no company |
+| `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, the AI company an AI account is with, and how an account reads in a list (its app and the line telling it apart) | A plain mark, the name read from its type, no company, and an account by the account it reaches, else its own name, else when it was connected |
 
 Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 
@@ -234,7 +234,6 @@ Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the chann
 | `work.reply.markdown` | A reply's, a question's or a browser's found text | Drawn as a repository's README is |
 | `work.message.file` | A file a texted or emailed message carried | A link that opens it |
 | `work.model.name` | A model's name as people read it | Its id |
-| `work.composer.sources` | The box's "+": the automations and accounts a message can point at | The account's workflows and connections, read through the API |
 | `work.apps` | The apps an agent can use as tools, and whose an account is | The integrations the API lists |
 | `work.connect.app` | Connecting an app's account where it's needed | NoClick's connect page in a new tab |
 | `work.connect.model` | Connecting the AI account a model needs | NoClick's connect page in a new tab |

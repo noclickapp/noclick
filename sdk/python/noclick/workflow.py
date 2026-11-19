@@ -1172,6 +1172,9 @@ class Workflow(_Object):
         "A JSON schema of what ``run`` takes: a form's fields, any object for a webhook, empty if nothing."))
     app_url: Optional[str] = field("app_url", doc="Where to open it in the NoClick app.")
     access: str = field("access", doc="Your account's access: ``owner``, ``editor`` or ``viewer``.")
+    step_types: List[str] = field("step_types", lambda raw: [str(t) for t in raw or []], doc=(
+        "What it's made of, at a glance, in a list too: at most four of its step types, its triggers first, then "
+        "its agents (one on a coding harness as ``agent:<harness>``, ``agent:codex``), then the rest, never a note."))
     created_at: Any = field("created_at", parse_time)
     updated_at: Any = field("updated_at", parse_time)
     steps: List[WorkflowStep] = field("steps", lambda raw: [WorkflowStep._from(s) for s in raw or []], doc=(

@@ -26,6 +26,21 @@ export function relTime(iso: string, now: string): string {
     return `${MONTHS[dt.getMonth()]} ${dt.getDate()}`;
 }
 
+/** "just now" · "5m ago" · "2d ago" · "3mo ago", against the clock: where space is tight (an automation's card or row,
+ *  a "+" list). '' for no time, so a caller can `&&` it. */
+export function relativeShort(iso?: string): string {
+    if (!iso) return '';
+    const ts = new Date(iso).getTime();
+    if (!Number.isFinite(ts)) return '';
+    const sec = (Date.now() - ts) / 1000;
+    if (sec < 60) return 'just now';
+    if (sec < 3600) return `${Math.floor(sec / 60)}m ago`;
+    if (sec < 86400) return `${Math.floor(sec / 3600)}h ago`;
+    if (sec < 86400 * 30) return `${Math.floor(sec / 86400)}d ago`;
+    if (sec < 86400 * 365) return `${Math.floor(sec / (86400 * 30))}mo ago`;
+    return `${Math.floor(sec / (86400 * 365))}y ago`;
+}
+
 export function clockLabel(iso: string): string {
     const dt = new Date(iso);
     return `${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;

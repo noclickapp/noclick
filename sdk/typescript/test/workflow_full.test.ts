@@ -9,6 +9,7 @@ import { json, operation, setup } from "./helpers.ts";
 const FULL = {
   object: "workflow", id: "wf_1", name: "Order intake", description: null, access: "owner", inputs: { type: "object" },
   app_url: "https://noclick.com/dashboard?tab=workflows&workflow=wf_1", created_at: "2026-10-12T10:00:00Z", updated_at: "2026-10-12T10:00:00Z",
+  step_types: ["trigger-webhook", "automation-linear"],
   steps: [
     {
       id: "hook", name: "Hook", type: "trigger-webhook", operation: null, enabled: true, settings: { http_method: "POST" },
@@ -34,6 +35,7 @@ test("one workflow reads in full", async () => {
   api.on("GET", "/v1/workflows/wf_1", json(FULL));
   const workflow = await nc.Workflow.get("wf_1");
   assert.deepEqual([workflow.access, workflow.paused, workflow.readiness.status], ["owner", false, "needs_setup"]);
+  assert.deepEqual(workflow.stepTypes, ["trigger-webhook", "automation-linear"]);
   assert.equal(workflow.readiness.meaning, FULL.readiness.meaning);
   const [hook, ticket] = workflow.steps;
   assert.deepEqual([hook.enabled, hook.settings, hook.trigger, hook.connection], [
