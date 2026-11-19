@@ -1378,9 +1378,11 @@ export class Project extends ApiObject {
   get published(): boolean {
     return this._field<boolean | null>("published") ?? false;
   }
-  /** The automation it was published from, or null for every other app. */
-  get workflow(): { id: string; name: string | null } | null {
-    return this._field<{ id: string; name: string | null } | null>("workflow") ?? null;
+  /** The automation it was published from, or null for every other app; `step` is the interface it serves, for a key
+   * that reads workflows (null for any other), which renaming or unpublishing one of several takes:
+   * `workflow.build(undefined, { publish: { action: "unpublish", step } })`. */
+  get workflow(): { id: string; name: string | null; step: string | null } | null {
+    return this._field<{ id: string; name: string | null; step: string | null } | null>("workflow") ?? null;
   }
   get runtime(): ProjectRuntime {
     return this._field("runtime");

@@ -1365,7 +1365,9 @@ class Project(_Object):
         "deploys when it's published again from there.",
     )
     workflow: Optional[Dict[str, Any]] = field(
-        "workflow", doc="``{id, name}`` of the automation it was published from (None for every other app).",
+        "workflow", doc="``{id, name, step}`` of the automation it was published from (None for every other app): "
+        "``step`` is the interface it serves, for a key that reads workflows (None for any other), which renaming or "
+        "unpublishing one of several takes: ``workflow.build(publish={\"action\": \"unpublish\", \"step\": step})``.",
     )
     runtime: str = field(
         "runtime", doc="``auto`` (each deployment runs where its commit says: ``Deployment.runtime``), ``edge`` "
