@@ -927,7 +927,7 @@ def test_machines_ssh_renews_its_shell_in_place_when_asked(home, api, monkeypatc
         time.sleep(0.2)
         os.close(slave)
         os.close(master)
-    assert opened.call_count == 2 and seen["auth"]["token"] == "tok_1"
+    assert opened.call_count == 2 and seen["auth"]["token"] == "tok_1" and seen["auth"]["renew"] is True
     assert seen["renew"] == {"type": "renew", "token": "tok_2"}
     assert "still here" in capsys.readouterr().out
 

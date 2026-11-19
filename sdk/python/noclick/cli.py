@@ -1202,8 +1202,9 @@ def cmd_machines_ssh(args: argparse.Namespace) -> int:
 
 
 def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
-    """Your terminal on a machine's shell socket, raw, until its bash ends; returns bash's exit code. When the
-    server asks (a shell lasts 15 minutes at a time), ``renew`` gets a new token for it, and bash goes on."""
+    """Your terminal on a machine's shell socket, raw, until its bash ends; returns bash's exit code. It says it
+    renews, so the shell lasts 15 minutes at a time: when the server asks, ``renew`` gets a new token for it, and bash
+    goes on."""
     try:
         from websockets.exceptions import ConnectionClosed
         from websockets.sync.client import connect
@@ -1223,7 +1224,7 @@ def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
 
     ended: Dict[str, Any] = {}
     with connect(url, user_agent_header=USER_AGENT, max_size=None) as socket:
-        socket.send(json.dumps({"type": "auth", "token": token, **size()}))
+        socket.send(json.dumps({"type": "auth", "token": token, "renew": True, **size()}))
         try:
             json.loads(socket.recv())
         except ConnectionClosed as closed:

@@ -514,8 +514,9 @@ class SandboxShell:
     user's browser, which opens it within two minutes as a take-over's terminal is opened (the websocket's first
     message is ``{"type": "auth", "token": ..., "cols": ..., "rows": ...}``; the TypeScript SDK's
     ``SandboxShell.connect``). It closes as bash exits, after ``idle_limit_s`` with nothing typed, or when the
-    websocket closes; asked to renew (``{"type": "renew"}``, every 15 minutes), the browser answers ``{"type":
-    "renew", "token": ...}`` with a new shell's token, and bash goes on."""
+    websocket closes. A browser that says it renews (``"renew": true`` in its first message) is asked to every 15
+    minutes (``{"type": "renew"}``) and answers ``{"type": "renew", "token": ...}`` with a new shell's token, and bash
+    goes on."""
 
     agent_id: str
     conversation: str

@@ -18,9 +18,9 @@
  * the browser that connects.
  *
  * An open terminal ends as soon as what opened it no longer may: its key is revoked or expires, its user isn't
- * active, its agent or machine is deleted, or its take-over is handed back. It lasts 15 minutes at a time: in the
- * minute before, the server asks for a new token for the same terminal, which `connect` gets itself (`renew`), and
- * the session goes on unbroken.
+ * active, its agent or machine is deleted, or its take-over is handed back. A connection that can renew (`renew`,
+ * which `connect` gives itself) says so as it opens and lasts 15 minutes at a time: in the minute before, the server
+ * asks for a new token for the same terminal, and the session goes on unbroken. One that can't has no lifetime.
  */
 
 import type { NoClick } from "./client.ts";
@@ -64,10 +64,11 @@ export interface TerminalConnectOptions {
   /** It closed: `final` when it won't open again with this take-over (handed back, nothing running, or a used token);
    *  otherwise take over again for a new token and connect. */
   onClose?: (event: { code: number; reason: string; final: boolean }) => void;
-  /** A new token for this same terminal, asked for while it's open (it lasts 15 minutes at a time) so it goes on
-   *  unbroken. `Terminal.connect` takes over again and `SandboxShell.connect` asks for the shell again by
-   *  themselves; for a machine's shell, `async () => (await machine.shell()).token`. Without one, it closes with
-   *  `TERMINAL_RENEW` at its time. */
+  /** A new token for this same terminal. With one, the connection says it renews as it opens, and lasts 15 minutes
+   *  at a time: the server asks for a new token in the last minute, and without an answer it closes with
+   *  `TERMINAL_RENEW`. `Terminal.connect` takes over again and `SandboxShell.connect` asks for the shell again by
+   *  themselves; for a machine's shell, `async () => (await machine.shell()).token`. Without one, it has no
+   *  lifetime. */
   renew?: () => Promise<string>;
   /** A WebSocket class, where the runtime has none of its own (Node before 22). */
   WebSocket?: typeof WebSocket;
@@ -88,7 +89,9 @@ export class TerminalConnection {
     socket.binaryType = "arraybuffer";
     this.socket = socket;
     socket.onopen = () => {
-      socket.send(JSON.stringify({ type: "auth", token, cols: options.cols, rows: options.rows }));
+      socket.send(JSON.stringify({
+        type: "auth", token, cols: options.cols, rows: options.rows, renew: options.renew ? true : undefined,
+      }));
     };
     socket.onmessage = (event: MessageEvent) => {
       if (typeof event.data !== "string") {

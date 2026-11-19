@@ -92,7 +92,8 @@ test("connect sends the token first, holds what's typed until it's ready, and re
   assert.equal(socket.url, "wss://api.test/v1/terminals/attach");  // no token in the URL
   assert.equal(socket.binaryType, "arraybuffer");
   socket.onopen?.();
-  assert.deepEqual(JSON.parse(socket.sent[0] as string), { type: "auth", token: "tok_1", cols: 100, rows: 30 });
+  // It can renew (it takes over again for a new token), and says so.
+  assert.deepEqual(JSON.parse(socket.sent[0] as string), { type: "auth", token: "tok_1", cols: 100, rows: 30, renew: true });
 
   connection.write("ls\r");  // before it's ready: held
   connection.resize(120, 40);  // before it's ready: nothing to size
@@ -150,12 +151,13 @@ test("asked to renew, a terminal takes over again and answers with the new token
   assert.equal(new TextDecoder().decode(socket.sent.at(-1) as Uint8Array), "ls\r");
 });
 
-test("a terminal with no way to renew closes at its time, to be opened again", async () => {
+test("a terminal with no way to renew doesn't say it renews, and a close at its time isn't final", async () => {
   const closes: { code: number; final: boolean }[] = [];
   const connection = new nc.TerminalConnection("wss://api.test/v1/terminals/attach", "tok_1", {
     WebSocket: FakeSocket as unknown as typeof WebSocket, onClose: ({ code, final }) => closes.push({ code, final }) });
   const socket = FakeSocket.last;
   socket.onopen?.();
+  assert.equal(JSON.parse(socket.sent[0] as string).renew, undefined);  // it can't renew, so it has no lifetime
   socket.receive(JSON.stringify({ type: "ready", state: "open" }));
   socket.receive(JSON.stringify({ type: "renew" }));
   await settle();

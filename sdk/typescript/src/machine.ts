@@ -726,7 +726,7 @@ export class Machine extends ApiObject {
    * Open a shell (`bash -l`) on this machine, as its user, in its home: for the account's owner, with its secret key
    * or signed in, while it's running. Your own machine's too (on a Mac, in NoClick's VM there). Hand `url` and `token`
    * to a browser terminal: `new TerminalConnection(shell.url, shell.token, { renew: async () => (await
-   * machine.shell()).token })` keeps it open past the 15 minutes a token's shell lasts unrenewed.
+   * machine.shell()).token })` renews it in place (with no `renew`, it has no lifetime).
    */
   async shell(): Promise<MachineShell> {
     const raw = asObject(await this._request("POST", `${await this._path()}/shell`));

@@ -157,7 +157,7 @@ test("a shell is a token the terminal's connection opens once, ending for good a
   });
   const socket = ShellSocket.last;
   socket.onopen?.();
-  assert.deepEqual(JSON.parse(socket.sent[0] as string), { type: "auth", token: "tok_sh", cols: 90, rows: 25 });
+  assert.deepEqual(JSON.parse(socket.sent[0] as string), { type: "auth", token: "tok_sh", cols: 90, rows: 25, renew: true });
   socket.onmessage?.({ data: JSON.stringify({ type: "ready", state: "open", shell: "s1" }) });
   connection.write("exit\r");
   assert.equal(new TextDecoder().decode(socket.sent[1] as Uint8Array), "exit\r");
