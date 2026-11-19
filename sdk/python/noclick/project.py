@@ -577,6 +577,18 @@ class Deployment(_Object):
         "when the copies go to the trash, and that promoting never carries them to production. None for production, "
         "and for an app whose previews use production's resources.",
     )
+    variables: Optional[Dict[str, List[str]]] = field(
+        "variables", doc="The names each of its releases was given in its environment, by the environment it was "
+        "released to (``{\"production\": [...], \"preview\": [...]}``): the app's settings and secrets, its bindings, "
+        "a container's ``DATABASE_URL`` and NoClick's own. Never a value.",
+    )
+    databases: Optional[List[Dict[str, Any]]] = field(
+        "databases", doc="On the deployment a container's deploy's or promote's (a rollback's) ``wait()`` gives, when "
+        "the app binds databases: ``{binding, engine, variable}`` each. ``variable`` names where a Postgres "
+        "database's connection URL reached the app (``DATABASE_URL``, or ``<binding>_URL`` when it binds several or "
+        "sets ``DATABASE_URL`` itself), a login of the release's own that lasts as long as the release; a SQLite one "
+        "has none (``variable`` None), and its ``note`` says the code reaches it through the SDK. None otherwise.",
+    )
 
     @classmethod
     def from_id(cls, deployment_id: str, *, client: Optional[Client] = None, user: Any = AMBIENT) -> "Deployment":
