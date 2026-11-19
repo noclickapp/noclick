@@ -2,6 +2,7 @@
 // what it spent this month. Read in the browser through useClient(), so it goes through the app's own server.
 import { APIConnectionError, NoClickError } from 'noclick';
 import { useEffect, useState } from 'react';
+import { signOut } from '@/lib/signOut';
 import { useClient } from '@/sdk/client';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { PAGE_TITLE } from '@/ui/titles';
@@ -36,14 +37,27 @@ export function AccountScreen() {
             {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
             {reading.state === 'ready' && <Account status={reading.status} />}
             <div className="flex flex-wrap items-center gap-3">
-                {/* What the account owns and what it costs, then where it's worked on: its agents, users, logs and usage. */}
-                <a className={BUTTON_PRIMARY} href="/resources">
+                {/* Where its agents and people work, what it owns and what it costs, then where it's built on: its agents,
+                    users, logs and usage. */}
+                <a className={BUTTON_PRIMARY} href="/work">
+                    Work
+                </a>
+                <a className={BUTTON_SECONDARY} href="/resources">
                     Resources
                 </a>
                 <a className={BUTTON_SECONDARY} href="/developers">
                     Developer console
                 </a>
-                <form method="post" action="/logout">
+                {/* What Work kept of the account in this browser is forgotten first (signOut); without a script, the form
+                    still signs out. */}
+                <form
+                    method="post"
+                    action="/logout"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        void signOut(reading.state === 'ready' ? reading.status.account.id : null);
+                    }}
+                >
                     <button type="submit" className={BUTTON_SECONDARY}>
                         Sign out
                     </button>

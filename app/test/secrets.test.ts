@@ -38,7 +38,7 @@ const SECRET_HOLDERS: Record<string, ReadonlySet<string>> = {
     ]),
     checkConfig: new Set(['src/server/gate.server.ts']),
 };
-const CLIENT_MAKERS = new Set(['src/sdk/proxied.ts', 'src/server/client.server.ts', 'src/screens/console/fixtures/client.ts']);
+const CLIENT_MAKERS = new Set(['src/sdk/proxied.ts', 'src/server/client.server.ts', 'src/screens/console/fixtures/client.ts', 'src/screens/work/fixtures/client.ts']);
 const BUILD_FLAGS = new Set(['DEV', 'PROD', 'SSR', 'MODE', 'BASE_URL']);
 const TEST_FILE = /\.test\.[cm]?[jt]sx?$/;
 /** Every module that reads or is handed a secret: what no pattern of imports may take in. */

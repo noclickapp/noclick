@@ -5,6 +5,7 @@
 import { useMemo } from 'react';
 import { useLoaderData } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
+import { signOut } from '@/lib/signOut';
 import { readAccountStatus } from '@/screens/account/status';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
@@ -28,15 +29,6 @@ export const loader = ({ context }: Route.LoaderArgs) => ({ apiUrl: apiUrl(conte
 /** That address is the same for as long as the app runs: moving between Resources' pages doesn't read it again. */
 export const shouldRevalidate = () => false;
 
-/** Signs out as the app's own button does: a POST to /logout, which ends the session and leads to the sign-in page. */
-function signOut(): void {
-    const form = document.createElement('form');
-    form.method = 'post';
-    form.action = '/logout';
-    document.body.appendChild(form);
-    form.submit();
-}
-
 export default function Resources() {
     const { apiUrl: api } = useLoaderData<typeof loader>();
     const client = useClient();
@@ -56,7 +48,7 @@ export default function Resources() {
             user: { id: account?.id ?? '', email: account?.email ?? null },
             now: Date.now,
             lab: false,
-            signOut,
+            signOut: () => void signOut(account?.id),
             live: null,
         }),
         [client, api, country, account?.id, account?.email]

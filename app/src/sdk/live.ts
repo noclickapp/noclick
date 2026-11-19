@@ -1,9 +1,15 @@
 // What moves while Work is open: the account's platform frames (a channel's messages, who's typing in it, an agent's
 // turn or step, a coding agent's place, a resource), which the host receives and hands here, so a view follows them with
 // `useWorkFrames` (and a test delivers its own) without a connection of its own. Frames say what moved; the view reads it
-// again through the platform client.
+// again through the platform client. A `reset` says something may have moved that no frame named: every view reads
+// again what it shows.
 import { createContext, useContext, useEffect, useRef } from 'react';
 import type { PlatformAgentEvent, PlatformChannelEvent, PlatformChannelTypingEvent, PlatformCodingAgentEvent, PlatformResourceEvent } from '@/sdk/frames';
+
+/** Read again whatever is shown. `backstop`: a host with no live source, on its timer. */
+export interface WorkReset {
+    why: 'backstop';
+}
 
 export interface WorkFrames {
     'platform:agent': PlatformAgentEvent;
@@ -11,6 +17,7 @@ export interface WorkFrames {
     'platform:channel_typing': PlatformChannelTypingEvent;
     'platform:coding_agent': PlatformCodingAgentEvent;
     'platform:resource': PlatformResourceEvent;
+    reset: WorkReset;
 }
 export type WorkFrameKind = keyof WorkFrames;
 
@@ -30,6 +37,18 @@ export function createWorkLive(): WorkLive {
         },
         deliver: (kind, frame) => listeners.get(kind)?.forEach((listener) => (listener as (f: typeof frame) => void)(frame)),
     };
+}
+
+/** How often a host with no live source has what's shown read again. */
+export const BACKSTOP_MS = 60_000;
+
+/** For a host with no live source: a `reset` every `everyMs` while the page is shown (a read also runs again when the
+ *  page is focused). Returns what stops it. */
+export function resetEvery(live: WorkLive, everyMs = BACKSTOP_MS): () => void {
+    const timer = window.setInterval(() => {
+        if (document.visibilityState === 'visible') live.deliver('reset', { why: 'backstop' });
+    }, everyMs);
+    return () => window.clearInterval(timer);
 }
 
 export const WorkLiveContext = createContext<WorkLive | null>(null);

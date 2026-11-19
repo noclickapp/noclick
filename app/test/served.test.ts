@@ -2,7 +2,7 @@
 // API. Pins that the gate sees every request React Router answers (the ones it answers without middleware too), what
 // the server answers without the gate (static files, React Router's manifest, and the few requests the HTTP server
 // refuses before React Router), that none of those answers carries anything of the app's, that events stream, and
-// that the built app serves the developer console and nothing of its lab.
+// that the built app serves the developer console and nothing of its labs.
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -200,14 +200,27 @@ describe('the developer console, under the production server', () => {
         }
     });
 
+    it('serves Work to the owner at /work, behind the sign-in', async () => {
+        expect((await get(configured, '/work')).headers.get('location')).toBe('/login?next=%2Fwork');
+        const cookie = await signedInCookie();
+        for (const path of ['/work', '/work?space=home&show=agents']) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain('<title>Work · NoClick</title>');
+            expect(page.headers.get('x-frame-options'), path).toBe('DENY');
+        }
+    });
+
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
-        expect((await get(configured, '/developers-lab', { headers: { cookie } })).status).toBe(404);
-        expect((await get(configured, '/developers-lab/usage?fixture=populated', { headers: { cookie } })).status).toBe(404);
+        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key']) {
+            expect((await get(configured, path, { headers: { cookie } })).status, path).toBe(404);
+        }
         const files = builtFiles();
         expect(files.length).toBeGreaterThan(20);
-        // The lab's own note, and a value only its fixtures hold (the moment they are set at).
-        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05/.test(readFileSync(file, 'utf8')));
+        // The console lab's own note, a value only its fixtures hold (the moment they are set at), and a made-up agent of
+        // Work's fixtures.
+        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05|agt_wirefern/.test(readFileSync(file, 'utf8')));
         expect(carrying.map((file) => file.slice(APP.length + 1))).toEqual([]);
     });
 });

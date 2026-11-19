@@ -2,8 +2,8 @@
 
 NoClick's app: the screens for working with a NoClick account, built only on the TypeScript SDK in
 [`../sdk/typescript`](../sdk/typescript). It runs with your NoClick key on its server, behind a password only you
-know. So far it has your account at a glance and NoClick's developer console; NoClick's screens move in here one
-at a time.
+know. So far it has your account at a glance, Work, Resources and NoClick's developer console; NoClick's screens
+move in here one at a time.
 
 ## Configuration
 
@@ -39,14 +39,16 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server; **Resources** on it opens `/resources`, and **Developer console** the console at `/developers`.
+app's own server; **Work** on it opens `/work`, **Resources** `/resources`, and **Developer console** the console at
+`/developers`.
 `scripts/check.sh` at the
 repository's root installs, typechecks, tests and builds the app along with the SDKs, as CI does; the tests need
 neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
-`http://localhost:5173/developers-lab` (or `/resources-lab` for Resources): the same pages over made-up data. The app still wants its settings and your
-sign-in first, though the lab calls nothing. See [the lab](#the-lab).
+`http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work): the same pages over
+made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
+[the lab](#the-lab).
 
 To deploy it, set the four variables in your host's settings and serve it over **https**: away from `localhost` the
 sign-in cookie is `Secure`, so a browser keeps it only over https, and the app tells browsers to come back over
@@ -83,8 +85,7 @@ them; `src/screens/console/ownerOnly.ts` is the one list, read by the sidebar, t
   who can go on with it and a link to where they do.
 - **Revealing a card's number**: it needs the `cards:reveal` scope, which a key with every scope (`*`) doesn't hold.
 
-The same list holds what later screens leave out for a key: spaces the owner joined in other accounts, sharing the
-personal space, an agent's sandbox (the `agents:terminal` scope), and approving a call NoClick holds for the owner.
+The same list holds what Work leaves out for a key (see [Work](#work)).
 
 A key's own limits apply as well: give the app a key with the scopes its pages need, and a spending cap.
 
@@ -103,8 +104,13 @@ by default, so the app is whole with every slot left alone. The console's are in
 | Slot | Where it is | By default |
 |---|---|---|
 | `console.terms` | Under a button that makes a key, approves a command line's sign-in or copies the setup prompt | Nothing |
-| `console.connection.mark` | Beside a connection's or an integration's name: its mark and what it is called | A plain mark, and the name read from its type |
 | `console.cards.issuerForm` | The cards onboarding page, for the signed-in owner | A link to where the application is finished |
+
+One is drawn by several screens, so it is in `src/ui/slots.ts`:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, and the AI company an AI account is with | A plain mark, the name read from its type, and no company |
 
 Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 
@@ -115,12 +121,14 @@ Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 | `resources.number.actions` | A number's page, beside its facts | Nothing |
 | `resources.file.markdown` | A Markdown file's preview | Its text drawn as a repository's README is |
 
-The channels' (`src/screens/channels/slots.ts`; the screens that use them come later):
+The channels' (`src/screens/channels/slots.ts`; Work draws them):
 
 | Slot | Where it is | By default |
 |---|---|---|
 | `channels.agent.face` | An agent's face, wherever a channel draws one | Its initials on its own colour |
 | `channels.picker.moreAgents` | The pickers that put an agent in a channel: a group of agents from somewhere other than NoClick's, and adding one | Nothing: the platform's agents alone |
+
+Work's are listed under [Work](#work).
 
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
 file there runs before any page renders, and nothing else in the app imports from it, so pulling a newer version
@@ -138,6 +146,9 @@ client, answered from canned `/v1` responses, with no account and no network. It
 - It also draws what is designed and not built yet, each tagged "designed". The console at `/developers` never
   shows those.
 
+`/work-lab` is Work over its own made-up data (`src/screens/work/fixtures`), likewise in development only: `?scene=`
+picks a view (its index lists them all), and `?as=key` answers as the API answers a key.
+
 ## Resources
 
 `/resources` is what the account owns and what it costs (`src/screens/resources`): its phone numbers, domains, email
@@ -150,13 +161,90 @@ acts as the app's key: what only the owner may do is left out as in the console 
 
 What differs from NoClick's own Resources:
 
-- No agents, skills, memories, machines or secrets: NoClick's app draws those from its Work pages, which aren't part
-  of this app yet (`resources.kinds` is where a host adds them).
+- No agents, skills, memories, machines or secrets among its kinds: NoClick's app adds those from its Work pages
+  through `resources.kinds`; here they are on [Work](#work)'s own pages.
 - No agents' workspaces among the files: an agent made on a workflow's canvas keeps its files where only NoClick's
   app reads them, so they appear there alone.
 - Every workflow the key reads is listed, not one workspace's.
 - A workflow is named, not opened: this app has no canvas.
 - No "Ask NoClick", and nothing goes to a command palette.
+
+## Work
+
+`/work` is where the account's people and agents work (`src/screens/work`): its spaces, each with its channels,
+direct messages and threads, its people and agents and what they may reach; the account's agents, each with its
+conversation, triggers, tools, files and activity; making an agent; and machines, with their disk, settings and a
+shell. It is the same page NoClick's own app draws, reading through the client the app hands every screen, so it
+acts as the app's key.
+
+**What it leaves out for a key**, from the same list as the console (`ownerOnly.ts`):
+
+- **Spaces the owner joined in other accounts**: a key is the account, not the person who joined them.
+- **Opening the personal space to people.**
+- **Asking for machines** and accepting their usage policy.
+- **Approving or declining a call NoClick holds for the owner's yes**: its card links to NoClick's page for it.
+
+Anything else is offered, and the key's scopes decide: what a scope the key lacks would allow, the API refuses, and
+Work says so in the API's words where you tried. An agent's sandbox (its files, the `@` files in its box, a shell on it)
+is one: it needs the `agents:terminal` scope, which the account's key with every scope (`*`) doesn't hold, so give the
+app a key with that scope only if its password should carry it.
+
+`src/screens/work/workAsKey.test.tsx` opens every view of Work over its fixtures as the owner and as a key, fails if
+the key's views ask for anything the API refuses every key, and keeps every call either makes in `workCalls.txt`.
+
+**Everyone who has the password can do whatever the app's key allows.** Work acts with the key, and NoClick's API lets
+an account's key do all of this, so anyone signed in here can:
+
+- read every channel, direct message and thread the account is in, and every conversation of its agents, and post in
+  them as you;
+- answer the questions the account's agents ask;
+- invite people to a space (the invitation says it is from you), change their roles and remove them;
+- archive a space and put it in the trash;
+- share the account's connections, databases, apps and machines with a space, at a level;
+- make, change, message and delete agents, including agents that run commands in sandboxes of their own;
+- buy machines once the account may, and spend whatever else the key's scopes and spending cap allow;
+- drive an agent's browser from its live view;
+- with `agents:terminal`, read an agent's sandbox and open a shell on it.
+
+What stays yours, on NoClick's own pages, signed in or from the link NoClick sends you: approving a call held for your
+yes, raising the account's spending cap, adding funds, linking a phone, and what the console's list above names. The
+key's scopes are how you choose the rest: start with none that spend and without `agents:terminal`, widen them only
+knowingly, and give the key a spending cap. Use a long random password, and share it only with people you would hand
+what the key allows. Signing out drops this browser's copy of Work's channels and threads.
+
+What differs from NoClick's own Work:
+
+- No live updates yet. What a page shows is read again when you come back to the tab and every minute while it's
+  shown; an agent's open conversation is live through its own stream.
+- No cards under an agent's turns (a purchase held for a yes, an account to connect, a build on its canvas): each
+  call is a row of the turn's steps.
+- No "Ask NoClick", no search palette, and no opening a workflow's step: this app has no chat with NoClick and no
+  canvas.
+- Connecting an app's account or an AI account opens NoClick's connect page in a new tab, and Work waits for the
+  account to land. A tool server (MCP) that asks you to sign in is added on NoClick, or with its key.
+- Adding funds opens NoClick's page for it, and the account's connections open NoClick's. Resources opens this app's.
+- An app is drawn with a plain mark and the name read from its type; a coding harness the app has no drawing of
+  (OpenCode, Hermes, OpenClaw) with a plain dot.
+- Only the account's own agents are listed: NoClick's app also lists those of the account's platform users.
+
+Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the channels':
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `work.turn.cards` | Under an agent's turn: a card for what a call did | Nothing: each call is a row of the turn's steps |
+| `work.reply.markdown` | A reply's, a question's or a browser's found text | Drawn as a repository's README is |
+| `work.message.file` | A file a texted or emailed message carried | A link that opens it |
+| `work.model.name` | A model's name as people read it | Its id |
+| `work.composer.sources` | The box's "+": the automations and accounts a message can point at | The account's workflows and connections, read through the API |
+| `work.apps` | The apps an agent can use as tools, and whose an account is | The integrations the API lists |
+| `work.connect.app` | Connecting an app's account where it's needed | NoClick's connect page in a new tab |
+| `work.connect.model` | Connecting the AI account a model needs | NoClick's connect page in a new tab |
+| `work.toolServer.signIn` | Signing in to a tool server added as an agent's tool | Says to add it on NoClick, or give its key |
+| `work.funds.add` | Adding funds, where a costly model needs them | A link to NoClick's page for it |
+| `work.harness.mark` | The marks of coding harnesses the app has no drawing of | None: a plain dot |
+| `work.file.preview` | An agent's workspace file, previewed | A picture, a recording or text at the link the API signed |
+| `work.address` | Where Work is, for its pieces drawn elsewhere | This app's `/work` |
+| `work.joinedSpace.typing` | Saying you're typing in a space you joined in another account | Through the API, as in your own spaces |
 
 ## How it reaches NoClick
 
@@ -186,8 +274,9 @@ What differs from NoClick's own Resources:
   one is a `.server` module, which the build refuses to put in the browser's bundle. `test/secrets.test.ts` guards
   against an accidental change to any of that, by name: it is a check on mistakes, not a proof, and code set on
   getting around it (a name built at run time, a value passed along) gets past it.
-- **WebSockets don't go through the proxy.** It forwards HTTP, including streams of events, but not the agent
-  terminal's WebSocket; a screen that needs one is out of scope for now.
+- **WebSockets don't go through the proxy.** It forwards HTTP, including streams of events, but not a WebSocket. A
+  machine's shell and a browser's live view open theirs at NoClick's API directly, with a single-use token the app
+  asks for through the proxy and sends as the socket's first message, so the key never reaches the browser.
 
 ## What the sign-in protects, and what it doesn't
 
@@ -253,6 +342,7 @@ It doesn't:
 - `test/sockets.test.ts` keeps every screen on the SDK client it is handed: none opens a connection of its own.
   `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
   opens every page of the console as a key and fails if one asks the API for something only the owner may have;
-  `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources.
+  `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources, and
+  `src/screens/work/workAsKey.test.tsx` for Work.
 
 Apache-2.0, as the rest of this repository.

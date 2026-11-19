@@ -1,7 +1,9 @@
 // The app's slots (src/slots.ts) are few and findable: each is declared once, beside its screen
-// (`src/screens/<screen>/slots.ts`), under a name that starts with that screen and says where the place is. A slot
-// declared anywhere else, or twice, would be one a host couldn't find or couldn't fill reliably. And the app itself
-// fills none: with every slot left alone it is whole, and filling is for whoever hosts it (src/custom/, or another app).
+// (`src/screens/<screen>/slots.ts`), under a name that starts with that screen and says where the place is; one that
+// several screens draw (a connection's mark) is declared in `src/ui/slots.ts`, under a name of its own that starts
+// with no screen's. A slot declared anywhere else, or twice, would be one a host couldn't find or couldn't fill
+// reliably. And the app itself fills none: with every slot left alone it is whole, and filling is for whoever hosts it
+// (src/custom/, or another app).
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';
@@ -45,18 +47,28 @@ function uses(files: Record<string, string>): { declared: Use[]; fills: string[]
     return { declared, fills };
 }
 
+/** The screens `files` has, by the folders under src/screens/. */
+function screensOf(files: Record<string, string>): Set<string> {
+    return new Set(Object.keys(files).flatMap((file) => /^src\/screens\/([^/]+)\//.exec(file)?.[1] ?? []));
+}
+
+/** Where several screens' slots are declared. */
+const SHARED = 'src/ui/slots.ts';
+
 /** What is wrong with how `files` declare and fill slots, as `file: what`. */
 function problems(files: Record<string, string>): string[] {
     const { declared, fills } = uses(files);
+    const screens = screensOf(files);
     const found: string[] = [];
     const seen = new Map<string, string>();
     for (const { file, name } of declared) {
         const screen = /^src\/screens\/([^/]+)\/slots\.ts$/.exec(file)?.[1];
-        if (!screen) found.push(`${file}: declares a slot outside a screen's slots.ts`);
+        if (!screen && file !== SHARED) found.push(`${file}: declares a slot outside a screen's slots.ts`);
         if (name === null) found.push(`${file}: declares a slot whose name isn't written out`);
         else {
             if (!/^[a-z][A-Za-z0-9]*(?:\.[a-z][A-Za-z0-9]*)+$/.test(name)) found.push(`${file}: '${name}' isn't a dotted path of plain words`);
             if (screen && !name.startsWith(`${screen}.`)) found.push(`${file}: '${name}' doesn't start with its screen (${screen}.)`);
+            if (file === SHARED && screens.has(name.split('.')[0])) found.push(`${file}: '${name}' starts with a screen's name: declare it in that screen's slots.ts`);
             if (seen.has(name)) found.push(`${file}: '${name}' is declared already, in ${seen.get(name)}`);
             seen.set(name, file);
         }
@@ -85,6 +97,7 @@ describe('the guard', () => {
                 'src/screens/console/slots.ts': "import { slot } from '@/slots';\nexport const TERMS = slot('console.terms', null);\nexport const MARK = slot('console.connection.mark', null);",
                 'src/custom/mine.tsx': "import { fill } from '@/slots';\nimport { TERMS } from '@/screens/console/slots';\nfill(TERMS, null);",
                 'src/screens/console/Page.tsx': "import { useSlot } from '@/slots';\nconst slot = (name: string) => name;\nslot('not a slot');",
+                'src/ui/slots.ts': "import { slot } from '@/slots';\nexport const MARK = slot('connection.mark', null);",
             }),
         ).toEqual([]);
     });
@@ -101,6 +114,7 @@ describe('the guard', () => {
                     'export const E = slot(`console.${1}`, null);',
                 ].join('\n'),
                 'src/screens/console/Page.tsx': "import { fill, slot } from '@/slots';\nconst HERE = slot('console.page.here', null);\nfill(HERE, null);",
+                'src/ui/slots.ts': "import { slot } from '@/slots';\nexport const MARK = slot('console.mark', null);",
             }),
         ).toEqual([
             "src/screens/console/slots.ts: 'console.terms' is declared already, in src/screens/console/slots.ts",
@@ -109,6 +123,7 @@ describe('the guard', () => {
             "src/screens/console/slots.ts: 'Console Terms' doesn't start with its screen (console.)",
             "src/screens/console/slots.ts: declares a slot whose name isn't written out",
             "src/screens/console/Page.tsx: declares a slot outside a screen's slots.ts",
+            "src/ui/slots.ts: 'console.mark' starts with a screen's name: declare it in that screen's slots.ts",
             'src/screens/console/Page.tsx: fills a slot (the app fills none; a host does, from src/custom/)',
         ]);
     });
@@ -120,13 +135,27 @@ describe('the app', () => {
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
             'channels.agent.face',
             'channels.picker.moreAgents',
+            'connection.mark',
             'console.cards.issuerForm',
-            'console.connection.mark',
             'console.terms',
             'resources.file.markdown',
             'resources.kinds',
             'resources.number.actions',
             'resources.numbers',
+            'work.address',
+            'work.apps',
+            'work.composer.sources',
+            'work.connect.app',
+            'work.connect.model',
+            'work.file.preview',
+            'work.funds.add',
+            'work.harness.mark',
+            'work.joinedSpace.typing',
+            'work.message.file',
+            'work.model.name',
+            'work.reply.markdown',
+            'work.toolServer.signIn',
+            'work.turn.cards',
         ]);
         expect(problems(modules).join('\n')).toBe('');
     });

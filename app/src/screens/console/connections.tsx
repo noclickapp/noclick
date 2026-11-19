@@ -5,7 +5,7 @@
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
-import { credentialLabel, CredentialMark } from './credentialMark';
+import { credentialLabel, CredentialMark } from '@/ui/connectionMark';
 import { Input } from '@/ui/input';
 import { cn } from '@/ui/utils';
 import { Connection, NO_USER, type JsonObject, type User } from 'noclick';

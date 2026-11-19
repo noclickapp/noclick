@@ -8,7 +8,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 import { AlarmClock, CalendarClock, Download, FileText, FlaskConical, GitBranch, Globe, Hash, Inbox as InboxIcon, InfinityIcon, ListOrdered, Mail, Network, Pause, Phone, Play, Plus, ShieldCheck, SquareTerminal, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE, LiveDot, fmtBytes } from '@/ui/primitives';
-import { credentialLabel } from '../credentialMark';
+import { credentialLabel } from '@/ui/connectionMark';
 import { cn } from '@/ui/utils';
 import { ALL_USERS, Agent, Agents, Cron, Inbox, NO_USER, NoClickError, Event as NoClickEvent, OnEvent, OnPlatformEvent, OnQueue, OnWebhook, Operation, PhoneNumber, Policy, Queue, Repo, Secret, Usage, Volume, type AgentGrant, type AgentTrigger, type Conversation, type HarnessName, type IntegrationOperation, type JsonObject, type MemoryEntry, type Message, type PolicyVerdict, type Rehearsal } from 'noclick';
 import { BUCKET_TOOLS, DATABASE_TOOLS, toMemoryEntry, toMessage } from '@/sdk/source';

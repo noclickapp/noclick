@@ -6,7 +6,7 @@ import { useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } 
 import { Link } from 'react-router';
 import { X } from 'lucide-react';
 import { HAIRLINE } from '@/ui/primitives';
-import { CredentialMark } from './credentialMark';
+import { CredentialMark } from '@/ui/connectionMark';
 import { cn } from '@/ui/utils';
 import { ALL_USERS, Agent, Agents, Bucket, Connection, Database, Usage, type JsonObject, type ModelUsage, type HarnessInfo, type HarnessModel, type IntegrationInfo, type IntegrationOperation, type NoClick } from 'noclick';
 import { formatCount, formatMoney } from '@/screens/console/lib/format';

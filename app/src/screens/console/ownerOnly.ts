@@ -10,8 +10,8 @@
 // own buttons and reads. So a screen acting as a key never calls an operation that would refuse it (consoleAsKey and
 // resourcesAsKey hold that; NoClick's own tests call every operation the screens make as a key, and hold the table to
 // what refuses one).
-import { useCallback } from 'react';
-import { useConsole } from './hooks/useConsole';
+import { useCallback, useContext } from 'react';
+import { ConsoleContext } from './hooks/useConsole';
 
 export interface OwnerOnlyRow {
     what: string;
@@ -26,6 +26,10 @@ export interface OwnerOnlyRow {
      *  whether it's one, and the operations are left out of `OWNER_ONLY_OPERATIONS`. Absent: refused whatever they
      *  name. */
     only?: string;
+    /** The scope a key needs for it, where a key given that scope may (the account's own key with every scope, `*`,
+     *  hasn't it): a screen offers it to a key as to the owner, and shows the API's refusal as it comes. The operations
+     *  stay among what the API refuses the account's `*` key (`refusedToAccountKey`), and out of `OWNER_ONLY_OPERATIONS`. */
+    scope?: string;
 }
 
 export const OWNER_ONLY = {
@@ -102,6 +106,7 @@ export const OWNER_ONLY = {
     /** An agent's sandbox: its files, a command run there, and a shell of your own on it. */
     agentSandbox: {
         what: 'An agent’s sandbox',
+        scope: 'agents:terminal',
         why: 'A key reaches an agent’s sandbox only with the agents:terminal scope, which an account’s key with every scope (*) doesn’t hold.',
         operations: [
             'GET /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
@@ -122,16 +127,36 @@ export type OwnerOnly = keyof typeof OWNER_ONLY;
 
 /** Every operation the API refuses a key whatever it names that a screen can reach, as `METHOD /v1/path/{param}`. A
  *  row refused for only some of what it names (`only`) isn't here: its screen asks each thing. */
-export const OWNER_ONLY_OPERATIONS: readonly string[] = Object.values(OWNER_ONLY as Record<string, OwnerOnlyRow>).flatMap((row) => (row.only ? [] : row.operations));
+export const OWNER_ONLY_OPERATIONS: readonly string[] = Object.values(OWNER_ONLY as Record<string, OwnerOnlyRow>).flatMap((row) => (row.only || row.scope ? [] : row.operations));
 
-/** Whether an operation is one the API refuses a key: its method and its path as sent (`/v1/keys/9b2a…`). */
-export function isOwnerOnly(method: string, path: string): boolean {
+/** What the API refuses the account's own key with every scope (`*`) whatever it names: the owner's alone, and what
+ *  needs a scope `*` doesn't hold. A fixture answering as such a key refuses these. */
+const REFUSED_TO_ACCOUNT_KEY: readonly string[] = Object.values(OWNER_ONLY as Record<string, OwnerOnlyRow>).flatMap((row) => (row.only ? [] : row.operations));
+
+const matches = (operations: readonly string[], method: string, path: string): boolean => {
     const sent = path.split('?')[0].split('/').filter(Boolean);
-    return OWNER_ONLY_OPERATIONS.some((operation) => {
+    return operations.some((operation) => {
         const [verb, template] = operation.split(' ');
         const wanted = template.split('/').filter(Boolean);
         return verb === method.toUpperCase() && wanted.length === sent.length && wanted.every((part, i) => part.startsWith('{') || part === sent[i]);
     });
+};
+
+/** Whether an operation is one the API refuses any key, so no screen acting as one makes it: its method and its path as
+ *  sent (`/v1/keys/9b2a…`). */
+export function isOwnerOnly(method: string, path: string): boolean {
+    return matches(OWNER_ONLY_OPERATIONS, method, path);
+}
+
+/** Whether the API refuses the operation to the account's own `*` key (`isOwnerOnly`, and what needs a scope it lacks). */
+export function refusedToAccountKey(method: string, path: string): boolean {
+    return matches(REFUSED_TO_ACCOUNT_KEY, method, path);
+}
+
+/** The scope a key needs for the operation, where a key given it may make it; null for any other. */
+export function scopeFor(method: string, path: string): string | null {
+    const row = Object.values(OWNER_ONLY as Record<string, OwnerOnlyRow>).find((r) => r.scope && matches(r.operations, method, path));
+    return row?.scope ?? null;
 }
 
 /** What only the owner can do that is done on `page` of NoClick's own console (`keys`: API keys and connected apps). */
@@ -144,8 +169,10 @@ export function ownerOnlyWhy(what: OwnerOnly): string {
     return `${OWNER_ONLY[what].why} It’s done signed in to NoClick, as the account’s owner.`;
 }
 
-/** Whether this console may do `what`: true for the signed-in owner, false for a key. */
+/** Whether this screen may do `what`: true for the signed-in owner, false for a key. A piece drawn outside a console's
+ *  context (a page of a host that signs its owner in, drawing another screen's parts) acts as that owner. */
 export function useOwnerOnly(): (what: OwnerOnly) => boolean {
-    const { actsAs } = useConsole();
-    return useCallback(() => actsAs === 'owner', [actsAs]);
+    const actsAs = useContext(ConsoleContext)?.actsAs ?? 'owner';
+    // What a key given its scope may do is offered to every key: the API's answer says whether this one may.
+    return useCallback((what: OwnerOnly) => actsAs === 'owner' || !!(OWNER_ONLY[what] as OwnerOnlyRow).scope, [actsAs]);
 }

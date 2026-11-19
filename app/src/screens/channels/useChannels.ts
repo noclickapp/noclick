@@ -13,7 +13,7 @@ import type { AgentChoice, Channel, ChannelAttachment, ChannelMessage, ChannelMo
 /** How often the lists and the open channel are read again when no change arrived. */
 export const CHANNELS_BACKSTOP_MS = 60_000;
 /** Changes that land together are read once. */
-const SETTLE_MS = 250;
+export const SETTLE_MS = 250;
 
 export interface ChannelHistory {
     /** Oldest first. */

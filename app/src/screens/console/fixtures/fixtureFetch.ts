@@ -5,7 +5,7 @@
 // signed-in owner, or (`actsAs: 'key'`) as it answers one of the account's own
 // secret keys: the operations only the owner may make are refused, as the API
 // refuses them, and the account is read without what only the owner sees.
-import { isOwnerOnly } from '../ownerOnly';
+import { refusedToAccountKey } from '../ownerOnly';
 import { CORE_ROUTES, apiError, rememberOperation, type FixtureReply, type FixtureRequest, type FixtureRoute, type FixtureSet } from './core';
 
 type RouteModule = { routes?: readonly FixtureRoute[] };
@@ -80,7 +80,7 @@ export function makeFixtureFetch({ set, actsAs = 'owner', routes = [], onRequest
             body: text ? JSON.parse(text) : null,
         };
         onRequest?.(request);
-        if (actsAs === 'key' && isOwnerOnly(method, url.pathname)) return toResponse(OWNER_ONLY_REFUSAL);
+        if (actsAs === 'key' && refusedToAccountKey(method, url.pathname)) return toResponse(OWNER_ONLY_REFUSAL);
         for (const route of table) {
             if (route.method !== method) continue;
             const params = matchPath(route.path, url.pathname);

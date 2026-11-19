@@ -78,3 +78,15 @@ export function countOf(n: number, noun: string | readonly [string, string]): st
 export function formatDollars(usd: number): string {
     return USD.format(usd);
 }
+
+/** When an account was added, where nothing else tells it apart: "Added Nov 19, 2026". */
+export function addedLabel(iso: string): string {
+    return `Added ${new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+}
+
+const WHOLE_USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+/** An amount of funds: whole dollars as "$5", any other with its cents, "$5.50". */
+export function formatFunds(usd: number): string {
+    return Number.isInteger(usd) ? WHOLE_USD.format(usd) : USD.format(usd);
+}

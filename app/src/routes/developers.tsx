@@ -4,6 +4,7 @@
 import { useMemo } from 'react';
 import { useLoaderData, useParams } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
+import { signOut } from '@/lib/signOut';
 import { readAccountStatus } from '@/screens/account/status';
 import { DeveloperConsole } from '@/screens/console/DeveloperConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
@@ -21,15 +22,6 @@ export const loader = ({ context }: Route.LoaderArgs) => ({ apiUrl: apiUrl(conte
 
 /** That address is the same for as long as the app runs: moving between the console's pages doesn't read it again. */
 export const shouldRevalidate = () => false;
-
-/** Signs out as the app's own button does: a POST to /logout, which ends the session and leads to the sign-in page. */
-function signOut(): void {
-    const form = document.createElement('form');
-    form.method = 'post';
-    form.action = '/logout';
-    document.body.appendChild(form);
-    form.submit();
-}
 
 export default function Developers() {
     const { apiUrl: api } = useLoaderData<typeof loader>();
@@ -51,7 +43,7 @@ export default function Developers() {
             home="/"
             country={country}
             user={user}
-            onSignOut={signOut}
+            onSignOut={() => void signOut(account?.id)}
             live={null}
         />
     );
