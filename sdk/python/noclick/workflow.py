@@ -171,7 +171,8 @@ class WorkflowBuildResult:
     """A finished build: what the builder says it did (``summary``), the
     workflow's ``steps`` as they now stand, and, when it published the
     workflow's app, ``published`` (``{state, url}``: ``state`` is
-    ``published``, ``renamed`` or ``unpublished``)."""
+    ``published``, ``renamed`` or ``unpublished``; unpublished, its
+    ``trash_id`` restores it until ``restorable_until``)."""
 
     workflow_id: Optional[str]
     summary: Optional[str]
@@ -1726,14 +1727,17 @@ class Workflow(_Object):
 
     @synced
     async def unpublish(self) -> WorkflowBuild:
-        """Take the workflow's app down: its public URL stops answering.
+        """Take the workflow's app down, to the trash: its public URL stops answering. For 30 days its address
+        stays its own, and restoring it (or ``publish()``) brings it back there with the same key.
 
         Returns:
-            A ``WorkflowBuild``; its result's ``published`` says ``unpublished``.
+            A ``WorkflowBuild``; its result's ``published`` says ``unpublished``, with the ``trash_id`` that
+            restores it and until when (``restorable_until``).
 
         Usage::
 
-            noclick.Workflow.from_name("Morrow Bakehouse site").unpublish().wait()
+            done = noclick.Workflow.from_name("Morrow Bakehouse site").unpublish().wait()
+            noclick.TrashItem.from_id(done.published["trash_id"]).restore()
         """
         return await self.build.aio(publish={"action": "unpublish"})
 

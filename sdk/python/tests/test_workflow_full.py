@@ -69,6 +69,11 @@ def test_a_build_result_says_what_it_published(api, client):
     result = nc.WorkflowBuildResult._from({"workflow_id": "wf_1", "summary": None, "steps": [], "app_url": None,
                                            "published": {"state": "published", "url": "https://morrow.noclick.app"}})
     assert result.published == {"state": "published", "url": "https://morrow.noclick.app"}
+    # Unpublished, it names the trash item that restores it.
+    gone = {"state": "unpublished", "url": None, "trash_id": "tr_1", "restorable_until": "2026-12-20T10:00:00Z"}
+    result = nc.WorkflowBuildResult._from({"workflow_id": "wf_1", "summary": None, "steps": [], "app_url": None,
+                                           "published": gone})
+    assert result.published["trash_id"] == "tr_1"
 
 
 def test_one_run_reads_with_its_steps(api, client):

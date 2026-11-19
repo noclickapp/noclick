@@ -70,6 +70,17 @@ test("publishing is a build with publish", async () => {
   assert.deepEqual(builds.last.body, { instructions: "Add a contact form", publish: {} });
 });
 
+test("an unpublish's result names the trash item that restores it", async () => {
+  const { api } = setup();
+  const unpublished = { state: "unpublished", url: null, trash_id: "tr_1", restorable_until: "2026-12-20T10:00:00Z" };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(operation({
+    id: "op_b", kind: "workflow.build", status: "succeeded", workflow_id: "wf_1",
+    result: { object: "workflow_build", workflow_id: "wf_1", summary: null, steps: [], app_url: null, published: unpublished },
+  }), { status: 202 }));
+  const done = await (await nc.Workflow.fromId("wf_1").unpublish()).wait();
+  assert.deepEqual(done.published, { state: "unpublished", url: null, trashId: "tr_1", restorableUntil: "2026-12-20T10:00:00Z" });
+});
+
 test("one run reads with its steps", async () => {
   const { api } = setup();
   api.on("GET", "/v1/workflows/wf_1/runs/run_1", json({
