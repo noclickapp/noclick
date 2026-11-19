@@ -27,6 +27,19 @@ export const pricingUrl = (site: string) => `${site}/pricing`;
 /** Where funds are added: where a `payment_required` error's next step also sends you. */
 export const addFundsUrl = (site: string) => `${site}/dashboard?action=topup`;
 
+/** A call held for the owner's yes, on the page that approves it (the owner signs in there, or opens the link NoClick
+ *  sends them). */
+export const approvalUrl = (site: string, approvalId: string) => `${site}/approve/${encodeURIComponent(approvalId)}`;
+
+/** The account's plan, balance and monthly cap, on Settings → Plan and billing in the NoClick app. */
+export const billingSettingsUrl = (site: string) => `${site}/dashboard?tab=settings&section=billing`;
+
+/** Where the owner links their phone, so a text from it reaches their own account (Settings → Phone). */
+export const phoneSettingsUrl = (site: string) => `${site}/dashboard?tab=settings&section=phone`;
+
+/** An automation on its canvas in the NoClick app. */
+export const workflowUrl = (site: string, workflowId: string) => `${site}/dashboard?workflow=${encodeURIComponent(workflowId)}`;
+
 /** The older workflow SDK's keys, on Settings → Developer in the NoClick app. */
 export const legacyKeysUrl = (site: string) => `${site}/dashboard?tab=settings&section=developer`;
 

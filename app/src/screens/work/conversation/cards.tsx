@@ -1,14 +1,14 @@
-// The cards under an agent's turns: what whoever shows Work draws for a call (`TURN_CARDS`: a purchase held for a yes,
-// an account to connect, a build on its canvas, a long action followed until it settles), read from the turn's calls of
-// NoClick's own tools and what its stream announced of them. Nothing is drawn where nobody fills it.
-import type { ReactNode } from 'react';
+// The cards under an agent's turns: the chat's cards for a call (a purchase held for a yes, an account to connect, a
+// build on its canvas, a long action followed until it settles), read from the turn's calls of NoClick's own tools and
+// what its stream announced of them, so a card looks and acts the same in Work and on the Chat page.
+import { useMemo, type ReactNode } from 'react';
 import { announcedResult } from '@/lib/agentThread/messages';
-import { useSlot } from '@/slots';
 import type { ThreadJobs } from '@/lib/threadJobs';
+import { CardsProvider, TurnCards } from '@/screens/chat/cards/toolCards';
+import { TurnAskedProvider } from '@/screens/chat/cards/toolCardRegistry';
 import { parsePartialJson } from '@/lib/partialJson';
 import type { CoordinatorToolCall, JsonObject } from '@/lib/toolCalls';
 import { stepsOf, type Step, type Thread, type TurnEntry } from '@/lib/agentThread/thread';
-import { TURN_CARDS } from '../slots';
 
 // NoClick's own tools as an agent names them: directly, or through a coding harness's MCP server.
 const PREFIX = /^(mcp__(?:noclick|nc)__)?(noclick__)?/;
@@ -42,16 +42,22 @@ export function turnCalls(turn: TurnEntry): CoordinatorToolCall[] {
 
 /** What the cards under the thread's turns read: the work they started, followed as `follow` follows it. */
 export function ThreadCards({ thread, follow, children }: { thread: Thread; follow: ThreadJobs; children: ReactNode }) {
-    const { Provider } = useSlot(TURN_CARDS);
+    const cards = useMemo(() => thread.entries.flatMap((e) => (e.kind === 'turn' ? turnCalls(e) : [])), [thread]);
+    const jobs = follow(cards, thread.entries.length);
     return (
-        <Provider thread={thread} follow={follow}>
+        <CardsProvider cards={cards} jobs={jobs} moved={thread.entries.length}>
             {children}
-        </Provider>
+        </CardsProvider>
     );
 }
 
 /** A turn's cards, under what it said; `asked`, what the person asked in the message it answers. */
 export function TurnCardsOf({ turn, asked }: { turn: TurnEntry; asked: string | null }) {
-    const { Cards } = useSlot(TURN_CARDS);
-    return <Cards turn={turn} asked={asked} />;
+    const calls = useMemo(() => turnCalls(turn), [turn]);
+    if (!calls.length) return null;
+    return (
+        <TurnAskedProvider value={asked}>
+            <TurnCards calls={calls} text={turn.reply ?? undefined} />
+        </TurnAskedProvider>
+    );
 }

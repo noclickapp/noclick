@@ -14,6 +14,10 @@ export default [
     route('resources', 'routes/resources.tsx'),
     // Resources over made-up data: development only, as the console's lab.
     route('resources-lab', 'routes/resources-lab.tsx'),
+    // The account's NoClick to talk to, acting as the app's key.
+    route('chat', 'routes/chat.tsx'),
+    // The chat over made-up data: development only, as the console's lab.
+    route('chat-lab', 'routes/chat-lab.tsx'),
     // The account's spaces, channels, agents and people, acting as the app's key.
     route('work', 'routes/work.tsx'),
     // Work over made-up data: development only, as the console's lab.

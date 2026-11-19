@@ -1,12 +1,11 @@
 // Work's slots: the places in it a host may fill (src/slots.ts), each with what stands there otherwise. An app's or an
 // account's mark is the shared `connection.mark` (src/ui/slots.ts); an agent's face and the pickers' agents from
-// elsewhere are the channels layer's (screens/channels/slots.ts).
-import type { ComponentType, ReactNode } from 'react';
+// elsewhere are the channels layer's (screens/channels/slots.ts); the cards under an agent's turns are the chat's
+// (screens/chat/slots.ts).
+import type { ComponentType } from 'react';
 import type { HarnessName, NoClick } from 'noclick';
 import { slot } from '@/slots';
-import type { ThreadJobs } from '@/lib/threadJobs';
 import type { BrandIconComponent } from '@/ui/BrandIcon';
-import type { Thread, TurnEntry } from '@/lib/agentThread/thread';
 import { StandardMarkdown } from '@/screens/resources/slotStandards';
 import type { PreviewParts } from '@/screens/resources/FilePreview';
 import { sdkTyping } from '@/screens/channels/sdkTransport';
@@ -15,7 +14,6 @@ import {
     FundsOnNoClick,
     LinkedFileCard,
     ModelConnectLink,
-    NO_CARDS,
     useNoToolServerSignIn,
     useV1ToolApps,
     workAddress,
@@ -25,18 +23,6 @@ import {
 } from './slotStandards';
 
 // ── an agent's turns ───────────────────────────────────────────────────────
-
-export interface TurnCardParts {
-    /** Around a thread: what its turns' cards read, the work they started followed as `follow` follows it. */
-    Provider: ComponentType<{ thread: Thread; follow: ThreadJobs; children: ReactNode }>;
-    /** Under a turn's words: a card for each call that has one; `asked`, what the person asked in the message it
-     *  answers. Nothing where none has one. */
-    Cards: ComponentType<{ turn: TurnEntry; asked: string | null }>;
-}
-
-/** Under an agent's turns: a card for what a call did (a purchase held for a yes, an account to connect, a build on its
- *  canvas, a long action followed until it settles). Nothing stands there: each call stays a row of the turn's steps. */
-export const TURN_CARDS = slot<TurnCardParts>('work.turn.cards', NO_CARDS);
 
 export interface MarkdownProps {
     content: string;
@@ -49,8 +35,9 @@ export interface MarkdownProps {
  *  repository's README is. */
 export const REPLY_MARKDOWN = slot<ComponentType<MarkdownProps>>('work.reply.markdown', StandardMarkdown);
 
-/** A file a texted or emailed message carried, as a card in the message. The standard is a link that opens it. */
-export const MESSAGE_FILE = slot<ComponentType<{ name: string; url: string }>>('work.message.file', LinkedFileCard);
+/** A file a texted or emailed message carried, or one an agent made, as a card in the message (its type and size
+ *  where they're known). The standard is a link that opens it. */
+export const MESSAGE_FILE = slot<ComponentType<{ name: string; url: string; mimeType?: string; sizeBytes?: number }>>('work.message.file', LinkedFileCard);
 
 /** A model's name as people read it, by its id (`anthropic/claude-sonnet-5-5`); undefined where the host knows none. */
 export const MODEL_NAME = slot<(model: string) => string | undefined>('work.model.name', () => undefined);

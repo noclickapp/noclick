@@ -9,6 +9,7 @@ import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
 import { openTabForLater } from '@/lib/oauthPopup';
 import { signOut } from '@/lib/signOut';
+import { askInChat } from '@/screens/chat/asks';
 import { readAccountStatus } from '@/screens/account/status';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
@@ -59,9 +60,10 @@ export default function WorkRoute() {
         }),
         [client, api, country, account?.id, account?.email]
     );
-    // Resources is this app's own page; connections are made on NoClick, and there's no assistant's page here.
+    // Resources and the chat are this app's own pages; connections are made on NoClick.
     const work = useMemo<WorkContextValue>(
         () => ({
+            ask: askInChat(navigate),
             openPage: (page, params = {}) => {
                 if (page !== 'resources') return void openTabForLater({ url: `${NOCLICK_SITE}/dashboard?tab=connections` });
                 const search = new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => !!entry[1]));

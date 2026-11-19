@@ -58,3 +58,11 @@ export function onAskNoClick(listener: () => void): () => void {
     window.addEventListener(ASK_EVENT, listener);
     return () => window.removeEventListener(ASK_EVENT, listener);
 }
+
+/** Ask NoClick from another page of this app: the draft is staged for the chat, and `go` takes the person there. */
+export function askInChat(go: (path: string) => void): (text: string) => void {
+    return (text) => {
+        stageAsk(text);
+        go('/chat');
+    };
+}

@@ -23,17 +23,10 @@ import type {
     ModelConnectProps,
     ToolApp,
     ToolServerSignIn,
-    TurnCardParts,
     WorkAddress,
 } from './slots';
 
 // ── an agent's turns ───────────────────────────────────────────────────────
-
-function Unchanged({ children }: { children: ReactNode }) {
-    return <>{children}</>;
-}
-
-export const NO_CARDS: TurnCardParts = { Provider: Unchanged, Cards: () => null };
 
 /** A file in a message, as a card that opens it in a new tab. */
 export function LinkedFileCard({ name, url }: { name: string; url: string }) {

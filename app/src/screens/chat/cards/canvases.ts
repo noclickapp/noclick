@@ -1,21 +1,18 @@
 // An automation is drawn in full once in a thread, on the newest card about it: an older card about the same
 // automation folds to a line (a build card a later build supersedes, a setup card a later one for another client
 // replaces), so the thread ends where the automation now stands rather than wherever it was first drawn. Each kind
-// of tool card says which automation a call draws, registered by whoever registers the card (a build started through
-// the API, say). A note's setup card is about the automation its setup names.
+// of tool card says which automation a call draws: the chat's own (CARD_CANVASES), after any its host's cards say
+// (`chat.cards.more`). A note's setup card is about the automation its setup names.
 import { createContext, useContext } from 'react';
+import { standing } from '@/slots';
 import type { CoordinatorJobs } from '@/lib/threadJobs';
 import type { CoordinatorToolCall } from '@/lib/toolCalls';
 import type { SetupRef as CoordinatorSetupRef } from '@/lib/agentThread/thread';
+import { MORE_CARDS } from '../slots';
+import { CARD_CANVASES } from './cardMatchers';
 
 /** The automation a call's card draws on its canvas, if it draws one; `jobs` are the thread's reads of its work. */
 export type CanvasOf = (call: CoordinatorToolCall, jobs: CoordinatorJobs) => string | undefined;
-
-const CANVASES: CanvasOf[] = [];
-
-export function registerCanvasCard(canvasOf: CanvasOf): void {
-    CANVASES.push(canvasOf);
-}
 
 /** A note's setup card, by the id the transcript gives it (`setupCardId`). */
 export interface SetupCardRef {
@@ -35,7 +32,7 @@ export function setupCardId(messageIndex: number): string {
 
 function automationOf(card: CoordinatorToolCall | SetupCardRef, jobs: CoordinatorJobs): string | undefined {
     if ('setup' in card) return card.setup.workflow_id;
-    for (const canvasOf of CANVASES) {
+    for (const canvasOf of [...standing(MORE_CARDS).canvases, ...CARD_CANVASES]) {
         const workflowId = canvasOf(card, jobs);
         if (workflowId) return workflowId;
     }

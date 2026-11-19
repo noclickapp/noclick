@@ -3,10 +3,11 @@
 // agent's into `/work`. What only the account's signed-in owner can do (src/screens/console/ownerOnly.ts) isn't
 // offered here.
 import { useMemo } from 'react';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
 import { signOut } from '@/lib/signOut';
 import { readAccountStatus } from '@/screens/account/status';
+import { askInChat } from '@/screens/chat/asks';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
@@ -57,7 +58,9 @@ export default function Resources() {
         [client, api, country, account?.id, account?.email, live]
     );
     // NoClick bills the account, so prices show and what's sold is offered; every workflow the key reads is listed.
-    const resources = useMemo<ResourcesContextValue>(() => ({ billing: true, country }), [country]);
+    const navigate = useNavigate();
+    // An empty kind's Ask NoClick drafts it in this app's chat.
+    const resources = useMemo<ResourcesContextValue>(() => ({ billing: true, country, ask: askInChat(navigate) }), [country, navigate]);
     return (
         <ConsoleProviders value={consoleValue}>
             <ResourcesContext.Provider value={resources}>

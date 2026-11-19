@@ -37,9 +37,12 @@ export function AccountScreen() {
             {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
             {reading.state === 'ready' && <Account status={reading.status} />}
             <div className="flex flex-wrap items-center gap-3">
-                {/* Where its agents and people work, what it owns and what it costs, then where it's built on: its agents,
-                    users, logs and usage. */}
-                <a className={BUTTON_PRIMARY} href="/work">
+                {/* The account's NoClick to talk to, where its agents and people work, what it owns and what it costs,
+                    then where it's built on: its agents, users, logs and usage. */}
+                <a className={BUTTON_PRIMARY} href="/chat">
+                    Chat
+                </a>
+                <a className={BUTTON_SECONDARY} href="/work">
                     Work
                 </a>
                 <a className={BUTTON_SECONDARY} href="/resources">

@@ -134,9 +134,21 @@ describe('the app', () => {
         const modules = appModules();
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
             'channels.agent.face',
+            'chat.approval',
+            'chat.build.question',
+            'chat.cards.more',
+            'chat.connect.email',
+            'chat.connect.link',
+            'chat.connect.text',
+            'chat.note.setup',
+            'chat.outOfFunds',
+            'chat.places',
+            'chat.question.pick',
+            'chat.working',
             'connection.mark',
             'console.cards.issuerForm',
             'console.terms',
+            'mcp.client.marks',
             'resources.file.markdown',
             'resources.kinds',
             'resources.number.actions',
@@ -154,7 +166,6 @@ describe('the app', () => {
             'work.reply.markdown',
             'work.teamWorkspace',
             'work.toolServer.signIn',
-            'work.turn.cards',
         ]);
         expect(problems(modules).join('\n')).toBe('');
     });

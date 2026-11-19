@@ -114,6 +114,13 @@ export const OWNER_ONLY = {
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
         ],
     },
+    /** Approving or declining a purchase or a deletion NoClick holds for the owner's yes: on its card in the chat, and in
+     *  the chat's Beside. */
+    approvals: {
+        what: 'Approving a held purchase or deletion',
+        why: 'Only the account’s owner approves a purchase or a deletion NoClick holds for their yes, signed in or from the link NoClick sends them.',
+        operations: ['POST /v1/approvals/{approval_id}/answer'],
+    },
     /** Approving or declining a call NoClick holds for the owner's yes. */
     heldCalls: {
         what: 'Approving a held call',

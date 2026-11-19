@@ -39,14 +39,15 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server; **Work** on it opens `/work`, **Resources** `/resources`, and **Developer console** the console at
-`/developers`.
+app's own server; **Chat** on it opens `/chat`, **Work** `/work`, **Resources** `/resources`, and **Developer
+console** the console at `/developers`.
 `scripts/check.sh` at the
 repository's root installs, typechecks, tests and builds the app along with the SDKs, as CI does; the tests need
 neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
-`http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work): the same pages over
+`http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
+Chat): the same pages over
 made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
@@ -147,7 +148,8 @@ client, answered from canned `/v1` responses, with no account and no network. It
   shows those.
 
 `/work-lab` is Work over its own made-up data (`src/screens/work/fixtures`), likewise in development only: `?scene=`
-picks a view (its index lists them all), and `?as=key` answers as the API answers a key.
+picks a view (its index lists them all), and `?as=key` answers as the API answers a key. `/chat-lab` is the same for
+the chat (`src/screens/chat/fixtures`, `src/screens/chat/lab`).
 
 ## Resources
 
@@ -168,6 +170,76 @@ What differs from NoClick's own Resources:
 - Every workflow the key reads is listed, not one workspace's.
 - A workflow is named, not opened: this app has no canvas.
 - No "Ask NoClick", and nothing goes to a command palette.
+
+## Chat
+
+`/chat` is the account's NoClick to talk to (`src/screens/chat`): its one session with the account, live, every turn's
+work drawn as Work draws an agent's, messages that came by text, email or a call captioned with the app they came by,
+NoClick's own notes folded into what it handled, and the files it made. Its box is Work's (files, references to
+automations and accounts, `/loop`, `/clear` and `/resume`, Stop and Steer) with NoClick's model, the account its model
+runs on, where it runs and its budget beside it. Beside the conversation is what NoClick's helpers are at and what
+needs you, a helper's own conversation opening beside the chat. Under a turn, its cards: a held purchase with what it
+costs, long work followed to its end, a build on its automation's preview, agents and channels (answered in place), a
+placed call followed live, an MCP server with each client's steps, an agent's question to you, a hand-off's receipt,
+a served domain, links to connect an account or to pay. The memories panel reads, edits and forgets what NoClick
+remembers. Connect lists the other ways into the same conversation: NoClick's WhatsApp and iMessage numbers, its email
+address, and the setup guides for using NoClick from an MCP client. "Ask NoClick" from Work and Resources lands here as
+a draft. It is the same page NoClick's own app draws, reading through the client the app hands every screen, so it
+acts as the app's key.
+
+**Everyone who has the password talks to NoClick as you.** The chat acts with the key, and NoClick's API lets an
+account's key do all of this, so anyone signed in here can:
+
+- read your whole conversation with NoClick, the texts, emails and calls in it included, its quiet background
+  conversation, and every memory it keeps (the memories panel says so);
+- send it messages, which it acts on with the key's power;
+- answer the questions other agents asked you;
+- change NoClick's model, the account it runs on, its harness and its budget.
+
+What stays yours, on NoClick's own pages, signed in or from the link NoClick sends you:
+
+- **Approving a held purchase or deletion**: its card, and the Beside's Review, open its page on NoClick.
+- **Raising the account's spending cap and adding funds**: the out-of-funds card and a paused agent's ask link to them.
+- **Linking a phone**: a text from a phone that isn't linked starts an account of its own, so the Connect menu offers
+  NoClick's numbers to text only once your phone is linked, and otherwise links to Settings on NoClick.
+- **Claiming or renaming NoClick's email address**: ask NoClick, which can. Its mail can be switched on or off here.
+
+The page never tells NoClick you're watching it: you are still texted what it would text you, since whoever reads the
+chat here may not be you.
+
+What differs from NoClick's own Chat:
+
+- A build's question is shown with a link to answer it on NoClick's page for it, until the builder's questions become
+  ordinary questions this app answers through the API.
+- An agent's question about your own accounts (a repository, a team) is answered in words, not picked from a list.
+- Connecting an account, or signing in with an AI plan, opens its page on NoClick in a new tab; the card says when it
+  has connected.
+- A build or an agent is drawn on a preview of its automation, not the interactive canvas; "Open canvas" opens it on
+  NoClick.
+- A link to pay (funds, a plan, a phone number's purchase page) opens its page on NoClick.
+- No finishing an automation set up on another page, and none of the cards NoClick's old chat drew before it moved onto
+  the API: those calls are rows of their turn's steps.
+- Integrations are drawn with plain marks.
+
+`src/screens/chat/chatAsKey.test.tsx` opens every scene of the chat's lab as the owner and as a key, fails if the key's
+views ask for anything the API refuses every key, and keeps every call either makes in `chatCalls.txt`.
+
+Its slots (`src/screens/chat/slots.ts`), besides Work's `work.reply.markdown` and `work.message.file`, the shared
+`connection.mark`, `mcp.client.marks` and the channels':
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `chat.cards.more` | Under a turn: cards of the host's own, for its own tools or what a call answered | None beyond the chat's own |
+| `chat.working` | The mark a build at work wears in its card | A live dot |
+| `chat.build.question` | The question a build waits on, under its card | Says what it asks; answered on NoClick's page |
+| `chat.question.pick` | An agent's question about your own accounts | Answered in words |
+| `chat.note.setup` | The card under a note setting up an automation | Nothing: the note's words stand |
+| `chat.outOfFunds` | Under a reply turned down for want of funds | A link to adding funds on NoClick |
+| `chat.connect.link` | Connecting an account a card asks for | Its page on NoClick in a new tab, then "connected" |
+| `chat.approval` | Reviewing held calls from the Beside | None: each opens its page on NoClick |
+| `chat.connect.text` | The Connect menu's WhatsApp and iMessage | NoClick's numbers, once your phone is linked |
+| `chat.connect.email` | The Connect menu's email | NoClick's inbox, its mail switched on or off |
+| `chat.places` | Where a card's links go (Resources, an automation's canvas) | This app's `/resources`; the canvas on NoClick |
 
 ## Work
 
@@ -218,10 +290,9 @@ this browser's copy of Work's channels and threads.
 What differs from NoClick's own Work:
 
 - Who is typing is named as the channel's members name them: the change stream says who by id alone.
-- No cards under an agent's turns (a purchase held for a yes, an account to connect, a build on its canvas): each
-  call is a row of the turn's steps.
-- No "Ask NoClick", no search palette, and no opening a workflow's step: this app has no chat with NoClick and no
-  canvas.
+- An agent's turns carry the chat's cards, as they draw there (see Chat).
+- "Ask NoClick" drafts the message in this app's chat. No search palette, and no opening a workflow's step: this app
+  has no canvas.
 - Connecting an app's account or an AI account opens NoClick's connect page in a new tab, and Work waits for the
   account to land. A tool server (MCP) that asks you to sign in is added on NoClick, or with its key.
 - Adding funds opens NoClick's page for it, and the account's connections open NoClick's. Resources opens this app's.
@@ -233,9 +304,8 @@ Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the chann
 
 | Slot | Where it is | By default |
 |---|---|---|
-| `work.turn.cards` | Under an agent's turn: a card for what a call did | Nothing: each call is a row of the turn's steps |
 | `work.reply.markdown` | A reply's, a question's or a browser's found text | Drawn as a repository's README is |
-| `work.message.file` | A file a texted or emailed message carried | A link that opens it |
+| `work.message.file` | A file a texted or emailed message carried, or one an agent made | A link that opens it |
 | `work.model.name` | A model's name as people read it | Its id |
 | `work.apps` | The apps an agent can use as tools, and whose an account is | The integrations the API lists |
 | `work.connect.app` | Connecting an app's account where it's needed | NoClick's connect page in a new tab |
@@ -355,7 +425,7 @@ It doesn't:
 - `test/sockets.test.ts` keeps every screen on the SDK client it is handed: none opens a connection of its own.
   `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
   opens every page of the console as a key and fails if one asks the API for something only the owner may have;
-  `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources, and
-  `src/screens/work/workAsKey.test.tsx` for Work.
+  `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources,
+  `src/screens/work/workAsKey.test.tsx` for Work, and `src/screens/chat/chatAsKey.test.tsx` for Chat.
 
 Apache-2.0, as the rest of this repository.

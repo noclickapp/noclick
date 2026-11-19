@@ -65,3 +65,8 @@ export const CONNECTION_MARK = slot<ConnectionMarks>('connection.mark', {
     aiCompany: () => undefined,
     account: standardAccountNames,
 });
+
+/** An MCP client's marks where its host draws it its own way: the rail's `Icon` (quieted beside the others) and its
+ *  `BrandIcon` in its own colours, by the client's key in `MCP_CLIENTS` (`claude-code`). The standard draws each client
+ *  by its own mark, and a coding harness by the protocol's. */
+export const MCP_CLIENT_MARKS = slot<Readonly<Record<string, { Icon: ComponentType<{ size?: number }>; BrandIcon: ComponentType<{ size?: number }> }>>>('mcp.client.marks', {});
