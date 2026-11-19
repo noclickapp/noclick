@@ -2,7 +2,7 @@
 // facts, and a body that shows the thing itself: an automation's tables, a file's preview; for the platform's kinds
 // the reads around the page draw it (a repo's files, a domain's records), and a host draws what it added. Every kind
 // shares this anatomy; only the body and the actions differ.
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { AlertCircle, Check, ChevronRight, Clock, Copy, Download, ExternalLink, Trash2, XCircle } from 'lucide-react';
@@ -255,9 +255,14 @@ export function ResourceDetail({
     const client = useClient();
     const NumberActions = useSlot(NUMBER_ACTIONS);
     const [inner, setInner] = useState<InnerStep | null>(null);
-    // Taken when asked, so its preview is read once.
+    // Taken when asked, so its preview is read once. Another item's page starts without it, put down as that page
+    // renders: an effect runs only after the page is drawn, and undid a Delete clicked before it ran.
     const [removing, setRemoving] = useState<Removal | null>(null);
-    useEffect(() => setRemoving(null), [item.id]);
+    const [removingFor, setRemovingFor] = useState(item.id);
+    if (removingFor !== item.id) {
+        setRemovingFor(item.id);
+        setRemoving(null);
+    }
     const removed =({ done, gone }: { done: string; gone: boolean }) => {
         toast.success(done);
         setRemoving(null);
