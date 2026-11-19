@@ -1,5 +1,7 @@
-// Times, sizes and counts as the app prints them. Plain functions, apart from ui/primitives.tsx (which draws the node
-// marks) so a page that only formats a number doesn't load those.
+// Times, sizes, counts and dollars as the app prints them. Plain functions, apart from ui/primitives.tsx (which draws
+// the node marks) so a page that only formats a number doesn't load those.
+
+const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const pad2 = (n: number) => String(n).padStart(2, '0');
@@ -70,4 +72,9 @@ export function compactNumber(n: number): string {
 export function countOf(n: number, noun: string | readonly [string, string]): string {
     const [one, many] = typeof noun === 'string' ? [noun, `${noun}s`] : noun;
     return `${compactNumber(n)} ${n === 1 ? one : many}`;
+}
+
+/** A price already in dollars (a vendor's, like a domain's): 12.99 → "$12.99". */
+export function formatDollars(usd: number): string {
+    return USD.format(usd);
 }
