@@ -11,8 +11,10 @@ names the ``approvals:answer`` scope (a key with every scope, ``*``, holds it on
 
 A key never answers a call made with it (by its own code, through MCP, or by an agent or app acting as it), never
 approves one whose terms a person accepts (it may decline it), and approves only what it could make itself: the
-scopes the call needs, and a price within what's left of the key's own monthly cap. NoClick then runs an approved
-call itself, once, exactly as it was held.
+scopes the call needs (never a call only the owner and their NoClick assistant make), and a price that fits the key's
+own monthly cap beside what it spent and approved this month. NoClick then runs an approved call itself, once, exactly
+as it was held, with no scope the answering key lacks. While your account holds such a key, a call whose link reaches
+no person is still held, with an empty ``sent_to``, for your code to answer.
 """
 
 from __future__ import annotations
@@ -60,7 +62,8 @@ class Approval(_Object):
         "approves such a call.",
     )
     sent_to: List[str] = field("sent_to", doc="Where NoClick sent the owner its link: ``whatsapp``, ``imessage``, "
-                               "``email``, or ``web`` (a card in the chat they were watching).")
+                               "``email``, or ``web`` (a card in the chat they were watching); empty when it reached "
+                               "nobody and waits for your code.")
     created_at: Any = field("created_at", parse_time)
     expires_at: Any = field("expires_at", parse_time, doc="When it lapses unanswered (a day after it was held).")
     decided_at: Any = field("decided_at", parse_time)
@@ -124,8 +127,9 @@ class Approval(_Object):
         """Approve it from your own code, with one of your account's secret keys that names the
         ``approvals:answer`` scope; NoClick then runs the call itself, once, exactly as it was held. Refused
         with ``noclick.PermissionDenied`` for the key the call was made with, a call whose terms a person
-        accepts, one needing a scope the key lacks, a key acting for a user, and a key without the scope;
-        with ``noclick.SpendCapExceeded`` when its price is past what's left of the key's own monthly cap.
+        accepts, one needing a scope the key lacks or only the owner makes, a key acting for a user, and a key
+        without the scope; with ``noclick.SpendCapExceeded`` when its price, beside what the key spent and
+        approved this month, is past the key's own monthly cap.
 
         Returns:
             This approval, answered: ``status`` is ``approved``, then ``used`` once the call ran;

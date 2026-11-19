@@ -318,8 +318,12 @@ export const KEYS = [
     },
 ] as const;
 
+// What a key holds only when it names them: the API lists them apart from `scopes`.
+const EXPLICIT = ['agents:terminal', 'approvals:answer', 'cards:reveal', 'webhooks:reveal'];
+
 export const META = {
-    scopes: SCOPES,
+    scopes: SCOPES.filter((s) => !EXPLICIT.includes(s)),
+    explicit_scopes: EXPLICIT,
     session_scopes: ['agents', 'credentials:request', 'humans', 'tools'],
     operation_kinds: [
         'agent.message', 'agent.rehearse', 'channel.a2a', 'credential.connect', 'human.approve', 'human.ask', 'human.notify', 'inbox.wait_for', 'phone.call', 'sandbox.exec',

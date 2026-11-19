@@ -12,6 +12,7 @@ import { Input } from '@/ui/input';
 import { Textarea } from '@/ui/textarea';
 import { cn } from '@/ui/utils';
 import {
+    EXPLICIT_SCOPES,
     TOKEN_SCOPE,
     createKey,
     fullAccessScopes,
@@ -76,6 +77,22 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
     },
     { label: 'Platform', covers: 'Workflows.', scopes: ['workflows'] },
 ];
+
+/** What each scope a key holds only when it's named does, offered beside Full access or Read-only. */
+const NAMED_SCOPE_HINTS: Record<string, string> = {
+    [TOKEN_SCOPE]: 'reads raw provider access tokens',
+    'cards:reveal': 'hands out a card’s number',
+    'webhooks:reveal': 'reads a webhook’s signing secret',
+    'agents:terminal': 'opens a coding agent’s terminal, which shows its sandbox’s keys and tokens',
+    'approvals:answer': 'approves or declines a call NoClick holds for your yes, from your code',
+};
+
+/** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built
+ *  from), and with them those a key holds only when it names them (`all`). */
+export function accountScopes(meta: { scopes: string[]; explicit_scopes?: string[] } | undefined): { full: string[]; all: string[] } {
+    const full = meta?.scopes ?? [];
+    return { full, all: [...full, ...(meta?.explicit_scopes ?? []).filter((s) => !full.includes(s))] };
+}
 
 const sameSet = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((s) => b.includes(s));
 
@@ -227,7 +244,7 @@ function PublicAccessFields({ draft, onChange, errors, listed, cap }: { draft: A
 type Access = 'full' | 'read' | 'custom';
 
 const ACCESS: readonly { value: Access; label: string; hint: string }[] = [
-    { value: 'full', label: 'Full access (no raw tokens)', hint: 'Every scope except the ones that read secrets, like raw provider tokens.' },
+    { value: 'full', label: 'Full access (no raw tokens)', hint: 'Every scope except those a key holds only when you name them, like raw provider tokens.' },
     { value: 'read', label: 'Read-only', hint: 'Usage and operations.' },
     { value: 'custom', label: 'Custom…', hint: 'Pick the scopes yourself.' },
 ];
@@ -243,10 +260,12 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
     const Terms = useSlot(TERMS);
     const [keyType, setKeyType] = useState<KeyType>('secret');
     const [draft, setDraft] = useState<AccessDraft>(accessDraft);
-    const allScopes = useAccount().data?.meta.scopes ?? [];
+    const { full: fullScopes, all: allScopes } = accountScopes(useAccount().data?.meta);
     const [name, setName] = useState('');
     const [access, setAccess] = useState<Access>('full');
     const [custom, setCustom] = useState<string[]>([]);
+    // Beside Full access or Read-only: scopes a key holds only when they're named, each chosen on its own.
+    const [named, setNamed] = useState<string[]>([]);
     const [user, setUser] = useState<string | null>(null);
     const [cap, setCap] = useState('');
     const [expires, setExpires] = useState('');
@@ -260,6 +279,7 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
         setName('');
         setAccess('full');
         setCustom([]);
+        setNamed([]);
         setUser(null);
         setCap('');
         setExpires('');
@@ -271,7 +291,8 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
         onOpenChange(next);
     };
 
-    const scopes = access === 'full' ? fullAccessScopes(allScopes) : access === 'read' ? [...READ_ONLY_SCOPES] : custom;
+    const scopes = access === 'full' ? [...fullAccessScopes(fullScopes), ...named] : access === 'read' ? [...READ_ONLY_SCOPES, ...named] : custom;
+    const nameable = allScopes.filter((s) => EXPLICIT_SCOPES.includes(s));
     const grouped = SCOPE_GROUPS.map((g) => ({ ...g, scopes: g.scopes.filter((s) => allScopes.includes(s)) })).filter((g) => g.scopes.length);
     const ungrouped = allScopes.filter((s) => !SCOPE_GROUPS.some((g) => g.scopes.includes(s)));
     if (ungrouped.length) grouped.push({ label: 'Other', covers: 'Scopes added since this form was written.', scopes: ungrouped });
@@ -431,6 +452,24 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
                                                 </label>
                                             ))}
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                            {access !== 'custom' && nameable.length > 0 && (
+                                <div className="mt-1 flex flex-col gap-1 rounded-lg bg-foreground/[0.03] p-3" data-named-scopes>
+                                    <span className="text-[12px] font-medium text-foreground">Also, only if you name them</span>
+                                    <span className="text-[12px] text-muted-foreground">A key never holds these unless you pick them here.</span>
+                                    {nameable.map((s) => (
+                                        <label key={s} className="flex cursor-pointer items-center gap-2 text-[13px]">
+                                            <input
+                                                type="checkbox"
+                                                checked={named.includes(s)}
+                                                onChange={(e) => setNamed((n) => (e.target.checked ? [...n, s] : n.filter((x) => x !== s)))}
+                                                className="accent-[hsl(var(--foreground))]"
+                                            />
+                                            <span className="font-mono text-[12px]">{s}</span>
+                                            {NAMED_SCOPE_HINTS[s] && <span className="text-[12px] text-muted-foreground">{NAMED_SCOPE_HINTS[s]}</span>}
+                                        </label>
                                     ))}
                                 </div>
                             )}

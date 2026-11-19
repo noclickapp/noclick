@@ -72,7 +72,10 @@ export interface AccountView {
     /** The owner's view only: the key the signed-in owner's calls are billed and logged under. */
     console_key_id?: string;
     meta: {
+        /** What a key with every scope (`*`) holds: what Full access is built from. */
         scopes: string[];
+        /** The scopes a key holds only when it names them, never part of Full access (absent from an older server). */
+        explicit_scopes?: string[];
         session_scopes: string[];
         operation_kinds: string[];
         operation_statuses: string[];

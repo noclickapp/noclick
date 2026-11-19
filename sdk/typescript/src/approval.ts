@@ -11,8 +11,10 @@
  *
  * A key never answers a call made with it (by its own code, through MCP, or by an agent or app acting as it), never
  * approves one whose terms a person accepts (it may decline it), and approves only what it could make itself: the
- * scopes the call needs, and a price within what's left of the key's own monthly cap. NoClick then runs an approved
- * call itself, once, exactly as it was held.
+ * scopes the call needs (never a call only the owner and their NoClick assistant make), and a price that fits the
+ * key's own monthly cap beside what it spent and approved this month. NoClick then runs an approved call itself, once,
+ * exactly as it was held, with no scope the answering key lacks. While your account holds such a key, a call whose link
+ * reaches no person is still held, with an empty `sentTo`, for your code to answer.
  */
 
 import { resolveClient } from "./client.ts";
@@ -104,7 +106,10 @@ export class Approval extends ApiObject {
   get consent(): JsonObject[] {
     return this._field("consent");
   }
-  /** Where NoClick sent the owner its link: `whatsapp`, `imessage`, `email`, or `web` (a card in the chat). */
+  /**
+   * Where NoClick sent the owner its link: `whatsapp`, `imessage`, `email`, or `web` (a card in the chat); empty when
+   * it reached nobody and waits for your code.
+   */
   get sentTo(): string[] {
     return this._field("sent_to");
   }
@@ -149,8 +154,9 @@ export class Approval extends ApiObject {
   /**
    * Approve it from your own code, with one of your account's secret keys that names the `approvals:answer` scope;
    * NoClick then runs the call itself, once, exactly as it was held. Throws `PermissionDenied` for the key the call
-   * was made with, a call whose terms a person accepts, one needing a scope the key lacks, a key acting for a user,
-   * and a key without the scope; `SpendCapExceeded` when its price is past what's left of the key's own monthly cap.
+   * was made with, a call whose terms a person accepts, one needing a scope the key lacks or only the owner makes, a
+   * key acting for a user, and a key without the scope; `SpendCapExceeded` when its price, beside what the key spent
+   * and approved this month, is past the key's own monthly cap.
    */
   approve(options: { note?: string } = {}): Promise<this> {
     return this.answer(true, options.note);
