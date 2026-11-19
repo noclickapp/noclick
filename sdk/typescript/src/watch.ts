@@ -125,6 +125,9 @@ const WATCH_PROTOCOL = "noclick.watch";
 
 const PING_MS = 30_000;
 const BACKOFF_MS = [500, 1_000, 2_000, 5_000, 10_000, 30_000];
+// A connection that stayed up this long after `ready` starts the backoff again; one that drops sooner keeps it
+// climbing, so a socket cut right after it opens isn't retried twice a second forever.
+const STABLE_MS = 30_000;
 const TOO_MANY_MS = 30_000;
 // After a refusal, past a revoke's `before` (the backend's clock rounded up to the second, plus REVOKE_MARGIN_S, 5 s)
 // by a token clock up to a second behind: the next token opens, unless access really ended, which a second refusal
@@ -296,6 +299,7 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
       ws.onerror = () => { /* a close follows */ };
 
       let ready = false;
+      let readyAt = 0;
       while (true) {
         await next();
         if (options.signal?.aborted) return;
@@ -306,6 +310,7 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
           pinger = null;
           socket = null;
           const { code, reason } = item.close;
+          if (ready && Date.now() - readyAt >= STABLE_MS) failures = 0;
           if (code === WATCH_CLOSE.refused) {
             refusedInARow = ready ? 1 : refusedInARow + 1;
             if (refusedInARow >= 2) {
@@ -326,7 +331,7 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
         }
         if (item.type === "ready") {
           ready = true;
-          failures = 0;
+          readyAt = Date.now();
           refusedInARow = 0;
           status("live");
         } else if (item.type === "change" && item.id) {

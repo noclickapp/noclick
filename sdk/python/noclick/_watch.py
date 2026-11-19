@@ -25,6 +25,7 @@ import asyncio
 import inspect
 import json
 import random
+import time
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple, Union
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -40,6 +41,9 @@ CLOSE_RENEW, CLOSE_REFUSED, CLOSE_TOO_MANY = 4000, 4401, 4429
 # The socket's subprotocol; the token rides beside it, never in the URL.
 WATCH_PROTOCOL = "noclick.watch"
 _BACKOFF_S = (0.5, 1.0, 2.0, 5.0, 10.0, 30.0)
+# A connection that stayed up this long after `ready` starts the backoff again; one that drops sooner keeps it
+# climbing, so a socket cut right after it opens isn't retried twice a second forever.
+_STABLE_S = 30.0
 _TOO_MANY_S = 30.0
 # After a refusal, past a revoke's `before` (the backend's clock rounded up to the second, plus REVOKE_MARGIN_S, 5 s)
 # by a token clock up to a second behind: the next token opens, unless access really ended, which a second refusal
@@ -262,6 +266,7 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
                 failures += 1
                 continue
             ready = False
+            ready_at = 0.0
             code: Optional[int] = None
             reason = ""
             try:
@@ -278,7 +283,7 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
                         if message is None:
                             continue
                         if isinstance(message, WatchReady):
-                            ready, failures, refused_in_a_row = True, 0, 0
+                            ready, ready_at, refused_in_a_row = True, time.monotonic(), 0
                             status("live")
                         elif isinstance(message, WatchChange) and message.id:
                             after = message.id
@@ -291,6 +296,8 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
                     raise
                 code = getattr(getattr(exc, "rcvd", None), "code", None)
                 reason = getattr(getattr(exc, "rcvd", None), "reason", "") or str(exc)
+            if ready and time.monotonic() - ready_at >= _STABLE_S:
+                failures = 0
             if code == CLOSE_REFUSED:
                 refused_in_a_row = 1 if ready else refused_in_a_row + 1
                 if refused_in_a_row >= 2:
