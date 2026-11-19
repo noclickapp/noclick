@@ -58,8 +58,10 @@ class FakeSocket {
 const Socket = FakeSocket as unknown as typeof WebSocket;
 const tick = () => new Promise((resolve) => setImmediate(resolve));
 
+/** The view's `n`th socket, once it's made. A reopen waits on a timer (a recorded wait runs on the timers' next turn),
+ *  so this waits a while by the clock, never a count of turns, which a fast machine runs through before any timer. */
 async function opened(n: number): Promise<FakeSocket> {
-  for (let i = 0; i < 100 && FakeSocket.opened.length < n; i++) await tick();
+  for (let i = 0; i < 2000 && FakeSocket.opened.length < n; i++) await new Promise((resolve) => setTimeout(resolve, 1));
   const socket = FakeSocket.opened[n - 1];
   assert.ok(socket, `socket ${n} opened`);
   return socket;
