@@ -63,6 +63,12 @@ export type SecretEnvironment = DeploymentEnvironment | "all";
 export type ProjectRuntime = "auto" | "edge" | "container";
 /** Where one deployment runs. */
 export type DeploymentRuntime = "edge" | "container";
+/** A known change that fixes a deployment's failure (`Deployment.fix`). */
+export interface DeploymentFix {
+  kind: "next_upgrade";
+  found: string;
+  needed: string;
+}
 /** What a push to an app's repo deploys by itself. */
 export type DeployOnPush = "off" | "production" | "all";
 /** `branch`: each preview branch gets its own copy of what its code names; `shared`: previews use production's. */
@@ -627,6 +633,14 @@ export class Deployment extends ApiObject {
   /** The id NoClick's team finds a failure of its own by (null unless `platformError`). */
   get errorId(): string | null {
     return this._field("error_id") ?? null;
+  }
+  /**
+   * What fixes a failure when it's a known change to the app (null otherwise). Today only
+   * `{ kind: "next_upgrade", found: <the Next.js it asks for>, needed: <a release that builds> }`: its `next_step`
+   * says how to upgrade it, or to hand it to the app's coding agent.
+   */
+  get fix(): DeploymentFix | null {
+    return this._field("fix") ?? null;
   }
   /** Where it runs: `edge` or `container`, chosen when its build starts (null until then). */
   get runtime(): DeploymentRuntime | null {

@@ -509,6 +509,11 @@ class Deployment(_Object):
     error_id: Optional[str] = field(
         "error_id", doc="The id NoClick's team finds a failure of its own by (None unless ``platform_error``).",
     )
+    fix: Optional[Dict[str, str]] = field(
+        "fix", doc="What fixes a failure when it's a known change to the app (None otherwise). Today only "
+        "``{\"kind\": \"next_upgrade\", \"found\": <the Next.js it asks for>, \"needed\": <a release that "
+        "builds>}``: its ``next_step`` says how to upgrade it, or to hand it to the app's coding agent.",
+    )
     runtime: Optional[str] = field(
         "runtime", doc="Where it runs: ``edge`` or ``container``, chosen when its build starts (None until then).",
     )
