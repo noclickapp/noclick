@@ -35,6 +35,22 @@ def test_answer_with_routes_the_owners_texts_and_none_hands_them_back(api, clien
         nc.Human(email="ana@example.com").answer_with(AGENT_ID)
 
 
+def test_reach_reads_noclicks_numbers_and_whether_a_phone_is_linked_as_the_account(api, client):
+    read = api.get("/v1/humans/owner/reach").respond(json={
+        "object": "owner_reach", "phone_linked": True,
+        "lines": [{"app": "whatsapp", "number": "+14155550100"}, {"app": "imessage", "number": "+14155550101"}],
+    })
+    with nc.as_user(USER_ID):  # where the owner texts NoClick is the account's, never a user's
+        reach = nc.Human.owner().reach()
+    assert "NoClick-User" not in read.calls.last.request.headers
+    assert reach == nc.OwnerReach(lines=[nc.OwnerLine(app="whatsapp", number="+14155550100"),
+                                         nc.OwnerLine(app="imessage", number="+14155550101")], phone_linked=True)
+    api.get("/v1/humans/owner/reach").respond(json={"object": "owner_reach", "lines": [], "phone_linked": False})
+    assert nc.Human.owner().reach() == nc.OwnerReach(lines=[], phone_linked=False)
+    with pytest.raises(ValueError):
+        nc.Human(email="ana@example.com").reach()
+
+
 def test_the_owner_adds_an_email_by_code(api, client):
     sent = api.post("/v1/humans/owner/email").respond(json={"object": "owner_email", "status": "code_sent",
                                                            "email": "maya@morrowbakery.com", "expires_in_minutes": 15})

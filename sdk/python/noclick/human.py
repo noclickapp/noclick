@@ -41,6 +41,25 @@ class OwnerEmail:
     merged: bool
 
 
+@dataclass(frozen=True)
+class OwnerLine:
+    """One of NoClick's own numbers the owner texts it on (``Human.reach``): ``app`` is
+    ``whatsapp`` or ``imessage``."""
+
+    app: str
+    number: str
+
+
+@dataclass(frozen=True)
+class OwnerReach:
+    """Where the owner texts NoClick (``Human.reach``): NoClick's own numbers, one for each app
+    it answers on, and whether a phone of the owner's is linked to the account (which one is
+    never said)."""
+
+    lines: List[OwnerLine]
+    phone_linked: bool
+
+
 def _read_answer(result: Any, _op: Operation) -> Answer:
     if isinstance(result, dict):
         return Answer(result.get("choice"), result.get("text"), result)
@@ -415,6 +434,29 @@ class Human:
         raw = await resolve_client(self._client).request("GET", "/v1/humans/owner/answer", user=None)
         found = (raw or {}).get("agent_id")
         return Agent.from_id(found, client=self._client, user=None) if found else None
+
+    @synced
+    async def reach(self) -> OwnerReach:
+        """NoClick's own numbers the owner texts it on, and whether a phone of theirs is
+        linked (never which). Show a number only once one is: a text from a phone the account
+        hasn't linked starts an account of its own, and linking one is the owner's, signed in
+        to NoClick. Your account's own key reads it, never a user's.
+
+        Returns:
+            The ``noclick.OwnerReach``.
+
+        Usage::
+
+            reach = noclick.Human.owner().reach()
+            if reach.phone_linked:
+                for line in reach.lines:
+                    print(f"{line.app}: {line.number}")
+        """
+        if self._to != {"owner": True}:
+            raise ValueError("Only noclick.Human.owner() texts NoClick's own numbers.")
+        raw = await resolve_client(self._client).request("GET", "/v1/humans/owner/reach", user=None) or {}
+        lines = [OwnerLine(app=line["app"], number=line["number"]) for line in raw.get("lines") or []]
+        return OwnerReach(lines=lines, phone_linked=bool(raw.get("phone_linked")))
 
     @synced
     async def add_email(self, email: str) -> None:
