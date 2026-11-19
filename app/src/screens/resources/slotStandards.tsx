@@ -11,7 +11,7 @@ import { MarkdownDoc } from './CodeView';
 import type { ResourceItem } from './model';
 import type { MoreKinds, NumbersRead } from './slots';
 
-const NONE: MoreKinds = { kinds: [], items: {}, loading: {}, errors: {}, owns: () => false };
+const NONE: MoreKinds = { items: {}, loading: {}, errors: {}, owns: () => false };
 /** Each number carries its own price. */
 const OWN_PRICES: ReadonlyMap<string, number> = new Map();
 

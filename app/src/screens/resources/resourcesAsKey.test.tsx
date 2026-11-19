@@ -88,10 +88,8 @@ function open(address: string): Calls {
     };
 }
 
-const LISTED = KINDS.filter((k) => !k.fromHost);
-
 /** The overview, each kind's list and each page for getting one by hand. */
-const ADDRESSES = ['', ...LISTED.map((k) => `?kind=${k.id}`), ...LISTED.filter((k) => k.manual).map((k) => `?kind=${k.id}&new=1`)];
+const ADDRESSES = ['', ...KINDS.map((k) => `?kind=${k.id}`), ...KINDS.filter((k) => k.manual).map((k) => `?kind=${k.id}&new=1`)];
 
 describe('Resources acting as a key', () => {
     it.each(ADDRESSES)('asks for nothing only the owner may have at /resources%s', async (address) => {
@@ -100,7 +98,7 @@ describe('Resources acting as a key', () => {
         expect(calls.ownerOnly).toEqual([]);
     });
 
-    it.each(LISTED.map((k) => k.id))('asks for nothing only the owner may have on any %s page', async (kind) => {
+    it.each(KINDS.map((k) => k.id))('asks for nothing only the owner may have on any %s page', async (kind) => {
         const listed = open(`?kind=${kind}`);
         await listed.settled();
         const count = listed.container.querySelectorAll('[data-resource-row]').length;
@@ -116,5 +114,6 @@ describe('Resources acting as a key', () => {
             expect(calls.ownerOnly, `${kind} row ${row}`).toEqual([]);
             cleanup();
         }
-    });
+        // Every item's page, each opened afresh: a dozen agents' pages take a few seconds.
+    }, 30_000);
 });

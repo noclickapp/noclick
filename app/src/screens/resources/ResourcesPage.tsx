@@ -21,7 +21,7 @@ import { FileThumb } from './fileParts';
 import { NewAddressPage } from './NewAddressPage';
 import { useResourceCosts, type ResourceCosts } from './costs';
 import { INNER_PARAMS } from './kinds';
-import { kindDef, useResourceItems, type KindDef, type KindId, type ResourceItem } from './model';
+import { KINDS, kindDef, useResourceItems, type KindDef, type KindId, type ResourceItem } from './model';
 import { usePlatformResources } from './platform';
 import { ResourceDetail } from './ResourceDetail';
 import { TrashSection } from './TrashSection';
@@ -30,7 +30,7 @@ import { TILE_GRID, Tile, TileSkeletons } from '@/ui/Tile';
 
 function Lead({ item }: { item: ResourceItem }) {
     const platform = usePlatformResources();
-    const PlatformLead = platform?.hostOwns(item) ? platform.Lead?.[item.kind] : undefined;
+    const PlatformLead = platform?.hasOwnParts(item) ? platform.Lead?.[item.kind] : undefined;
     if (PlatformLead) return <PlatformLead item={item} />;
     if (item.file && item.kind === 'files') return <FileThumb file={item.file.entry} size={36} />;
     const tile = 'grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-foreground/[0.05]';
@@ -51,7 +51,7 @@ function Lead({ item }: { item: ResourceItem }) {
 
 function Row({ item, now, price, onOpen }: { item: ResourceItem; now: string; price?: number; onOpen: () => void }) {
     const platform = usePlatformResources();
-    const Menu = platform?.hostOwns(item) ? platform.RowMenu?.[item.kind] : undefined;
+    const Menu = platform?.hasOwnParts(item) ? platform.RowMenu?.[item.kind] : undefined;
     if (!Menu) return <RowButton item={item} now={now} price={price} onOpen={onOpen} />;
     // A button can't hold another: the menu sits beside the row, which lights up as one under the pointer.
     return (
@@ -236,16 +236,16 @@ export function ResourcesLoading() {
 /** The page itself, inside Resources' reads (ResourcesReads), or a lab's or a test's stand-in for them. */
 export function ResourcesView() {
     const [params, setParams] = useSearchParams();
-    const { items, kinds, loading, errors, now, refresh } = useResourceItems();
+    const { items, loading, errors, now, refresh } = useResourceItems();
     const { billing, remember } = useResources();
     // A command palette can open any of these by name later, from anywhere.
     useEffect(() => {
         remember?.(
-            kinds.flatMap((k) =>
+            KINDS.flatMap((k) =>
                 items[k.id].map((item) => ({ id: `resource:${k.id}:${item.id}`, label: item.title, context: k.label, icon: k.icon, about: item.subtitle, kind: k.id, resource: item.id, open: item.open }))
             )
         );
-    }, [items, kinds, remember]);
+    }, [items, remember]);
     const costs = useResourceCosts(items);
     const platform = usePlatformResources();
     const openBuy = (kind: KindId, way?: string) =>
@@ -263,7 +263,7 @@ export function ResourcesView() {
         const manual = kindDef(kind).manual;
         return manual && (billing || !manual.bought) ? { label: manual.label, short: manual.short, run: () => openBuy(kind), refusal: platform?.unavailable?.[kind] } : undefined;
     };
-    const activeKind = kinds.find((k) => k.id === params.get('kind'))?.id ?? null;
+    const activeKind = KINDS.find((k) => k.id === params.get('kind'))?.id ?? null;
     const resourceId = params.get('resource');
     const selected = activeKind && resourceId ? items[activeKind].find((i) => i.id === resourceId) : undefined;
 
@@ -285,7 +285,7 @@ export function ResourcesView() {
         );
 
     if (resourceId && activeKind) {
-        const Page = selected && platform?.hostOwns(selected) ? platform.Page?.[activeKind] : undefined;
+        const Page = selected && platform?.hasOwnParts(selected) ? platform.Page?.[activeKind] : undefined;
         if (selected && Page) return <Page item={selected} now={now} onBack={(to) => go(to === 'all' ? null : activeKind)} />;
         if (selected) {
             return (
@@ -419,7 +419,7 @@ export function ResourcesView() {
 
     // Every tile keeps its place, the way the sidebar lists them: an overview you learn once.
     // What it costs a month: the kinds with a set price each (what use-billed kinds spent shows on their tiles), once they've all answered.
-    const priced = kinds.filter((k) => k.billed === 'item');
+    const priced = KINDS.filter((k) => k.billed === 'item');
     const total = priced.some((k) => loading[k.id]) ? 0 : priced.reduce((sum, k) => sum + (costs.kindMonthly[k.id] ?? 0), 0);
     return (
         <PageFrame
@@ -428,7 +428,7 @@ export function ResourcesView() {
         >
             {/* Each tile fills in as its own reads answer, in its place from the start. */}
             <div className={TILE_GRID} data-testid="resources-overview">
-                {kinds.map((k) => {
+                {KINDS.map((k) => {
                     const KindIcon = k.icon;
                     const list = items[k.id];
                     const waiting = loading[k.id];

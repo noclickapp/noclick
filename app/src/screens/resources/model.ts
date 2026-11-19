@@ -1,8 +1,9 @@
 // What the Resources page lists: every kind the account can own, the items of each, and the payload an item's page
 // needs. What workflows keep (files and tables) and the account's own files are read through /v1 (kept.ts); domains,
-// email addresses (inboxes), apps, databases, buckets, repos and numbers by the reads around the page (reads.tsx), the
-// account's users' (`owner`) beside its own, with whatever kinds a host adds. An automation's published interface is
-// one of its apps, and its tables are a database: the one the platform keeps them in, else one per automation here.
+// email addresses (inboxes), apps, databases, buckets, repos, numbers and Work's kinds (agents, skills, memories,
+// machines, secrets) by the reads around the page (reads.tsx), the account's users' (`owner`) beside its own, with
+// whatever items a host adds. An automation's published interface is one of its apps, and its tables are a database:
+// the one the platform keeps them in, else one per automation here.
 import { useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { countOf } from '@/ui/primitives';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
@@ -148,7 +149,6 @@ export function useResourceItems() {
 
     return {
         items,
-        kinds: platform?.kinds ?? KINDS,
         /** By kind: true until what its list is drawn from has answered. */
         loading: kindLoading,
         /** Why a kind couldn't be read. */

@@ -503,9 +503,33 @@ function serverReply(r: FixtureRequest, change: (s: Json) => Json): FixtureReply
     return server ? ok(change(server)) : apiError(404, 'not_found', `MCP server ${r.params.id} not found.`);
 }
 
+/** Where each agent stands, as `GET /v1/agents/states` reads it: one working, the rest idle since they last ran. */
+function agentState(a: Json): Json {
+    const working = a.id === SUPPORT.id;
+    return {
+        agent_id: a.id,
+        name: a.name,
+        harness: a.harness,
+        state: working ? 'working' : 'idle',
+        conversation: working ? 'main' : null,
+        now: working ? { tool: 'gmail__send_email', kind: 'tool', line: 'Sends the refund confirmation', since: ago(2 * MIN) } : null,
+        waiting: { asks: 0, held_calls: 0, requests: 0, total: 0 },
+        turn_started_at: working ? ago(3 * MIN) : null,
+        last_active_at: a.last_active_at ?? null,
+        failed: null,
+        waking: null,
+    };
+}
+
 export const routes: readonly FixtureRoute[] = [
     // Agents: the core rows plus the designed fields, and the automation.
     { method: 'GET', path: '/v1/agents', reply: (r) => pageList(r, filteredAgents(r)) },
+    // Before `/v1/agents/:id`, which would take `states` for an agent's id.
+    {
+        method: 'GET',
+        path: '/v1/agents/states',
+        reply: (r) => (r.set === 'error' ? PAGE_ERROR : ok({ object: 'list', data: r.set === 'populated' ? LAB_AGENTS.map(agentState) : [], read_at: now() })),
+    },
     {
         method: 'GET',
         path: '/v1/agents/:id',
