@@ -45,7 +45,8 @@ from .app_services import (
 from .api_request import ApiRequest
 from .brand import Brand
 from .browser import (
-    ActResult, Browser, BrowserLogin, BrowserProfile, BrowserWaitingOn, BrowserWatchedStep, PageState, SiteLogin,
+    ActResult, Browser, BrowserLiveView, BrowserLogin, BrowserProfile, BrowserWaitingOn, BrowserWatchedStep, PageState,
+    SiteLogin,
 )
 from .bucket import Bucket, BucketObject, BucketOperations, BucketUpload, ObjectVersion, S3Credentials
 from .card import (
@@ -196,7 +197,8 @@ __all__ = [
     "PhoneText", "TransferOut", "NumberHolder", "NumberCoverage", "NumberPlace", "NumberDocument", "PhoneNumberOrder",
     "Sandbox", "SandboxFiles", "ExecResult", "Machine", "MachineSize", "MachineSizeRegion", "MachineHost", "MachinePort", "MachinePairing", "MachineRefusal", "MachineFiles", "MachineFileEntry", "MachineHealth", "MachineShell",
     "regions", "Region",
-    "Browser", "BrowserProfile", "BrowserLogin", "PageState", "ActResult", "SiteLogin", "BrowserWatchedStep",
+    "Browser", "BrowserLiveView", "BrowserProfile", "BrowserLogin", "PageState", "ActResult", "SiteLogin",
+    "BrowserWatchedStep",
     "BrowserWaitingOn",
     "Card", "CardTransaction", "CardDetails", "CardFunding", "CardBankTransfer", "CardDispute", "CardProgram",
     "CardMerchantCategory",

@@ -24,6 +24,7 @@ import { asObject, num, parseTime, str } from "./object.ts";
 import type { JsonObject } from "./object.ts";
 import { resolveScope } from "./scope.ts";
 import type { UserOption } from "./scope.ts";
+import { checkedSocketUrl, spread } from "./sockets.ts";
 
 /** What `watch` follows: each an object as its read names it. */
 export type WatchedObject =
@@ -135,26 +136,9 @@ const TOO_MANY_MS = 30_000;
 const REFUSED_WAIT_MS = 8_000;
 // Messages held for a reader slower than the room: past this many, they give way to one `reset`.
 const MAX_QUEUED = 1_000;
-const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
-
-/** A wait spread over half to one and a half of `ms`, so sockets that dropped together don't all come back at once. */
-function spread(ms: number): number {
-  return ms * (0.5 + Math.random());
-}
-
-/** The socket's address, if the token's answer named one this SDK sends a token to: wss://, or ws:// on this
- * machine. Anything else is refused before the token leaves. */
+/** The socket's address, if the token's answer named one this SDK sends a token to. */
 function socketUrl(url: string): string {
-  let parsed: URL | null = null;
-  try {
-    parsed = new URL(url);
-  } catch { /* refused below */ }
-  if (parsed && (parsed.protocol === "wss:" || (parsed.protocol === "ws:" && LOCAL_HOSTS.has(parsed.hostname)))) {
-    return url;
-  }
-  throw new NoClickError("The watch socket's address isn't a wss:// URL, so its token was not sent.", {
-    nextStep: "Check that the token comes from NoClick's API (or your server passes its url on as it is).",
-  });
+  return checkedSocketUrl(url, "watch socket");
 }
 
 /** The socket's address, resuming after `after` (a cursor, never a secret). */

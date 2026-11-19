@@ -21,6 +21,8 @@
  */
 
 import type { Agent } from "./agent.ts";
+import { BrowserLiveView, BrowserViewConnection } from "./browserView.ts";
+import type { BrowserViewConnectOptions, BrowserViewOptions } from "./browserView.ts";
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { Conflict, NotFound } from "./errors.ts";
@@ -601,6 +603,32 @@ export class Browser extends ApiObject {
    */
   async handBack(): Promise<void> {
     this._raw = asObject(await this._request("POST", `${this.path}/hand_back`));
+  }
+
+  /**
+   * A single-use token for the browser's live view, for a page of your own: `connect()` the result once, within two
+   * minutes, or hand its `url` and `token` to the page from your server. `thumb`: smaller pictures for a tile.
+   * `control`: a view that drives it, once you've taken it over (`takeOver`); it ends when it's handed back. Your
+   * account's keys and its signed-in owner get one; an MCP connection, an agent's turn and an app's code don't.
+   */
+  async liveView(options: BrowserViewOptions = {}): Promise<BrowserLiveView> {
+    if (options.control && options.thumb) throw new TypeError("A view that drives the browser shows it full size: leave out thumb");
+    const raw = options.control
+      ? await this._request("POST", `${this.path}/live_control`)
+      : await this._request("POST", `${this.path}/live_view`, { json: { thumb: options.thumb === true } });
+    return BrowserLiveView._from(asObject(raw), { client: this._client, user: this._callScope() });
+  }
+
+  /**
+   * Show the browser live in this page: asks for a token (`liveView`) and connects, and again with a new token
+   * whenever the view needs to open again, until it ends or you `close()` it. See `BrowserViewConnection`.
+   */
+  view(options: BrowserViewOptions & BrowserViewConnectOptions = {}): BrowserViewConnection {
+    const control = options.control === true;
+    return new BrowserViewConnection(async () => {
+      const minted = await this.liveView({ control, thumb: options.thumb });
+      return { url: minted.url, token: minted.token ?? "" };
+    }, control, options, true);
   }
 
   /** Close the browser now (billing stops with it). The profile keeps any new sign-ins. */

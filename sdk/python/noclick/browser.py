@@ -491,6 +491,31 @@ class BrowserProfile(_Object):
         await self._request("DELETE", await self._path())
 
 
+class BrowserLiveView(_Object):
+    """A browser's live view, for a page of your own (``Browser.live_view``): a single-use ``token`` for the
+    websocket at ``url``, valid two minutes. The page opens ``url`` and sends ``{"type": "auth", "token": ...}`` as its
+    first message (never put the token in the URL). The socket sends ``{"type": "viewport", "width", "height"}``,
+    then a JPEG of the page each time it changes; a ``control`` view also takes ``{"type": "tap", "x", "y"}``,
+    ``{"type": "mouse", "action": "down" | "up" | "move", "x", "y"}``, ``{"type": "scroll", "x", "y", "dx", "dy"}``,
+    ``{"type": "text", "text"}`` and ``{"type": "key", "key"}`` in the page's CSS pixels, while a watching one is
+    closed by anything it's sent. It closes 4000 after 15 minutes (open a new view to go on); 4401 (the token was
+    used, lapsed or its key ended), 4404, 4409 (a control view's browser was handed back), 4410 (the browser closed)
+    and 1008 are final. The TypeScript SDK's ``Browser.view`` does all of this in a page."""
+
+    _repr_keys = ("browser_id", "control", "thumb")
+
+    browser_id: str = field("browser_id")
+    control: bool = field("control", doc="Whether it drives the browser, not only watches it.")
+    thumb: bool = field("thumb", doc="Smaller pictures, at most two a second, for a tile.")
+    url: str = field("url", doc="The view's websocket.")
+    token: str = field("token", doc="Opens ``url`` once, within two minutes: its first message's ``token``.")
+    token_expires_at: Any = field("token_expires_at", parse_time)
+
+    @classmethod
+    def _of(cls, raw: Dict[str, Any], *, client: Any, user: Any) -> "BrowserLiveView":
+        return cls._new(raw=raw, client=client, user=user)
+
+
 class Browser(_Object):
     """A running browser. ``with noclick.Browser.create() as browser:`` closes it on
     exit; otherwise it closes at ``expires_at``. Billed per minute while it runs,
@@ -863,6 +888,29 @@ class Browser(_Object):
                 browser.hand_back()
         """
         self._raw = await self._request("POST", f"{self._path()}/hand_back")
+
+    @synced
+    async def live_view(self, *, control: bool = False, thumb: bool = False) -> BrowserLiveView:
+        """The browser live, for a page of your own: a ``BrowserLiveView`` whose single-use ``token`` opens its
+        ``url`` once, within two minutes. Hand both to the page from your server (the TypeScript SDK's
+        ``Browser.view`` connects with them). ``thumb``: smaller pictures for a tile. ``control``: a view that drives
+        the browser, once you've taken it over (``take_over``); it ends when it's handed back. Your account's keys and
+        its signed-in owner get one; an MCP connection, an agent's turn and an app's code don't.
+
+        Returns:
+            The view: its ``url`` and its ``token``, good once, within two minutes.
+
+        Usage::
+
+            browser.take_over()
+            view = browser.live_view(control=True)
+            send_to_page(view.url, view.token)   # within two minutes
+        """
+        if control and thumb:
+            raise ValueError("A view that drives the browser shows it full size: leave out thumb.")
+        raw = await self._request("POST", f"{self._path()}/live_control") if control else \
+            await self._request("POST", f"{self._path()}/live_view", json={"thumb": thumb})
+        return BrowserLiveView._of(raw, client=self._client, user=self._call_scope())
 
     @synced
     async def close(self) -> None:

@@ -145,6 +145,10 @@ export type {
   CardUpdateOptions,
 } from "./card.ts";
 export { Browser, BrowserLogin, BrowserProfile } from "./browser.ts";
+export { BROWSER_VIEW_CLOSE, BrowserLiveView, BrowserViewConnection } from "./browserView.ts";
+export type {
+  BrowserViewConnectOptions, BrowserViewInput, BrowserViewOptions, BrowserViewport, BrowserViewState,
+} from "./browserView.ts";
 export type {
   ActResult, BrowserActOptions, BrowserActStep, BrowserContentFormat, BrowserCreateOptions, BrowserDownload,
   BrowserStatus, BrowserWaitingOn, BrowserWatchedStep, PageState, SiteLogin,
