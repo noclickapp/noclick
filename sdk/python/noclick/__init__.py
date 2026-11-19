@@ -128,8 +128,8 @@ from .phone_number import (
 from .policy import Policy, PolicyVerdict, Rule
 from .project import (
     AnalyticsSummary, AppRequests, Binding, CheckReview, Deployment, DeploymentCheck, LogLine, LogLines, PathCheck,
-    PathTraffic, PreviewLink, Project, ProjectAI, ProjectAnalytics, ProjectSecrets, ProjectSettings, ProjectUsage,
-    RequestOutcomes, RouteTiming, Schedule, TrafficInterval, DurableObjectClass, DurableObjectClasses,
+    PathTraffic, PreviewLink, Project, ProjectAI, ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings,
+    ProjectUsage, RequestOutcomes, RouteTiming, Schedule, TrafficInterval, DurableObjectClass, DurableObjectClasses,
     DurableObjectInstance,
 )
 from .queues import Queue, QueueDepth, QueueMessage
@@ -208,7 +208,7 @@ __all__ = [
     "ProjectSecrets", "ProjectSettings", "ProjectAI", "Binding", "LogLine",
     "LogLines", "ProjectUsage", "DeploymentCheck", "PathCheck", "CheckReview", "RequestOutcomes", "RouteTiming",
     "ProjectAnalytics", "TrafficInterval", "PathTraffic", "AnalyticsSummary", "AppRequests", "PreviewLink",
-    "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",
+    "ProjectContainer", "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",
     "ProjectLive", "LiveStatus", "LiveSession", "LiveEditCounts", "LiveDataCopy", "LiveEdit", "LiveEdits",
     "LiveExecResult", "LiveEnterLink", "LiveEnd",
     "Repo", "Commit", "CommitDiff", "FileChange", "Branch", "RepoBackup", "RepoFile", "RepoCheckout", "RepoImport",

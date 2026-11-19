@@ -57,6 +57,30 @@ def test_an_estimate_sends_the_items_and_reads_every_line(api, client):
     assert est.lines[1].unit == "million runs" and est.lines[1].raw["usage_fields"] == ["requests", "code_share"]
 
 
+def test_a_container_app_is_priced_at_its_settings_with_what_its_warm_instances_cost_idle(api, client):
+    note = "1 instance kept warm while production serves it: about $49.93 a month even with nothing calling it."
+    settings = {"cpu": 1.0, "memory": 512, "min_instances": 1, "max_instances": 10, "cpu_always": True,
+                "request_timeout_s": 300}
+    bot = {"kind": "project", "label": "App in a container", "name": "bot", "assumed": ["region"],
+           "options": {"runtime": "container", "region": "us-east", "framework": None, "container": settings},
+           "usage": {"requests": 10000.0}, "monthly_usd": 50.06, "idle_usd_per_month": 49.93, "note": note,
+           "lines": [{**LINE, "charge": "warm_instances", "unit": "instance-month", "unit_usd": 49.93,
+                      "quantity": 1.0, "usd": 49.93, "assumed": False, "usage_fields": []}],
+           "not_included": []}
+    route = api.post("/v1/estimates").respond(json={**ESTIMATE, "monthly_usd": 50.06, "items": [bot]})
+    items = [{"kind": "project", "runtime": "container", "name": "bot",
+              "container": {"cpu_always": True, "min_instances": 1}}]
+    [item] = nc.estimate(items).items
+    assert body(route.calls.last.request) == {"items": items}
+    assert (item.idle_usd_per_month, item.note, item.options["container"]) == (49.93, note, settings)
+    assert [line.charge for line in item.lines] == ["warm_instances"]
+
+    # Any other item has neither.
+    route.respond(json=ESTIMATE)
+    site = nc.estimate([{"kind": "project"}]).items[0]
+    assert (site.idle_usd_per_month, site.note) == (None, None)
+
+
 def test_an_estimate_for_a_user_says_who_and_names_no_plan(api, client):
     route = api.post("/v1/estimates").respond(json={**ESTIMATE, "plan": None, "included_usd_per_month": None})
     with nc.as_user("user_42"):

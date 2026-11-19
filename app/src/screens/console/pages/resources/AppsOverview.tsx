@@ -1,5 +1,6 @@
 // The Apps drawer's Overview, Domains and Logs tabs: what the app is, what a push deploys and who opens its previews
-// (each a PATCH, with a link to make for a private preview and a way to stop every link made), and what it spent
+// (each a PATCH, with a link to make for a private preview and a way to stop every link made), how each instance runs
+// in a container (`AppsContainer`), and what it spent
 // this month against its budget (with what stops its paid calls, and a budget
 // dialog); the domains that serve it, added (with the records a connected one
 // needs) and removed; and the lines it printed while serving.
@@ -21,6 +22,7 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
+import { AppContainer } from './AppsContainer';
 import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, NOT_DEPLOYED, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel } from './AppsFormat';
 import { AppsLogLines, AppUrl, BranchName, Choice, PreviewLinkMaker } from './AppsParts';
 import { DnsRecordList, domainLook, sourceLabel } from './DomainsParts';
@@ -320,6 +322,7 @@ export function AppOverview({ project, usage }: { project: Project; usage: AppUs
             </dl>
             {repoId !== null && <DeployOnPushSetting project={project} />}
             {repoId !== null && <PreviewAccessSetting project={project} />}
+            {repoId !== null && <AppContainer project={project} />}
             <Usage project={project} usage={usage} />
         </div>
     );

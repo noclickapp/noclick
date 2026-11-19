@@ -119,12 +119,12 @@ export { Deployment, DurableObjectClass, Project, ProjectAI, ProjectSecrets, Pro
 export type {
   AnalyticsPeriod, AnalyticsSummary, AppRequests, BadgeCorner, Bindable, Binding, BindingKind, CheckCookie, CheckPath,
   DurableObjectClasses, DurableObjectInstance,
-  CheckRequest, CheckReview, ConsoleError, DeployOnPush, DeploymentCheck, DeploymentCheckOptions,
+  CheckRequest, CheckReview, ConsoleError, ContainerSettings, DeployOnPush, DeploymentCheck, DeploymentCheckOptions,
   DeploymentDatabase, DeploymentEnvironment, DeploymentFix, DeploymentRuntime, DeploymentStatus, LogLine, LogLines,
   PathCheck, PathTraffic,
   PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
   ProjectLogsOptions,
-  ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
+  ProjectContainer, ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";
 export { ProjectEmail, ProjectPayments, ProjectSignIn } from "./appServices.ts";
 export { ProjectLive } from "./live.ts";
