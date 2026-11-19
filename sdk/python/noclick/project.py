@@ -513,8 +513,8 @@ class Deployment(_Object):
         "runtime", doc="Where it runs: ``edge`` or ``container``, chosen when its build starts (None until then).",
     )
     runtime_reason: Optional[str] = field(
-        "runtime_reason", doc="Why it runs there, in words: the app's pinned runtime, or what its commit has "
-        "(``a Dockerfile describes its server``).",
+        "runtime_reason", doc="Why it runs there, in words: the app's pinned runtime, or what its commit has, its "
+        "own scripts named (``the app's own Dockerfile describes its server, built as it's written``).",
     )
     created_at: Any = field("created_at", parse_time)
     ready_at: Any = field("ready_at", parse_time)

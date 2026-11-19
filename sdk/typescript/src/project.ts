@@ -632,7 +632,10 @@ export class Deployment extends ApiObject {
   get runtime(): DeploymentRuntime | null {
     return this._field("runtime");
   }
-  /** Why it runs there, in words: the app's pinned runtime, or what its commit has ("a Dockerfile describes its server"). */
+  /**
+   * Why it runs there, in words: the app's pinned runtime, or what its commit has, its own scripts named ("the app's
+   * own Dockerfile describes its server, built as it's written").
+   */
   get runtimeReason(): string | null {
     return this._field("runtime_reason");
   }
