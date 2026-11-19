@@ -846,8 +846,9 @@ class Database(_Object):
     async def delete(self) -> TrashItem:
         """Delete the database and its data: it goes to the trash, restorable for 30 days (its storage billed
         until it's purged), and its connection URLs stop working. One with branches raises
-        ``noclick.Conflict`` naming them until you delete them, as does one an app
-        still binds or an agent has in its tools.
+        ``noclick.Conflict`` naming them until you delete them, as does one an agent has in its tools.
+        One an app binds goes to the trash too: the app keeps its binding, reaching nothing until you
+        restore the database.
 
         Returns:
             Its ``TrashItem``: ``restore()`` puts it back, tables and rows with it.

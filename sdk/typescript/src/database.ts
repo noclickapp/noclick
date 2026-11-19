@@ -461,8 +461,9 @@ export class Database extends ApiObject {
 
   /**
    * Delete the database and its data: it goes to the trash, restorable for 30 days, and its
-   * connection URLs stop working. One with branches, an app's binding or an agent's tool throws
-   * `Conflict`. Returns its `TrashItem`.
+   * connection URLs stop working. One with branches or in an agent's tools throws `Conflict`. One an
+   * app binds goes to the trash too: the app keeps its binding, reaching nothing until you restore
+   * the database. Returns its `TrashItem`.
    */
   async delete(): Promise<TrashItem> {
     return trashed(await this._request("DELETE", await this.route()), this);
