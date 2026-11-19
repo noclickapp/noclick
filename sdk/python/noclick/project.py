@@ -312,8 +312,9 @@ class ProjectContainer:
     """How each instance of an app runs in a container, and what its warm instances cost: the ``cpu`` and
     ``memory`` each instance gets, how many are kept running (``min_instances``) and how many it may grow to
     (``max_instances``), whether its CPU runs between requests too (``cpu_always``), and how long a request may take
-    (``request_timeout_s``). Changed with ``update(container=...)``, they apply from the app's next release (a deploy,
-    or a promote). An app on the edge has them too: they size its releases in a container."""
+    (``request_timeout_s``). Changed with ``update(container=...)``, ``min_instances`` applies at once, to the release
+    production serves; the rest from the app's next release (a deploy, or a promote). An app on the edge has them
+    too: they size its releases in a container."""
 
     #: vCPUs per instance: 0.5 to 8 (1, 2, 4, 6 or 8; under 1 in steps of 0.01, where each instance answers one
     #: request at a time). 1 unless set.
@@ -1592,7 +1593,8 @@ class Project(_Object):
         "container", ProjectContainer._from, doc="How each of its instances runs in a container (``cpu``, "
         "``memory``, ``min_instances``, ``max_instances``, ``cpu_always``, ``request_timeout_s``), and what its warm "
         "instances cost a month with nothing calling it (``idle_usd_per_month``, with a ``note`` in words). Set with "
-        "``create`` or ``update``; each release runs at the settings it was released with.",
+        "``create`` or ``update``: each release runs at the settings it was released with, but production keeps "
+        "``min_instances`` warm as it stands.",
     )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
@@ -2070,10 +2072,10 @@ class Project(_Object):
         says each one's bounds). A new repo, runtime, framework, branch or container settings apply
         from the next release (a deploy, or for container settings a promote of what production
         serves; the answer's ``raw["notes"]`` say so), and what's live keeps serving as it runs until
-        then; the rest apply at once. A container setting out of bounds raises
-        ``noclick.InvalidRequest`` naming it (``container.memory``), and so do warm instances whose
-        cost alone passes the app's budget (``container.min_instances``, with their
-        ``idle_usd_per_month``). An app with code always has a budget: ``budget_usd_per_month=None``
+        then; the rest apply at once, ``container``'s ``min_instances`` included. A container
+        setting out of bounds raises ``noclick.InvalidRequest`` naming it (``container.memory``),
+        and so do warm instances whose cost alone passes the app's budget
+        (``container.min_instances``, with their ``idle_usd_per_month``). An app with code always has a budget: ``budget_usd_per_month=None``
         raises ``noclick.InvalidRequest`` (only an app NoClick publishes may have none). Its user's
         cap still applies either way. Pinning a runtime the app's framework doesn't run on raises
         ``noclick.InvalidRequest``: change the framework with it.

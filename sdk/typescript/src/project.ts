@@ -343,7 +343,8 @@ function toPreviewLink(value: unknown): PreviewLink {
 
 /**
  * How each instance of an app runs in a container, by name, as `Project.create` and `update` take it: each one left
- * out is the default (in `update`, keeps its value). Applies from the app's next release.
+ * out is the default (in `update`, keeps its value). `minInstances` applies at once, the rest from the app's next
+ * release.
  */
 export interface ContainerSettings {
   /** vCPUs per instance: 0.5 to 8 (1, 2, 4, 6 or 8; under 1 in steps of 0.01, where each instance answers one request at a time). 1 unless set. */
@@ -368,8 +369,9 @@ export interface ContainerSettings {
 
 /**
  * How each instance of an app runs in a container (`ContainerSettings`, each one set), and what its warm instances cost.
- * Changed with `update({ container })`, they apply from the app's next release (a deploy, or a promote). An app on
- * the edge has them too: they size its releases in a container.
+ * Changed with `update({ container })`, `minInstances` applies at once, to the release production serves; the rest
+ * from the app's next release (a deploy, or a promote). An app on the edge has them too: they size its releases in a
+ * container.
  */
 export interface ProjectContainer {
   /** vCPUs per instance. */
@@ -1689,7 +1691,8 @@ export class Project extends ApiObject {
   /**
    * How each of its instances runs in a container (`cpu`, `memory`, `minInstances`, `maxInstances`, `cpuAlways`,
    * `requestTimeoutS`), and what its warm instances cost a month with nothing calling it (`idleUsdPerMonth`, with a
-   * `note` in words). Set with `create` or `update`; each release runs at the settings it was released with.
+   * `note` in words). Set with `create` or `update`: each release runs at the settings it was released with, but
+   * production keeps `minInstances` warm as it stands.
    */
   get container(): ProjectContainer {
     return toProjectContainer(this._field("container"));
@@ -1787,8 +1790,9 @@ export class Project extends ApiObject {
    * (`container`, `ContainerSettings`: a setting left out keeps its value, another app's `container` gives its
    * settings, and `null` sets every one back to its default). A new repo, runtime, framework, branch or container
    * settings apply from the next release (a deploy, or for container settings a promote of what production serves;
-   * the answer's `raw.notes` say so), and what's live keeps serving as it runs until then; the rest apply at once; its
-   * user's cap still applies either way. A field you leave out is unchanged. Pinning a runtime the app's framework
+   * the answer's `raw.notes` say so), and what's live keeps serving as it runs until then; the rest apply at once,
+   * `container`'s `minInstances` included; its user's cap still applies either way. A field you leave out is
+   * unchanged. Pinning a runtime the app's framework
    * doesn't run on throws `InvalidRequest`: change the framework with it. A container setting out of bounds throws
    * `InvalidRequest` naming it (`container.memory`), and so do warm instances whose cost alone passes the app's budget
    * (`container.min_instances`, with their `idle_usd_per_month`).

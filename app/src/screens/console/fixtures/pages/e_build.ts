@@ -625,8 +625,26 @@ const MEMORY_BY_CPU: Record<number, [number, number]> = { 1: [512, 4096], 2: [51
 const IDLE_USD_PER_S = { cpu: 0.0000025, gib: 0.0000025 };
 const ALWAYS_USD_PER_S = { cpu: 0.000018, gib: 0.000002 };
 const MONTH_S = 730 * 3600;
-const SETTINGS_APPLY =
-    'Its container settings apply from its next release: each release in a container runs at the settings it was released with. Deploy, or promote what production serves, to apply them now.';
+/** What a PATCH of container settings says applied when: the warm instances at once, the rest from the next release. */
+function settingsNotes(before: ContainerSettings, after: ContainerSettings, production: boolean): string[] {
+    const notes: string[] = [];
+    if (before.min_instances !== after.min_instances) {
+        const n = after.min_instances;
+        notes.push(
+            production
+                ? `min_instances applied now: production's release keeps ${n} instance${n === 1 ? '' : 's'} warm.`
+                : 'min_instances applies as soon as production serves a release in a container.'
+        );
+    }
+    const rest = CONTAINER_NAMES.filter((name) => name !== 'min_instances' && before[name] !== after[name]);
+    if (rest.length) {
+        const named = rest.length === 1 ? rest[0] : `${rest.slice(0, -1).join(', ')} and ${rest[rest.length - 1]}`;
+        notes.push(
+            `${named} ${rest.length === 1 ? 'applies' : 'apply'} from its next release: each release in a container runs at the settings it was released with. Deploy, or promote what production serves, to apply them now.`
+        );
+    }
+    return notes;
+}
 
 /** What the warm instances of `s` cost a month with nothing calling the app, in dollars. */
 function idleUsd(s: ContainerSettings): number {
@@ -946,9 +964,13 @@ function projectRefusal(runtime: string, body: Json): FixtureReply | null {
 /**
  * `app` after a PATCH of `body`, as the API answers it: its fields changed, and its container settings merged over its
  * own (null: back to the defaults), refused by the setting out of bounds or when keeping its instances warm would
- * cost more than its budget, and priced, the answer's notes saying they apply from its next release.
+ * cost more than its budget, and priced, the answer's notes saying its warm instances applied now (when production
+ * serves a release) and the rest apply from its next release.
  */
-export function patchApp(app: { region: string; runtime: string; budget_usd_per_month: number | null; container: Json }, body: Json): FixtureReply {
+export function patchApp(
+    app: { region: string; runtime: string; budget_usd_per_month: number | null; container: Json; production?: unknown },
+    body: Json
+): FixtureReply {
     if (body.region != null && body.region !== app.region) {
         return apiError(409, 'conflict', `The app runs in ${app.region}, fixed when it was created.`, 'Create another app in that region, or leave region out.', { region: app.region });
     }
@@ -971,7 +993,8 @@ export function patchApp(app: { region: string; runtime: string; budget_usd_per_
             { field: 'container.min_instances', idle_usd_per_month: idle }
         );
     }
-    return ok({ ...app, ...rest, container: containerView(merged, runtime), notes: [SETTINGS_APPLY] });
+    const notes = runtime === 'edge' ? [] : settingsNotes(settingsIn(app.container), merged, app.production != null);
+    return ok({ ...app, ...rest, container: containerView(merged, runtime), notes });
 }
 
 /** A link opening the newest serving preview of `app` (or `branch`'s), as POST /v1/projects/{id}/previews/link answers one. */

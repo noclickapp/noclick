@@ -1,7 +1,8 @@
 // The Apps drawer's container settings: what each instance gets (vCPUs and memory), how many are kept warm and how many
 // it may grow to, whether its CPU runs between requests, and how long a request may take, with what its warm instances
 // cost a month with nothing calling it. Changed in a dialog that sends only what changed, a refusal shown under the
-// setting it names; each release runs at the settings it was released with, so a change applies from the next one.
+// setting it names. The instances kept warm change at once; each release runs at the rest as it was released with them,
+// so a change to those applies from the next one.
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
@@ -16,7 +17,7 @@ import type { ChoiceOption } from './AppsFormat';
 import { Choice } from './AppsParts';
 import { Field, INPUT, Section } from './shared';
 
-const APPLIES = 'Each release runs at the settings it was released with, so a change applies from the next deploy, or a promote of what production serves.';
+const APPLIES = 'Kept warm changes at once. The rest apply from the next deploy, or a promote of what production serves: each release runs at the settings it was released with.';
 /** What the API says of an app pinned to the edge whose settings are changed; said here of one whose aren't too. */
 const ON_THE_EDGE = "Its releases run on the edge, where these don't apply: they size its releases in a container.";
 
