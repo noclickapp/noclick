@@ -61,11 +61,15 @@ test("a deploy says whether its code answered and what a preview writes to", asy
 
   api.on("GET", "/v1/operations/op_d/wait", json(operation({
     id: "op_d", kind: "project.deploy", status: "succeeded",
-    result: { ...DEPLOYMENT, warning: "It's live, but https://booking.noclick.site/api/health answered 500, not 200." },
+    result: {
+      ...DEPLOYMENT, warning: "It's live, but https://booking.noclick.site/api/health answered 500, not 200.",
+      next_step: "Read the app's runtime log, fix the cause, then deploy again.",
+    },
   })));
   const live = await (await nc.Project.fromId("prj_1").deploy()).wait();
   assert.ok(live.warning?.endsWith("answered 500, not 200."));
-  assert.deepEqual([live.codeUnchecked, live.previewData], [null, null]);
+  assert.equal(live.nextStep, "Read the app's runtime log, fix the cause, then deploy again.");
+  assert.deepEqual([live.codeUnchecked, live.previewData, preview.nextStep], [null, null, null]);
 
   // A deployment read later names where it serves, and a promoted preview serves both.
   api.on("GET", "/v1/deployments/dep_3", json({

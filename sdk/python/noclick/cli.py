@@ -492,16 +492,17 @@ def cmd_users_create(args: argparse.Namespace) -> int:
 def cmd_ops_wait(args: argparse.Namespace) -> int:
     op = Operation.from_id(args.operation_id)
     op.wait(timeout=args.timeout)  # raises the operation's error, or OperationTimeout
+    result = op.result
     if args.json:
         _print_json(op)
-        return 0
-    _note(f"{op.kind} {op.status}")
-    result = op.result
-    if isinstance(result, dict) and isinstance(result.get("text"), str):
-        print(result["text"])
-    elif result is not None:
-        print(json.dumps(result, indent=2, default=str))
-    return 0
+    else:
+        _note(f"{op.kind} {op.status}")
+        if isinstance(result, dict) and isinstance(result.get("text"), str):
+            print(result["text"])
+        elif result is not None:
+            print(json.dumps(result, indent=2, default=str))
+    # A deploy that went live but failed its check exits as a failure: the result says what to fix.
+    return 1 if op.kind == "project.deploy" and isinstance(result, dict) and _said_deployment(result) else 0
 
 
 # --- databases and storage -------------------------------------------------------
@@ -771,8 +772,25 @@ def cmd_deploy(args: argparse.Namespace) -> int:
                 _note(f"  {line.message}")
         raise
     print(deployment.url)
-    _note(f"Ready: {'production' if deployment.production else 'a preview of ' + branch}.")
+    where = "production" if deployment.production else "a preview of " + branch
+    if _said_deployment(deployment.raw):
+        _note(f"Live, but not working: {where} stays deployed (nothing was rolled back).")
+        return 1
+    _note(f"Ready: {where}.")
     return 0
+
+
+def _said_deployment(result: Dict[str, Any]) -> bool:
+    """Say what a deploy's look at its release found (its result as the operation gave it: a deployment read later
+    carries none of it); whether its check failed (a ``warning``: it's live but not working)."""
+    if result.get("warning"):
+        _note(f"warning: {result['warning']}")
+        if result.get("next_step"):
+            _note(f"  next step: {result['next_step']}")
+        return True
+    if result.get("code_unchecked"):
+        _note(f"note: {result['code_unchecked']}")
+    return False
 
 
 def cmd_logs(args: argparse.Namespace) -> int:
@@ -1458,6 +1476,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     deploy = command(commands, "deploy", cmd_deploy, "Push the commit you're on and deploy it.",
                      parents=[user])
+    deploy.epilog = ("Once live, its home page and the app's check paths are loaded. When they fail (an error page, a "
+                     "redirect to another site, scripts that don't load), it prints the URL, the warning and what to "
+                     "fix, and exits 1: the deployment stays live.")
     deploy.add_argument("project", nargs="?", help="The app to deploy (default: the checkout's folder name).")
     deploy.add_argument("--app", help="The app to deploy, as a flag: the same as the argument.")
     deploy.add_argument("--branch", help="The branch to push and deploy (default: your current one).")
@@ -1514,6 +1535,7 @@ def build_parser() -> argparse.ArgumentParser:
     ops = group("ops", "Wait on operations.")
     wait = command(ops, "wait", cmd_ops_wait, "Wait for an operation to finish and print its result.",
                    parents=[as_json])
+    wait.epilog = "A deploy that went live but failed its check (its result's warning) exits 1."
     wait.add_argument("operation_id")
     wait.add_argument("--timeout", type=float, metavar="SECONDS", help="Give up after this long (exit 124).")
     return parser

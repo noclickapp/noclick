@@ -557,6 +557,39 @@ def test_deploy_pushes_the_commit_then_deploys_it(home, api, monkeypatch, capsys
     assert "Pushed 3f2a1c9 to main." in out.err and "Ready: production." in out.err
 
 
+WARNED = {**DEPLOYMENT, "warning": "It's live, but https://booking.noclick.site/ answered 404: there's no home page.",
+          "next_step": "Publish the folder holding index.html, then deploy again."}
+
+
+def test_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home, api, monkeypatch, capsys):
+    """The CLI once printed the URL and "Ready" and exited 0 for a site whose / answered 404 (2026-11-19)."""
+    monkeypatch.setattr(cli, "_git", FakeGit())
+    api.get("/v1/projects").respond(json=listing(PROJECT))
+    api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://x:tok_9@git.noclick.test/booking.git"})
+    deploy = api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
+        "op_d", kind="project.deploy", status="succeeded", result=WARNED))
+    assert run("deploy") == 1
+    out = capsys.readouterr()
+    assert out.out == "https://booking.noclick.site\n"  # it's live: its URL still goes to stdout
+    assert f"warning: {WARNED['warning']}" in out.err and f"next step: {WARNED['next_step']}" in out.err
+    assert "Live, but not working: production stays deployed" in out.err and "Ready" not in out.err
+
+    # Its code never ran: said, and not a failure.
+    unchecked = {**DEPLOYMENT, "code_unchecked": "Static files answered every path asked."}
+    deploy.respond(202, json=operation("op_e", kind="project.deploy", status="succeeded", result=unchecked))
+    assert run("deploy") == 0
+    err = capsys.readouterr().err
+    assert "note: Static files answered every path asked." in err and "Ready: production." in err
+
+    # Waited on later, the same.
+    api.get("/v1/operations/op_d/wait").respond(json=operation(
+        "op_d", kind="project.deploy", status="succeeded", result=WARNED))
+    assert run("ops", "wait", "op_d") == 1
+    assert f"next step: {WARNED['next_step']}" in capsys.readouterr().err
+    assert run("ops", "wait", "op_d", "--json") == 1
+    assert json.loads(capsys.readouterr().out)["result"]["warning"] == WARNED["warning"]
+
+
 def test_deploy_with_a_deploy_token_signs_in_with_it_alone(home, api, monkeypatch, capsys):
     monkeypatch.delenv("NOCLICK_API_KEY")  # an agent's shell: no key, no login
     monkeypatch.setattr(cli, "_git", FakeGit())

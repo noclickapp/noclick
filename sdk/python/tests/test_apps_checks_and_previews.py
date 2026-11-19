@@ -60,10 +60,12 @@ def test_a_deploy_says_whether_its_code_answered_and_what_a_preview_writes_to(ap
 
     api.get("/v1/operations/op_d/wait").respond(json=operation(
         op_id="op_d", kind="project.deploy", status="succeeded", result={
-            **DEPLOYMENT, "warning": "It's live, but https://booking.noclick.site/api/health answered 500, not 200."}))
+            **DEPLOYMENT, "warning": "It's live, but https://booking.noclick.site/api/health answered 500, not 200.",
+            "next_step": "Read the app's runtime log, fix the cause, then deploy again."}))
     live = nc.Project.from_id("prj_1").deploy().wait()
     assert live.warning.endswith("answered 500, not 200.") and live.code_unchecked is None
-    assert live.preview_data is None
+    assert live.next_step == "Read the app's runtime log, fix the cause, then deploy again."
+    assert live.preview_data is None and preview.next_step is None
 
     # A deployment read later names where it serves, and a promoted preview serves both.
     api.get("/v1/deployments/dep_3").respond(json={

@@ -612,13 +612,22 @@ export class Deployment extends ApiObject {
     return this._field("serves") ?? null;
   }
   /**
-   * On the deployment a deploy's `wait()` gives: it went live, but a page answered 500 or more, one of the app's
-   * `checkPaths` answered other than it asks, or nothing answered, with the error the app logged then. It stays live
-   * (nothing is rolled back): read the app's runtime log, fix the cause and deploy again. Null when everything asked
-   * answered as asked, and on a deployment read later.
+   * On the deployment a deploy's `wait()` gives: it went live, but its home page didn't load as a visitor's browser
+   * would (an answer other than 2xx, a redirect to another site, a script or stylesheet it names that doesn't load as
+   * one), another page answered 500 or more, one of the app's `checkPaths` answered other than it asks, or nothing
+   * answered, with the error the app logged then. A site of files with no `index.html` gets one too, though it may
+   * mean to serve only its files. It stays live (nothing is rolled back): `nextStep` says what to fix. Null when
+   * everything asked answered as asked, and on a deployment read later.
    */
   get warning(): string | null {
     return this._field("warning") ?? null;
+  }
+  /**
+   * On the deployment a deploy's `wait()` gives, beside its `warning`: what to fix, then deploy again. Null
+   * otherwise.
+   */
+  get nextStep(): string | null {
+    return this._field("next_step") ?? null;
   }
   /**
    * On the deployment a deploy's `wait()` gives: its static files answered every path asked, so its server code
@@ -1571,11 +1580,11 @@ export class Project extends ApiObject {
   /**
    * Build and deploy `branch` (the production branch when omitted) at its head, or at `commit`.
    * `wait()` resolves to the `ready` `Deployment`; a failed build rejects with `OperationFailed`,
-   * whose `details.deployment_id` names the deployment to read the build log of. A release that runs
-   * code is asked for its home page and the app's `checkPaths` once it serves: one that answers wrong
-   * stays live, and the deployment's `warning` says what answered; `codeUnchecked` says when its static
-   * files answered every path, so its code never ran. A preview of an app whose `previewResources` is
-   * `branch` says what it writes to in `previewData`.
+   * whose `details.deployment_id` names the deployment to read the build log of. Every release is asked
+   * for its home page (its scripts and stylesheets too) and the app's `checkPaths` once it serves: one
+   * that answers wrong stays live, the deployment's `warning` says what answered and its `nextStep` what
+   * to fix; `codeUnchecked` says when its static files answered every path, so its code never ran. A
+   * preview of an app whose `previewResources` is `branch` says what it writes to in `previewData`.
    */
   async deploy(options: { branch?: string; commit?: string } = {}): Promise<Operation<Deployment>> {
     const payload = await this._request("POST", await this._projectPath("deployments"), {

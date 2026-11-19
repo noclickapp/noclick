@@ -494,10 +494,17 @@ class Deployment(_Object):
         "it was built for.",
     )
     warning: Optional[str] = field(
-        "warning", doc="On the deployment a deploy's ``wait()`` gives: it went live, but a page answered 500 or "
-        "more, one of the app's ``check_paths`` answered other than it asks, or nothing answered, with the error the "
-        "app logged then. It stays live (nothing is rolled back): read the app's runtime log, fix the cause and deploy "
-        "again. None when everything asked answered as asked, and on a deployment read later.",
+        "warning", doc="On the deployment a deploy's ``wait()`` gives: it went live, but its home page didn't load as "
+        "a visitor's browser would (an answer other than 2xx, a redirect to another site, a script or stylesheet it "
+        "names that doesn't load as one), another page answered 500 or more, one of the app's ``check_paths`` "
+        "answered other than it asks, or nothing answered, with the error the app logged then. A site of files with "
+        "no ``index.html`` gets one too, though it may mean to serve only its files. It stays live (nothing is rolled "
+        "back): ``next_step`` says what to fix. None when everything asked answered as asked, and on a deployment "
+        "read later.",
+    )
+    next_step: Optional[str] = field(
+        "next_step", doc="On the deployment a deploy's ``wait()`` gives, beside its ``warning``: what to fix, then "
+        "deploy again. None otherwise.",
     )
     code_unchecked: Optional[str] = field(
         "code_unchecked", doc="On the deployment a deploy's ``wait()`` gives: its static files answered every path "
@@ -1943,9 +1950,10 @@ class Project(_Object):
         """Build and deploy ``branch`` (the production branch when omitted) at
         its head, or at ``commit``. A deploy of the production branch goes live
         at ``url`` once it's ready; any other branch is a preview with a URL of
-        its own. A release that runs code is asked for its home page and the
-        app's ``check_paths`` as soon as its URL serves it: one that answers
-        wrong stays live, and the deployment's ``warning`` says what answered.
+        its own. Every release is asked for its home page (its scripts and
+        stylesheets too) and the app's ``check_paths`` as soon as its URL
+        serves it: one that answers wrong stays live, the deployment's
+        ``warning`` says what answered and its ``next_step`` what to fix.
         When its static files answer every path asked, its code is asked at a
         path no file answers too; ``code_unchecked`` says when nothing asked
         could reach its code. A preview of an app whose
@@ -1954,7 +1962,7 @@ class Project(_Object):
 
         Returns:
             An operation whose ``.wait()`` gives the ``Deployment``, ``ready``, with its ``warning``,
-            ``code_unchecked`` and ``preview_data``. A failed build raises ``noclick.OperationFailed``, whose
+            ``next_step``, ``code_unchecked`` and ``preview_data``. A failed build raises ``noclick.OperationFailed``, whose
             ``deployment_id`` names the deployment to read the build log of.
 
         Usage:
@@ -1963,8 +1971,8 @@ class Project(_Object):
                 app = noclick.Project.from_name("booking")
                 deployment = app.deploy().wait()
                 print(deployment.url, deployment.commit)
-                if deployment.warning or deployment.code_unchecked:
-                    print(deployment.warning or deployment.code_unchecked)
+                if deployment.warning:
+                    print(deployment.warning, deployment.next_step)   # live, but not working
 
             Deploy a branch as a preview, and read the build log when it fails::
 
