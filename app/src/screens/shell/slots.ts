@@ -10,6 +10,7 @@ import type { ShellPageId } from './pages';
 import type { Cmd } from './palette/layout';
 import type { PaletteScope } from './palette/open';
 import type { HoldingPage, PaletteEntry } from './palette/sources';
+import { FeedbackAround, FeedbackMenuItem } from './feedback';
 import { AccountName, accountOnApp, paletteOnApp } from './slotStandards';
 
 // ── the sidebar ─────────────────────────────────────────────────────────────
@@ -49,15 +50,17 @@ export const ACCOUNT_SWITCH = slot<AccountMenuSwitch | null>('shell.account.swit
 /** The account menu's billing rows, under its header. Nothing stands there. */
 export const ACCOUNT_BILLING = slot<ComponentType | null>('shell.account.billing', null);
 
-/** The account menu's rows of the host's own, above Community (a support chat). Nothing stands there. */
-export const ACCOUNT_ITEMS = slot<ComponentType | null>('shell.account.items', null);
+/** The account menu's rows of the host's own, above Community (a support chat). The standard sends NoClick feedback
+ *  through the platform API (feedback.tsx). */
+export const ACCOUNT_ITEMS = slot<ComponentType | null>('shell.account.items', FeedbackMenuItem);
 
 /** The account menu's last rows, for the host's own people (its staff's tools); `go` opens one of its pages. Nothing
  *  stands there. */
 export const ACCOUNT_STAFF = slot<ComponentType<{ go: (page: string) => void }> | null>('shell.account.staff', null);
 
-/** Around the account row: what opens over it (a way to send the host feedback). Nothing stands there. */
-export const ACCOUNT_AROUND = slot<ComponentType<{ children: ReactNode }> | null>('shell.account.around', null);
+/** Around the account row: what opens over it (a way to send the host feedback). The standard holds the feedback
+ *  dialog the menu's row opens, so it stays open once the menu has closed. */
+export const ACCOUNT_AROUND = slot<ComponentType<{ children: ReactNode }> | null>('shell.account.around', FeedbackAround);
 
 // ── the frame ───────────────────────────────────────────────────────────────
 
