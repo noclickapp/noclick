@@ -220,6 +220,19 @@ describe('the developer console, under the production server', () => {
         expect(page.headers.get('x-frame-options')).toBe('DENY');
     });
 
+    it('draws the home, the chat, Work and Resources in the app’s frame, and the console in its own', async () => {
+        const cookie = await signedInCookie();
+        for (const path of ['/', '/chat', '/work', '/resources?kind=domains']) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain('data-testid="app-sidebar"');
+            expect(page.body, path).toContain('aria-label="Main"');
+        }
+        const developers = await get(configured, '/developers', { headers: { cookie } });
+        expect(developers.status).toBe(200);
+        expect(developers.body).not.toContain('data-testid="app-sidebar"');
+    });
+
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
         for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key']) {

@@ -182,7 +182,7 @@ export function ShellSidebarContent({ user, collapsed, headerEnd, onNavigate, on
     };
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <SidebarHeader collapsed={collapsed} title={<Workspace user={user} />} onSearch={search} end={headerEnd} />
+            <SidebarHeader collapsed={collapsed} title={<Workspace user={user} onNavigate={onNavigate} />} onSearch={search} end={headerEnd} />
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 pb-3 scrollbar-subtle">
                 {builder && (

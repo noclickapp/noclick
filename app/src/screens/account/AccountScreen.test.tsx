@@ -51,7 +51,9 @@ it('shows the account the API answered, read through the client it was handed', 
     );
     expect(rows).toEqual({ Plan: 'Member', 'Left to spend': '$42.50', 'Spent this month': '$7.25 since November 1' });
     expect(screen.getByText('ana@example.com')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Sign out' }).closest('form')?.getAttribute('action')).toBe('/logout');
+    // Its ways out (the pages, the developer console, signing out) are the frame's (screens/shell/AppFrame.test.tsx).
+    expect(screen.queryAllByRole('link')).toEqual([]);
+    expect(screen.queryAllByRole('button')).toEqual([]);
 });
 
 it('says what it can’t read rather than guessing, and names the user a key acts for', async () => {

@@ -2,8 +2,8 @@
 
 NoClick's app: the screens for working with a NoClick account, built only on the TypeScript SDK in
 [`../sdk/typescript`](../sdk/typescript). It runs with your NoClick key on its server, behind a password only you
-know. So far it has your account at a glance, Work, Resources and NoClick's developer console; NoClick's screens
-move in here one at a time.
+know. So far it has your account at a glance, the chat, Work, Resources and NoClick's developer console; NoClick's
+screens move in here one at a time.
 
 ## Configuration
 
@@ -39,8 +39,9 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server; **Chat** on it opens `/chat`, **Work** `/work`, **Resources** `/resources`, and **Developer
-console** the console at `/developers`.
+app's own server. It sits in the app's frame, as `/chat`, `/work` and `/resources` do: a sidebar on a laptop (the
+pages, search, and your account with its menu), a bar with the page's name and a menu on a phone, and ⌘K to go
+anywhere (see [The frame](#the-frame)). **Developers** in the account menu opens the console at `/developers`.
 `scripts/check.sh` at the
 repository's root installs, typechecks, tests and builds the app along with the SDKs, as CI does; the tests need
 neither a key nor the network.
@@ -155,8 +156,8 @@ with none Settings doesn't list it:
 | `settings.popups` | Popups: which of the deployment's popups appear | Nothing, and no section |
 | `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
 
-The app shell's (`src/screens/shell/slots.ts`): the frame and sidebar a page sits in. No route draws it yet; a host
-fills what it keeps in its sidebar and menu:
+The app shell's (`src/screens/shell/slots.ts`): the frame and sidebar a page sits in (see [The frame](#the-frame)).
+A host fills what it keeps in its sidebar and menu:
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -214,7 +215,8 @@ What differs from NoClick's own Resources:
   app reads them, so they appear there alone.
 - Every workflow the key reads is listed, not one workspace's.
 - A workflow is named, not opened: this app has no canvas.
-- No "Ask NoClick", and nothing goes to a command palette.
+- "Ask NoClick" drafts the message in this app's chat, and the ⌘K palette opens any item the page listed, from any
+  page of the frame.
 
 ## Chat
 
@@ -336,8 +338,9 @@ What differs from NoClick's own Work:
 
 - Who is typing is named as the channel's members name them: the change stream says who by id alone.
 - An agent's turns carry the chat's cards, as they draw there (see Chat).
-- "Ask NoClick" drafts the message in this app's chat. No search palette, and no opening a workflow's step: this app
-  has no canvas.
+- "Ask NoClick" drafts the message in this app's chat. Home's Find opens the ⌘K palette, which finds Work's channels,
+  DMs, agents and spaces while Work is open (each moves within Work's address). No opening a workflow's step: this
+  app has no canvas.
 - Connecting an app's account or an AI account opens NoClick's connect page in a new tab, and Work waits for the
   account to land. A tool server (MCP) that asks you to sign in is added on NoClick, or with its key.
 - Adding funds opens NoClick's page for it, and the account's connections open NoClick's. Resources opens this app's.
@@ -360,6 +363,18 @@ channels':
 | `work.file.preview` | An agent's workspace file, previewed | A picture, a recording or text at the link the API signed |
 | `work.address` | Where Work is, for its pieces drawn elsewhere | This app's `/work` |
 | `work.joinedSpace.typing` | Saying you're typing in a space you joined in another account | Through the API, as in your own spaces |
+
+## The frame
+
+The home, `/chat`, `/work` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`, the layout route
+`src/routes/shell.tsx`), the same NoClick's own app draws its pages in. On a laptop: a sidebar that folds to a rail
+(`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the pages this app
+serves (Resources opening onto its kinds), and your account at its foot with its menu (Developers, Community, the
+theme, signing out). On a phone: a bar with the page's name and a menu that opens the same sidebar as a sheet; a page
+puts its own actions and its way back in that bar. ⌘K (or search) opens the palette: the pages, Resources' kinds and
+what Resources and Work handed it, the theme and signing out. Each page is its own route, so the sidebar goes to one
+by its address. The developer console keeps a frame of its own (`src/screens/console/ConsoleShell.tsx`). The frame
+reads only the account's status (`GET /v1/status`), and `src/screens/shell/AppFrame.test.tsx` holds it to that.
 
 ## Live updates
 

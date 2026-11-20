@@ -18,8 +18,9 @@ import { AccountName, accountOnApp, paletteOnApp } from './slotStandards';
  *  has routes for; a host that serves them all lists them all. */
 export const PAGES = slot<readonly ShellPageId[]>('shell.pages', ['chat', 'work', 'resources']);
 
-/** Atop the sidebar, beside search: the workspace. The standard names the account. */
-export const WORKSPACE = slot<ComponentType<{ user: AccountMenuUser }>>('shell.workspace', AccountName);
+/** Atop the sidebar, beside search: the workspace. `onNavigate` closes a phone's sheet when it goes somewhere. The
+ *  standard names the account and leads home. */
+export const WORKSPACE = slot<ComponentType<{ user: AccountMenuUser; onNavigate?: () => void }>>('shell.workspace', AccountName);
 
 /** At the sidebar's foot, while it's open: a card of the host's (an offer to text it from a phone). Nothing stands
  *  there. */

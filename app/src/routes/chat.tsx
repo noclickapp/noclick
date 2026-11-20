@@ -60,7 +60,7 @@ export default function ChatRoute() {
     );
     return (
         <ConsoleProviders value={consoleValue}>
-            <div className="h-dvh bg-background text-foreground">
+            <div className="h-full bg-background text-foreground">
                 {status.data === undefined ? (
                     status.error === undefined ? (
                         <ThreadLoading />

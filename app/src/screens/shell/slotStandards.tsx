@@ -1,6 +1,6 @@
 // What stands in the shell's slots (slots.ts) when no host fills them: each works on the platform API alone.
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { signOut } from '@/lib/signOut';
 import { userDisplayName } from '@/lib/userDisplay';
 import { readAccountStatus } from '@/screens/account/status';
@@ -11,19 +11,20 @@ import { useSlot } from '@/slots';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { LogoMark } from '@/ui/LogoMark';
 import { useTheme } from '@/ui/useTheme';
-import { SHELL_PAGES, type ShellPageId } from './pages';
+import { SHELL_PAGES } from './pages';
 import { asCmd, heldCommands, registeredEntries, shortcutsCommand, signOutCommand, themeCommands } from './palette/commands';
 import type { Cmd } from './palette/layout';
 import type { PaletteEntry } from './palette/sources';
 import { ACCOUNT_SESSION, PAGES, type AccountSession, type PaletteContext, type PaletteHost, type ShortcutGroup } from './slots';
 
-/** The workspace as the account's own name, beside NoClick's mark lined up with the sidebar's icons below. */
-export function AccountName({ user }: { user: AccountMenuUser }) {
+/** The workspace as the account's own name, beside NoClick's mark lined up with the sidebar's icons below. It leads
+ *  to the app's home, the account at a glance. */
+export function AccountName({ user, onNavigate }: { user: AccountMenuUser; onNavigate?: () => void }) {
     return (
-        <div className="flex min-w-0 items-center gap-1">
+        <Link to="/" onClick={onNavigate} className="flex min-w-0 items-center gap-1 rounded-xl py-1.5 transition-colors hover:bg-foreground/[0.05]">
             <LogoMark className="ml-[13px] h-[18px] w-[18px] shrink-0" alt="NoClick" />
             <span className="truncate px-1.5 text-[14px] font-semibold tracking-[-0.01em] text-foreground">{userDisplayName({ email: user.email, name: user.display_name }, 'NoClick')}</span>
-        </div>
+        </Link>
     );
 }
 
@@ -58,13 +59,16 @@ const APP_SHORTCUTS: ShortcutGroup[] = [
 ];
 
 /** A page's route in this app. */
-const pageRoute = (id: ShellPageId) => `/${id}`;
+export const pageRoute = (id: string) => `/${id}`;
 
-/** Resources' route for one kind's list. */
-function kindRoute(kind: KindId): string {
-    const params = Object.entries(resourceAddress(kind)).filter((entry): entry is [string, string] => entry[1] !== null);
+/** Resources' route at one of its addresses (resourceAddress: a kind's list, an item). */
+export function resourcesRoute(address: Record<string, string | null>): string {
+    const params = Object.entries(address).filter((entry): entry is [string, string] => entry[1] !== null);
     return `${pageRoute('resources')}?${new URLSearchParams(params)}`;
 }
+
+/** Resources' route for one kind's list. */
+export const kindRoute = (kind: KindId) => resourcesRoute(resourceAddress(kind));
 
 /** The app's own commands: its served pages and Resources' kinds, what its pages handed over, a registered source's
  *  places and commands, the theme, the keyboard shortcuts and signing out. */

@@ -1,8 +1,7 @@
-// The signed-in owner's first screen: which NoClick account the app acts in, its plan, what it has left to spend and
-// what it spent this month. Read in the browser through useClient(), so it goes through the app's own server.
+// The signed-in owner's home: which NoClick account the app acts in, its plan, what it has left to spend and what it
+// spent this month. Read in the browser through useClient(), so it goes through the app's own server.
 import { APIConnectionError, NoClickError } from 'noclick';
 import { useEffect, useState } from 'react';
-import { signOut } from '@/lib/signOut';
 import { useClient } from '@/sdk/client';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { PAGE_TITLE } from '@/ui/titles';
@@ -27,46 +26,20 @@ export function AccountScreen() {
         return () => controller.abort();
     }, [client, attempt]);
 
+    // The frame around it (screens/shell/AppFrame.tsx) carries the ways out: the pages, the developer console and
+    // signing out are the sidebar's and its account menu's. The page scrolls inside the frame.
     return (
-        <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col gap-10 px-6 py-16">
-            {reading.state === 'loading' && (
-                <p role="status" className="text-[14px] text-muted-foreground">
-                    Reading your NoClick account…
-                </p>
-            )}
-            {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
-            {reading.state === 'ready' && <Account status={reading.status} />}
-            <div className="flex flex-wrap items-center gap-3">
-                {/* The account's NoClick to talk to, where its agents and people work, what it owns and what it costs,
-                    then where it's built on: its agents, users, logs and usage. */}
-                <a className={BUTTON_PRIMARY} href="/chat">
-                    Chat
-                </a>
-                <a className={BUTTON_SECONDARY} href="/work">
-                    Work
-                </a>
-                <a className={BUTTON_SECONDARY} href="/resources">
-                    Resources
-                </a>
-                <a className={BUTTON_SECONDARY} href="/developers">
-                    Developer console
-                </a>
-                {/* What Work kept of the account in this browser is forgotten first (signOut); without a script, the form
-                    still signs out. */}
-                <form
-                    method="post"
-                    action="/logout"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        void signOut(reading.state === 'ready' ? reading.status.account.id : null);
-                    }}
-                >
-                    <button type="submit" className={BUTTON_SECONDARY}>
-                        Sign out
-                    </button>
-                </form>
+        <div className="h-full overflow-y-auto">
+            <div className="mx-auto flex w-full max-w-xl flex-col gap-10 px-6 py-16">
+                {reading.state === 'loading' && (
+                    <p role="status" className="text-[14px] text-muted-foreground">
+                        Reading your NoClick account…
+                    </p>
+                )}
+                {reading.state === 'failed' && <Failure error={reading.error} retry={() => setAttempt((n) => n + 1)} />}
+                {reading.state === 'ready' && <Account status={reading.status} />}
             </div>
-        </main>
+        </div>
     );
 }
 

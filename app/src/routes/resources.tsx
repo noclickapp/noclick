@@ -1,7 +1,7 @@
 // `/resources`: what the account owns and what it costs (src/screens/resources), read with the app's key through the
 // app's own server, as every screen's calls are. Its links into the developer console open `/developers`, and an
 // agent's into `/work`. What only the account's signed-in owner can do (src/screens/console/ownerOnly.ts) isn't
-// offered here.
+// offered here. The command palette can open any item the page listed later, from any page of the app's frame.
 import { useMemo } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
@@ -11,9 +11,12 @@ import { askInChat } from '@/screens/chat/asks';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
-import { ResourcesContext, type ResourcesContextValue } from '@/screens/resources/context';
+import { ResourcesContext, type RememberedItem, type ResourcesContextValue } from '@/screens/resources/context';
+import { resourceAddress } from '@/screens/resources/kinds';
 import { ResourcesView } from '@/screens/resources/ResourcesPage';
 import { ResourcesReads } from '@/screens/resources/reads';
+import { rememberPaletteEntries } from '@/screens/shell/palette/sources';
+import { resourcesRoute } from '@/screens/shell/slotStandards';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
 import { liveFromWatch, sdkLive } from '@/sdk/watchLive';
@@ -59,14 +62,21 @@ export default function Resources() {
     );
     // NoClick bills the account, so prices show and what's sold is offered; every workflow the key reads is listed.
     const navigate = useNavigate();
-    // An empty kind's Ask NoClick drafts it in this app's chat.
-    const resources = useMemo<ResourcesContextValue>(() => ({ billing: true, country, ask: askInChat(navigate) }), [country, navigate]);
+    // An empty kind's Ask NoClick drafts it in this app's chat; the palette opens an item at its address.
+    const resources = useMemo<ResourcesContextValue>(() => {
+        const remember = (items: RememberedItem[]) =>
+            rememberPaletteEntries(
+                'Resources',
+                items.map(({ kind, resource, open, ...entry }) => ({ ...entry, run: open ?? (() => navigate(resourcesRoute(resourceAddress(kind, { resource })))) }))
+            );
+        return { billing: true, country, ask: askInChat(navigate), remember };
+    }, [country, navigate]);
     return (
         <ConsoleProviders value={consoleValue}>
             <ResourcesContext.Provider value={resources}>
                 <ResourcesReads>
-                    {/* The page scrolls inside the window, as it does inside NoClick's own shell. */}
-                    <div className="h-dvh">
+                    {/* The page scrolls inside the frame, as it does inside NoClick's own shell. */}
+                    <div className="h-full">
                         <ResourcesView />
                     </div>
                 </ResourcesReads>

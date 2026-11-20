@@ -3,8 +3,9 @@
 // signed-in owner can do (src/screens/console/ownerOnly.ts) isn't offered here, and whoever is signed in to this app is
 // the account: they post as it and read what it reads. What it shows follows the account's change stream (@/sdk/watchLive)
 // where the API offers it; while the stream isn't live, it's read again when the page is focused and every minute. An
-// agent's open session is live through its own stream either way.
-import { useMemo } from 'react';
+// agent's open session is live through its own stream either way. Work hands the command palette its channels, DMs,
+// agents and spaces while it's open: each moves within Work's own address.
+import { useEffect, useMemo } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
 import { openTabForLater } from '@/lib/oauthPopup';
@@ -14,6 +15,8 @@ import { readAccountStatus } from '@/screens/account/status';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
+import { openCommandPalette } from '@/screens/shell/palette/open';
+import { rememberPaletteEntries } from '@/screens/shell/palette/sources';
 import type { WorkContextValue } from '@/screens/work/context';
 import { WorkLoading, WorkNotice } from '@/screens/work/notices';
 import { WorkScreen } from '@/screens/work/WorkScreen';
@@ -69,14 +72,17 @@ export default function WorkRoute() {
                 const search = new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => !!entry[1]));
                 navigate(`/resources${search.size ? `?${search}` : ''}`);
             },
+            palette: { remember: (entries) => rememberPaletteEntries('Work', entries), open: () => openCommandPalette() },
         }),
         [navigate]
     );
+    // Leaving Work takes its places out of the palette: each one moves within Work's address, not to it.
+    useEffect(() => () => rememberPaletteEntries('Work', []), []);
     const user = { email: account?.email ?? '', display_name: account?.name ?? undefined };
     return (
         <ConsoleProviders value={consoleValue}>
-            {/* The page fills the window, as it does inside NoClick's own shell. */}
-            <div className="h-dvh">
+            {/* The page fills the frame, as it does inside NoClick's own shell. */}
+            <div className="h-full">
                 {status.data === undefined ? (
                     status.error === undefined ? (
                         <WorkLoading />
