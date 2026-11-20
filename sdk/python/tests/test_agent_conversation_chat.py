@@ -5,7 +5,7 @@ resumed; every agent's state; an agent's effort and speed and what each harness 
 import httpx
 
 import noclick as nc
-from platform_helpers import agent_row, body
+from platform_helpers import agent_row, body, operation
 
 AGENT = agent_row(id="ag_1", name="coder", harness="claude_code", effort="high", speed="standard")
 SETTINGS = {
@@ -146,6 +146,7 @@ def test_a_conversations_tool_servers_are_read_live_and_one_is_reconnected(api, 
     assert servers.source == "live" and servers.reconnect == {"available": True, "scope": "server", "why": None}
     assert [(s.name, s.status, s.tool_count, s.error) for s in servers.servers] == [
         ("noclick", "connected", 12, None), ("linear", "failed", None, "401 from the server")]
+    assert servers.servers[0].tools is None
     assert chat.reconnect_tool_server("linear").servers[1].status == "connecting" and again.called
 
 
@@ -162,6 +163,68 @@ def test_an_agents_mcp_server_takes_headers_which_change_and_read_back_by_name(a
     assert (docs.headers, docs.signed_in) == (["X-Api-Key"], False)
     assert coder.update_tool_server(docs, headers={}).headers == []
     assert body(changed.calls.last.request) == {"headers": {}}
+
+
+def test_a_conversations_tool_servers_name_each_tool_where_the_harness_lists_them(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    api.get("/v1/agents/ag_1/conversations/main/tool_servers").respond(json={**TOOL_SERVERS, "data": [
+        {**TOOL_SERVERS["data"][0], "tool_count": 2, "tools": [
+            {"name": "search", "description": "Search the account."}, {"name": "fetch", "description": None}]}]})
+    [noclick] = nc.Agent.from_id("ag_1").conversation("main").tool_servers().servers
+    assert noclick.tools == [nc.ToolServerTool("search", "Search the account."), nc.ToolServerTool("fetch")]
+
+
+ADDED_SERVER = {
+    "object": "agent_tool_server", "id": "mcp_docs", "agent_id": "ag_1", "name": "docs",
+    "url": "https://mcp.docs.example.com/mcp", "host": "mcp.docs.example.com", "transport": "http",
+    "signed_in": False, "headers": [], "sign_in": "browser", "status": "signed_out",
+    "problem": {"reason": "signed_out", "message": "Its sign-in ended.", "provider_said": "invalid_grant",
+                "since": "2026-11-18T09:00:00Z", "next_step": "Sign in to it again."},
+    "tools": [{"name": "search_docs", "description": "Search the docs."}],
+    "icon": {"integration": "docs"}, "checked_at": "2026-11-18T08:00:00Z",
+}
+
+
+def test_an_agents_mcp_server_says_how_it_stands_and_signs_in_again_by_a_link(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    api.get("/v1/agents/ag_1/tool_servers").respond(json={"object": "list", "data": [ADDED_SERVER]})
+    made = api.post("/v1/agents/ag_1/tool_servers/mcp_docs/connect_link").respond(json={
+        "object": "connect_link", "url": "https://noclick.com/c/docs", "expires_at": "2026-11-21T10:00:00Z",
+        "operation": operation(op_id="op_s", kind="tool_server.sign_in")}, status_code=201)
+    api.get("/v1/operations/op_s/wait").respond(json=operation(
+        op_id="op_s", kind="tool_server.sign_in", status="succeeded", result={"tool_server": {
+            **ADDED_SERVER, "signed_in": True, "status": "unchecked", "problem": None}}))
+    [docs] = nc.Agent.from_id("ag_1").tool_servers()
+    assert (docs.host, docs.sign_in, docs.status, docs.icon) == (
+        "mcp.docs.example.com", "browser", "signed_out", {"integration": "docs"})
+    assert (docs.problem.reason, docs.problem.provider_said, docs.problem.since.day) == ("signed_out", "invalid_grant", 18)
+    assert docs.tools == [nc.ToolServerTool("search_docs", "Search the docs.")] and docs.checked_at.hour == 8
+    link = docs.connect_link(reason="Sign in to the docs again")
+    assert isinstance(link, nc.ConnectLink) and link.url == "https://noclick.com/c/docs" and link.id == "op_s"
+    assert body(made.calls.last.request) == {"reason": "Sign in to the docs again"}
+    again = link.wait()
+    assert isinstance(again, nc.AgentToolServer) and (again.id, again.signed_in, again.status, again.problem) == (
+        "mcp_docs", True, "unchecked", None)
+
+
+def test_an_agents_mcp_servers_read_for_a_conversation_say_which_can_reconnect_in_place(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    read = api.get("/v1/agents/ag_1/tool_servers").respond(json={"object": "list", "data": [{
+        **ADDED_SERVER, "status": "failed", "reconnectable": True,
+        "problem": {**ADDED_SERVER["problem"], "reason": "failed", "message": "connection refused"}}]})
+    [docs] = nc.Agent.from_id("ag_1").tool_servers(conversation="main")
+    assert read.calls.last.request.url.params["conversation"] == "main"
+    assert (docs.status, docs.reconnectable, docs.problem.message) == ("failed", True, "connection refused")
+
+
+def test_a_server_read_before_its_state_was_named_reads_as_unchecked(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    api.get("/v1/agents/ag_1/tool_servers").respond(json={"object": "list", "data": [{
+        "object": "agent_tool_server", "id": "mcp_docs", "name": "docs", "url": "https://mcp.docs.example.com/mcp",
+        "transport": "http", "signed_in": False, "headers": []}]})
+    [docs] = nc.Agent.from_id("ag_1").tool_servers()
+    assert (docs.sign_in, docs.status, docs.problem, docs.tools, docs.icon, docs.reconnectable) == (
+        "none", "unchecked", None, [], None, False)
 
 
 def test_an_agents_own_permission_mode_is_what_its_conversations_start_from(api, client):

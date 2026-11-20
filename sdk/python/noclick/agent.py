@@ -3149,21 +3149,27 @@ class Agent(_Object):
     # ── MCP servers ──
 
     @synced
-    async def tool_servers(self) -> List[AgentToolServer]:
-        """Its MCP servers, each a step of its automation. Whether one connected is a conversation's:
-        ``agent.conversation(name).tool_servers()``.
+    async def tool_servers(self, *, conversation: Optional[str] = None) -> List[AgentToolServer]:
+        """Its MCP servers, each a step of its automation, with each one's state: how it lets its client in
+        (``sign_in``), its ``status`` and ``problem``, the ``tools`` its last run found, its ``host`` and ``icon``.
+        With ``conversation``, each as that conversation's coding harness last said it where that's newer (``status``
+        ``connecting`` too), and whether it can connect one again in place now (``reconnectable``:
+        ``agent.conversation(name).reconnect_tool_server(server.name)``).
 
         Returns:
-            A list of ``AgentToolServer``, in its automation's order.
+            A list of ``AgentToolServer``, in the order they were added.
 
         Usage::
 
             for server in noclick.Agent.from_name("coder").tool_servers():
-                print(server.name, server.url, server.signed_in)
+                print(server.name, server.status, [tool.name for tool in server.tools])
+                if server.status == "needs_sign_in":
+                    print("Sign in:", server.connect_link().url)
         """
         raw = await self._ensure()
-        listed = await self._request("GET", f"/v1/agents/{raw['id']}/tool_servers")
-        return [AgentToolServer._from(s) for s in listed.get("data") or [] if isinstance(s, dict)]
+        listed = await self._request("GET", f"/v1/agents/{raw['id']}/tool_servers",
+                                     params={"conversation": conversation} if conversation else None)
+        return [AgentToolServer._from(s, self) for s in listed.get("data") or [] if isinstance(s, dict)]
 
     @synced
     async def add_tool_server(self, url: str, *, name: Optional[str] = None, transport: str = "http",
@@ -3171,15 +3177,15 @@ class Agent(_Object):
                               headers: Optional[Dict[str, str]] = None) -> AgentToolServer:
         """Give it an MCP server's tools from its next turn. The server is a step of its automation, reached at
         its public https URL (``transport`` ``sse`` for one that speaks only the older SSE), named ``name``, else
-        after the URL's host (``mcp.linear.app`` is ``linear``). A server that asks its client to sign in raises
-        ``noclick.InvalidRequest`` (``needs_sign_in``) unless ``credential`` is the account's own sign-in to it,
-        which NoClick's MCP sign-in makes (the app's Add an MCP server runs it), or ``headers`` carry the key it
-        takes instead (``{"Authorization": "Bearer <key>"}``): kept as a credential, sent on every request, never
-        read back. Up to 20.
+        after the URL's host (``mcp.linear.app`` is ``linear``). ``credential`` is the account's own sign-in to it,
+        which NoClick's MCP sign-in makes, or ``headers`` carry the key it takes instead (``{"Authorization":
+        "Bearer <key>"}``): kept as a credential, sent on every request, never read back. A server that asks its
+        client to sign in, given neither, is added waiting for a person (``status`` ``needs_sign_in``):
+        ``server.connect_link()`` signs them in. Up to 20.
 
         Returns:
             The ``AgentToolServer`` as added: its ``id`` (what ``remove_tool_server`` takes), ``name``, ``url``,
-            whether it's ``signed_in`` and its ``headers``' names.
+            how it lets its client in (``sign_in``), its ``status`` and its ``headers``' names.
 
         Usage::
 
@@ -3191,7 +3197,8 @@ class Agent(_Object):
         raw = await self._ensure()
         body = {"url": url, "transport": transport, **({"name": name} if name else {}),
                 **({"credential_id": credential} if credential else {}), **({"headers": headers} if headers else {})}
-        return AgentToolServer._from(await self._request("POST", f"/v1/agents/{raw['id']}/tool_servers", json=body))
+        return AgentToolServer._from(await self._request("POST", f"/v1/agents/{raw['id']}/tool_servers", json=body),
+                                     self)
 
     @synced
     async def update_tool_server(self, server: Union[str, AgentToolServer], *,
@@ -3210,7 +3217,7 @@ class Agent(_Object):
         raw = await self._ensure()
         step = server.id if isinstance(server, AgentToolServer) else server
         return AgentToolServer._from(await self._request(
-            "PATCH", f"/v1/agents/{raw['id']}/tool_servers/{quote(step, safe='')}", json={"headers": headers}))
+            "PATCH", f"/v1/agents/{raw['id']}/tool_servers/{quote(step, safe='')}", json={"headers": headers}), self)
 
     @synced
     async def remove_tool_server(self, server: Union[str, AgentToolServer]) -> None:

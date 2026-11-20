@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import * as nc from "../src/index.ts";
-import { json, setup } from "./helpers.ts";
+import { json, operation, setup } from "./helpers.ts";
 
 const AGENT = {
   object: "agent", id: "ag_1", name: "coder", model: "sonnet", harness: "claude_code", instructions: "Fix docs.",
@@ -175,6 +175,7 @@ test("a conversation's tool servers are read live and one is reconnected", async
   assert.deepEqual(servers.servers.map((s) => [s.name, s.status, s.toolCount, s.error]),
     [["noclick", "connected", 12, null], ["linear", "failed", null, "401 from the server"]]);
   assert.deepEqual(servers.reconnect, { available: true, scope: "server", why: null });
+  assert.equal(servers.servers[0].tools, null);
   const after = await chat.reconnectToolServer("linear");
   assert.equal(again.calls.length, 1);
   assert.equal(after.servers[1].status, "connecting");
@@ -193,6 +194,74 @@ test("an agent's MCP server takes headers, which change and read back by name", 
   assert.deepEqual([docs.headers, docs.signedIn], [["X-Api-Key"], false]);
   assert.deepEqual((await coder.updateToolServer(docs, {})).headers, []);
   assert.deepEqual(changed.last.body, { headers: {} });
+});
+
+test("a conversation's tool servers name each tool where the harness lists them", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  api.on("GET", "/v1/agents/ag_1/conversations/main/tool_servers", json({ ...TOOL_SERVERS, data: [{
+    ...TOOL_SERVERS.data[0], tool_count: 2,
+    tools: [{ name: "search", description: "Search the account." }, { name: "fetch", description: null }] }] }));
+  const [noclick] = (await nc.Agent.fromId("ag_1").conversation("main").toolServers()).servers;
+  assert.deepEqual(noclick.tools, [{ name: "search", description: "Search the account." }, { name: "fetch", description: null }]);
+});
+
+const ADDED_SERVER = {
+  object: "agent_tool_server", id: "mcp_docs", agent_id: "ag_1", name: "docs",
+  url: "https://mcp.docs.example.com/mcp", host: "mcp.docs.example.com", transport: "http",
+  signed_in: false, headers: [], sign_in: "browser", status: "signed_out",
+  problem: { reason: "signed_out", message: "Its sign-in ended.", provider_said: "invalid_grant",
+             since: "2026-11-18T09:00:00Z", next_step: "Sign in to it again." },
+  tools: [{ name: "search_docs", description: "Search the docs." }],
+  icon: { integration: "docs" }, checked_at: "2026-11-18T08:00:00Z",
+};
+
+test("an agent's MCP server says how it stands and signs in again by a link", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  api.on("GET", "/v1/agents/ag_1/tool_servers", json({ object: "list", data: [ADDED_SERVER] }));
+  const made = api.on("POST", "/v1/agents/ag_1/tool_servers/mcp_docs/connect_link", json({
+    object: "connect_link", url: "https://noclick.com/c/docs", expires_at: "2026-11-21T10:00:00Z",
+    operation: operation({ id: "op_s", kind: "tool_server.sign_in" }) }, { status: 201 }));
+  api.on("GET", "/v1/operations/op_s/wait", json(operation({
+    id: "op_s", kind: "tool_server.sign_in", status: "succeeded",
+    result: { tool_server: { ...ADDED_SERVER, signed_in: true, status: "unchecked", problem: null } } })));
+  const [docs] = await nc.Agent.fromId("ag_1").toolServers();
+  assert.deepEqual([docs.host, docs.signIn, docs.status, docs.icon],
+    ["mcp.docs.example.com", "browser", "signed_out", { integration: "docs" }]);
+  assert.deepEqual([docs.problem?.reason, docs.problem?.providerSaid, docs.problem?.since?.toISOString()],
+    ["signed_out", "invalid_grant", "2026-11-18T09:00:00.000Z"]);
+  assert.deepEqual(docs.tools, [{ name: "search_docs", description: "Search the docs." }]);
+  assert.equal(docs.checkedAt?.toISOString(), "2026-11-18T08:00:00.000Z");
+  const link = await docs.connectLink({ reason: "Sign in to the docs again" });
+  assert.ok(link instanceof nc.ConnectLink);
+  assert.deepEqual([link.url, link.id], ["https://noclick.com/c/docs", "op_s"]);
+  assert.deepEqual(made.last.body, { reason: "Sign in to the docs again" });
+  const again = await link.wait();
+  assert.deepEqual([again.id, again.signedIn, again.status, again.problem], ["mcp_docs", true, "unchecked", null]);
+  assert.equal(typeof again.connectLink, "function");
+});
+
+test("an agent's MCP servers read for a conversation say which can reconnect in place", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const read = api.on("GET", "/v1/agents/ag_1/tool_servers", json({ object: "list", data: [{
+    ...ADDED_SERVER, status: "failed", reconnectable: true,
+    problem: { ...ADDED_SERVER.problem, reason: "failed", message: "connection refused" } }] }));
+  const [docs] = await nc.Agent.fromId("ag_1").toolServers({ conversation: "main" });
+  assert.equal(read.last.query.get("conversation"), "main");
+  assert.deepEqual([docs.status, docs.reconnectable, docs.problem?.message], ["failed", true, "connection refused"]);
+});
+
+test("a server read before its state was named reads as unchecked", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  api.on("GET", "/v1/agents/ag_1/tool_servers", json({ object: "list", data: [{
+    object: "agent_tool_server", id: "mcp_docs", name: "docs", url: "https://mcp.docs.example.com/mcp",
+    transport: "http", signed_in: false, headers: [] }] }));
+  const [docs] = await nc.Agent.fromId("ag_1").toolServers();
+  assert.deepEqual([docs.signIn, docs.status, docs.problem, docs.tools, docs.icon, docs.reconnectable],
+    ["none", "unchecked", null, [], null, false]);
 });
 
 test("an agent's own permission mode is what its conversations start from", async () => {
