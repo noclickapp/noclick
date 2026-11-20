@@ -31,7 +31,7 @@ export type WatchedObject =
   | "domain" | "deployment" | "repo" | "mcp_server" | "live_session" | "phone_call" | "workflow"
   | "durable_object_class" | "skill" | "memory" | "machine" | "sandbox" | "agent_move" | "connection" | "plan_usage"
   | "agent_trigger" | "approval" | "browser" | "agent" | "coding_agent" | "channel" | "workspace"
-  | "workspace_resource" | "channel_sections" | "space_question";
+  | "workspace_resource" | "channel_sections" | "space_question" | "usage";
 
 /** The socket is open: `resumed` when it carried on from the last change you got, so nothing was missed. */
 export interface WatchReady {
@@ -46,7 +46,7 @@ export interface WatchChange {
   id: string;
   at: Date | null;
   object: WatchedObject | string;
-  /** Its id; null for a `coding_agent` change that may be any of them. */
+  /** Its id; null for a `coding_agent` change that may be any of them, and for `usage` (the account was charged). */
   objectId: string | null;
   /** Its status as its read gave it then (advisory: the read is the truth); null once it's gone. */
   status: string | null;
