@@ -51,3 +51,31 @@ test("a key without the scope is refused", async () => {
   await assert.rejects(nc.Approval.fromId("apr_1").approve(), (error: unknown) =>
     error instanceof nc.PermissionDenied && /approvals:answer/.test(error.message));
 });
+
+const POLICY = {
+  object: "approval_policy",
+  callers: { agent: "A platform agent's NoClick tools, and its own tool calls.", key: "A key used through MCP." },
+  kinds: [
+    { kind: "purchase", description: "A call with a price.", approver: "owner", outside_only: false,
+      defaults: { connected_app: "under_auto_approve", agent: "ask", app: "allow" } },
+    { kind: "outside_other_connection", description: "A stranger's turn beyond what it answers on.",
+      approver: "connection_owner", outside_only: true, defaults: { agent: "ask" } },
+  ],
+};
+
+test("the default policy reads kind by kind and caller by caller", async () => {
+  const { api } = setup();
+  const read = api.on("GET", "/v1/approvals/policy", json(POLICY));
+  const policy = await nc.asUser("user_42", () => nc.ApprovalPolicy.get());
+  assert.equal(read.last.headers.get("NoClick-User"), null);
+  assert.deepEqual(policy.kinds.map((k) => k.kind), ["purchase", "outside_other_connection"]);
+  assert.equal(policy.default("purchase", "agent"), "ask");
+  assert.equal(policy.default("purchase", "connected_app"), "under_auto_approve");
+  assert.equal(policy.default("purchase", "code"), null);
+  assert.deepEqual(policy.kinds[1], {
+    kind: "outside_other_connection", description: "A stranger's turn beyond what it answers on.",
+    approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" },
+  });
+  assert.match(policy.callers.agent, /^A platform agent's/);
+  assert.throws(() => policy.default("refund", "agent"), /no kind 'refund'/);
+});

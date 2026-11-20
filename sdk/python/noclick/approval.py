@@ -24,10 +24,13 @@ it reads here, never its link::
     event = noclick.Webhook.verify(body, headers, secret)
     if event.type == "approval.requested":
         noclick.Approval.from_id(event.data["id"]).decline(note="Nothing is bought on weekends.")
+
+What NoClick holds by default, kind by kind and for which callers, reads as ``noclick.ApprovalPolicy.get()``.
 """
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
@@ -37,6 +40,82 @@ from ._sync import synced
 from ._scope import AMBIENT
 
 STATUSES = ("pending", "approved", "declined", "expired", "used", "canceled")
+
+
+@dataclass(frozen=True)
+class HoldKind:
+    """One kind of call NoClick may hold for a person, and what it does with one by default."""
+
+    #: Its name (``purchase``, ``delete``, ``raise_limit``, ...).
+    kind: str
+    #: What it covers, in a person's words.
+    description: str
+    #: Who answers it: ``owner`` (the account's owner, from the link NoClick sends them) or ``connection_owner``
+    #: (whoever owns the connection the call runs on: its user, else the account's owner).
+    approver: str
+    #: It applies only on a turn answering someone outside the agent's scope.
+    outside_only: bool
+    #: What it does by default for each kind of caller it applies to (``ApprovalPolicy.callers`` names them):
+    #: ``allow``, ``ask``, ``deny``, ``under_auto_approve`` (a quoted purchase at or under the connection's
+    #: auto-approve amount runs, anything else asks) or ``once_previewed`` (a deletion its preview confirmed runs).
+    defaults: Dict[str, str]
+
+
+@dataclass(frozen=True)
+class ApprovalPolicy:
+    """What NoClick holds for a person by default, kind by kind, and for which callers. These are defaults NoClick
+    chose; settings of your own to switch them come next, so no call ever needs a person for good."""
+
+    kinds: List[HoldKind]
+    #: Each kind of caller, by name (``connected_app``, ``assistant``, ``agent``, ``key``, ``code``, ``app``), with
+    #: what it is.
+    callers: Dict[str, str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    def default(self, kind: str, caller: str) -> Optional[str]:
+        """What ``kind`` does by default for ``caller``.
+
+        Returns:
+            ``allow``, ``ask``, ``deny``, ``under_auto_approve`` or ``once_previewed``; None where the kind doesn't
+            apply to that caller.
+
+        Raises:
+            KeyError: ``kind`` isn't one NoClick holds.
+
+        Usage::
+
+            policy = noclick.ApprovalPolicy.get()
+            if policy.default("delete", "agent") == "ask":
+                print("An agent's deletion waits for the owner.")
+        """
+        found = next((k for k in self.kinds if k.kind == kind), None)
+        if found is None:
+            raise KeyError(f"NoClick holds no kind '{kind}': it holds {', '.join(k.kind for k in self.kinds)}.")
+        return found.defaults.get(caller)
+
+    @synced
+    @classmethod
+    async def get(cls, *, client: Optional[Client] = None) -> "ApprovalPolicy":
+        """What waits for a person by default: each kind of hold (a purchase, a deletion that can't be undone, a
+        spending limit raised, a call whose terms a person accepts, ...), what it covers, who approves it, and what
+        it does for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through
+        MCP, code, an app's own code).
+
+        Returns:
+            The policy: ``kinds``, each a ``HoldKind``, and ``callers``.
+
+        Usage::
+
+            policy = noclick.ApprovalPolicy.get()
+            print(policy.default("purchase", "agent"))   # "ask"
+            for kind in policy.kinds:
+                print(kind.kind, kind.defaults)
+        """
+        raw = await resolve_client(client).request("GET", "/v1/approvals/policy", user=None)
+        return cls(kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
+                                   outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]))
+                          for k in raw.get("kinds") or []],
+                   callers=dict(raw.get("callers") or {}), raw=raw)
 
 
 class Approval(_Object):

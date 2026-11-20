@@ -25,11 +25,82 @@
  *     if (event.type === "approval.requested") {
  *       await Approval.fromId(String(event.data.id)).decline({ note: "Nothing is bought on weekends." });
  *     }
+ *
+ * What NoClick holds by default, kind by kind and for which callers, reads as `ApprovalPolicy.get()`.
  */
 
 import { resolveClient } from "./client.ts";
-import { ApiObject, compact, listAll, parseTime } from "./object.ts";
+import type { NoClick } from "./client.ts";
+import { ApiObject, asList, asObject, compact, listAll, parseTime } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, ReadOptions } from "./object.ts";
+
+/** One kind of call NoClick may hold for a person, and what it does with one by default. */
+export interface HoldKind {
+  /** Its name (`purchase`, `delete`, `raise_limit`, ...). */
+  kind: string;
+  /** What it covers, in a person's words. */
+  description: string;
+  /**
+   * Who answers it: `owner` (the account's owner, from the link NoClick sends them) or `connection_owner` (whoever owns
+   * the connection the call runs on: its user, else the account's owner).
+   */
+  approver: string;
+  /** It applies only on a turn answering someone outside the agent's scope. */
+  outsideOnly: boolean;
+  /**
+   * What it does by default for each kind of caller it applies to (`ApprovalPolicy.callers` names them): `allow`,
+   * `ask`, `deny`, `under_auto_approve` (a quoted purchase at or under the connection's auto-approve amount runs,
+   * anything else asks) or `once_previewed` (a deletion its preview confirmed runs).
+   */
+  defaults: Record<string, string>;
+}
+
+/**
+ * What NoClick holds for a person by default, kind by kind, and for which callers. These are defaults NoClick chose;
+ * settings of your own to switch them come next, so no call ever needs a person for good.
+ *
+ *     const policy = await ApprovalPolicy.get();
+ *     policy.default("purchase", "agent"); // "ask"
+ */
+export class ApprovalPolicy {
+  /** Each kind of hold. */
+  readonly kinds: HoldKind[];
+  /** Each kind of caller, by name (`connected_app`, `assistant`, `agent`, `key`, `code`, `app`), with what it is. */
+  readonly callers: Record<string, string>;
+  readonly raw: JsonObject;
+
+  private constructor(raw: JsonObject) {
+    this.raw = raw;
+    this.kinds = asList(raw.kinds).map((entry) => {
+      const k = asObject(entry);
+      return {
+        kind: String(k.kind), description: String(k.description), approver: String(k.approver),
+        outsideOnly: Boolean(k.outside_only), defaults: { ...(asObject(k.defaults) as Record<string, string>) },
+      };
+    });
+    this.callers = { ...(asObject(raw.callers) as Record<string, string>) };
+  }
+
+  /**
+   * What waits for a person by default: each kind of hold (a purchase, a deletion that can't be undone, a spending
+   * limit raised, a call whose terms a person accepts, ...), what it covers, who approves it, and what it does for
+   * each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP, code, an
+   * app's own code).
+   */
+  static async get(options: { client?: NoClick } = {}): Promise<ApprovalPolicy> {
+    const raw = await resolveClient(options.client).request("GET", "/v1/approvals/policy", { user: null });
+    return new ApprovalPolicy(asObject(raw));
+  }
+
+  /** What `kind` does by default for `caller`; null where it doesn't apply to that caller. Throws for a kind NoClick doesn't hold. */
+  default(kind: string, caller: string): string | null {
+    const found = this.kinds.find((k) => k.kind === kind);
+    if (!found) {
+      throw new Error(`NoClick holds no kind '${kind}': it holds ${this.kinds.map((k) => k.kind).join(", ")}.`);
+    }
+    return found.defaults[caller] ?? null;
+  }
+}
 
 export type ApprovalStatus = "pending" | "approved" | "declined" | "expired" | "used" | "canceled";
 

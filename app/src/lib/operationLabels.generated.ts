@@ -103,6 +103,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "ai_videos_create": ["Create Video", "POST", "write"],
     "approvals_get": ["Get Approval", "GET", "read"],
     "approvals_list": ["List Approvals", "GET", "read"],
+    "approvals_policy": ["Get Approval Policy", "GET", "read"],
     "attachments_delete": ["Delete Attachment", "DELETE", "destructive"],
     "attachments_list": ["List Attachments", "GET", "read"],
     "brand": ["Get Brand", "GET", "read"],

@@ -52,3 +52,31 @@ def test_a_key_without_the_scope_or_that_made_the_call_is_refused(api, client):
         "scope": "approvals:answer"}})
     with pytest.raises(nc.PermissionDenied, match="approvals:answer"):
         nc.Approval.from_id("apr_1").approve()
+
+
+POLICY = {
+    "object": "approval_policy",
+    "callers": {"agent": "A platform agent's NoClick tools, and its own tool calls.", "key": "A key used through MCP."},
+    "kinds": [
+        {"kind": "purchase", "description": "A call with a price.", "approver": "owner", "outside_only": False,
+         "defaults": {"connected_app": "under_auto_approve", "agent": "ask", "app": "allow"}},
+        {"kind": "outside_other_connection", "description": "A stranger's turn beyond what it answers on.",
+         "approver": "connection_owner", "outside_only": True, "defaults": {"agent": "ask"}},
+    ],
+}
+
+
+def test_the_default_policy_reads_kind_by_kind_and_caller_by_caller(api, client):
+    read = api.get("/v1/approvals/policy").respond(json=POLICY)
+    with nc.as_user("user_42"):
+        policy = nc.ApprovalPolicy.get()
+    assert "NoClick-User" not in read.calls.last.request.headers
+    assert [k.kind for k in policy.kinds] == ["purchase", "outside_other_connection"]
+    assert policy.default("purchase", "agent") == "ask"
+    assert policy.default("purchase", "connected_app") == "under_auto_approve"
+    assert policy.default("purchase", "code") is None
+    stranger = policy.kinds[1]
+    assert (stranger.approver, stranger.outside_only, stranger.defaults) == ("connection_owner", True, {"agent": "ask"})
+    assert policy.callers["agent"].startswith("A platform agent's")
+    with pytest.raises(KeyError, match="no kind 'refund'"):
+        policy.default("refund", "agent")

@@ -43,7 +43,7 @@ from .app_services import (
     Broadcast, EmailSetup, PaymentsSetup, ProjectEmail, ProjectPayments, ProjectSignIn, SentEmail, SignInSetup,
 )
 from .api_request import ApiRequest
-from .approval import Approval
+from .approval import Approval, ApprovalPolicy, HoldKind
 from .brand import Brand
 from .browser import (
     ActResult, Browser, BrowserLiveView, BrowserLogin, BrowserProfile, BrowserWaitingOn, BrowserWatchedStep, PageState,
@@ -175,6 +175,7 @@ __all__ = [
     "IntegrationInfo", "IntegrationOperation", "IntegrationEvent",
     "Toolkit", "ToolResult",
     "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach", "Approval",
+    "ApprovalPolicy", "HoldKind",
     "Agent", "AgentConversation", "AgentStateRow", "CommandResult", "ConversationContext", "ConversationRevert",
     "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
     "Message", "HarnessInfo",
