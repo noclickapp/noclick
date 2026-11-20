@@ -16,6 +16,15 @@
  * may still spend itself). NoClick then runs an approved call itself, once, exactly as it was held, with no scope the
  * answering key lacks. While your account holds a key that would approve it, a call whose link reaches no person is
  * still held, with an empty `sentTo`, for your code (or the owner, signed in) to answer.
+ *
+ * Rather than poll, your code can hear each one: a webhook subscribed to `approval.requested` gets it as it's held,
+ * and to `approval.decided` as it's approved, declined, expired or withdrawn. The event's `data` is the approval as
+ * it reads here, never its link:
+ *
+ *     const event = await Webhook.verify(body, headers, secret);
+ *     if (event.type === "approval.requested") {
+ *       await Approval.fromId(String(event.data.id)).decline({ note: "Nothing is bought on weekends." });
+ *     }
  */
 
 import { resolveClient } from "./client.ts";
