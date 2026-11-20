@@ -25,7 +25,10 @@ it reads here, never its link::
     if event.type == "approval.requested":
         noclick.Approval.from_id(event.data["id"]).decline(note="Nothing is bought on weekends.")
 
-What NoClick holds by default, kind by kind and for which callers, reads as ``noclick.ApprovalPolicy.get()``.
+What NoClick holds, kind by kind and for which callers, reads as ``noclick.ApprovalPolicy.get()``, and your account
+switches any kind it may (``noclick.ApprovalPolicy.set``) so it needn't wait for a person at all::
+
+    noclick.ApprovalPolicy.set(settings={"purchase": {"disposition": "allow", "under_usd": 20}})
 """
 
 from __future__ import annotations
@@ -44,7 +47,7 @@ STATUSES = ("pending", "approved", "declined", "expired", "used", "canceled")
 
 @dataclass(frozen=True)
 class HoldKind:
-    """One kind of call NoClick may hold for a person, and what it does with one by default."""
+    """One kind of call NoClick may hold for a person: what it does by default, and what your account switched."""
 
     #: Its name (``purchase``, ``delete``, ``raise_limit``, ...).
     kind: str
@@ -59,21 +62,109 @@ class HoldKind:
     #: ``allow``, ``ask``, ``deny``, ``under_auto_approve`` (a quoted purchase at or under the connection's
     #: auto-approve amount runs, anything else asks) or ``once_previewed`` (a deletion its preview confirmed runs).
     defaults: Dict[str, str]
+    #: Whether your account may switch it (``ApprovalPolicy.set``).
+    settable: bool = False
+    #: What your account set it to (``disposition``, ``under_usd``, ``until``, ``effective_at``, ``pending``), or None.
+    setting: Optional[Dict[str, Any]] = None
+    #: The loosest a narrower scope may set it to, or None.
+    ceiling: Optional[Dict[str, Any]] = None
+    #: What each caller meets now: a default, or ``allow``, ``ask``, ``deny`` or ``allow_under`` (a purchase at or
+    #: under the setting's ``under_usd`` runs) by your account's setting.
+    effective: Dict[str, str] = dc_field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class PolicyChange:
+    """One change to your account's approval switches, as ``ApprovalPolicy.set`` made it."""
+
+    id: str
+    batch_id: str
+    #: The kind it changed, and whether its setting or its ceiling.
+    kind: str
+    target: str
+    before: Optional[Dict[str, Any]]
+    #: What it set (``disposition``, ``under_usd``, ``until``); None put NoClick's default back.
+    after: Optional[Dict[str, Any]]
+    #: It lets a caller do more than before: a key's loosening waits out an undo window first.
+    loosens: bool
+    #: ``owner`` (signed in) or ``key`` (with ``key_id``).
+    changed_by: str
+    key_id: Optional[str]
+    effective_at: Any
+    until: Any
+    #: It still waits out its undo window: ``ApprovalPolicy.undo`` takes it back.
+    pending: bool
+    undone_at: Any
+    undone_by: Optional[str]
+    created_at: Any
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @staticmethod
+    def _from(raw: Dict[str, Any]) -> "PolicyChange":
+        return PolicyChange(
+            id=raw["id"], batch_id=raw["batch_id"], kind=raw["kind"], target=raw["target"], before=raw.get("before"),
+            after=raw.get("after"), loosens=bool(raw.get("loosens")), changed_by=raw["changed_by"],
+            key_id=raw.get("key_id"), effective_at=parse_time(raw.get("effective_at")), until=parse_time(raw.get("until")),
+            pending=bool(raw.get("pending")), undone_at=parse_time(raw.get("undone_at")), undone_by=raw.get("undone_by"),
+            created_at=parse_time(raw.get("created_at")), raw=raw)
+
+
+@dataclass(frozen=True)
+class ApprovalExplanation:
+    """What a call of one kind by one kind of caller meets now, and why."""
+
+    kind: str
+    caller: str
+    #: ``allow``, ``ask``, ``deny``, or ``under_auto_approve`` where it turns on the connection's own amount.
+    disposition: str
+    #: ``account`` (your setting), ``bounds`` (NoClick asks this caller first) or ``default``.
+    source: str
+    #: What a held call's approval would say; None when it runs.
+    why: Optional[str]
+    setting: Optional[Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+def _wire_setting(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in value.items()}
+    return value
 
 
 @dataclass(frozen=True)
 class ApprovalPolicy:
-    """What NoClick holds for a person by default, kind by kind, and for which callers. These are defaults NoClick
-    chose; settings of your own to switch them come next, so no call ever needs a person for good."""
+    """What NoClick holds for a person, kind by kind and for which callers: its defaults, and what your account
+    switched (``set``), so no call ever needs a person for good."""
 
     kinds: List[HoldKind]
     #: Each kind of caller, by name (``connected_app``, ``assistant``, ``agent``, ``key``, ``code``, ``app``), with
     #: what it is.
     callers: Dict[str, str]
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: Whether the account has a monthly spending cap: loosening a purchase or a deletion past the default needs one.
+    spend_cap_set: bool = False
+    #: The changes the call that returned it made (``set``); empty from ``get``.
+    changes: List[PolicyChange] = dc_field(default_factory=list)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "ApprovalPolicy":
+        return cls(
+            kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
+                            outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]),
+                            settable=bool(k.get("settable")), setting=k.get("setting"), ceiling=k.get("ceiling"),
+                            effective=dict(k.get("effective") or k["defaults"]))
+                   for k in raw.get("kinds") or []],
+            callers=dict(raw.get("callers") or {}), raw=raw, spend_cap_set=bool(raw.get("spend_cap_set")),
+            changes=[PolicyChange._from(c) for c in raw.get("changes") or []])
+
+    def _kind(self, kind: str) -> HoldKind:
+        found = next((k for k in self.kinds if k.kind == kind), None)
+        if found is None:
+            raise KeyError(f"NoClick holds no kind '{kind}': it holds {', '.join(k.kind for k in self.kinds)}.")
+        return found
 
     def default(self, kind: str, caller: str) -> Optional[str]:
-        """What ``kind`` does by default for ``caller``.
+        """What ``kind`` does by default for ``caller``, whatever your account switched.
 
         Returns:
             ``allow``, ``ask``, ``deny``, ``under_auto_approve`` or ``once_previewed``; None where the kind doesn't
@@ -86,36 +177,145 @@ class ApprovalPolicy:
 
             policy = noclick.ApprovalPolicy.get()
             if policy.default("delete", "agent") == "ask":
-                print("An agent's deletion waits for the owner.")
+                print("An agent's deletion waits for the owner by default.")
         """
-        found = next((k for k in self.kinds if k.kind == kind), None)
-        if found is None:
-            raise KeyError(f"NoClick holds no kind '{kind}': it holds {', '.join(k.kind for k in self.kinds)}.")
-        return found.defaults.get(caller)
+        return self._kind(kind).defaults.get(caller)
+
+    def effective(self, kind: str, caller: str) -> Optional[str]:
+        """What ``kind`` does for ``caller`` now: your account's setting where it switched one, else the default.
+
+        Returns:
+            ``allow``, ``ask``, ``deny``, ``allow_under`` (a purchase at or under the setting's ``under_usd``),
+            ``under_auto_approve`` or ``once_previewed``; None where the kind doesn't apply to that caller.
+
+        Raises:
+            KeyError: ``kind`` isn't one NoClick holds.
+
+        Usage::
+
+            policy = noclick.ApprovalPolicy.get()
+            print(policy.effective("purge", "agent"))   # "ask", until the account allows it
+        """
+        return self._kind(kind).effective.get(caller)
 
     @synced
     @classmethod
     async def get(cls, *, client: Optional[Client] = None) -> "ApprovalPolicy":
-        """What waits for a person by default: each kind of hold (a purchase, a deletion that can't be undone, a
-        spending limit raised, a call whose terms a person accepts, ...), what it covers, who approves it, and what
-        it does for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through
-        MCP, code, an app's own code).
+        """What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit
+        raised, a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default
+        for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP,
+        code, an app's own code), and what your account switched.
 
         Returns:
-            The policy: ``kinds``, each a ``HoldKind``, and ``callers``.
+            The policy: ``kinds``, each a ``HoldKind``, ``callers`` and ``spend_cap_set``.
 
         Usage::
 
             policy = noclick.ApprovalPolicy.get()
             print(policy.default("purchase", "agent"))   # "ask"
             for kind in policy.kinds:
-                print(kind.kind, kind.defaults)
+                print(kind.kind, kind.effective)
         """
-        raw = await resolve_client(client).request("GET", "/v1/approvals/policy", user=None)
-        return cls(kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
-                                   outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]))
-                          for k in raw.get("kinds") or []],
-                   callers=dict(raw.get("callers") or {}), raw=raw)
+        return cls._from(await resolve_client(client).request("GET", "/v1/approvals/policy", user=None))
+
+    @synced
+    @classmethod
+    async def set(
+        cls, *, settings: Optional[Dict[str, Any]] = None, ceilings: Optional[Dict[str, Any]] = None,
+        client: Optional[Client] = None,
+    ) -> "ApprovalPolicy":
+        """Switch what NoClick holds for a person, for your whole account, from the kinds a ``get`` lists as
+        ``settable``: each named kind to ``"allow"``, ``"ask"`` or ``"deny"``, a dict with ``disposition`` (and for a
+        purchase ``under_usd``, allowed at or under it, asked above; any kind may take ``until``, when it lapses back),
+        or None for NoClick's default. Kinds you don't name stay as they are. ``ceilings`` are the loosest a narrower
+        scope (a key, an agent) may set.
+
+        Signed in as the account's owner, or with one of its own secret keys naming the ``approvals:policy`` scope
+        (``*`` holds it only when it's named too). A key's loosening takes effect after a 10-minute undo window, and
+        the owner is told; the owner's own change applies at once.
+
+        Returns:
+            The policy as it stands after, with ``changes``: each change it made.
+
+        Raises:
+            noclick.PermissionDenied: the caller may not switch them, or loosening a purchase or a deletion past the
+                default while the account has no monthly spending cap (``reason`` ``spend_cap_required``).
+            noclick.InvalidRequest: a kind not settable yet, ``under_usd`` on anything but a purchase allowed, or a
+                setting looser than its ceiling.
+
+        Usage::
+
+            noclick.ApprovalPolicy.set(settings={
+                "purchase": {"disposition": "allow", "under_usd": 20},
+                "purge": "allow",
+                "outside_outbound": "allow",
+            })
+        """
+        body = compact(settings={k: _wire_setting(v) for k, v in settings.items()} if settings is not None else None,
+                       ceilings={k: _wire_setting(v) for k, v in ceilings.items()} if ceilings is not None else None)
+        return cls._from(await resolve_client(client).request("PUT", "/v1/approvals/policy", json=body, user=None))
+
+    @synced
+    @classmethod
+    async def explain(
+        cls, kind: str, caller: str, *, amount_usd: Optional[float] = None, quoted: bool = True,
+        previewed: bool = True, client: Optional[Client] = None,
+    ) -> ApprovalExplanation:
+        """What a call of ``kind`` by ``caller`` would meet now, and why: your account's setting, what NoClick asks
+        that caller first, or the default. Nothing runs and nothing is held.
+
+        Returns:
+            An ``ApprovalExplanation``: ``disposition``, ``source`` and ``why``.
+
+        Usage::
+
+            seen = noclick.ApprovalPolicy.explain("purchase", "agent", amount_usd=12)
+            print(seen.disposition, seen.source, seen.why)
+        """
+        raw = await resolve_client(client).request("POST", "/v1/approvals/policy/explain", json=compact(
+            kind=kind, caller=caller, amount_usd=amount_usd, quoted=quoted, previewed=previewed), user=None)
+        return ApprovalExplanation(kind=raw["kind"], caller=raw["caller"], disposition=raw["disposition"],
+                                   source=raw["source"], why=raw.get("why"), setting=raw.get("setting"), raw=raw)
+
+    @synced
+    @classmethod
+    async def history(cls, *, limit: Optional[int] = None, client: Optional[Client] = None) -> List[PolicyChange]:
+        """Every change to your account's approval switches, newest first: the first 20, or the first ``limit`` (at
+        most 100).
+
+        Returns:
+            Each ``PolicyChange``.
+
+        Usage::
+
+            for change in noclick.ApprovalPolicy.history():
+                print(change.kind, change.after, change.changed_by, change.pending)
+        """
+        raw = await resolve_client(client).request("GET", "/v1/approvals/policy/changes",
+                                                   params=compact(limit=limit), user=None)
+        return [PolicyChange._from(row) for row in raw.get("data") or []]
+
+    @synced
+    @classmethod
+    async def undo(cls, change_id: str, *, client: Optional[Client] = None) -> PolicyChange:
+        """Take back a change still waiting out its undo window (a key's loosening): what was in effect before it
+        stands again. Signed in, or with a key naming ``approvals:policy``.
+
+        Returns:
+            The change, undone (``undone_at``, ``undone_by``).
+
+        Raises:
+            noclick.Conflict: it's in effect already, undone already, or a later change replaced it.
+
+        Usage::
+
+            for change in noclick.ApprovalPolicy.history():
+                if change.pending and change.changed_by == "key":
+                    noclick.ApprovalPolicy.undo(change.id)
+        """
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/approvals/policy/changes/{quote(change_id, safe='')}/undo", user=None)
+        return PolicyChange._from(raw)
 
 
 class Approval(_Object):

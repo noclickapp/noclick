@@ -105,6 +105,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "approvals_get": ["Get Approval", "GET", "read"],
     "approvals_list": ["List Approvals", "GET", "read"],
     "approvals_policy": ["Get Approval Policy", "GET", "read"],
+    "approvals_policy_changes_list": ["List Approval Policy Changes", "GET", "read"],
+    "approvals_policy_explain": ["Explain Approval Policy", "POST", "read"],
     "attachments_delete": ["Delete Attachment", "DELETE", "destructive"],
     "attachments_list": ["List Attachments", "GET", "read"],
     "brand": ["Get Brand", "GET", "read"],

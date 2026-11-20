@@ -60,7 +60,7 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
     { label: 'Admin', covers: 'Users, usage, policy, brand and the operations your calls started.', scopes: ['users', 'usage', 'policy', 'brand', 'operations'] },
     { label: 'Connect', covers: "Ask users to connect services, and use their connections.", scopes: ['credentials:request', 'credentials:use', TOKEN_SCOPE] },
     { label: 'Tools', covers: 'Run integration operations and toolkits, host them as MCP servers, call AI models and draw pictures for replies.', scopes: ['tools', 'mcp_servers', 'ai', 'render'] },
-    { label: 'People', covers: 'Ask, notify and request approvals from people, and approve or decline the calls NoClick holds for your yes.', scopes: ['humans', 'approvals:answer'] },
+    { label: 'People', covers: 'Ask, notify and request approvals from people, and approve, decline or switch off the calls NoClick holds for your yes.', scopes: ['humans', 'approvals:answer', 'approvals:policy'] },
     {
         label: 'Agents',
         covers: 'Hosted agents and the channels, inboxes, numbers and sandboxes they use, and taking over a coding agent’s terminal.',
@@ -85,6 +85,7 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'webhooks:reveal': 'reads a webhook’s signing secret',
     'agents:terminal': 'opens a coding agent’s terminal, which shows its sandbox’s keys and tokens',
     'approvals:answer': 'approves or declines a call NoClick holds for your yes, from your code',
+    'approvals:policy': 'switches what NoClick holds for your yes, for the whole account',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

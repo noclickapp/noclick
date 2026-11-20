@@ -74,8 +74,62 @@ test("the default policy reads kind by kind and caller by caller", async () => {
   assert.equal(policy.default("purchase", "code"), null);
   assert.deepEqual(policy.kinds[1], {
     kind: "outside_other_connection", description: "A stranger's turn beyond what it answers on.",
-    approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" },
+    approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" }, settable: false, setting: null,
+    ceiling: null, effective: { agent: "ask" },
   });
   assert.match(policy.callers.agent, /^A platform agent's/);
   assert.throws(() => policy.default("refund", "agent"), /no kind 'refund'/);
+});
+
+const CHANGE = {
+  object: "approval_policy_change", id: "chg_1", batch_id: "bat_1", kind: "purchase", target: "setting", before: null,
+  after: { disposition: "allow", under_usd: 20, until: null }, loosens: true, changed_by: "key", key_id: "key_9",
+  effective_at: "2026-11-21T09:10:00+00:00", until: null, pending: true, undone_at: null, undone_by: null,
+  created_at: "2026-11-21T09:00:00+00:00",
+};
+
+test("the account switches kinds as the account and reads back what changed", async () => {
+  const { api } = setup();
+  const set = {
+    ...POLICY, spend_cap_set: true, changes: [CHANGE], kinds: [
+      { ...POLICY.kinds[0], settable: true, setting: { disposition: "allow", under_usd: 20, until: null, pending: true },
+        ceiling: null, effective: { connected_app: "under_auto_approve", agent: "allow_under", app: "allow" } },
+      POLICY.kinds[1]],
+  };
+  const put = api.on("PUT", "/v1/approvals/policy", json(set));
+  const until = new Date("2026-11-22T00:00:00Z");
+  const policy = await nc.asUser("user_42", () => nc.ApprovalPolicy.set({
+    settings: { purchase: { disposition: "allow", under_usd: 20 }, purge: { disposition: "allow", until }, delete: null },
+  }));
+  assert.equal(put.last.headers.get("NoClick-User"), null);
+  assert.deepEqual(put.last.body, { settings: {
+    purchase: { disposition: "allow", under_usd: 20 }, purge: { disposition: "allow", until: until.toISOString() },
+    delete: null } });
+  const [change] = policy.changes;
+  assert.deepEqual([change.kind, change.loosens, change.pending, change.changedBy], ["purchase", true, true, "key"]);
+  assert.equal(change.effectiveAt?.getUTCMinutes(), 10);
+  assert.equal(policy.spendCapSet, true);
+  assert.equal(policy.effective("purchase", "agent"), "allow_under");
+});
+
+test("a switch needs a cap, explain reads, and undo takes one back", async () => {
+  const { api } = setup();
+  api.on("PUT", "/v1/approvals/policy", apiError(403, "permission_denied", "Loosening a purchase needs a cap.",
+    { reason: "spend_cap_required", field: "settings.purchase" }));
+  await assert.rejects(nc.ApprovalPolicy.set({ settings: { purchase: "allow" } }), (error: unknown) =>
+    error instanceof nc.PermissionDenied && /needs a cap/.test(error.message));
+  const explained = api.on("POST", "/v1/approvals/policy/explain", json({
+    object: "approval_explanation", kind: "purchase", caller: "agent", disposition: "ask", source: "default",
+    why: "Purchases through an API key always ask.", setting: null, bounds: false }));
+  const seen = await nc.ApprovalPolicy.explain("purchase", "agent", { amountUsd: 12 });
+  assert.deepEqual(explained.last.body, { kind: "purchase", caller: "agent", amount_usd: 12, quoted: true, previewed: true });
+  assert.deepEqual([seen.disposition, seen.source], ["ask", "default"]);
+  const listed = api.on("GET", "/v1/approvals/policy/changes", json(listing([CHANGE])));
+  const [change] = await nc.ApprovalPolicy.history({ limit: 5 });
+  assert.equal(listed.last.query.get("limit"), "5");
+  assert.equal(change.id, "chg_1");
+  api.on("POST", "/v1/approvals/policy/changes/chg_1/undo", json({
+    ...CHANGE, pending: false, undone_at: "2026-11-21T09:02:00+00:00", undone_by: "owner" }));
+  const undone = await nc.ApprovalPolicy.undo("chg_1");
+  assert.deepEqual([undone.undoneBy, undone.pending], ["owner", false]);
 });
