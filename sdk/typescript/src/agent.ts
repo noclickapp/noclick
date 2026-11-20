@@ -343,6 +343,10 @@ export interface AgentReply {
    * stands; null when the agent answered.
    */
   endedBy?: TurnLimitName | null;
+  /** What a coding harness's turn did (null for a turn with no harness steps). */
+  summary?: TurnSummary | null;
+  /** Its harness steps' folds, in order. */
+  groups?: StepGroup[];
   raw: JsonObject;
 }
 
@@ -423,6 +427,160 @@ function toConversation(raw: JsonObject): Conversation {
 /** A step's kind: a coding harness's shell `command`, file `edit`, `read` or `search`, or any other `tool` (NoClick's own among them). */
 export type AgentStepKind = "command" | "edit" | "read" | "search" | "tool";
 
+/** What a coding harness's step did, as NoClick judged it from what it runs. */
+export type StepCategory = "read" | "search" | "list" | "edit" | "test" | "install" | "run" | "tool";
+
+/**
+ * What a coding harness's step did, in words, in its tense: running as it runs (`Reading attachments.py`), done once
+ * it ended (`Read attachments.py lines 55-110`). `text` is the whole line; `verb`, `object` and `detail` its parts.
+ */
+export interface StepLabel {
+  text: string;
+  verb: string | null;
+  object: string | null;
+  detail: string | null;
+}
+
+/**
+ * A test run's counts, read from what it printed (pytest, vitest, jest, node's runner, cargo): as it streams (`done`
+ * false; `total` once it's known) and at its end, and in words (`label`: `161 passed`, `2 of 43 failed`, `64 of 161`).
+ */
+export interface StepTests {
+  passed: number;
+  failed: number;
+  skipped: number;
+  total: number | null;
+  done: boolean;
+  label: string;
+}
+
+/** How far a step is where it reported a count: `done` of `total`. A step that names no total has none. */
+export interface StepProgress {
+  done: number;
+  total: number;
+}
+
+/** The lines an edit's diffs added and removed. */
+export interface DiffStat {
+  added: number;
+  removed: number;
+}
+
+/**
+ * Reads, searches and listings a coding harness made in a row, folded into one line as Claude Code folds them (never
+ * a failed step): `label` (`Read 6 files, searched for 3 patterns`; `Reading …` while one runs), its `counts`
+ * (`read`: files, `search`, `list`), its steps (`stepIds`) and `parent`, the subagent call whose steps they are. A
+ * group no longer standing (a step left it) has no `stepIds`.
+ */
+export interface StepGroup {
+  id: string;
+  label: string | null;
+  counts: Record<string, number>;
+  stepIds: string[];
+  running: boolean;
+  parent: string | null;
+}
+
+/** A file a turn changed: the lines its edits added and removed, and `how` where not by an edit tool (`sed`, `script`). */
+export interface ChangedFile {
+  path: string;
+  added: number;
+  removed: number;
+  how: string[];
+}
+
+/** The files a turn changed (`label`: `Changed 5 files`), and how many only by a script or a command (`byScript`). */
+export interface TurnChanges {
+  label: string;
+  files: ChangedFile[];
+  added: number;
+  removed: number;
+  byScript: number;
+}
+
+/**
+ * What a coding harness's turn did: `label` (`Read 9 files, searched 7 times`), its steps' `counts` by category, how
+ * many `failed`, what it `changed` and its last test run's counts (`tests`).
+ */
+export interface TurnSummary {
+  label: string | null;
+  counts: Record<string, number>;
+  failed: number;
+  changed: TurnChanges | null;
+  tests: StepTests | null;
+}
+
+const counts = (value: unknown): Record<string, number> =>
+  Object.fromEntries(Object.entries(value && typeof value === "object" ? asObject(value) : {}).map(([k, v]) => [k, Number(v ?? 0)]));
+
+/** @internal */
+export function toStepLabel(value: unknown): StepLabel | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  return raw.text ? { text: String(raw.text), verb: str(raw.verb), object: str(raw.object), detail: str(raw.detail) } : null;
+}
+
+/** @internal */
+export function toStepTests(value: unknown): StepTests | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  return {
+    passed: num(raw.passed) ?? 0, failed: num(raw.failed) ?? 0, skipped: num(raw.skipped) ?? 0, total: num(raw.total),
+    done: raw.done === true, label: str(raw.label) ?? "",
+  };
+}
+
+/** @internal */
+export function toStepProgress(value: unknown): StepProgress | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  const total = num(raw.total);
+  return total ? { done: num(raw.done) ?? 0, total } : null;
+}
+
+/** @internal */
+export function toDiffStat(value: unknown): DiffStat | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  return { added: num(raw.added) ?? 0, removed: num(raw.removed) ?? 0 };
+}
+
+/** @internal */
+export function toStepGroup(value: unknown): StepGroup | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  if (!raw.id) return null;
+  return {
+    id: String(raw.id), label: str(raw.label), counts: counts(raw.counts),
+    stepIds: Array.isArray(raw.step_ids) ? raw.step_ids.map(String) : [], running: raw.running === true,
+    parent: str(raw.parent),
+  };
+}
+
+/** @internal */
+export function toStepGroups(value: unknown): StepGroup[] {
+  return (Array.isArray(value) ? value : []).map(toStepGroup).filter((g): g is StepGroup => g !== null);
+}
+
+/** @internal */
+export function toTurnSummary(value: unknown): TurnSummary | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = asObject(value);
+  const changed = raw.changed && typeof raw.changed === "object" ? asObject(raw.changed) : null;
+  return {
+    label: str(raw.label), counts: counts(raw.counts), failed: num(raw.failed) ?? 0,
+    changed: changed && {
+      label: str(changed.label) ?? "",
+      files: (Array.isArray(changed.files) ? (changed.files as JsonObject[]) : []).map((f) => ({
+        path: str(f.path) ?? "", added: num(f.added) ?? 0, removed: num(f.removed) ?? 0,
+        how: Array.isArray(f.how) ? f.how.map(String) : [],
+      })),
+      added: num(changed.added) ?? 0, removed: num(changed.removed) ?? 0, byScript: num(changed.by_script) ?? 0,
+    },
+    tests: toStepTests(raw.tests),
+  };
+}
+
 /** One file a step changed: a unified diff, or a new file's whole content (`change` `add`), at most 16,384 characters. */
 export interface AgentStepDiff {
   path: string;
@@ -437,6 +595,12 @@ export interface AgentStepDiff {
  * before reads `[… N characters not shown …]`), its `tool_result` (`exitCode`, `durationMs`, `isError`, `result`)
  * and each `diff`. A turn keeps at most 200 such steps and 256,000 characters of their output and diffs, the
  * newest steps' first. NoClick's own tool calls are `kind` `tool`, with no `callId`.
+ *
+ * What a harness's step did, in words, judged once by NoClick as it ran: its `category`, its `label` and where that
+ * came from (`labelSource`: the harness's own `description`, Codex's `actions`, or `derived` from the command), the
+ * command as shown (`displayCommand`: no `cd` into where it runs, heredocs shortened), a read's `lines`, how many lines
+ * it printed (`outputLines`), a test run's `tests`, a count it reported (`progress`), an edit's `diffStat`, whether it
+ * `failed` (a search that found nothing didn't) and the `group` it folds into (`StepGroup.id`).
  */
 export interface AgentStep {
   kind: AgentStepKind;
@@ -454,6 +618,17 @@ export interface AgentStep {
   result: unknown;
   diffs: AgentStepDiff[];
   createdAt: Date | null;
+  category: StepCategory | null;
+  label: StepLabel | null;
+  labelSource: "description" | "actions" | "derived" | null;
+  displayCommand: string | null;
+  lines: { from: number | null; to: number | null } | null;
+  outputLines: number | null;
+  tests: StepTests | null;
+  progress: StepProgress | null;
+  diffStat: DiffStat | null;
+  failed: boolean | null;
+  group: string | null;
   raw: JsonObject;
 }
 
@@ -480,6 +655,18 @@ export function toAgentStep(raw: JsonObject): AgentStep {
       ? (raw.diffs as JsonObject[]).map((d) => ({ path: str(d.path) ?? "", change: str(d.kind), diff: str(d.diff) ?? "" }))
       : [],
     createdAt: parseTime(raw.created_at),
+    category: str(raw.category) as StepCategory | null,
+    label: toStepLabel(raw.label),
+    labelSource: str(raw.label_source) as AgentStep["labelSource"],
+    displayCommand: str(raw.display_command),
+    lines: raw.lines && typeof raw.lines === "object"
+      ? { from: num(asObject(raw.lines).from), to: num(asObject(raw.lines).to) } : null,
+    outputLines: num(raw.output_lines),
+    tests: toStepTests(raw.tests),
+    progress: toStepProgress(raw.progress),
+    diffStat: toDiffStat(raw.diff_stat),
+    failed: typeof raw.failed === "boolean" ? raw.failed : null,
+    group: str(raw.group),
     raw,
   };
 }
@@ -499,6 +686,8 @@ export function toAgentEvent(type: string, data: JsonObject): AgentEvent {
       operationId: str(data.operation_id),
       modelUsage: toModelUsage(data.model_usage),
       endedBy: str(data.ended_by) as TurnLimitName | null,
+      summary: toTurnSummary(data.summary),
+      groups: toStepGroups(data.groups),
       raw: data,
     };
     return {
@@ -507,7 +696,8 @@ export function toAgentEvent(type: string, data: JsonObject): AgentEvent {
       via: null, data: null, trigger: null, reasoning: [], callId: null, source: null, exitCode: null, durationMs: null,
       whole: false, path: null, change: null, diff: null, count: null, stepKind: null, command: null, query: null,
       request: null, operationId: reply.operationId, messageId: null, author: null, notification: false, space: null,
-      subagent: null, raw: data,
+      subagent: null, category: null, label: null, displayCommand: null, group: null, stepGroup: null, tests: null,
+      progress: null, outputLines: null, diffStat: null, failed: null, summary: reply.summary ?? null, raw: data,
     };
   }
   return {
@@ -530,6 +720,17 @@ export function toAgentEvent(type: string, data: JsonObject): AgentEvent {
     notification: data.notification === true, space: toSpace(data.space),
     subagent: type === "message" ? toSubagent(data.subagent) : null,
     chat: type === "message" ? str(data.chat) : null,
+    category: str(data.category) as StepCategory | null,
+    label: toStepLabel(data.label),
+    displayCommand: str(data.display_command),
+    group: type === "tool_call" || type === "tool_result" ? str(data.group) : null,
+    stepGroup: type === "group" ? toStepGroup(data) : null,
+    tests: toStepTests(data.tests),
+    progress: toStepProgress(data.progress),
+    outputLines: num(data.output_lines),
+    diffStat: toDiffStat(data.diff_stat),
+    failed: typeof data.failed === "boolean" ? data.failed : null,
+    summary: toTurnSummary(data.summary),
     raw: data,
   };
 }
@@ -563,6 +764,8 @@ export function toMessage(m: JsonObject): Message {
     space: toSpace(m.space),
     subagent: toSubagent(m.subagent),
     chat: str(m.chat),
+    summary: toTurnSummary(m.summary),
+    groups: toStepGroups(m.groups),
     raw: m,
   };
 }
@@ -714,6 +917,10 @@ export interface Message {
    * (null otherwise).
    */
   chat?: string | null;
+  /** What a coding harness's reply's turn did (null where it says nothing). */
+  summary?: TurnSummary | null;
+  /** Its harness steps' folds, in order. */
+  groups?: StepGroup[];
   raw: JsonObject;
 }
 
@@ -1189,6 +1396,8 @@ function readReply(result: unknown, op: Operation<unknown>): AgentReply {
     operationId: str(op._known("id")),
     modelUsage: toModelUsage(body.model_usage),
     endedBy: str(body.ended_by) as TurnLimitName | null,
+    summary: toTurnSummary(body.summary),
+    groups: toStepGroups(body.groups),
     raw: body,
   };
 }

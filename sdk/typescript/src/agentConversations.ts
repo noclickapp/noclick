@@ -10,7 +10,7 @@
  *     const { data } = await Agent.states();
  */
 
-import type { HarnessName, ModelUsage, PermissionMode } from "./agent.ts";
+import type { HarnessName, ModelUsage, PermissionMode, StepCategory } from "./agent.ts";
 import { asObject, num, parseTime, str } from "./object.ts";
 import type { JsonObject } from "./object.ts";
 
@@ -289,6 +289,13 @@ export interface AgentNow {
   kind: "command" | "edit" | "read" | "search" | "tool";
   line: string;
   since: Date | null;
+  /** Whether that step still runs (false once it ended and the turn goes on). */
+  running: boolean;
+  /** That step in words, in its tense (`Running the plan usage tests`), as a coding harness's step says it. */
+  label: string | null;
+  category: StepCategory | null;
+  /** What the turn did so far (`Read 5 files, searched 5 times`). */
+  summary: string | null;
 }
 
 /**
@@ -333,7 +340,9 @@ export function toAgentStates(value: unknown): AgentStates {
         agentId: String(row.agent_id), name: String(row.name ?? ""), harness: row.harness as HarnessName,
         state: (str(row.state) ?? "idle") as AgentState, conversation: str(row.conversation),
         now: now && { tool: String(now.tool ?? ""), kind: (str(now.kind) ?? "tool") as AgentNow["kind"],
-                      line: String(now.line ?? ""), since: parseTime(now.since) },
+                      line: String(now.line ?? ""), since: parseTime(now.since), running: now.running !== false,
+                      label: str(now.label), category: str(now.category) as StepCategory | null,
+                      summary: str(now.summary) },
         waiting: { asks: num(waiting.asks) ?? 0, heldCalls: num(waiting.held_calls) ?? 0,
                    requests: num(waiting.requests) ?? 0, total: num(waiting.total) ?? 0 },
         turnStartedAt: parseTime(row.turn_started_at), lastActiveAt: parseTime(row.last_active_at),

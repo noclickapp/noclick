@@ -181,6 +181,82 @@ test("a coding agent's reply keeps its turn's steps, in the shape its live event
   assert.deepEqual(reply.steps.map((step) => [step.kind, step.exitCode]), [["command", 1]]);
 });
 
+const SUMMARY = {
+  label: "Read 5 files, searched 5 times", counts: { read: 7, search: 5, edit: 8, test: 3 }, failed: 3,
+  changed: { label: "Changed 2 files", added: 310, removed: 0, by_script: 1, files: [
+    { path: "usage.py", added: 0, removed: 0, how: ["sed", "script"] },
+    { path: "test_platform_plan_usage.py", added: 310, removed: 0, how: [] }] },
+  tests: { passed: 161, failed: 0, skipped: 0, total: 161, done: true, label: "161 passed" },
+};
+const GROUP = { id: "g:s2", label: "Read 2 files, searched for 2 patterns", counts: { read: 2, search: 2, list: 0 },
+  step_ids: ["s2", "s3", "s4", "s5"], running: false };
+
+test("a coding turn's steps say what they did in words, fold and sum up, live and kept alike", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const read = {
+    id: "s3", source: "harness", kind: "command", tool: "shell", command: "sed -n 55,110p a.py",
+    arguments: { command: "sed -n 55,110p a.py" }, output: "x\n", exit_code: 0, is_error: false, diffs: [],
+    created_at: null, category: "read",
+    label: { text: "Read a.py lines 55-110", verb: "Read", object: "a.py", detail: "lines 55-110" },
+    label_source: "derived", display_command: "sed -n 55,110p a.py", lines: { from: 55, to: 110 }, output_lines: 1,
+    failed: false, group: "g:s2",
+  };
+  const tests = { ...read, id: "s26", category: "test", label: { text: "Ran the plan usage tests", verb: "Ran" },
+    label_source: "description", group: null, lines: null, output_lines: 4, tests: SUMMARY.tests,
+    progress: { done: 161, total: 161 } };
+  const edited = { ...read, id: "s15", kind: "edit", category: "edit", label: { text: "Edited usage.py" },
+    diff_stat: { added: 3, removed: 1 }, group: null };
+  api.on("GET", "/v1/agents/ag_1/conversations/task", json({ object: "conversation", messages: [
+    { role: "assistant", text: "Done.", created_at: null, operation_id: "op_1", tool_calls: [read, tests, edited],
+      summary: SUMMARY, groups: [GROUP] }] }));
+  const [replied] = await nc.Agent.fromId("ag_1").history("task");
+  const [sed, ran, edit] = replied.steps;
+  assert.deepEqual([sed.category, sed.label, sed.labelSource, sed.displayCommand, sed.lines, sed.outputLines, sed.failed, sed.group],
+    ["read", { text: "Read a.py lines 55-110", verb: "Read", object: "a.py", detail: "lines 55-110" }, "derived",
+      "sed -n 55,110p a.py", { from: 55, to: 110 }, 1, false, "g:s2"]);
+  assert.deepEqual([ran.label?.text, ran.labelSource, ran.tests, ran.progress], ["Ran the plan usage tests", "description",
+    { passed: 161, failed: 0, skipped: 0, total: 161, done: true, label: "161 passed" }, { done: 161, total: 161 }]);
+  assert.deepEqual(edit.diffStat, { added: 3, removed: 1 });
+  const group = { id: "g:s2", label: GROUP.label, counts: GROUP.counts, stepIds: GROUP.step_ids, running: false, parent: null };
+  assert.deepEqual(replied.groups, [group]);
+  const summary = replied.summary!;
+  assert.deepEqual([summary.label, summary.failed, summary.counts.edit, summary.tests?.label],
+    ["Read 5 files, searched 5 times", 3, 8, "161 passed"]);
+  assert.deepEqual(summary.changed, { label: "Changed 2 files", added: 310, removed: 0, byScript: 1, files: [
+    { path: "usage.py", added: 0, removed: 0, how: ["sed", "script"] },
+    { path: "test_platform_plan_usage.py", added: 310, removed: 0, how: [] }] });
+
+  const moments: [string, unknown][] = [
+    ["tool_call", { id: "s26", tool: "shell", source: "harness", kind: "command", category: "test",
+      label: { text: "Running the plan usage tests", verb: "Running" }, display_command: "pytest x", group: null,
+      arguments: { command: "pytest x" } }],
+    ["output", { id: "s26", text: "....\n", output_lines: 3, progress: { done: 64, total: 161 },
+      tests: { passed: 0, failed: 0, skipped: 0, total: 161, done: false, label: "64 of 161" } }],
+    ["group", GROUP],
+    ["tool_result", { id: "s26", tool: "shell", source: "harness", kind: "command", category: "test",
+      label: { text: "Ran the plan usage tests" }, failed: false, group: null, tests: SUMMARY.tests, output_lines: 4 }],
+    ["turn_end", { status: "succeeded", text: "Done.", operation_id: "op_1", summary: SUMMARY }],
+  ];
+  api.on("GET", "/v1/agents/ag_1/conversations/task/events", () => new Response(
+    moments.map(([type, data]) => `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`).join(""),
+    { headers: { "content-type": "text/event-stream" } }));
+  const watched: nc.AgentEvent[] = [];
+  for await (const event of nc.Agent.fromId("ag_1").watch("task")) watched.push(event);
+  const [call, out, folded, end, turnEnd] = watched;
+  assert.deepEqual([call.category, call.label?.text, call.displayCommand], ["test", "Running the plan usage tests", "pytest x"]);
+  assert.deepEqual([out.progress, out.tests?.label, out.outputLines], [{ done: 64, total: 161 }, "64 of 161", 3]);
+  assert.deepEqual(folded.stepGroup, group);
+  assert.deepEqual([end.label?.text, end.failed, end.tests?.label], ["Ran the plan usage tests", false, "161 passed"]);
+  assert.deepEqual(turnEnd.summary, summary);
+
+  // A turn's reply as its operation settles with it.
+  api.on("GET", "/v1/operations/op_1/wait", json(operation({ id: "op_1", kind: "agent.message", status: "succeeded",
+    result: { text: "Done.", tool_calls: [read], summary: SUMMARY, groups: [GROUP] } })));
+  const reply = await nc.Operation.fromId<nc.AgentReply>("op_1").wait();
+  assert.deepEqual([reply.summary, reply.groups], [summary, [group]]);
+});
+
 test("a message says how it arrived, a note carries its data and joins a conversation once by its key", async () => {
   const { api } = setup();
   api.on("GET", "/v1/agents/ag_1", json(AGENT));

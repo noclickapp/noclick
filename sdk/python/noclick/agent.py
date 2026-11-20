@@ -71,6 +71,148 @@ _STEP_KINDS = ("command", "edit", "read", "search", "tool")
 
 
 @dataclass(frozen=True)
+class StepLabel:
+    """What a coding harness's step did, in words, in its tense: running as it runs (``Reading attachments.py``),
+    done once it ended (``Read attachments.py lines 55-110``). ``text`` is the whole line; ``verb``, ``object`` and
+    ``detail`` its parts."""
+
+    text: str
+    verb: Optional[str] = None
+    object: Optional[str] = None
+    detail: Optional[str] = None
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["StepLabel"]:
+        if not isinstance(raw, dict) or not raw.get("text"):
+            return None
+        return cls(str(raw["text"]), raw.get("verb"), raw.get("object"), raw.get("detail"))
+
+
+@dataclass(frozen=True)
+class StepTests:
+    """A test run's counts, read from what it printed (pytest, vitest, jest, node's runner, cargo): as it streams
+    (``done`` False; ``total`` once it's known) and at its end, and in words (``label``: ``161 passed``, ``2 of 43
+    failed``, ``64 of 161``)."""
+
+    passed: int
+    failed: int
+    skipped: int
+    total: Optional[int]
+    done: bool
+    label: str
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["StepTests"]:
+        if not isinstance(raw, dict):
+            return None
+        return cls(int(raw.get("passed") or 0), int(raw.get("failed") or 0), int(raw.get("skipped") or 0),
+                   raw.get("total"), raw.get("done") is True, str(raw.get("label") or ""))
+
+
+@dataclass(frozen=True)
+class StepProgress:
+    """How far a step is, where it reported a count (a test run whose total is known, ``[64/161]``): ``done`` of
+    ``total``. A step that names no total has none."""
+
+    done: int
+    total: int
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["StepProgress"]:
+        if not isinstance(raw, dict) or not raw.get("total"):
+            return None
+        return cls(int(raw.get("done") or 0), int(raw["total"]))
+
+
+@dataclass(frozen=True)
+class DiffStat:
+    """The lines an edit's diffs added and removed."""
+
+    added: int
+    removed: int
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["DiffStat"]:
+        return cls(int(raw.get("added") or 0), int(raw.get("removed") or 0)) if isinstance(raw, dict) else None
+
+
+@dataclass(frozen=True)
+class StepGroup:
+    """Reads, searches and listings a coding harness made in a row, folded into one line as Claude Code folds them
+    (never a failed step): ``label`` (``Read 6 files, searched for 3 patterns``; ``Reading …`` while one runs), the
+    ``counts`` (``read``: files, ``search``, ``list``), its steps (``step_ids``) and ``parent``, the subagent call
+    whose steps they are. A group no longer standing (a step left it) has no ``step_ids``."""
+
+    id: str
+    label: Optional[str]
+    counts: Dict[str, int]
+    step_ids: List[str]
+    running: bool
+    parent: Optional[str] = None
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["StepGroup"]:
+        if not isinstance(raw, dict) or not raw.get("id"):
+            return None
+        return cls(str(raw["id"]), raw.get("label"), dict(raw.get("counts") or {}),
+                   [str(i) for i in raw.get("step_ids") or []], raw.get("running") is True, raw.get("parent"))
+
+
+def _groups(raw: Any) -> List[StepGroup]:
+    return [g for g in (StepGroup._from(r) for r in raw or []) if g is not None]
+
+
+@dataclass(frozen=True)
+class ChangedFile:
+    """A file a turn changed: the lines its edits added and removed, and ``how`` where not by an edit tool
+    (``sed``, ``script``, ``a command``): such a change carries no counts."""
+
+    path: str
+    added: int
+    removed: int
+    how: List[str]
+
+
+@dataclass(frozen=True)
+class TurnChanges:
+    """The files a turn changed: ``label`` (``Changed 5 files``), each file, the lines added and removed, and how
+    many were changed only by a script or a command (``by_script``)."""
+
+    label: str
+    files: List[ChangedFile]
+    added: int
+    removed: int
+    by_script: int
+
+
+@dataclass(frozen=True)
+class TurnSummary:
+    """What a coding harness's turn did: ``label`` (``Read 9 files, searched 7 times``), its steps' ``counts`` by
+    category (read, search, list, edit, test, install, run, tool), how many ``failed``, what it ``changed`` and its
+    last test run's counts (``tests``)."""
+
+    label: Optional[str]
+    counts: Dict[str, int]
+    failed: int
+    changed: Optional[TurnChanges]
+    tests: Optional[StepTests]
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["TurnSummary"]:
+        if not isinstance(raw, dict):
+            return None
+        changed = raw.get("changed") if isinstance(raw.get("changed"), dict) else None
+        return cls(raw.get("label"), dict(raw.get("counts") or {}), int(raw.get("failed") or 0),
+                   TurnChanges(str(changed.get("label") or ""), [
+                       ChangedFile(str(f.get("path") or ""), int(f.get("added") or 0), int(f.get("removed") or 0),
+                                   [str(h) for h in f.get("how") or []])
+                       for f in changed.get("files") or [] if isinstance(f, dict)],
+                       int(changed.get("added") or 0), int(changed.get("removed") or 0),
+                       int(changed.get("by_script") or 0)) if changed else None,
+                   StepTests._from(raw.get("tests")))
+
+
+@dataclass(frozen=True)
 class AgentStep:
     """One step of a turn as its reply keeps it (``Message.steps``, ``AgentReply.steps``). ``kind`` is a coding
     harness's shell ``command``, file ``edit``, ``read`` or ``search``, or any other ``tool`` (NoClick's own among
@@ -79,7 +221,15 @@ class AgentStep:
     command's ``output`` (the last 4,096 characters; what came before reads ``[… N characters not shown …]``), its
     ``tool_result`` (``exit_code``, ``duration_ms``, ``is_error``, ``result``) and each ``diff`` (``diffs``). A turn keeps
     at most 200 such steps and 256,000 characters of their output and diffs, the newest steps' first. NoClick's own tool
-    calls are ``kind`` ``tool``, with no ``call_id``."""
+    calls are ``kind`` ``tool``, with no ``call_id``.
+
+    What a harness's step did, in words, judged once by NoClick as it ran: its ``category`` (``read``, ``search``,
+    ``list``, ``edit``, ``test``, ``install``, ``run`` or ``tool``), its ``label`` (``StepLabel``) and where that came
+    from (``label_source``: the harness's own ``description``, Codex's ``actions``, or ``derived`` from the command),
+    the command as shown (``display_command``: no ``cd`` into where it runs, heredocs shortened), a read's ``lines``
+    (``{from, to}``), how many lines it printed (``output_lines``), a test run's ``tests``, a count it reported
+    (``progress``), an edit's ``diff_stat``, whether it ``failed`` (a search that found nothing didn't) and the
+    ``group`` it folds into (``StepGroup.id``)."""
 
     kind: str
     tool: str
@@ -97,6 +247,17 @@ class AgentStep:
     diffs: List[AgentStepDiff]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    category: Optional[str] = None
+    label: Optional[StepLabel] = None
+    label_source: Optional[str] = None
+    display_command: Optional[str] = None
+    lines: Optional[Dict[str, Any]] = None
+    output_lines: Optional[int] = None
+    tests: Optional[StepTests] = None
+    progress: Optional[StepProgress] = None
+    diff_stat: Optional[DiffStat] = None
+    failed: Optional[bool] = None
+    group: Optional[str] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "AgentStep":
@@ -105,7 +266,12 @@ class AgentStep:
         return cls(raw.get("kind") if raw.get("kind") in _STEP_KINDS else "tool", raw.get("tool") or "", raw.get("id"),
                    raw.get("source"), dict(raw.get("arguments") or {}), raw.get("command"), raw.get("path"),
                    raw.get("query"), raw.get("output"), raw.get("exit_code"), raw.get("duration_ms"),
-                   raw.get("is_error") is True, raw.get("result"), diffs, parse_time(raw.get("created_at")), raw)
+                   raw.get("is_error") is True, raw.get("result"), diffs, parse_time(raw.get("created_at")), raw,
+                   raw.get("category"), StepLabel._from(raw.get("label")), raw.get("label_source"),
+                   raw.get("display_command"), raw.get("lines") if isinstance(raw.get("lines"), dict) else None,
+                   raw.get("output_lines"), StepTests._from(raw.get("tests")), StepProgress._from(raw.get("progress")),
+                   DiffStat._from(raw.get("diff_stat")),
+                   raw.get("failed") if isinstance(raw.get("failed"), bool) else None, raw.get("group"))
 
 
 def _steps(tool_calls: List[Dict[str, Any]]) -> List[AgentStep]:
@@ -130,6 +296,10 @@ class AgentReply:
     #: The limit that ended the turn before it finished (``"steps"``, ``"spend"`` or ``"time"``: its
     #: ``turn_limits``), its text then saying where the work stands; ``None`` when the agent answered.
     ended_by: Optional[str] = None
+    #: What a coding harness's turn did (``None`` for a turn with no harness steps).
+    summary: Optional[TurnSummary] = None
+    #: Its harness steps' folds, in order.
+    groups: List[StepGroup] = dc_field(default_factory=list)
 
     @property
     def steps(self) -> List[AgentStep]:
@@ -434,6 +604,10 @@ class Message:
     #: was sent to (a WhatsApp chat's id, ``channel:<id>``, ``owner``, a shared page's visitor), which its reply goes
     #: back to. None otherwise.
     chat: Optional[str] = None
+    #: What a coding harness's reply's turn did (``None`` where it says nothing).
+    summary: Optional[TurnSummary] = None
+    #: Its harness steps' folds, in order.
+    groups: List[StepGroup] = dc_field(default_factory=list)
 
     @property
     def steps(self) -> List[AgentStep]:
@@ -450,7 +624,7 @@ class Message:
                    {"name": command.get("name", ""), "arguments": command.get("arguments") or ""}
                    if isinstance(command, dict) else None, raw.get("id"), _author(raw.get("author")),
                    raw.get("notification") is True, raw.get("space") or None, raw.get("subagent") or None,
-                   raw.get("chat"))
+                   raw.get("chat"), TurnSummary._from(raw.get("summary")), _groups(raw.get("groups")))
 
 
 @dataclass(frozen=True)
@@ -553,6 +727,8 @@ def _read_reply(result: Any, op: Operation) -> AgentReply:
         raw=result,
         model_usage=ModelUsage._from(result.get("model_usage")),
         ended_by=result.get("ended_by"),
+        summary=TurnSummary._from(result.get("summary")),
+        groups=_groups(result.get("groups")),
     )
 
 
@@ -562,6 +738,7 @@ def _agent_event(kind: str, data: Dict[str, Any]) -> AgentEvent:
         reply = AgentReply(
             data.get("text") or "", data.get("conversation"), list(data.get("tool_calls") or []),
             data.get("operation_id"), data, ModelUsage._from(data.get("model_usage")), data.get("ended_by"),
+            TurnSummary._from(data.get("summary")), _groups(data.get("groups")),
         )
         return AgentEvent("done", text=reply.text, reply=reply, operation_id=reply.operation_id, raw=data)
     return AgentEvent(
@@ -583,6 +760,14 @@ def _agent_event(kind: str, data: Dict[str, Any]) -> AgentEvent:
         notification=data.get("notification") is True, space=data.get("space") or None,
         subagent=(data.get("subagent") or None) if kind == "message" else None,
         chat=data.get("chat") if kind == "message" else None,
+        category=data.get("category"), label=StepLabel._from(data.get("label")),
+        display_command=data.get("display_command"),
+        group=data.get("group") if kind in ("tool_call", "tool_result") else None,
+        step_group=StepGroup._from(data) if kind == "group" else None,
+        tests=StepTests._from(data.get("tests")), progress=StepProgress._from(data.get("progress")),
+        output_lines=data.get("output_lines"), diff_stat=DiffStat._from(data.get("diff_stat")),
+        failed=data.get("failed") if isinstance(data.get("failed"), bool) else None,
+        summary=TurnSummary._from(data.get("summary")),
     )
 
 

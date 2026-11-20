@@ -25,7 +25,7 @@ from .sandbox import ExecResult
 from .volume import VolumeEntry
 
 if TYPE_CHECKING:
-    from .agent import Agent, AgentReply, ModelUsage
+    from .agent import Agent, AgentReply, DiffStat, ModelUsage, StepGroup, StepLabel, StepProgress, StepTests, TurnSummary
 
 
 # --- memory ------------------------------------------------------------------
@@ -1015,6 +1015,23 @@ class AgentEvent:
     subagent: Optional[Dict[str, str]] = None
     #: The chat a ``message`` of the agent's session came from, where it isn't the session's own (``Message.chat``).
     chat: Optional[str] = None
+    #: A coding harness's step in words, as NoClick judged it (``tool_call`` running, ``tool_result`` done; see
+    #: ``AgentStep``): its ``category``, ``label``, the command as shown, the fold it's in (``group``), a test run's
+    #: ``tests`` and a count it reported (``progress``) as its ``output`` streams, how many lines it printed so far
+    #: (``output_lines``), an edit's ``diff_stat`` and whether it ``failed``.
+    category: Optional[str] = None
+    label: Optional["StepLabel"] = None
+    display_command: Optional[str] = None
+    group: Optional[str] = None
+    tests: Optional["StepTests"] = None
+    progress: Optional["StepProgress"] = None
+    output_lines: Optional[int] = None
+    diff_stat: Optional["DiffStat"] = None
+    failed: Optional[bool] = None
+    #: A ``group`` moment: a fold of the turn's reads and searches that changed, as it stands now (``StepGroup``).
+    step_group: Optional["StepGroup"] = None
+    #: A ``turn_end``'s turn did as a coding harness ran it (``TurnSummary``).
+    summary: Optional["TurnSummary"] = None
 
 
 # --- test runs ---------------------------------------------------------------------

@@ -188,6 +188,83 @@ def test_a_coding_agents_reply_keeps_its_turns_steps_in_the_shape_its_live_event
     assert [(step.kind, step.exit_code) for step in reply.steps] == [("command", 1)]
 
 
+SUMMARY = {"label": "Read 5 files, searched 5 times", "counts": {"read": 7, "search": 5, "edit": 8, "test": 3},
+           "failed": 3, "changed": {"label": "Changed 2 files", "files": [
+               {"path": "usage.py", "added": 0, "removed": 0, "how": ["sed", "script"]},
+               {"path": "test_platform_plan_usage.py", "added": 310, "removed": 0, "how": []}],
+               "added": 310, "removed": 0, "by_script": 1},
+           "tests": {"passed": 161, "failed": 0, "skipped": 0, "total": 161, "done": True, "label": "161 passed"}}
+GROUP = {"id": "g:s2", "label": "Read 2 files, searched for 2 patterns", "counts": {"read": 2, "search": 2, "list": 0},
+         "step_ids": ["s2", "s3", "s4", "s5"], "running": False}
+
+
+def test_a_coding_turns_steps_say_what_they_did_in_words_fold_and_sum_up(api, client):
+    """A coding harness's step says what it did in words, judged once by NoClick: its category, its label in its tense,
+    where that came from, the command as shown, a test run's counts and a count it reported, an edit's lines, whether
+    it failed and the fold it's in; a reply says what its turn did and its folds, live and kept alike."""
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    read = {"id": "s3", "source": "harness", "kind": "command", "tool": "shell", "command": "sed -n 55,110p a.py",
+            "arguments": {"command": "sed -n 55,110p a.py"}, "output": "x\n", "exit_code": 0, "is_error": False,
+            "diffs": [], "created_at": None, "category": "read",
+            "label": {"text": "Read a.py lines 55-110", "verb": "Read", "object": "a.py", "detail": "lines 55-110"},
+            "label_source": "derived", "display_command": "sed -n 55,110p a.py", "lines": {"from": 55, "to": 110},
+            "output_lines": 1, "failed": False, "group": "g:s2"}
+    tests = {**read, "id": "s26", "category": "test", "label": {"text": "Ran the plan usage tests", "verb": "Ran"},
+             "label_source": "description", "group": None, "lines": None, "output_lines": 4,
+             "tests": SUMMARY["tests"], "progress": {"done": 161, "total": 161}}
+    edited = {**read, "id": "s15", "kind": "edit", "category": "edit", "label": {"text": "Edited usage.py"},
+              "diff_stat": {"added": 3, "removed": 1}, "group": None}
+    api.get("/v1/agents/ag_1/conversations/task").respond(json={"messages": [
+        {"role": "assistant", "text": "Done.", "created_at": None, "operation_id": "op_1",
+         "tool_calls": [read, tests, edited], "summary": SUMMARY, "groups": [GROUP]}]})
+    [replied] = nc.Agent.from_id("ag_1").history("task")
+    sed, ran, edit = replied.steps
+    assert (sed.category, sed.label, sed.label_source, sed.display_command, sed.lines, sed.output_lines, sed.failed,
+            sed.group) == ("read", nc.StepLabel("Read a.py lines 55-110", "Read", "a.py", "lines 55-110"), "derived",
+                           "sed -n 55,110p a.py", {"from": 55, "to": 110}, 1, False, "g:s2")
+    assert (ran.label.text, ran.label_source, ran.tests, ran.progress) == (
+        "Ran the plan usage tests", "description", nc.StepTests(161, 0, 0, 161, True, "161 passed"),
+        nc.StepProgress(161, 161))
+    assert edit.diff_stat == nc.DiffStat(3, 1)
+    assert replied.groups == [nc.StepGroup("g:s2", GROUP["label"], GROUP["counts"], GROUP["step_ids"], False)]
+    summary = replied.summary
+    assert (summary.label, summary.failed, summary.counts["edit"], summary.tests.label) == (
+        "Read 5 files, searched 5 times", 3, 8, "161 passed")
+    assert summary.changed == nc.TurnChanges("Changed 2 files", [
+        nc.ChangedFile("usage.py", 0, 0, ["sed", "script"]), nc.ChangedFile("test_platform_plan_usage.py", 310, 0, [])],
+        310, 0, 1)
+
+    import json as _json
+    moments = [
+        ("tool_call", {"id": "s26", "tool": "shell", "source": "harness", "kind": "command", "category": "test",
+                       "label": {"text": "Running the plan usage tests", "verb": "Running"},
+                       "display_command": "pytest x", "group": None, "arguments": {"command": "pytest x"}}),
+        ("output", {"id": "s26", "text": "....\n", "output_lines": 3,
+                    "tests": {"passed": 0, "failed": 0, "skipped": 0, "total": 161, "done": False, "label": "64 of 161"},
+                    "progress": {"done": 64, "total": 161}}),
+        ("group", GROUP),
+        ("tool_result", {"id": "s26", "tool": "shell", "source": "harness", "kind": "command", "category": "test",
+                         "label": {"text": "Ran the plan usage tests"}, "failed": False, "group": None,
+                         "tests": SUMMARY["tests"], "output_lines": 4}),
+        ("turn_end", {"status": "succeeded", "text": "Done.", "operation_id": "op_1", "summary": SUMMARY}),
+    ]
+    stream = "".join(f"event: {kind}\ndata: {_json.dumps(data)}\n\n" for kind, data in moments)
+    api.get("/v1/agents/ag_1/conversations/task/events").respond(200, content=stream.encode())
+    call, out, group, end, turn_end = list(nc.Agent.from_id("ag_1").watch("task"))
+    assert (call.category, call.label.text, call.display_command) == ("test", "Running the plan usage tests", "pytest x")
+    assert (out.progress, out.tests.label, out.output_lines) == (nc.StepProgress(64, 161), "64 of 161", 3)
+    assert group.step_group == replied.groups[0]
+    assert (end.label.text, end.failed, end.tests.label) == ("Ran the plan usage tests", False, "161 passed")
+    assert turn_end.summary == summary
+
+    # A turn's reply as its operation settles with it.
+    api.get("/v1/operations/op_1/wait").respond(json=operation(
+        "op_1", kind="agent.message", status="succeeded",
+        result={"text": "Done.", "tool_calls": [read], "summary": SUMMARY, "groups": [GROUP]}))
+    reply = nc.Operation.from_id("op_1").wait()
+    assert (reply.summary, reply.groups) == (summary, replied.groups)
+
+
 def test_a_message_says_how_it_arrived_and_a_note_carries_its_data(api, client):
     api.get("/v1/agents/ag_1").respond(json=AGENT)
     setup = {"setup": {"kind": "agent", "workflow_id": "wf_1"}}

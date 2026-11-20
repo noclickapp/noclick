@@ -9,7 +9,10 @@
  *     const run = await (await support.rehearse("A customer asks for a refund on order 1841")).wait();
  */
 
-import type { Agent, AgentReply, AgentStepKind, HarnessName, MessageSpace, MessageSubagent, MessageTrigger, MessageVia, ModelUsage, ReasoningLine } from "./agent.ts";
+import type {
+  Agent, AgentReply, AgentStepKind, DiffStat, HarnessName, MessageSpace, MessageSubagent, MessageTrigger, MessageVia, ModelUsage,
+  ReasoningLine, StepCategory, StepGroup, StepLabel, StepProgress, StepTests, TurnSummary,
+} from "./agent.ts";
 import type { MessageAuthor } from "./agentConversations.ts";
 import type { Attachment } from "./attachment.ts";
 import type { NoClick } from "./client.ts";
@@ -738,7 +741,7 @@ export class ShareLink extends ApiObject {
 export interface AgentEvent {
   type:
     | "text" | "reasoning" | "tool_call" | "tool_result" | "file" | "approval" | "operation" | "done" | "message"
-    | "status" | "output" | "diff" | "turn_end" | (string & {});
+    | "status" | "output" | "diff" | "turn_end" | "group" | (string & {});
   text: string | null;
   tool: string | null;
   arguments: JsonObject | null;
@@ -825,6 +828,25 @@ export interface AgentEvent {
   subagent?: MessageSubagent | null;
   /** The chat a `message` of the agent's session came from, where it isn't the session's own (`Message.chat`). */
   chat?: string | null;
+  /**
+   * A coding harness's step in words, as NoClick judged it (`tool_call` running, `tool_result` done; see `AgentStep`):
+   * its `category`, `label`, the command as shown, the fold it's in (`group`), a test run's `tests` and a count it
+   * reported (`progress`) as its `output` streams, how many lines it printed so far (`outputLines`), an edit's
+   * `diffStat` and whether it `failed`.
+   */
+  category?: StepCategory | null;
+  label?: StepLabel | null;
+  displayCommand?: string | null;
+  group?: string | null;
+  tests?: StepTests | null;
+  progress?: StepProgress | null;
+  outputLines?: number | null;
+  diffStat?: DiffStat | null;
+  failed?: boolean | null;
+  /** A `group` moment: a fold of the turn's reads and searches that changed, as it stands now. */
+  stepGroup?: StepGroup | null;
+  /** A `turn_end`'s (or `done`'s) turn as a coding harness ran it. */
+  summary?: TurnSummary | null;
   raw: JsonObject;
 }
 

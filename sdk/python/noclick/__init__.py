@@ -27,7 +27,8 @@ from .agent_conversations import (
     AgentToolServer, ConversationUsage, ToolServer, ToolServers,
 )
 from .agent import (
-    Agent, AgentCommand, AgentCommands, AgentGrant, HarnessRequest, AgentReply, AgentStep, AgentStepDiff, Conversation, HarnessInfo,
+    Agent, AgentCommand, AgentCommands, AgentGrant, HarnessRequest, AgentReply, AgentStep, AgentStepDiff, ChangedFile, Conversation, DiffStat, HarnessInfo,
+    StepGroup, StepLabel, StepProgress, StepTests, TurnChanges, TurnSummary,
     AgentToolAccess, AgentToolAction, AgentToolApp, HarnessModel, Message, ModelSwitchGrant, ModelSwitching,
     ModelUsage,
 )
@@ -179,7 +180,7 @@ __all__ = [
     "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach", "Approval",
     "ApprovalPolicy", "HoldKind",
     "Agent", "AgentConversation", "AgentStateRow", "CommandResult", "ConversationContext", "ConversationRevert",
-    "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
+    "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "ChangedFile", "DiffStat", "StepGroup", "StepLabel", "StepProgress", "StepTests", "TurnChanges", "TurnSummary", "Conversation",
     "Message", "HarnessInfo",
     "HarnessModel", "ModelUsage", "ModelSwitching", "ModelSwitchGrant", "AgentToolAccess", "AgentToolApp",
     "AgentToolAction",
