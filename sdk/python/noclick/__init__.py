@@ -140,6 +140,7 @@ from .repo import Branch, Commit, CommitDiff, FileChange, Repo, RepoBackup, Repo
 from .sandbox import ExecResult, Sandbox, SandboxFiles
 from .secret import Secret
 from .session import Session
+from .step_type import StepType, StepTypeConnection, StepTypeOperation, step_type, step_types
 from .tool_call import ToolCall, ToolCallSummary
 from .trash import TrashItem
 from .toolkit import Toolkit, ToolResult
@@ -227,7 +228,7 @@ __all__ = [
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult", "WorkflowStep",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
-    "RowsPage",
+    "RowsPage", "step_types", "step_type", "StepType", "StepTypeOperation", "StepTypeConnection",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",

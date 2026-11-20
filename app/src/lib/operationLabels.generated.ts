@@ -520,6 +520,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "skills_versions_list": ["List Versions", "GET", "read"],
     "skills_versions_restore": ["Restore Version", "POST", "write"],
     "status": ["Get Status", "GET", "read"],
+    "step_types_get": ["Get Step Type", "GET", "read"],
+    "step_types_list": ["List Step Types", "GET", "read"],
     "texting_registrations_create": ["Create Registration", "POST", "spend"],
     "texting_registrations_delete": ["Delete Registration", "DELETE", "destructive"],
     "texting_registrations_get": ["Get Registration", "GET", "read"],
