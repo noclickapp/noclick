@@ -1,7 +1,6 @@
 // Settings → Notifications: the email alerts NoClick sends the account's owner, one switch a category. The same
 // preferences decide every send and the one-click unsubscribe link each alert email carries. Whoever draws it reads
 // and writes them; this draws what it's told.
-import type { ReactNode } from 'react';
 import { cn } from '@/ui/utils';
 import { Switch } from '@/ui/switch';
 import { SettingsGroup, SettingsHeader, SettingsRow } from './parts';
@@ -82,14 +81,13 @@ export const NOTIFICATION_CATEGORIES = [
     },
 ] as const;
 
-/** The section: its header, anything its host says above the switches (`notice`), and a switch per category, each
- *  on until it's read off. `prefs` null while they're read: the switches wait, dimmed. */
-export function NotificationsView({ prefs, onToggle, notice }: { prefs: NotificationPrefs | null; onToggle: (key: string, enabled: boolean) => void; notice?: ReactNode }) {
+/** The section: its header and a switch per category, each on until it's read off. `prefs` null while they're read:
+ *  the switches wait, dimmed. */
+export function NotificationsView({ prefs, onToggle }: { prefs: NotificationPrefs | null; onToggle: (key: string, enabled: boolean) => void }) {
     const isLoading = prefs === null;
     return (
         <div>
             <SettingsHeader title="Notifications" description="Email alerts sent to your account email." />
-            {notice}
             <SettingsGroup
                 className={cn('transition-opacity', isLoading && 'opacity-60')}
                 note="Every alert email also carries a one-click unsubscribe link for its category."
