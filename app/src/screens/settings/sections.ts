@@ -1,10 +1,10 @@
 // Settings' sections: one table that Settings lists and the command palette jumps to, with who sees each, and the
 // groups the list shows them in. Whoever draws Settings says what it knows of the account (`SectionContext`); which
 // sections show follows from that alone (`visibleSections`).
-import { BarChart3, Bell, Brain, Building2, Code2, CreditCard, Eye, KeyRound, Smartphone, type LucideIcon } from 'lucide-react';
+import { BarChart3, Bell, Brain, Building2, Code2, CreditCard, Eye, Smartphone, type LucideIcon } from 'lucide-react';
 
 /** A section's id, as the address's `?section=` names it. */
-export type SettingsSectionId = 'usage' | 'credentials' | 'billing' | 'organization' | 'skills' | 'notifications' | 'phone' | 'popups' | 'developer';
+export type SettingsSectionId = 'usage' | 'billing' | 'organization' | 'skills' | 'notifications' | 'phone' | 'popups' | 'developer';
 
 /** What decides whether a section shows. */
 export interface SectionContext {
@@ -33,13 +33,6 @@ export const SETTINGS_SECTION_DEFS: readonly SettingsSectionDef[] = [
         description: 'Track AI, compute, and resource costs',
         icon: BarChart3,
         keywords: 'costs spend spending credits money',
-    },
-    {
-        id: 'credentials',
-        label: 'Credentials',
-        description: 'Manage API keys and connected accounts',
-        icon: KeyRound,
-        keywords: 'connections accounts oauth integrations api keys',
     },
     {
         id: 'billing',
@@ -98,7 +91,7 @@ export const SETTINGS_SECTION_DEFS: readonly SettingsSectionDef[] = [
 export const SETTINGS_GROUPS: readonly { label: string; sections: readonly SettingsSectionId[] }[] = [
     { label: 'Workspace', sections: ['usage', 'billing', 'organization'] },
     { label: 'Preferences', sections: ['notifications', 'phone', 'popups'] },
-    { label: 'Build', sections: ['skills', 'credentials', 'developer'] },
+    { label: 'Build', sections: ['skills', 'developer'] },
 ];
 
 export interface VisibleSettingsSection extends Omit<SettingsSectionDef, 'description' | 'shown'> {

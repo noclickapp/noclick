@@ -17,8 +17,8 @@ describe('the sections an account sees', () => {
     });
 
     it('leave out what the host shows as a page of its own', () => {
-        expect(ids(PERSONAL, ['credentials', 'published'])).not.toContain('credentials');
-        expect(ids(PERSONAL, ['credentials'])).toContain('usage');
+        expect(ids(PERSONAL, ['developer', 'published'])).not.toContain('developer');
+        expect(ids(PERSONAL, ['developer'])).toContain('usage');
     });
 
     it('say who Members is for: an organization’s people, or inviting some to a personal workspace', () => {
