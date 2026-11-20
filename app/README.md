@@ -143,6 +143,18 @@ them, and without one the page shows what each thing cost:
 | `usage.charge.run` | The run a charge belonged to, opened from its facts | What the charges read says of it, with its automation on NoClick |
 | `usage.charge.ask` | A charge's facts: asking about it | Nobody, and no button |
 
+Settings' (`src/screens/settings/slots.ts`): a section whose body is the deployment's is a slot its host fills, and
+with none Settings doesn't list it:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `settings.billing` | Plan and billing: the plan, adding money, the spending cap | Nothing, and no section |
+| `settings.members` | Members: who's in the workspace and how they sign in | Nothing, and no section |
+| `settings.phone` | Phone: the numbers a person messages and calls from | Nothing, and no section |
+| `settings.skills` | Skills: the reusable context a builder loads | Nothing, and no section |
+| `settings.popups` | Popups: which of the deployment's popups appear | Nothing, and no section |
+| `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
+
 Work's are listed under [Work](#work).
 
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
