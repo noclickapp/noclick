@@ -194,9 +194,14 @@ export function thingOf(snap: UsageSnapshot, row: UsageRow, dim: Dimension): str
         case 'app':
             return m.project_id ?? m.platform_api?.project_id ?? OUTSIDE;
         case 'person': {
-            // A platform user; the member who ran it when the owner pays; else the payer.
+            // Who it was for, as each charge records it; one of your apps' own users (a platform user who isn't one
+            // of your people) splits as that user. A charge recorded before then: its platform user, the member who
+            // ran it when the owner pays, else the payer.
             const tenant = m.platform_api?.tenant_id;
-            return tenant && tenant !== 'self' ? tenant : m.actual_user_id ?? row.user_id;
+            const user = tenant && tenant !== 'self' ? tenant : undefined;
+            const login = user ? snap.directory.people[user]?.person : undefined;
+            if (user && !login) return user;
+            return m.responsible_user_id ?? login ?? m.actual_user_id ?? row.user_id;
         }
         case 'key':
             return m.platform_api?.key_id ?? OUTSIDE;
@@ -430,6 +435,7 @@ export function toSnapshot(data: UsagePageData): UsageSnapshot {
             node_id: str(g.node_id),
             surface: str(g.surface),
             actual_user_id: str(g.actual_user_id),
+            responsible_user_id: str(g.responsible_user_id),
             project_id: str(g.project_id),
             database_id: str(g.database_id),
             repo_id: str(g.repo_id),
