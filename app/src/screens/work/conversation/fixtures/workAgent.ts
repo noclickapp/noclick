@@ -156,8 +156,10 @@ export interface FakeWorkAgent {
     watching: () => number;
     /** The account's connections as GET /v1/connections lists them (change one to reconnect it in place). */
     connections: Json[];
-    /** The agent's MCP servers, as added and taken away. */
+    /** The agent's MCP servers, as added and taken away (each drawn as GET …/tool_servers lists it, `serverView`). */
     toolServers: Json[];
+    /** A person signs in to a server through its connect link: it holds the sign-in, and the link's operation succeeds. */
+    signIn: (step: string) => void;
     /** Each conversation's triggered turns, newest first, as GET .../conversations/{c}/activity reads them (change
      *  them as a turn moves). */
     activity: Map<string, Json[]>;
@@ -211,6 +213,15 @@ export function liveViewRoutes(method: string, path: string, browsers: Json[], b
     const token = `view-token-${++liveViewTokens}`;
     LIVE_VIEW_TOKENS.set(token, { thumb, control });
     return json({ object: 'browser_live_view', browser_id: browser.id, control, thumb, url: LIVE_VIEW_SOCKET, token, token_expires_at: new Date(Date.now() + 120_000).toISOString() });
+}
+
+/** An MCP server as GET /v1/agents/{id}/tool_servers lists it, a fixture's server filled in where it leaves a field out. */
+export function serverView(server: Json): Json {
+    const url = String(server.url ?? '');
+    return {
+        object: 'agent_tool_server', agent_id: AGENT_ID, transport: 'http', signed_in: false, headers: [], sign_in: 'none', status: 'unchecked',
+        problem: null, tools: [], icon: null, checked_at: null, reconnectable: false, host: url ? new URL(url).host : null, ...server,
+    };
 }
 
 /** What Work's pickers read beside an agent, as /v1 answers them: the harnesses and their models, the account's
@@ -281,9 +292,10 @@ export function fakeWorkAgent(
         subagentTitles?: Record<string, string>;
         /** Its triggers, as GET /v1/agents/{id}/triggers lists them (none when left out). */
         triggers?: Json[];
-        /** Its MCP servers, as GET /v1/agents/{id}/tool_servers lists them (none when left out). */
+        /** Its MCP servers, as GET /v1/agents/{id}/tool_servers lists them (none when left out; `serverView` fills in
+         *  what a server leaves out). */
         toolServers?: Json[];
-        /** The URLs whose servers ask their client to sign in: adding one takes a credential. */
+        /** The URLs whose servers ask their client to sign in: one added with nothing to let it in waits for one. */
         signsIn?: string[];
         /** The account's browsers, as GET /v1/browsers lists them (newest first; filtered by agent and conversation). */
         browsers?: Json[];
@@ -446,23 +458,35 @@ export function fakeWorkAgent(
             return json(agent);
         }
         if (method === 'GET' && rest === '/triggers') return json({ object: 'list', data: options.triggers ?? [], next_cursor: null });
-        if (method === 'GET' && rest === '/tool_servers') return json({ object: 'list', data: toolServers, next_cursor: null });
+        if (method === 'GET' && rest === '/tool_servers') return json({ object: 'list', data: toolServers.map(serverView), next_cursor: null });
         if (method === 'POST' && rest === '/tool_servers') {
             const b = body as Json;
             const url = String(b.url);
-            if (options.signsIn?.includes(url) && !b.credential_id && !b.headers)
-                return json({ error: { type: 'invalid_request', message: `${url} asks its client to sign in, and nothing was signed in to it.`, reason: 'needs_sign_in' } }, 400);
             const name = String(b.name ?? new URL(url).hostname.split('.').find((p) => !['mcp', 'api'].includes(p)));
-            const server = { object: 'agent_tool_server', id: `mcp_${name}`, name, url, transport: b.transport ?? 'http', signed_in: !!b.credential_id, headers: Object.keys((b.headers as Json | undefined) ?? {}) };
+            const headers = Object.keys((b.headers as Json | undefined) ?? {});
+            const waits = !!options.signsIn?.includes(url) && !b.credential_id && !headers.length;
+            const server: Json = {
+                id: `mcp_${name}`, name, url, transport: b.transport ?? 'http', signed_in: !!b.credential_id, headers,
+                sign_in: b.credential_id || waits ? 'browser' : headers.length ? 'key' : 'none',
+                ...(waits && { status: 'needs_sign_in', problem: { reason: 'needs_sign_in', message: `${name} asks its client to sign in, and nothing is signed in to it.`, provider_said: null, since: null, next_step: null } }),
+            };
             toolServers.push(server);
-            return json(server, 201);
+            return json(serverView(server), 201);
+        }
+        const link = rest.match(/^\/tool_servers\/([^/]+)\/connect_link$/);
+        if (link && method === 'POST') {
+            const step = decodeURIComponent(link[1]);
+            if (!toolServers.some((s) => s.id === step)) return notFound(`No MCP server ${step}.`);
+            const operation = { object: 'operation', id: `op-sign-in-${++made}`, kind: 'tool_server.sign_in', status: 'awaiting_human', step, created_at: at(), updated_at: at() };
+            operations.set(operation.id, operation);
+            return json({ object: 'connect_link', url: `https://noclick.test/c/${operation.id}`, expires_at: null, operation });
         }
         const server = rest.match(/^\/tool_servers\/([^/]+)$/);
         if (server && method === 'DELETE') {
             const at = toolServers.findIndex((s) => s.id === decodeURIComponent(server[1]));
             if (at < 0) return notFound(`No MCP server ${server[1]}.`);
             const [gone] = toolServers.splice(at, 1);
-            return json({ ...gone, deleted: true });
+            return json({ ...serverView(gone), deleted: true });
         }
         if (method === 'GET' && rest === '/wakeups') return json({ object: 'list', data: [], next_cursor: null });
         if (method === 'POST' && rest === '/attachments') {
@@ -526,6 +550,13 @@ export function fakeWorkAgent(
         const c = decodeURIComponent(conv[1]);
         const tail = conv[2] ?? '';
         if (method === 'GET' && tail === '') return json({ object: 'conversation', id: c, agent_id: AGENT_ID, session: histories.has(c) ? c : active, messages: historyOf(c), next_cursor: null });
+        const reconnected = tail.match(/^\/tool_servers\/([^/]+)\/reconnect$/);
+        if (reconnected && method === 'POST') {
+            const server = toolServers.find((s) => s.name === decodeURIComponent(reconnected[1]));
+            if (!server) return notFound(`No MCP server ${reconnected[1]}.`);
+            Object.assign(server, { status: 'connected', problem: null, reconnectable: false, checked_at: at() });
+            return json({ object: 'tool_servers', source: 'live', checked_at: at(), data: [{ name: server.name, status: 'connected', tool_count: null, tools: null, error: null }], reconnect: { available: true, scope: 'server', why: null } });
+        }
         if (method === 'POST' && tail === '/resume') {
             if (!histories.has(c)) return notFound(`No session ${c}.`);
             if (c !== active && busy()) return working();
@@ -638,6 +669,11 @@ export function fakeWorkAgent(
         reply,
         connections,
         toolServers,
+        signIn: (step) => {
+            const server = toolServers.find((s) => s.id === step)!;
+            Object.assign(server, { signed_in: true, sign_in: 'browser', status: 'unchecked', problem: null });
+            for (const op of operations.values()) if (op.kind === 'tool_server.sign_in' && op.step === step && op.status === 'awaiting_human') settle(String(op.id), 'succeeded', { result: { tool_server: serverView(server) } });
+        },
         activity,
         humanRequests,
         machines,

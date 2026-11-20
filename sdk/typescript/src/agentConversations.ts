@@ -11,6 +11,7 @@
  */
 
 import type { HarnessName, ModelUsage, PermissionMode } from "./agent.ts";
+import type { ConnectLink, LinkOptions } from "./connection.ts";
 import { asObject, num, parseTime, str } from "./object.ts";
 import type { JsonObject } from "./object.ts";
 
@@ -347,6 +348,25 @@ export function toAgentStates(value: unknown): AgentStates {
   };
 }
 
+/** A tool an MCP server offers: its `name` and `description`, as the server lists it. */
+export interface ToolServerTool {
+  name: string;
+  description: string | null;
+}
+
+/**
+ * What's wrong with an agent's MCP server, as a connection's `disconnected` says it: `reason` (`needs_sign_in`,
+ * `signed_out`, `refused`, `revoked` or `failed`), NoClick's one line (`message`), the server's own words where it
+ * said any (`providerSaid`), since when (`since`, null for a server never signed in to) and what to do (`nextStep`).
+ */
+export interface ToolServerProblem {
+  reason: string;
+  message: string;
+  providerSaid: string | null;
+  since: Date | null;
+  nextStep: string | null;
+}
+
 /** One MCP server a conversation's coding harness reaches its tools on, as it stands. */
 export interface ToolServer {
   name: string;
@@ -356,6 +376,15 @@ export interface ToolServer {
   toolCount: number | null;
   /** Why it failed, in the harness's or the server's words. */
   error: string | null;
+  /** Each tool it offers, where the harness lists them (Claude Code and Codex do; null where it doesn't). */
+  tools: ToolServerTool[] | null;
+}
+
+function toTools(raw: unknown): ToolServerTool[] {
+  return (Array.isArray(raw) ? raw : []).filter((t) => t && typeof t === "object").map((t) => {
+    const tool = asObject(t);
+    return { name: String(tool.name ?? ""), description: str(tool.description) };
+  });
 }
 
 /**
@@ -373,8 +402,14 @@ export interface ToolServers {
 
 /**
  * An MCP server an agent has as tools: a step of its automation (`id`, what `removeToolServer` takes), reached at its
- * `url` over `transport` (`http` or `sse`), `signedIn` where a sign-in to it is set, sending the `headers` named
- * (their values are never read back).
+ * `url` (on `host`) over `transport` (`http` or `sse`), letting its client in as `signIn` says (`none`, `key`: the
+ * `headers` named, whose values are never read back, or `browser`: a person's sign-in, `signedIn` once one is set).
+ * Its `status`: `connected`, `needs_sign_in` (nothing lets it in yet), `signed_out` (its sign-in was refused or
+ * revoked), `failed` (its last run found no tools), `unchecked` (no run since it was last let in) or, read for a
+ * conversation, `connecting` (its harness's handshake hasn't finished), with what's wrong in `problem`; the `tools` it
+ * offered and when that was found (`checkedAt`); whether that conversation's harness can connect it again in place now
+ * (`reconnectable`); and what draws it (`icon`: `{ integration }`, `{ mark: "noclick" }`, or null: draw its name's
+ * first letter). Listed in the order they were added.
  */
 export interface AgentToolServer {
   id: string;
@@ -384,15 +419,48 @@ export interface AgentToolServer {
   signedIn: boolean;
   headers: string[];
   raw: JsonObject;
+  agentId: string | null;
+  host: string | null;
+  signIn: "none" | "key" | "browser";
+  status: "connected" | "connecting" | "needs_sign_in" | "signed_out" | "failed" | "unchecked";
+  problem: ToolServerProblem | null;
+  tools: ToolServerTool[];
+  icon: { integration: string } | { mark: "noclick" } | null;
+  checkedAt: Date | null;
+  reconnectable: boolean;
+  /**
+   * Mint a link where someone signs in to this server (`signIn` `browser`), the first time or again: NoClick's MCP
+   * sign-in for it, which becomes the server's sign-in once it lands. `sendTo` also delivers it. A server that takes
+   * a key rejects with `Conflict`: give it headers with `agent.updateToolServer`. `await link.wait()` resolves to
+   * this server as it stands then.
+   */
+  connectLink(options?: LinkOptions): Promise<ConnectLink<AgentToolServer>>;
 }
 
 /** @internal */
-export function toAgentToolServer(raw: JsonObject): AgentToolServer {
-  return {
+export function toAgentToolServer(
+  raw: JsonObject, connectLink: (server: AgentToolServer, options: LinkOptions) => Promise<ConnectLink<AgentToolServer>>,
+): AgentToolServer {
+  const problem = raw.problem && typeof raw.problem === "object" ? asObject(raw.problem) : null;
+  const icon = raw.icon && typeof raw.icon === "object" ? asObject(raw.icon) : null;
+  const server: AgentToolServer = {
     id: String(raw.id ?? ""), name: String(raw.name ?? ""), url: str(raw.url),
     transport: raw.transport === "sse" ? "sse" : "http", signedIn: raw.signed_in === true,
     headers: Array.isArray(raw.headers) ? raw.headers.map(String) : [], raw,
+    agentId: str(raw.agent_id), host: str(raw.host),
+    signIn: (str(raw.sign_in) ?? "none") as AgentToolServer["signIn"],
+    status: (str(raw.status) ?? "unchecked") as AgentToolServer["status"],
+    problem: problem && {
+      reason: String(problem.reason ?? ""), message: String(problem.message ?? ""),
+      providerSaid: str(problem.provider_said), since: parseTime(problem.since), nextStep: str(problem.next_step),
+    },
+    tools: toTools(raw.tools),
+    icon: icon && (typeof icon.integration === "string" ? { integration: icon.integration }
+      : icon.mark === "noclick" ? { mark: "noclick" } : null),
+    checkedAt: parseTime(raw.checked_at), reconnectable: raw.reconnectable === true,
+    connectLink: (options = {}) => connectLink(server, options),
   };
+  return server;
 }
 
 /** @internal */
@@ -404,6 +472,7 @@ export function toToolServers(raw: JsonObject): ToolServers {
       return {
         name: String(server.name ?? ""), status: (str(server.status) ?? "failed") as ToolServer["status"],
         toolCount: num(server.tool_count), error: str(server.error),
+        tools: server.tools == null ? null : toTools(server.tools),
       };
     }),
     source: (str(raw.source) ?? "none") as ToolServers["source"], checkedAt: parseTime(raw.checked_at),

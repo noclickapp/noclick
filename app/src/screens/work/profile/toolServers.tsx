@@ -26,6 +26,25 @@ function Dot({ status }: { status: ToolServer['status'] }) {
 
 const toolsText = (n: number | null) => (n === null ? '' : n === 1 ? '1 tool' : `${n} tools`);
 
+/** A tool server's Reconnect pill: its handshake done again in the running harness (`all` for every server). */
+export function ReconnectPill({ busy, disabled, all, onClick, className }: { busy: boolean; disabled?: boolean; all?: boolean; onClick: () => void; className?: string }) {
+    return (
+        <button
+            type="button"
+            disabled={disabled || busy}
+            onClick={(e) => {
+                // A row that opens a page holds it.
+                e.stopPropagation();
+                onClick();
+            }}
+            className={cn(PILL, className)}
+        >
+            <RotateCw className={cn('h-3 w-3', busy && 'animate-spin motion-reduce:animate-none')} strokeWidth={2} />
+            {busy ? 'Reconnecting…' : all ? 'Reconnect all' : 'Reconnect'}
+        </button>
+    );
+}
+
 export function ToolServers({ agent, conversation }: { agent: Agent; conversation: string | null }) {
     const client = useWorkClient();
     const read = useToolServers(agent.id, conversation);
@@ -73,10 +92,7 @@ export function ToolServers({ agent, conversation }: { agent: Agent; conversatio
                                   {s.status === 'connecting' ? (
                                       <span className="shrink-0 text-[12.5px] text-muted-foreground">Connecting…</span>
                                   ) : s.status === 'failed' && each ? (
-                                      <button type="button" disabled={reconnecting !== null} onClick={() => void reconnect(data!, s.name)} className={cn(PILL, '-mr-2')}>
-                                          <RotateCw className={cn('h-3 w-3', reconnecting === s.name && 'animate-spin motion-reduce:animate-none')} strokeWidth={2} />
-                                          {reconnecting === s.name ? 'Reconnecting…' : 'Reconnect'}
-                                      </button>
+                                      <ReconnectPill busy={reconnecting === s.name} disabled={reconnecting !== null} onClick={() => void reconnect(data!, s.name)} className="-mr-2" />
                                   ) : (
                                       <span className="shrink-0 text-[12.5px] tabular-nums text-muted-foreground">{toolsText(s.toolCount)}</span>
                                   )}
@@ -85,12 +101,7 @@ export function ToolServers({ agent, conversation }: { agent: Agent; conversatio
                           </li>
                       ))}
             </ul>
-            {failed.length > 0 && all && (
-                <button type="button" disabled={reconnecting !== null} onClick={() => void reconnect(data!, failed[0].name)} className={cn(PILL, '-ml-2 mt-1')}>
-                    <RotateCw className={cn('h-3 w-3', reconnecting && 'animate-spin motion-reduce:animate-none')} strokeWidth={2} />
-                    {reconnecting ? 'Reconnecting…' : 'Reconnect all'}
-                </button>
-            )}
+            {failed.length > 0 && all && <ReconnectPill all busy={reconnecting !== null} onClick={() => void reconnect(data!, failed[0].name)} className="-ml-2 mt-1" />}
             {failed.length > 0 && data && !data.reconnect.available && data.reconnect.why && <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">{data.reconnect.why}</p>}
             {named && conversation && data?.source === 'none' && <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">They connect when it next works here.</p>}
             {read.error !== undefined && <p className="mt-1 text-[12.5px] leading-snug text-muted-foreground">Couldn’t read whether they’re connected.</p>}

@@ -24,7 +24,7 @@ from ._usage import (
 from ._version import __version__
 from .agent_conversations import (
     AgentConversation, AgentStateRow, CommandResult, ConversationContext, ConversationRevert, ConversationSettings,
-    AgentToolServer, ConversationUsage, ToolServer, ToolServers,
+    AgentToolServer, ConversationUsage, ToolServer, ToolServerProblem, ToolServers, ToolServerTool,
 )
 from .agent import (
     Agent, AgentCommand, AgentCommands, AgentGrant, HarnessRequest, AgentReply, AgentStep, AgentStepDiff, Conversation, HarnessInfo,
@@ -179,7 +179,7 @@ __all__ = [
     "Human", "HumanRequest", "HumanOperations", "Answer", "OwnerEmail", "OwnerLine", "OwnerReach", "Approval",
     "ApprovalPolicy", "HoldKind",
     "Agent", "AgentConversation", "AgentStateRow", "CommandResult", "ConversationContext", "ConversationRevert",
-    "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServers", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
+    "AgentToolServer", "ConversationUsage", "ToolServer", "ToolServerProblem", "ToolServers", "ToolServerTool", "AgentCommand", "AgentCommands", "AgentGrant", "ConversationSettings", "HarnessRequest", "AgentReply", "AgentStep", "AgentStepDiff", "Conversation",
     "Message", "HarnessInfo",
     "HarnessModel", "ModelUsage", "ModelSwitching", "ModelSwitchGrant", "AgentToolAccess", "AgentToolApp",
     "AgentToolAction",

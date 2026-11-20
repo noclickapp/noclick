@@ -1610,9 +1610,10 @@ class ConnectLink(Operation):
         return await Operation.summary.aio(**_with_kinds(filters, _CONNECT_KINDS, "ConnectLink.summary"))
 
     @classmethod
-    def _from_link(cls, payload: Dict[str, Any], *, client: Optional[Client], user: Any) -> "ConnectLink":
+    def _from_link(cls, payload: Dict[str, Any], *, client: Optional[Client], user: Any,
+                   kind: str = "credential.connect") -> "ConnectLink":
         operation = payload.get("operation")
-        hints: Dict[str, Any] = {"kind": "credential.connect"}
+        hints: Dict[str, Any] = {"kind": kind}
         raw = operation if isinstance(operation, dict) else None
         if isinstance(operation, str):
             hints["id"] = operation

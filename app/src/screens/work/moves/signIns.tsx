@@ -83,8 +83,8 @@ export function useBrowserSignIn(signIn: BrowserSignIn) {
     };
 }
 
-/** Its Connect pill. */
-export function ConnectSignIn({ state }: { state: ReturnType<typeof useBrowserSignIn> }) {
+/** A sign-in's Connect pill (`label` Reconnect for one that ended). */
+export function ConnectSignIn({ state, label = 'Connect' }: { state: { ready: boolean; connecting: boolean; connect: () => void }; label?: string }) {
     return (
         <button
             type="button"
@@ -96,7 +96,7 @@ export function ConnectSignIn({ state }: { state: ReturnType<typeof useBrowserSi
             }}
             className={cn(BUTTON_SECONDARY, 'h-7 shrink-0 px-3 text-[12.5px]')}
         >
-            {state.connecting ? 'Connecting…' : 'Connect'}
+            {state.connecting ? 'Connecting…' : label}
         </button>
     );
 }
