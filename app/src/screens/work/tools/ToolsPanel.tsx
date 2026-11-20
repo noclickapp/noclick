@@ -5,13 +5,14 @@
 // agent can use as tools), NoClick's own and an MCP server by its URL. An app with an account already connected goes on
 // at once (a choice where there are several); one with none opens the connect dialog's own flow (AppConnect), and the
 // account that lands goes on. An app or NoClick tool is the agent's `tools`, written with `agent.update`; an MCP
-// server is a step of its automation (`agent.addToolServer`), signed in with NoClick's MCP sign-in (useMCPOAuth) where
-// the server asks for one, or given the key it takes instead (a header the platform keeps as a credential and never
-// shows again). Each holds from its next turn; one the platform refuses goes back, saying why.
+// server is a step of its automation (`agent.addToolServer`), each drawn as the platform says it stands (ToolServers)
+// and signed in to through its connect link where the server asks for a sign-in, or given the key it takes instead (a
+// header the platform keeps as a credential and never shows again). Each holds from its next turn; one the platform
+// refuses goes back, saying why.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { ArrowLeft, Bot, Check, ChevronRight, Compass, Globe, InfinityIcon, Plug, Plus, Search, Sparkles, User, Wallet, Wrench, X } from 'lucide-react';
-import { Agent, NoClickError, type AgentToolServer, type Connection } from 'noclick';
+import { Agent, type AgentToolServer, type Connection } from 'noclick';
 import { invalidateV1 } from '@/sdk/useV1';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { BrandIcon } from '@/ui/BrandIcon';
@@ -20,7 +21,7 @@ import { scoreFields } from '@/lib/fuzzyRank';
 import { useChanged } from '@/lib/useChanged';
 import { cn } from '@/ui/utils';
 import { useSlot } from '@/slots';
-import { APPS, TOOL_SERVER_SIGN_IN, type ToolApp } from '../slots';
+import { APPS, type ToolApp } from '../slots';
 import { reconnectByLink } from '@/ui/connectStandards';
 import { CONNECT_APP } from '@/ui/slots';
 import { useWorkClient } from '../client';
@@ -28,7 +29,8 @@ import { AGENTS_KEY } from '../agents/reads';
 import { HarnessMark } from '../agents/harness';
 import { rereadAccounts, useConnections } from '../newAgent/catalog';
 import { AppMark, catalogApp } from '../newAgent/wakes';
-import { rereadAgent, useAgent, useAgentToolServers, useToolServers } from '../profile/reads';
+import { rereadAgent, useAgent, useAgentToolServers } from '../profile/reads';
+import { checkedLine, ServerPage, ServerRow, useServerActions } from './ToolServers';
 import { ComposerDrawer } from '../conversation/menus';
 import { XS_BUTTON, XS_GHOST, XS_OUTLINE, XS_PRIMARY } from '../conversation/styles';
 import { EVERYTHING, holds, keyHeaders, NOCLICK_TOOLS, refFor, toolRows, withAll, without, type ToolEntry, type ToolRow } from '@/lib/agentTools';
@@ -131,7 +133,11 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
     const reaches = useEverythingReaches(live.userId);
     const [view, setView] = useState<'list' | 'add' | 'server'>('list');
     const nav = useWorkNav();
-    const servers = useAgentToolServers(agent.id);
+    const servers = useAgentToolServers(agent.id, conversation);
+    const actions = useServerActions(agent.id, conversation);
+    // The server whose own page is open, by its step.
+    const [shown, setShown] = useState<string | null>(null);
+    const page = shown ? servers.data?.find((s) => s.id === shown) : undefined;
     // What was just written, shown until the agent read again says it.
     const [pending, setPending] = useState<ToolEntry[] | null>(null);
     if (useChanged(read.data)) setPending(null);
@@ -175,16 +181,27 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
 
     return (
         <div className="flex max-h-[min(30rem,58dvh)] flex-col" data-testid="tools-panel">
-            {view === 'list' ? (
+            {view === 'list' && page ? (
+                <>
+                    <PanelHead title={page.name} onBack={() => setShown(null)} onClose={onClose} />
+                    <ServerPage
+                        server={page}
+                        actions={actions}
+                        onRemove={() => {
+                            setShown(null);
+                            void removeServer(page);
+                        }}
+                    />
+                </>
+            ) : view === 'list' ? (
                 <ToolList
-                    agentId={agent.id}
                     name={name}
                     tools={tools}
                     servers={servers.data ?? []}
                     connections={connections.data ?? []}
                     reaches={reaches}
                     apps={apps}
-                    conversation={conversation}
+                    actions={actions}
                     onAdd={() => setView('add')}
                     onChoose={() => {
                         nav.openProfile(agent.id, { tab: 'tools' });
@@ -192,10 +209,11 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
                     }}
                     onRemove={remove}
                     onRemoveServer={(s) => void removeServer(s)}
+                    onOpenServer={(s) => setShown(s.id)}
                     onClose={onClose}
                 />
             ) : view === 'server' ? (
-                <AddServer agent={agent} name={name} onBack={() => setView('add')} onClose={onClose} onAdded={() => setView('list')} />
+                <AddServer agent={agent} name={name} actions={actions} onBack={() => setView('add')} onClose={onClose} onAdded={() => setView('list')} />
             ) : (
                 <AddTool
                     name={name}
@@ -256,21 +274,20 @@ const hostOf = (url: string | null) => {
 };
 
 function ToolList({
-    agentId,
     name,
     tools,
     servers,
     connections,
     reaches,
     apps,
-    conversation,
+    actions,
     onAdd,
     onChoose,
     onRemove,
     onRemoveServer,
+    onOpenServer,
     onClose,
 }: {
-    agentId: string;
     name: string;
     tools: ToolEntry[];
     servers: AgentToolServer[];
@@ -278,18 +295,18 @@ function ToolList({
     /** What everything reaches; null until the accounts are read. */
     reaches: Connection[] | null;
     apps: ToolApp[];
-    conversation: string | null;
+    actions: ReturnType<typeof useServerActions>;
     onAdd: () => void;
     /** Opening its profile's Tools tab, where everything is narrowed app by app. */
     onChoose: () => void;
     onRemove: (row: ToolRow, title: string) => void;
     onRemoveServer: (server: AgentToolServer) => void;
+    onOpenServer: (server: AgentToolServer) => void;
     onClose: () => void;
 }) {
     const rows = toolRows(tools, connections);
     const everything = rows.find((r): r is Everything => r.kind === 'everything');
     const listed = rows.filter((r): r is Listed => r.kind !== 'everything');
-    const status = useToolServers(agentId, servers.length ? conversation : null);
     const groups: [string, Listed[]][] = [
         ['Apps', listed.filter((r) => r.kind === 'app')],
         ['NoClick', listed.filter((r) => r.kind === 'noclick')],
@@ -332,24 +349,12 @@ function ToolList({
                         )}
                         {servers.length > 0 && (
                             <section aria-label="MCP servers">
-                                <p className={HEAD}>MCP servers</p>
-                                {servers.map((s) => {
-                                    const seen = status.data?.servers.find((x) => x.name === s.name);
-                                    const tools = seen?.toolCount;
-                                    return (
-                                        <div key={s.id} className={cn(ROW, 'group')} data-tool={`server:${s.id}`}>
-                                            <Tile>
-                                                <Plug className="h-3.5 w-3.5" strokeWidth={2} />
-                                            </Tile>
-                                            <Line
-                                                title={s.name}
-                                                tone={seen?.status === 'failed' ? 'down' : undefined}
-                                                line={seen?.status === 'failed' ? (seen.error ?? 'Didn’t connect') : [tools != null ? `${tools} ${tools === 1 ? 'tool' : 'tools'}` : hostOf(s.url), s.signedIn ? 'Signed in' : s.headers.length ? 'Uses a key' : null].filter(Boolean).join(' · ')}
-                                            />
-                                            <RemoveButton title={s.name} onRemove={() => onRemoveServer(s)} />
-                                        </div>
-                                    );
-                                })}
+                                <p className={HEAD}>
+                                    MCP servers<span className="font-normal">{checkedLine(servers)}</span>
+                                </p>
+                                {servers.map((s) => (
+                                    <ServerRow key={s.id} server={s} actions={actions} onOpen={() => onOpenServer(s)} remove={<RemoveButton title={s.name} onRemove={() => onRemoveServer(s)} />} />
+                                ))}
                             </section>
                         )}
                     </>
@@ -602,9 +607,9 @@ function AddTool({
     );
 }
 
-/** An MCP server by its URL (and a name, else its host's): added as it is, with the key it takes where one is given,
- *  or, where the server asks its client to sign in, once NoClick's MCP sign-in for it has run. */
-function AddServer({ agent, name, onBack, onClose, onAdded }: { agent: Agent; name: string; onBack: () => void; onClose: () => void; onAdded: () => void }) {
+/** An MCP server by its URL (and a name, else its host's): added as it is, with the key it takes where one is given;
+ *  one that asks its client to sign in is added waiting for that, and signs in here through its connect link. */
+function AddServer({ agent, name, actions, onBack, onClose, onAdded }: { agent: Agent; name: string; actions: ReturnType<typeof useServerActions>; onBack: () => void; onClose: () => void; onAdded: () => void }) {
     const client = useWorkClient();
     const [url, setUrl] = useState('');
     const [label, setLabel] = useState('');
@@ -612,49 +617,49 @@ function AddServer({ agent, name, onBack, onClose, onAdded }: { agent: Agent; na
     const [header, setHeader] = useState('');
     const [busy, setBusy] = useState(false);
     const [problem, setProblem] = useState<string | null>(null);
-    // The URL asked for a sign-in: set once the platform said so.
-    const [signing, setSigning] = useState<string | null>(null);
+    // Added, and waiting on a person's sign-in.
+    const [added, setAdded] = useState<AgentToolServer | null>(null);
     const at = url.trim();
-    const host = hostOf(signing ?? at);
+    const host = added?.host ?? hostOf(at);
+    const signing = !!added && actions.busy[added.id] === 'signing';
     // The header the key goes in, and its value, as it'll be sent.
     const sent = key.trim() ? Object.entries(keyHeaders(key, header))[0] : null;
-    const add = async (credential?: string) => {
-        const target = signing ?? at;
+    const add = async () => {
         setBusy(true);
         setProblem(null);
         try {
-            const headers = !credential && sent ? Object.fromEntries([sent]) : undefined;
-            const added = await Agent.fromId(agent.id, { client }).addToolServer(target, { name: label.trim() || undefined, credential, headers });
+            const server = await Agent.fromId(agent.id, { client }).addToolServer(at, { name: label.trim() || undefined, headers: sent ? Object.fromEntries([sent]) : undefined });
             rereadAgent(agent.id);
-            toast(`${added.name} added`, { description: `${name} can use its tools from its next turn.` });
+            if (server.status === 'needs_sign_in' && server.signIn === 'browser') return setAdded(server);
+            toast(`${server.name} added`, { description: `${name} can use its tools from its next turn.` });
             onAdded();
         } catch (error) {
-            if (!credential && error instanceof NoClickError && error.details.reason === 'needs_sign_in') {
-                setSigning(target);
-                void oauth.discover(target);
-            } else setProblem(errorText(error));
+            setProblem(errorText(error));
         } finally {
             setBusy(false);
         }
     };
-    const oauth = useSlot(TOOL_SERVER_SIGN_IN)({ onCredentialCreated: (credentialId) => void add(credentialId) });
-    const ready = !!oauth.discoveryResult?.requires_oauth && !oauth.isConnecting && !busy;
+    const signIn = (server: AgentToolServer) =>
+        actions.signIn(server, () => {
+            toast(`Signed in to ${server.name}`, { description: `${name} can use its tools from its next turn.` });
+            onAdded();
+        });
     return (
         <>
-            <PanelHead title="Add an MCP server" onBack={signing ? () => setSigning(null) : onBack} onClose={onClose} />
+            <PanelHead title="Add an MCP server" onBack={added ? onAdded : onBack} onClose={onClose} />
             <form
                 className="flex flex-col gap-3 overflow-y-auto px-4 pb-4 pt-1 scrollbar-subtle"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    if (signing) {
-                        if (ready) void oauth.connect(signing, label.trim() || host);
+                    if (added) {
+                        if (!signing) signIn(added);
                     } else if (at) void add();
                 }}
             >
-                {signing ? (
+                {added ? (
                     <>
                         <p className="text-[13.5px] leading-snug text-foreground/90">{host} asks you to sign in before {name} can use it.</p>
-                        <p className="text-[12.5px] leading-snug text-muted-foreground">It opens in a window. NoClick keeps the sign-in, and {name} uses it from its next turn.</p>
+                        <p className="text-[12.5px] leading-snug text-muted-foreground">It opens in a new tab. NoClick keeps the sign-in, and {name} uses it from its next turn.</p>
                     </>
                 ) : (
                     <>
@@ -683,14 +688,11 @@ function AddServer({ agent, name, onBack, onClose, onAdded }: { agent: Agent; na
                         {at && !/^https:\/\//i.test(at) && <p className="text-[12px] leading-snug text-muted-foreground">It needs to be a public https URL: a server on your laptop can’t run here.</p>}
                     </>
                 )}
-                {signing && oauth.discoveryResult && !oauth.discoveryResult.requires_oauth && !problem && (
-                    <p className="text-[12.5px] leading-snug text-red-600 dark:text-red-400">It asks for a sign-in NoClick can’t run in a browser, so it can’t be added here.</p>
-                )}
-                {(problem ?? oauth.error) && <p className="text-[12.5px] leading-snug text-red-600 dark:text-red-400">{problem ?? oauth.error}</p>}
+                {problem && <p className="text-[12.5px] leading-snug text-red-600 dark:text-red-400">{problem}</p>}
                 <div className="flex items-center justify-end gap-2 pt-1">
-                    {signing ? (
-                        <button type="submit" disabled={!ready} className={cn(XS_BUTTON, XS_PRIMARY, 'h-8 px-3.5 text-[13px]')}>
-                            {oauth.isConnecting || busy ? 'Signing in…' : oauth.isDiscovering ? 'Checking its sign-in…' : `Sign in to ${host}`}
+                    {added ? (
+                        <button type="submit" disabled={signing} className={cn(XS_BUTTON, XS_PRIMARY, 'h-8 px-3.5 text-[13px]')}>
+                            {signing ? 'Signing in…' : `Sign in to ${host}`}
                         </button>
                     ) : (
                         <button type="submit" disabled={!/^https:\/\//i.test(at) || busy} className={cn(XS_BUTTON, XS_PRIMARY, 'h-8 px-3.5 text-[13px]')}>

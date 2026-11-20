@@ -171,7 +171,7 @@ export { AgentMemory, AgentSandbox, AgentWorkspace, SandboxShell, ShareLink } fr
 export type {
   AgentNow, AgentSpeed, AgentState, AgentStateRow, AgentStates, CommandResult, ConversationChanges, ConversationContext,
   ConversationRevert, ConversationSettings, ConversationUsage, ForkedFrom, LastMessage, MessageAuthor, ModelAccount,
-  AgentToolServer, PlanLimit, ToolServer, ToolServers,
+  AgentToolServer, PlanLimit, ToolServer, ToolServerProblem, ToolServers, ToolServerTool,
 } from "./agentConversations.ts";
 export type {
   AgentEvent, CodingAgent, CodingAgents, CodingApp, CodingCount, CodingCredential, CodingJob, CodingPause, CodingPlace,

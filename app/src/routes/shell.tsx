@@ -1,7 +1,7 @@
 // The frame around the signed-in owner's pages (src/screens/shell/AppFrame.tsx): the home, the chat, Work and
 // Resources draw inside it, each its own route below, and the sidebar goes to a page by its route. The account is the
-// one the app's key acts in, as `GET /v1/status` names it. The developer console keeps a frame of its own
-// (src/screens/console/ConsoleShell.tsx), reached from the account menu. The frame reads nothing on the server, so
+// one the app's key acts in, as `GET /v1/status` names it. The developer console, reached from the account menu, draws
+// the same frame with its own sidebar (src/screens/console/ConsoleShell.tsx). The frame reads nothing on the server, so
 // moving between the pages never waits on it.
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { readAccountStatus } from '@/screens/account/status';

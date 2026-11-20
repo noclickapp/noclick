@@ -129,10 +129,11 @@ describe('the sidebar with nothing filled', () => {
         await waitFor(() => expect(screen.getByText('Member plan')).toBeTruthy());
     });
 
-    it('offers the console and Community in the account menu', async () => {
+    it('offers the console, feedback and Community in the account menu', async () => {
         shell();
         const menu = await openAccountMenu();
         expect(within(menu).getByText('Community')).toBeTruthy();
+        expect(within(menu).getByText('Send feedback')).toBeTruthy();
         fireEvent.click(within(menu).getByText('Developers'));
         expect(screen.getByTestId('where').textContent).toBe('/developers');
     });
@@ -178,6 +179,8 @@ describe('the sidebar a host fills', () => {
         const menu = await openAccountMenu();
         expect(within(menu).queryByText('Developers')).toBeNull();
         const rows = within(menu).getAllByRole('menuitem').map((row) => row.textContent?.trim());
+        // The host's rows stand in the standard's place: no feedback row of the app's.
+        expect(rows).not.toContain('Send feedback');
         expect(rows.indexOf('Upgrade')).toBeLessThan(rows.indexOf('Chat with us'));
         expect(rows.indexOf('Chat with us')).toBeLessThan(rows.indexOf('Community'));
         expect(rows.indexOf('Community')).toBeLessThan(rows.indexOf('Debug'));

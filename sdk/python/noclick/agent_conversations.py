@@ -9,10 +9,11 @@ from urllib.parse import quote
 
 from ._object import compact, parse_time
 from ._sync import synced
-from .operation import Operation
+from .operation import Operation, register_result
 
 if TYPE_CHECKING:
     from .agent import Agent, Conversation
+    from .connection import ConnectLink
 
 
 @dataclass(frozen=True)
@@ -106,15 +107,50 @@ class ConversationContext:
 
 
 @dataclass(frozen=True)
+class ToolServerTool:
+    """A tool an MCP server offers: its ``name`` and ``description``, as the server lists it."""
+
+    name: str
+    description: Optional[str] = None
+
+    @classmethod
+    def _list(cls, raw: Any) -> List["ToolServerTool"]:
+        return [cls(str(t.get("name") or ""), t.get("description")) for t in raw or [] if isinstance(t, dict)]
+
+
+@dataclass(frozen=True)
+class ToolServerProblem:
+    """What's wrong with an agent's MCP server, as a connection's ``disconnected`` says it: ``reason``
+    (``needs_sign_in``, ``signed_out``, ``refused``, ``revoked`` or ``failed``), NoClick's one line (``message``), the
+    server's own words where it said any (``provider_said``), since when (``since``, unknown for a server never
+    signed in to) and what to do (``next_step``)."""
+
+    reason: str
+    message: str
+    provider_said: Optional[str] = None
+    since: Any = None
+    next_step: Optional[str] = None
+
+    @classmethod
+    def _from(cls, raw: Any) -> Optional["ToolServerProblem"]:
+        if not isinstance(raw, dict):
+            return None
+        return cls(str(raw.get("reason") or ""), str(raw.get("message") or ""), raw.get("provider_said"),
+                   parse_time(raw.get("since")), raw.get("next_step"))
+
+
+@dataclass(frozen=True)
 class ToolServer:
     """One MCP server a conversation's coding harness reaches its tools on: ``status`` ``connected``, ``connecting``
-    (its handshake hasn't finished) or ``failed`` (``error`` says why), and how many tools it offers the model where
-    the harness says (``tool_count``)."""
+    (its handshake hasn't finished) or ``failed`` (``error`` says why), how many tools it offers the model where the
+    harness says (``tool_count``), and each of them (``tools``) where it lists them (Claude Code and Codex do; else
+    ``None``)."""
 
     name: str
     status: str
     tool_count: Optional[int]
     error: Optional[str]
+    tools: Optional[List[ToolServerTool]] = None
 
 
 @dataclass(frozen=True)
@@ -132,7 +168,8 @@ class ToolServers:
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "ToolServers":
-        servers = [ToolServer(str(s.get("name") or ""), s.get("status") or "failed", s.get("tool_count"), s.get("error"))
+        servers = [ToolServer(str(s.get("name") or ""), s.get("status") or "failed", s.get("tool_count"), s.get("error"),
+                              None if s.get("tools") is None else ToolServerTool._list(s["tools"]))
                    for s in raw.get("data") or [] if isinstance(s, dict)]
         reconnect = raw.get("reconnect") if isinstance(raw.get("reconnect"), dict) else {}
         return cls(servers, raw.get("source") or "none", parse_time(raw.get("checked_at")),
@@ -143,8 +180,15 @@ class ToolServers:
 @dataclass(frozen=True)
 class AgentToolServer:
     """An MCP server an agent has as tools: a step of its automation (``id``, what ``remove_tool_server`` takes),
-    reached at its ``url`` over ``transport`` (``http`` or ``sse``), ``signed_in`` where a sign-in to it is set,
-    sending the ``headers`` named (their values are never read back)."""
+    reached at its ``url`` (on ``host``) over ``transport`` (``http`` or ``sse``), letting its client in as
+    ``sign_in`` says (``none``, ``key``: the ``headers`` named, whose values are never read back, or ``browser``: a
+    person's sign-in, ``signed_in`` once one is set). Its ``status``: ``connected``, ``needs_sign_in`` (nothing lets
+    it in yet), ``signed_out`` (its sign-in was refused or revoked), ``failed`` (its last run found no tools),
+    ``unchecked`` (no run since it was last let in) or, read for a conversation, ``connecting`` (its harness's handshake
+    hasn't finished), with what's wrong in ``problem``; the ``tools`` it offered and when that was found
+    (``checked_at``); whether that conversation's harness can connect it again in place now (``reconnectable``); and
+    what draws it (``icon``: ``{"integration": name}``, ``{"mark": "noclick"}``, or ``None``: draw its name's first
+    letter). Listed in the order they were added."""
 
     id: str
     name: str
@@ -153,12 +197,70 @@ class AgentToolServer:
     signed_in: bool
     headers: List[str] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    agent_id: Optional[str] = None
+    host: Optional[str] = None
+    sign_in: str = "none"
+    status: str = "unchecked"
+    problem: Optional[ToolServerProblem] = None
+    tools: List[ToolServerTool] = dc_field(default_factory=list)
+    icon: Optional[Dict[str, str]] = None
+    checked_at: Any = None
+    reconnectable: bool = False
+    _agent: Any = dc_field(default=None, repr=False, compare=False)
 
     @classmethod
-    def _from(cls, raw: Dict[str, Any]) -> "AgentToolServer":
+    def _from(cls, raw: Dict[str, Any], agent: Any = None) -> "AgentToolServer":
         return cls(str(raw.get("id") or ""), str(raw.get("name") or ""), raw.get("url"),
                    raw.get("transport") or "http", raw.get("signed_in") is True,
-                   [str(h) for h in raw.get("headers") or []], raw)
+                   [str(h) for h in raw.get("headers") or []], raw, raw.get("agent_id"), raw.get("host"),
+                   raw.get("sign_in") or "none", raw.get("status") or "unchecked",
+                   ToolServerProblem._from(raw.get("problem")), ToolServerTool._list(raw.get("tools")),
+                   raw.get("icon") if isinstance(raw.get("icon"), dict) else None, parse_time(raw.get("checked_at")),
+                   raw.get("reconnectable") is True, agent)
+
+    @synced
+    async def connect_link(self, *, redirect_url: Optional[str] = None, reason: Optional[str] = None,
+                           send_to: Any = None) -> "ConnectLink":
+        """Mint a link where someone signs in to this server (``sign_in`` ``browser``), the first time or again:
+        NoClick's MCP sign-in for it, which becomes the server's sign-in once it lands. ``send_to`` ("user",
+        "owner" for your account's owner, an email, or a dict) also delivers it. A server that takes a key raises
+        ``noclick.Conflict``: give it headers with ``agent.update_tool_server``.
+
+        Returns:
+            The link: its ``url``, when it ``expires_at``, and where it went when you set ``send_to``. It's also the
+            operation that finishes once they've signed in: ``link.wait()`` returns this ``AgentToolServer`` as it
+            stands then.
+
+        Usage::
+
+            for server in noclick.Agent.from_name("coder").tool_servers():
+                if server.status in ("needs_sign_in", "signed_out"):
+                    print(server.name, server.connect_link().url)
+        """
+        from .agent import Agent
+        from .connection import ConnectLink, _link_options
+
+        agent = self._agent if self._agent is not None else Agent.from_id(str(self.agent_id))
+        raw = await agent._ensure()
+        payload = await agent._request(
+            "POST", f"/v1/agents/{raw['id']}/tool_servers/{quote(self.id, safe='')}/connect_link",
+            json=_link_options(redirect_url, reason, send_to))
+        return ConnectLink._from_link(payload, client=agent._client, user=agent._call_scope(), kind=SIGN_IN_KIND)
+
+
+#: The operation a tool server's connect link is (``AgentToolServer.connect_link``).
+SIGN_IN_KIND = "tool_server.sign_in"
+
+
+def _read_signed_in(result: Any, op: Operation) -> AgentToolServer:
+    from .agent import Agent
+
+    server = result.get("tool_server", result) if isinstance(result, dict) else {}
+    agent = Agent.from_id(str(server.get("agent_id")), client=op._client, user=op._scope)
+    return AgentToolServer._from(server, agent)
+
+
+register_result(SIGN_IN_KIND, _read_signed_in)
 
 
 @dataclass(frozen=True)

@@ -397,7 +397,8 @@ export interface LinkOptions {
   sendTo?: SendTo;
 }
 
-function linkBody(options: LinkOptions): JsonObject {
+/** @internal */
+export function linkBody(options: LinkOptions): JsonObject {
   return compact({ redirect_url: options.redirectUrl, reason: options.reason, send_to: normalizeSendTo(options.sendTo) });
 }
 
@@ -1157,8 +1158,11 @@ export async function run<R = unknown>(
 
 const CONNECT_KINDS = ["credential.connect"] as const;
 
-/** A connect page URL that is also the operation tracking it. */
-export class ConnectLink extends Operation<Connection> {
+/**
+ * A connect page URL that is also the operation tracking it. `wait()` resolves to what it connected: the
+ * `Connection`, or an agent's `AgentToolServer` for that server's sign-in link.
+ */
+export class ConnectLink<T = Connection> extends Operation<T> {
   /** Where the person connects. */
   url = "";
   expiresAt: Date | null = null;
@@ -1192,9 +1196,10 @@ export class ConnectLink extends Operation<Connection> {
   }
 
   /** @internal */
-  static _fromLink(payload: unknown, init: { client?: NoClick; user?: ObjectInit["user"] }): ConnectLink {
+  static _fromLink<T = Connection>(payload: unknown, init: { client?: NoClick; user?: ObjectInit["user"] },
+    kind = "credential.connect"): ConnectLink<T> {
     const body = asObject(payload);
-    const link = new ConnectLink(Operation._init(body.operation, { ...init, kind: "credential.connect" }));
+    const link = new ConnectLink<T>(Operation._init(body.operation, { ...init, kind }));
     link.url = String(body.url ?? "");
     link.expiresAt = parseTime(body.expires_at);
     link.connection = str(body.connection);
