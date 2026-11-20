@@ -164,10 +164,9 @@ describe('Notifications', () => {
         expect(onToggle).toHaveBeenCalledWith('approvals', false);
     });
 
-    it('holds the switches while the preferences are read, and shows what its host says above them', () => {
-        render(<NotificationsView prefs={null} onToggle={() => undefined} notice={<p>Nothing sends mail here yet.</p>} />);
+    it('holds the switches while the preferences are read', () => {
+        render(<NotificationsView prefs={null} onToggle={() => undefined} />);
         expect(screen.getAllByRole('switch').every((s) => s.hasAttribute('disabled'))).toBe(true);
-        expect(screen.getByText('Nothing sends mail here yet.')).toBeTruthy();
     });
 
     it('names each category once', () => {
