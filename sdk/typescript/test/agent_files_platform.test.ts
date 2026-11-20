@@ -200,7 +200,7 @@ test("a coding turn's steps say what they did in words, fold and sum up, live an
     created_at: null, category: "read",
     label: { text: "Read a.py lines 55-110", verb: "Read", object: "a.py", detail: "lines 55-110" },
     label_source: "derived", display_command: "sed -n 55,110p a.py", lines: { from: 55, to: 110 }, output_lines: 1,
-    failed: false, group: "g:s2",
+    failed: false, group: "g:s2", paths: ["a.py"],
   };
   const tests = { ...read, id: "s26", category: "test", label: { text: "Ran the plan usage tests", verb: "Ran" },
     label_source: "description", group: null, lines: null, output_lines: 4, tests: SUMMARY.tests,
@@ -215,6 +215,7 @@ test("a coding turn's steps say what they did in words, fold and sum up, live an
   assert.deepEqual([sed.category, sed.label, sed.labelSource, sed.displayCommand, sed.lines, sed.outputLines, sed.failed, sed.group],
     ["read", { text: "Read a.py lines 55-110", verb: "Read", object: "a.py", detail: "lines 55-110" }, "derived",
       "sed -n 55,110p a.py", { from: 55, to: 110 }, 1, false, "g:s2"]);
+  assert.deepEqual(sed.paths, ["a.py"]);
   assert.deepEqual([ran.label?.text, ran.labelSource, ran.tests, ran.progress], ["Ran the plan usage tests", "description",
     { passed: 161, failed: 0, skipped: 0, total: 161, done: true, label: "161 passed" }, { done: 161, total: 161 }]);
   assert.deepEqual(edit.diffStat, { added: 3, removed: 1 });

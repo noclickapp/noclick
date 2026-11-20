@@ -629,6 +629,8 @@ export interface AgentStep {
   diffStat: DiffStat | null;
   failed: boolean | null;
   group: string | null;
+  /** The files a read or an edit named, as it named them. */
+  paths: string[];
   raw: JsonObject;
 }
 
@@ -667,6 +669,7 @@ export function toAgentStep(raw: JsonObject): AgentStep {
     diffStat: toDiffStat(raw.diff_stat),
     failed: typeof raw.failed === "boolean" ? raw.failed : null,
     group: str(raw.group),
+    paths: Array.isArray(raw.paths) ? raw.paths.map(String) : [],
     raw,
   };
 }

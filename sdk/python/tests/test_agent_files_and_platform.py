@@ -208,7 +208,7 @@ def test_a_coding_turns_steps_say_what_they_did_in_words_fold_and_sum_up(api, cl
             "diffs": [], "created_at": None, "category": "read",
             "label": {"text": "Read a.py lines 55-110", "verb": "Read", "object": "a.py", "detail": "lines 55-110"},
             "label_source": "derived", "display_command": "sed -n 55,110p a.py", "lines": {"from": 55, "to": 110},
-            "output_lines": 1, "failed": False, "group": "g:s2"}
+            "output_lines": 1, "failed": False, "group": "g:s2", "paths": ["a.py"]}
     tests = {**read, "id": "s26", "category": "test", "label": {"text": "Ran the plan usage tests", "verb": "Ran"},
              "label_source": "description", "group": None, "lines": None, "output_lines": 4,
              "tests": SUMMARY["tests"], "progress": {"done": 161, "total": 161}}
@@ -222,6 +222,7 @@ def test_a_coding_turns_steps_say_what_they_did_in_words_fold_and_sum_up(api, cl
     assert (sed.category, sed.label, sed.label_source, sed.display_command, sed.lines, sed.output_lines, sed.failed,
             sed.group) == ("read", nc.StepLabel("Read a.py lines 55-110", "Read", "a.py", "lines 55-110"), "derived",
                            "sed -n 55,110p a.py", {"from": 55, "to": 110}, 1, False, "g:s2")
+    assert sed.paths == ["a.py"]
     assert (ran.label.text, ran.label_source, ran.tests, ran.progress) == (
         "Ran the plan usage tests", "description", nc.StepTests(161, 0, 0, 161, True, "161 passed"),
         nc.StepProgress(161, 161))

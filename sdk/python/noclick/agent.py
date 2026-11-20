@@ -227,7 +227,7 @@ class AgentStep:
     ``list``, ``edit``, ``test``, ``install``, ``run`` or ``tool``), its ``label`` (``StepLabel``) and where that came
     from (``label_source``: the harness's own ``description``, Codex's ``actions``, or ``derived`` from the command),
     the command as shown (``display_command``: no ``cd`` into where it runs, heredocs shortened), a read's ``lines``
-    (``{from, to}``), how many lines it printed (``output_lines``), a test run's ``tests``, a count it reported
+    (``{from, to}``), the files a read or an edit named (``paths``), how many lines it printed (``output_lines``), a test run's ``tests``, a count it reported
     (``progress``), an edit's ``diff_stat``, whether it ``failed`` (a search that found nothing didn't) and the
     ``group`` it folds into (``StepGroup.id``)."""
 
@@ -258,6 +258,8 @@ class AgentStep:
     diff_stat: Optional[DiffStat] = None
     failed: Optional[bool] = None
     group: Optional[str] = None
+    #: The files a read or an edit named, as it named them.
+    paths: List[str] = dc_field(default_factory=list)
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "AgentStep":
@@ -271,7 +273,8 @@ class AgentStep:
                    raw.get("display_command"), raw.get("lines") if isinstance(raw.get("lines"), dict) else None,
                    raw.get("output_lines"), StepTests._from(raw.get("tests")), StepProgress._from(raw.get("progress")),
                    DiffStat._from(raw.get("diff_stat")),
-                   raw.get("failed") if isinstance(raw.get("failed"), bool) else None, raw.get("group"))
+                   raw.get("failed") if isinstance(raw.get("failed"), bool) else None, raw.get("group"),
+                   [str(p) for p in raw.get("paths") or []])
 
 
 def _steps(tool_calls: List[Dict[str, Any]]) -> List[AgentStep]:
