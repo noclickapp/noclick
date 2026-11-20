@@ -1,17 +1,23 @@
 // The app's one navigation, as the frame (AppShell) draws it: the workspace and search atop it, then the pages, and at
-// the foot what the host keeps there (a card, a balance) and the account. On a laptop it is a column that folds to an
-// icon rail; on a phone the same content is the menu's sheet. Its parts hold no data: the host hands it the workspace,
-// the foot and the account, and says how to go to a page.
-import { useEffect, useState, type ReactNode } from 'react';
+// the foot what the host keeps there (a card, a balance) and the account with its menu. On a laptop it is a column that
+// folds to an icon rail; on a phone the same content is the menu's sheet. What's the host's own fills the shell's slots
+// (slots.ts); the host says which page is open and how to go to one.
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+import { FaDiscord } from 'react-icons/fa6';
 import { ChevronRight } from 'lucide-react';
+import { useSlot } from '@/slots';
 import { KINDS, type KindId } from '@/screens/resources/kinds';
+import { AccountMenuBody } from '@/ui/AccountMenuBody';
+import { ACCOUNT_MENU_ITEM, planLabel, type AccountMenuUser } from '@/ui/accountParts';
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { BuilderMark } from '@/ui/glyphs';
 import { HAIRLINE } from '@/ui/primitives';
-import { SIDEBAR_CURRENT, SidebarHeader, SidebarItem } from '@/ui/sidebarParts';
+import { SIDEBAR_CURRENT, SidebarAccountButton, SidebarHeader, SidebarItem } from '@/ui/sidebarParts';
 import { cn } from '@/ui/utils';
 import type { SidebarFrame } from './AppShell';
-import type { ShellPage, ShellPageId } from './pages';
+import { SHELL_PAGES, type ShellPage } from './pages';
+import { ACCOUNT_AROUND, ACCOUNT_BILLING, ACCOUNT_ITEMS, ACCOUNT_SESSION, ACCOUNT_STAFF, ACCOUNT_SWITCH, FOOT_BALANCE, FOOT_CARD, FOOT_INVITE, PAGES, WORKSPACE } from './slots';
 
 const RESOURCES_OPEN_KEY = 'nc-sidebar-resources-open';
 
@@ -103,46 +109,71 @@ export function ResourcesNav({
     );
 }
 
+const COMMUNITY = 'https://discord.com/invite/sHC2mrnss8';
+
+/** The account at the sidebar's foot and its menu: who you are and your plan, the other place you work, the host's
+ *  billing rows, its own rows, Community, its staff's rows, the theme and signing out. */
+export function ShellAccount({ user, collapsed, go }: { user: AccountMenuUser; collapsed: boolean; go: (page: string) => void }) {
+    const session = useSlot(ACCOUNT_SESSION);
+    const plan = session.usePlan();
+    const signOut = session.useSignOut();
+    const switchTo = useSlot(ACCOUNT_SWITCH);
+    const Billing = useSlot(ACCOUNT_BILLING);
+    const Items = useSlot(ACCOUNT_ITEMS);
+    const Staff = useSlot(ACCOUNT_STAFF);
+    const Around = useSlot(ACCOUNT_AROUND);
+    const row = (
+        <div className={cn('flex items-center', collapsed && 'justify-center')}>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <SidebarAccountButton user={user} plan={planLabel(plan)} collapsed={collapsed} data-onboarding="user-menu" />
+                </DropdownMenuTrigger>
+                <AccountMenuBody
+                    user={user}
+                    plan={plan}
+                    onLogout={signOut}
+                    billing={Billing ? <Billing /> : undefined}
+                    switchTo={switchTo ?? undefined}
+                    side={collapsed ? 'right' : 'top'}
+                    align={collapsed ? 'end' : 'start'}
+                >
+                    {Items && <Items />}
+                    <DropdownMenuItem className={ACCOUNT_MENU_ITEM} onClick={() => window.open(COMMUNITY, '_blank', 'noopener')}>
+                        <FaDiscord className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <span>Community</span>
+                    </DropdownMenuItem>
+                    {Staff && <Staff go={go} />}
+                </AccountMenuBody>
+            </DropdownMenu>
+        </div>
+    );
+    return Around ? <Around>{row}</Around> : row;
+}
+
 export interface ShellSidebarProps extends SidebarFrame {
-    /** Atop it, beside search: the workspace (its name, or a way to switch it). */
-    workspace: ReactNode;
+    user: AccountMenuUser;
     onSearch: () => void;
     /** With a canvas open: the builder chat beside it, and its toggle. */
     builder?: { open: boolean; onToggle: () => void };
-    pages: readonly ShellPage[];
     /** The page open now. */
     current: string;
-    onPage: (id: ShellPageId) => void;
+    /** Goes to a page: one of the shell's, or one of the host's own (its staff's). */
+    onPage: (page: string) => void;
     /** Goes to Resources' overview (null) or one kind's list. */
     onKind: (kind: KindId | null) => void;
-    /** At the foot, above the account: a card shown while the sidebar is open, the balance (kept mounted on the rail,
-     *  hidden), and a row under it. */
-    card?: ReactNode;
-    balance?: ReactNode;
-    belowBalance?: ReactNode;
-    /** The account, last. */
-    account: ReactNode;
 }
 
-/** The sidebar's content, for the laptop column and the phone sheet alike. */
-export function ShellSidebarContent({
-    collapsed,
-    headerEnd,
-    onNavigate,
-    workspace,
-    onSearch,
-    builder,
-    pages,
-    current,
-    onPage,
-    onKind,
-    card,
-    balance,
-    belowBalance,
-    account,
-}: ShellSidebarProps) {
-    const go = (id: ShellPageId) => {
-        onPage(id);
+/** The sidebar's content, for the laptop column and the phone sheet alike: the pages this app serves, and what the
+ *  host keeps in the slots (slots.ts) atop it and at its foot. */
+export function ShellSidebarContent({ user, collapsed, headerEnd, onNavigate, onSearch, builder, current, onPage, onKind }: ShellSidebarProps) {
+    const served = useSlot(PAGES);
+    const Workspace = useSlot(WORKSPACE);
+    const Card = useSlot(FOOT_CARD);
+    const Balance = useSlot(FOOT_BALANCE);
+    const Invite = useSlot(FOOT_INVITE);
+    const pages = SHELL_PAGES.filter((page) => served.includes(page.id));
+    const go = (page: string) => {
+        onPage(page);
         onNavigate?.();
     };
     const search = () => {
@@ -151,7 +182,7 @@ export function ShellSidebarContent({
     };
     return (
         <div className="flex h-full min-h-0 flex-col">
-            <SidebarHeader collapsed={collapsed} title={workspace} onSearch={search} end={headerEnd} />
+            <SidebarHeader collapsed={collapsed} title={<Workspace user={user} />} onSearch={search} end={headerEnd} />
 
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 pb-3 scrollbar-subtle">
                 {builder && (
@@ -172,16 +203,16 @@ export function ShellSidebarContent({
 
             {/* No rule above the foot: its card and account stand on the column's own surface. */}
             <div className="flex shrink-0 flex-col gap-0.5 p-2">
-                {!collapsed && card}
+                {!collapsed && Card && <Card />}
                 {/* Mounted even on the rail: what's in it may listen for the app's events (a balance opens its way to
                     add funds when work runs out of them). */}
-                {balance && (
+                {Balance && (
                     <div className={cn(collapsed && 'hidden')} data-onboarding="balance">
-                        {balance}
+                        <Balance />
                     </div>
                 )}
-                {!collapsed && belowBalance}
-                {account}
+                {!collapsed && Invite && <Invite />}
+                <ShellAccount user={user} collapsed={collapsed} go={go} />
             </div>
         </div>
     );

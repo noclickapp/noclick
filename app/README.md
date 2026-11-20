@@ -155,6 +155,24 @@ with none Settings doesn't list it:
 | `settings.popups` | Popups: which of the deployment's popups appear | Nothing, and no section |
 | `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
 
+The app shell's (`src/screens/shell/slots.ts`): the frame and sidebar a page sits in. No route draws it yet; a host
+fills what it keeps in its sidebar and menu:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `shell.pages` | The pages the sidebar lists | The pages this app serves: Chat, Work and Resources |
+| `shell.workspace` | Atop the sidebar, beside search | The account's name |
+| `shell.foot.card` | The sidebar's foot, while it's open | Nothing |
+| `shell.foot.balance` | The sidebar's foot, kept mounted on the rail | Nothing |
+| `shell.foot.invite` | The sidebar's foot, under the balance | Nothing |
+| `shell.account.session` | The account's plan, and signing out | The plan the API names; signing out of this app |
+| `shell.account.switchTo` | First in the account menu | This app's developer console |
+| `shell.account.billing` | The account menu's billing rows | Nothing |
+| `shell.account.items` | The account menu, above Community | Nothing |
+| `shell.account.staff` | The account menu's last rows | Nothing |
+| `shell.account.around` | Around the account row (what opens over it) | Nothing |
+| `shell.banner` | A strip across the top of the page | Nothing |
+
 Work's are listed under [Work](#work).
 
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
