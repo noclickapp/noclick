@@ -845,7 +845,7 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
 /** A note the stream says: once (one read back already, or said again, isn't drawn twice; one written since the
  *  person's last message is new), and before a turn at work, where the conversation keeps it. */
 function withNote(thread: Thread, note: NoteEntry): Thread {
-    const since = thread.entries.slice(thread.entries.findLastIndex((e) => e.kind === 'user') + 1);
+    const since = thread.entries.slice(thread.entries.map((e) => e.kind).lastIndexOf('user') + 1);
     if (since.some((e) => e.kind === 'note' && sameNote(e, note))) return thread;
     const live = liveTurn(thread);
     const at = live ? thread.entries.indexOf(live) : thread.entries.length;
