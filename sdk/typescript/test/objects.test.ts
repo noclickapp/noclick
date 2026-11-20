@@ -172,16 +172,18 @@ test("cancel and events", async () => {
 
 // --- credentials + integrations ---------------------------------------------
 
-test("a connection says what holds it: agents, hosted MCP servers and apps", async () => {
+test("a connection says what holds it: agents, hosted MCP servers, apps and automations with their marks", async () => {
   const { api } = setup();
   api.on("GET", "/v1/connections/gmail", json({ ...CONNECTION, used_by: [
-    { kind: "agent", id: "ag_1", name: "support", binding: null, user_id: null },
-    { kind: "project", id: "prj_1", name: "booking", binding: "MAIL", user_id: USER_ID },
+    { kind: "agent", id: "ag_1", name: "support", binding: null, marks: null, user_id: null },
+    { kind: "project", id: "prj_1", name: "booking", binding: "MAIL", marks: null, user_id: USER_ID },
+    { kind: "workflow", id: "wf_1", name: "Inbox triage", binding: null, marks: ["automation-gmail", "agent"], user_id: null },
   ] }));
   const gmail = await nc.Connection.get("gmail");
   assert.deepEqual(gmail.usedBy, [
-    { kind: "agent", id: "ag_1", name: "support", userId: null, binding: null },
-    { kind: "project", id: "prj_1", name: "booking", userId: USER_ID, binding: "MAIL" },
+    { kind: "agent", id: "ag_1", name: "support", userId: null, binding: null, marks: [] },
+    { kind: "project", id: "prj_1", name: "booking", userId: USER_ID, binding: "MAIL", marks: [] },
+    { kind: "workflow", id: "wf_1", name: "Inbox triage", userId: null, binding: null, marks: ["automation-gmail", "agent"] },
   ]);
 });
 

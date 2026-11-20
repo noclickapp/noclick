@@ -647,7 +647,7 @@ export class Connection extends ApiObject {
     const rows = this._field<unknown>("used_by");
     return (Array.isArray(rows) ? rows : []).map(asObject).map((u) => ({
       kind: str(u.kind) ?? "agent", id: str(u.id) ?? "", name: str(u.name) ?? "", userId: str(u.user_id),
-      binding: str(u.binding),
+      binding: str(u.binding), marks: Array.isArray(u.marks) ? u.marks.map(String) : [],
     }));
   }
   /** The open link where someone connects (or reconnects) the account, if one is open. */
@@ -1030,6 +1030,8 @@ export interface ConnectionHolder {
   userId: string | null;
   /** The name an app binds it under (null for anything else). */
   binding: string | null;
+  /** An automation's (`workflow`) steps' node types, by which the app draws it; empty for anything else. */
+  marks: string[];
 }
 
 /**

@@ -415,7 +415,8 @@ class Connection(_Object):
         "apps that bind it or whose code made it, numbers connected through it, and the automations whose steps use "
         "its account (yours, and for an account yours owns, those in its workspace). Each is ``kind`` (``agent``, "
         "``channel``, ``workspace``, ``mcp_server``, ``project``, ``phone_number`` or ``workflow``), ``id``, "
-        "``name``, ``user_id`` and an app's ``binding`` name.",
+        "``name``, ``user_id``, an app's ``binding`` name and an automation's ``marks`` (the node types its steps "
+        "are, by which the app draws it; null for anything else).",
     )
     connected_at: Any = field("connected_at", parse_time)
     created_at: Any = field("created_at", parse_time)
