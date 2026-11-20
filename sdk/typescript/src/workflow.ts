@@ -913,6 +913,14 @@ export class Step extends ApiObject {
   }
 
   /**
+   * Run the workflow from this step: it and what comes after it (`only: true`: it alone), the steps before it giving
+   * the outputs they last stored. `Workflow.run` with `fromStep` says more.
+   */
+  async run(options: Omit<WorkflowRunOptions, "fromStep"> = {}): Promise<Operation<WorkflowRun>> {
+    return await this._workflow.run({}, { ...options, fromStep: this.id });
+  }
+
+  /**
    * What the step produced, run by run, newest first, each a `StepOutput` with its run, how that run started, the
    * step's status there and a one-line `preview`. A trigger's deliveries are its outputs (`noEvent` marks a manual
    * run's placeholder). `search` keeps those holding the text (any case), reading 100 at a time. Inside `asUser` (or
@@ -1169,6 +1177,13 @@ export class EditBatch {
 
 export interface WorkflowRunOptions extends CallOptions {
   idempotencyKey?: string;
+  /**
+   * Run this step and what comes after it instead, the steps before it giving the outputs they last stored, as the
+   * app's Run from here does. A run from a step takes no inputs, unless it's a trigger that does.
+   */
+  fromStep?: StepRef;
+  /** With `fromStep`: run that step alone, nothing after it. */
+  only?: boolean;
 }
 
 /**
@@ -1609,11 +1624,16 @@ export class Workflow extends ApiObject {
    * step with no account connected throws `NeedsConnection`, and a workflow that can't start from
    * code or isn't set up `ActionRequired`. `wait()` resolves to the finished `WorkflowRun`, or
    * throws the run's error if it failed.
+   *
+   * `fromStep` runs that step and what comes after it instead (`only: true`: that step alone), the steps before it
+   * giving the outputs they last stored. A step that provides an agent its tools has no run of its own
+   * (`InvalidRequest`, `details.reason` `tool_provider`).
    */
   async run(inputs: JsonObject = {}, options: WorkflowRunOptions = {}): Promise<Operation<WorkflowRun>> {
     const scope = resolveScope(options.user);
+    const from = options.fromStep === undefined ? undefined : stepId(options.fromStep);
     const payload = await this._api.request("POST", `${await this.path()}/runs`, {
-      json: { inputs },
+      json: { inputs, ...compact({ from_step: from, only: options.only ? true : undefined }) },
       user: scope,
       idempotencyKey: options.idempotencyKey,
     });

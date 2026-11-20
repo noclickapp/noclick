@@ -740,6 +740,21 @@ class Step(_Object):
         """
         return await self._edit({"op": "unmock_step", "id": self.id})
 
+    @synced
+    async def run(self, *, only: bool = False, user: Any = AMBIENT, idempotency_key: Optional[str] = None) -> Operation:
+        """Run the workflow from this step: it and what comes after it (``only=True``: it alone), the steps
+        before it giving the outputs they last stored. ``Workflow.run(from_step=...)`` says more.
+
+        Returns:
+            An operation whose ``.wait()`` gives the finished ``WorkflowRun``.
+
+        Usage::
+
+            summarize = noclick.Workflow.from_name("order-intake").step("summarize")
+            print(summarize.run(only=True).wait().outputs)
+        """
+        return await self._workflow.run.aio(from_step=self.id, only=only, user=user, idempotency_key=idempotency_key)
+
     # --- what it produced --------------------------------------------------
 
     async def _outputs_path(self) -> str:
@@ -1941,6 +1956,8 @@ class Workflow(_Object):
         self,
         inputs: Optional[Dict[str, Any]] = None,
         *,
+        from_step: Any = None,
+        only: bool = False,
         user: Any = AMBIENT,
         idempotency_key: Optional[str] = None,
     ) -> Operation:
@@ -1950,6 +1967,13 @@ class Workflow(_Object):
         account connected raises ``noclick.NeedsConnection``, and a workflow that
         can't start from code (several triggers and no Run trigger, or only
         events an integration pushes) or isn't set up ``noclick.ActionRequired``.
+
+        ``from_step`` (a ``Step`` or its id) runs that step and what comes after
+        it instead, the steps before it giving the outputs they last stored, as
+        the app's Run from here does; with ``only=True`` that step alone. A run
+        from a step takes no inputs, unless it's a trigger that does. A step
+        that provides an agent its tools has no run of its own
+        (``noclick.InvalidRequest``, ``details["reason"]`` ``tool_provider``).
 
         Returns:
             An operation whose ``.wait()`` gives the finished ``WorkflowRun``, or
@@ -1967,11 +1991,17 @@ class Workflow(_Object):
                 intake = noclick.Workflow.from_name("order-intake")
                 op = intake.run({"order_id": "o_1042"}, user="acme", idempotency_key="order-o_1042")
                 print(op.id)   # resume anywhere with noclick.Operation.from_id(op.id).wait()
+
+            Try one step again on what came in last, nothing after it::
+
+                intake = noclick.Workflow.from_name("order-intake")
+                run = intake.run(from_step="summarize", only=True).wait()
         """
         scope = resolve_scope(user)
+        body = {"inputs": inputs or {}, **compact(from_step=None if from_step is None else _step_id(from_step),
+                                                  only=True if only else None)}
         payload = await self._api.request(
-            "POST", f"{await self._path()}/runs", json={"inputs": inputs or {}}, user=scope,
-            idempotency_key=idempotency_key,
+            "POST", f"{await self._path()}/runs", json=body, user=scope, idempotency_key=idempotency_key,
         )
         return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.run", reader=_read_run)
 
