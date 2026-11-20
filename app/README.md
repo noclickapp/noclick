@@ -131,6 +131,18 @@ The channels' (`src/screens/channels/slots.ts`; Work draws them):
 |---|---|---|
 | `channels.agent.face` | An agent's face, wherever a channel draws one | Its initials on its own colour |
 
+The Usage page's (`src/screens/usage/slots.ts`): the money behind it is the deployment's, so a host that bills fills
+them, and without one the page shows what each thing cost:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `usage.billing.planLine` | Under the page's title, where the deployment bills | Nothing: the title says what the page shows |
+| `usage.billing.balance` | Beside the headline, where the deployment bills | The balance as read, with a link to add funds on NoClick |
+| `usage.billing.alert` | Above the headline: money owed, work paused, money running out | Nothing |
+| `usage.charge.price` | A charge's facts: how it was priced | Nothing |
+| `usage.charge.run` | The run a charge belonged to, opened from its facts | What the charges read says of it, with its automation on NoClick |
+| `usage.charge.ask` | A charge's facts: asking about it | Nobody, and no button |
+
 Work's are listed under [Work](#work).
 
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
