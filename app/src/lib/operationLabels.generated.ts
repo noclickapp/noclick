@@ -354,6 +354,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "moves_current_setup_replace": ["Put Setup", "PUT", "write"],
     "moves_current_skills_replace": ["Put Skill", "PUT", "write"],
     "moves_current_source_replace": ["Set Source", "PUT", "write"],
+    "notifications_list": ["Get Notifications", "GET", "read"],
+    "notifications_update": ["Update Notifications", "PATCH", "write"],
     "operations_cancel": ["Cancel Operation", "POST", "destructive"],
     "operations_get": ["Get Operation", "GET", "read"],
     "operations_list": ["List Operations", "GET", "read"],

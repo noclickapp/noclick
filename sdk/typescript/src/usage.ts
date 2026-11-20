@@ -125,7 +125,21 @@ export interface ProjectBudget {
   raw: JsonObject;
 }
 
-/** Every capped key, user and agent with this month's spend, and every app with a budget. */
+/**
+ * Your account's monthly spending cap: `capUsd` (null while none is set) and, where one is set, what its billing
+ * period has spent (`spentUsd`), when that period started and resets, and whether it's `reached`: then every call
+ * that costs money rejects with `SpendCapExceeded`.
+ */
+export interface AccountCap {
+  capUsd: number | null;
+  spentUsd: number | null;
+  periodStart: Date | null;
+  resetsAt: Date | null;
+  reached: boolean;
+  raw: JsonObject;
+}
+
+/** Every capped key, user and agent with this month's spend, every app with a budget, and your account's own cap. */
 export interface UsageLimits {
   periodStart: Date | null;
   resetsAt: Date | null;
@@ -135,6 +149,8 @@ export interface UsageLimits {
   /** Each app with a `budgetUsdPerMonth`. */
   projects: ProjectBudget[];
   raw: JsonObject;
+  /** Your account's monthly spending cap, over its billing period. */
+  account: AccountCap | null;
 }
 
 /**
@@ -276,6 +292,17 @@ function ledgerCharge(raw: JsonObject): LedgerCharge {
     ownResource: raw.user_resource === true,
     key: String(raw.k),
     metadata: asObject(raw.metadata),
+    raw,
+  };
+}
+
+function accountCap(raw: JsonObject): AccountCap {
+  return {
+    capUsd: num(raw.cap_usd),
+    spentUsd: num(raw.spent_usd),
+    periodStart: parseTime(raw.period_start),
+    resetsAt: parseTime(raw.resets_at),
+    reached: raw.reached === true,
     raw,
   };
 }
@@ -427,7 +454,10 @@ export class Usage {
     };
   }
 
-  /** This month's spend of every capped key, user and agent (account principals), and of every budgeted app. */
+  /**
+   * This month's spend of every capped key, user and agent (account principals), of every budgeted app, and your
+   * account's own monthly cap (`account`).
+   */
   static async limits(options: { client?: NoClick } = {}): Promise<UsageLimits> {
     const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/limits", { user: null }));
     return {
@@ -448,7 +478,25 @@ export class Usage {
         spent: requiredNumber(row, "spent"), raw: row,
       })),
       raw,
+      account: raw.account ? accountCap(asObject(raw.account)) : null,
     };
+  }
+
+  /**
+   * Set your account's monthly spending cap, in whole dollars; `null` removes it. Past it, every call that costs
+   * money rejects with `SpendCapExceeded` until the billing period resets. Your account's own keys lower the cap, or
+   * set one where there's none; raising or removing it is your account's owner's (in Settings → Plan and billing in
+   * the NoClick app), so from a key it rejects with `PermissionDenied` and changes nothing. Needs the `usage` scope.
+   *
+   *     const cap = await Usage.setAccountCap(50);
+   *     console.log(cap.capUsd, cap.spentUsd, cap.resetsAt);
+   */
+  static async setAccountCap(capUsd: number | null, options: { client?: NoClick } = {}): Promise<AccountCap> {
+    const raw = await resolveClient(options.client).request("PUT", "/v1/usage/limits/account", {
+      json: { cap_usd: capUsd },
+      user: null,
+    });
+    return accountCap(asObject(raw));
   }
 }
 

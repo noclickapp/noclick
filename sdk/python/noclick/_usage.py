@@ -1,6 +1,7 @@
 """Spend: ``noclick.usage(group_by="user")``, ``noclick.Usage.series(group_by="agent")``,
-``noclick.Usage.limits()``, the account's ledger: ``noclick.Usage.ledger()``, ``noclick.Usage.charges()``,
-``noclick.Usage.billing()``, and the workstreams it's counted under (``noclick.Workstream``)."""
+``noclick.Usage.limits()``, ``noclick.Usage.set_account_cap(50)``, the account's ledger: ``noclick.Usage.ledger()``,
+``noclick.Usage.charges()``, ``noclick.Usage.billing()``, and the workstreams it's counted under
+(``noclick.Workstream``)."""
 
 from __future__ import annotations
 
@@ -106,8 +107,30 @@ class ProjectBudget:
 
 
 @dataclass(frozen=True)
+class AccountCap:
+    """Your account's monthly spending cap: ``cap_usd`` (None while none is set) and, where one is set,
+    what its billing period has spent (``spent_usd``), when that period started and resets, and whether
+    it's ``reached``: then every call that costs money raises ``noclick.SpendCapExceeded``."""
+
+    cap_usd: Optional[float]
+    spent_usd: Optional[float]
+    period_start: Any
+    resets_at: Any
+    reached: bool
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "AccountCap":
+        raw = raw if isinstance(raw, dict) else {}
+        spent = raw.get("spent_usd")
+        return cls(raw.get("cap_usd"), None if spent is None else float(spent), parse_time(raw.get("period_start")),
+                   parse_time(raw.get("resets_at")), raw.get("reached") is True, raw)
+
+
+@dataclass(frozen=True)
 class UsageLimits:
-    """Every capped key, user and agent with this month's spend, and every app with a budget."""
+    """Every capped key, user and agent with this month's spend, every app with a budget, and your
+    account's own monthly cap."""
 
     period_start: Any
     resets_at: Any
@@ -117,6 +140,8 @@ class UsageLimits:
     #: Each app with a ``budget_usd_per_month``.
     projects: List[ProjectBudget]
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: Your account's monthly spending cap, over its billing period.
+    account: Optional[AccountCap] = None
 
 
 @dataclass(frozen=True)
@@ -428,13 +453,14 @@ class Usage:
     @synced
     @staticmethod
     async def limits(*, client: Optional[Client] = None) -> UsageLimits:
-        """This month's spend of every capped key, user and agent (account principals), and of
-        every app with a budget.
+        """This month's spend of every capped key, user and agent (account principals), of
+        every app with a budget, and your account's own monthly cap.
 
         Returns:
             Each capped key and user with its ``cap`` and ``spent``, each budgeted agent with its
             ``budget``, ``spent`` and ``subtree_spent``, each budgeted app (``projects``) with its
-            ``budget`` and ``spent``, and when the caps reset (``resets_at``).
+            ``budget`` and ``spent``, when the caps reset (``resets_at``), and the account's cap
+            (``account``), over its billing period.
 
         Usage::
 
@@ -444,6 +470,7 @@ class Usage:
             for app in limits.projects:
                 print(app.name, app.user_id, app.spent, app.budget)
             print(limits.resets_at)
+            print(limits.account.cap_usd, limits.account.spent_usd)   # None, None while no cap is set
         """
         raw = await resolve_client(client).request("GET", "/v1/usage/limits", user=None) or {}
         return UsageLimits(
@@ -463,7 +490,29 @@ class Usage:
                 for r in raw.get("projects") or []
             ],
             raw=raw,
+            account=AccountCap._from(raw["account"]) if raw.get("account") else None,
         )
+
+    @synced
+    @staticmethod
+    async def set_account_cap(cap_usd: Optional[int], *, client: Optional[Client] = None) -> AccountCap:
+        """Set your account's monthly spending cap, in whole dollars; ``None`` removes it. Past it,
+        every call that costs money raises ``noclick.SpendCapExceeded`` until the billing period
+        resets. Your account's own keys lower the cap, or set one where there's none; raising or
+        removing it is your account's owner's (in Settings → Plan and billing in the NoClick app), so
+        from a key it raises ``noclick.PermissionDenied`` and changes nothing. Needs the ``usage`` scope.
+
+        Returns:
+            The cap as it now stands, with what its billing period has spent.
+
+        Usage::
+
+            cap = noclick.Usage.set_account_cap(50)
+            print(cap.cap_usd, cap.spent_usd, cap.resets_at)
+        """
+        raw = await resolve_client(client).request("PUT", "/v1/usage/limits/account", json={"cap_usd": cap_usd},
+                                                   user=None)
+        return AccountCap._from(raw)
 
 
 @synced
