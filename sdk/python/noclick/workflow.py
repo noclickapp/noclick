@@ -29,7 +29,7 @@ import uuid
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
-from ._client import Client, resolve_client
+from ._client import Client, path_segment, resolve_client
 from ._object import Page, _Object, compact, csv, field, list_all, list_page, parse_time, read_scope, ref_id
 from ._sync import run_sync, synced
 from ._scope import AMBIENT, resolve_scope
@@ -523,6 +523,57 @@ def _update_workflow_op(name: Optional[str], description: Optional[str],
     return compact(op="update_workflow", name=name, description=description, settings=settings)
 
 
+@dataclass(frozen=True)
+class StepOption:
+    """One choice a step's setting takes, as the app's dropdown lists it: its ``value`` (what the setting takes),
+    its ``label`` and what the service says beside it (``metadata``: an icon, a count, ``None`` for none)."""
+
+    value: Any
+    label: Any
+    metadata: Optional[Dict[str, Any]]
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepOption":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("value"), raw.get("label"), raw.get("metadata"))
+
+
+@dataclass(frozen=True)
+class StepOptions:
+    """A page of the choices a step's ``field`` takes (``Step.options``). ``next_page_token`` reads the next page;
+    ``withheld`` names, by path, a choice or a part of one left out because it held a secret."""
+
+    field: str
+    options: List[StepOption]
+    next_page_token: Optional[str]
+    withheld: List[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepOptions":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("field") or "", [StepOption._from(o) for o in raw.get("options") or []],
+                   raw.get("next_page_token"), list(raw.get("withheld") or []), raw)
+
+
+@dataclass(frozen=True)
+class StepValue:
+    """A widget's value on a step (``Step.value``): ``value``, or ``values`` where it fills several of the step's
+    settings at once (a trigger's address, whether it's registered, why not). ``withheld`` names, by path, what was
+    left out because it held a secret (a webhook's signing secret, a signed upload link)."""
+
+    field: str
+    value: Any
+    values: Optional[Dict[str, Any]]
+    withheld: List[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepValue":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("field") or "", raw.get("value"), raw.get("values"), list(raw.get("withheld") or []), raw)
+
+
 class Step(_Object):
     """One step of a workflow's graph: its trigger, an app's operation, an agent, a
     note. ``Workflow.graph()`` reads them all; ``Workflow.step(id)`` is a handle to
@@ -685,6 +736,60 @@ class Step(_Object):
     async def _edit(self, op: Dict[str, Any], *also: Any) -> "Step":
         return await self._workflow._edit_step(self, op, *also)
 
+    # --- what its form shows -------------------------------------------------
+
+    async def _form(self, kind: str, body: Dict[str, Any]) -> Any:
+        return await self._request("POST", f"{await self._step_path()}/{kind}", json=compact(**body))
+
+    @synced
+    async def options(
+        self, field: str, *, settings: Optional[Dict[str, Any]] = None, search: Optional[str] = None,
+        page_token: Optional[str] = None,
+    ) -> StepOptions:
+        """The choices ``field`` takes, as the app's dropdown lists them: read from the account the
+        step connects to (a Google account's spreadsheets, a Slack workspace's channels) by the
+        step's own lookup, with its settings as saved and ``settings`` laid over them (what a list
+        that depends on another reads, like the tabs of a spreadsheet you haven't saved yet).
+        ``search`` narrows them where the service can search. A page at a time: pass
+        ``page_token=`` its ``next_page_token``. A connection whose owner reviews its calls holds
+        the lookup for them (``noclick.ApprovalRequired``). Takes edit access to the workflow.
+
+        Returns:
+            The ``StepOptions``: ``options`` (each a ``StepOption``), ``next_page_token`` and
+            ``withheld``.
+
+        Usage::
+
+            sheet = noclick.Workflow.from_name("Morning brief").step("read_sheet")
+            for choice in sheet.options("spreadsheet_id").options:
+                print(choice.value, choice.label)
+            tabs = sheet.options("sheet_name", settings={"spreadsheet_id": "1AbCdEf"})
+        """
+        raw = await self._form("options", {"field": field, "settings": settings, "search": search,
+                                           "page_token": page_token})
+        return StepOptions._from(raw)
+
+    @synced
+    async def value(self, field: str, *, settings: Optional[Dict[str, Any]] = None) -> StepValue:
+        """A widget's value on the step, as the app loads it beside the step's settings: a
+        trigger's address, minted and registered where its events come from (``webhook_url``), an
+        app's event subscription (``subscription_status``), the files in a filesystem step's
+        volume (``file_browser``), an alarm's schedules (``active_alarms``), an MCP step's hosted
+        link (``hosted_url``). ``settings`` are laid over the step's saved ones. One that mints or
+        registers something changes the account; a hosted MCP link's URL is its capability, so no
+        MCP connection loads it. Takes edit access to the workflow.
+
+        Returns:
+            The ``StepValue``: ``value``, or ``values`` where it fills several settings at once,
+            and ``withheld``.
+
+        Usage::
+
+            hook = noclick.Workflow.from_name("Order intake").step("hook")
+            print(hook.value("webhook_url").values["webhook_url"])
+        """
+        return StepValue._from(await self._form("values", {"field": field, "settings": settings}))
+
     # --- changing it -------------------------------------------------------
 
     @synced
@@ -839,7 +944,7 @@ class Step(_Object):
     # --- what it produced --------------------------------------------------
 
     async def _step_path(self) -> str:
-        return f"{await self._workflow._path()}/steps/{self.id}"
+        return f"{await self._workflow._path()}/steps/{path_segment(self.id)}"
 
     async def _outputs_path(self) -> str:
         return f"{await self._step_path()}/outputs"

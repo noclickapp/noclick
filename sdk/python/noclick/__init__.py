@@ -164,9 +164,9 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepOutput, Workflow,
-    WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint, WorkflowGraph, WorkflowRun, WorkflowRunCounts,
-    WorkflowStep, WorkflowVersion,
+    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepOption, StepOptions,
+    StepOutput, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint, WorkflowGraph,
+    WorkflowRun, WorkflowRunCounts, WorkflowStep, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
@@ -234,8 +234,9 @@ __all__ = [
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
     "WorkflowStep", "WorkflowApproval",
-    "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
-    "RowsPage", "step_types", "step_type", "StepType", "StepTypeOperation", "StepTypeConnection",
+    "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepValue", "EditBatch", "WorkflowEdit", "WorkflowVersion",
+    "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
+    "StepTypeOperation", "StepTypeConnection",
     "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "ExpressionPreview",
     "ClearedStepState",
     "BuildQuestion", "ExportBundle", "ExportItem",

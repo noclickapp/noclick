@@ -653,6 +653,76 @@ export interface WorkflowVersion {
   raw: JsonObject;
 }
 
+/**
+ * One choice a step's setting takes, as the app's dropdown lists it: its `value` (what the setting takes), its
+ * `label` and what the service says beside it (`metadata`: an icon, a count; `null` for none).
+ */
+export interface StepOption {
+  value: unknown;
+  label: unknown;
+  metadata: JsonObject | null;
+}
+
+/**
+ * A page of the choices a step's `field` takes (`Step.options`). `nextPageToken` reads the next page; `withheld`
+ * names, by path, a choice or a part of one left out because it held a secret.
+ */
+export interface StepOptions {
+  field: string;
+  options: StepOption[];
+  nextPageToken: string | null;
+  withheld: string[];
+  raw: JsonObject;
+}
+
+/** What `Step.options` sends beside the field. */
+export interface StepOptionsQuery {
+  /** The step's settings as its form holds them, over the saved ones: what a list that depends on another reads. */
+  settings?: JsonObject;
+  /** Narrows the choices, where the service can search them. */
+  search?: string;
+  /** The `nextPageToken` of the page before. */
+  pageToken?: string;
+}
+
+/**
+ * A widget's value on a step (`Step.value`): `value`, or `values` where it fills several of the step's settings at
+ * once (a trigger's address, whether it's registered, why not). `withheld` names, by path, what was left out
+ * because it held a secret (a webhook's signing secret, a signed upload link).
+ */
+export interface StepValue {
+  field: string;
+  value: unknown;
+  values: JsonObject | null;
+  withheld: string[];
+  raw: JsonObject;
+}
+
+function toStepOptions(value: unknown): StepOptions {
+  const raw = asObject(value);
+  return {
+    field: str(raw.field) ?? "",
+    options: asList(raw.options).map((option) => {
+      const found = asObject(option);
+      return { value: found.value ?? null, label: found.label ?? null, metadata: found.metadata ? asObject(found.metadata) : null };
+    }),
+    nextPageToken: str(raw.next_page_token),
+    withheld: asList(raw.withheld).map(String),
+    raw,
+  };
+}
+
+function toStepValue(value: unknown): StepValue {
+  const raw = asObject(value);
+  return {
+    field: str(raw.field) ?? "",
+    value: raw.value ?? null,
+    values: raw.values ? asObject(raw.values) : null,
+    withheld: asList(raw.withheld).map(String),
+    raw,
+  };
+}
+
 // A step's config holds these beside its settings; each is a field of its own on a `Step`.
 const OWN_FIELDS = new Set(["label", "operation", "disabled", "credentialIds", "mockedOutput"]);
 // The canvas's node shape keeps these beside its `data.config` (the API's shape keeps them all in `config`).
@@ -1069,6 +1139,34 @@ export class Step extends ApiObject {
       conversationsDeleted: Number(raw.conversations_deleted ?? 0),
       raw,
     };
+  }
+
+  /**
+   * The choices `field` takes, as the app's dropdown lists them: read from the account the step connects to (a
+   * Google account's spreadsheets, a Slack workspace's channels) by the step's own lookup, with its settings as saved
+   * and `settings` laid over them (what a list that depends on another reads, like the tabs of a spreadsheet you
+   * haven't saved yet). `search` narrows them where the service can search. A page at a time: pass `pageToken` its
+   * `nextPageToken`. A connection whose owner reviews its calls holds the lookup for them (`ApprovalRequired`).
+   * Takes edit access to the workflow.
+   */
+  async options(field: string, query: StepOptionsQuery = {}): Promise<StepOptions> {
+    return toStepOptions(await this._request("POST", `${await this._workflow._stepPath(this.id)}/options`, {
+      json: compact({ field, settings: query.settings, search: query.search, page_token: query.pageToken }),
+    }));
+  }
+
+  /**
+   * A widget's value on the step, as the app loads it beside the step's settings: a trigger's address, minted and
+   * registered where its events come from (`webhook_url`), an app's event subscription (`subscription_status`), the
+   * files in a filesystem step's volume (`file_browser`), an alarm's schedules (`active_alarms`), an MCP step's
+   * hosted link (`hosted_url`). `settings` are laid over the step's saved ones. One that mints or registers something
+   * changes the account; a hosted MCP link's URL is its capability, so no MCP connection loads it. Takes edit access
+   * to the workflow.
+   */
+  async value(field: string, options: { settings?: JsonObject } = {}): Promise<StepValue> {
+    return toStepValue(await this._request("POST", `${await this._workflow._stepPath(this.id)}/values`, {
+      json: compact({ field, settings: options.settings }),
+    }));
   }
 }
 
@@ -1500,9 +1598,9 @@ export class Workflow extends ApiObject {
     return `/v1/workflows/${typeof id === "string" ? id : (await this._ensure()).id}`;
   }
 
-  /** @internal Where one of its steps is. */
+  /** @internal Where one of its steps is (its id one path segment). */
   async _stepPath(stepId: string): Promise<string> {
-    return `${await this.path()}/steps/${stepId}`;
+    return `${await this.path()}/steps/${encodeURIComponent(stepId)}`;
   }
 
   /** @internal Where one of its steps' outputs are read. */
