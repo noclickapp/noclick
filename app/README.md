@@ -172,6 +172,7 @@ fills what it keeps in its sidebar and menu:
 | `shell.account.staff` | The account menu's last rows | Nothing |
 | `shell.account.around` | Around the account row (what opens over it) | Nothing |
 | `shell.banner` | A strip across the top of the page | Nothing |
+| `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
 
 Work's are listed under [Work](#work).
 

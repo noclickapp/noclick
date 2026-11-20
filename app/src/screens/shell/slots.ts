@@ -7,7 +7,10 @@ import { Code2 } from 'lucide-react';
 import { slot } from '@/slots';
 import type { AccountMenuSwitch, AccountMenuUser } from '@/ui/accountParts';
 import type { ShellPageId } from './pages';
-import { AccountName, accountOnApp } from './slotStandards';
+import type { Cmd } from './palette/layout';
+import type { PaletteScope } from './palette/open';
+import type { HoldingPage, PaletteEntry } from './palette/sources';
+import { AccountName, accountOnApp, paletteOnApp } from './slotStandards';
 
 // ── the sidebar ─────────────────────────────────────────────────────────────
 
@@ -59,3 +62,44 @@ export const ACCOUNT_AROUND = slot<ComponentType<{ children: ReactNode }> | null
 
 /** A strip across the top of the page (a host's staff viewing as someone). Nothing stands there. */
 export const BANNER = slot<ComponentType | null>('shell.banner', null);
+
+// ── the command palette ─────────────────────────────────────────────────────
+
+/** What the palette hands whoever builds its commands. */
+export interface PaletteContext {
+    open: boolean;
+    /** What it shows: its commands, or the keyboard shortcuts. */
+    page: 'root' | 'shortcuts';
+    /** What registered sources add: places to go, and (`action`) things done in place. */
+    registered: readonly PaletteEntry[];
+    /** What pages handed over, by page. */
+    held: Partial<Record<HoldingPage, readonly PaletteEntry[]>>;
+    /** Narrows the palette to one section, its query cleared (an "Open …" command). */
+    scopeTo: (scope: PaletteScope) => void;
+    /** Shows the keyboard shortcuts. */
+    showShortcuts: () => void;
+}
+
+export interface ShortcutItem {
+    keys: string[];
+    /** Pressed one after another (G then W), not together. */
+    sequence?: boolean;
+    label: string;
+}
+
+export interface ShortcutGroup {
+    title: string;
+    items: ShortcutItem[];
+}
+
+/** What the palette offers: its commands in order (a hook, called while it's mounted, with what's drawn beside it), the
+ *  sections an "Open …" command narrows to (by the placeholder it shows), and the keyboard shortcuts it lists. */
+export interface PaletteHost {
+    useCommands: (palette: PaletteContext) => { commands: readonly Cmd[]; beside?: ReactNode };
+    scopes: readonly { scope: PaletteScope; label: string }[];
+    shortcuts: readonly ShortcutGroup[];
+}
+
+/** The ⌘K palette's commands. The standard goes to the pages this app serves (and Resources' kinds), to what its pages
+ *  handed over, and offers the theme, the keyboard shortcuts and signing out. */
+export const PALETTE = slot<PaletteHost>('shell.palette', paletteOnApp);

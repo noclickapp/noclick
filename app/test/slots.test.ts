@@ -172,6 +172,7 @@ describe('the app', () => {
             'shell.foot.card',
             'shell.foot.invite',
             'shell.pages',
+            'shell.palette',
             'shell.workspace',
             'usage.billing.alert',
             'usage.billing.balance',
