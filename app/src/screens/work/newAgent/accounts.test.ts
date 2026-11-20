@@ -3,7 +3,7 @@
 // and the key runs it, else a connect; NoClick's own runtime always takes NoClick's key.
 import { describe, expect, it } from 'vitest';
 import { Connection, type HarnessInfo, type HarnessInfo as Harness, type HarnessName } from 'noclick';
-import { accountRefusal, accountsOf, firstUsable, NOCLICK_KEY_ACCOUNT, switchAccount, switchChoices, type ModelAccount } from './accounts';
+import { accountRefusal, accountsOf, firstUsable, menuTitle, NOCLICK_KEY_ACCOUNT, switchAccount, switchChoices, type ModelAccount } from './accounts';
 
 const harness = (name: HarnessName, noclickKey = false): HarnessInfo =>
     ({ name, defaultModel: `${name}-model`, integrations: ['anthropic', 'openai', 'openrouter'], noclickKey: { runs: noclickKey, models: [], why: null } }) as unknown as HarnessInfo;
@@ -78,5 +78,21 @@ describe('what an agent may move between when a plan runs out', () => {
         expect(switchChoices([own], harness('codex', true)).at(-1)).toBe(NOCLICK_KEY_ACCOUNT);
         expect(switchChoices([own], harness('claude_code'))).toEqual([own]);
         expect(switchChoices([own], harness('sdk'))).toEqual([own]);
+    });
+});
+
+describe('an account as the account menu names it', () => {
+    it('names a plan by its email, its logo saying which plan, else by its kind and what tells it apart', () => {
+        expect(menuTitle({ ...PLAN, email: 'rowan@example.com', name: 'rowan@example.com' })).toBe('rowan@example.com');
+        expect(menuTitle({ ...CHATGPT, email: null, name: 'Added Sep 11, 2025' })).toBe('ChatGPT plan · Added Sep 11, 2025');
+        expect(menuTitle({ ...CHATGPT, email: null })).toBe('ChatGPT plan');
+    });
+
+    // The open app names a key by its provider ("Anthropic key"); the hosted app fills in the company ("Claude key").
+    it('names a key by its kind and its name, else who it is, and never how it stopped', () => {
+        expect(menuTitle({ ...KEY, name: 'work' })).toBe('Anthropic key · work');
+        expect(menuTitle({ ...KEY, email: 'Key ending 4f2a' })).toBe('Anthropic key · Key ending 4f2a');
+        expect(menuTitle({ ...KEY, status: 'disconnected', down: { reason: 'refused', message: '' } })).toBe('Anthropic key');
+        expect(menuTitle(NOCLICK_KEY_ACCOUNT)).toBe('NoClick’s key');
     });
 });

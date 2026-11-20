@@ -1,8 +1,9 @@
 // @vitest-environment happy-dom
 // A plan's tier and usage in the account pill and its menu, over the fake /v1: the pill says what's left once the plan
-// is nearly used for the pick; the menu reads the used plan fresh as it opens and shows the windows that can stop the
-// pick's model, the other plans one bar each, each plan's tier beside its name, and a tier that runs nothing among the
-// ones not for this, in its own words. A `usage` frame reads it again; nothing polls.
+// is nearly used for the pick; the menu reads the used plan fresh as it opens and shows each plan on one line by its
+// email, its tier beside it, a meter of what's left and a line saying how much of the window that stops it first is used
+// and when it resets; the ones not for this fold into one row, a tier that runs nothing saying why as its tooltip. A
+// `usage` frame reads it again; nothing polls.
 import {
     cleanup,
     fireEvent,
@@ -191,7 +192,7 @@ describe('a plan’s usage in the account pill', () => {
         ]);
     });
 
-    it('opens on the windows that can stop the model, read fresh, and the other plans one bar each with their tiers', async () => {
+    it('opens on one line a plan: its email, its tier, a meter and how much is used of the window that stops it first, read fresh', async () => {
         const { usageReads } = show();
         fireEvent.click(await pill());
         const menu = await screen.findByRole('dialog', { name: 'Runs on' });
@@ -205,38 +206,61 @@ describe('a plan’s usage in the account pill', () => {
             ).toBe(true)
         );
 
+        // The plan goes by its email (its logo says it's Claude's), its tier beside it.
         const used = within(menu).getByRole('menuitemradio', { checked: true });
+        expect(within(used).getByText('ana@example.com')).toBeTruthy();
         expect(within(used).getByText('Ultra')).toBeTruthy();
+        expect(used.textContent).not.toContain('Your Claude plan');
+        // The window that stops the pick first, how much of it is used and when it resets; the meter names every one.
         await waitFor(() =>
-            expect(within(used).getAllByTestId('plan-window')).toHaveLength(3)
+            expect(within(used).getByTestId('plan-usage').textContent).toBe('91% used · resets in 1 h 40 min')
         );
-        const windows = within(used)
-            .getAllByTestId('plan-window')
-            .map((w) => w.textContent);
-        expect(windows).toEqual([
-            '5-hour91% usedresets in 1 h 40 min',
-            'Weekly38% usedresets Thu 9:00 AM',
-            'Opus weekly71% usedresets Thu 9:00 AM',
-        ]);
-        // The near window reads in full ink, never red.
-        const near = within(used).getAllByTestId('plan-window')[0];
-        expect(near.getAttribute('data-state')).toBe('near');
-        expect(near.innerHTML).not.toMatch(/red|yellow|amber/);
+        const meter = within(used).getByTestId('plan-meter');
+        expect(meter.getAttribute('title')).toBe(
+            '5-hour 91% used, resets in 1 h 40 min · Weekly 38% used, resets Thu 9:00 AM · Opus weekly 71% used, resets Thu 9:00 AM'
+        );
+        // Near its limit it reads in full ink, never red: red is for a plan that's used up.
+        expect(meter.getAttribute('data-state')).toBe('near');
+        expect(used.innerHTML).not.toMatch(/-(red|yellow|amber)-/);
 
-        // Claude Free runs nothing: it's among the ones not for this, saying so, its tier beside it.
+        // The others are folded into one row, until it's opened.
         expect(within(menu).getAllByRole('menuitemradio')).toHaveLength(1);
-        expect(
-            within(menu).getByText('Claude Free doesn’t include Claude Code.')
-        ).toBeTruthy();
-        expect(within(menu).getByText('Free')).toBeTruthy();
-        // ChatGPT's plan, not for Claude Code: its tier and the window that stops it first.
-        expect(within(menu).getByText('Plus')).toBeTruthy();
-        const others = within(menu)
-            .getAllByTestId('plan-usage')
-            .filter((u) => !used.contains(u));
-        expect(others.map((u) => u.textContent)).toEqual([
-            'Weekly51% usedresets Fri 9:00 AM',
-        ]);
+        const others = within(menu).getByRole('button', { name: /2 others can’t run this/ });
+        expect(others.getAttribute('aria-expanded')).toBe('false');
+        expect(within(menu).getByTestId('others').hasAttribute('inert')).toBe(true);
+        fireEvent.click(others);
+        expect(others.getAttribute('aria-expanded')).toBe('true');
+        expect(within(menu).getByTestId('others').hasAttribute('inert')).toBe(false);
+        // Claude Free runs nothing: its tier beside it and why as its tooltip, no line of its own.
+        const free = within(menu).getByText('kid@example.com').closest('[title]')!;
+        expect(free.getAttribute('title')).toBe('Claude Free doesn’t include Claude Code.');
+        expect(within(free as HTMLElement).getByText('Free')).toBeTruthy();
+        // ChatGPT's plan, not for Claude Code (no email on record): its tier and the window that stops it first.
+        const gpt = within(menu).getByText('ChatGPT plan').closest('[title]') as HTMLElement;
+        expect(within(gpt).getByText('Plus')).toBeTruthy();
+        expect(within(gpt).getByTestId('plan-usage').textContent).toBe('51% used · resets Fri 9:00 AM');
+    });
+
+    it('says a used-up plan is out in red, its meter an empty red track', async () => {
+        const connections = CONNECTIONS();
+        const out = win('five_hour', '5-hour', 1, iso(17, 12, 40));
+        connections[0].windows = [out];
+        connections[0].usage = { state: 'used_up', tightest: out, available_at: out.resets_at, as_of: iso(17, 10, 58) };
+        const fake = fakeWorkAgent({ connections });
+        render(
+            <WorkProviders client={fake.client}>
+                <Chip />
+            </WorkProviders>
+        );
+        fireEvent.click(await pill());
+        const menu = await screen.findByRole('dialog', { name: 'Runs on' });
+        const used = within(menu).getByRole('menuitemradio', { checked: true });
+        const line = await within(used).findByTestId('plan-usage');
+        await waitFor(() => expect(line.textContent).toBe('Used up · back in 1 h 40 min'));
+        expect(line.querySelector('.text-red-600')?.textContent).toBe('Used up');
+        const track = within(used).getByTestId('plan-meter').querySelector('span')!;
+        expect(track.className).toMatch(/bg-red-/);
+        expect((track.firstElementChild as HTMLElement).style.width).toBe('0%');
     });
 
     it('reads it again on its connection’s usage frame, and says used up then', async () => {

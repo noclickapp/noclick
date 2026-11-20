@@ -1,6 +1,7 @@
 // A Claude or ChatGPT plan's usage in Work's account pill and its menu: the reading for the pick's model (GET
 // /v1/connections/{ref}/usage, kept or fresh), re-read on its connection's `plan_usage` frame and never polled, and the
-// bars that fill as a window is used, in ink alone (a window near its limit reads in full ink; red stays for failures).
+// meter and line each plan shows: what's left of the window that stops it first, and how much is used and when it
+// resets (near its limit in full ink; used up, red, since the plan has stopped).
 import { useEffect, useState } from 'react';
 import {
     Connection,
@@ -60,65 +61,29 @@ export function useNow(everyMs = 30_000): Date {
     return now;
 }
 
-/** One window: its name and how much is used, a bar that fills as it's used, and when it resets (or comes back). */
-export function UsageWindow({
-    w,
-    now,
-    reset = true,
-}: {
-    w: PlanWindow;
-    now: Date;
-    reset?: boolean;
-}) {
-    const tight = windowTight(w);
-    const when = reset ? windowReset(w, now) : null;
-    const fill =
-        w.state === 'used_up' ? 100 : Math.max(0, Math.min(100, w.used * 100));
+/** A plan's meter beside its name: a short bar of what's left of the window that stops it first, like a battery, in
+ *  ink while there's room, full ink near its limit, and an empty red track once it's used up. Its title names every
+ *  window that can stop the pick. */
+export function UsageMeter({ w, title }: { w: PlanWindow; title: string }) {
+    const out = w.state === 'used_up';
+    const left = out ? 0 : Math.max(0, Math.min(100, (1 - w.used) * 100));
     return (
-        <span className="block" data-testid="plan-window" data-state={w.state}>
-            <span className="flex items-baseline justify-between gap-2 text-[12px] leading-[18px] max-sm:text-[13px]">
-                <span className="truncate text-foreground/80">{w.label}</span>
-                <span
-                    className={cn(
-                        'shrink-0 whitespace-nowrap tabular-nums',
-                        tight
-                            ? 'font-medium text-foreground'
-                            : 'text-muted-foreground'
-                    )}
-                >
-                    {windowUse(w)}
-                </span>
+        <span title={title} data-testid="plan-meter" data-state={w.state} className="grid shrink-0 place-items-center py-1.5">
+            <span aria-hidden className={cn('block h-1 w-[22px] overflow-hidden rounded-full transition-colors', out ? 'bg-red-600/45 dark:bg-red-400/55' : 'bg-foreground/[0.12]')}>
+                <span className={cn('block h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none', windowTight(w) ? 'bg-foreground' : 'bg-muted-foreground')} style={{ width: `${left}%` }} />
             </span>
-            <span
-                aria-hidden
-                className="mt-[5px] block h-1 overflow-hidden rounded-full bg-foreground/[0.08]"
-            >
-                <span
-                    className={cn(
-                        'block h-full rounded-full transition-[width] duration-700',
-                        tight ? 'bg-foreground' : 'bg-muted-foreground'
-                    )}
-                    style={{ width: `${fill}%` }}
-                />
-            </span>
-            {when && (
-                <span className="mt-1 block text-[11.5px] tabular-nums text-muted-foreground max-sm:text-[12.5px]">
-                    {when}
-                </span>
-            )}
         </span>
     );
 }
 
-/** A plan's windows, one bar each, as the menu shows them under the account that's used. */
-export function UsageWindows({ windows }: { windows: readonly PlanWindow[] }) {
-    const now = useNow();
-    if (!windows.length) return null;
+/** The line under a plan: how much of the window that stops it first is used and when it resets ("41% used ·
+ *  resets Mon 4:13 PM", "Used up · back in 2 h 54 min"), in full ink near its limit, "Used up" in red. */
+export function UsageLine({ w, now }: { w: PlanWindow; now: Date }) {
+    const reset = windowReset(w, now);
     return (
-        <span className="mt-2 flex flex-col gap-2.5" data-testid="plan-usage">
-            {windows.map((w) => (
-                <UsageWindow key={`${w.kind}:${w.label}`} w={w} now={now} />
-            ))}
+        <span data-testid="plan-usage" data-state={w.state} className={cn('block text-[11.5px] leading-snug tabular-nums max-sm:text-[12.5px]', windowTight(w) ? 'text-foreground' : 'text-muted-foreground')}>
+            <span className={w.state === 'used_up' ? 'text-red-600 dark:text-red-400' : undefined}>{windowUse(w)}</span>
+            {reset && ` · ${reset}`}
         </span>
     );
 }

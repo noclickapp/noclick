@@ -74,6 +74,17 @@ export const windowUse = (w: Pick<PlanWindow, 'state' | 'used'>): string =>
 export const windowTight = (w: Pick<PlanWindow, 'state'>): boolean =>
     w.state === 'near' || w.state === 'used_up';
 
+/** Every window of a plan, as its meter's title names them: "5-hour 91% used, resets in 1 h 40 min · Weekly 38%
+ *  used, resets Thu 9:00 AM". */
+export function windowsTitle(
+    windows: readonly Pick<PlanWindow, 'label' | 'state' | 'used' | 'resetsAt'>[],
+    now: Date = new Date()
+): string {
+    return windows
+        .map((w) => [`${w.label} ${windowUse(w).toLowerCase()}`, windowReset(w, now)].filter(Boolean).join(', '))
+        .join(' · ');
+}
+
 /** What the pill adds once the plan is near its limit for the pick: "9% left" (the tightest window's, rounded down),
  *  "used up"; null below it. */
 export function planShortfall(

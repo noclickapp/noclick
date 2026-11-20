@@ -1,7 +1,7 @@
 // The words a plan's usage reads in: when a window resets (a countdown later today, the day and time after), how much
 // of it is used, and what the pill adds once the plan is near its limit.
 import { describe, expect, it } from 'vitest';
-import { clockAt, planShortfall, resetWhen, windowReset, windowUse } from './planWords';
+import { clockAt, planShortfall, resetWhen, windowReset, windowsTitle, windowUse } from './planWords';
 
 // Tuesday 17 November 2026, 11:00 in the runner's own zone.
 const NOW = new Date(2026, 10, 17, 11, 0, 0);
@@ -87,5 +87,21 @@ describe('planShortfall', () => {
         expect(planShortfall({ state: 'ok', tightest })).toBeNull();
         expect(planShortfall({ state: 'unknown', tightest: null })).toBeNull();
         expect(planShortfall(null)).toBeNull();
+    });
+});
+
+describe('windowsTitle', () => {
+    it('names every window with how much is used and when it resets, as a meter’s title says them', () => {
+        expect(
+            windowsTitle(
+                [
+                    { label: '5-hour', state: 'near', used: 0.91, resetsAt: at(17, 12, 40) },
+                    { label: 'Weekly', state: 'ok', used: 0.38, resetsAt: at(19, 9) },
+                    { label: 'Opus weekly', state: 'used_up', used: 1, resetsAt: at(19, 9) },
+                    { label: 'Monthly', state: 'ok', used: 0.1, resetsAt: null },
+                ],
+                NOW
+            )
+        ).toBe('5-hour 91% used, resets in 1 h 40 min · Weekly 38% used, resets Thu 9:00 AM · Opus weekly used up, back Thu 9:00 AM · Monthly 10% used');
     });
 });

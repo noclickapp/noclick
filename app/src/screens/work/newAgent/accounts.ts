@@ -302,6 +302,10 @@ export const chipLabel = (a: ModelAccount) => (isPlanAccount(a) ? `Your ${accoun
 
 /** "Claude key · work", "Claude plan", "NoClick’s key", "OpenRouter key · refused". */
 export const accountTitle = (a: ModelAccount) => [kindLabel(a), a.name, downWord(a)].filter(Boolean).join(' · ');
+/** An account in the account menu, never how it stopped (its row says): a plan by the email it signed in with, its logo
+ *  saying which plan it is, else "ChatGPT plan · Added Sep 11, 2025"; a key by its kind and what tells it apart ("Claude
+ *  key · work", "Claude key · Key ending 4f2a"); "NoClick’s key". */
+export const menuTitle = (a: ModelAccount) => (isPlanAccount(a) && a.email ? a.email : [kindLabel(a), isPlanAccount(a) ? a.name : (a.name ?? a.email)].filter(Boolean).join(' · '));
 /** What the picker's pill says: its name where it has one ("work"), else its kind; one that stopped working, only
  *  that ("key refused", "plan signed out"), which is what the pill has room for. */
 export const accountShort = (a: ModelAccount) => (downWord(a) ? `${isPlanAccount(a) ? 'plan' : 'key'} ${downWord(a)}` : (a.name ?? kindLabel(a)));
