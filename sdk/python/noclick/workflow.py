@@ -42,19 +42,64 @@ from .workflow_approval import WorkflowApproval
 class RunStep:
     """What one step did in a run: ``status`` is ``succeeded``, ``failed``
     (``error`` says why) or ``skipped``; ``output`` is what it produced, with
-    long lists and text cut short."""
+    long lists and text cut short and never a secret (``withheld`` names, by
+    path, what was left out). ``Step.output`` reads it whole."""
 
     id: str
     name: str
     status: str
     error: Optional[str]
     output: Any
+    withheld: List[str] = dc_field(default_factory=list)
 
     @classmethod
     def _from(cls, raw: Any) -> "RunStep":
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("id") or "", raw.get("name") or "", raw.get("status") or "", raw.get("error"),
-                   raw.get("output"))
+                   raw.get("output"), list(raw.get("withheld") or []))
+
+
+@dataclass(frozen=True)
+class StepOutput:
+    """What one step produced in one run (``Step.outputs``, ``Step.output``). ``run_id`` is the
+    run's id (``Workflow.get_run`` reads a run from code by it), ``source`` how it started (as
+    ``WorkflowRun.source`` says it), ``status`` the step's there (``succeeded``, ``failed`` with
+    ``error``, ``skipped``). A trigger's deliveries are its outputs too: ``no_event`` marks a
+    manual run's placeholder for one that got no event. ``iteration`` is set for one iteration of
+    a step that runs in a loop.
+
+    A listing gives a one-line ``preview`` (``path=value`` pairs); one read gives the ``output``,
+    with long text and lists cut short (``truncated``) unless read ``full``, or the part at ``path``.
+    Never a secret: ``withheld`` names, by path, what was left out (a request's ``Authorization``
+    header, a key, a token)."""
+
+    step_id: str
+    run_id: str
+    workflow_id: Optional[str]
+    iteration: Optional[int]
+    source: Optional[str]
+    status: Optional[str]
+    error: Optional[str]
+    created_at: Any
+    no_event: bool
+    preview: Optional[str] = None
+    output: Any = None
+    path: Optional[str] = None
+    full: bool = False
+    truncated: bool = False
+    withheld: List[str] = dc_field(default_factory=list)
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepOutput":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(
+            step_id=raw.get("step_id") or "", run_id=raw.get("run_id") or "", workflow_id=raw.get("workflow_id"),
+            iteration=raw.get("iteration"), source=raw.get("source"), status=raw.get("status"),
+            error=raw.get("error"), created_at=parse_time(raw.get("created_at")), no_event=bool(raw.get("no_event")),
+            preview=raw.get("preview"), output=raw.get("output"), path=raw.get("path"), full=bool(raw.get("full")),
+            truncated=bool(raw.get("truncated")), withheld=list(raw.get("withheld") or []), raw=raw,
+        )
 
 
 @dataclass(frozen=True)
@@ -694,6 +739,59 @@ class Step(_Object):
             noclick.Workflow.from_name("Morning brief").step("read_calendar").unmock()
         """
         return await self._edit({"op": "unmock_step", "id": self.id})
+
+    # --- what it produced --------------------------------------------------
+
+    async def _outputs_path(self) -> str:
+        return f"{await self._workflow._path()}/steps/{self.id}/outputs"
+
+    @synced
+    async def outputs(
+        self, *, search: Optional[str] = None, limit: Optional[int] = 10, user: Any = AMBIENT,
+    ) -> List[StepOutput]:
+        """What the step produced, run by run, newest first, each a ``StepOutput`` with its run,
+        how that run started, the step's status there and a one-line ``preview``. A trigger's
+        deliveries are its outputs (``no_event`` marks a manual run's placeholder). ``search``
+        keeps those holding the text (any case), reading 100 at a time. Inside ``as_user`` (or
+        with ``user=``) only the runs recorded for that user are read.
+
+        Returns:
+            The newest ``limit`` (10 by default; ``None`` for every one).
+
+        Usage::
+
+            hook = noclick.Workflow.from_name("order-intake").step("hook")
+            for out in hook.outputs(search="o_1042"):
+                print(out.created_at, out.source, out.preview)
+        """
+        return await list_all(await self._outputs_path(), lambda raw, _scope: StepOutput._from(raw),
+                              params={"search": search}, user=user, limit=limit, client=self._client)
+
+    @synced
+    async def output(
+        self, run_id: str, *, path: Optional[str] = None, full: bool = False, iteration: Optional[int] = None,
+        user: Any = AMBIENT,
+    ) -> StepOutput:
+        """What the step produced in one run (``run_id``, as ``outputs()`` or ``Workflow.runs()``
+        name it): its ``output``, long text and lists cut short unless ``full``, or only the
+        part at ``path`` (``payload.items[0].id``, as a preview names it). ``iteration`` reads
+        one iteration of a step that runs in a loop. Never a secret (``withheld``); a path to
+        one raises ``noclick.InvalidRequest``, as does a path that isn't there (naming what is).
+
+        Returns:
+            The ``StepOutput``; a run the step stored nothing in raises ``noclick.NotFound``.
+
+        Usage::
+
+            hook = noclick.Workflow.from_name("order-intake").step("hook")
+            latest = hook.outputs(limit=1)[0]
+            print(hook.output(latest.run_id, path="items[0].sku").output)
+        """
+        raw = await self._api.request(
+            "GET", f"{await self._outputs_path()}/{run_id}",
+            params=compact(path=path, full="true" if full else None, iteration=iteration), user=resolve_scope(user),
+        )
+        return StepOutput._from(raw)
 
 
 @dataclass(frozen=True)

@@ -161,8 +161,8 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, EditBatch, RunStep, Step, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint,
-    WorkflowGraph, WorkflowRun, WorkflowStep, WorkflowVersion,
+    BuildQuestion, EditBatch, RunStep, Step, StepOutput, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit,
+    WorkflowEndpoint, WorkflowGraph, WorkflowRun, WorkflowStep, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
@@ -228,8 +228,8 @@ __all__ = [
     "Webhook", "WebhookDelivery", "Event", "EventType",
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
-    "Workflow", "WorkflowRun", "RunStep", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult", "WorkflowStep",
-    "WorkflowApproval",
+    "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
+    "WorkflowStep", "WorkflowApproval",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
     "RowsPage", "step_types", "step_type", "StepType", "StepTypeOperation", "StepTypeConnection",
     "BuildQuestion", "ExportBundle", "ExportItem",

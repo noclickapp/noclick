@@ -35,7 +35,8 @@ export type WorkflowRunStatus = "running" | "succeeded" | "failed";
 
 /**
  * What one step did in a run: `status` is `succeeded`, `failed` (`error` says why) or `skipped`;
- * `output` is what it produced, with long lists and text cut short.
+ * `output` is what it produced, with long lists and text cut short and never a secret (`withheld`
+ * names, by path, what was left out). `Step.output` reads it whole.
  */
 export interface RunStep {
   id: string;
@@ -43,6 +44,36 @@ export interface RunStep {
   status: string;
   error: string | null;
   output: unknown;
+  withheld: string[];
+}
+
+/**
+ * What one step produced in one run (`Step.outputs`, `Step.output`). `runId` is the run's id (`Workflow.getRun` reads
+ * a run from code by it), `source` how it started (as `WorkflowRun.source` says it), `status` the step's there
+ * (`succeeded`, `failed` with `error`, `skipped`). A trigger's deliveries are its outputs too: `noEvent` marks a manual
+ * run's placeholder for one that got no event. `iteration` is set for one iteration of a step that runs in a loop.
+ *
+ * A listing gives a one-line `preview` (`path=value` pairs); one read gives the `output`, with long text and lists cut
+ * short (`truncated`) unless read `full`, or the part at `path`. Never a secret: `withheld` names, by path, what was
+ * left out (a request's `Authorization` header, a key, a token).
+ */
+export interface StepOutput {
+  stepId: string;
+  runId: string;
+  workflowId: string | null;
+  iteration: number | null;
+  source: string | null;
+  status: string | null;
+  error: string | null;
+  createdAt: Date | null;
+  noEvent: boolean;
+  preview: string | null;
+  output: unknown;
+  path: string | null;
+  full: boolean;
+  truncated: boolean;
+  withheld: string[];
+  raw: JsonObject;
 }
 
 /**
@@ -105,7 +136,44 @@ export function toWorkflowRun(value: unknown): WorkflowRun {
 
 function toRunStep(value: unknown): RunStep {
   const raw = asObject(value);
-  return { id: str(raw.id) ?? "", name: str(raw.name) ?? "", status: str(raw.status) ?? "", error: str(raw.error), output: raw.output ?? null };
+  return {
+    id: str(raw.id) ?? "",
+    name: str(raw.name) ?? "",
+    status: str(raw.status) ?? "",
+    error: str(raw.error),
+    output: raw.output ?? null,
+    withheld: asList(raw.withheld).map(String),
+  };
+}
+
+/** @internal */
+export function toStepOutput(value: unknown): StepOutput {
+  const raw = asObject(value);
+  return {
+    stepId: str(raw.step_id) ?? "",
+    runId: str(raw.run_id) ?? "",
+    workflowId: str(raw.workflow_id),
+    iteration: typeof raw.iteration === "number" ? raw.iteration : null,
+    source: str(raw.source),
+    status: str(raw.status),
+    error: str(raw.error),
+    createdAt: parseTime(raw.created_at),
+    noEvent: raw.no_event === true,
+    preview: str(raw.preview),
+    output: raw.output ?? null,
+    path: str(raw.path),
+    full: raw.full === true,
+    truncated: raw.truncated === true,
+    withheld: asList(raw.withheld).map(String),
+    raw,
+  };
+}
+
+/** What `Step.output` reads: the part at `path`, the whole output (`full`), one `iteration` of a step in a loop. */
+export interface StepOutputOptions extends CallOptions {
+  path?: string;
+  full?: boolean;
+  iteration?: number;
 }
 
 function toEndpoint(value: unknown): WorkflowEndpoint {
@@ -843,6 +911,36 @@ export class Step extends ApiObject {
   async unmock(): Promise<this> {
     return await this._edit({ op: "unmock_step", id: this.id });
   }
+
+  /**
+   * What the step produced, run by run, newest first, each a `StepOutput` with its run, how that run started, the
+   * step's status there and a one-line `preview`. A trigger's deliveries are its outputs (`noEvent` marks a manual
+   * run's placeholder). `search` keeps those holding the text (any case), reading 100 at a time. Inside `asUser` (or
+   * with `user`) only the runs recorded for that user are read. The newest `limit` (10 by default; `null` for every
+   * one).
+   */
+  async outputs(options: CallOptions & { search?: string; limit?: number | null } = {}): Promise<StepOutput[]> {
+    const { search, limit, ...call } = options;
+    const path = await this._workflow._stepOutputsPath(this.id);
+    const first = limit === undefined ? 10 : (limit ?? undefined);
+    return await listAll({ ...call, client: call.client ?? this._client, path, query: { search }, limit: first }, (raw) => toStepOutput(raw));
+  }
+
+  /**
+   * What the step produced in one run (`runId`, as `outputs()` or `Workflow.runs()` name it): its `output`, long text
+   * and lists cut short unless `full`, or only the part at `path` (`payload.items[0].id`, as a preview names it).
+   * `iteration` reads one iteration of a step that runs in a loop. Never a secret (`withheld`); a path to one throws
+   * `InvalidRequest`, as does a path that isn't there (naming what is). A run the step stored nothing in throws
+   * `NotFound`.
+   */
+  async output(runId: string, options: StepOutputOptions = {}): Promise<StepOutput> {
+    const { path, full, iteration, client, user } = options;
+    const raw = await (client ?? this._api).request("GET", `${await this._workflow._stepOutputsPath(this.id)}/${runId}`, {
+      query: { path, full: full ? "true" : undefined, iteration },
+      user,
+    });
+    return toStepOutput(raw);
+  }
 }
 
 /**
@@ -1264,6 +1362,11 @@ export class Workflow extends ApiObject {
   private async path(): Promise<string> {
     const id = this._known("id");
     return `/v1/workflows/${typeof id === "string" ? id : (await this._ensure()).id}`;
+  }
+
+  /** @internal Where one of its steps' outputs are read. */
+  async _stepOutputsPath(stepId: string): Promise<string> {
+    return `${await this.path()}/steps/${stepId}/outputs`;
   }
 
   // --- its graph --------------------------------------------------------

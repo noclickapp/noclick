@@ -205,7 +205,8 @@ export type {
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
   AddNoteOptions, AddStepOptions, BuildQuestion, EditOptions, GraphEdge, Position, PublishOptions, RunStep,
-  StepConnection, StepRef, StepTrigger, StepUpdate, WorkflowBuildResult, WorkflowEdge, WorkflowEdit,
+  StepConnection, StepOutput, StepOutputOptions, StepRef, StepTrigger, StepUpdate, WorkflowBuildResult, WorkflowEdge,
+  WorkflowEdit,
   WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunOptions, WorkflowRunStatus, WorkflowStep,
   WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
