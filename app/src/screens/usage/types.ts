@@ -29,6 +29,9 @@ export interface UsageEventMetadata {
     /** Who the charge was for (their login): the person whose message, click or key started the work, recorded as
      *  the charge is written. Charges recorded before it was carry none. */
     responsible_user_id?: string;
+    /** The workstream the work belongs to, as the agent that started it named it: the id it was recorded under, which
+     *  the directory's `workstreams` names as it reads now. Work nobody named one for carries none. */
+    workstream_id?: string;
     /** The automation, agent node and run the charge was recorded in. Charges recorded before runs were stamped
      *  carry the automation alone. */
     workflow_id?: string;
@@ -230,6 +233,9 @@ export interface Directory {
     numbers?: Record<string, { name: string }>;
     inboxes?: Record<string, { name: string }>;
     keys?: Record<string, { name: string }>;
+    /** Workstreams by the id a charge carries; `reads_as`: the one a renamed workstream was merged into, whose name
+     *  `name` is. */
+    workstreams?: Record<string, { name: string; reads_as?: string }>;
 }
 
 /** The page's read, as NoClick sends it (groups and charges flat, before `toSnapshot`). */
