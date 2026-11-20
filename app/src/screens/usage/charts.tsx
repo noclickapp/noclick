@@ -49,14 +49,18 @@ export function useWidth<T extends HTMLElement>() {
     return [ref, width] as const;
 }
 
-/** Three or four round ticks from 0 that clear `max`. */
+/** Whether a step is a whole number of cents, as the axis reads it. */
+const wholeCents = (step: number) => Math.abs(step * 100 - Math.round(step * 100)) < 1e-6;
+
+/** Three or four round ticks from 0, the last at or above `max`. They're a whole number of cents apart, a cent at
+ *  least: the axis reads cents, so a smaller step (a period of a few cents) drew ticks with the same label. */
 export function niceTicks(max: number, count = 3): number[] {
     if (max <= 0) return [0, 1];
     const raw = max / count;
     const mag = 10 ** Math.floor(Math.log10(raw));
-    const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw) ?? 10 * mag;
-    const ticks: number[] = [];
-    for (let v = 0; v < max + step * 0.999; v += step) ticks.push(Math.round(v * 100) / 100);
+    const step = Math.max(0.01, [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw && wholeCents(s)) ?? 10 * mag);
+    const ticks = [0];
+    for (let i = 1; ticks[ticks.length - 1] < max; i++) ticks.push(Math.round(i * step * 100) / 100);
     return ticks;
 }
 
