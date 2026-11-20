@@ -13,12 +13,12 @@ import { WorkProviders } from '../agents/fixtures/providers';
 import { useHarnessSwitch } from '../agents/harnessSwitch';
 import { useAgents } from '../agents/reads';
 import { useHarnesses, useModelAccounts } from '../newAgent/catalog';
-import { CONNECT_MODEL } from '../slots';
+import { CONNECT_MODEL } from '@/ui/slots';
 import { CONNECTION_MARK } from '@/ui/slots';
 import { AgentConversation } from './AgentConversation';
 import { AGENT_ID, CONNECTIONS, fakeWorkAgent, settingsFor } from './fixtures/workAgent';
 
-// The connect popup as the picker opens it (the `work.connect.model` slot): its title, and a sign-in that lands the
+// The connect popup as the picker opens it (the `connect.model` slot): its title, and a sign-in that lands the
 // account it was opened for. It opens on the Claude plan's way, the one account this test's company has.
 const signIn = { landed: 'cred-1' };
 fill(CONNECT_MODEL, ({ credentialType, title, onConnected }) =>

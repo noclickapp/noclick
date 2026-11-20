@@ -13,7 +13,9 @@ import { BrandIcon } from '@/ui/BrandIcon';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { useSlot } from '@/slots';
 import { useConnectionMarks } from '@/ui/connectionMark';
-import { CONNECT_MODEL, type CostlyModel } from '../slots';
+import { CONNECT_MODEL } from '@/ui/slots';
+import { useWorkClient } from '../client';
+import type { CostlyModel } from '../slots';
 import { MENU_SURFACE } from '@/ui/menus';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
@@ -116,6 +118,7 @@ export interface ConnectOptions {
  *  outlives the dialog. */
 export function useConnectAi(onPicked: (account: string) => void): { connect: (harness: HarnessInfo, model: string, options?: ConnectOptions) => void; dialog: ReactNode } {
     const Connect = useSlot(CONNECT_MODEL);
+    const client = useWorkClient();
     const { accounts, labels } = useModelAccounts();
     const [open, setOpen] = useState<{ harness: HarnessInfo; model: string; another: boolean } | null>(null);
     const [focus, setFocus] = useState<string | null>(null);
@@ -142,6 +145,7 @@ export function useConnectAi(onPicked: (account: string) => void): { connect: (h
             title={way && ask ? (open?.another ? 'Connect another account' : wayTitle(way, ask)) : undefined}
             description={why ?? undefined}
             others={ways.filter((w) => w.id !== way?.id).map((w) => ({ key: w.id, label: wayLabel(w), credentialType: wayType(w), onPick: () => setFocus(w.id) }))}
+            client={client}
             onOpenChange={(o) => !o && setOpen(null)}
             onConnected={(id) => {
                 setLanded(`credential:${id}`);

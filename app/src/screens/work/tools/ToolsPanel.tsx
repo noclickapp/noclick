@@ -20,8 +20,9 @@ import { scoreFields } from '@/lib/fuzzyRank';
 import { useChanged } from '@/lib/useChanged';
 import { cn } from '@/ui/utils';
 import { useSlot } from '@/slots';
-import { APPS, CONNECT_APP, TOOL_SERVER_SIGN_IN, type ToolApp } from '../slots';
-import { reconnectByLink } from '../slotStandards';
+import { APPS, TOOL_SERVER_SIGN_IN, type ToolApp } from '../slots';
+import { reconnectByLink } from '@/ui/connectStandards';
+import { CONNECT_APP } from '@/ui/slots';
 import { useWorkClient } from '../client';
 import { AGENTS_KEY } from '../agents/reads';
 import { HarnessMark } from '../agents/harness';
@@ -212,6 +213,7 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
                 <ConnectApp
                     app={connecting}
                     name={name}
+                    client={client}
                     onConnected={(credentialId) => {
                         rereadAccounts();
                         void add(`credential:${credentialId}`, connecting.label);

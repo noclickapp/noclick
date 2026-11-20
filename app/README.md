@@ -108,11 +108,13 @@ by default, so the app is whole with every slot left alone. The console's are in
 | `console.terms` | Under a button that makes a key, approves a command line's sign-in or copies the setup prompt | Nothing |
 | `console.cards.issuerForm` | The cards onboarding page, for the signed-in owner | A link to where the application is finished |
 
-One is drawn by several screens, so it is in `src/ui/slots.ts`:
+Some are drawn by several screens, so they are in `src/ui/slots.ts`:
 
 | Slot | Where it is | By default |
 |---|---|---|
 | `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, the AI company an AI account is with, and how an account reads in a list (its app and the line telling it apart) | A plain mark, the name read from its type, no company, and an account by the account it reaches, else its own name, else when it was connected |
+| `connect.app` | Connecting an app's account where it's needed (an agent's tools, a trigger's account), with the client of the screen drawing it | NoClick's connect page in a new tab |
+| `connect.model` | Connecting the AI account a model needs, from the model picker | NoClick's connect page in a new tab |
 
 Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 
@@ -300,7 +302,8 @@ What differs from NoClick's own Work:
   (OpenCode, Hermes, OpenClaw) with a plain dot.
 - Only the account's own agents are listed: NoClick's app also lists those of the account's platform users.
 
-Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the channels':
+Its slots (`src/screens/work/slots.ts`), besides the shared `connection.mark`, `connect.app` and `connect.model` and the
+channels':
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -308,8 +311,6 @@ Its slots (`src/screens/work/slots.ts`), besides `connection.mark` and the chann
 | `work.message.file` | A file a texted or emailed message carried, or one an agent made | A link that opens it |
 | `work.model.name` | A model's name as people read it | Its id |
 | `work.apps` | The apps an agent can use as tools, and whose an account is | The integrations the API lists |
-| `work.connect.app` | Connecting an app's account where it's needed | NoClick's connect page in a new tab |
-| `work.connect.model` | Connecting the AI account a model needs | NoClick's connect page in a new tab |
 | `work.toolServer.signIn` | Signing in to a tool server added as an agent's tool | Says to add it on NoClick, or give its key |
 | `work.funds.add` | Adding funds, where a costly model needs them | A link to NoClick's page for it |
 | `work.harness.mark` | The marks of coding harnesses the app has no drawing of | None: a plain dot |

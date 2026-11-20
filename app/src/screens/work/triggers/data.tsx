@@ -18,7 +18,7 @@ import { rereadAccounts, useConnections } from '../newAgent/catalog';
 import { fixLabel, itemOf, sentenceOf, wakeupItem, type Names, type TriggerItem, type TriggerKind } from './model';
 import { openTabForLater } from '@/lib/oauthPopup';
 import { useSlot } from '@/slots';
-import { CONNECT_APP } from '../slots';
+import { CONNECT_APP } from '@/ui/slots';
 
 /** An account connected in the app, as a trigger names its connection: `credential:<id>`. */
 const APP_REF = 'credential:';

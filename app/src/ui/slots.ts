@@ -1,9 +1,11 @@
 // Slots several screens draw (src/slots.ts): each with what stands there when no host fills it. A slot only one screen
 // draws is declared beside that screen instead (`screens/<screen>/slots.ts`).
 import type { ComponentType } from 'react';
+import type { NoClick } from 'noclick';
 import { slot } from '@/slots';
 import type { BrandIconComponent } from './BrandIcon';
 import type { MarkSize } from './primitives';
+import { AppConnectLink, ModelConnectLink, reconnectByLink } from './connectStandards';
 import { plainGlyph, standardAccountNames, StandardCredentialMark, standardCredentialLabel } from './connectionMarkStandards';
 
 /** A service's glyph and its colour, as `BrandIcon` draws it (a Tailwind `text-*` class, a CSS colour, or '' for a mark
@@ -70,3 +72,64 @@ export const CONNECTION_MARK = slot<ConnectionMarks>('connection.mark', {
  *  `BrandIcon` in its own colours, by the client's key in `MCP_CLIENTS` (`claude-code`). The standard draws each client
  *  by its own mark, and a coding harness by the protocol's. */
 export const MCP_CLIENT_MARKS = slot<Readonly<Record<string, { Icon: ComponentType<{ size?: number }>; BrandIcon: ComponentType<{ size?: number }> }>>>('mcp.client.marks', {});
+
+// ── connecting an account ───────────────────────────────────────────────────
+
+/** An app whose account can be connected. */
+export interface ConnectableApp {
+    /** Its node type (`automation-gmail`), which names and marks it. */
+    value: string;
+    label: string;
+    /** The credential types one of its accounts may be. */
+    acceptedCredentialTypes: string[];
+    /** Its glyph and colour where the host draws one; else its node's mark is drawn. */
+    Icon?: BrandIconComponent;
+    iconColor?: string;
+}
+
+export interface AppConnecting {
+    /** The dialog that connects one of an app's accounts for `name` (an agent, say), with the platform client the screen
+     *  drawing it reads with, handing back the account that lands (`credential:<id>`'s id) and closing itself as
+     *  `onClose` says. */
+    Connect: ComponentType<{ app: ConnectableApp; name: string; client: NoClick; onConnected: (credentialId: string) => void; onClose: () => void }>;
+    /** Connects again an account connected in the app (its origin `app`, its ref `credential:<id>`) that stopped
+     *  working; `title` names it in what's said if it can't. */
+    reconnect: (account: { credentialType?: string; credentialId: string }, client: NoClick, title: string) => void;
+    /** Calls `changed` whenever an account was connected or connected again here, until the returned function runs. */
+    subscribe?: (changed: () => void) => () => void;
+}
+
+/** Connecting an app's account where it's needed (an agent's tools, a trigger's account). The standard makes the
+ *  connection and opens its connect page on NoClick in a new tab, then waits for the account to land. */
+export const CONNECT_APP = slot<AppConnecting>('connect.app', {
+    Connect: AppConnectLink,
+    reconnect: (account, client, title) => void reconnectByLink(client, `credential:${account.credentialId}`, title),
+});
+
+/** Another way to run a model, offered in the connect dialog beside the one it opens on. */
+export interface OtherWay {
+    key: string;
+    label: string;
+    credentialType: string;
+    onPick: () => void;
+}
+
+export interface ModelConnectProps {
+    /** Open on this way of running it: an AI account's credential type (`agent_claude_code_oauth`); closed when null. */
+    credentialType: string | null;
+    /** The model provider that way is an account with (`anthropic`). */
+    integration: string | null;
+    title?: string;
+    /** Why it's asked (the account it replaces was signed out). */
+    description?: string;
+    others: OtherWay[];
+    /** The platform client the screen drawing it reads with. */
+    client: NoClick;
+    onOpenChange: (open: boolean) => void;
+    /** The account that landed: its credential's id. */
+    onConnected: (credentialId: string) => void;
+}
+
+/** Connecting the AI account a model needs (the model picker's). The standard makes the connection and opens its
+ *  connect page on NoClick (a key, or signing in with a plan) in a new tab, then waits for it to land. */
+export const CONNECT_MODEL = slot<ComponentType<ModelConnectProps>>('connect.model', ModelConnectLink);

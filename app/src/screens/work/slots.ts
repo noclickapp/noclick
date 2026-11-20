@@ -1,11 +1,12 @@
 // Work's slots: the places in it a host may fill (src/slots.ts), each with what stands there otherwise. An app's or an
-// account's mark is the shared `connection.mark` (src/ui/slots.ts); an agent's face and the pickers' agents from
+// account's mark is the shared `connection.mark`, and connecting an app's account or an AI account the shared
+// `connect.app` and `connect.model` (src/ui/slots.ts); an agent's face and the pickers' agents from
 // elsewhere are the channels layer's (screens/channels/slots.ts); the cards under an agent's turns are the chat's
 // (screens/chat/slots.ts).
 import type { ComponentType } from 'react';
 import type { HarnessName, NoClick } from 'noclick';
 import { slot } from '@/slots';
-import type { BrandIconComponent } from '@/ui/BrandIcon';
+import type { ConnectableApp } from '@/ui/slots';
 import { StandardMarkdown } from '@/screens/resources/slotStandards';
 import type { PreviewParts } from '@/screens/resources/FilePreview';
 import { sdkTyping } from '@/screens/channels/sdkTransport';
@@ -13,13 +14,10 @@ import type { SendTyping } from '@/screens/channels/typing';
 import {
     FundsOnNoClick,
     LinkedFileCard,
-    ModelConnectLink,
     useNoToolServerSignIn,
     useV1ToolApps,
     workAddress,
     workspacePreviewParts,
-    AppConnectLink,
-    reconnectByLink,
 } from './slotStandards';
 
 // ── an agent's turns ───────────────────────────────────────────────────────
@@ -44,17 +42,9 @@ export const MODEL_NAME = slot<(model: string) => string | undefined>('work.mode
 
 // ── connecting ──────────────────────────────────────────────────────────────
 
-/** An app an agent can use as tools. */
-export interface ToolApp {
-    /** Its node type (`automation-gmail`), which names and marks it. */
-    value: string;
-    label: string;
-    /** The credential types one of its accounts may be. */
-    acceptedCredentialTypes: string[];
-    /** Its glyph and colour where the host draws one; else its node's mark is drawn. */
-    Icon?: BrandIconComponent;
-    iconColor?: string;
-}
+/** An app an agent can use as tools: one whose account is connected through the shared `connect.app` slot
+ *  (`@/ui/slots`), as connecting an AI account a model needs is through `connect.model`. */
+export type ToolApp = ConnectableApp;
 
 export interface WorkApps {
     /** The apps an agent can use as tools, read once and kept. */
@@ -71,47 +61,6 @@ export const APPS = slot<WorkApps>('work.apps', { useToolApps: useV1ToolApps, se
 /** The team workspace the page shows (its organization's id), in which the accounts a message points at are read and
  *  used: one a teammate shared with that team is the team's, there alone. The standard is none: the account's own. */
 export const TEAM_WORKSPACE = slot<() => string | null>('work.teamWorkspace', () => null);
-
-export interface AppConnecting {
-    /** The dialog that connects one of an app's accounts, handing back the account that lands (`credential:<id>`'s
-     *  id) and closing itself as `onClose` says. */
-    Connect: ComponentType<{ app: ToolApp; name: string; onConnected: (credentialId: string) => void; onClose: () => void }>;
-    /** Connects again an account connected in the app (its origin `app`, its ref `credential:<id>`) that stopped
-     *  working; `title` names it in what's said if it can't. */
-    reconnect: (account: { credentialType?: string; credentialId: string }, client: NoClick, title: string) => void;
-    /** Calls `changed` whenever an account was connected or connected again here, until the returned function runs. */
-    subscribe?: (changed: () => void) => () => void;
-}
-
-/** Connecting an app's account where it's needed (an agent's tools, a trigger's account). The standard makes the
- *  connection and opens its connect page on NoClick in a new tab, then waits for the account to land. */
-export const CONNECT_APP = slot<AppConnecting>('work.connect.app', { Connect: AppConnectLink, reconnect: (account, client, title) => void reconnectByLink(client, `credential:${account.credentialId}`, title) });
-
-/** Another way to run a model, offered in the connect dialog beside the one it opens on. */
-export interface OtherWay {
-    key: string;
-    label: string;
-    credentialType: string;
-    onPick: () => void;
-}
-
-export interface ModelConnectProps {
-    /** Open on this way of running it: an AI account's credential type (`agent_claude_code_oauth`); closed when null. */
-    credentialType: string | null;
-    /** The model provider that way is an account with (`anthropic`). */
-    integration: string | null;
-    title?: string;
-    /** Why it's asked (the account it replaces was signed out). */
-    description?: string;
-    others: OtherWay[];
-    onOpenChange: (open: boolean) => void;
-    /** The account that landed: its credential's id. */
-    onConnected: (credentialId: string) => void;
-}
-
-/** Connecting the AI account a model needs, from the model picker. The standard makes the connection and opens its
- *  connect page on NoClick (a key, or signing in with a plan) in a new tab, then waits for it to land. */
-export const CONNECT_MODEL = slot<ComponentType<ModelConnectProps>>('work.connect.model', ModelConnectLink);
 
 /** Signing in to a tool server (an MCP server) added as an agent's tool, or carried by a move. */
 export interface ToolServerSignIn {
