@@ -75,7 +75,7 @@ export type { BrandFields } from "./brand.ts";
 export { Notifications } from "./notifications.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {
-  AccountCap, AgentBudget, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,
+  AccountCap, AgentBudget, CapChange, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,
   UsageChargesOptions, UsageGroup, UsageLedger, UsageLimits, UsageOptions, UsagePoint, UsageSeries, UsageSeriesLine,
   UsageSeriesOptions, UserCap,
 } from "./usage.ts";

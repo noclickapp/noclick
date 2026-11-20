@@ -45,15 +45,25 @@ async def test_notifications_aio(api, client):
     assert (await nc.Notifications.get.aio()).categories["digest"] is False
 
 
-def test_limits_carry_the_accounts_own_cap(api, client):
-    api.get("/v1/usage/limits").respond(json={**LIMITS, "account": CAP})
+SET_BY = {"by": "agent", "responsible_user_id": "6c1f0e9a-0000-4000-8000-000000000001", "key_id": "key_1",
+          "grant_id": None, "agent_id": "ag_1", "turn_id": "op_1", "client": "support", "approval_id": None,
+          "cap_before_usd": 80.0, "cap_after_usd": 50.0, "at": "2026-11-21T09:30:00+00:00"}
+
+
+def test_limits_carry_the_accounts_own_cap_and_who_set_it(api, client):
+    api.get("/v1/usage/limits").respond(json={**LIMITS, "account": {**CAP, "set_by": SET_BY}})
     account = nc.Usage.limits().account
     assert (account.cap_usd, account.spent_usd, account.reached) == (50.0, 12.5, False)
     assert account.resets_at.isoformat() == "2026-12-01T00:00:00+00:00"
+    who = account.set_by
+    assert (who.by, who.responsible_user_id, who.agent_id, who.turn_id, who.client) == (
+        "agent", SET_BY["responsible_user_id"], "ag_1", "op_1", "support")
+    assert (who.cap_before_usd, who.cap_after_usd, who.at.isoformat()) == (80.0, 50.0, "2026-11-21T09:30:00+00:00")
 
     api.get("/v1/usage/limits").respond(json={**LIMITS, "account": {"object": "spend_cap", "cap_usd": None}})
     none = nc.Usage.limits().account
-    assert (none.cap_usd, none.spent_usd, none.period_start, none.reached) == (None, None, None, False)
+    assert (none.cap_usd, none.spent_usd, none.period_start, none.reached, none.set_by) == (None, None, None, False,
+                                                                                            None)
 
 
 def test_set_account_cap_puts_it_as_the_account(api, client):

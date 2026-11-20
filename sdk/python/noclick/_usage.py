@@ -107,10 +107,41 @@ class ProjectBudget:
 
 
 @dataclass(frozen=True)
+class CapChange:
+    """Who set your account's monthly cap last: ``by`` (``owner``, signed in; ``key``, one of your account's
+    keys; ``connection``, an MCP connection; ``agent``, an agent's turn; ``assistant``, your NoClick
+    assistant), the person it was for (``responsible_user_id``: the person whose message started the
+    agent's turn, the person a connection acts for, else your account's owner), the key it was made with,
+    the connection (``grant_id``) and agent (``agent_id``, its ``turn_id``) it came through and their name
+    (``client``), the approval a raise ran on, the cap before and after, and when."""
+
+    by: str
+    responsible_user_id: Optional[str]
+    key_id: Optional[str]
+    grant_id: Optional[str]
+    agent_id: Optional[str]
+    turn_id: Optional[str]
+    client: Optional[str]
+    approval_id: Optional[str]
+    cap_before_usd: Optional[float]
+    cap_after_usd: Optional[float]
+    at: Any
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "CapChange":
+        return cls(raw["by"], raw.get("responsible_user_id"), raw.get("key_id"), raw.get("grant_id"),
+                   raw.get("agent_id"), raw.get("turn_id"), raw.get("client"), raw.get("approval_id"),
+                   raw.get("cap_before_usd"), raw.get("cap_after_usd"), parse_time(raw.get("at")), raw)
+
+
+@dataclass(frozen=True)
 class AccountCap:
     """Your account's monthly spending cap: ``cap_usd`` (None while none is set) and, where one is set,
     what its billing period has spent (``spent_usd``), when that period started and resets, and whether
-    it's ``reached``: then every call that costs money raises ``noclick.SpendCapExceeded``."""
+    it's ``reached``: then every call that costs money raises ``noclick.SpendCapExceeded``. ``set_by``
+    says who set it last (None: nobody has, or only NoClick's own hold on an account no person has
+    claimed)."""
 
     cap_usd: Optional[float]
     spent_usd: Optional[float]
@@ -118,13 +149,15 @@ class AccountCap:
     resets_at: Any
     reached: bool
     raw: Dict[str, Any] = dc_field(repr=False)
+    set_by: Optional[CapChange] = None
 
     @classmethod
     def _from(cls, raw: Any) -> "AccountCap":
         raw = raw if isinstance(raw, dict) else {}
         spent = raw.get("spent_usd")
         return cls(raw.get("cap_usd"), None if spent is None else float(spent), parse_time(raw.get("period_start")),
-                   parse_time(raw.get("resets_at")), raw.get("reached") is True, raw)
+                   parse_time(raw.get("resets_at")), raw.get("reached") is True, raw,
+                   CapChange._from(raw["set_by"]) if raw.get("set_by") else None)
 
 
 @dataclass(frozen=True)
@@ -500,10 +533,12 @@ class Usage:
         every call that costs money raises ``noclick.SpendCapExceeded`` until the billing period
         resets. Your account's own keys lower the cap, or set one where there's none; raising or
         removing it is your account's owner's (in Settings → Plan and billing in the NoClick app), so
-        from a key it raises ``noclick.PermissionDenied`` and changes nothing. Needs the ``usage`` scope.
+        from a key it raises ``noclick.PermissionDenied`` and changes nothing. Through MCP, and from an
+        agent on the word of the person whose message started its turn, a raise or a removal waits for
+        the owner's approval. Needs the ``usage`` scope.
 
         Returns:
-            The cap as it now stands, with what its billing period has spent.
+            The cap as it now stands, with what its billing period has spent and who set it (``set_by``).
 
         Usage::
 

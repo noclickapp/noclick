@@ -126,9 +126,32 @@ export interface ProjectBudget {
 }
 
 /**
+ * Who set your account's monthly cap last: `by` (`owner`, signed in; `key`, one of your account's keys; `connection`,
+ * an MCP connection; `agent`, an agent's turn; `assistant`, your NoClick assistant), the person it was for
+ * (`responsibleUserId`: the person whose message started the agent's turn, the person a connection acts for, else
+ * your account's owner), the key it was made with, the connection (`grantId`) and agent (`agentId`, its `turnId`) it
+ * came through and their name (`client`), the approval a raise ran on, the cap before and after, and when.
+ */
+export interface CapChange {
+  by: string;
+  responsibleUserId: string | null;
+  keyId: string | null;
+  grantId: string | null;
+  agentId: string | null;
+  turnId: string | null;
+  client: string | null;
+  approvalId: string | null;
+  capBeforeUsd: number | null;
+  capAfterUsd: number | null;
+  at: Date | null;
+  raw: JsonObject;
+}
+
+/**
  * Your account's monthly spending cap: `capUsd` (null while none is set) and, where one is set, what its billing
  * period has spent (`spentUsd`), when that period started and resets, and whether it's `reached`: then every call
- * that costs money rejects with `SpendCapExceeded`.
+ * that costs money rejects with `SpendCapExceeded`. `setBy` says who set it last (null: nobody has, or only NoClick's
+ * own hold on an account no person has claimed).
  */
 export interface AccountCap {
   capUsd: number | null;
@@ -137,6 +160,7 @@ export interface AccountCap {
   resetsAt: Date | null;
   reached: boolean;
   raw: JsonObject;
+  setBy: CapChange | null;
 }
 
 /** Every capped key, user and agent with this month's spend, every app with a budget, and your account's own cap. */
@@ -296,6 +320,23 @@ function ledgerCharge(raw: JsonObject): LedgerCharge {
   };
 }
 
+function capChange(raw: JsonObject): CapChange {
+  return {
+    by: String(raw.by),
+    responsibleUserId: str(raw.responsible_user_id),
+    keyId: str(raw.key_id),
+    grantId: str(raw.grant_id),
+    agentId: str(raw.agent_id),
+    turnId: str(raw.turn_id),
+    client: str(raw.client),
+    approvalId: str(raw.approval_id),
+    capBeforeUsd: num(raw.cap_before_usd),
+    capAfterUsd: num(raw.cap_after_usd),
+    at: parseTime(raw.at),
+    raw,
+  };
+}
+
 function accountCap(raw: JsonObject): AccountCap {
   return {
     capUsd: num(raw.cap_usd),
@@ -304,6 +345,7 @@ function accountCap(raw: JsonObject): AccountCap {
     resetsAt: parseTime(raw.resets_at),
     reached: raw.reached === true,
     raw,
+    setBy: raw.set_by ? capChange(asObject(raw.set_by)) : null,
   };
 }
 
@@ -486,7 +528,9 @@ export class Usage {
    * Set your account's monthly spending cap, in whole dollars; `null` removes it. Past it, every call that costs
    * money rejects with `SpendCapExceeded` until the billing period resets. Your account's own keys lower the cap, or
    * set one where there's none; raising or removing it is your account's owner's (in Settings → Plan and billing in
-   * the NoClick app), so from a key it rejects with `PermissionDenied` and changes nothing. Needs the `usage` scope.
+   * the NoClick app), so from a key it rejects with `PermissionDenied` and changes nothing. Through MCP, and from an
+   * agent on the word of the person whose message started its turn, a raise or a removal waits for the owner's
+   * approval. Needs the `usage` scope. Resolves to the cap as it stands, with who set it (`setBy`).
    *
    *     const cap = await Usage.setAccountCap(50);
    *     console.log(cap.capUsd, cap.spentUsd, cap.resetsAt);
