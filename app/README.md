@@ -169,9 +169,9 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.account.session` | The account's plan, and signing out | The plan the API names; signing out of this app |
 | `shell.account.switchTo` | First in the account menu | This app's developer console |
 | `shell.account.billing` | The account menu's billing rows | Nothing |
-| `shell.account.items` | The account menu, above Community | Nothing |
+| `shell.account.items` | The account menu, above Community | Send feedback: a note to the NoClick team (`POST /v1/feedback`) |
 | `shell.account.staff` | The account menu's last rows | Nothing |
-| `shell.account.around` | Around the account row (what opens over it) | Nothing |
+| `shell.account.around` | Around the account row (what opens over it) | The feedback dialog that row opens |
 | `shell.banner` | A strip across the top of the page | Nothing |
 | `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
 
