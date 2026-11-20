@@ -10,7 +10,10 @@
 // while a turn is at work goes before that turn, where the conversation keeps it; a turn NoClick turned down because
 // the account ran out carries what its card draws.
 import { outOfFundsOf, readMessage, turnEndText, type ChatReference } from './messages';
-import type { AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, HarnessRequest, JsonObject, Message, MessageSubagent, MessageTrigger, MessageVia } from 'noclick';
+import type {
+    AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, DiffStat, HarnessRequest, JsonObject, Message, MessageSubagent, MessageTrigger, MessageVia, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
+    TurnSummary,
+} from 'noclick';
 
 /** An automation a note sets up (one picked on a public page): a hosted link the owner's own agent calls (`mcp`), or
  *  an agent NoClick runs (`agent`), and the agent the owner came for. */
@@ -49,6 +52,17 @@ export interface Step {
     said: string;
     saidId: string | null;
     saidAt: number | null;
+    /** What a harness's step did, as the platform judged it (none on NoClick's own calls or older history): what kind
+     *  of step, its words in its tense, the command as shown, the lines it printed, a test run's counts, a count it
+     *  reported, an edit's lines and whether it failed. */
+    category: StepCategory | null;
+    label: StepLabel | null;
+    displayCommand: string | null;
+    outputLines: number | null;
+    tests: StepTests | null;
+    progress: StepProgress | null;
+    diffStat: DiffStat | null;
+    failed: boolean | null;
 }
 
 /** A turn's work and words, in the order they came: a run of steps, what it said between them, a message that joined
@@ -171,6 +185,10 @@ export interface TurnEntry {
     announced: JsonObject[];
     /** NoClick turned it down because the account ran out: what its card draws (Add funds, the invite link). */
     outOfFunds: JsonObject | null;
+    /** Its harness's reads and searches folded, as the platform folds them (a `group` moment says each change). */
+    groups: StepGroup[];
+    /** What its harness did, once it ended. */
+    summary: TurnSummary | null;
 }
 
 export interface NoteEntry {
@@ -322,6 +340,14 @@ export function stepOf(s: AgentStep, index: number, turnKey: string, fallbackAt:
         said: '',
         saidId: null,
         saidAt: null,
+        category: s.category,
+        label: s.label,
+        displayCommand: s.displayCommand,
+        outputLines: s.outputLines,
+        tests: s.tests,
+        progress: s.progress,
+        diffStat: s.diffStat,
+        failed: s.failed,
     };
 }
 
@@ -389,6 +415,8 @@ function settledTurn(m: Message, at: number, startedAt: number, key: string): Tu
         failure: m.raw.failed === true ? failureOf(m.raw.failure) : null,
         announced: [],
         outOfFunds: outOfFundsOf(m.raw.out_of_funds) ?? null,
+        groups: m.groups ?? [],
+        summary: m.summary ?? null,
     };
 }
 
@@ -481,6 +509,8 @@ export function runningTurn(operationId: string | null, at: number): TurnEntry {
         failure: null,
         announced: [],
         outOfFunds: null,
+        groups: [],
+        summary: null,
     };
 }
 
@@ -657,6 +687,18 @@ function toStep(raw: JsonObject): AgentStep {
         result: raw.result ?? null,
         diffs: Array.isArray(raw.diffs) ? (raw.diffs as JsonObject[]).map((d) => ({ path: s(d.path) ?? '', change: s(d.kind), diff: s(d.diff) ?? '' })) : [],
         createdAt: typeof raw.created_at === 'string' ? new Date(raw.created_at) : null,
+        category: s(raw.category) as StepCategory | null,
+        label: raw.label && typeof raw.label === 'object' && s((raw.label as JsonObject).text) ? (raw.label as unknown as StepLabel) : null,
+        labelSource: s(raw.label_source) as AgentStep['labelSource'],
+        displayCommand: s(raw.display_command),
+        lines: raw.lines && typeof raw.lines === 'object' ? { from: n((raw.lines as JsonObject).from), to: n((raw.lines as JsonObject).to) } : null,
+        outputLines: n(raw.output_lines),
+        tests: raw.tests && typeof raw.tests === 'object' ? (raw.tests as unknown as StepTests) : null,
+        progress: raw.progress && typeof raw.progress === 'object' ? (raw.progress as unknown as StepProgress) : null,
+        diffStat: raw.diff_stat && typeof raw.diff_stat === 'object' ? (raw.diff_stat as unknown as DiffStat) : null,
+        failed: typeof raw.failed === 'boolean' ? raw.failed : null,
+        group: s(raw.group),
+        paths: Array.isArray(raw.paths) ? raw.paths.map(String) : [],
         raw,
     };
 }
@@ -769,6 +811,14 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
                 said: '',
                 saidId: null,
                 saidAt: null,
+                category: event.category ?? null,
+                label: event.label ?? null,
+                displayCommand: event.displayCommand ?? null,
+                outputLines: null,
+                tests: null,
+                progress: null,
+                diffStat: null,
+                failed: null,
             };
             return replace(next, addStep(turn, step));
         }
@@ -778,7 +828,16 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
             if (!id || !into) return thread;
             const { thread: next, turn } = into;
             if (!stepFor(turn, id, null)) return next;
-            return replace(next, withStep(turn, id, (s) => ({ ...s, output: event.whole ? (event.text ?? '') : s.output + (event.text ?? '') })));
+            return replace(
+                next,
+                withStep(turn, id, (s) => ({
+                    ...s,
+                    output: event.whole ? (event.text ?? '') : s.output + (event.text ?? ''),
+                    outputLines: event.outputLines ?? s.outputLines,
+                    tests: event.tests ?? s.tests,
+                    progress: event.progress ?? s.progress,
+                }))
+            );
         }
         case 'diff': {
             const id = event.callId;
@@ -797,7 +856,22 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
             if (!step) return next;
             return replace(
                 next,
-                withStep(turn, step.id, (s) => ({ ...s, running: false, output: typeof event.raw.output === 'string' && event.raw.output ? event.raw.output : s.output, exitCode: event.exitCode ?? s.exitCode, durationMs: event.durationMs ?? s.durationMs ?? at - s.at, isError: event.isError, result: event.result }))
+                withStep(turn, step.id, (s) => ({
+                    ...s,
+                    running: false,
+                    output: typeof event.raw.output === 'string' && event.raw.output ? event.raw.output : s.output,
+                    exitCode: event.exitCode ?? s.exitCode,
+                    durationMs: event.durationMs ?? s.durationMs ?? at - s.at,
+                    isError: event.isError,
+                    result: event.result,
+                    category: event.category ?? s.category,
+                    label: event.label ?? s.label,
+                    outputLines: event.outputLines ?? s.outputLines,
+                    tests: event.tests ?? s.tests,
+                    progress: event.progress ?? s.progress,
+                    diffStat: event.diffStat ?? s.diffStat,
+                    failed: event.failed ?? s.failed,
+                }))
             );
         }
         case 'status': {
@@ -822,8 +896,20 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
             }
             return thread;
         }
-        case 'turn_end':
-            return event.operationId ? closed(thread, event.operationId, event.status, event.text, at, following) : thread;
+        case 'turn_end': {
+            if (!event.operationId) return thread;
+            const turn = event.summary && thread.entries.find((e): e is TurnEntry => e.kind === 'turn' && e.operationId === event.operationId);
+            const told = turn ? replace(thread, { ...turn, summary: event.summary ?? null }) : thread;
+            return closed(told, event.operationId, event.status, event.text, at, following);
+        }
+        case 'group': {
+            // A fold of the turn's reads and searches as it stands now; one no longer standing has no steps.
+            const group = event.stepGroup;
+            const turn = group && liveTurn(thread);
+            if (!group || !turn) return thread;
+            const others = turn.groups.filter((g) => g.id !== group.id);
+            return replace(thread, { ...turn, groups: group.stepIds.length ? [...others, group] : others });
+        }
         case 'request': {
             if (!event.request) return thread;
             const request = toRequest(event.request);

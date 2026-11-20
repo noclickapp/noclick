@@ -3,7 +3,8 @@
 // under it. Each step is an icon in a 24px slot and what it did: a command with its output and exit code, an edit with
 // its diff, a read, a search, one of NoClick's own tools with what it was given and what it answered.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ChevronRight, CircleAlert, CircleHelp, CornerDownRight, Download as DownloadIcon, FilePen, FileText, LoaderCircle, Minimize2, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon } from 'lucide-react';
+import { ChevronRight, CircleAlert, CircleHelp, CornerDownRight, Download as DownloadIcon, FilePen, FileText, FlaskConical, FolderOpen, ListTree, LoaderCircle, Minimize2, Package, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon } from 'lucide-react';
+import type { StepCategory, StepGroup, TurnSummary } from 'noclick';
 import { knownStepName, stepLine, type StepPhase } from '@/lib/stepLabels';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
@@ -28,8 +29,21 @@ const WORDS: Record<Step['kind'], { verb: string; running: string; icon: LucideI
     tool: { verb: 'Used', running: 'Using', icon: Wrench },
 };
 
-/** A step that went wrong; a request you declined is your answer, not its failure. */
-export const failedStep = (s: Step) => !s.id.startsWith('request:') && (s.isError || (s.kind === 'command' && s.exitCode !== null && s.exitCode !== 0));
+/** A harness's step by what it did, as the platform judged it. */
+const CATEGORY_ICON: Record<StepCategory, LucideIcon> = {
+    read: FileText,
+    search: Search,
+    list: FolderOpen,
+    edit: FilePen,
+    test: FlaskConical,
+    install: Package,
+    run: SquareTerminal,
+    tool: Wrench,
+};
+
+/** A step that went wrong; a request you declined is your answer, not its failure. The platform says so of a harness's
+ *  step (a search that found nothing didn't fail). */
+export const failedStep = (s: Step) => !s.id.startsWith('request:') && (s.failed ?? (s.isError || (s.kind === 'command' && s.exitCode !== null && s.exitCode !== 0)));
 
 /** "Ran 3 commands, edited 2 files": what a run of steps came to, counted, commands and edits first. */
 export function summarize(steps: readonly Step[]): string {
@@ -115,20 +129,49 @@ export function SystemDivider({ icon: Icon, label, detail }: { icon?: LucideIcon
 }
 
 /** A turn's finished work folded to one line: "Worked for 43s ›", "You stopped after 12s ›". Its subagents stay out
- *  under it, each one line and what it found (one can still be at work after the reply). */
-export function WorkFold({ steps: all, ms, stopped, mode, children }: { steps: Step[]; ms: number; stopped?: boolean; mode: ToolCalls; children?: ReactNode }) {
+ *  under it, each one line and what it found (one can still be at work after the reply). A coding harness's turn the
+ *  platform summed up reads as its summary ("Worked for 6m 12s · read 9 files, searched 7 times"), what it changed,
+ *  then its test runs and failures in order, ending on the last run's result; opened, every step. */
+export function WorkFold({ steps: all, ms, stopped, mode, groups = [], summary = null, children }: { steps: Step[]; ms: number; stopped?: boolean; mode: ToolCalls; groups?: StepGroup[]; summary?: TurnSummary | null; children?: ReactNode }) {
     const [open, setOpen] = useState(false);
     const steps = all.filter((s) => !isSubagentCall(s));
     const subagents = all.filter(isSubagentCall).filter((s) => mode === 'all' || s.running || failedStep(s));
     const failed = steps.filter(failedStep).length;
     if (mode === 'none') return null;
+    if (summary && mode === 'all' && steps.length > 0) {
+        const pinned = steps.filter((s) => s.category === 'test' || failedStep(s));
+        const worked = stopped ? `You stopped after ${spent(ms)}` : `Worked for ${spent(ms)}`;
+        return (
+            <div className="border-b border-border/60 pb-2 pt-1 dark:border-foreground/[0.07]" data-testid="turn-summary">
+                <button
+                    type="button"
+                    onClick={() => setOpen(!open)}
+                    aria-expanded={open}
+                    className="flex min-h-6 w-full items-start gap-1.5 rounded-lg px-0.5 text-left text-sm leading-relaxed text-muted-foreground transition-colors hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/70"
+                >
+                    <span className="grid h-6 w-6 shrink-0 place-items-center">
+                        <ListTree className="h-4 w-4 text-muted-foreground/80" strokeWidth={2} />
+                    </span>
+                    <span className="min-w-0 flex-1 tabular-nums">
+                        {worked}
+                        {summary.label && <> · {summary.label.charAt(0).toLowerCase() + summary.label.slice(1)}</>}
+                    </span>
+                    <ChevronRight className={cn('mt-1 h-3.5 w-3.5 shrink-0 transition-transform duration-200', open && 'rotate-90')} strokeWidth={2} />
+                </button>
+                {summary.changed && <ChangedRow changed={summary.changed} />}
+                <StepList steps={open ? steps : pinned} groups={open ? groups : []} live={false} />
+                {subagents.length > 0 && <StepList steps={subagents} live={false} className="mt-0.5" />}
+                {children}
+            </div>
+        );
+    }
     const shown = mode === 'failures' ? steps.filter(failedStep) : steps;
     if (!shown.length && !subagents.length && !(stopped && mode === 'all')) return null;
     const expanded = open || mode === 'failures';
     return (
         <div className={cn('pb-2 pt-1', mode === 'all' && 'border-b border-border/60 dark:border-foreground/[0.07]')}>
             {mode === 'all' && (shown.length > 0 || !subagents.length) && (
-                <ShortcutTooltip label={summarize(steps)}>
+                <ShortcutTooltip label={summary?.label ?? summarize(steps)}>
                     <button
                         type="button"
                         onClick={() => setOpen(!open)}
@@ -141,20 +184,93 @@ export function WorkFold({ steps: all, ms, stopped, mode, children }: { steps: S
                     </button>
                 </ShortcutTooltip>
             )}
-            {expanded && shown.length > 0 && <StepList steps={shown} live={false} className={mode === 'all' ? 'mt-1' : undefined} />}
+            {expanded && shown.length > 0 && <StepList steps={shown} groups={mode === 'all' ? groups : []} live={false} className={mode === 'all' ? 'mt-1' : undefined} />}
             {subagents.length > 0 && <StepList steps={subagents} live={false} className="mt-0.5" />}
             {children}
         </div>
     );
 }
 
-export function StepList({ steps, live, className }: { steps: Step[]; live: boolean; className?: string }) {
+/** A turn's steps in order, each run of reads and searches the platform folded as one line (`groups`). */
+export function StepList({ steps, live, groups = [], className }: { steps: Step[]; live: boolean; groups?: StepGroup[]; className?: string }) {
+    const rows: ReactNode[] = [];
+    const drawn = new Set<string>();
+    for (const s of steps) {
+        const group = groups.find((g) => g.stepIds.includes(s.id));
+        const members = group ? steps.filter((m) => group.stepIds.includes(m.id)) : [];
+        if (group && members.length > 1) {
+            if (!drawn.has(group.id)) rows.push(<FoldRow key={group.id} group={group} steps={members} live={live} />);
+            drawn.add(group.id);
+            continue;
+        }
+        rows.push(<StepRow key={s.id} step={s} live={live} />);
+    }
+    return <ul className={className}>{rows}</ul>;
+}
+
+/** Reads and searches in a row as one line ("Read 6 files, searched for 3 patterns"), opening in place, one level down,
+ *  on each of them, each opening again on its command and what it printed. */
+function FoldRow({ group, steps, live }: { group: StepGroup; steps: Step[]; live: boolean }) {
+    const [open, setOpen] = useState(false);
+    const running = live && group.running;
     return (
-        <ul className={className}>
-            {steps.map((s) => (
-                <StepRow key={s.id} step={s} live={live} />
-            ))}
-        </ul>
+        <li data-fold={group.id}>
+            <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                aria-expanded={open}
+                className="group/fold flex min-h-6 w-full items-center gap-1.5 rounded-lg px-0.5 text-left text-sm leading-relaxed text-muted-foreground transition-colors hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/70"
+            >
+                <span className="grid h-6 w-6 shrink-0 place-items-center">
+                    <ListTree className="h-4 w-4 text-muted-foreground/80" strokeWidth={2} />
+                </span>
+                <span className={cn('min-w-0 truncate', running && 'work-shine')}>{group.label}</span>
+                <ChevronRight className={cn('ml-auto h-3.5 w-3.5 shrink-0 opacity-60 transition-transform duration-200 group-hover/fold:opacity-100', open && 'rotate-90')} strokeWidth={2} />
+            </button>
+            {open && (
+                <ul className="mb-1 ml-3 border-l border-border pl-2.5 dark:border-foreground/[0.1]">
+                    {steps.map((s) => (
+                        <StepRow key={s.id} step={s} live={live} />
+                    ))}
+                </ul>
+            )}
+        </li>
+    );
+}
+
+/** What a turn changed, one line ("Changed 5 files +310 and 4 by script"), opening on each file and how. */
+function ChangedRow({ changed }: { changed: NonNullable<TurnSummary['changed']> }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div data-testid="turn-changed">
+            <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                aria-expanded={open}
+                className="group/changed flex min-h-6 w-full items-center gap-1.5 rounded-lg px-0.5 text-left text-sm leading-relaxed text-muted-foreground transition-colors hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/70"
+            >
+                <span className="grid h-6 w-6 shrink-0 place-items-center">
+                    <FilePen className="h-4 w-4 text-muted-foreground/80" strokeWidth={2} />
+                </span>
+                <span className="shrink-0">{changed.label}</span>
+                <DiffStat added={changed.added} removed={changed.removed} className="shrink-0 text-[10px]" />
+                {changed.byScript > 0 && <span className="min-w-0 truncate">and {changed.byScript} by script</span>}
+                <ChevronRight className={cn('ml-auto h-3.5 w-3.5 shrink-0 opacity-60 transition-transform duration-200 group-hover/changed:opacity-100', open && 'rotate-90')} strokeWidth={2} />
+            </button>
+            {open && (
+                <ul className="mb-1 ml-7 space-y-0.5 text-xs leading-5 text-muted-foreground">
+                    {changed.files.map((f) => (
+                        <li key={f.path} className="flex min-w-0 items-baseline gap-1.5">
+                            <ShortcutTooltip label={f.path}>
+                                <span className="min-w-0 truncate font-mono text-foreground/80">{baseName(f.path)}</span>
+                            </ShortcutTooltip>
+                            <DiffStat added={f.added} removed={f.removed} className="shrink-0 text-[10px]" />
+                            {f.how.length > 0 && <span className="shrink-0">· {f.how.join(', ')}</span>}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     );
 }
 
@@ -210,6 +326,7 @@ export function StepRow({ step, live }: { step: Step; live: boolean }) {
 
 /** What a step is doing, in a line: "Running pytest -q", "Reading worker.py", "Listing failed runs". */
 export function doing(step: Step): string {
+    if (step.label) return step.label.text;
     const named = namedTool(step, 'running');
     return named ? `${named.head}${named.tail ?? ''}`.replace(/\u00a0/g, ' ') : `${WORDS[step.kind].running} ${targetOf(step)}`;
 }
@@ -301,6 +418,123 @@ function AskedRow({ step }: { step: Step }) {
 }
 
 function WorkRow({ step, live }: { step: Step; live: boolean }) {
+    if (step.label) return <LabeledRow step={step} live={live} />;
+    return <RawRow step={step} live={live} />;
+}
+
+/** The line a failed step's output ends on that says why: a test's FAILED line, an error, else its last line. */
+function whyItFailed(output: string): string | null {
+    const lines = output.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('[…') && !/^=+.*=+$/.test(l));
+    return lines.find((l) => /^(FAILED|ERROR)\b|Error:|error:|Exception/.test(l)) ?? lines[lines.length - 1] ?? null;
+}
+
+/** A harness's step as the platform said it: what it did in words ("Read attachments.py lines 55-110"), how it ended
+ *  (a test run's "161 passed", "2 of 43 failed", a command's exit) and, tapped, its command and what it printed or
+ *  changed. While it runs, how long it's been, a bar where it reported a count ("64 of 161") and its last lines. */
+function LabeledRow({ step, live }: { step: Step; live: boolean }) {
+    const running = step.running && live;
+    const failed = failedStep(step);
+    const [open, setOpen] = useState(false);
+    const label = step.label!;
+    const Icon = failed ? CircleAlert : CATEGORY_ICON[step.category ?? 'tool'];
+    const stat = step.diffStat ?? (step.diffs.length ? diffStat(step.diffs) : null);
+    const command = step.displayCommand ?? step.command;
+    const why = failed && !running ? whyItFailed(step.output) : null;
+    const end = running ? (
+        <Elapsed from={step.at} />
+    ) : failed ? (
+        <span className="text-red-600 dark:text-red-300">{step.tests?.failed ? step.tests.label : step.exitCode ? `exit ${step.exitCode}` : 'failed'}</span>
+    ) : step.tests?.done ? (
+        <span>{step.tests.label}</span>
+    ) : step.kind === 'command' && step.running ? (
+        <span>stopped</span>
+    ) : null;
+    return (
+        <li data-step={step.category ?? step.kind} data-status={running ? 'running' : failed ? 'failed' : 'done'}>
+            <div className="group/step flex min-h-6 items-center gap-1.5 rounded-lg px-0.5 text-sm leading-relaxed text-muted-foreground transition-colors hover:bg-foreground/[0.04]">
+                <span className="grid h-6 w-6 shrink-0 place-items-center">
+                    <Icon className={cn('h-4 w-4', failed ? 'text-red-500 dark:text-red-300' : 'text-muted-foreground/80')} strokeWidth={2} />
+                </span>
+                <ShortcutTooltip label={command ?? step.path ?? undefined}>
+                    <button
+                        type="button"
+                        onClick={() => setOpen(!open)}
+                        aria-expanded={open}
+                        className={cn('flex min-w-0 items-baseline gap-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70', running && 'work-shine')}
+                    >
+                        {label.verb ? (
+                            <>
+                                <span className="shrink-0">{label.verb}</span>
+                                {label.object && <span className="min-w-0 truncate text-foreground/80">{label.object}</span>}
+                                {label.detail && <span className="min-w-0 truncate">{label.detail}</span>}
+                            </>
+                        ) : (
+                            <span className="min-w-0 truncate text-foreground/80">{label.text}</span>
+                        )}
+                        {stat && (stat.added > 0 || stat.removed > 0) && <DiffStat {...stat} className="shrink-0 text-[10px]" />}
+                    </button>
+                </ShortcutTooltip>
+                <span className="ml-auto flex shrink-0 items-center gap-1.5 pl-2 text-xs tabular-nums">
+                    {end}
+                    <button type="button" aria-label={open ? 'Hide' : 'Show'} onClick={() => setOpen(!open)} className="grid h-5 w-5 place-items-center rounded-full opacity-60 transition-opacity hover:bg-foreground/[0.06] hover:opacity-100 focus-visible:opacity-100">
+                        <ChevronRight className={cn('h-3 w-3 transition-transform duration-200', open && 'rotate-90')} strokeWidth={2} />
+                    </button>
+                </span>
+            </div>
+            {why && !open && <p className="mb-0.5 ml-7 truncate font-mono text-[11px] leading-relaxed text-red-600 dark:text-red-300">{why}</p>}
+            {running && !open && <RunningTail step={step} />}
+            {open && (
+                <>
+                    {command && (
+                        <p data-testid="step-command" className="mb-1 ml-7 whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-foreground/80 [overflow-wrap:anywhere]">
+                            {command}
+                        </p>
+                    )}
+                    {step.diffs.map((d) => (
+                        <DiffBlock key={d.path} diff={d.diff} path={d.path} many={step.diffs.length > 1} />
+                    ))}
+                    {(step.output || (running && step.kind === 'command')) && <OutputTail text={step.output} live={running} />}
+                </>
+            )}
+        </li>
+    );
+}
+
+/** How far a running step is where it reported a count (never a made-up one), then its last three lines and how many
+ *  came before them. */
+function RunningTail({ step }: { step: Step }) {
+    const lines = step.output.replace(/^\[…[^\]]*\]\n?/, '').replace(/\n$/, '').split('\n').filter((l, i, all) => l || i < all.length - 1);
+    const last = lines.slice(-3);
+    const before = Math.max(0, (step.outputLines ?? lines.length) - last.length);
+    const progress = step.progress;
+    if (!progress && !last.length) return null;
+    return (
+        <div className="mb-1 ml-7" data-testid="running-tail">
+            {progress && (
+                <div className="flex items-center gap-2 py-0.5">
+                    <div role="progressbar" aria-label={step.label?.text} aria-valuemin={0} aria-valuemax={progress.total} aria-valuenow={progress.done} className="h-[3px] w-40 max-w-[50%] overflow-hidden rounded-full bg-foreground/[0.08]">
+                        <div className="h-full rounded-full bg-foreground/50 transition-[width] duration-500" style={{ width: `${Math.min(100, (progress.done / progress.total) * 100)}%` }} />
+                    </div>
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                        {progress.done} of {progress.total}
+                    </span>
+                </div>
+            )}
+            {last.length > 0 && (
+                <div className="font-mono text-[11px] leading-relaxed text-muted-foreground">
+                    {before > 0 && <p className="font-sans italic">+{before} lines</p>}
+                    {last.map((l, i) => (
+                        <p key={i} className="truncate">
+                            {l || ' '}
+                        </p>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function RawRow({ step, live }: { step: Step; live: boolean }) {
     const running = step.running && live;
     const failed = failedStep(step);
     // A running command (or edit) opens on its output; a running tool call stays closed on its words ("Opening

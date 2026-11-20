@@ -5,6 +5,7 @@ import { MemberAvatar } from '@/screens/channels/avatars';
 import type { AgentState as FaceState } from '@/screens/channels/types';
 import { cn } from '@/ui/utils';
 import { useAgentFaces, useAgentStates } from '../agents/reads';
+import { nowWords } from '../agents/states';
 import { useWorkNav } from '../nav';
 import type { Step } from '@/lib/agentThread/thread';
 
@@ -52,7 +53,7 @@ export function ChildAgentRow({ child }: { child: Child }) {
     const state = useAgentStates(null).data?.find((s) => s.agentId === child.agentId);
     const face = faces.get(child.agentId) ?? { id: child.agentId, kind: 'agent' as const, name: child.name, agentId: child.agentId };
     const where = state?.state === 'working' || state?.state === 'waking' ? 'working' : state?.state === 'needs_you' ? 'waiting' : state?.state === 'failed' ? 'failed' : state ? 'done' : null;
-    const line = where === 'working' ? state?.now?.line || 'Working' : where === 'waiting' ? 'Waiting on you' : where === 'failed' ? `Failed: ${state?.failed?.message ?? 'its turn didn’t finish'}` : where === 'done' ? 'Done' : null;
+    const line = where === 'working' ? nowWords(state?.now) || 'Working' : where === 'waiting' ? 'Waiting on you' : where === 'failed' ? `Failed: ${state?.failed?.message ?? 'its turn didn’t finish'}` : where === 'done' ? 'Done' : null;
     return (
         <li data-child-agent={child.agentId}>
             <button

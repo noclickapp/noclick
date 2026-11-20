@@ -78,6 +78,8 @@ function toolStep(tool: string, detail: string | undefined): string {
  *  never an id or JSON. Null when it isn't running a step. */
 export function nowWords(now: AgentNow | null | undefined): string | null {
     if (!now) return null;
+    // A coding harness's step, as the platform said it ("Running the plan usage tests").
+    if (now.label) return now.label;
     const verb = CODE[now.kind];
     if (verb) {
         const [, rest = ''] = /^(?:bash:|edit|read|search)\s*(.*)$/.exec(now.line) ?? [];
@@ -119,7 +121,7 @@ export function entryOf(state: AgentState, facts: AgentFacts | undefined, now: n
     const last = state.lastActiveAt?.getTime() ?? null;
     let line: string;
     if (state.state === 'needs_you') line = state.waiting.total > 1 ? `${state.waiting.total} things wait on you` : 'Waiting on you';
-    else if (state.state === 'working') line = `${state.now?.line || 'Working'} · ${elapsed(now - started)}`;
+    else if (state.state === 'working') line = `${nowWords(state.now) || 'Working'} · ${elapsed(now - started)}`;
     else if (state.state === 'waking') line = state.waking?.why || 'Waking';
     else if (state.state === 'failed') line = `Failed: ${state.failed?.message ?? 'its last turn didn’t finish'}`;
     else if (state.state === 'with_you') line = 'With you';

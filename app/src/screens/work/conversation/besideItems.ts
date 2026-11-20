@@ -6,6 +6,7 @@
 // draws this.
 import type { AgentStateRow, Browser, HarnessRequest, Operation, Wakeup } from 'noclick';
 import { describeCronIn } from '@/lib/scheduleFormat';
+import { nowWords } from '../agents/states';
 import { captionOf, isLiveState, newestStep, stateOf } from '../browser/words';
 import { doing, failedStep, subagentTask } from './Activity';
 import { spawnedChild, type Child } from './subagents';
@@ -116,7 +117,7 @@ export function agentItem(started: { child: Child; step: Step }, job: Operation 
         startedAt,
         endedAt,
         activeAt: state?.now?.since?.getTime() ?? state?.lastActiveAt?.getTime() ?? startedAt,
-        line: status === 'needs' ? 'Waiting on you' : status === 'running' ? state?.now?.line || 'Working' : typeof result?.text === 'string' ? firstLine(result.text) : status === 'failed' ? (state?.failed?.message ?? 'Its task failed.') : null,
+        line: status === 'needs' ? 'Waiting on you' : status === 'running' ? nowWords(state?.now) || 'Working' : typeof result?.text === 'string' ? firstLine(result.text) : status === 'failed' ? (state?.failed?.message ?? 'Its task failed.') : null,
         call: null,
         turnRunning: false,
         agent: child,

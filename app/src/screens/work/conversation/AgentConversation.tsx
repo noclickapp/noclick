@@ -653,6 +653,8 @@ function lineOf(turn: TurnEntry): string | null {
         const n = stepsOf(turn).filter((s) => s.running && isSubagentCall(s)).length;
         return n === 1 ? 'Running a subagent' : `Running ${n} subagents`;
     }
+    // A harness's step as the platform said it ("Running the plan usage tests").
+    if (running.label) return running.label.text;
     if (running.kind === 'command') return `Running ${running.command ?? 'a command'}`;
     if (running.kind === 'edit') return `Editing ${running.path?.split('/').pop() ?? 'a file'}`;
     if (running.kind === 'read') return `Reading ${running.path?.split('/').pop() ?? 'a file'}`;

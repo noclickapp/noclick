@@ -378,6 +378,14 @@ const recordedSteps = (a: TurnActivity): Step[] =>
         said: '',
         saidId: null,
         saidAt: null,
+        category: null,
+        label: null,
+        displayCommand: null,
+        outputLines: null,
+        tests: null,
+        progress: null,
+        diffStat: null,
+        failed: null,
     }));
 
 /** "Handled by WhatsApp · 4s ›", its steps opening under it (while it works, its live steps, open), and the cards its

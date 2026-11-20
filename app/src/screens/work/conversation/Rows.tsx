@@ -241,7 +241,7 @@ export function TurnView({
                 p.kind === 'steps' ? (
                     (() => {
                         const shown = mode === 'all' ? p.steps : mode === 'failures' ? p.steps.filter((s) => s.running || s.isError || (s.exitCode ?? 0) !== 0) : [];
-                        return shown.length ? <StepList key={i} steps={shown} live className="mt-1" /> : null;
+                        return shown.length ? <StepList key={i} steps={shown} groups={mode === 'all' ? turn.groups : []} live className="mt-1" /> : null;
                     })()
                 ) : p.kind === 'text' ? (
                     <div key={i} className="py-1.5">
@@ -263,7 +263,7 @@ export function TurnView({
                 </>
             ) : (
                 <div className="px-1 pt-3">
-                    <WorkFold steps={steps} ms={(turn.endedAt ?? turn.startedAt) - turn.startedAt} stopped={turn.status === 'stopped'} mode={mode} />
+                    <WorkFold steps={steps} ms={(turn.endedAt ?? turn.startedAt) - turn.startedAt} stopped={turn.status === 'stopped'} mode={mode} groups={turn.groups} summary={turn.summary} />
                     {steers.map((p) => p.kind === 'user' && <UserRow key={p.entry.key} entry={p.entry} mine={mine(p.entry)} compact onRewind={onRewind && mine(p.entry) && p.entry.id ? () => onRewind(p.entry) : undefined} />)}
                     {turn.failure ? (
                         <>
