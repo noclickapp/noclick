@@ -90,6 +90,7 @@ export interface PolicyChange {
   undoneAt: Date | null;
   undoneBy: string | null;
   createdAt: Date | null;
+  raw: JsonObject;
 }
 
 /** What a call of one kind by one kind of caller meets now, and why. */
@@ -103,6 +104,7 @@ export interface ApprovalExplanation {
   /** What a held call's approval would say; null when it runs. */
   why: string | null;
   setting: JsonObject | null;
+  raw: JsonObject;
 }
 
 /** A kind's switch: `"allow"`, `"ask"`, `"deny"`, the same as an object (a purchase may take `under_usd`; any kind
@@ -121,6 +123,7 @@ function policyChange(entry: unknown): PolicyChange {
     loosens: Boolean(c.loosens), changedBy: String(c.changed_by), keyId: (c.key_id as string | null) ?? null,
     effectiveAt: parseTime(c.effective_at), until: parseTime(c.until), pending: Boolean(c.pending),
     undoneAt: parseTime(c.undone_at), undoneBy: (c.undone_by as string | null) ?? null, createdAt: parseTime(c.created_at),
+    raw: c,
   };
 }
 
@@ -211,6 +214,7 @@ export class ApprovalPolicy {
     return {
       kind: String(raw.kind), caller: String(raw.caller), disposition: String(raw.disposition),
       source: String(raw.source), why: (raw.why as string | null) ?? null, setting: (raw.setting as JsonObject | null) ?? null,
+      raw,
     };
   }
 
