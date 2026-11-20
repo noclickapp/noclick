@@ -94,6 +94,15 @@ export function formatDollars(usd: number): string {
     return USD.format(usd);
 }
 
+/** A metered amount in dollars, precise enough that a small real charge never rounds away: a 30s sandbox beat is
+ *  "$0.0063", a short model call "<$0.0001". */
+export function usageDollars(usd: number): string {
+    if (usd === 0) return '$0';
+    if (usd >= 0.1) return USD.format(usd);
+    if (usd >= 0.0001) return `$${Number(usd.toPrecision(2))}`;
+    return '<$0.0001';
+}
+
 /** When an account was added, where nothing else tells it apart: "Added Nov 19, 2026". */
 export function addedLabel(iso: string): string {
     return `Added ${new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
