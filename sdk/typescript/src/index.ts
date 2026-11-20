@@ -74,8 +74,9 @@ export { Brand } from "./brand.ts";
 export type { BrandFields } from "./brand.ts";
 export { Usage, usage } from "./usage.ts";
 export type {
-  AgentBudget, KeyCap, ProjectBudget, UsageGroup, UsageLimits, UsageOptions, UsagePoint, UsageSeries, UsageSeriesLine,
-  UsageSeriesOptions, UserCap,
+  AgentBudget, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges, UsageChargesOptions,
+  UsageGroup, UsageLedger, UsageLimits, UsageOptions, UsagePoint, UsageSeries, UsageSeriesLine, UsageSeriesOptions,
+  UserCap,
 } from "./usage.ts";
 export { A2AMember, Channel, Subscription } from "./channel.ts";
 export type {

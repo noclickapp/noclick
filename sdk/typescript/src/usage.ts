@@ -4,7 +4,7 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { asObject, isoTime, num, parseTime, readScope, refId, requiredNumber, str } from "./object.ts";
+import { asObject, compact, isoTime, num, parseTime, readScope, refId, requiredNumber, str } from "./object.ts";
 import type { ApiObject, JsonObject, ReadOptions } from "./object.ts";
 import type { UserOption } from "./scope.ts";
 
@@ -130,8 +130,147 @@ export interface UsageLimits {
   raw: JsonObject;
 }
 
+/**
+ * One group of the account's ledger: its charges in one period (this billing period or the one before), one day
+ * and one set of breakdown fields, added up.
+ */
+export interface LedgerGroup {
+  /** The group's key: list its charges with `Usage.charges({ keys: [key] })`. */
+  key: string;
+  /** In this billing period (true) or the one before. */
+  current: boolean;
+  /** Its day (`YYYY-MM-DD`) in the zone the ledger was read in. */
+  day: string;
+  usageType: string;
+  /** What was charged for: a model's id, or a service like `voice/call` or `apps/hosting`. */
+  subtype: string;
+  unit: string;
+  /** On the account's own key or resource: nobody was charged. */
+  ownResource: boolean;
+  /** How many charges it holds. */
+  charges: number;
+  quantity: number;
+  usd: number;
+  /** Every breakdown field (`UsageLedger.fields`) by name: the automation, agent step, person, app, key… it names. */
+  fields: Record<string, unknown>;
+  raw: JsonObject;
+}
+
+/** The account's ledger: every charge it was billed in its billing period and the one before, grouped. */
+export interface UsageLedger {
+  periodStart: Date | null;
+  periodEnd: Date | null;
+  /** Where the period before starts. */
+  previousStart: Date | null;
+  /** The fields each group is split by. */
+  fields: string[];
+  groups: LedgerGroup[];
+  /** Names for what the groups name, by kind (`workflows`, `agents`, `people`, `projects`, `keys`…) and id. */
+  directory: Record<string, Record<string, JsonObject>>;
+  raw: JsonObject;
+}
+
+/** One charge in the account's ledger. */
+export interface LedgerCharge {
+  id: string;
+  at: Date | null;
+  usageType: string;
+  subtype: string;
+  unit: string;
+  quantity: number;
+  usd: number;
+  ownResource: boolean;
+  /** Its group's key. */
+  key: string;
+  /** What it was for: the automation, agent step and run, the number, sender, key or app it names. */
+  metadata: JsonObject;
+  raw: JsonObject;
+}
+
+/** A page of the ledger's charges, newest first. */
+export interface UsageCharges {
+  charges: LedgerCharge[];
+  /** The runs the charges were recorded in, by run id. */
+  runs: Record<string, JsonObject>;
+  /** Pass as `cursor` for the next page; null at the end. */
+  next: string | null;
+  raw: JsonObject;
+}
+
+export interface UsageChargesOptions {
+  /** Default: the billing period's start. */
+  from?: Date | string;
+  /** Default: the billing period's end. */
+  to?: Date | string;
+  /** Only charges in these groups (`LedgerGroup.key`). */
+  keys?: string[];
+  /** Only charges on this day (`YYYY-MM-DD`) in `tz`. */
+  day?: string;
+  /** The IANA time zone the ledger was read in. */
+  tz?: string;
+  /** The previous page's `next`. */
+  cursor?: string;
+  /** Charges per page, up to 500 (default 50). */
+  limit?: number;
+  client?: NoClick;
+}
+
+/**
+ * The money behind the ledger, as the credit gate reads it. One of the account's own keys reads the plan, the
+ * balance, funds added and what's scheduled; `autoTopUp` and friends' credit (in `raw`) are the signed-in owner's.
+ */
+export interface UsageBilling {
+  /** The plan, its window and its pools: included usage, Free's daily share, an older plan's top-up. */
+  plan: JsonObject;
+  /** What was added less what it paid for; below zero is owed. */
+  balanceUsd: number;
+  /** Funds added this period, and the plan's fee on them. */
+  fundsUsd: number;
+  feesUsd: number;
+  /** Charges that come on a date: a number's month, a connection's hours. */
+  recurring: JsonObject[];
+  /** Domains that renew soon. */
+  domains: JsonObject[];
+  /** Auto top-up, for the signed-in owner; null otherwise. */
+  autoTopUp: JsonObject | null;
+  raw: JsonObject;
+}
+
 function rows(value: unknown): JsonObject[] {
   return Array.isArray(value) ? (value as JsonObject[]) : [];
+}
+
+function ledgerGroup(raw: JsonObject, fields: string[]): LedgerGroup {
+  return {
+    key: String(raw.k),
+    current: raw.current === true,
+    day: String(raw.day),
+    usageType: String(raw.usage_type),
+    subtype: String(raw.usage_subtype),
+    unit: String(raw.unit_type),
+    ownResource: raw.user_resource === true,
+    charges: requiredNumber(raw, "n"),
+    quantity: requiredNumber(raw, "quantity"),
+    usd: requiredNumber(raw, "total_cost"),
+    fields: Object.fromEntries(fields.map((name) => [name, raw[name] ?? null])),
+    raw,
+  };
+}
+
+function ledgerCharge(raw: JsonObject): LedgerCharge {
+  return {
+    id: String(raw.id),
+    at: parseTime(raw.created_at),
+    usageType: String(raw.usage_type),
+    subtype: String(raw.usage_subtype),
+    unit: String(raw.unit_type),
+    quantity: requiredNumber(raw, "quantity"),
+    usd: requiredNumber(raw, "total_cost"),
+    ownResource: raw.user_resource === true,
+    key: String(raw.k),
+    metadata: asObject(raw.metadata),
+    raw,
+  };
 }
 
 export class Usage {
@@ -205,6 +344,79 @@ export class Usage {
         raw: line,
       })),
       raw,
+    };
+  }
+
+  /**
+   * The account's ledger, as Settings → Usage reads it: every charge it was billed in its billing period and the
+   * one before (its automations' runs, its chat with NoClick, a teammate's work it pays for, its keys' and agents'
+   * calls), grouped by day in `tz` and by every field a breakdown splits by, with names for what they were for.
+   * For the signed-in owner and the account's own secret keys. `usage()` reads only what its keys and agents spent.
+   *
+   *     const ledger = await Usage.ledger({ tz: "Europe/London" });
+   *     const thisPeriod = ledger.groups.filter((g) => g.current && !g.ownResource);
+   *     console.log(thisPeriod.reduce((sum, g) => sum + g.usd, 0));
+   */
+  static async ledger(options: { tz?: string; client?: NoClick } = {}): Promise<UsageLedger> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/groups", {
+      query: { tz: options.tz }, user: null,
+    }));
+    const period = asObject(raw.period);
+    const fields = Array.isArray(raw.fields) ? raw.fields.map(String) : [];
+    return {
+      periodStart: parseTime(period.window_start),
+      periodEnd: parseTime(period.window_end),
+      previousStart: parseTime(period.previous_start),
+      fields,
+      groups: rows(raw.groups).map((group) => ledgerGroup(group, fields)),
+      directory: asObject(raw.directory) as Record<string, Record<string, JsonObject>>,
+      raw,
+    };
+  }
+
+  /**
+   * A page of the ledger's charges, newest first, narrowed to groups (`keys`) or a day; the billing period's by
+   * default. Pass `next` back as `cursor` for the page after it.
+   *
+   *     const ledger = await Usage.ledger();
+   *     const calls = ledger.groups.filter((g) => g.current && g.subtype === "voice/call").map((g) => g.key);
+   *     let page = await Usage.charges({ keys: calls });
+   *     while (page.next) page = await Usage.charges({ keys: calls, cursor: page.next });
+   */
+  static async charges(options: UsageChargesOptions = {}): Promise<UsageCharges> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/usage/charges", {
+      json: compact({
+        start: isoTime(options.from), end: isoTime(options.to), keys: options.keys, day: options.day, tz: options.tz,
+        cursor: options.cursor, limit: options.limit,
+      }),
+      user: null,
+    }));
+    return {
+      charges: rows(raw.rows).map(ledgerCharge),
+      runs: asObject(raw.runs) as Record<string, JsonObject>,
+      next: str(raw.next),
+      raw,
+    };
+  }
+
+  /**
+   * The money behind the ledger, as the credit gate reads it: the plan and its pools, the balance, funds added and
+   * what's scheduled to be charged; null where nobody is billed.
+   */
+  static async billing(options: { client?: NoClick } = {}): Promise<UsageBilling | null> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/billing", { user: null }));
+    if (raw.billing === null || raw.billing === undefined) return null;
+    const billing = asObject(raw.billing);
+    const funds = asObject(billing.funds);
+    return {
+      plan: asObject(billing.plan),
+      balanceUsd: requiredNumber(asObject(billing.balance), "usd"),
+      fundsUsd: requiredNumber(funds, "usd"),
+      feesUsd: requiredNumber(funds, "fee"),
+      recurring: rows(billing.recurring),
+      domains: rows(billing.domains),
+      autoTopUp: billing.autoTopUp ? asObject(billing.autoTopUp) : null,
+      raw: billing,
     };
   }
 

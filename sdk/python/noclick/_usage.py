@@ -1,5 +1,6 @@
 """Spend: ``noclick.usage(group_by="user")``, ``noclick.Usage.series(group_by="agent")``,
-``noclick.Usage.limits()``."""
+``noclick.Usage.limits()``, and the account's ledger: ``noclick.Usage.ledger()``, ``noclick.Usage.charges()``,
+``noclick.Usage.billing()``."""
 
 from __future__ import annotations
 
@@ -7,7 +8,7 @@ from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional
 
 from ._client import Client, resolve_client
-from ._object import iso_time, parse_time, read_scope, ref_id, required_number as num
+from ._object import compact, iso_time, parse_time, read_scope, ref_id, required_number as num
 from ._sync import synced
 from ._scope import AMBIENT
 
@@ -118,6 +119,106 @@ class UsageLimits:
 
 
 @dataclass(frozen=True)
+class LedgerGroup:
+    """One group of the account's ledger: its charges in one period (this billing period or the one before), one
+    day (in the zone the ledger was read in) and one set of breakdown fields, added up. ``key`` lists its charges
+    (``Usage.charges(keys=[group.key])``); ``subtype`` is what was charged for (a model's id, or a service like
+    ``voice/call``); ``own_resource`` means nobody was charged (the account's own key or resource); ``fields`` is every
+    breakdown field by name (``UsageLedger.fields``): the automation, agent step, person, app or key it names."""
+
+    key: str
+    current: bool
+    day: str
+    usage_type: str
+    subtype: str
+    unit: str
+    own_resource: bool
+    charges: int
+    quantity: float
+    usd: float
+    fields: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@dataclass(frozen=True)
+class UsageLedger:
+    """The account's ledger: every charge it was billed in its billing period (``period_start`` to ``period_end``)
+    and the one before (from ``previous_start``), grouped; ``directory`` names what the groups name, by kind
+    (``workflows``, ``agents``, ``people``, ``projects``, ``keys``…) and id."""
+
+    period_start: Any
+    period_end: Any
+    previous_start: Any
+    fields: List[str]
+    groups: List[LedgerGroup]
+    directory: Dict[str, Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@dataclass(frozen=True)
+class LedgerCharge:
+    """One charge in the account's ledger; ``key`` is its group's, ``metadata`` what it was for (the automation,
+    agent step and run, the number, sender, key or app it names)."""
+
+    id: str
+    at: Any
+    usage_type: str
+    subtype: str
+    unit: str
+    quantity: float
+    usd: float
+    own_resource: bool
+    key: str
+    metadata: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@dataclass(frozen=True)
+class UsageCharges:
+    """A page of the ledger's charges, newest first, with the runs they were recorded in by run id; pass ``next``
+    back as ``cursor`` for the next page (None at the end)."""
+
+    charges: List[LedgerCharge]
+    runs: Dict[str, Dict[str, Any]]
+    next: Optional[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@dataclass(frozen=True)
+class UsageBilling:
+    """The money behind the ledger, as the credit gate reads it: the ``plan`` with its window and pools (included
+    usage, Free's daily share, an older plan's top-up), the balance (below zero is owed), funds added this period and
+    the plan's fee on them, and what's scheduled (``recurring``: a number's month, a connection's hours; ``domains``
+    that renew soon). ``auto_top_up`` is the signed-in owner's alone, as friends' credit (in ``raw``) is."""
+
+    plan: Dict[str, Any]
+    balance_usd: float
+    funds_usd: float
+    fees_usd: float
+    recurring: List[Dict[str, Any]]
+    domains: List[Dict[str, Any]]
+    auto_top_up: Optional[Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+def _ledger_group(raw: Dict[str, Any], fields: List[str]) -> LedgerGroup:
+    return LedgerGroup(
+        key=raw["k"], current=raw.get("current") is True, day=raw["day"], usage_type=raw["usage_type"],
+        subtype=raw["usage_subtype"], unit=raw["unit_type"], own_resource=raw.get("user_resource") is True,
+        charges=int(num(raw, "n")), quantity=float(num(raw, "quantity")), usd=float(num(raw, "total_cost")),
+        fields={name: raw.get(name) for name in fields}, raw=raw,
+    )
+
+
+def _ledger_charge(raw: Dict[str, Any]) -> LedgerCharge:
+    return LedgerCharge(
+        id=raw["id"], at=parse_time(raw.get("created_at")), usage_type=raw["usage_type"], subtype=raw["usage_subtype"],
+        unit=raw["unit_type"], quantity=float(num(raw, "quantity")), usd=float(num(raw, "total_cost")),
+        own_resource=raw.get("user_resource") is True, key=raw["k"], metadata=raw.get("metadata") or {}, raw=raw,
+    )
+
+
+@dataclass(frozen=True)
 class Usage:
     """What the account (or the current user) spent in ``period``."""
 
@@ -218,6 +319,107 @@ class Usage:
                 for line in raw.get("series") or []
             ],
             raw=raw,
+        )
+
+    @synced
+    @staticmethod
+    async def ledger(*, tz: Optional[str] = None, client: Optional[Client] = None) -> UsageLedger:
+        """The account's ledger, as Settings → Usage reads it: every charge it was billed in its billing period and
+        the one before (its automations' runs, its chat with NoClick, a teammate's work it pays for, its keys' and
+        agents' calls), grouped by day in ``tz`` (an IANA zone, default UTC) and by every field a breakdown splits
+        by, with names for what they were for. For the signed-in owner and the account's own secret keys;
+        ``noclick.usage()`` reads only what its keys and agents spent.
+
+        Returns:
+            The period, the fields groups are split by, the groups (each with its ``key``, ``day``, ``usd`` and
+            ``fields``) and the ``directory`` naming what they name.
+
+        Usage::
+
+            ledger = noclick.Usage.ledger(tz="Europe/London")
+            this_period = [g for g in ledger.groups if g.current and not g.own_resource]
+            print(sum(g.usd for g in this_period))
+        """
+        raw = await resolve_client(client).request("GET", "/v1/usage/groups", params={"tz": tz}, user=None) or {}
+        period = raw.get("period") or {}
+        fields = [str(name) for name in raw.get("fields") or []]
+        return UsageLedger(
+            period_start=parse_time(period.get("window_start")),
+            period_end=parse_time(period.get("window_end")),
+            previous_start=parse_time(period.get("previous_start")),
+            fields=fields,
+            groups=[_ledger_group(group, fields) for group in raw.get("groups") or []],
+            directory=raw.get("directory") or {},
+            raw=raw,
+        )
+
+    @synced
+    @staticmethod
+    async def charges(
+        *,
+        from_: Any = None,
+        to: Any = None,
+        keys: Optional[List[str]] = None,
+        day: Optional[str] = None,
+        tz: Optional[str] = None,
+        cursor: Optional[str] = None,
+        limit: Optional[int] = None,
+        client: Optional[Client] = None,
+    ) -> UsageCharges:
+        """A page of the ledger's charges, newest first: the billing period's by default (``from_``, ``to``),
+        narrowed to groups (``keys``: ``LedgerGroup.key``) or a ``day`` (``YYYY-MM-DD``) in ``tz``, up to ``limit``
+        (500; default 50) a page.
+
+        Returns:
+            The charges, the runs they were recorded in, and ``next``: pass it as ``cursor`` for the next page.
+
+        Usage::
+
+            ledger = noclick.Usage.ledger()
+            calls = [g.key for g in ledger.groups if g.current and g.subtype == "voice/call"]
+            page = noclick.Usage.charges(keys=calls)
+            while page.next:
+                page = noclick.Usage.charges(keys=calls, cursor=page.next)
+        """
+        body = compact(start=iso_time(from_), end=iso_time(to), keys=keys, day=day, tz=tz, cursor=cursor, limit=limit)
+        raw = await resolve_client(client).request("POST", "/v1/usage/charges", json=body, user=None) or {}
+        return UsageCharges(
+            charges=[_ledger_charge(row) for row in raw.get("rows") or []],
+            runs=raw.get("runs") or {},
+            next=raw.get("next"),
+            raw=raw,
+        )
+
+    @synced
+    @staticmethod
+    async def billing(*, client: Optional[Client] = None) -> Optional[UsageBilling]:
+        """The money behind the ledger, as the credit gate reads it: the plan and its pools, the balance, funds
+        added and what's scheduled to be charged. One of the account's own keys reads those; the signed-in owner
+        also reads auto top-up and friends' credit.
+
+        Returns:
+            The money, or None where nobody is billed.
+
+        Usage::
+
+            money = noclick.Usage.billing()
+            if money is not None:
+                print(money.balance_usd, money.plan.get("included_usd"))
+        """
+        raw = await resolve_client(client).request("GET", "/v1/usage/billing", user=None) or {}
+        billing = raw.get("billing")
+        if billing is None:
+            return None
+        funds = billing.get("funds") or {}
+        return UsageBilling(
+            plan=billing.get("plan") or {},
+            balance_usd=float(num(billing.get("balance") or {}, "usd")),
+            funds_usd=float(num(funds, "usd")),
+            fees_usd=float(num(funds, "fee")),
+            recurring=list(billing.get("recurring") or []),
+            domains=list(billing.get("domains") or []),
+            auto_top_up=billing.get("autoTopUp"),
+            raw=billing,
         )
 
     @synced

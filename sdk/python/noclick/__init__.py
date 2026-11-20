@@ -18,7 +18,8 @@ from ._client import CONSOLE_BASE_URL, DEFAULT_BASE_URL, Client, configure, defa
 from ._object import MAX_PAGE_SIZE, Page
 from ._scope import ALL_USERS, NO_USER, as_user, current_user
 from ._usage import (
-    AgentBudget, KeyCap, ProjectBudget, Usage, UsageGroup, UsageLimits, UsagePoint, UsageSeries, UsageSeriesLine, UserCap,
+    AgentBudget, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, Usage, UsageBilling, UsageCharges, UsageGroup,
+    UsageLedger, UsageLimits, UsagePoint, UsageSeries, UsageSeriesLine, UserCap,
     usage,
 )
 from ._version import __version__
@@ -235,6 +236,7 @@ __all__ = [
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
+    "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",
