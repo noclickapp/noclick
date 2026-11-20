@@ -26,3 +26,9 @@ export const SHELL_PAGES: readonly ShellPage[] = [
 export function shellPageFor(id: string): ShellPage | undefined {
     return SHELL_PAGES.find((p) => p.id === id);
 }
+
+/** The phone bar's name for a page. The chat goes unnamed, as on a laptop: it is the app itself. */
+export function shellPageTitle(page: string): string {
+    if (page === 'chat') return '';
+    return shellPageFor(page)?.label ?? 'NoClick';
+}

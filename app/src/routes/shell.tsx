@@ -1,14 +1,51 @@
 // The frame around the signed-in owner's pages (src/screens/shell/AppFrame.tsx): the home, the chat, Work and
-// Resources draw inside it, each its own route below. It reads nothing on the server, so moving between them never
-// waits on it.
-import { Outlet } from 'react-router';
+// Resources draw inside it, each its own route below, and the sidebar goes to a page by its route. The account is the
+// one the app's key acts in, as `GET /v1/status` names it. The developer console keeps a frame of its own
+// (src/screens/console/ConsoleShell.tsx), reached from the account menu. The frame reads nothing on the server, so
+// moving between the pages never waits on it.
+import { Outlet, useLocation, useNavigate } from 'react-router';
+import { readAccountStatus } from '@/screens/account/status';
 import { AppFrame } from '@/screens/shell/AppFrame';
+import { shellPageFor, shellPageTitle } from '@/screens/shell/pages';
+import { kindRoute, pageRoute } from '@/screens/shell/slotStandards';
+import { useClient } from '@/sdk/client';
+import { useV1 } from '@/sdk/useV1';
+import type { AccountMenuUser } from '@/ui/accountParts';
+import { useSidebarCollapsed } from '@/ui/sidebarPanel';
+import { useIsMobile } from '@/ui/useIsMobile';
+
+/** Where a phone's layout starts, as in NoClick's own app. */
+const PHONE_BELOW = 769;
 
 export const shouldRevalidate = () => false;
 
+/** The page an address is on: one of the shell's, or none (the home). */
+function pageAt(pathname: string): string {
+    const first = pathname.split('/')[1] ?? '';
+    return shellPageFor(first) ? first : '';
+}
+
 export default function Shell() {
+    const isMobile = useIsMobile(PHONE_BELOW);
+    const [collapsed, setCollapsed] = useSidebarCollapsed();
+    const navigate = useNavigate();
+    const page = pageAt(useLocation().pathname);
+    const client = useClient();
+    const account = useV1('status', (signal) => readAccountStatus(client, signal), { client }).data?.account;
+    const user: AccountMenuUser = { email: account?.email ?? '', display_name: account?.name ?? undefined };
     return (
-        <AppFrame>
+        <AppFrame
+            isMobile={isMobile}
+            user={user}
+            places={{ current: page, go: (id) => navigate(pageRoute(id)), goKind: (kind) => navigate(kind ? kindRoute(kind) : pageRoute('resources')) }}
+            collapsed={collapsed}
+            onCollapsedChange={setCollapsed}
+            title={shellPageTitle(page)}
+            builder={null}
+            builderShown={false}
+            builderWidth={0}
+            animate
+        >
             <Outlet />
         </AppFrame>
     );

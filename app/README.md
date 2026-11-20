@@ -366,15 +366,16 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`, the layout route
-`src/routes/shell.tsx`), the same NoClick's own app draws its pages in. On a laptop: a sidebar that folds to a rail
-(`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the pages this app
-serves (Resources opening onto its kinds), and your account at its foot with its menu (Developers, Community, the
-theme, signing out). On a phone: a bar with the page's name and a menu that opens the same sidebar as a sheet; a page
-puts its own actions and its way back in that bar. ⌘K (or search) opens the palette: the pages, Resources' kinds and
-what Resources and Work handed it, the theme and signing out. Each page is its own route, so the sidebar goes to one
-by its address. The developer console keeps a frame of its own (`src/screens/console/ConsoleShell.tsx`). The frame
-reads only the account's status (`GET /v1/status`), and `src/screens/shell/AppFrame.test.tsx` holds it to that.
+The home, `/chat`, `/work` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
+(`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
+folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the
+pages this app serves (Resources opening onto its kinds), and your account at its foot with its menu (Developers,
+Community, the theme, signing out). On a phone: a bar with the page's name and a menu that opens the same sidebar as a
+sheet; a page puts its own actions and its way back in that bar. ⌘K (or search) opens the palette: the pages,
+Resources' kinds and what Resources and Work handed it, the theme and signing out. The developer console keeps a frame
+of its own (`src/screens/console/ConsoleShell.tsx`). The frame reads only the account's status (`GET /v1/status`), and
+`src/routes/shell.test.tsx` holds it to that.
 
 ## Live updates
 
