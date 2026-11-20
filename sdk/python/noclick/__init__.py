@@ -20,7 +20,7 @@ from ._scope import ALL_USERS, NO_USER, as_user, current_user
 from ._usage import (
     AgentBudget, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, Usage, UsageBilling, UsageCharges, UsageGroup,
     UsageLedger, UsageLimits, UsagePoint, UsageSeries, UsageSeriesLine, UserCap,
-    usage,
+    Workstream, usage,
 )
 from ._version import __version__
 from .agent_conversations import (
@@ -237,6 +237,7 @@ __all__ = [
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
+    "Workstream",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",

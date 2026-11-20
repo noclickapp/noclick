@@ -32,12 +32,14 @@ test("spawn starts the task at once with the updates its parent requires", async
     updates: ["blocked", new nc.Before("gmail.send_email_message", "stripe.*"), new nc.Every(900), "done"],
     conversation: "launch", instructions: "Report what you found and where.", tools: ["search", "fetch"],
     budgetUsd: 0.5, ttlS: 900, model: "openrouter/y", harness: "sdk", modelConnection: "openrouter", name: "researcher", user: USER_ID,
+    workstream: "Q3 launch",
   });
   assert.deepEqual(spawn.last.body, {
     task: "Find three recent launches in our category.",
     updates: ["done", "blocked", { before: ["gmail.send_email_message", "stripe.*"] }, { every_s: 900 }],
     conversation: "launch", instructions: "Report what you found and where.", tools: ["search", "fetch"],
     budget_usd_per_month: 0.5, ttl_s: 900, model: "openrouter/y", harness: "sdk", model_connection: "openrouter", name: "researcher",
+    workstream: "Q3 launch",
   });
   assert.equal(spawn.last.headers.get("NoClick-User"), USER_ID); // the parent's conversation is the user's thread
   assert.equal(child.parentId, "ag_1");

@@ -2534,6 +2534,7 @@ class Agent(_Object):
         harness: Optional[str] = None,
         model_connection: Any = None,
         name: Optional[str] = None,
+        workstream: Optional[str] = None,
         user: Any = AMBIENT,
     ) -> "Agent":
         """Make a child agent and start ``task`` (its first message, up to 16,000
@@ -2555,7 +2556,10 @@ class Agent(_Object):
         own; NoClick adds a short brief saying it works on one task for its parent.
         ``budget_usd`` is held out of what the parent's monthly budget has left (without
         one, the child draws on the parent's as it spends), and ``ttl_s`` makes it
-        temporary. ``name`` defaults to ``<parent>-<random>``.
+        temporary. ``name`` defaults to ``<parent>-<random>``. ``workstream`` is the line of
+        work the task belongs to (``noclick.Workstream``): one of yours, matched whatever its
+        case, or a new name, which makes one; every charge of the job, and of what it starts,
+        is counted under it.
 
         ``updates`` is only when NoClick makes it report: ``"done"`` (always on: the job
         finished, any outcome), ``"blocked"`` (it started waiting on a person),
@@ -2588,6 +2592,7 @@ class Agent(_Object):
                     conversation="launch-plan",
                     budget_usd=0.50,
                     ttl_s=3600,
+                    workstream="Q3 launch",
                 )
                 print(researcher.job.status)   # running
 
@@ -2616,7 +2621,7 @@ class Agent(_Object):
             task=task, updates=wired_updates, conversation=conversation, instructions=instructions,
             tools=await tool_refs(tools, scope=owner), budget_usd_per_month=budget_usd, ttl_s=ttl_s,
             model=model, harness=harness, model_connection=await model_connection_ref(model_connection, scope=owner),
-            name=name,
+            name=name, workstream=workstream,
         )
         response = await self._request(
             "POST", f"/v1/agents/{raw['id']}/children", json=body, user=self._talk_scope(user),

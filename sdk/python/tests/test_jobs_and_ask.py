@@ -36,14 +36,14 @@ def test_spawn_starts_the_task_with_the_updates_its_parent_requires(api, client)
         updates=["blocked", nc.Before("gmail.send_email_message", "stripe.*"), nc.Every(timedelta(minutes=15)), "done"],
         conversation="launch-plan",
         budget_usd=0.5, ttl_s=3600, model="sonnet", harness="claude_code",
-        model_connection=nc.Connection.from_name("claude"), name="researcher",
+        model_connection=nc.Connection.from_name("claude"), name="researcher", workstream="Q3 launch",
     )
     assert body(spawn.calls.last.request) == {
         "task": "Find three recent launches.",
         "updates": ["done", "blocked", {"before": ["gmail.send_email_message", "stripe.*"]}, {"every_s": 900}],
         "conversation": "launch-plan", "instructions": "Report each launch as you finish it.",
         "tools": ["search", "fetch"], "budget_usd_per_month": 0.5, "ttl_s": 3600, "model": "sonnet",
-        "harness": "claude_code", "model_connection": "claude", "name": "researcher",
+        "harness": "claude_code", "model_connection": "claude", "name": "researcher", "workstream": "Q3 launch",
     }
     job = child.job
     assert isinstance(job, nc.Job) and (job.id, job.kind, job.step) == ("op_t", "agent.task", "working")

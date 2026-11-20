@@ -1563,6 +1563,11 @@ export interface SpawnOptions {
   modelConnection?: string | Connection;
   /** `<parent>-<8 hex>` when omitted. */
   name?: string;
+  /**
+   * The line of work the task belongs to (`Workstream`): one of yours, matched whatever its case, or a new name,
+   * which makes one. Every charge of the job, and of what it starts, is counted under it.
+   */
+  workstream?: string;
   /** Whose conversation `conversation` is (an account parent talking to a user: that user's thread). */
   user?: UserOption;
 }
@@ -3023,6 +3028,7 @@ export class Agent extends ApiObject {
         harness: options.harness,
         model_connection: await modelConnectionRef(options.modelConnection, owner),
         name: options.name,
+        workstream: options.workstream,
       }),
       user: scope,
     });

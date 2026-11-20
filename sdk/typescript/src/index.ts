@@ -72,7 +72,7 @@ export { Policy, Rule } from "./policy.ts";
 export type { PolicyDraft, PolicyOptions, PolicyRules, PolicyVerdict, RuleInput } from "./policy.ts";
 export { Brand } from "./brand.ts";
 export type { BrandFields } from "./brand.ts";
-export { Usage, usage } from "./usage.ts";
+export { Usage, usage, Workstream } from "./usage.ts";
 export type {
   AgentBudget, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges, UsageChargesOptions,
   UsageGroup, UsageLedger, UsageLimits, UsageOptions, UsagePoint, UsageSeries, UsageSeriesLine, UsageSeriesOptions,

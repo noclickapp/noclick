@@ -1,11 +1,12 @@
 """Spend: ``noclick.usage(group_by="user")``, ``noclick.Usage.series(group_by="agent")``,
-``noclick.Usage.limits()``, and the account's ledger: ``noclick.Usage.ledger()``, ``noclick.Usage.charges()``,
-``noclick.Usage.billing()``."""
+``noclick.Usage.limits()``, the account's ledger: ``noclick.Usage.ledger()``, ``noclick.Usage.charges()``,
+``noclick.Usage.billing()``, and the workstreams it's counted under (``noclick.Workstream``)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional
+from urllib.parse import quote
 
 from ._client import Client, resolve_client
 from ._object import compact, iso_time, parse_time, read_scope, ref_id, required_number as num
@@ -15,8 +16,8 @@ from ._scope import AMBIENT
 
 @dataclass(frozen=True)
 class UsageGroup:
-    """Spend of one user, key, agent, app or person (``id``) in the period. ``name`` is a person's name, with
-    ``group_by="person"``."""
+    """Spend of one user, key, agent, app, person or workstream (``id``) in the period. ``name`` is a person's
+    name, with ``group_by="person"``, or a workstream's, with ``group_by="workstream"``."""
 
     id: Optional[str]
     usd: float
@@ -274,8 +275,10 @@ class Usage:
     ) -> UsageSeries:
         """Daily spend between ``from_`` and ``to`` (default: the current month,
         at most 92 days), one line per ``group_by`` ``key``, ``user``,
-        ``agent``, ``type``, ``project`` (an app) or ``person`` (who each
-        charge was for, labelled with their name). ``key`` is a key id or prefix.
+        ``agent``, ``type``, ``project`` (an app), ``person`` (who each
+        charge was for, labelled with their name) or ``workstream`` (the line
+        of work it belongs to, labelled with its name). ``key`` is a key id or
+        prefix.
 
         Returns:
             The lines, largest first, each with its ``label``, ``total_usd`` and daily ``points``.
@@ -473,13 +476,15 @@ async def usage(
     client: Optional[Client] = None,
 ) -> Usage:
     """Spend for ``period`` (``"month"``), optionally split ``group_by``
-    ``"user"``, ``"key"``, ``"agent"``, ``"project"`` (each app) or ``"person"`` (who each charge was for: the
-    person whose message, click or key started the work; the account's owner for work nobody else started), and
-    narrowed to one ``agent`` (an ``Agent`` or its id). Needs the ``usage`` scope.
+    ``"user"``, ``"key"``, ``"agent"``, ``"project"`` (each app), ``"person"`` (who each charge was for: the
+    person whose message, click or key started the work; the account's owner for work nobody else started) or
+    ``"workstream"`` (the line of work it belongs to, as the agent that started it named it), and narrowed to one
+    ``agent`` (an ``Agent`` or its id). Needs the ``usage`` scope.
 
     Returns:
-        The period's ``total_usd`` and, with ``group_by``, one group per user, key, agent, app or person
-        that spent, largest first; a person's group has their ``name``. Without ``group_by``, ``groups`` is empty.
+        The period's ``total_usd`` and, with ``group_by``, one group per user, key, agent, app, person or
+        workstream that spent, largest first; a person's or workstream's group has its ``name`` (the ``None``
+        workstream is work nobody named one for). Without ``group_by``, ``groups`` is empty.
 
     Usage:
         See this month's spend per user::
@@ -510,6 +515,11 @@ async def usage(
 
             for person in noclick.usage(group_by="person").groups:
                 print(person.name, person.usd)
+
+        What each line of work cost::
+
+            for workstream in noclick.usage(group_by="workstream").groups:
+                print(workstream.name or "(unnamed)", workstream.usd)
     """
     params = {"period": period, "group_by": group_by, "agent_id": await ref_id(agent)}
     raw = await resolve_client(client).request("GET", "/v1/usage", params=params, user=user) or {}
@@ -522,3 +532,64 @@ async def usage(
         ],
         raw=raw,
     )
+
+
+@dataclass(frozen=True)
+class Workstream:
+    """A line of work your spend is counted under. An agent names one when it starts work (a child's task, a message
+    it hands another agent, an app's coding job; ``Agent.spawn(workstream=)``), from your workstreams or a new name,
+    and every charge of that work, and of what it starts, belongs to it. A person renames one."""
+
+    id: str
+    #: As it was first written; matched whatever its case.
+    name: str
+    #: What it spent this month (a call acting for one of your users: that user's share).
+    spent_usd: float
+    events: int
+    created_at: Any
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "Workstream":
+        return cls(raw["id"], raw["name"], float(raw.get("spent_usd") or 0), int(raw.get("events") or 0),
+                   parse_time(raw.get("created_at")), raw)
+
+    @synced
+    @staticmethod
+    async def list(*, user: Any = AMBIENT, client: Optional[Client] = None) -> List["Workstream"]:
+        """Your workstreams, most spent this month first, each with what it spent (as
+        ``noclick.usage(group_by="workstream")`` counts it). Needs the ``usage`` scope.
+
+        Returns:
+            Each workstream's ``id``, ``name``, ``spent_usd`` and ``events``. What work nobody named one for spent is
+            the ``None`` group of ``noclick.usage(group_by="workstream")``.
+
+        Usage::
+
+            for workstream in noclick.Workstream.list():
+                print(workstream.name, workstream.spent_usd)
+        """
+        page = await resolve_client(client).request("GET", "/v1/workstreams", user=user) or {}
+        return [Workstream._from(row) for row in page.get("data") or []]
+
+    @synced
+    @staticmethod
+    async def rename(workstream: Any, name: str, *, client: Optional[Client] = None) -> "Workstream":
+        """Rename ``workstream`` (a ``Workstream``, its name in any case, or its id) to ``name``. Renamed onto
+        another workstream's name, it merges into that one: its charges so far read as that one's (none is
+        rewritten), and ``raw["merged_from"]`` names it. Your account's alone: a call acting for one of your users
+        can't. Needs the ``usage`` scope.
+
+        Returns:
+            The workstream it reads as now, without this month's spend (``spent_usd`` 0; ``Workstream.list()`` reads
+            it).
+
+        Usage::
+
+            noclick.Workstream.rename("website", "Bakery site")
+            noclick.Workstream.rename("Menu", "Bakery site")   # merges Menu into it
+        """
+        ref = workstream.id if isinstance(workstream, Workstream) else str(workstream)
+        raw = await resolve_client(client).request(
+            "PATCH", f"/v1/workstreams/{quote(ref, safe='')}", json={"name": name}, user=None) or {}
+        return Workstream._from(raw)

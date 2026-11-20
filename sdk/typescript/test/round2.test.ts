@@ -121,6 +121,34 @@ test("usage groups by the person each charge was for, by name", async () => {
   assert.deepEqual([usage.group("login-ana").name, usage.group("nobody").name], ["Ana", null]);
 });
 
+test("usage groups by workstream, by name", async () => {
+  const { api } = setup();
+  const route = api.on("GET", "/v1/usage", json({
+    object: "usage", period: "2026-09", total_usd: 12.5, group_by: "workstream",
+    groups: [{ id: "ws_1", name: "Bakery site", usd: 9, events: 30 }, { id: null, name: null, usd: 3.5, events: 2 }],
+  }));
+  const usage = await nc.usage({ groupBy: "workstream" });
+  assert.equal(route.last.query.get("group_by"), "workstream");
+  assert.deepEqual(usage.groups.map((g) => [g.id, g.name, g.usd]), [["ws_1", "Bakery site", 9], [null, null, 3.5]]);
+});
+
+test("workstreams are listed with their spend and renamed by name or id", async () => {
+  const { api } = setup();
+  const row = { object: "workstream", id: "ws_1", name: "Bakery site", created_at: "2026-11-20T10:00:00+00:00", updated_at: "2026-11-20T10:00:00+00:00" };
+  const listed = api.on("GET", "/v1/workstreams", json({ object: "list", unnamed_usd: 3.5, data: [{ ...row, spent_usd: 9, events: 30 }] }));
+  const [site] = await nc.Workstream.list({ user: USER_ID });
+  assert.equal(listed.last.headers.get("NoClick-User"), USER_ID);
+  assert.deepEqual([site.id, site.name, site.spentUsd, site.events, site.createdAt?.getUTCFullYear()], ["ws_1", "Bakery site", 9, 30, 2026]);
+  const renamed = api.on("PATCH", "/v1/workstreams/web%2Fsite%20old", json({ ...row, merged_from: { id: "ws_2", name: "Menu" } }));
+  const merged = await nc.Workstream.rename("web/site old", "Bakery site");
+  assert.deepEqual(renamed.last.body, { name: "Bakery site" });
+  assert.equal(renamed.last.headers.get("NoClick-User"), null);
+  assert.deepEqual([merged.id, merged.spentUsd, (merged.raw.merged_from as nc.JsonObject).name], ["ws_1", 0, "Menu"]);
+  const byId = api.on("PATCH", "/v1/workstreams/ws_1", json({ ...row, name: "Bakery" }));
+  assert.equal((await nc.Workstream.rename(site, "Bakery")).name, "Bakery");
+  assert.equal(byId.count, 1);
+});
+
 test("a spend cap refusal is SpendCapExceeded and is not retried", async () => {
   const { api, sleeps } = setup();
   const route = api.on("POST", "/v1/sandboxes", apiError(402, "spend_cap_exceeded", "User cap reached.", { cap: 5, spent: 5.01, scope: "user" }));

@@ -271,6 +271,35 @@ def test_usage_grouped_by_person_names_each(api, client):
     assert spend["login-ana"].name == "Ana" and spend["nobody"].name is None
 
 
+def test_usage_grouped_by_workstream_names_each(api, client):
+    route = api.get("/v1/usage").respond(json={**USAGE, "group_by": "workstream", "groups": [
+        {"id": "ws_1", "name": "Bakery site", "usd": 9.0, "events": 30}, {"id": None, "name": None, "usd": 3.5, "events": 2},
+    ]})
+    spend = nc.usage(group_by="workstream")
+    assert route.calls.last.request.url.params["group_by"] == "workstream"
+    assert [(g.id, g.name, g.usd) for g in spend.groups] == [("ws_1", "Bakery site", 9.0), (None, None, 3.5)]
+
+
+def test_workstreams_are_listed_with_their_spend_and_renamed_by_name(api, client):
+    listed = api.get("/v1/workstreams").respond(json={"object": "list", "unnamed_usd": 3.5, "data": [
+        {"object": "workstream", "id": "ws_1", "name": "Bakery site", "spent_usd": 9.0, "events": 30,
+         "created_at": "2026-11-20T10:00:00+00:00", "updated_at": "2026-11-20T10:00:00+00:00"},
+    ]})
+    [site] = nc.Workstream.list(user="user_42")
+    assert listed.calls.last.request.headers["noclick-user"] == "user_42"
+    assert (site.id, site.name, site.spent_usd, site.events) == ("ws_1", "Bakery site", 9.0, 30)
+    assert site.created_at.year == 2026
+    renamed = api.patch("/v1/workstreams/web%2Fsite%20old").respond(json={
+        "object": "workstream", "id": "ws_1", "name": "Bakery site", "created_at": "2026-11-20T10:00:00+00:00",
+        "updated_at": "2026-11-21T10:00:00+00:00", "merged_from": {"id": "ws_2", "name": "Menu"}})
+    merged = nc.Workstream.rename("web/site old", "Bakery site")
+    assert body(renamed.calls.last.request) == {"name": "Bakery site"}
+    assert "noclick-user" not in renamed.calls.last.request.headers
+    assert (merged.id, merged.name, merged.raw["merged_from"]["name"]) == ("ws_1", "Bakery site", "Menu")
+    by_id = api.patch("/v1/workstreams/ws_1").respond(json={**renamed.calls.last.response.json(), "name": "Bakery"})
+    assert nc.Workstream.rename(site, "Bakery").name == "Bakery" and by_id.called
+
+
 def test_usage_for_one_agent(api, client):
     route = api.get("/v1/usage").respond(json=USAGE)
     nc.usage(group_by="user", agent=nc.Agent.from_id("agt_1"))

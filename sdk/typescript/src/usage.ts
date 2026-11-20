@@ -1,5 +1,6 @@
 /**
- * Usage: what the account (or the current user) spent, in total, over time, and against caps.
+ * Usage: what the account (or the current user) spent, in total, over time, and against caps, and the workstreams
+ * it's counted under.
  */
 
 import { resolveClient } from "./client.ts";
@@ -10,7 +11,7 @@ import type { UserOption } from "./scope.ts";
 
 export interface UsageOptions {
   period?: string;
-  groupBy?: "user" | "key" | "agent" | "project" | "person";
+  groupBy?: "user" | "key" | "agent" | "project" | "person" | "workstream";
   agent?: string | ApiObject;
   user?: UserOption;
   client?: NoClick;
@@ -18,14 +19,17 @@ export interface UsageOptions {
 
 /**
  * Spend for `period` (default `month`), optionally split `groupBy` user, key, agent, `project` (each
- * app) or `person` (who each charge was for: the person whose message, click or key started the work; the
- * account's owner for work nobody else started), and narrowed to one `agent`. Needs the `usage` scope. Without
- * `groupBy`, `groups` is empty.
+ * app), `person` (who each charge was for: the person whose message, click or key started the work; the
+ * account's owner for work nobody else started) or `workstream` (the line of work it belongs to, as the agent that
+ * started it named it; the `null` one is work nobody named one for), and narrowed to one `agent`. Needs the `usage`
+ * scope. Without `groupBy`, `groups` is empty.
  *
  *     const month = await usage({ groupBy: "user" });
  *     console.log(month.totalUsd, month.groups);
  *
  *     for (const person of (await usage({ groupBy: "person" })).groups) console.log(person.name, person.usd);
+ *
+ *     for (const line of (await usage({ groupBy: "workstream" })).groups) console.log(line.name ?? "(unnamed)", line.usd);
  */
 export async function usage(options: UsageOptions = {}): Promise<Usage> {
   return await Usage.get(options);
@@ -33,7 +37,7 @@ export async function usage(options: UsageOptions = {}): Promise<Usage> {
 
 export interface UsageGroup {
   id: string | null;
-  /** A person's name, with `groupBy: "person"`; otherwise null. */
+  /** A person's name, with `groupBy: "person"`, or a workstream's, with `groupBy: "workstream"`; otherwise null. */
   name: string | null;
   usd: number;
   events: number;
@@ -47,10 +51,13 @@ export interface UsagePoint {
   events: number;
 }
 
-/** One key, user, agent, app, person or usage type's spend over the period. */
+/** One key, user, agent, app, person, workstream or usage type's spend over the period. */
 export interface UsageSeriesLine {
   id: string | null;
-  /** A key name (`Console` for the console key), a user's id, an agent name, a person's name or a type label. */
+  /**
+   * A key name (`Console` for the console key), a user's id, an agent name, a person's name, a workstream's name or a
+   * type label.
+   */
   label: string | null;
   totalUsd: number;
   events: number;
@@ -72,8 +79,8 @@ export interface UsageSeriesOptions extends ReadOptions {
   from?: Date | string;
   to?: Date | string;
   interval?: "day";
-  /** `project`: one line per app; `person`: one per person each charge was for. */
-  groupBy?: "key" | "user" | "agent" | "type" | "project" | "person";
+  /** `project`: one line per app; `person`: one per person each charge was for; `workstream`: one per workstream. */
+  groupBy?: "key" | "user" | "agent" | "type" | "project" | "person" | "workstream";
   /** A key id or prefix. */
   key?: string;
   /** An `Agent` or agent id. */
@@ -315,7 +322,7 @@ export class Usage {
     return this.groups.find((group) => group.id === id) ?? null;
   }
 
-  /** Daily spend between `from` and `to`, one line per key, user, agent, app, person or usage type. */
+  /** Daily spend between `from` and `to`, one line per key, user, agent, app, person, workstream or usage type. */
   static async series(options: UsageSeriesOptions = {}): Promise<UsageSeries> {
     const { user, userId } = await readScope(options);
     const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/series", {
@@ -442,5 +449,57 @@ export class Usage {
       })),
       raw,
     };
+  }
+}
+
+/**
+ * A line of work your spend is counted under. An agent names one when it starts work (a child's task, a message it
+ * hands another agent, an app's coding job; `agent.spawn(task, { workstream })`), from your workstreams or a new
+ * name, and every charge of that work, and of what it starts, belongs to it. A person renames one.
+ *
+ *     for (const workstream of await Workstream.list()) console.log(workstream.name, workstream.spentUsd);
+ *     await Workstream.rename("Menu", "Bakery site");   // merges Menu into Bakery site
+ */
+export class Workstream {
+  readonly id: string;
+  /** As it was first written; matched whatever its case. */
+  readonly name: string;
+  /** What it spent this month (a call acting for one of your users: that user's share). */
+  readonly spentUsd: number;
+  readonly events: number;
+  readonly createdAt: Date | null;
+  readonly raw: JsonObject;
+
+  private constructor(raw: JsonObject) {
+    this.id = String(raw.id);
+    this.name = String(raw.name);
+    this.spentUsd = num(raw.spent_usd) ?? 0;
+    this.events = num(raw.events) ?? 0;
+    this.createdAt = parseTime(raw.created_at);
+    this.raw = raw;
+  }
+
+  /**
+   * Your workstreams, most spent this month first, each with what it spent (as `usage({ groupBy: "workstream" })`
+   * counts it). Needs the `usage` scope.
+   */
+  static async list(options: { user?: UserOption; client?: NoClick } = {}): Promise<Workstream[]> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workstreams", { user: options.user }));
+    return rows(raw.data).map((row) => new Workstream(row));
+  }
+
+  /**
+   * Rename `workstream` (a `Workstream`, its name in any case, or its id) to `name`. Renamed onto another
+   * workstream's name, it merges into that one: its charges so far read as that one's (none is rewritten), and
+   * `raw.merged_from` names it. Your account's alone: a call acting for one of your users can't. Answers the
+   * workstream it reads as now, without this month's spend (`Workstream.list()` reads it). Needs the `usage` scope.
+   */
+  static async rename(workstream: string | Workstream, name: string, options: { client?: NoClick } = {}): Promise<Workstream> {
+    const ref = typeof workstream === "string" ? workstream : workstream.id;
+    const raw = await resolveClient(options.client).request("PATCH", `/v1/workstreams/${encodeURIComponent(ref)}`, {
+      json: { name },
+      user: null,
+    });
+    return new Workstream(asObject(raw));
   }
 }
