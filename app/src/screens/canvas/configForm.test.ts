@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateShowIf, isValidTimeZone, judgeConfigForm } from './configForm';
+import { compileConfigSchema, evaluateShowIf, isValidTimeZone, judgeConfigForm } from './configForm';
 import { schemaInfoOf } from './stepSchema';
 import { describeRequireOneOfGroup, evaluateRequireOneOf, hasDefaultValue, isFieldEmpty, isFieldRequired } from './stepFields';
 
@@ -92,5 +92,19 @@ describe('the field rules', () => {
         expect(unsatisfiedGroups).toEqual([[['id'], ['lat', 'lng']]]);
         expect([...attentionKeys]).toEqual(['id', 'lng']);
         expect(describeRequireOneOfGroup([['id'], ['lat', 'lng']], (k) => k.toUpperCase())).toBe('ID or LAT + LNG');
+    });
+});
+
+describe('compileConfigSchema', () => {
+    it('compiles a draft 2020-12 schema the form can judge with', () => {
+        const validate = compileConfigSchema({ type: 'object', properties: { n: { type: 'number', exclusiveMinimum: 0 }, name: { type: 'string', pattern: "^\\w[\\w './()-]+$" } } });
+        expect(validate({ n: 1, name: "Ada's repo (v2)" })).toBe(true);
+        expect(validate({ n: 0 })).toBe(false);
+    });
+
+    it("refuses a pattern a u regex can't hold and a keyword in a form the dialect forbids", () => {
+        expect(() => compileConfigSchema({ properties: { name: { type: 'string', pattern: "^[\\w\\']+$" } } })).toThrow(/Invalid escape/);
+        expect(() => compileConfigSchema({ properties: { n: { type: 'number', minimum: 0, exclusiveMinimum: true } } })).toThrow(/exclusiveMinimum must be number/);
+        expect(() => compileConfigSchema({ properties: { v: { type: 'any' } } })).toThrow(/schema is invalid/);
     });
 });

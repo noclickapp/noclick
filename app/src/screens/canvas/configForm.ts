@@ -43,6 +43,12 @@ const ajv = new Ajv2020({
 addFormats(ajv);
 ajv.addFormat('timezone', { type: 'string', validate: isValidTimeZone });
 
+/** Compiles a schema with the form's validator (draft 2020-12, its formats, `timezone`). A schema it can't compile (a
+ *  pattern invalid in a `u` regex, a keyword the dialect doesn't allow) throws: every step type's schema must compile. */
+export function compileConfigSchema(schema: object) {
+    return ajv.compile(schema);
+}
+
 /**
  * Evaluate a ui:show-if condition against the current config.
  * Supports:
@@ -179,7 +185,7 @@ export function judgeConfigForm(
         }
     }
 
-    const validate = ajv.compile(validationSchema);
+    const validate = compileConfigSchema(validationSchema);
     const ajvValid = validate(preprocessed);
 
     const validationErrors: ConfigFormError[] = [];
