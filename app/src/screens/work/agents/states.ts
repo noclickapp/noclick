@@ -78,8 +78,9 @@ function toolStep(tool: string, detail: string | undefined): string {
  *  never an id or JSON. Null when it isn't running a step. */
 export function nowWords(now: AgentNow | null | undefined): string | null {
     if (!now) return null;
-    // A coding harness's step, as the platform said it ("Running the plan usage tests").
-    if (now.label) return now.label;
+    // A coding harness's step, as the platform said it ("Running the plan usage tests"), while it runs; once it ended
+    // and the turn goes on, it's just working.
+    if (now.label) return now.running ? now.label : null;
     const verb = CODE[now.kind];
     if (verb) {
         const [, rest = ''] = /^(?:bash:|edit|read|search)\s*(.*)$/.exec(now.line) ?? [];

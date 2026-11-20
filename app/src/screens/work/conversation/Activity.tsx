@@ -132,7 +132,7 @@ export function SystemDivider({ icon: Icon, label, detail }: { icon?: LucideIcon
  *  under it, each one line and what it found (one can still be at work after the reply). A coding harness's turn the
  *  platform summed up reads as its summary ("Worked for 6m 12s · read 9 files, searched 7 times"), what it changed,
  *  then its test runs and failures in order, ending on the last run's result; opened, every step. */
-export function WorkFold({ steps: all, ms, stopped, mode, groups = [], summary = null, children }: { steps: Step[]; ms: number; stopped?: boolean; mode: ToolCalls; groups?: StepGroup[]; summary?: TurnSummary | null; children?: ReactNode }) {
+export function WorkFold({ steps: all, ms, stopped, mode, groups = [], summary = null, onChanges, children }: { steps: Step[]; ms: number; stopped?: boolean; mode: ToolCalls; groups?: StepGroup[]; summary?: TurnSummary | null; onChanges?: () => void; children?: ReactNode }) {
     const [open, setOpen] = useState(false);
     const steps = all.filter((s) => !isSubagentCall(s));
     const subagents = all.filter(isSubagentCall).filter((s) => mode === 'all' || s.running || failedStep(s));
@@ -158,7 +158,7 @@ export function WorkFold({ steps: all, ms, stopped, mode, groups = [], summary =
                     </span>
                     <ChevronRight className={cn('mt-1 h-3.5 w-3.5 shrink-0 transition-transform duration-200', open && 'rotate-90')} strokeWidth={2} />
                 </button>
-                {summary.changed && <ChangedRow changed={summary.changed} />}
+                {summary.changed && <ChangedRow changed={summary.changed} onOpen={onChanges} />}
                 <StepList steps={open ? steps : pinned} groups={open ? groups : []} live={false} />
                 {subagents.length > 0 && <StepList steps={subagents} live={false} className="mt-0.5" />}
                 {children}
@@ -193,24 +193,31 @@ export function WorkFold({ steps: all, ms, stopped, mode, groups = [], summary =
 
 /** A turn's steps in order, each run of reads and searches the platform folded as one line (`groups`). */
 export function StepList({ steps, live, groups = [], className }: { steps: Step[]; live: boolean; groups?: StepGroup[]; className?: string }) {
+    const groupOf = new Map<string, StepGroup>();
+    for (const g of groups) for (const id of g.stepIds) groupOf.set(id, g);
+    const members = new Map<string, Step[]>();
+    for (const s of steps) {
+        const g = groupOf.get(s.id);
+        if (g) members.set(g.id, [...(members.get(g.id) ?? []), s]);
+    }
     const rows: ReactNode[] = [];
     const drawn = new Set<string>();
     for (const s of steps) {
-        const group = groups.find((g) => g.stepIds.includes(s.id));
-        const members = group ? steps.filter((m) => group.stepIds.includes(m.id)) : [];
-        if (group && members.length > 1) {
-            if (!drawn.has(group.id)) rows.push(<FoldRow key={group.id} group={group} steps={members} live={live} />);
-            drawn.add(group.id);
+        const g = groupOf.get(s.id);
+        const folded = g ? members.get(g.id)! : [];
+        if (g && folded.length > 1) {
+            if (!drawn.has(g.id)) rows.push(<FoldRow key={g.id} group={g} steps={folded} live={live} groups={groups} />);
+            drawn.add(g.id);
             continue;
         }
-        rows.push(<StepRow key={s.id} step={s} live={live} />);
+        rows.push(<StepRow key={s.id} step={s} live={live} groups={groups} />);
     }
     return <ul className={className}>{rows}</ul>;
 }
 
 /** Reads and searches in a row as one line ("Read 6 files, searched for 3 patterns"), opening in place, one level down,
  *  on each of them, each opening again on its command and what it printed. */
-function FoldRow({ group, steps, live }: { group: StepGroup; steps: Step[]; live: boolean }) {
+function FoldRow({ group, steps, live, groups }: { group: StepGroup; steps: Step[]; live: boolean; groups: StepGroup[] }) {
     const [open, setOpen] = useState(false);
     const running = live && group.running;
     return (
@@ -230,7 +237,7 @@ function FoldRow({ group, steps, live }: { group: StepGroup; steps: Step[]; live
             {open && (
                 <ul className="mb-1 ml-3 border-l border-border pl-2.5 dark:border-foreground/[0.1]">
                     {steps.map((s) => (
-                        <StepRow key={s.id} step={s} live={live} />
+                        <StepRow key={s.id} step={s} live={live} groups={groups} />
                     ))}
                 </ul>
             )}
@@ -239,7 +246,7 @@ function FoldRow({ group, steps, live }: { group: StepGroup; steps: Step[]; live
 }
 
 /** What a turn changed, one line ("Changed 5 files +310 and 4 by script"), opening on each file and how. */
-function ChangedRow({ changed }: { changed: NonNullable<TurnSummary['changed']> }) {
+function ChangedRow({ changed, onOpen }: { changed: NonNullable<TurnSummary['changed']>; onOpen?: () => void }) {
     const [open, setOpen] = useState(false);
     return (
         <div data-testid="turn-changed">
@@ -268,6 +275,13 @@ function ChangedRow({ changed }: { changed: NonNullable<TurnSummary['changed']> 
                             {f.how.length > 0 && <span className="shrink-0">· {f.how.join(', ')}</span>}
                         </li>
                     ))}
+                    {onOpen && (
+                        <li>
+                            <button type="button" onClick={onOpen} className="text-foreground/80 underline-offset-2 hover:underline">
+                                See the changes
+                            </button>
+                        </li>
+                    )}
                 </ul>
             )}
         </div>
@@ -316,9 +330,9 @@ export function DiffStat({ added, removed, className }: { added: number; removed
 
 /** One step, t3code's row: an icon in a 24px slot, what it did, and opened, its output or its change, indented under
  *  the words. A subagent's call is its group; a NoClick agent it started, that agent's row. */
-export function StepRow({ step, live }: { step: Step; live: boolean }) {
+export function StepRow({ step, live, groups = [] }: { step: Step; live: boolean; groups?: StepGroup[] }) {
     if (step.id.startsWith('request:')) return <AskedRow step={step} />;
-    if (isSubagentCall(step)) return <SubagentGroup step={step} />;
+    if (isSubagentCall(step)) return <SubagentGroup step={step} groups={groups} />;
     const child = spawnedChild(step);
     if (child) return <ChildAgentRow child={child} />;
     return <WorkRow step={step} live={live} />;
@@ -337,7 +351,7 @@ export const subagentTask = (step: Step): string => String(step.arguments.descri
 /** A subagent in its parent's log: "↳ its task · 6 steps · 1m 04s", spinning while it works with its latest step under
  *  it; opened, its own steps under a guide line; done, what it found as a quote; failed, open on its error. Its
  *  call's end is its last words: a summary, or why it failed. */
-function SubagentGroup({ step }: { step: Step }) {
+function SubagentGroup({ step, groups }: { step: Step; groups: StepGroup[] }) {
     const failed = failedStep(step);
     const [open, setOpen] = useState(failed);
     const was = useRef(failed);
@@ -382,7 +396,7 @@ function SubagentGroup({ step }: { step: Step }) {
             {open && (
                 <div className="mb-1 ml-3 border-l border-border pl-2.5 dark:border-foreground/[0.1]">
                     {error && <p className="py-0.5 text-xs leading-relaxed text-red-600 [overflow-wrap:anywhere] dark:text-red-300">{error}</p>}
-                    {n > 0 ? <StepList steps={step.children} live={running} /> : !error && <p className="py-0.5 text-xs text-muted-foreground">{running ? 'Starting…' : 'No steps kept.'}</p>}
+                    {n > 0 ? <StepList steps={step.children} groups={groups} live={running} /> : !error && <p className="py-0.5 text-xs text-muted-foreground">{running ? 'Starting…' : 'No steps kept.'}</p>}
                 </div>
             )}
             {!running && !failed && words && (
@@ -425,7 +439,8 @@ function WorkRow({ step, live }: { step: Step; live: boolean }) {
 /** The line a failed step's output ends on that says why: a test's FAILED line, an error, else its last line. */
 function whyItFailed(output: string): string | null {
     const lines = output.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('[…') && !/^=+.*=+$/.test(l));
-    return lines.find((l) => /^(FAILED|ERROR)\b|Error:|error:|Exception/.test(l)) ?? lines[lines.length - 1] ?? null;
+    const said = lines.filter((l) => /^(FAILED|ERROR)\b|^\w*(Error|Exception)\b|error:/.test(l));
+    return said[said.length - 1] ?? lines[lines.length - 1] ?? null;
 }
 
 /** A harness's step as the platform said it: what it did in words ("Read attachments.py lines 55-110"), how it ended
@@ -494,6 +509,7 @@ function LabeledRow({ step, live }: { step: Step; live: boolean }) {
                         <DiffBlock key={d.path} diff={d.diff} path={d.path} many={step.diffs.length > 1} />
                     ))}
                     {(step.output || (running && step.kind === 'command')) && <OutputTail text={step.output} live={running} />}
+                    {!command && !step.output && !step.diffs.length && <ToolDetail step={step} />}
                 </>
             )}
         </li>
@@ -506,7 +522,7 @@ function RunningTail({ step }: { step: Step }) {
     const lines = step.output.replace(/^\[…[^\]]*\]\n?/, '').replace(/\n$/, '').split('\n').filter((l, i, all) => l || i < all.length - 1);
     const last = lines.slice(-3);
     const before = Math.max(0, (step.outputLines ?? lines.length) - last.length);
-    const progress = step.progress;
+    const progress = step.progress && step.progress.total > 0 ? step.progress : null;
     if (!progress && !last.length) return null;
     return (
         <div className="mb-1 ml-7" data-testid="running-tail">

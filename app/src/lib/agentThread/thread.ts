@@ -694,7 +694,7 @@ function toStep(raw: JsonObject): AgentStep {
         lines: raw.lines && typeof raw.lines === 'object' ? { from: n((raw.lines as JsonObject).from), to: n((raw.lines as JsonObject).to) } : null,
         outputLines: n(raw.output_lines),
         tests: raw.tests && typeof raw.tests === 'object' ? (raw.tests as unknown as StepTests) : null,
-        progress: raw.progress && typeof raw.progress === 'object' ? (raw.progress as unknown as StepProgress) : null,
+        progress: raw.progress && typeof raw.progress === 'object' && n((raw.progress as JsonObject).total) ? (raw.progress as unknown as StepProgress) : null,
         diffStat: raw.diff_stat && typeof raw.diff_stat === 'object' ? (raw.diff_stat as unknown as DiffStat) : null,
         failed: typeof raw.failed === 'boolean' ? raw.failed : null,
         group: s(raw.group),
@@ -905,7 +905,7 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
         case 'group': {
             // A fold of the turn's reads and searches as it stands now; one no longer standing has no steps.
             const group = event.stepGroup;
-            const turn = group && liveTurn(thread);
+            const turn = group && ((event.operationId && thread.entries.find((e): e is TurnEntry => e.kind === 'turn' && e.operationId === event.operationId)) || liveTurn(thread));
             if (!group || !turn) return thread;
             const others = turn.groups.filter((g) => g.id !== group.id);
             return replace(thread, { ...turn, groups: group.stepIds.length ? [...others, group] : others });

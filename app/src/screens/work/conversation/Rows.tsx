@@ -10,7 +10,7 @@ import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { MENU_SURFACE } from '@/ui/menus';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { cn } from '@/ui/utils';
-import { DiffStat, StepList, SystemDivider, WorkFold, WorkingLine, diffStat, type ToolCalls } from './Activity';
+import { DiffStat, StepList, SystemDivider, WorkFold, WorkingLine, diffStat, failedStep, type ToolCalls } from './Activity';
 import { useModelAccounts } from '../newAgent/catalog';
 import { clockOf, XS_BUTTON, XS_GHOST, XS_OUTLINE } from './styles';
 import { changedFiles, stepsOf, type Failure, type MarkerEntry, type NoteEntry, type TurnEntry, type UserEntry } from '@/lib/agentThread/thread';
@@ -240,7 +240,7 @@ export function TurnView({
             {turn.parts.map((p, i) =>
                 p.kind === 'steps' ? (
                     (() => {
-                        const shown = mode === 'all' ? p.steps : mode === 'failures' ? p.steps.filter((s) => s.running || s.isError || (s.exitCode ?? 0) !== 0) : [];
+                        const shown = mode === 'all' ? p.steps : mode === 'failures' ? p.steps.filter((s) => s.running || failedStep(s)) : [];
                         return shown.length ? <StepList key={i} steps={shown} groups={mode === 'all' ? turn.groups : []} live className="mt-1" /> : null;
                     })()
                 ) : p.kind === 'text' ? (
@@ -263,7 +263,7 @@ export function TurnView({
                 </>
             ) : (
                 <div className="px-1 pt-3">
-                    <WorkFold steps={steps} ms={(turn.endedAt ?? turn.startedAt) - turn.startedAt} stopped={turn.status === 'stopped'} mode={mode} groups={turn.groups} summary={turn.summary} />
+                    <WorkFold steps={steps} ms={(turn.endedAt ?? turn.startedAt) - turn.startedAt} stopped={turn.status === 'stopped'} mode={mode} groups={turn.groups} summary={turn.summary} onChanges={onChanges} />
                     {steers.map((p) => p.kind === 'user' && <UserRow key={p.entry.key} entry={p.entry} mine={mine(p.entry)} compact onRewind={onRewind && mine(p.entry) && p.entry.id ? () => onRewind(p.entry) : undefined} />)}
                     {turn.failure ? (
                         <>
@@ -283,7 +283,8 @@ export function TurnView({
                         )
                     )}
                     {cards}
-                    {files.length > 0 && <ChangesCard files={files} onOpen={onChanges} />}
+                    {/* A turn the platform summed up says what it changed in its fold. */}
+                    {files.length > 0 && !turn.summary?.changed && <ChangesCard files={files} onOpen={onChanges} />}
                     {turn.reply && !turn.failure && <MessageMeta end={false} at={turn.endedAt ?? turn.startedAt} text={turn.reply} />}
                 </div>
             )}
