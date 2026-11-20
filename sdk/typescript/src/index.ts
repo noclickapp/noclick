@@ -36,7 +36,7 @@ export { ApiRequest } from "./apiRequest.ts";
 export type { ApiRequestFilters } from "./apiRequest.ts";
 export { ConnectLink, Connection, ConnectionOperations, run } from "./connection.ts";
 export type {
-  ConnectionAccess, ConnectionCreateOptions, ConnectionOrigin, ConnectionStatus, InWorkspace, IntegrationEvent, IntegrationInfo, IntegrationKind, IntegrationOperation, LinkOptions, LookupOption,
+  ConnectionAccess, ConnectionCreateOptions, ConnectionHealth, ConnectionOrigin, ConnectionShared, ConnectionStatus, InWorkspace, IntegrationEvent, IntegrationInfo, IntegrationKind, IntegrationOperation, LinkOptions, LookupOption,
   LookupOptions, Plan, PlanNextStep, PlanUsage, PlanUsageState, PlanUsageSummary, PlanWindow, SendTo, Token, ToolRef, Verification,
 } from "./connection.ts";
 export { Toolkit } from "./toolkit.ts";

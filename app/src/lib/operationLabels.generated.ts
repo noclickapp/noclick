@@ -215,6 +215,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "connections_operations_run": ["Run Connection Operation", "POST", "outbound"],
     "connections_require_approval": ["Require Approval", "POST", "write"],
     "connections_test_account": ["Mark Test Account", "POST", "write"],
+    "connections_update": ["Rename Connection", "PATCH", "write"],
     "connections_usage": ["Connection Usage", "GET", "read"],
     "connections_verify": ["Verify Connection", "POST", "read"],
     "databases_branches_create": ["Branch", "POST", "write"],

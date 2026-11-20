@@ -321,6 +321,39 @@ test("markTestAccount lets a preview write through it, and unmarks", async () =>
   assert.deepEqual(route.last.body, { test_account: false });
 });
 
+test("an account connected in the app: who shared it, its live health, the check's whole answer, a rename", async () => {
+  const { api } = setup();
+  const APP = {
+    ...CONNECTION, id: "credential:cred_1", name: "Team inbox", origin: "app", access: "edit",
+    shared: { with: "workspace", by: { name: "Priya Raman", email: "priya@example.test" } },
+    health: { healthy: false, status: "failed", hint: "Scan the code again." },
+  };
+  api.on("GET", "/v1/connections/credential%3Acred_1", json(APP));
+  api.on("POST", "/v1/connections/credential%3Acred_1/verify", json({
+    ...APP, verification: {
+      reachable: true, samples: [{ label: "site", value: null }], message: "ok", noun: "repositories", total: 9,
+      account_label: "octo", proves: "account", error: null,
+    },
+  }));
+  const rename = api.on("PATCH", "/v1/connections/credential%3Acred_1", json({ ...APP, name: "Sales inbox" }));
+
+  const account = await nc.Connection.get("credential:cred_1");
+  assert.deepEqual([account.shared?.with, account.shared?.byName, account.shared?.byEmail],
+    ["workspace", "Priya Raman", "priya@example.test"]);
+  assert.deepEqual([account.health?.healthy, account.health?.status, account.health?.hint], [false, "failed", "Scan the code again."]);
+  const checked = await account.verify();
+  assert.deepEqual(
+    [checked?.noun, checked?.total, checked?.accountLabel, checked?.proves, checked?.error],
+    ["repositories", 9, "octo", "account", null],
+  );
+  assert.equal((await account.rename("Sales inbox")).name, "Sales inbox");
+  assert.deepEqual(rename.last.body, { name: "Sales inbox" });
+  // A named connection, whose kind of account has no live check, reads neither.
+  api.on("GET", "/v1/connections/con_1", json({ ...CONNECTION, shared: null, health: null }));
+  const named = await nc.Connection.get("con_1");
+  assert.deepEqual([named.shared, named.health], [null, null]);
+});
+
 test("create with data, list, get, verify, token, import, delete", async () => {
   const { api } = setup();
   const createRoute = api.on("POST", "/v1/connections", json(CONNECTION, { status: 201 }));

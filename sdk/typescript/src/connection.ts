@@ -37,8 +37,38 @@ import type { UserOption, UserRef } from "./scope.ts";
 /** Whether the provider accepted the credential (`reachable` null = cannot judge). */
 export interface Verification {
   reachable: boolean | null;
+  /** Things of the account's own, as the provider sees them (`{ label, value }`). */
   samples: unknown[];
   message: string | null;
+  hint: string | null;
+  /** What the samples are ("repositories", "channels"); `null` when the check named none. */
+  noun: string | null;
+  /** How many there are when more than the samples; `null` when the check didn't say. */
+  total: number | null;
+  /** Who the account signs in as; `null` when the check didn't say. */
+  accountLabel: string | null;
+  /** `account` when the answer is the account's own, `reachability` when the provider only accepted the key. */
+  proves: string | null;
+  /** The provider's own words when it turned the account down; `null` otherwise. */
+  error: string | null;
+  raw: JsonObject;
+}
+
+/** How an account shared with yours reaches it: shared with your account's person (`you`) or with the team
+ *  workspace it's read in (`workspace`), and who shared it (`byName`, `byEmail`). */
+export interface ConnectionShared {
+  with: "you" | "workspace";
+  byName: string | null;
+  byEmail: string | null;
+  raw: JsonObject;
+}
+
+/** A provider's live word on a linked session (a WhatsApp number's, a Discord install's). */
+export interface ConnectionHealth {
+  healthy: boolean;
+  /** The provider's own word for its state (`connected`, `failed`, `installed`). */
+  status: string;
+  /** What to do when it isn't healthy. */
   hint: string | null;
   raw: JsonObject;
 }
@@ -315,8 +345,26 @@ function toVerification(value: unknown): Verification | null {
     samples: Array.isArray(raw.samples) ? raw.samples : [],
     message: str(raw.message),
     hint: str(raw.hint),
+    noun: str(raw.noun),
+    total: typeof raw.total === "number" ? raw.total : null,
+    accountLabel: str(raw.account_label),
+    proves: str(raw.proves),
+    error: str(raw.error),
     raw,
   };
+}
+
+function toShared(value: unknown): ConnectionShared | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as JsonObject;
+  const by = asObject(raw.by ?? {});
+  return { with: raw.with === "workspace" ? "workspace" : "you", byName: str(by.name), byEmail: str(by.email), raw };
+}
+
+function toHealth(value: unknown): ConnectionHealth | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as JsonObject;
+  return { healthy: raw.healthy === true, status: str(raw.status) ?? "", hint: str(raw.hint), raw };
 }
 
 /** @internal An integration name from a string or an `IntegrationInfo`. */
@@ -559,6 +607,16 @@ export class Connection extends ApiObject {
   get access(): ConnectionAccess {
     return this._field("access");
   }
+  /** How one connected in the app and shared with your account reaches it, and who shared it; `null` for your own
+   *  and for a named connection. */
+  get shared(): ConnectionShared | null {
+    return toShared(this.raw.shared);
+  }
+  /** The provider's live word on a linked session (a WhatsApp number's, a Discord install's), read with the
+   *  connection; `null` where there's nothing to ask or no telling. */
+  get health(): ConnectionHealth | null {
+    return toHealth(this.raw.health);
+  }
   /** The team workspace it was read in (`organizationId`), where it runs; `null` in your account's own. */
   get organizationId(): string | null {
     return this._field<string | null | undefined>("organization_id") ?? null;
@@ -582,7 +640,8 @@ export class Connection extends ApiObject {
   /**
    * What holds it: agents (in their tools, as their `modelConnection`, given it by their user, or with a trigger on
    * it), channels and workspaces subscribed to its events, hosted MCP servers with it in their tools, apps that bind
-   * it (with the `binding` name) or whose code made it, and numbers connected through it, each with whose it is.
+   * it (with the `binding` name) or whose code made it, numbers connected through it, and the automations whose steps
+   * use its account (`workflow`: yours, and for an account yours owns, those in its workspace), each with whose it is.
    */
   get usedBy(): ConnectionHolder[] {
     const rows = this._field<unknown>("used_by");
@@ -865,10 +924,26 @@ export class Connection extends ApiObject {
     return toPlanUsage(await this.act("GET", "/usage", undefined, false, query));
   }
 
-  /** Re-check the account against the provider. */
+  /**
+   * Re-check the account against the provider: its things as the provider sees them, who it signs in as, or its
+   * refusal in its own words. Each check asks the provider, so an account makes at most 20 a minute
+   * (`RateLimited` past them).
+   */
   async verify(): Promise<Verification | null> {
     this._raw = asObject(await this.act("POST", "/verify"));
     return toVerification(this._raw.verification);
+  }
+
+  /**
+   * Rename an account connected in the app (`origin` `app`): the name your account and the app see, which nothing
+   * finds it by. Its owner renames it, or someone it's shared with to edit (`PermissionDenied` otherwise). A named
+   * connection's name is how code finds it, so it isn't renamed (`InvalidRequest`).
+   *
+   *     await (await Connection.get("credential:...")).rename("Sales inbox");
+   */
+  async rename(name: string): Promise<this> {
+    this._raw = asObject(await this.act("PATCH", "", { name }, true));
+    return this;
   }
 
   /**

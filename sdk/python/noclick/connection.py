@@ -40,19 +40,64 @@ from .repo import RepoCheckout, _folder, _pushable
 
 @dataclass(frozen=True)
 class Verification:
-    """Whether the provider accepted the credential (``reachable`` None = cannot judge)."""
+    """Whether the provider accepted the credential (``reachable`` None = cannot judge): things of the account's own
+    as the provider sees them (``samples``, which are ``noun``, ``total`` of them when more), who it signs in as
+    (``account_label``), whether that proves the account (``proves`` ``account``) or only that the key was accepted
+    (``reachability``), and a refusal in the provider's own words (``error``)."""
 
     reachable: Optional[bool]
     samples: List[Any]
     message: Optional[str]
     hint: Optional[str] = None
+    noun: Optional[str] = None
+    total: Optional[int] = None
+    account_label: Optional[str] = None
+    proves: Optional[str] = None
+    error: Optional[str] = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
     def _from(cls, raw: Optional[Dict[str, Any]]) -> Optional["Verification"]:
         if not isinstance(raw, dict):
             return None
-        return cls(raw.get("reachable"), list(raw.get("samples") or []), raw.get("message"), raw.get("hint"), raw)
+        return cls(raw.get("reachable"), list(raw.get("samples") or []), raw.get("message"), raw.get("hint"),
+                   raw.get("noun"), raw.get("total"), raw.get("account_label"), raw.get("proves"), raw.get("error"),
+                   raw)
+
+
+@dataclass(frozen=True)
+class ConnectionShared:
+    """How an account shared with yours reaches it: shared with your account's person (``with_`` ``you``) or with the
+    team workspace it's read in (``workspace``), and who shared it (``by_name``, ``by_email``)."""
+
+    with_: str
+    by_name: Optional[str]
+    by_email: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Optional[Dict[str, Any]]) -> Optional["ConnectionShared"]:
+        if not isinstance(raw, dict):
+            return None
+        by = raw.get("by") or {}
+        return cls(raw.get("with") or "you", by.get("name"), by.get("email"), raw)
+
+
+@dataclass(frozen=True)
+class ConnectionHealth:
+    """A provider's live word on a linked session (a WhatsApp number's, a Discord install's): ``healthy``, the
+    provider's own word for its state (``status``) and, when it isn't healthy, what to do (``hint``)."""
+
+    healthy: bool
+    status: str
+    hint: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Optional[Dict[str, Any]]) -> Optional["ConnectionHealth"]:
+        if not isinstance(raw, dict):
+            return None
+        return cls(raw.get("healthy") is True, raw.get("status") or "", raw.get("hint"), raw)
 
 
 @dataclass(frozen=True)
@@ -367,9 +412,10 @@ class Connection(_Object):
         "used_by",
         doc="What holds it: agents (in their tools, as their ``model_connection``, given it by their user, or with a "
         "trigger on it), channels and workspaces subscribed to its events, hosted MCP servers with it in their tools, "
-        "apps that bind it or whose code made it, and numbers connected through it. Each is ``kind`` (``agent``, "
-        "``channel``, ``workspace``, ``mcp_server``, ``project`` or ``phone_number``), ``id``, ``name``, ``user_id`` "
-        "and an app's ``binding`` name.",
+        "apps that bind it or whose code made it, numbers connected through it, and the automations whose steps use "
+        "its account (yours, and for an account yours owns, those in its workspace). Each is ``kind`` (``agent``, "
+        "``channel``, ``workspace``, ``mcp_server``, ``project``, ``phone_number`` or ``workflow``), ``id``, "
+        "``name``, ``user_id`` and an app's ``binding`` name.",
     )
     connected_at: Any = field("connected_at", parse_time)
     created_at: Any = field("created_at", parse_time)
@@ -395,6 +441,18 @@ class Connection(_Object):
     @property
     def verification(self) -> Optional[Verification]:
         return Verification._from(self._sync_raw().get("verification"))
+
+    @property
+    def shared(self) -> Optional[ConnectionShared]:
+        """How one connected in the app and shared with your account reaches it, and who shared it; None for your
+        own and for a named connection."""
+        return ConnectionShared._from(self._sync_raw().get("shared"))
+
+    @property
+    def health(self) -> Optional[ConnectionHealth]:
+        """The provider's live word on a linked session (a WhatsApp number's, a Discord install's), read with the
+        connection; None where there's nothing to ask or no telling."""
+        return ConnectionHealth._from(self._sync_raw().get("health"))
 
     @property
     def plan(self) -> Optional[Plan]:
@@ -1175,12 +1233,15 @@ class Connection(_Object):
 
     @synced
     async def verify(self) -> Optional[Verification]:
-        """Re-check the account against the provider.
+        """Re-check the account against the provider. Each check asks the provider, so an
+        account makes at most 20 a minute (``noclick.RateLimited`` past them).
 
         Returns:
             The provider's verdict, also kept as ``verification``: ``reachable`` is
             ``True`` when it accepted the account, ``False`` when it refused it, and
-            ``None`` when NoClick can't tell; ``message`` says what was found.
+            ``None`` when NoClick can't tell; ``message`` says what was found, and
+            ``samples``, ``noun``, ``total``, ``account_label`` and ``error`` what
+            the provider showed or said.
 
         Usage::
 
@@ -1208,6 +1269,25 @@ class Connection(_Object):
             print(gmail.approval_operations)   # ['delete_message', 'send_email_message']
         """
         self._raw = await self._act("POST", "/require_approval", json={"operations": list(operations)}) or {}
+        return self
+
+    @synced
+    async def rename(self, name: str) -> "Connection":
+        """Rename an account connected in the app (``origin`` ``app``): the name your
+        account and the app see, which nothing finds it by. Its owner renames it, or someone
+        it's shared with to edit (``noclick.PermissionDenied`` otherwise). A named
+        connection's name is how code finds it, so it isn't renamed (``noclick.InvalidRequest``).
+
+        Returns:
+            The connection, with its new ``name``.
+
+        Usage::
+
+            inbox = noclick.Connection.get("credential:...")
+            inbox.rename("Sales inbox")
+            print(inbox.name)   # Sales inbox
+        """
+        self._raw = await self._act("PATCH", "", write=True, json={"name": name}) or {}
         return self
 
     @synced

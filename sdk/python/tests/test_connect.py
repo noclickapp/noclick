@@ -316,6 +316,32 @@ def test_mark_test_account_lets_a_preview_write_through_it_and_unmarks(api, clie
     assert body(route.calls.last.request) == {"test_account": False}
 
 
+def test_an_app_account_says_who_shared_it_its_live_health_the_checks_whole_answer_and_renames(api, client):
+    app = {**CONN, "id": "credential:cred_1", "name": "Team inbox", "origin": "app", "access": "edit",
+           "shared": {"with": "workspace", "by": {"name": "Priya Raman", "email": "priya@example.test"}},
+           "health": {"healthy": False, "status": "failed", "hint": "Scan the code again."}}
+    api.get("/v1/connections/credential%3Acred_1").respond(json=app)
+    api.post("/v1/connections/credential%3Acred_1/verify").respond(json={**app, "verification": {
+        "reachable": True, "samples": [{"label": "site", "value": None}], "message": "ok", "noun": "repositories",
+        "total": 9, "account_label": "octo", "proves": "account", "error": None}})
+    rename = api.patch("/v1/connections/credential%3Acred_1").respond(json={**app, "name": "Sales inbox"})
+
+    account = nc.Connection.get("credential:cred_1")
+    assert (account.shared.with_, account.shared.by_name, account.shared.by_email) == (
+        "workspace", "Priya Raman", "priya@example.test")
+    assert (account.health.healthy, account.health.status, account.health.hint) == (
+        False, "failed", "Scan the code again.")
+    check = account.verify()
+    assert (check.noun, check.total, check.account_label, check.proves, check.error) == (
+        "repositories", 9, "octo", "account", None)
+    assert account.rename("Sales inbox").name == "Sales inbox"
+    assert body(rename.calls.last.request) == {"name": "Sales inbox"}
+    # A named connection, whose kind of account has no live check, reads neither.
+    api.get("/v1/connections/con_1").respond(json={**CONN, "shared": None, "health": None})
+    named = nc.Connection.get("con_1")
+    assert (named.shared, named.health) == (None, None)
+
+
 def test_from_name_without_create_raises_not_found_and_a_concurrent_create_is_read(api, client):
     api.get("/v1/connections/gmail").respond(404, json={"error": {"type": "not_found", "message": "No"}})
     try:
