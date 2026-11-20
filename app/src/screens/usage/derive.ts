@@ -25,7 +25,8 @@ export function roundMoney(usd: number): string {
     if (v >= 100) return `${sign}$${Math.round(v).toLocaleString('en-US')}`;
     if (v >= 10) return `${sign}$${v.toFixed(0)}`;
     if (v === 0) return '$0';
-    return `${sign}$${v < 1 ? v.toFixed(2) : v.toFixed(v % 1 === 0 ? 0 : 2)}`;
+    // Whole dollars by the cents shown, so a sum a hair under $5 (float noise) reads "$5", as $5 itself does.
+    return `${sign}$${v < 1 ? v.toFixed(2) : v.toFixed(Math.round(v * 100) % 100 === 0 ? 0 : 2)}`;
 }
 
 /** Split a figure into its dollars and cents for a hero: ["$127", ".40"]. */
