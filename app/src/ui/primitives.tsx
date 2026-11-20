@@ -1,5 +1,5 @@
-// Shared building blocks: marks, eyebrows, section headers, pills, stat tiles,
-// sparklines and the small formatters. Black/zinc/white by design — brand marks
+// Shared building blocks: marks, eyebrows, section headers, pills and the small
+// formatters. Black/zinc/white by design — brand marks
 // are the only colour, red is reserved for failure, and a succeeded thing gets a
 // zinc check, never a green one.
 import React, { type ReactNode } from 'react';
@@ -33,22 +33,6 @@ export function clickableRow(onActivate?: () => void) {
  *  row's rounded hover corners. */
 export const ROWS =
     "[&>*+*]:relative [&>*+*]:before:pointer-events-none [&>*+*]:before:absolute [&>*+*]:before:inset-x-0 [&>*+*]:before:top-0 [&>*+*]:before:h-px [&>*+*]:before:bg-border [&>*+*]:before:content-[''] dark:[&>*+*]:before:bg-foreground/[0.06]";
-
-/** Page and grid rhythm, shared by a grid of cards and its loading skeleton so
- *  the placeholder can never drift from the real page. */
-export const LAYOUT = {
-    pageMaxWidth: 1400,
-    pagePad: 'px-4 py-5 sm:px-7 sm:py-6',
-    gridGap: 'gap-3 sm:gap-[18px]',
-    cardPad: 'p-4 sm:p-[18px]',
-    // Cells draw their own right/bottom hairlines; the grid's -1px margins tuck
-    // the outer ones under the card's border, so the ledger can wrap on phones.
-    // Five cells: pairs on a narrow screen with the last one across, one row wide.
-    ledgerGrid: 'grid -mb-px -mr-px grid-cols-2 lg:grid-cols-5 [&>*:last-child]:col-span-2 lg:[&>*:last-child]:col-span-1',
-    ledgerCell: 'border-b border-r border-border px-4 py-3.5 dark:border-foreground/[0.06] sm:px-5 sm:py-4',
-    greetingGap: 'mb-5',
-    ledgerGap: 'mb-4',
-} as const;
 
 // ---------------------------------------------------------------------------
 // Formatters
@@ -137,24 +121,6 @@ export function Eyebrow({ children, right, className }: { children: ReactNode; r
 }
 
 /** A labelled text link — the configured affordance style (no border, no box). */
-/** A visible but quiet control: the same borderless fill as the active filter
- *  chip and the navbar tab. For navigation that must be findable (the
- *  drill-down's way back) without competing with the page's primary actions. */
-export function SoftButton({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={cn(
-                'inline-flex h-8 items-center gap-1.5 rounded-md bg-foreground/[0.07] px-3 text-[12.5px] font-medium text-foreground transition-colors hover:bg-foreground/[0.12]',
-                className
-            )}
-        >
-            {children}
-        </button>
-    );
-}
-
 export function TextLink({ children, onClick, className, icon = true }: { children: ReactNode; onClick?: () => void; className?: string; icon?: boolean }) {
     return (
         <button
@@ -272,78 +238,5 @@ export function LiveDot({ className }: { className?: string }) {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground/40" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-foreground" />
         </span>
-    );
-}
-
-// ---------------------------------------------------------------------------
-// Figures
-
-/** Stat tile: label · value · optional delta · optional 14-point sparkline. */
-export function StatTile({
-    label,
-    value,
-    delta,
-    trend,
-    tone = 'neutral',
-    onClick,
-    className,
-    hero = false,
-}: {
-    label: string;
-    value: string;
-    delta?: { text: string; good?: boolean };
-    trend?: number[];
-    tone?: 'neutral' | 'failure' | 'attention';
-    onClick?: () => void;
-    className?: string;
-    hero?: boolean;
-}) {
-    const Tag = onClick ? 'button' : 'div';
-    return (
-        <Tag
-            type={onClick ? 'button' : undefined}
-            onClick={onClick}
-            className={cn(
-                'flex min-w-0 flex-col items-start gap-1 text-left',
-                onClick && 'group/stat cursor-pointer',
-                className
-            )}
-        >
-            <span className="text-[11px] font-medium text-foreground/65 dark:text-foreground/45">{label}</span>
-            <span className="flex w-full items-end justify-between gap-3">
-                <span
-                    className={cn(
-                        'leading-none tracking-tight',
-                        hero ? 'text-[48px] font-semibold' : 'text-[22px] font-semibold',
-                        tone === 'failure' && 'text-red-600 dark:text-red-400',
-                        tone === 'attention' && 'text-foreground'
-                    )}
-                >
-                    {value}
-                </span>
-                {trend && <Sparkline values={trend} className="mb-[3px] shrink-0" />}
-            </span>
-            {delta && (
-                <span className={cn('text-[11px]', delta.good === false ? 'text-red-600 dark:text-red-400' : 'text-foreground/60 dark:text-foreground/40')}>
-                    {delta.text}
-                </span>
-            )}
-        </Tag>
-    );
-}
-
-/** 14-point sparkline, de-emphasis ink with the last point marked. */
-export function Sparkline({ values, width = 72, height = 22, className }: { values: number[]; width?: number; height?: number; className?: string }) {
-    if (!values.length) return null;
-    const max = Math.max(1, ...values);
-    const stepX = values.length > 1 ? width / (values.length - 1) : width;
-    const pts = values.map((v, i) => [i * stepX, height - 2 - (v / max) * (height - 4)] as const);
-    const path = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
-    const [lx, ly] = pts[pts.length - 1];
-    return (
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={cn('overflow-visible', className)} aria-hidden>
-            <path d={path} fill="none" stroke="hsl(var(--foreground) / 0.3)" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
-            <circle cx={lx} cy={ly} r={2.5} fill="hsl(var(--foreground))" stroke="hsl(var(--background))" strokeWidth={2} />
-        </svg>
     );
 }
