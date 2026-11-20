@@ -43,6 +43,7 @@ PAGE_OF_MODULE = {
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "workflow_resources": "Workflow", "_watch": "watch",
     "step_type": "Workflow",
+    "workflow_approval": "Workflow",
 }
 # Module docstrings that describe internals rather than the page's names.
 NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "agent_conversations", "app_services", "cron", "live",

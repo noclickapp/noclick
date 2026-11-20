@@ -28,6 +28,8 @@ import { ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPa
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
+import { WorkflowApproval } from "./workflowApproval.ts";
+import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
 export type WorkflowRunStatus = "running" | "succeeded" | "failed";
 
@@ -1528,6 +1530,17 @@ export class Workflow extends ApiObject {
   /** One run, with what each step did (`steps`: status, error and output, in order); an unknown id throws `NotFound`. */
   async getRun(runId: string): Promise<WorkflowRun> {
     return toWorkflowRun(await this._request("GET", `${await this.path()}/runs/${runId}`));
+  }
+
+  /**
+   * Its Approval steps, newest first: those its runs wait at (`status: "pending"`), and those approved, declined or
+   * expired: the first 20, or the first `limit` (at most 100). NoClick asks your account's owner to answer each;
+   * your code answers one with a key naming `approvals:answer` (`approval.approve()`, `approval.decline()`).
+   */
+  async approvals(options: Omit<WorkflowApprovalListOptions, "client"> = {}): Promise<WorkflowApproval[]> {
+    const id = this._known("id");
+    const workflowId = typeof id === "string" ? id : (await this._ensure()).id;
+    return await WorkflowApproval.list(String(workflowId), { ...options, client: this._client });
   }
 
   /**

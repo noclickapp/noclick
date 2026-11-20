@@ -569,6 +569,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "webhooks_list": ["List Webhooks", "GET", "read"],
     "webhooks_test": ["Test Webhook", "POST", "outbound"],
     "webhooks_update": ["Update Webhook", "PATCH", "write"],
+    "workflows_approvals_get": ["Get Workflow Approval", "GET", "read"],
+    "workflows_approvals_list": ["List Workflow Approvals", "GET", "read"],
     "workflows_builds_answer": ["Answer Build", "POST", "write"],
     "workflows_builds_create": ["Start Build", "POST", "write"],
     "workflows_create": ["Create Workflow", "POST", "write"],

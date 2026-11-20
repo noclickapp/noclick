@@ -209,6 +209,28 @@ export interface NoteEntry {
     /** A note saying the agent moved to another model connection, waits for a plan's reset, or is back on the one it
      *  left: drawn as one quiet line. */
     modelSwitch?: ModelSwitchNote;
+    /** A note saying a run of one of the account's workflows waits at its Approval step: its card (Approve, Decline)
+     *  draws under it. */
+    workflowApproval?: WorkflowApprovalNote;
+}
+
+/** The Approval step a note is about: read and answered on /v1 by its card. */
+export interface WorkflowApprovalNote {
+    id: string;
+    workflowId: string;
+    workflowName: string;
+    title: string | null;
+}
+
+function workflowApprovalOf(data: JsonObject | null): WorkflowApprovalNote | undefined {
+    const note = data?.workflow_approval as Partial<Record<string, unknown>> | undefined;
+    if (!note || typeof note.id !== 'string' || typeof note.workflow_id !== 'string') return undefined;
+    return {
+        id: note.id,
+        workflowId: note.workflow_id,
+        workflowName: typeof note.workflow_name === 'string' ? note.workflow_name : 'Your workflow',
+        title: typeof note.title === 'string' ? note.title : null,
+    };
 }
 
 /** What an app testing note says: its state, its line in two parts (the lead in bold, then what it costs), and what the
@@ -437,7 +459,8 @@ function noteOf(m: { role: string | null; text: string; data: JsonObject | null;
     const session: NoteEntry['session'] = !space && (how === 'cleared' || how === 'resumed') ? { how, by: authorOf(by) } : undefined;
     const appTesting = space ? undefined : appTestingOf(m.data);
     const modelSwitch = space ? undefined : modelSwitchOf(m.data);
-    return { kind: 'note', key, text: m.text ?? '', at, setup: space ? null : setupOf(m.data), space, ...(renamedTo ? { renamedTo } : {}), ...(session ? { session } : {}), ...(appTesting ? { appTesting } : {}), ...(modelSwitch ? { modelSwitch } : {}) };
+    const workflowApproval = space ? undefined : workflowApprovalOf(m.data);
+    return { kind: 'note', key, text: m.text ?? '', at, setup: space ? null : setupOf(m.data), space, ...(renamedTo ? { renamedTo } : {}), ...(session ? { session } : {}), ...(appTesting ? { appTesting } : {}), ...(modelSwitch ? { modelSwitch } : {}), ...(workflowApproval ? { workflowApproval } : {}) };
 }
 
 const sameNote = (a: NoteEntry, b: NoteEntry) => a.text === b.text && a.setup?.workflow_id === b.setup?.workflow_id && a.setup?.client === b.setup?.client && a.space?.id === b.space?.id;

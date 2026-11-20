@@ -35,6 +35,7 @@ from ._sync import run_sync, synced
 from ._scope import AMBIENT, resolve_scope
 from .exceptions import AnswerRequired, Conflict, NotFound
 from .operation import Operation, register_result
+from .workflow_approval import WorkflowApproval
 
 
 @dataclass(frozen=True)
@@ -1918,6 +1919,24 @@ class Workflow(_Object):
                 print(step.name, step.status, step.error)
         """
         return WorkflowRun._from(await self._request("GET", f"{await self._path()}/runs/{run_id}"))
+
+    @synced
+    async def approvals(self, *, status: Optional[str] = None, limit: Optional[int] = 20) -> List[WorkflowApproval]:
+        """Its Approval steps, newest first: those its runs wait at (``status="pending"``), and those approved,
+        declined or expired. NoClick asks your account's owner to answer each; your code answers one with a key
+        naming ``approvals:answer`` (``approval.approve()``, ``approval.decline()``).
+
+        Returns:
+            The first ``limit`` (20 by default, at most 100), each a ``noclick.WorkflowApproval``.
+
+        Usage::
+
+            invoices = noclick.Workflow.from_name("Invoices")
+            for approval in invoices.approvals(status="pending"):
+                print(approval.title, approval.values)
+        """
+        workflow_id = self._known("id") or (await self._ensure())["id"]
+        return await WorkflowApproval.list.aio(workflow_id, status=status, limit=limit, client=self._client)
 
     @synced
     async def endpoint(self, *, public: Optional[bool] = None) -> WorkflowEndpoint:

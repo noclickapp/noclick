@@ -163,6 +163,7 @@ from .workflow import (
     BuildQuestion, EditBatch, RunStep, Step, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint,
     WorkflowGraph, WorkflowRun, WorkflowStep, WorkflowVersion,
 )
+from .workflow_approval import WorkflowApproval
 from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
 
 __all__ = [
@@ -227,6 +228,7 @@ __all__ = [
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult", "WorkflowStep",
+    "WorkflowApproval",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
     "RowsPage", "step_types", "step_type", "StepType", "StepTypeOperation", "StepTypeConnection",
     "BuildQuestion", "ExportBundle", "ExportItem",

@@ -491,6 +491,20 @@ describe('an app testing line', () => {
     });
 });
 
+describe('a workflow’s Approval step', () => {
+    const asked = { id: 'wa_1', workflow_id: 'wf_1', workflow_name: 'Invoices', title: 'Pay invoice 1042' };
+
+    it('reads back and arrives live as a note naming the step its card answers; data that isn’t one names none', () => {
+        const note = { kind: 'note', workflowApproval: { id: 'wa_1', workflowId: 'wf_1', workflowName: 'Invoices', title: 'Pay invoice 1042' } };
+        const text = 'Invoices is waiting for your approval: Pay invoice 1042.';
+        expect(history({ role: 'note', text, data: { workflow_approval: asked }, created_at: iso(0) }).entries[0]).toMatchObject(note);
+        expect(play(EMPTY_THREAD, [{ type: 'message', role: 'note', text, data: { workflow_approval: asked } }]).entries[0]).toMatchObject(note);
+        const untitled = history({ role: 'note', text: 'x', data: { workflow_approval: { id: 'wa_2', workflow_id: 'wf_1' } } }).entries[0];
+        expect(untitled).toMatchObject({ workflowApproval: { id: 'wa_2', workflowId: 'wf_1', workflowName: 'Your workflow', title: null } });
+        expect(history({ role: 'note', text: 'x', data: { workflow_approval: { id: 'wa_3' } } }).entries[0]).not.toHaveProperty('workflowApproval');
+    });
+});
+
 describe('a model switch’s line', () => {
     const switched = {
         state: 'switched', lead: 'Claude-work used up. Now on your Claude plan (claude-personal) until 3:20 PM', detail: null,

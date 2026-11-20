@@ -4,10 +4,10 @@
 // quiet work (a check-in, a failed run it looked into, an agent asking for you: the `background` chat) folded to one
 // line, never a message to the owner. What only the Chat page's session carries comes through Work's slots: a
 // message that came by text, email or a call reads as that app drew it (a call's turns as one call), what a message
-// points at as chips, a note setting an automation up as its setup card, a space's news as its note, NoClick's own
-// notes (and its triage of an event from before quiet work had its own chat) folded into "What NoClick handled", and
-// under a reply its cards, the files it made, the app it went back out on, and the account's out-of-funds card where
-// NoClick turned a turn down.
+// points at as chips, a note setting an automation up as its setup card, a workflow's Approval step that waits as its
+// card (Approve, Decline), a space's news as its note, NoClick's own notes (and its triage of an event from before
+// quiet work had its own chat) folded into "What NoClick handled", and under a reply its cards, the files it made, the
+// app it went back out on, and the account's out-of-funds card where NoClick turned a turn down.
 import { useMemo, type ReactNode } from 'react';
 import type { MessageTrigger } from 'noclick';
 import { useSlot } from '@/slots';
@@ -25,6 +25,7 @@ import { wroteIt } from '@/screens/work/viewer';
 import type { SetupCardRef } from './cards/canvases';
 import { UpdatesCard } from './cards/inline/updates';
 import { SpaceNewsNote } from './cards/SpaceNewsNote';
+import { WorkflowApprovalCard } from './cards/WorkflowApprovalCard';
 import { CardsProvider, SetupNoteCard } from './cards/toolCards';
 import { entriesOf, type NoteMessage, type SignalRef } from './cards/updates';
 import { OUT_OF_FUNDS } from './slots';
@@ -90,7 +91,7 @@ function noteRuns(entries: readonly Entry[]): Map<string, NoteRun> {
     for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const next = entries[i + 1];
-        if (e.kind === 'note' && !e.setup && !e.space) {
+        if (e.kind === 'note' && !e.setup && !e.space && !e.workflowApproval) {
             run ??= { notes: [], keys: [] };
             run.notes.push({ note: { isUser: false, text: e.text, isComplete: true, notification: true, sentAt: e.at, turnId: e.key } });
             run.keys.push(e.key);
@@ -192,6 +193,15 @@ export function ChatTranscript() {
                     </div>
                 );
             if (n.space) return <SpaceNewsNote msg={{ isUser: false, text: n.text, isComplete: true, notification: true, sentAt: n.at, space: n.space }} />;
+            if (n.workflowApproval)
+                return (
+                    <div className="px-1 pt-4" data-note="workflow-approval">
+                        <p className="text-[15px] leading-relaxed text-foreground/80">{n.text}</p>
+                        <div className="mt-3">
+                            <WorkflowApprovalCard note={n.workflowApproval} />
+                        </div>
+                    </div>
+                );
             const run = notesAt.get(n.key);
             if (!run) return undefined;
             return run.start === n.key ? <NoteFold run={run} /> : null;
