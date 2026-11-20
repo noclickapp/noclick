@@ -443,10 +443,13 @@ export interface ConnectionCreateOptions extends LinkOptions, CallOptions {
  * (their name is the app's, so refer to them by id). They run, look up,
  * verify and take `requireApproval` like any connection, and an account agent
  * takes one as a tool (the `Connection`, or `"credential:<id>"`,
- * `"credential:<id>.operation"`; a user's agent can't); the app connects and
- * reconnects them, and `delete()` removes one as the app does. One shared with
- * your account has `access` `"view"` or `"edit"`: it runs, but its token,
- * approval rules and deletion stay its owner's.
+ * `"credential:<id>.operation"`; a user's agent can't); the app connects
+ * them, and `delete()` removes one as the app does. A connect link
+ * (`connectLink()`, `request()`) reconnects one in place: a key typed there
+ * replaces its own in the same credential, so everything using it keeps
+ * working; its owner makes the link, or someone it's shared with to edit. One
+ * shared with your account has `access` `"view"` or `"edit"`: it runs, but its
+ * token, approval rules and deletion stay its owner's.
  * A Claude or ChatGPT plan you signed in to in the app is one too, an account
  * agent's `modelConnection`; a plan shared with you, or filled in by someone
  * else, isn't.
@@ -775,7 +778,10 @@ export class Connection extends ApiObject {
   /**
    * A new link where someone connects (or reconnects) this connection's
    * account; `await link.wait()` resolves to the connected `Connection`. The
-   * connection's own `connectUrl` is now this link's.
+   * connection's own `connectUrl` is now this link's. On an account connected in
+   * the app (`credential:<id>`), a key typed there goes into that same
+   * credential, once, before the link expires; one shared with you to use
+   * throws `PermissionDenied`.
    */
   async connectLink(options: LinkOptions = {}): Promise<ConnectLink> {
     const body = linkBody(options);

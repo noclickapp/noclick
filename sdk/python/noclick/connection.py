@@ -367,8 +367,11 @@ class Connection(_Object):
     They run, look up, verify and take ``require_approval`` like any
     connection, and an account agent takes one as a tool (the ``Connection``,
     or ``"credential:<id>"``, ``"credential:<id>.operation"``; a user's agent
-    can't); the app connects and reconnects them, and ``delete()`` removes
-    one as the app does. One shared with your account has ``access``
+    can't); the app connects them, and ``delete()`` removes one as the app
+    does. A connect link (``connect_link()``, ``request()``) reconnects one in
+    place: a key typed there replaces its own in the same credential, so
+    everything using it keeps working; its owner makes the link, or someone
+    it's shared with to edit. One shared with your account has ``access``
     ``"view"`` or ``"edit"``: it runs, but its token, approval rules and
     deletion stay its owner's. A Claude or ChatGPT plan you
     signed in to in the app is one too, an account agent's
@@ -971,7 +974,10 @@ class Connection(_Object):
     ) -> "ConnectLink":
         """Mint a new link where someone connects (or reconnects) this
         connection's account. ``send_to`` ("user", "owner" for your account's
-        owner, an email, or a dict) also delivers it.
+        owner, an email, or a dict) also delivers it. On an account connected in
+        the app (``credential:<id>``), a key typed there goes into that same
+        credential, once, before the link expires; one shared with you to use
+        raises ``PermissionDenied``.
 
         Returns:
             The link: its ``url``, when it ``expires_at``, and where it went when
