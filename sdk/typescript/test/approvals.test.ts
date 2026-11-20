@@ -75,7 +75,7 @@ test("the default policy reads kind by kind and caller by caller", async () => {
   assert.deepEqual(policy.kinds[1], {
     kind: "outside_other_connection", description: "A stranger's turn beyond what it answers on.",
     approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" }, settable: false, setting: null,
-    ceiling: null, effective: { agent: "ask" },
+    ceiling: null, effective: { agent: "ask" }, own: null,
   });
   assert.match(policy.callers.agent, /^A platform agent's/);
   assert.throws(() => policy.default("refund", "agent"), /no kind 'refund'/);
@@ -132,4 +132,35 @@ test("a switch needs a cap, explain reads, and undo takes one back", async () =>
     ...CHANGE, pending: false, undone_at: "2026-11-21T09:02:00+00:00", undone_by: "owner" }));
   const undone = await nc.ApprovalPolicy.undo("chg_1");
   assert.deepEqual([undone.undoneBy, undone.pending], ["owner", false]);
+});
+
+test("a key and a connected app set their own as the account, and the policy reads for one", async () => {
+  const { api } = setup();
+  const patched = api.on("PATCH", "/v1/keys/key_7", json({
+    object: "key", id: "key_7", name: "deploy-bot",
+    approvals: { purchase: { disposition: "allow", under_usd: 20, until: null, pending: false } },
+    approval_changes: [{ ...CHANGE, scope: "key", scope_id: "key_7", changed_by: "owner", key_id: null, pending: false }],
+  }));
+  const mine = await nc.asUser("user_42", () => nc.ApprovalPolicy.setForKey("key_7", {
+    purchase: { disposition: "allow", under_usd: 20 }, purge: null,
+  }));
+  assert.equal(patched.last.headers.get("NoClick-User"), null);
+  assert.deepEqual(patched.last.body, { approvals: { purchase: { disposition: "allow", under_usd: 20 }, purge: null } });
+  assert.deepEqual([mine.kind, mine.id, mine.settings.purchase.under_usd], ["key", "key_7", 20]);
+  assert.deepEqual([mine.changes[0].scope, mine.changes[0].scopeId, mine.autoApproveUnderUsd], ["key", "key_7", null]);
+
+  const app = api.on("PATCH", "/v1/connected_apps/app_1", json({
+    object: "connected_app", id: "app_1", auto_approve_under_usd: null, approvals: {}, approval_changes: [] }));
+  const done = await nc.ApprovalPolicy.setForConnectedApp("app_1", { autoApproveUnderUsd: null });
+  assert.deepEqual(app.last.body, { auto_approve_under_usd: null });
+  assert.deepEqual([done.kind, done.autoApproveUnderUsd, done.changes], ["connected_app", null, []]);
+  await nc.ApprovalPolicy.setForConnectedApp("app_1", { settings: { delete: "ask" } });
+  assert.deepEqual(app.last.body, { approvals: { delete: "ask" } });
+
+  const read = api.on("GET", "/v1/approvals/policy", json({ ...POLICY, key_id: "key_7", kinds: [
+    { ...POLICY.kinds[0], own: { disposition: "deny", under_usd: null, until: null },
+      effective: { connected_app: "under_auto_approve", agent: "ask", app: "allow", key: "deny" } }] }));
+  const policy = await nc.ApprovalPolicy.get({ keyId: "key_7" });
+  assert.equal(read.last.query.get("key_id"), "key_7");
+  assert.deepEqual([policy.kinds[0].own?.disposition, policy.effective("purchase", "key")], ["deny", "deny"]);
 });

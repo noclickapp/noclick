@@ -135,3 +135,46 @@ def test_a_switch_needs_a_cap_explain_reads_and_undo_takes_one_back(api, client)
         **CHANGE, "pending": False, "undone_at": "2026-11-21T09:02:00+00:00", "undone_by": "owner"})
     undone = nc.ApprovalPolicy.undo("chg_1")
     assert (undone.undone_by, undone.pending) == ("owner", False)
+
+
+KEY_CHANGE = {**CHANGE, "scope": "key", "scope_id": "key_7", "changed_by": "owner", "key_id": None, "pending": False}
+
+
+def test_a_key_and_a_connected_app_set_their_own_as_the_account(api, client):
+    patched = api.patch("/v1/keys/key_7").respond(json={
+        "object": "key", "id": "key_7", "name": "deploy-bot",
+        "approvals": {"purchase": {"disposition": "allow", "under_usd": 20.0, "until": None, "pending": False}},
+        "approval_changes": [KEY_CHANGE]})
+    with nc.as_user("user_42"):
+        mine = nc.ApprovalPolicy.set_for_key("key_7", {"purchase": {"disposition": "allow", "under_usd": 20},
+                                                       "purge": None})
+    request = patched.calls.last.request
+    assert "NoClick-User" not in request.headers
+    assert body(request) == {"approvals": {"purchase": {"disposition": "allow", "under_usd": 20}, "purge": None}}
+    [change] = mine.changes
+    assert (mine.kind, mine.id, mine.settings["purchase"]["under_usd"]) == ("key", "key_7", 20.0)
+    assert (change.scope, change.scope_id, mine.auto_approve_under_usd) == ("key", "key_7", None)
+
+    app = api.patch("/v1/connected_apps/app_1").respond(json={
+        "object": "connected_app", "id": "app_1", "auto_approve_under_usd": None, "approvals": {},
+        "approval_changes": []})
+    done = nc.ApprovalPolicy.set_for_connected_app("app_1", auto_approve_under_usd=None)
+    assert body(app.calls.last.request) == {"auto_approve_under_usd": None}
+    assert (done.kind, done.auto_approve_under_usd, done.changes) == ("connected_app", None, [])
+    nc.ApprovalPolicy.set_for_connected_app("app_1", {"delete": "ask"})
+    assert body(app.calls.last.request) == {"approvals": {"delete": "ask"}}
+
+
+def test_the_policy_reads_and_explains_for_one_key(api, client):
+    read = api.get("/v1/approvals/policy").respond(json={**POLICY, "key_id": "key_7", "kinds": [
+        {**POLICY["kinds"][0], "own": {"disposition": "deny", "under_usd": None, "until": None},
+         "effective": {"connected_app": "under_auto_approve", "agent": "ask", "app": "allow", "key": "deny"}}]})
+    policy = nc.ApprovalPolicy.get(key_id="key_7")
+    assert read.calls.last.request.url.params["key_id"] == "key_7"
+    assert policy.kinds[0].own["disposition"] == "deny" and policy.effective("purchase", "key") == "deny"
+    explained = api.post("/v1/approvals/policy/explain").respond(json={
+        "object": "approval_explanation", "kind": "purchase", "caller": "key", "disposition": "deny",
+        "source": "key", "why": "This account's approval settings don't allow a purchase.", "setting": None,
+        "bounds": False})
+    seen = nc.ApprovalPolicy.explain("purchase", "key", connected_app_id="app_1")
+    assert body(explained.calls.last.request)["connected_app_id"] == "app_1" and seen.source == "key"

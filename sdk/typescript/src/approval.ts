@@ -27,12 +27,13 @@
  *     }
  *
  * What NoClick holds, kind by kind and for which callers, reads as `ApprovalPolicy.get()`, and your account switches
- * any kind it may (`ApprovalPolicy.set`) so it needn't wait for a person at all.
+ * any kind it may (`ApprovalPolicy.set`) so it needn't wait for a person at all. A key, or a connected app, sets its own
+ * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`).
  */
 
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { ApiObject, asList, asObject, compact, listAll, parseTime } from "./object.ts";
+import { ApiObject, asList, asObject, compact, defined, listAll, parseTime } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, ReadOptions } from "./object.ts";
 
 /** One kind of call NoClick may hold for a person: what it does by default, and what your account switched. */
@@ -62,25 +63,30 @@ export interface HoldKind {
   ceiling: JsonObject | null;
   /**
    * What each caller meets now: a default, or `allow`, `ask`, `deny` or `allow_under` (a purchase at or under the
-   * setting's `under_usd` runs) by your account's setting.
+   * setting's `under_usd` runs) by your account's setting (or the key's or connected app's own, read with `get({ keyId })`).
    */
   effective: Record<string, string>;
+  /** Read for a key or connected app: what it sets for itself, or null. */
+  own: JsonObject | null;
 }
 
-/** One change to your account's approval switches. */
+/** One change to your account's approval switches, or to a key's or connected app's own. */
 export interface PolicyChange {
   id: string;
   batchId: string;
+  /** Whose settings it changed: `account`, `key` or `connected_app`, and that key's or connected app's id. */
+  scope: string;
+  scopeId: string | null;
   /** The kind it changed. */
   kind: string;
-  /** `setting` or `ceiling`. */
+  /** `setting`, `ceiling` or `auto_approve` (a connected app's auto-approve amount). */
   target: string;
   before: JsonObject | null;
   /** What it set (`disposition`, `under_usd`, `until`); null put NoClick's default back. */
   after: JsonObject | null;
   /** It lets a caller do more than before: a key's loosening waits out an undo window first. */
   loosens: boolean;
-  /** `owner` (signed in) or `key` (with `keyId`). */
+  /** `owner` (signed in), `key` (with `keyId`) or `assistant` (NoClick's, once the owner approved a loosening). */
   changedBy: string;
   keyId: string | null;
   effectiveAt: Date | null;
@@ -99,7 +105,8 @@ export interface ApprovalExplanation {
   caller: string;
   /** `allow`, `ask`, `deny`, or `under_auto_approve` where it turns on the connection's own amount. */
   disposition: string;
-  /** `account` (your setting), `bounds` (NoClick asks this caller first) or `default`. */
+  /** `key` (the key's or connected app's own setting), `account` (your setting), `bounds` (NoClick asks this caller
+   *  first) or `default`. */
   source: string;
   /** What a held call's approval would say; null when it runs. */
   why: string | null;
@@ -115,10 +122,34 @@ export type ApprovalSetting = "allow" | "ask" | "deny" | {
   until?: Date | string;
 } | null;
 
+/** A key's or connected app's own approval settings, as a change left them. */
+export interface OwnApprovals {
+  /** `key` or `connected_app`, and its id. */
+  kind: string;
+  id: string;
+  /** What it sets for itself, by kind (`disposition`, `under_usd`, `until`, `effective_at`, `pending`). */
+  settings: Record<string, JsonObject>;
+  /** A connected app's auto-approve amount (null: it asks before every purchase); null for a key. */
+  autoApproveUnderUsd: number | null;
+  /** Each change the call made. */
+  changes: PolicyChange[];
+  raw: JsonObject;
+}
+
+function ownApprovals(kind: string, entry: unknown): OwnApprovals {
+  const raw = asObject(entry);
+  return {
+    kind, id: String(raw.id), settings: { ...(asObject(raw.approvals) as Record<string, JsonObject>) },
+    autoApproveUnderUsd: (raw.auto_approve_under_usd as number | null | undefined) ?? null,
+    changes: asList(raw.approval_changes).map(policyChange), raw,
+  };
+}
+
 function policyChange(entry: unknown): PolicyChange {
   const c = asObject(entry);
   return {
-    id: String(c.id), batchId: String(c.batch_id), kind: String(c.kind), target: String(c.target),
+    id: String(c.id), batchId: String(c.batch_id), scope: String(c.scope ?? "account"),
+    scopeId: (c.scope_id as string | null | undefined) ?? null, kind: String(c.kind), target: String(c.target),
     before: (c.before as JsonObject | null) ?? null, after: (c.after as JsonObject | null) ?? null,
     loosens: Boolean(c.loosens), changedBy: String(c.changed_by), keyId: (c.key_id as string | null) ?? null,
     effectiveAt: parseTime(c.effective_at), until: parseTime(c.until), pending: Boolean(c.pending),
@@ -164,6 +195,7 @@ export class ApprovalPolicy {
         outsideOnly: Boolean(k.outside_only), defaults, settable: Boolean(k.settable),
         setting: (k.setting as JsonObject | null) ?? null, ceiling: (k.ceiling as JsonObject | null) ?? null,
         effective: k.effective ? { ...(asObject(k.effective) as Record<string, string>) } : { ...defaults },
+        own: (k.own as JsonObject | null | undefined) ?? null,
       };
     });
     this.callers = { ...(asObject(raw.callers) as Record<string, string>) };
@@ -175,10 +207,15 @@ export class ApprovalPolicy {
    * What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit raised,
    * a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default for each
    * kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP, code, an app's
-   * own code), and what your account switched.
+   * own code), and what your account switched. With `keyId` or `connectedAppId`, also what that key or connected app
+   * sets for itself (each kind's `own`), which `effective` reads for its calls.
    */
-  static async get(options: { client?: NoClick } = {}): Promise<ApprovalPolicy> {
-    const raw = await resolveClient(options.client).request("GET", "/v1/approvals/policy", { user: null });
+  static async get(
+    options: { keyId?: string; connectedAppId?: string; client?: NoClick } = {},
+  ): Promise<ApprovalPolicy> {
+    const raw = await resolveClient(options.client).request("GET", "/v1/approvals/policy", {
+      query: { key_id: options.keyId, connected_app_id: options.connectedAppId }, user: null,
+    });
     return new ApprovalPolicy(asObject(raw));
   }
 
@@ -200,16 +237,21 @@ export class ApprovalPolicy {
   }
 
   /**
-   * What a call of `kind` by `caller` would meet now, and why: your account's setting, what NoClick asks that caller
-   * first, or the default. Nothing runs and nothing is held.
+   * What a call of `kind` by `caller` would meet now, and why: the key's or connected app's own setting (`keyId`,
+   * `connectedAppId`: the call is its), your account's setting, what NoClick asks that caller first, or the default.
+   * Nothing runs and nothing is held.
    */
   static async explain(
     kind: string, caller: string,
-    options: { amountUsd?: number; quoted?: boolean; previewed?: boolean; client?: NoClick } = {},
+    options: {
+      amountUsd?: number; quoted?: boolean; previewed?: boolean; keyId?: string; connectedAppId?: string;
+      client?: NoClick;
+    } = {},
   ): Promise<ApprovalExplanation> {
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/approvals/policy/explain", {
       json: compact({ kind, caller, amount_usd: options.amountUsd, quoted: options.quoted ?? true,
-        previewed: options.previewed ?? true }), user: null,
+        previewed: options.previewed ?? true, key_id: options.keyId, connected_app_id: options.connectedAppId }),
+      user: null,
     }));
     return {
       kind: String(raw.kind), caller: String(raw.caller), disposition: String(raw.disposition),
@@ -234,6 +276,49 @@ export class ApprovalPolicy {
     const raw = await resolveClient(options.client).request(
       "POST", `/v1/approvals/policy/changes/${encodeURIComponent(changeId)}/undo`, { user: null });
     return policyChange(raw);
+  }
+
+  /**
+   * Switch what one of your secret keys waits for, in place of the account's, for the calls it makes through MCP and
+   * the code it runs: each named kind as `set` takes it, or null for the account's. Never looser than the account's
+   * ceiling for the kind (else its own setting, else NoClick's default for a key): raise the ceiling with
+   * `set({ ceilings })` first; lowering it later tightens every key at once. A purchase or a deletion past the default
+   * needs a monthly cap on the account. Signed in, with one of your keys naming `approvals:policy` (whose loosening
+   * waits a 10-minute undo window, and never loosens itself), or by NoClick's assistant (whose loosening waits for the
+   * owner).
+   *
+   *     await ApprovalPolicy.set({ ceilings: { purchase: { disposition: "allow", under_usd: 50 } } });
+   *     await ApprovalPolicy.setForKey(keyId, { purchase: { disposition: "allow", under_usd: 20 } });
+   */
+  static async setForKey(
+    keyId: string, settings: Record<string, ApprovalSetting>, options: { client?: NoClick } = {},
+  ): Promise<OwnApprovals> {
+    const raw = await resolveClient(options.client).request("PATCH", `/v1/keys/${encodeURIComponent(keyId)}`, {
+      json: { approvals: wireSettings(settings) as JsonObject }, user: null,
+    });
+    return ownApprovals("key", raw);
+  }
+
+  /**
+   * Switch what a connected app (an MCP client a person connected, NoClick's assistant's grant among them) waits for,
+   * in place of the account's, for its calls and its code's: `settings` as `setForKey` takes them, and its
+   * `autoApproveUnderUsd`, the price at or under which a purchase it makes goes through unasked (null: it asks before
+   * every one), at or under its monthly cap and the account's ceiling for purchases. Signed in, with one of your keys
+   * naming `approvals:policy` (which only lowers an auto-approve amount), or by NoClick's assistant (whose loosening
+   * waits for the owner, and never its own grant's).
+   *
+   *     await ApprovalPolicy.setForConnectedApp(appId, { autoApproveUnderUsd: 10 });
+   */
+  static async setForConnectedApp(
+    connectedAppId: string,
+    options: { settings?: Record<string, ApprovalSetting>; autoApproveUnderUsd?: number | null; client?: NoClick },
+  ): Promise<OwnApprovals> {
+    const raw = await resolveClient(options.client).request(
+      "PATCH", `/v1/connected_apps/${encodeURIComponent(connectedAppId)}`, {
+        json: defined({ approvals: wireSettings(options.settings), auto_approve_under_usd: options.autoApproveUnderUsd }),
+        user: null,
+      });
+    return ownApprovals("connected_app", raw);
   }
 
   private find(kind: string): HoldKind {

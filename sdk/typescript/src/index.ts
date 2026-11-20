@@ -46,7 +46,7 @@ export type {
 export { Human, HumanOperations, HumanRequest } from "./human.ts";
 export { Approval, ApprovalPolicy } from "./approval.ts";
 export type {
-  ApprovalExplanation, ApprovalListOptions, ApprovalSetting, ApprovalStatus, HoldKind, PolicyChange,
+  ApprovalExplanation, ApprovalListOptions, ApprovalSetting, ApprovalStatus, HoldKind, OwnApprovals, PolicyChange,
 } from "./approval.ts";
 export type { Answer, HumanOptions, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";

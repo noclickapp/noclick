@@ -29,6 +29,12 @@ What NoClick holds, kind by kind and for which callers, reads as ``noclick.Appro
 switches any kind it may (``noclick.ApprovalPolicy.set``) so it needn't wait for a person at all::
 
     noclick.ApprovalPolicy.set(settings={"purchase": {"disposition": "allow", "under_usd": 20}})
+
+A key, or a connected app, sets its own within the account's ceiling (``set_for_key``, ``set_for_connected_app``), so
+one autonomous key buys unasked while everything else still asks::
+
+    noclick.ApprovalPolicy.set(ceilings={"purchase": {"disposition": "allow", "under_usd": 50}})
+    noclick.ApprovalPolicy.set_for_key(key_id, {"purchase": {"disposition": "allow", "under_usd": 20}})
 """
 
 from __future__ import annotations
@@ -38,7 +44,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import _Object, compact, field, list_all, parse_time
+from ._object import UNSET, _Object, compact, field, list_all, parse_time
 from ._sync import synced
 from ._scope import AMBIENT
 
@@ -69,17 +75,22 @@ class HoldKind:
     #: The loosest a narrower scope may set it to, or None.
     ceiling: Optional[Dict[str, Any]] = None
     #: What each caller meets now: a default, or ``allow``, ``ask``, ``deny`` or ``allow_under`` (a purchase at or
-    #: under the setting's ``under_usd`` runs) by your account's setting.
+    #: under the setting's ``under_usd`` runs) by your account's setting (or the key's or connected app's own, read
+    #: with ``get(key_id=...)``).
     effective: Dict[str, str] = dc_field(default_factory=dict)
+    #: Read for a key or connected app: what it sets for itself, or None.
+    own: Optional[Dict[str, Any]] = None
 
 
 @dataclass(frozen=True)
 class PolicyChange:
-    """One change to your account's approval switches, as ``ApprovalPolicy.set`` made it."""
+    """One change to your account's approval switches (``ApprovalPolicy.set``), or a key's or connected app's own
+    (``set_for_key``, ``set_for_connected_app``)."""
 
     id: str
     batch_id: str
-    #: The kind it changed, and whether its setting or its ceiling.
+    #: The kind it changed, and whether its setting, its ceiling or (``auto_approve``) a connected app's auto-approve
+    #: amount.
     kind: str
     target: str
     before: Optional[Dict[str, Any]]
@@ -87,7 +98,8 @@ class PolicyChange:
     after: Optional[Dict[str, Any]]
     #: It lets a caller do more than before: a key's loosening waits out an undo window first.
     loosens: bool
-    #: ``owner`` (signed in) or ``key`` (with ``key_id``).
+    #: ``owner`` (signed in), ``key`` (with ``key_id``) or ``assistant`` (NoClick's, once the owner approved a
+    #: loosening).
     changed_by: str
     key_id: Optional[str]
     effective_at: Any
@@ -98,6 +110,9 @@ class PolicyChange:
     undone_by: Optional[str]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: Whose settings it changed: ``account``, ``key`` or ``connected_app``, and that key's or connected app's id.
+    scope: str = "account"
+    scope_id: Optional[str] = None
 
     @staticmethod
     def _from(raw: Dict[str, Any]) -> "PolicyChange":
@@ -106,7 +121,8 @@ class PolicyChange:
             after=raw.get("after"), loosens=bool(raw.get("loosens")), changed_by=raw["changed_by"],
             key_id=raw.get("key_id"), effective_at=parse_time(raw.get("effective_at")), until=parse_time(raw.get("until")),
             pending=bool(raw.get("pending")), undone_at=parse_time(raw.get("undone_at")), undone_by=raw.get("undone_by"),
-            created_at=parse_time(raw.get("created_at")), raw=raw)
+            created_at=parse_time(raw.get("created_at")), raw=raw, scope=raw.get("scope") or "account",
+            scope_id=raw.get("scope_id"))
 
 
 @dataclass(frozen=True)
@@ -117,7 +133,8 @@ class ApprovalExplanation:
     caller: str
     #: ``allow``, ``ask``, ``deny``, or ``under_auto_approve`` where it turns on the connection's own amount.
     disposition: str
-    #: ``account`` (your setting), ``bounds`` (NoClick asks this caller first) or ``default``.
+    #: ``key`` (the key's or connected app's own setting), ``account`` (your setting), ``bounds`` (NoClick asks this
+    #: caller first) or ``default``.
     source: str
     #: What a held call's approval would say; None when it runs.
     why: Optional[str]
@@ -129,6 +146,28 @@ def _wire_setting(value: Any) -> Any:
     if isinstance(value, dict):
         return {k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in value.items()}
     return value
+
+
+@dataclass(frozen=True)
+class OwnApprovals:
+    """A key's or connected app's own approval settings, as a change left them."""
+
+    #: ``key`` or ``connected_app``, and its id.
+    kind: str
+    id: str
+    #: What it sets for itself, by kind (``disposition``, ``under_usd``, ``until``, ``effective_at``, ``pending``).
+    settings: Dict[str, Dict[str, Any]]
+    #: Each change the call made.
+    changes: List[PolicyChange]
+    raw: Dict[str, Any] = dc_field(repr=False)
+    #: A connected app's auto-approve amount (None: it asks before every purchase); None for a key.
+    auto_approve_under_usd: Optional[float] = None
+
+    @staticmethod
+    def _from(kind: str, raw: Dict[str, Any]) -> "OwnApprovals":
+        return OwnApprovals(kind=kind, id=raw["id"], settings=dict(raw.get("approvals") or {}),
+                            changes=[PolicyChange._from(c) for c in raw.get("approval_changes") or []], raw=raw,
+                            auto_approve_under_usd=raw.get("auto_approve_under_usd"))
 
 
 @dataclass(frozen=True)
@@ -152,7 +191,7 @@ class ApprovalPolicy:
             kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
                             outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]),
                             settable=bool(k.get("settable")), setting=k.get("setting"), ceiling=k.get("ceiling"),
-                            effective=dict(k.get("effective") or k["defaults"]))
+                            effective=dict(k.get("effective") or k["defaults"]), own=k.get("own"))
                    for k in raw.get("kinds") or []],
             callers=dict(raw.get("callers") or {}), raw=raw, spend_cap_set=bool(raw.get("spend_cap_set")),
             changes=[PolicyChange._from(c) for c in raw.get("changes") or []])
@@ -200,11 +239,13 @@ class ApprovalPolicy:
 
     @synced
     @classmethod
-    async def get(cls, *, client: Optional[Client] = None) -> "ApprovalPolicy":
+    async def get(cls, *, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
+                  client: Optional[Client] = None) -> "ApprovalPolicy":
         """What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit
         raised, a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default
         for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP,
-        code, an app's own code), and what your account switched.
+        code, an app's own code), and what your account switched. With ``key_id`` or ``connected_app_id``, also what
+        that key or connected app sets for itself (each kind's ``own``), which ``effective`` reads for its calls.
 
         Returns:
             The policy: ``kinds``, each a ``HoldKind``, ``callers`` and ``spend_cap_set``.
@@ -215,8 +256,12 @@ class ApprovalPolicy:
             print(policy.default("purchase", "agent"))   # "ask"
             for kind in policy.kinds:
                 print(kind.kind, kind.effective)
+            mine = noclick.ApprovalPolicy.get(key_id=key_id)
+            print(mine.effective("purchase", "key"))
         """
-        return cls._from(await resolve_client(client).request("GET", "/v1/approvals/policy", user=None))
+        return cls._from(await resolve_client(client).request(
+            "GET", "/v1/approvals/policy", params=compact(key_id=key_id, connected_app_id=connected_app_id),
+            user=None))
 
     @synced
     @classmethod
@@ -259,10 +304,12 @@ class ApprovalPolicy:
     @classmethod
     async def explain(
         cls, kind: str, caller: str, *, amount_usd: Optional[float] = None, quoted: bool = True,
-        previewed: bool = True, client: Optional[Client] = None,
+        previewed: bool = True, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
+        client: Optional[Client] = None,
     ) -> ApprovalExplanation:
-        """What a call of ``kind`` by ``caller`` would meet now, and why: your account's setting, what NoClick asks
-        that caller first, or the default. Nothing runs and nothing is held.
+        """What a call of ``kind`` by ``caller`` would meet now, and why: the key's or connected app's own setting
+        (``key_id``, ``connected_app_id``: the call is its), your account's setting, what NoClick asks that caller
+        first, or the default. Nothing runs and nothing is held.
 
         Returns:
             An ``ApprovalExplanation``: ``disposition``, ``source`` and ``why``.
@@ -273,7 +320,8 @@ class ApprovalPolicy:
             print(seen.disposition, seen.source, seen.why)
         """
         raw = await resolve_client(client).request("POST", "/v1/approvals/policy/explain", json=compact(
-            kind=kind, caller=caller, amount_usd=amount_usd, quoted=quoted, previewed=previewed), user=None)
+            kind=kind, caller=caller, amount_usd=amount_usd, quoted=quoted, previewed=previewed, key_id=key_id,
+            connected_app_id=connected_app_id), user=None)
         return ApprovalExplanation(kind=raw["kind"], caller=raw["caller"], disposition=raw["disposition"],
                                    source=raw["source"], why=raw.get("why"), setting=raw.get("setting"), raw=raw)
 
@@ -316,6 +364,74 @@ class ApprovalPolicy:
         raw = await resolve_client(client).request(
             "POST", f"/v1/approvals/policy/changes/{quote(change_id, safe='')}/undo", user=None)
         return PolicyChange._from(raw)
+
+    @synced
+    @classmethod
+    async def set_for_key(cls, key_id: str, settings: Dict[str, Any], *,
+                          client: Optional[Client] = None) -> OwnApprovals:
+        """Switch what one of your secret keys waits for, in place of the account's, for the calls it makes through
+        MCP and the code it runs: each named kind to ``"allow"``, ``"ask"`` or ``"deny"``, a dict as ``set`` takes,
+        or None for the account's. Never looser than the account's ceiling for the kind (else its own setting, else
+        NoClick's default for a key): raise the ceiling with ``set(ceilings=...)`` first. Lowering the ceiling later
+        tightens every key at once. A purchase or a deletion past the default needs a monthly cap on the account.
+
+        Signed in, with one of your keys naming ``approvals:policy`` (whose loosening waits a 10-minute undo window,
+        and never loosens itself), or by NoClick's assistant (whose loosening waits for the owner).
+
+        Returns:
+            The key's own settings, with ``changes``.
+
+        Raises:
+            noclick.InvalidRequest: looser than the account allows a key, or a key that takes no settings (the
+                console key, a publishable key).
+            noclick.PermissionDenied: the caller may not change them, a key loosening its own, or a purchase or a
+                deletion past the default with no monthly cap (``reason`` ``spend_cap_required``).
+
+        Usage::
+
+            noclick.ApprovalPolicy.set(ceilings={"purchase": {"disposition": "allow", "under_usd": 50}})
+            mine = noclick.ApprovalPolicy.set_for_key(key_id, {"purchase": {"disposition": "allow", "under_usd": 20}})
+            print(mine.settings["purchase"])
+        """
+        raw = await resolve_client(client).request(
+            "PATCH", f"/v1/keys/{quote(key_id, safe='')}",
+            json={"approvals": {k: _wire_setting(v) for k, v in settings.items()}}, user=None)
+        return OwnApprovals._from("key", raw)
+
+    @synced
+    @classmethod
+    async def set_for_connected_app(cls, connected_app_id: str, settings: Optional[Dict[str, Any]] = None, *,
+                                    auto_approve_under_usd: Any = UNSET,
+                                    client: Optional[Client] = None) -> OwnApprovals:
+        """Switch what a connected app (an MCP client a person connected, NoClick's assistant's grant among them)
+        waits for, in place of the account's, for its calls and its code's: ``settings`` as ``set_for_key`` takes,
+        and its ``auto_approve_under_usd``, the price at or under which a purchase it makes goes through unasked
+        (None: it asks before every one), at or under its monthly cap and the account's ceiling for purchases.
+
+        Signed in, with one of your keys naming ``approvals:policy`` (which only lowers an auto-approve amount, and
+        whose loosening waits a 10-minute undo window), or by NoClick's assistant (whose loosening waits for the
+        owner, and never its own grant's).
+
+        Returns:
+            The connected app's own settings and auto-approve amount, with ``changes``.
+
+        Raises:
+            noclick.InvalidRequest: looser than the account's ceiling, or an amount above its monthly cap.
+            noclick.PermissionDenied: the caller may not change them, or loosens what it acts as.
+
+        Usage::
+
+            app = noclick.ApprovalPolicy.set_for_connected_app(app_id, auto_approve_under_usd=10)
+            noclick.ApprovalPolicy.set_for_connected_app(app_id, {"delete": "ask"})
+        """
+        body: Dict[str, Any] = {}
+        if settings is not None:
+            body["approvals"] = {k: _wire_setting(v) for k, v in settings.items()}
+        if auto_approve_under_usd is not UNSET:
+            body["auto_approve_under_usd"] = auto_approve_under_usd
+        raw = await resolve_client(client).request(
+            "PATCH", f"/v1/connected_apps/{quote(connected_app_id, safe='')}", json=body, user=None)
+        return OwnApprovals._from("connected_app", raw)
 
 
 class Approval(_Object):
