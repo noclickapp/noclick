@@ -375,8 +375,9 @@ class ApprovalPolicy:
         NoClick's default for a key): raise the ceiling with ``set(ceilings=...)`` first. Lowering the ceiling later
         tightens every key at once. A purchase or a deletion past the default needs a monthly cap on the account.
 
-        Signed in, with one of your keys naming ``approvals:policy`` (whose loosening waits a 10-minute undo window,
-        and never loosens itself), or by NoClick's assistant (whose loosening waits for the owner).
+        Any of your account's keys tightens them. Loosening takes one naming ``approvals:policy``: it waits a
+        10-minute undo window and the owner is told, and a key never loosens itself. Your agents change them when you
+        say so (a turn your own message started); one acting on its own waits for you.
 
         Returns:
             The key's own settings, with ``changes``.
@@ -384,8 +385,8 @@ class ApprovalPolicy:
         Raises:
             noclick.InvalidRequest: looser than the account allows a key, or a key that takes no settings (the
                 console key, a publishable key).
-            noclick.PermissionDenied: the caller may not change them, a key loosening its own, or a purchase or a
-                deletion past the default with no monthly cap (``reason`` ``spend_cap_required``).
+            noclick.PermissionDenied: a key loosening without ``approvals:policy``, or its own settings, or a
+                purchase or a deletion past the default with no monthly cap (``reason`` ``spend_cap_required``).
 
         Usage::
 
@@ -408,16 +409,17 @@ class ApprovalPolicy:
         and its ``auto_approve_under_usd``, the price at or under which a purchase it makes goes through unasked
         (None: it asks before every one), at or under its monthly cap and the account's ceiling for purchases.
 
-        Signed in, with one of your keys naming ``approvals:policy`` (which only lowers an auto-approve amount, and
-        whose loosening waits a 10-minute undo window), or by NoClick's assistant (whose loosening waits for the
-        owner, and never its own grant's).
+        Any of your account's keys tightens them. Loosening takes one naming ``approvals:policy`` (it waits a
+        10-minute undo window, and only lowers an auto-approve amount). Your agents change them when you say so; a
+        connected app or an agent acting on its own waits for you.
 
         Returns:
             The connected app's own settings and auto-approve amount, with ``changes``.
 
         Raises:
             noclick.InvalidRequest: looser than the account's ceiling, or an amount above its monthly cap.
-            noclick.PermissionDenied: the caller may not change them, or loosens what it acts as.
+            noclick.PermissionDenied: a key loosening without ``approvals:policy``, or raising an auto-approve
+                amount.
 
         Usage::
 

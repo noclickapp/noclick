@@ -283,9 +283,9 @@ export class ApprovalPolicy {
    * the code it runs: each named kind as `set` takes it, or null for the account's. Never looser than the account's
    * ceiling for the kind (else its own setting, else NoClick's default for a key): raise the ceiling with
    * `set({ ceilings })` first; lowering it later tightens every key at once. A purchase or a deletion past the default
-   * needs a monthly cap on the account. Signed in, with one of your keys naming `approvals:policy` (whose loosening
-   * waits a 10-minute undo window, and never loosens itself), or by NoClick's assistant (whose loosening waits for the
-   * owner).
+   * needs a monthly cap on the account. Any of your account's keys tightens them; loosening takes one naming
+   * `approvals:policy` (it waits a 10-minute undo window, and a key never loosens itself). Your agents change them when
+   * you say so; one acting on its own waits for you.
    *
    *     await ApprovalPolicy.set({ ceilings: { purchase: { disposition: "allow", under_usd: 50 } } });
    *     await ApprovalPolicy.setForKey(keyId, { purchase: { disposition: "allow", under_usd: 20 } });
@@ -303,9 +303,9 @@ export class ApprovalPolicy {
    * Switch what a connected app (an MCP client a person connected, NoClick's assistant's grant among them) waits for,
    * in place of the account's, for its calls and its code's: `settings` as `setForKey` takes them, and its
    * `autoApproveUnderUsd`, the price at or under which a purchase it makes goes through unasked (null: it asks before
-   * every one), at or under its monthly cap and the account's ceiling for purchases. Signed in, with one of your keys
-   * naming `approvals:policy` (which only lowers an auto-approve amount), or by NoClick's assistant (whose loosening
-   * waits for the owner, and never its own grant's).
+   * every one), at or under its monthly cap and the account's ceiling for purchases. Any of your account's keys
+   * tightens them; loosening takes one naming `approvals:policy` (which only lowers an auto-approve amount). Your agents
+   * change them when you say so; a connected app or an agent acting on its own waits for you.
    *
    *     await ApprovalPolicy.setForConnectedApp(appId, { autoApproveUnderUsd: 10 });
    */
