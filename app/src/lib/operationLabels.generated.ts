@@ -72,6 +72,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "agents_share_update": ["Update Share", "PATCH", "write"],
     "agents_states_list": ["Agent States", "GET", "read"],
     "agents_tool_access": ["Get Tool Access", "GET", "read"],
+    "agents_tool_servers_connect_link": ["Tool Server Connect Link", "POST", "write"],
     "agents_tool_servers_create": ["Add Tool Server", "POST", "write"],
     "agents_tool_servers_delete": ["Remove Tool Server", "DELETE", "destructive"],
     "agents_tool_servers_list": ["List Tool Servers", "GET", "read"],

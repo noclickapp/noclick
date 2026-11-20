@@ -40,8 +40,10 @@ export const useToolServers = (agentId: string, conversation: string | null) =>
 /** Reads a conversation's tool servers again; with none named, every conversation's of the agent. */
 export const rereadToolServers = (agentId: string, conversation: string | null) => invalidateV1(key(agentId, `tools:${conversation ?? ''}`));
 
-/** The MCP servers it has as tools, each a step of its automation. */
-export const useAgentToolServers = (agentId: string) => useWorkV1(key(agentId, 'servers'), (client) => agent(client, agentId).toolServers());
+/** The MCP servers it has as tools, each a step of its automation and as it stands; for a conversation, each as that
+ *  conversation's harness last said it (read again with the conversation's tool servers). */
+export const useAgentToolServers = (agentId: string, conversation: string | null = null) =>
+    useWorkV1(key(agentId, `tools:${conversation ?? ''}:servers`), (client) => agent(client, agentId).toolServers({ conversation: conversation ?? undefined }));
 
 /** What it may do with each app it reaches, app by app (its Tools tab). */
 export const toolAccessKey = (agentId: string) => key(agentId, 'access');

@@ -17,8 +17,8 @@ import type { BrowserProfile } from "./browser.ts";
 import type { Card } from "./card.ts";
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { modelConnectionRef, toolRefs } from "./connection.ts";
-import type { Connection, ConnectionStatus, ToolRef } from "./connection.ts";
+import { ConnectLink, linkBody, modelConnectionRef, toolRefs } from "./connection.ts";
+import type { Connection, ConnectionStatus, LinkOptions, ToolRef } from "./connection.ts";
 import type { UsedBy } from "./database.ts";
 import { Job, Wakeup, updatesWire } from "./coordination.ts";
 import type { UpdateSpec, WakeupStatus } from "./coordination.ts";
@@ -1405,6 +1405,14 @@ function readReply(result: unknown, op: Operation<unknown>): AgentReply {
   };
 }
 
+/** The operation a tool server's connect link is (`AgentToolServer.connectLink`). */
+const TOOL_SERVER_SIGN_IN = "tool_server.sign_in";
+
+registerResult(TOOL_SERVER_SIGN_IN, (result, op) => {
+  const body = asObject(result);
+  const server = asObject("tool_server" in body ? body.tool_server : result);
+  return Agent.fromId(String(server.agent_id ?? ""), { client: op._client, user: op._scope }).toolServer(server);
+});
 // A turn, a spawned task and an answered `ask` all resolve to a reply.
 registerResult("agent.message", readReply);
 registerResult("agent.task", readReply);
@@ -2628,22 +2636,39 @@ export class Agent extends ApiObject {
   // ── MCP servers ──
 
   /**
-   * Its MCP servers, each a step of its automation. In its automation's order; whether one connected
-   * is a conversation's: `agent.conversation(name).toolServers()`.
+   * Its MCP servers, each a step of its automation, in the order they were added, with each one's state: how it
+   * lets its client in (`signIn`), its `status` and `problem`, the `tools` its last run found, its `host` and
+   * `icon`. With `conversation`, each as that conversation's coding harness last said it where that's newer
+   * (`status` `connecting` too), and whether it can connect one again in place now (`reconnectable`:
+   * `agent.conversation(name).reconnectToolServer(server.name)`).
    */
-  async toolServers(): Promise<AgentToolServer[]> {
+  async toolServers(options: { conversation?: string } = {}): Promise<AgentToolServer[]> {
     const raw = await this._ensure();
-    return (asList(await this._request("GET", `/v1/agents/${raw.id}/tool_servers`)) as JsonObject[]).map(toAgentToolServer);
+    const query = options.conversation ? { conversation: options.conversation } : undefined;
+    return (asList(await this._request("GET", `/v1/agents/${raw.id}/tool_servers`, { query })) as JsonObject[])
+      .map((server) => this.toolServer(server));
+  }
+
+  /** @internal */
+  toolServer(raw: JsonObject): AgentToolServer {
+    return toAgentToolServer(raw, async (server: AgentToolServer, options: LinkOptions) => {
+      const agent = await this._ensure();
+      const payload = await this._request(
+        "POST", `/v1/agents/${agent.id}/tool_servers/${encodeURIComponent(server.id)}/connect_link`,
+        { json: linkBody(options) });
+      return ConnectLink._fromLink<AgentToolServer>(payload, { client: this._client, user: this._callScope() },
+        TOOL_SERVER_SIGN_IN);
+    });
   }
 
   /**
    * Give it an MCP server's tools from its next turn. The server is a step of its automation, reached at its public
    * https URL (`transport: "sse"` for one that speaks only the older SSE), named `name`, else after the URL's host
-   * (`mcp.linear.app` is `linear`). A server that asks its client to sign in throws `InvalidRequest`
-   * (`needs_sign_in`) unless `credential` is the account's own sign-in to it, which NoClick's MCP sign-in makes, or
-   * `headers` carry the key it takes instead (`{ Authorization: "Bearer <key>" }`): kept as a credential, sent on
-   * every request, never read back. Up to 20. Returns the `AgentToolServer` as added: its `id` is what
-   * `removeToolServer` takes.
+   * (`mcp.linear.app` is `linear`). `credential` is the account's own sign-in to it, which NoClick's MCP sign-in
+   * makes, or `headers` carry the key it takes instead (`{ Authorization: "Bearer <key>" }`): kept as a credential,
+   * sent on every request, never read back. A server that asks its client to sign in, given neither, is added
+   * waiting for a person (`status` `needs_sign_in`): `server.connectLink()` signs them in. Up to 20. Returns the
+   * `AgentToolServer` as added: its `id` is what `removeToolServer` takes.
    */
   async addToolServer(url: string, options: { name?: string; transport?: "http" | "sse"; credential?: string; headers?: Record<string, string> } = {}): Promise<AgentToolServer> {
     const raw = await this._ensure();
@@ -2651,7 +2676,7 @@ export class Agent extends ApiObject {
     if (options.name) json.name = options.name;
     if (options.credential) json.credential_id = options.credential;
     if (options.headers && Object.keys(options.headers).length) json.headers = options.headers;
-    return toAgentToolServer(asObject(await this._request("POST", `/v1/agents/${raw.id}/tool_servers`, { json })));
+    return this.toolServer(asObject(await this._request("POST", `/v1/agents/${raw.id}/tool_servers`, { json })));
   }
 
   /**
@@ -2661,7 +2686,7 @@ export class Agent extends ApiObject {
   async updateToolServer(server: string | AgentToolServer, headers: Record<string, string>): Promise<AgentToolServer> {
     const raw = await this._ensure();
     const step = typeof server === "string" ? server : server.id;
-    return toAgentToolServer(asObject(await this._request("PATCH", `/v1/agents/${raw.id}/tool_servers/${encodeURIComponent(step)}`, { json: { headers } })));
+    return this.toolServer(asObject(await this._request("PATCH", `/v1/agents/${raw.id}/tool_servers/${encodeURIComponent(step)}`, { json: { headers } })));
   }
 
   /**
