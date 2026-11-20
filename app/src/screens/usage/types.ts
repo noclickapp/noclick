@@ -26,6 +26,9 @@ export type UnitType =
 export interface UsageEventMetadata {
     /** The member who ran the work when the workspace's owner pays for it. */
     actual_user_id?: string;
+    /** Who the charge was for (their login): the person whose message, click or key started the work, recorded as
+     *  the charge is written. Charges recorded before it was carry none. */
+    responsible_user_id?: string;
     /** The automation, agent node and run the charge was recorded in. Charges recorded before runs were stamped
      *  carry the automation alone. */
     workflow_id?: string;
@@ -219,7 +222,9 @@ export interface Directory {
     /** `${workflow_id}:${node_id}`, or a platform agent's id; `chat`: the agent that is the account's chat with NoClick;
      *  `agent`: on a workflow node, the platform agent that runs on it. */
     agents: Record<string, { name: string; chat?: boolean; agent?: string }>;
-    people: Record<string, { name: string }>;
+    /** People by login, and your platform users by their id; `person`: the login of a platform user who is one
+     *  (someone who joined one of your workspaces). */
+    people: Record<string, { name: string; person?: string }>;
     projects?: Record<string, { name: string }>;
     databases?: Record<string, { name: string }>;
     numbers?: Record<string, { name: string }>;

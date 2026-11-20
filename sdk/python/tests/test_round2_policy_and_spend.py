@@ -261,6 +261,16 @@ def test_usage_grouped_by_user(api, client):
         nc.usage()["nobody"]
 
 
+def test_usage_grouped_by_person_names_each(api, client):
+    route = api.get("/v1/usage").respond(json={**USAGE, "group_by": "person", "groups": [
+        {"id": "login-ana", "name": "Ana", "usd": 9.0, "events": 30}, {"id": None, "name": None, "usd": 3.5, "events": 2},
+    ]})
+    spend = nc.usage(group_by="person")
+    assert route.calls.last.request.url.params["group_by"] == "person"
+    assert [(g.id, g.name, g.usd) for g in spend.groups] == [("login-ana", "Ana", 9.0), (None, None, 3.5)]
+    assert spend["login-ana"].name == "Ana" and spend["nobody"].name is None
+
+
 def test_usage_for_one_agent(api, client):
     route = api.get("/v1/usage").respond(json=USAGE)
     nc.usage(group_by="user", agent=nc.Agent.from_id("agt_1"))

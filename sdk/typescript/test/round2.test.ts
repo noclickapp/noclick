@@ -109,6 +109,18 @@ test("Usage.get groups spend", async () => {
   assert.equal(route.last.query.get("agent_id"), "agt_1");
 });
 
+test("usage groups by the person each charge was for, by name", async () => {
+  const { api } = setup();
+  const route = api.on("GET", "/v1/usage", json({
+    object: "usage", period: "2026-09", total_usd: 12.5, group_by: "person",
+    groups: [{ id: "login-ana", name: "Ana", usd: 9, events: 30 }, { id: null, name: null, usd: 3.5, events: 2 }],
+  }));
+  const usage = await nc.usage({ groupBy: "person" });
+  assert.equal(route.last.query.get("group_by"), "person");
+  assert.deepEqual(usage.groups.map((g) => [g.id, g.name, g.usd]), [["login-ana", "Ana", 9], [null, null, 3.5]]);
+  assert.deepEqual([usage.group("login-ana").name, usage.group("nobody").name], ["Ana", null]);
+});
+
 test("a spend cap refusal is SpendCapExceeded and is not retried", async () => {
   const { api, sleeps } = setup();
   const route = api.on("POST", "/v1/sandboxes", apiError(402, "spend_cap_exceeded", "User cap reached.", { cap: 5, spent: 5.01, scope: "user" }));
