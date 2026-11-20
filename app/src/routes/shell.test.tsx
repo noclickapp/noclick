@@ -2,7 +2,7 @@
 // The app's pages in the shell's frame, as its routes draw it (routes.ts: the home, the chat, Work and Resources in
 // one layout, the developer console outside it). The sidebar goes to each page and to Resources' kinds by their
 // routes and marks the one open, the account's name leads home, search opens the palette, and the account menu offers
-// the console (in a frame of its own) and signing out. On a phone: the page's name in the bar and the pages as a sheet
+// the console (with a sidebar of its own) and signing out. On a phone: the page's name in the bar and the pages as a sheet
 // that closes as it goes. All of it reads only the account's status, which a key may.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NoClick } from 'noclick';
@@ -143,7 +143,7 @@ describe('the frame on a laptop', () => {
         await waitFor(() => expect(submitted).toEqual([{ method: 'post', action: '/logout' }]));
     });
 
-    it('offers the console in the account menu, which keeps a frame of its own', async () => {
+    it('offers the console in the account menu, which has a sidebar of its own', async () => {
         open('/work');
         const menu = await openAccountMenu();
         fireEvent.click(within(menu).getByText('Developers'));

@@ -30,8 +30,8 @@ export interface AppShellProps {
     /** Laptop: the sidebar is an icon rail. */
     collapsed: boolean;
     onCollapsedChange: (collapsed: boolean) => void;
-    /** The page's name, for the phone bar. */
-    title: string;
+    /** The page's name, for the phone bar (a link where it leads somewhere). */
+    title: ReactNode;
     /** The builder chat, mounted once. */
     builder: ReactNode;
     builderShown: boolean;

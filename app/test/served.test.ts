@@ -220,7 +220,7 @@ describe('the developer console, under the production server', () => {
         expect(page.headers.get('x-frame-options')).toBe('DENY');
     });
 
-    it('draws the home, the chat, Work and Resources in the app’s frame, and the console in its own', async () => {
+    it('draws the home, the chat, Work and Resources in the app’s frame, and the console in it with its own sidebar', async () => {
         const cookie = await signedInCookie();
         for (const path of ['/', '/chat', '/work', '/resources?kind=domains']) {
             const page = await get(configured, path, { headers: { cookie } });
@@ -230,7 +230,9 @@ describe('the developer console, under the production server', () => {
         }
         const developers = await get(configured, '/developers', { headers: { cookie } });
         expect(developers.status).toBe(200);
-        expect(developers.body).not.toContain('data-testid="app-sidebar"');
+        expect(developers.body).toContain('data-testid="app-sidebar"');
+        expect(developers.body).toContain('aria-label="Developer console"');
+        expect(developers.body).not.toContain('aria-label="Main"');
     });
 
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
