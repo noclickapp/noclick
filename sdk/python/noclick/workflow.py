@@ -742,8 +742,20 @@ class Step(_Object):
     def verdict(self) -> Optional[Dict[str, Any]]:
         """Whether it's ready to run, as the last edit through this handle that touched it judged:
         ``config_valid``, and when it isn't, ``validation_error`` and ``missing_required``; an agent's
-        ``agent_credential_hint``. ``None`` until an edit judged it (a read doesn't)."""
+        ``agent_credential_hint``; and ``references`` (see ``references``). ``None`` until an edit judged it (a
+        read doesn't)."""
         return self._verdict
+
+    @property
+    def references(self) -> List[Dict[str, Any]]:
+        """Each read of another step's output in its settings (``{{ $('x').key }}``) that won't resolve at run
+        time, as the last edit through this handle that touched it judged: ``{field, step, key, known_keys}`` for a
+        key ``x``'s output isn't known to have (``known_keys``: what it has, from what ``x`` declares, its latest
+        output in this workflow, or what your account's own runs of its type showed), or ``{field, step,
+        reference, missing, near}`` for a step ``x`` the workflow doesn't have (``near``: the one it likely
+        means). A read of a step whose output nothing has shown yet isn't judged. Empty when every read resolves,
+        or before an edit judged it."""
+        return list((self._verdict or {}).get("references") or [])
 
     @property
     def notes(self) -> Dict[str, Any]:
@@ -1242,7 +1254,8 @@ class WorkflowEdit:
     ``harness_switch``, ``coerced_values``, ``stripped_trigger_refs``,
     ``http_auth_credential_hint``); and, for each step an op touched, whether it's ready
     to run (``steps``: ``config_valid``, ``validation_error``, ``missing_required``,
-    ``agent_credential_hint``). ``graph`` is the workflow as written, read as
+    ``agent_credential_hint``, and ``references``: each read of another step's output that
+    won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
     the version of its history a restore put back."""
 

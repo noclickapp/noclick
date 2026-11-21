@@ -267,6 +267,23 @@ test("an edit surfaces its notes and verdicts", async () => {
   assert.deepEqual([writer.verdict?.config_valid, writer.verdict?.missing_required], [false, ["credentials"]]);
   assert.deepEqual([writer.settings, writer.connections], [{ model: "codex", codex_model: "gpt-5" }, {}]);
   assert.deepEqual(workflow.lastEdit?.steps.post, { config_valid: true });
+  assert.deepEqual(writer.references, []);
+});
+
+test("an edit names the reads that won't resolve", async () => {
+  const { api } = setup();
+  const unresolved = [
+    { field: "title", step: "hook", key: "ordr_id", known_keys: ["order_id", "total"] },
+    { field: "title", step: "hok", reference: "{{ $('hok').order_id }}", missing: true, near: "hook" },
+  ];
+  api.on("POST", EDITS, json(edited(5, [{ op: "update_step", id: "linear", changed: true }], {
+    steps: { linear: { config_valid: true, references: unresolved } },
+    graph: bare([HOOK, LINEAR], []),
+  })));
+  const workflow = nc.Workflow.fromId(WF);
+  const linear = await workflow.step("linear").update({ settings: { title: "{{ $('hook').ordr_id }} {{ $('hok').order_id }}" } });
+  assert.deepEqual(linear.references, unresolved);
+  assert.deepEqual(linear.verdict?.references, unresolved);
 });
 
 test("the workflow's own fields, notes and moves", async () => {

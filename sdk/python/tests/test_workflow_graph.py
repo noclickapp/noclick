@@ -259,6 +259,20 @@ def test_an_edit_surfaces_its_notes_and_verdicts(api, client):
     assert writer.verdict["config_valid"] is False and writer.verdict["missing_required"] == ["credentials"]
     assert writer.settings == {"model": "codex", "codex_model": "gpt-5"} and writer.connections == {}
     assert workflow.last_edit.steps["post"] == {"config_valid": True}
+    assert writer.references == [] and workflow.step("post").references == []
+
+
+def test_an_edit_names_the_reads_that_wont_resolve(api, client):
+    unresolved = [{"field": "message", "step": "hook", "key": "ordr_id", "known_keys": ["order_id", "total"]},
+                  {"field": "message", "step": "hok", "reference": "{{ $('hok').order_id }}", "missing": True,
+                   "near": "hook"}]
+    api.post(EDITS).respond(json=edited(
+        5, [{"op": "update_step", "id": "linear", "changed": True}],
+        steps={"linear": {"config_valid": True, "references": unresolved}}, graph=bare(HOOK, LINEAR, edges=[])))
+    workflow = nc.Workflow.from_id(WF)
+    linear = workflow.step("linear").update(settings={"title": "{{ $('hook').ordr_id }} {{ $('hok').order_id }}"})
+    assert linear.references == unresolved and linear.verdict["references"] == unresolved
+    assert workflow.last_edit.steps["linear"]["references"][0]["known_keys"] == ["order_id", "total"]
 
 
 def test_the_workflows_own_fields_notes_and_moves(api, client):
