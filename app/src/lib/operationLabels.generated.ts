@@ -755,7 +755,7 @@ propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qonto
 quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisely ramp rawg-video-games-database razorpay
 rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow recurly reddit reddit-ads
 redirect-pizza redirection redis reducto refersion reflect regiondo rei-pebble relevance-ai reloadify remote
-remove-bg render rentcast rentman repairdesk repairshopr repliz reply reply-io resend resource-guru responder
+remove-bg render rentcast rentec-direct rentman repairdesk repairshopr repliz reply reply-io resend resource-guru responder
 responsys reteno revolut-for-business rezdy rillet ringcentral ringover rippling ritekit rkvst roam rocket-reach
 rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics rossum route4me royalmail rss rudder rumble
 rundeck runn runpod runscope runsignup safetyculture sakari-sms salesforce salesforge salesloft salesmsg salesql
