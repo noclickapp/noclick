@@ -1406,9 +1406,12 @@ function triggerTitle(t: AgentTrigger, userId: string | null): ReactNode {
             return `Webhook ${specText(t, 'name')}`;
         case 'event': {
             const filters = Object.entries((t.spec.filters as JsonObject | undefined) ?? {});
+            // An account connected in the app is named by its id: it reads as the account it hears through.
+            const through = specText(t, 'connection');
+            const who = through.startsWith('credential:') ? (t.summary?.account ?? t.summary?.app ?? 'Your account connected in the app') : through;
             return (
                 <>
-                    {specText(t, 'connection')} sends {specText(t, 'event')}
+                    {who} sends {specText(t, 'event')}
                     {filters.length > 0 && <span className="text-muted-foreground"> where {filters.map(([k, v]) => `${k} is ${String(v)}`).join(', ')}</span>}
                 </>
             );

@@ -60,6 +60,7 @@ function open(address: string, holding: Record<string, Json> = {}, lab = false) 
         return { status: answer.status, body: (await answer.json()) as Json };
     };
     const held = new Map(Object.entries(holding));
+    let added = 0;
     const sent: { method: string; path: string; body: Json }[] = [];
     // Every connection the account's own scope holds: the named ones the fixtures list, then the app's.
     const connections = async (): Promise<Json[]> => ((await asPlain({ method: 'GET', path: '/v1/connections', query: new URLSearchParams({ user_id: 'none' }), headers: new Headers(), params: {}, body: null, set: 'populated' })).body.data as Json[]).concat(IN_THE_APP);
@@ -106,10 +107,11 @@ function open(address: string, holding: Record<string, Json> = {}, lab = false) 
             reply: async (r) => {
                 const { kind, ...spec } = r.body as Json;
                 // The API's words for a ref that names no connection (`triggers.service.compile_source`).
-                if (kind === 'event' && !namedOnThePlatform(String(spec.connection), await connections())) {
-                    return apiError(404, 'not_found', `The account has no connection named '${String(spec.connection)}'.`);
-                }
-                return { status: 201, body: { object: 'agent_trigger', id: fixtureId(3, 190), kind, spec, status: 'active', url: null, next_run: null, last_fired_at: null, error: null, created_at: FIXTURE_NOW } };
+                const through = kind === 'event' ? namedOnThePlatform(String(spec.connection), await connections()) : undefined;
+                if (kind === 'event' && !through) return apiError(404, 'not_found', `The account has no connection named '${String(spec.connection)}'.`);
+                // An app event says what it hears through, as `triggers.service._source` does.
+                const summary = through ? { app: through.integration, integration: through.integration, icon: null, credential_type: through.credential_type, account: through.account ?? null, number: null, hears: null, groups: null, status: 'connected', problem: null, remedy: null } : null;
+                return { status: 201, body: { object: 'agent_trigger', id: fixtureId(3, 190 + ++added), kind, spec, title: null, summary, status: 'active', url: null, next_run: null, last_fired_at: null, error: null, created_at: FIXTURE_NOW } };
             },
         },
     ];
@@ -180,6 +182,11 @@ it('hears an app event through an account connected in the app by its `credentia
     expect(namedOnThePlatform(String(app.connection), await console_.connections())).toBe(APP_SLACK);
     expect(named).toMatchObject({ kind: 'event', connection: 'gmail', event: 'gmail_message' });
     expect(namedOnThePlatform(String(named.connection), await console_.connections())).toMatchObject({ name: 'gmail', user_id: null });
+    // Each reads as what it hears through: the app account as its account, never its id.
+    const listed = screen.getByRole('list', { name: 'Triggers' });
+    expect(within(listed).getByText(/ops@yourco\.test sends slack_message/)).toBeTruthy();
+    expect(within(listed).getByText(/gmail sends gmail_message/)).toBeTruthy();
+    expect(listed.textContent).not.toContain(APP_SLACK.id);
 });
 
 it('gives an agent an account connected in the app by its `credential:` ref, and lists that tool as the account', async () => {
