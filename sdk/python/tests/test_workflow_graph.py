@@ -119,10 +119,12 @@ def test_a_graph_reads_the_whole_definition_into_typed_steps_notes_and_edges(api
     [note] = graph.notes
     assert (note.type, note.settings["content"]) == ("stickyNote", "Orders land here.")
     assert graph.edges == [
-        {"id": "hook-writer", "from": "hook", "to": "writer", "kind": "data", "handle": None},
-        {"id": "linear-writer", "from": "linear", "to": "writer", "kind": "tools", "handle": None},
-        {"id": "writer-post", "from": "writer", "to": "post", "kind": "data", "handle": None},
+        {"id": "hook-writer", "from": "hook", "to": "writer", "kind": "data", "handle": None, "target_handle": None},
+        {"id": "linear-writer", "from": "linear", "to": "writer", "kind": "tools", "handle": None,
+         "target_handle": None},
+        {"id": "writer-post", "from": "writer", "to": "post", "kind": "data", "handle": None, "target_handle": None},
     ]
+    assert graph.display_metadata is None
     assert graph.step("writer") is writer and graph.step("Post it") is post
     with pytest.raises(nc.NotFound):
         graph.step("Nope")
@@ -463,15 +465,50 @@ def test_an_op_that_cant_apply_is_named_and_nothing_lands(api, client):
     assert workflow._version is None and workflow.last_edit is None
 
 
-def test_an_agents_workflow_is_refused_as_its_agents(api, client):
-    """It changes through the agent: the refusal names it, and nothing about the handle moves."""
-    api.post(EDITS).respond(403, json={"error": {
-        "type": "permission_denied", "message": "'helper' is the workflow the agent 'helper' runs on.",
-        "next_step": "Change or message the agent (/v1/agents/ag_1).", "agent_id": "ag_1"}})
+def test_an_agents_workflow_keeps_its_agents_own_step(api, client):
+    """An agent's workflow is edited as its canvas edits it, but its own step stays: the refusal names the agent,
+    and nothing about the handle moves."""
+    api.post(EDITS).respond(400, json={"error": {
+        "type": "invalid_request", "message": "'agent' is the agent 'helper' itself: its workflow keeps it.",
+        "next_step": "Leave 'agent' in, or delete the agent (DELETE /v1/agents/ag_1).", "agent_id": "ag_1"}})
     workflow = nc.Workflow.from_id(WF)
-    with pytest.raises(nc.PermissionDenied) as refused:
-        workflow.step("agent").update(settings={"system_prompt": "Help."})
+    with pytest.raises(nc.InvalidRequest) as refused:
+        workflow.step("agent").remove()
     assert refused.value.agent_id == "ag_1" and workflow.last_edit is None
+
+
+def test_a_canvas_saves_as_one_batch_in_its_own_terms(api, client):
+    """A canvas's batch: named as a canvas's, its edge ids and inputs, a note where it sits, a resize, what the app
+    shows of the workflow, and a setting taken out by None."""
+    route = api.post(EDITS).respond(json=edited(5, []))
+    workflow = nc.Workflow.from_id(WF)
+    with workflow.edit(if_version=4, source="canvas") as e:
+        e.update_step("writer", settings={"system_prompt": "Be brief.", "channel__label": None})
+        e.connect("state", "code", target_handle="state", id="xy-edge__state-code")
+        e.disconnect("writer", "post", id="writer-post")
+        e.add_note("Read me", id="note-2", position=(40, -120), width=280, height=160)
+        e.move("note-2", (60, -140), width=320, height=200)
+        e.update_workflow(display_metadata={"viewport": {"x": 0, "y": 0, "zoom": 1}})
+    assert body(route.calls.last.request) == {"if_version": 4, "source": "canvas", "ops": [
+        {"op": "update_step", "id": "writer", "settings": {"system_prompt": "Be brief.", "channel__label": None}},
+        {"op": "connect", "from": "state", "to": "code", "kind": "data", "target_handle": "state",
+         "id": "xy-edge__state-code"},
+        {"op": "disconnect", "from": "writer", "to": "post", "id": "writer-post"},
+        {"op": "add_note", "content": "Read me", "id": "note-2", "width": 280, "height": 160,
+         "position": {"x": 40, "y": -120}},
+        {"op": "move", "id": "note-2", "position": {"x": 60, "y": -140}, "width": 320, "height": 200},
+        {"op": "update_workflow", "display_metadata": {"viewport": {"x": 0, "y": 0, "zoom": 1}}},
+    ]}
+
+
+def test_a_graph_reads_what_the_app_shows_and_an_edges_input(api, client):
+    edges = [{"id": "s-c", "source": "state", "target": "code", "targetHandle": "state"}]
+    api.get(f"/v1/workflows/{WF}/graph").respond(json={**read(graph=bare(HOOK, edges=edges)),
+                                                       "display_metadata": {"viewport": {"zoom": 2}}})
+    graph = nc.Workflow.from_id(WF).graph()
+    assert graph.display_metadata == {"viewport": {"zoom": 2}}
+    assert graph.edges == [{"id": "s-c", "from": "state", "to": "code", "kind": "data", "handle": None,
+                            "target_handle": "state"}]
 
 
 def test_a_batch_held_for_the_owner_surfaces_as_its_approval_and_lands_nothing(api, client):
@@ -569,6 +606,39 @@ def test_restoring_a_version_is_a_version_of_its_own_and_checks_the_version_it_i
         7, 4, 2, "restored version 2")
     with pytest.raises(TypeError):
         workflow.restore(if_version=7)
+
+
+def test_naming_versions_keeps_them_and_a_name_comes_back_off(api, client):
+    named = version_row(5, 5, label="Before Slack", note="Sends at 8.", labeled_by={"user_id": "u_1"},
+                        labeled_at="2026-11-21T10:00:00Z")
+    now = api.post(f"/v1/workflows/{WF}/versions").respond(201, json=named)
+    patch = api.patch(f"/v1/workflows/{WF}/versions/5").mock(side_effect=[
+        httpx.Response(200, json={**named, "label": "Before the Slack change"}),
+        httpx.Response(200, json={**named, "label": None, "note": None, "labeled_by": None, "labeled_at": None})])
+    listed = api.get(f"/v1/workflows/{WF}/versions").respond(json=listing(named))
+    workflow = nc.Workflow.from_id(WF)
+    saved = workflow.name_version("Before Slack", note="Sends at 8.", if_version=4)
+    assert body(now.calls.last.request) == {"label": "Before Slack", "note": "Sends at 8.", "if_version": 4}
+    assert (saved.label, saved.note, saved.labeled_by, saved.labeled_at.year) == (
+        "Before Slack", "Sends at 8.", {"user_id": "u_1"}, 2026)
+    renamed = workflow.name_version("Before the Slack change", history_version=5)
+    assert body(patch.calls.last.request) == {"label": "Before the Slack change", "note": None}
+    assert renamed.label == "Before the Slack change"
+    assert workflow.unname_version(5).label is None
+    assert body(patch.calls.last.request) == {"label": None}
+    assert [v.label for v in workflow.versions(named=True)] == ["Before Slack"]
+    assert listed.calls.last.request.url.params["named"] == "true"
+    workflow.versions()
+    assert "named" not in listed.calls.last.request.url.params
+
+
+def test_naming_the_version_it_is_at_twice_is_a_conflict_naming_the_first(api, client):
+    api.post(f"/v1/workflows/{WF}/versions").respond(409, json={"error": {
+        "type": "conflict", "message": "Nothing changed since the version named 'Start'.",
+        "history_version": 2, "label": "Start"}})
+    with pytest.raises(nc.Conflict) as again:
+        nc.Workflow.from_id(WF).name_version("Start again")
+    assert again.value.details["label"] == "Start"
 
 
 def test_restore_without_a_version_still_brings_it_back_from_the_trash(api, client):

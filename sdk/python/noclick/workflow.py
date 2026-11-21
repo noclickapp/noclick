@@ -526,9 +526,10 @@ def _node_config(node: Mapping[str, Any]) -> Dict[str, Any]:
 
 
 def _edge(raw: Mapping[str, Any]) -> Dict[str, Any]:
+    tools = raw.get("targetHandle") == _TOOLS_HANDLE
     return {"id": raw.get("id"), "from": raw.get("source") or raw.get("sourceId"),
-            "to": raw.get("target") or raw.get("targetId"),
-            "kind": "tools" if raw.get("targetHandle") == _TOOLS_HANDLE else "data", "handle": raw.get("sourceHandle")}
+            "to": raw.get("target") or raw.get("targetId"), "kind": "tools" if tools else "data",
+            "handle": raw.get("sourceHandle"), "target_handle": None if tools else raw.get("targetHandle")}
 
 
 def _new_id(kind: str) -> str:
@@ -605,9 +606,10 @@ def _note_op(content: str, note_id: Optional[str], **fields: Any) -> Dict[str, A
     return {"op": "add_note", "content": content, "id": note_id or _new_id(_NOTE), **compact(**fields)}
 
 
-def _update_workflow_op(name: Optional[str], description: Optional[str],
-                        settings: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    return compact(op="update_workflow", name=name, description=description, settings=settings)
+def _update_workflow_op(name: Optional[str], description: Optional[str], settings: Optional[Dict[str, Any]],
+                        display_metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    return compact(op="update_workflow", name=name, description=description, settings=settings,
+                   display_metadata=display_metadata)
 
 
 @dataclass(frozen=True)
@@ -927,8 +929,9 @@ class Step(_Object):
         operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
     ) -> "Step":
         """Change its settings, name or operation, or switch it off or on. ``settings`` merge
-        into what it has (a nested object merges, any other value replaces); a field you leave
-        out is never touched. An agent given another ``model`` on another harness drops the
+        into what it has (a nested object merges, any other value replaces, and ``None`` takes
+        that setting out, a secret included); a field you leave out is never touched. An agent
+        given another ``model`` on another harness drops the
         old harness's own settings and connections, as the app does (``notes["harness_switch"]``
         says what went). Values are judged as a run judges them: one that can't be is refused
         with ``noclick.InvalidRequest`` naming the field, and nothing changes.
@@ -982,11 +985,13 @@ class Step(_Object):
         await self._workflow._send([{"op": "remove_step", "id": self.id}], include_graph=True)
 
     @synced
-    async def connect(self, other: Any, *, kind: str = "data", handle: Optional[str] = None) -> "Step":
+    async def connect(self, other: Any, *, kind: str = "data", handle: Optional[str] = None,
+                      target_handle: Optional[str] = None) -> "Step":
         """Wire this step into ``other`` (a ``Step`` or its id). ``kind="data"`` runs ``other``
         after it with its output; ``kind="tools"`` makes its operations tools of ``other``, an
         agent (or an MCP step). ``handle`` names which of this step's outputs, for a step with
-        several (an iteration's ``loop``). Connecting what's already connected changes nothing.
+        several (an iteration's ``loop``), and ``target_handle`` which of ``other``'s inputs (a
+        code step's ``state``). Connecting what's already connected changes nothing.
 
         Returns:
             This step; ``notes`` holds the edge (``edge_id``, ``kind``).
@@ -997,7 +1002,8 @@ class Step(_Object):
             brief.step("summarize").connect("send_summary")
             brief.step("linear").connect("triage_agent", kind="tools")
         """
-        return await self._edit(_connect_op("connect", self, other, kind=kind, handle=handle), other)
+        return await self._edit(_connect_op("connect", self, other, kind=kind, handle=handle,
+                                            target_handle=target_handle), other)
 
     @synced
     async def disconnect(self, other: Any, *, handle: Optional[str] = None) -> "Step":
@@ -1261,7 +1267,11 @@ class WorkflowGraph:
     the workflow's own settings (``variable_definitions[1].value``), and
     ``variables_withheld`` the graph's own variables. The graph a ``noclick.Conflict``
     carries holds the steps and edges alone: its ``name``, ``description``, ``settings``
-    and ``settings_withheld`` are ``None``."""
+    and ``settings_withheld`` are ``None``.
+
+    An edge into a step with several inputs names which in ``target_handle`` (a code step's
+    ``state``). ``display_metadata`` is what the app shows of the workflow (its canvas's
+    viewport, the step open in its panel), read with ``graph()``: never part of a version."""
 
     workflow_id: str
     version: int
@@ -1275,6 +1285,7 @@ class WorkflowGraph:
     withheld: Dict[str, List[str]]
     variables_withheld: List[str]
     raw: Dict[str, Any] = dc_field(repr=False)
+    display_metadata: Optional[Dict[str, Any]] = None
 
     @classmethod
     def _from(cls, raw: Any, *, workflow: "Workflow", workflow_id: str, version: int,
@@ -1294,6 +1305,7 @@ class WorkflowGraph:
             notes=[s for s, n in zip(made, nodes) if n.get("type") == _NOTE],
             edges=[_edge(e) for e in raw.get("edges") or [] if isinstance(e, dict)],
             withheld=withheld, variables_withheld=list(raw.get("variables_withheld") or []), raw=raw,
+            display_metadata=dict(own["display_metadata"]) if isinstance(own.get("display_metadata"), dict) else None,
         )
 
     def _node(self, step_id: str) -> Optional[Dict[str, Any]]:
@@ -1383,12 +1395,15 @@ class WorkflowVersion:
     """One version of a workflow's history: its own number (``history_version``, what
     ``version_at`` and ``restore`` take, fixed once given), the workflow's ``version``
     its latest write left, where the change came from (``source``: ``api``,
-    ``canvas``, ``builder``, ``mcp``, ``coordinator``, ``deploy``, ``restore``, or
-    ``baseline``, the workflow as it was before its history began), who began it
+    ``canvas``, ``builder``, ``mcp``, ``coordinator``, ``deploy``, ``restore``,
+    ``baseline``, the workflow as it was before its history began, or ``checkpoint``, one
+    saved in the app before its history was kept, numbered below 1), who began it
     (``author``: ``{user_id, key_id}``, ``None`` for the baseline) and everyone who
     wrote into it (``authors``, its author first), a ``summary`` and each of its
     ``changes``, and for a restore the version of the history it put back
-    (``restored_from``).
+    (``restored_from``). A named version (a checkpoint: ``Workflow.name_version``) has its
+    ``label`` and ``note``, who named it (``labeled_by``: ``{user_id}``) and when
+    (``labeled_at``), and is kept for good while it has a name.
 
     Saves in the app's canvas within five minutes of a session's first are one
     version, whoever made them. Any other change (from your code, the builder, an MCP
@@ -1412,6 +1427,10 @@ class WorkflowVersion:
     created_at: Any
     updated_at: Any
     graph: Optional[WorkflowGraph] = None
+    label: Optional[str] = None
+    note: Optional[str] = None
+    labeled_by: Optional[Dict[str, Any]] = None
+    labeled_at: Any = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -1423,7 +1442,9 @@ class WorkflowVersion:
             authors=[dict(a) for a in raw.get("authors") or []],
             summary=raw.get("summary"), changes=list(raw.get("changes") or []),
             restored_from=raw.get("restored_from"), created_at=parse_time(raw.get("created_at")),
-            updated_at=parse_time(raw.get("updated_at")), graph=_definition(raw, workflow), raw=raw,
+            updated_at=parse_time(raw.get("updated_at")), graph=_definition(raw, workflow),
+            label=raw.get("label"), note=raw.get("note"), labeled_by=raw.get("labeled_by"),
+            labeled_at=parse_time(raw.get("labeled_at")), raw=raw,
         )
 
 
@@ -1470,11 +1491,13 @@ class EditBatch:
     _workflow: "Workflow"
 
     @classmethod
-    def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool) -> "EditBatch":
+    def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool,
+            source: Optional[str] = None) -> "EditBatch":
         batch = cls.__new__(cls)
         batch._workflow = workflow
         batch._if_version = if_version
         batch._include_graph = include_graph
+        batch._source = source
         batch._ops = []
         batch._added = []
         batch._result = None
@@ -1501,7 +1524,8 @@ class EditBatch:
     async def _send(self) -> Optional[WorkflowEdit]:
         if not self._ops:
             return None
-        edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph)
+        edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph,
+                                          source=self._source)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1583,26 +1607,30 @@ class EditBatch:
         """
         self._queue({"op": "remove_step", "id": _step_id(step)})
 
-    def connect(self, source: Any, target: Any, *, kind: str = "data", handle: Optional[str] = None) -> None:
+    def connect(self, source: Any, target: Any, *, kind: str = "data", handle: Optional[str] = None,
+                target_handle: Optional[str] = None, id: Optional[str] = None) -> None:
         """Queue an edge from ``source`` into ``target``, as ``Step.connect`` makes it
-        (``kind="tools"`` wires ``source`` into an agent as its tools).
+        (``kind="tools"`` wires ``source`` into an agent as its tools). ``id`` names the edge
+        (made for it when left out), as a canvas names its own.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.connect("every_morning", "summarize")
         """
-        self._queue(_connect_op("connect", source, target, kind=kind, handle=handle))
+        self._queue(_connect_op("connect", source, target, kind=kind, handle=handle, target_handle=target_handle,
+                                id=id))
 
-    def disconnect(self, source: Any, target: Any, *, handle: Optional[str] = None) -> None:
-        """Queue removing the edge from ``source`` into ``target``.
+    def disconnect(self, source: Any, target: Any, *, handle: Optional[str] = None, id: Optional[str] = None) -> None:
+        """Queue removing the edge from ``source`` into ``target`` (``id``: the one edge of
+        that id, when two join them).
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.disconnect("summarize", "send_summary")
         """
-        self._queue(_connect_op("disconnect", source, target, handle=handle))
+        self._queue(_connect_op("disconnect", source, target, handle=handle, id=id))
 
     def set_connection(self, step: Any, connection: Any, *, slot: Optional[str] = None) -> None:
         """Queue connecting an account to a step, as ``Step.set_connection`` does
@@ -1638,27 +1666,32 @@ class EditBatch:
 
     def update_workflow(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
-        settings: Optional[Dict[str, Any]] = None,
+        settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Queue a change to the workflow's own fields, as ``Workflow.update`` makes it.
+        ``display_metadata`` replaces what the app shows of it (its canvas's viewport, the step
+        open in its panel; 16 KB at most): never a version, nor a change anyone is told of.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_workflow(description="Emails the team the day's calendar at 8.")
         """
-        self._queue(_update_workflow_op(name, description, settings))
+        self._queue(_update_workflow_op(name, description, settings, display_metadata))
 
-    def move(self, step: Any, position: Position) -> None:
-        """Queue moving a step (or a note) on the canvas, to ``(x, y)``. Moving things is
-        never a version of its own.
+    def move(self, step: Any, position: Position, *, width: Optional[float] = None,
+             height: Optional[float] = None) -> None:
+        """Queue moving a step (or a note) on the canvas, to ``(x, y)``, and for one drawn at a
+        size (a note) giving it ``width`` and ``height``. Moving things is never a version of
+        its own.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.move("send_summary", (640, 120))
         """
-        self._queue({"op": "move", "id": _step_id(step), "position": _position(position)})
+        self._queue({"op": "move", "id": _step_id(step), "position": _position(position),
+                     **compact(width=width, height=height)})
 
     def layout(self) -> None:
         """Queue laying every step out again, as the app's Tidy up does.
@@ -1674,8 +1707,10 @@ class EditBatch:
         self, content: str, *, id: Optional[str] = None, color: Optional[int] = None,
         near: Optional[Sequence[Any]] = None, direction: Optional[str] = None, after: Any = None,
         before: Any = None, width: Optional[int] = None, height: Optional[int] = None,
+        position: Optional[Position] = None,
     ) -> Step:
-        """Queue a note on the canvas, as ``Workflow.add_note`` makes it.
+        """Queue a note on the canvas, as ``Workflow.add_note`` makes it (``position``: where it
+        sits, instead of beside steps).
 
         Returns:
             The note, a step of type ``stickyNote`` whose ``id`` later edits can name.
@@ -1687,7 +1722,8 @@ class EditBatch:
         """
         op = _note_op(content, id, color=color, near=[_step_id(s) for s in near] if near is not None else None,
                       direction=direction, after=_step_id(after) if after is not None else None,
-                      before=_step_id(before) if before is not None else None, width=width, height=height)
+                      before=_step_id(before) if before is not None else None, width=width, height=height,
+                      position=_position(position) if position is not None else None)
         self._queue(op)
         note = Step._of(self._workflow, op["id"])
         self._added.append((len(self._ops) - 1, note))
@@ -2095,14 +2131,14 @@ class Workflow(_Object):
         return Step._of(self, step_id, node=cached, withheld=withheld)
 
     async def _send(self, ops: Sequence[Dict[str, Any]], *, if_version: Optional[int] = None,
-                    include_graph: bool = False) -> WorkflowEdit:
+                    include_graph: bool = False, source: Optional[str] = None) -> WorkflowEdit:
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
         sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=sent, if_version=if_version, include_graph=include_graph or None))
+                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2168,10 +2204,12 @@ class Workflow(_Object):
     @synced
     async def update(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
-        settings: Optional[Dict[str, Any]] = None,
+        settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
     ) -> "Workflow":
         """Change its name, description or settings (by top-level key; only its owner changes
         those, and NoClick's own are refused). A field you leave out is never touched.
+        ``display_metadata`` replaces what the app shows of it (its canvas's viewport), never a
+        version.
 
         Returns:
             This workflow; it loads again the next time you read a field.
@@ -2181,7 +2219,7 @@ class Workflow(_Object):
             brief = noclick.Workflow.from_name("Morning brief")
             brief.update(name="Team brief", description="Emails the team the day's calendar at 8.")
         """
-        await self._send([_update_workflow_op(name, description, settings)], include_graph=True)
+        await self._send([_update_workflow_op(name, description, settings, display_metadata)], include_graph=True)
         return self
 
     @synced
@@ -2224,7 +2262,8 @@ class Workflow(_Object):
         handle = step if isinstance(step, Step) else Step._of(self, _step_id(step))
         return await self._edit_step(handle, {"op": "move", "id": handle.id, "position": _position(position)})
 
-    def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False) -> EditBatch:
+    def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False,
+             source: Optional[str] = None) -> EditBatch:
         """Collect several edits and send them as one batch when the ``with`` block ends:
         they're applied in order and land as one version, or none of them do. With
         ``if_version`` (a version you read: ``version``, ``graph().version``, or the last
@@ -2237,9 +2276,16 @@ class Workflow(_Object):
         app, conversations or files) may be held for the account's owner when an agent, a
         connected app or a deployed app's code sends it: it raises ``noclick.ApprovalRequired``,
         nothing of it has landed, and NoClick applies it once they approve: its ``operation``
-        settles then, with the batch's answer. The workflow one of your agents runs on changes
-        through the agent: an edit of it raises ``noclick.PermissionDenied`` naming it
-        (``agent_id``).
+        settles then, with the batch's answer. The workflow one of your agents runs on is
+        edited as its canvas edits it: the agent follows its prompt, harness and model, its own
+        step stays (removing it raises ``noclick.InvalidRequest`` naming the agent), and a key
+        that couldn't change the agent can't change it this way either.
+
+        ``source="canvas"`` says the edits are a canvas's saves, as the app's canvas sends them:
+        each setting ``update_step`` sends replaces that setting whole and is kept as written
+        (never rewritten nor refused for its value; the step's verdict says it isn't ready),
+        and they join the canvas session's version (saves within five minutes of its first,
+        whoever made them).
 
         Returns:
             An ``EditBatch`` to use as a context manager (``async with`` in async code);
@@ -2268,12 +2314,13 @@ class Workflow(_Object):
                     except noclick.Conflict as changed:
                         graph = changed.graph   # the workflow as it stands; decide again from it
         """
-        return EditBatch._of(self, if_version, include_graph)
+        return EditBatch._of(self, if_version, include_graph, source)
 
     @synced
-    async def versions(self, *, limit: Optional[int] = 20) -> List[WorkflowVersion]:
-        """Its versions, newest first, kept 90 days: each one's number, where it came from,
-        who made it and what changed.
+    async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
+        """Its versions, newest first, kept 90 days (a named one for good): each one's number,
+        where it came from, who made it and what changed. ``named=True`` lists only the named
+        ones, its checkpoints.
 
         Returns:
             The first ``limit`` versions (20 by default; ``None`` for all of them), fetched page by page.
@@ -2286,11 +2333,61 @@ class Workflow(_Object):
         """
         return await list_all(
             f"{await self._path()}/versions", lambda raw, _scope: WorkflowVersion._from(raw, self),
-            user=None, limit=limit, client=self._client,
+            user=None, limit=limit, client=self._client, params=compact(named="true" if named else None),
         )
 
     @synced
-    async def versions_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None) -> Page:
+    async def name_version(
+        self, label: str, *, note: Optional[str] = None, history_version: Optional[int] = None,
+        if_version: Optional[int] = None,
+    ) -> WorkflowVersion:
+        """Name a version of its history, keeping it for good while it has a name: the version
+        it's at now (a checkpoint, as the app saves one; ``if_version`` refuses it with
+        ``noclick.Conflict`` when the workflow moved on since you read it), or the one
+        ``history_version`` names, or another name for a named one. No later change joins a
+        named version. Naming the version it's at now when it has a name already raises
+        ``noclick.Conflict`` naming it (``label``). Restore it with
+        ``restore(history_version=...)``. A name someone else gave is changed only by them or the
+        workflow's owner.
+
+        Returns:
+            The named ``WorkflowVersion``.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            saved = brief.name_version("Before the Slack change", note="Sends at 8.")
+            brief.step("send_summary").update(settings={"channel": "#team"})
+            brief.restore(history_version=saved.history_version)   # back to it
+        """
+        path = f"{await self._path()}/versions"
+        if history_version is None:
+            raw = await self._request("POST", path, json=compact(label=label, note=note, if_version=if_version))
+        else:
+            raw = await self._request("PATCH", f"{path}/{history_version}", json={"label": label, "note": note})
+        return WorkflowVersion._from(raw, self)
+
+    @synced
+    async def unname_version(self, history_version: int) -> WorkflowVersion:
+        """Take a version's name away (a checkpoint deleted): it's kept 90 days from its last
+        write then, as any version. Only who named it or the workflow's owner takes it away.
+
+        Returns:
+            The ``WorkflowVersion``, its ``label`` ``None``.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            for version in brief.versions(named=True, limit=None):
+                if version.label.startswith("tmp"):
+                    brief.unname_version(version.history_version)
+        """
+        path = f"{await self._path()}/versions/{history_version}"
+        return WorkflowVersion._from(await self._request("PATCH", path, json={"label": None}), self)
+
+    @synced
+    async def versions_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None,
+                            named: bool = False) -> Page:
         """One page of its versions, newest first; pass ``next_cursor`` back as ``cursor``.
 
         Returns:
@@ -2310,6 +2407,7 @@ class Workflow(_Object):
         return await list_page(
             f"{await self._path()}/versions", lambda raw, _scope: WorkflowVersion._from(raw, self),
             user=None, cursor=cursor, limit=limit, client=self._client,
+            params=compact(named="true" if named else None),
         )
 
     @synced

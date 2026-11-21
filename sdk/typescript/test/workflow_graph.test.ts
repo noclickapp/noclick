@@ -129,10 +129,11 @@ test("a graph reads the whole definition into typed steps, notes and edges", asy
   const [note] = graph.notes;
   assert.deepEqual([note.type, note.settings.content], ["stickyNote", "Orders land here."]);
   assert.deepEqual(graph.edges, [
-    { id: "hook-writer", from: "hook", to: "writer", kind: "data", handle: null },
-    { id: "linear-writer", from: "linear", to: "writer", kind: "tools", handle: null },
-    { id: "writer-post", from: "writer", to: "post", kind: "data", handle: null },
+    { id: "hook-writer", from: "hook", to: "writer", kind: "data", handle: null, targetHandle: null },
+    { id: "linear-writer", from: "linear", to: "writer", kind: "tools", handle: null, targetHandle: null },
+    { id: "writer-post", from: "writer", to: "post", kind: "data", handle: null, targetHandle: null },
   ]);
+  assert.equal(graph.displayMetadata, null);
   assert.equal(graph.step("writer"), writer);
   assert.equal(graph.step("Post it"), post);
   assert.throws(() => graph.step("Nope"), nc.NotFound);
@@ -473,15 +474,50 @@ test("an op that can't apply is named and nothing lands", async () => {
   assert.deepEqual([workflow._version, workflow.lastEdit], [null, null]);
 });
 
-test("an agent's workflow is refused as its agent's", async () => {
+test("an agent's workflow keeps its agent's own step", async () => {
   const { api } = setup();
-  api.on("POST", EDITS, apiError(403, "permission_denied", "'helper' is the workflow the agent 'helper' runs on.", {
-    next_step: "Change or message the agent (/v1/agents/ag_1).", agent_id: "ag_1",
+  api.on("POST", EDITS, apiError(400, "invalid_request", "'agent' is the agent 'helper' itself: its workflow keeps it.", {
+    next_step: "Leave 'agent' in, or delete the agent (DELETE /v1/agents/ag_1).", agent_id: "ag_1",
   }));
   const workflow = nc.Workflow.fromId(WF);
-  await assert.rejects(workflow.step("agent").update({ settings: { system_prompt: "Help." } }),
-    (err: unknown) => err instanceof nc.PermissionDenied && err.details.agent_id === "ag_1");
+  await assert.rejects(workflow.step("agent").remove(),
+    (err: unknown) => err instanceof nc.InvalidRequest && err.details.agent_id === "ag_1");
   assert.equal(workflow.lastEdit, null);
+});
+
+test("a canvas saves as one batch in its own terms", async () => {
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json(edited(5, [])));
+  await nc.Workflow.fromId(WF).edit({ ifVersion: 4, source: "canvas" }, (e) => {
+    e.updateStep("writer", { settings: { system_prompt: "Be brief.", channel__label: null } });
+    e.connect("state", "code", { targetHandle: "state", id: "xy-edge__state-code" });
+    e.disconnect("writer", "post", { id: "writer-post" });
+    e.addNote("Read me", { id: "note-2", position: { x: 40, y: -120 }, width: 280, height: 160 });
+    e.move("note-2", { x: 60, y: -140 }, { width: 320, height: 200 });
+    e.updateWorkflow({ displayMetadata: { viewport: { x: 0, y: 0, zoom: 1 } } });
+  });
+  assert.deepEqual(route.last.body, {
+    ops: [
+      { op: "update_step", id: "writer", settings: { system_prompt: "Be brief.", channel__label: null } },
+      { op: "connect", from: "state", to: "code", kind: "data", target_handle: "state", id: "xy-edge__state-code" },
+      { op: "disconnect", from: "writer", to: "post", id: "writer-post" },
+      { op: "add_note", content: "Read me", id: "note-2", width: 280, height: 160, position: { x: 40, y: -120 } },
+      { op: "move", id: "note-2", position: { x: 60, y: -140 }, width: 320, height: 200 },
+      { op: "update_workflow", display_metadata: { viewport: { x: 0, y: 0, zoom: 1 } } },
+    ],
+    if_version: 4, source: "canvas",
+  });
+});
+
+test("a graph reads what the app shows and an edge's input", async () => {
+  const { api } = setup();
+  api.on("GET", `/v1/workflows/${WF}/graph`, json({
+    ...read(4, bare([HOOK], [{ id: "s-c", source: "state", target: "code", targetHandle: "state" }])),
+    display_metadata: { viewport: { zoom: 2 } },
+  }));
+  const graph = await nc.Workflow.fromId(WF).graph();
+  assert.deepEqual(graph.displayMetadata, { viewport: { zoom: 2 } });
+  assert.deepEqual(graph.edges, [{ id: "s-c", from: "state", to: "code", kind: "data", handle: null, targetHandle: "state" }]);
 });
 
 test("a batch held for the owner surfaces as its approval and lands nothing", async () => {
@@ -566,6 +602,40 @@ test("restoring a version is a version of its own, checked against the version i
   const edit = workflow.lastEdit;
   assert.deepEqual([workflow.version, edit?.historyVersion, edit?.restoredFrom, edit?.summary], [7, 4, 2, "restored version 2"]);
   await assert.rejects(workflow.restore({ ifVersion: 7 }), TypeError);
+});
+
+test("naming versions keeps them, and a name comes back off", async () => {
+  const { api } = setup();
+  const named = versionRow(5, 5, "api", {
+    label: "Before Slack", note: "Sends at 8.", labeled_by: { user_id: "u_1" }, labeled_at: "2026-11-21T10:00:00Z",
+  });
+  const now = api.on("POST", `/v1/workflows/${WF}/versions`, json(named, { status: 201 }));
+  const patch = api.on("PATCH", `/v1/workflows/${WF}/versions/5`,
+    json({ ...named, label: "Before the Slack change" }),
+    json({ ...named, label: null, note: null, labeled_by: null, labeled_at: null }));
+  const listed = api.on("GET", `/v1/workflows/${WF}/versions`, json(listing([named])), json(listing([named])));
+  const workflow = nc.Workflow.fromId(WF);
+  const saved = await workflow.nameVersion("Before Slack", { note: "Sends at 8.", ifVersion: 4 });
+  assert.deepEqual(now.last.body, { label: "Before Slack", note: "Sends at 8.", if_version: 4 });
+  assert.deepEqual([saved.label, saved.note, saved.labeledBy, saved.labeledAt?.getUTCFullYear()], [
+    "Before Slack", "Sends at 8.", { user_id: "u_1" }, 2026]);
+  const renamed = await workflow.nameVersion("Before the Slack change", { historyVersion: 5 });
+  assert.deepEqual([patch.last.body, renamed.label], [{ label: "Before the Slack change", note: null }, "Before the Slack change"]);
+  assert.equal((await workflow.unnameVersion(5)).label, null);
+  assert.deepEqual(patch.last.body, { label: null });
+  assert.deepEqual((await workflow.versions({ named: true })).map((v) => v.label), ["Before Slack"]);
+  assert.equal(listed.last.query.get("named"), "true");
+  await workflow.versions();
+  assert.equal(listed.last.query.get("named"), null);
+});
+
+test("naming the version it's at twice is a Conflict naming the first", async () => {
+  const { api } = setup();
+  api.on("POST", `/v1/workflows/${WF}/versions`, apiError(409, "conflict", "Nothing changed since the version named 'Start'.", {
+    history_version: 2, label: "Start",
+  }));
+  await assert.rejects(nc.Workflow.fromId(WF).nameVersion("Start again"),
+    (err: unknown) => err instanceof nc.Conflict && err.details.label === "Start");
 });
 
 test("restore without a version still brings it back from the trash", async () => {

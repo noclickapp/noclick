@@ -663,7 +663,8 @@ export interface Position {
 
 /**
  * How two steps of a graph are wired: `kind` is `data`, or `tools` for a step wired into an agent as its tools;
- * `handle` names which output of `from` it leaves (`null` for its only one).
+ * `handle` names which output of `from` it leaves (`null` for its only one), `targetHandle` which input of `to` it
+ * joins, for a step with several (a code step's `state`).
  */
 export interface GraphEdge {
   id: string | null;
@@ -671,6 +672,7 @@ export interface GraphEdge {
   to: string;
   kind: "data" | "tools";
   handle: string | null;
+  targetHandle: string | null;
 }
 
 /** A step, or its id. */
@@ -678,7 +680,10 @@ export type StepRef = Step | string;
 
 /** What `Step.update` (and a batch's `updateStep`) changes; a field left out is never touched. */
 export interface StepUpdate {
-  /** Settings to change, merged into the step's (a nested object merges, any other value replaces). */
+  /**
+   * Settings to change, merged into the step's (a nested object merges, any other value replaces, and `null` takes
+   * that setting out, a secret included).
+   */
   settings?: JsonObject;
   name?: string;
   operation?: string;
@@ -723,6 +728,8 @@ export interface AddNoteOptions {
   before?: StepRef;
   width?: number;
   height?: number;
+  /** Where it sits, instead of beside steps (`near`, or `after` and `before`). */
+  position?: Position;
 }
 
 /** What `Workflow.edit` checks and answers. */
@@ -731,6 +738,12 @@ export interface EditOptions {
   ifVersion?: number;
   /** `true`: the answer carries the graph as written. */
   includeGraph?: boolean;
+  /**
+   * `canvas`: the edits are a canvas's saves. Each setting `updateStep` sends replaces that setting whole and is kept
+   * as written (never rewritten nor refused for its value; the step's verdict says it isn't ready), and they join the
+   * canvas session's version (saves within five minutes of its first, whoever made them).
+   */
+  source?: "canvas";
 }
 
 /** What `Workflow.update` changes; a field left out is never touched. */
@@ -739,6 +752,21 @@ export interface WorkflowUpdate {
   description?: string;
   /** Its settings to change, by top-level key; only its owner changes them. */
   settings?: JsonObject;
+  /**
+   * What the app shows of it (its canvas's viewport, the step open in its panel; 16 KB at most), replacing what's
+   * kept: never a version, nor a change anyone is told of.
+   */
+  displayMetadata?: JsonObject;
+}
+
+/** What `nameVersion` takes beside its label. */
+export interface NameVersionOptions {
+  /** A line about it. */
+  note?: string;
+  /** The version of its history to name; left out, the version the workflow is at now (a checkpoint). */
+  historyVersion?: number;
+  /** For the version it's at now: refused with `Conflict` when the workflow moved on since this version. */
+  ifVersion?: number;
 }
 
 /**
@@ -770,10 +798,12 @@ export interface WorkflowEdit {
 /**
  * One version of a workflow's history: its own number (`historyVersion`, what `versionAt` and `restore` take,
  * fixed once given), the workflow's `version` its latest write left, where the change came from (`source`: `api`,
- * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, or `baseline`, the workflow before its history
- * began), who began it (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it
- * (`authors`, its author first), a `summary` and its `changes`, and for a restore the version of the history it put
- * back (`restoredFrom`).
+ * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `baseline`, the workflow before its history
+ * began, or `checkpoint`, one saved in the app before its history was kept, numbered below 1), who began it
+ * (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it (`authors`, its author
+ * first), a `summary` and its `changes`, and for a restore the version of the history it put back (`restoredFrom`).
+ * A named version (a checkpoint: `Workflow.nameVersion`) has its `label` and `note`, who named it (`labeledBy`) and
+ * when (`labeledAt`), and is kept for good while it has a name.
  *
  * Saves in the app's canvas within five minutes of a session's first are one version, whoever made them. Any other
  * change (from your code, the builder, an MCP client, NoClick's assistant, a restore) is a version of its own, which
@@ -795,6 +825,10 @@ export interface WorkflowVersion {
   createdAt: Date | null;
   updatedAt: Date | null;
   graph: WorkflowGraph | null;
+  label: string | null;
+  note: string | null;
+  labeledBy: { user_id: string } | null;
+  labeledAt: Date | null;
   raw: JsonObject;
 }
 
@@ -928,12 +962,14 @@ function nodeConfig(node: JsonObject): JsonObject {
 
 function toEdge(value: unknown): GraphEdge {
   const raw = asObject(value);
+  const tools = raw.targetHandle === TOOLS_HANDLE;
   return {
     id: str(raw.id),
     from: str(raw.source) ?? str(raw.sourceId) ?? "",
     to: str(raw.target) ?? str(raw.targetId) ?? "",
-    kind: raw.targetHandle === TOOLS_HANDLE ? "tools" : "data",
+    kind: tools ? "tools" : "data",
     handle: str(raw.sourceHandle),
+    targetHandle: tools ? null : str(raw.targetHandle),
   };
 }
 
@@ -1003,12 +1039,16 @@ function noteOp(content: string, options: AddNoteOptions): JsonObject {
       color: options.color, near: options.near?.map(stepId), direction: options.direction,
       after: options.after === undefined ? undefined : stepId(options.after),
       before: options.before === undefined ? undefined : stepId(options.before), width: options.width, height: options.height,
+      position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
     }),
   };
 }
 
 function updateWorkflowOp(update: WorkflowUpdate): JsonObject {
-  return compact({ op: "update_workflow", name: update.name, description: update.description, settings: update.settings });
+  return compact({
+    op: "update_workflow", name: update.name, description: update.description, settings: update.settings,
+    display_metadata: update.displayMetadata,
+  });
 }
 
 /**
@@ -1060,6 +1100,10 @@ function toWorkflowVersion(value: unknown, workflow: Workflow): WorkflowVersion 
     createdAt: parseTime(raw.created_at),
     updatedAt: parseTime(raw.updated_at),
     graph: definitionOf(raw, workflow),
+    label: str(raw.label),
+    note: str(raw.note),
+    labeledBy: raw.labeled_by && typeof raw.labeled_by === "object" ? { user_id: String(asObject(raw.labeled_by).user_id) } : null,
+    labeledAt: parseTime(raw.labeled_at),
     raw,
   };
 }
@@ -1234,7 +1278,8 @@ export class Step extends ApiObject {
 
   /**
    * Change its settings, name or operation, or switch it off or on. `settings` merge into what it has (a nested
-   * object merges, any other value replaces); a field you leave out is never touched. An agent given another
+   * object merges, any other value replaces, and `null` takes that setting out, a secret included); a field you leave
+   * out is never touched. An agent given another
    * `model` on another harness drops the old harness's own settings and connections, as the app does
    * (`notes.harness_switch` says what went). A value that can't be is refused with `InvalidRequest` naming the
    * field, and nothing changes. Resolves to this step as written, with `notes` and `verdict`.
@@ -1263,10 +1308,13 @@ export class Step extends ApiObject {
   /**
    * Wire this step into `other`. `kind: "data"` runs `other` after it with its output; `kind: "tools"` makes its
    * operations tools of `other`, an agent (or an MCP step). `handle` names which of this step's outputs, for a step
-   * with several. Connecting what's already connected changes nothing; `notes` holds the edge.
+   * with several, and `targetHandle` which of `other`'s inputs (a code step's `state`). Connecting what's already
+   * connected changes nothing; `notes` holds the edge.
    */
-  async connect(other: StepRef, options: { kind?: "data" | "tools"; handle?: string } = {}): Promise<this> {
-    return await this._edit(edgeOp("connect", this, other, { kind: options.kind ?? "data", handle: options.handle }), other);
+  async connect(other: StepRef, options: { kind?: "data" | "tools"; handle?: string; targetHandle?: string } = {}): Promise<this> {
+    return await this._edit(edgeOp("connect", this, other, {
+      kind: options.kind ?? "data", handle: options.handle, target_handle: options.targetHandle,
+    }), other);
   }
 
   /** Remove the edge from this step to `other`; one that isn't there throws `InvalidRequest`. */
@@ -1441,7 +1489,8 @@ export class Step extends ApiObject {
  * step id, the paths of the settings left out (`api_key`, `auth.password`, `headers[0].value`), `settingsWithheld`
  * those of the workflow's own settings (`variable_definitions[1].value`), and `variablesWithheld` the graph's own
  * variables. The graph a `Conflict` carries holds the steps and edges alone: its `name`, `description`,
- * `settings` and `settingsWithheld` are `null`.
+ * `settings` and `settingsWithheld` are `null`. `displayMetadata` is what the app shows of the workflow (its
+ * canvas's viewport, the step open in its panel), read with `graph()`: never part of a version.
  */
 export class WorkflowGraph {
   readonly workflowId: string;
@@ -1455,6 +1504,7 @@ export class WorkflowGraph {
   readonly edges: GraphEdge[];
   readonly withheld: Record<string, string[]>;
   readonly variablesWithheld: string[];
+  readonly displayMetadata: JsonObject | null;
   readonly raw: JsonObject;
 
   /**
@@ -1479,6 +1529,7 @@ export class WorkflowGraph {
     this.edges = (Array.isArray(raw.edges) ? raw.edges : []).map(toEdge);
     this.withheld = withheld;
     this.variablesWithheld = Array.isArray(raw.variables_withheld) ? raw.variables_withheld.map(String) : [];
+    this.displayMetadata = own?.display_metadata && typeof own.display_metadata === "object" ? { ...asObject(own.display_metadata) } : null;
     this.raw = raw;
   }
 
@@ -1586,14 +1637,19 @@ export class EditBatch {
     this.queue({ op: "remove_step", id: stepId(step) });
   }
 
-  /** Queue an edge from `source` into `target`, as `Step.connect` makes it. */
-  connect(source: StepRef, target: StepRef, options: { kind?: "data" | "tools"; handle?: string } = {}): void {
-    this.queue(edgeOp("connect", source, target, { kind: options.kind ?? "data", handle: options.handle }));
+  /**
+   * Queue an edge from `source` into `target`, as `Step.connect` makes it; `id` names the edge (made for it when left
+   * out), as a canvas names its own.
+   */
+  connect(source: StepRef, target: StepRef, options: { kind?: "data" | "tools"; handle?: string; targetHandle?: string; id?: string } = {}): void {
+    this.queue(edgeOp("connect", source, target, {
+      kind: options.kind ?? "data", handle: options.handle, target_handle: options.targetHandle, id: options.id,
+    }));
   }
 
-  /** Queue removing the edge from `source` into `target`. */
-  disconnect(source: StepRef, target: StepRef, options: { handle?: string } = {}): void {
-    this.queue(edgeOp("disconnect", source, target, { handle: options.handle }));
+  /** Queue removing the edge from `source` into `target` (`id`: the one edge of that id, when two join them). */
+  disconnect(source: StepRef, target: StepRef, options: { handle?: string; id?: string } = {}): void {
+    this.queue(edgeOp("disconnect", source, target, { handle: options.handle, id: options.id }));
   }
 
   /** Queue connecting an account to a step, as `Step.setConnection` does (`null` with `slot` takes one off). */
@@ -1616,9 +1672,12 @@ export class EditBatch {
     this.queue(updateWorkflowOp(update));
   }
 
-  /** Queue moving a step (or a note) on the canvas. Moving things is never a version of its own. */
-  move(step: StepRef, position: Position): void {
-    this.queue({ op: "move", id: stepId(step), position: { x: position.x, y: position.y } });
+  /**
+   * Queue moving a step (or a note) on the canvas, and for one drawn at a size (a note) giving it `width` and
+   * `height`. Moving things is never a version of its own.
+   */
+  move(step: StepRef, position: Position, size: { width?: number; height?: number } = {}): void {
+    this.queue({ op: "move", id: stepId(step), position: { x: position.x, y: position.y }, ...compact({ width: size.width, height: size.height }) });
   }
 
   /** Queue laying every step out again, as the app's Tidy up does. */
@@ -1959,7 +2018,7 @@ export class Workflow extends ApiObject {
     let raw: unknown;
     try {
       raw = await this._request("POST", `${path}/edits`, {
-        json: compact({ ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined }),
+        json: compact({ ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source }),
       });
     } catch (err) {
       this._stale(err);
@@ -2040,8 +2099,11 @@ export class Workflow extends ApiObject {
    * A batch that can't be undone from its versions alone (one that removes a step holding an app, conversations or
    * files) may be held for the account's owner when an agent, a connected app or a deployed app's code sends it: it
    * throws `ApprovalRequired`, nothing of it has landed, and NoClick applies it once they approve (its `operation`
-   * settles then, with the batch's answer). The workflow one of your agents runs on changes through the agent: an
-   * edit of it throws `PermissionDenied` naming it (`details.agent_id`).
+   * settles then, with the batch's answer). The workflow one of your agents runs on is edited as its canvas edits it:
+   * the agent follows its prompt, harness and model, its own step stays (removing it throws `InvalidRequest` naming
+   * the agent, `details.agent_id`), and a key that couldn't change the agent can't change it this way either.
+   *
+   * `source: "canvas"` says the edits are a canvas's saves (`EditOptions.source`).
    */
   async edit(options: EditOptions, build: (batch: EditBatch) => unknown): Promise<WorkflowEdit | null> {
     const batch = new EditBatch(this, options);
@@ -2049,17 +2111,46 @@ export class Workflow extends ApiObject {
     return await batch._send();
   }
 
-  /** Its versions, newest first, kept 90 days: the first `limit` (20 by default; `null` for all), fetched page by page. */
-  async versions(options: { limit?: number | null } = {}): Promise<WorkflowVersion[]> {
+  /**
+   * Its versions, newest first, kept 90 days (a named one for good): the first `limit` (20 by default; `null` for
+   * all), fetched page by page. `named: true` lists only the named ones, its checkpoints.
+   */
+  async versions(options: { limit?: number | null; named?: boolean } = {}): Promise<WorkflowVersion[]> {
     const path = `${await this.path()}/versions`;
     const limit = options.limit === undefined ? 20 : (options.limit ?? undefined);
-    return await listAll({ path, user: null, client: this._client, limit }, (raw) => toWorkflowVersion(raw, this));
+    const query = options.named ? { named: "true" } : undefined;
+    return await listAll({ path, user: null, client: this._client, limit, query }, (raw) => toWorkflowVersion(raw, this));
   }
 
-  /** One page of its versions, newest first; pass `nextCursor` back as `cursor`. */
-  async versionsPage(options: PageOptions = {}): Promise<Page<WorkflowVersion>> {
+  /** One page of its versions, newest first (`named: true`: the named ones); pass `nextCursor` back as `cursor`. */
+  async versionsPage(options: PageOptions & { named?: boolean } = {}): Promise<Page<WorkflowVersion>> {
+    const { named, ...page } = options;
     const path = `${await this.path()}/versions`;
-    return await listPage({ ...options, path, user: null, client: this._client }, (raw) => toWorkflowVersion(raw, this));
+    const query = named ? { named: "true" } : undefined;
+    return await listPage({ ...page, path, user: null, client: this._client, query }, (raw) => toWorkflowVersion(raw, this));
+  }
+
+  /**
+   * Name a version of its history, keeping it for good while it has a name: the version it's at now (a checkpoint,
+   * as the app saves one; `ifVersion` refuses it with `Conflict` when the workflow moved on since you read it), or
+   * the one `historyVersion` names, or another name for a named one. No later change joins a named version. Naming
+   * the version it's at now when it has a name already throws `Conflict` naming it (`details.label`). Restore it
+   * with `restore({ historyVersion })`. A name someone else gave is changed only by them or the workflow's owner.
+   */
+  async nameVersion(label: string, options: NameVersionOptions = {}): Promise<WorkflowVersion> {
+    const path = `${await this.path()}/versions`;
+    const raw = options.historyVersion === undefined
+      ? await this._request("POST", path, { json: compact({ label, note: options.note, if_version: options.ifVersion }) })
+      : await this._request("PATCH", `${path}/${options.historyVersion}`, { json: { label, note: options.note ?? null } });
+    return toWorkflowVersion(raw, this);
+  }
+
+  /**
+   * Take a version's name away (a checkpoint deleted): it's kept 90 days from its last write then, as any version.
+   * Only who named it or the workflow's owner takes it away.
+   */
+  async unnameVersion(historyVersion: number): Promise<WorkflowVersion> {
+    return toWorkflowVersion(await this._request("PATCH", `${await this.path()}/versions/${historyVersion}`, { json: { label: null } }), this);
   }
 
   /**
