@@ -777,9 +777,9 @@ tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twili
 typecast typeform typefully unifi unione unipile uniswap-api universe unleash uplisting upload-post uploadcare
 upstash-vector uptimecom uptimerobot urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro vast-ai
 vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler
-vimeo viral-loops virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video voiceflow
-volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit
-weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport
+vimeo viral-loops virtualbadgeio virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video
+voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront
+weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport
 weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase
 whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api
 woop-social word wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads
