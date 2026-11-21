@@ -45,7 +45,7 @@ def writes(connection: noclick.Connection) -> list:
 # ## Make writes ask first
 #
 # `require_approval` only ever adds: each call of those operations then waits for the account's
-# owner to approve that exact call, wherever it comes from. Lifting one is done in the app. On an
+# owner to approve that exact call, wherever it comes from. `lift_approval` takes one back. On an
 # account shared with you, the rules stay its owner's, so the walk leaves those alone.
 
 
@@ -76,5 +76,6 @@ if __name__ == "__main__":
 # ## Clean up
 #
 # Reading and checking create nothing. A verify asks each provider once and costs nothing at
-# NoClick. To let an operation run without asking again, change the account's permissions in the
-# NoClick app (Connections).
+# NoClick. To let an operation run without asking again, call `connection.lift_approval(name)`
+# with a key naming the `approvals:policy` scope (it takes effect after a 10-minute undo window),
+# or change the account's permissions in the NoClick app (Connections).

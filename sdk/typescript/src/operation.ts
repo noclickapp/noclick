@@ -97,6 +97,18 @@ async function filterQuery(filters: OperationFilters): Promise<Record<string, Qu
   };
 }
 
+/** The workstream an operation's work belongs to, as it reads now. */
+export interface NamedWorkstream {
+  id: string;
+  name: string;
+}
+
+/** A workstream as a view names it (`{ id, name }`), null when it names none. */
+export function namedWorkstream(value: unknown): NamedWorkstream | null {
+  const raw = value && typeof value === "object" ? (value as JsonObject) : null;
+  return raw ? { id: String(raw.id), name: String(raw.name) } : null;
+}
+
 /** One stage of what an operation's work planned (a deploy's: Queued, Building, Shipping, Live). */
 export interface OperationStage {
   name: string;
@@ -260,6 +272,13 @@ export class Operation<T = unknown> extends ApiObject {
   /** What it was started with (on a single operation's view, for account principals). */
   get input(): JsonObject | null {
     return this._field("input");
+  }
+  /**
+   * The workstream its work belongs to, as it reads now (a renamed one by its new name, a merged one as the one it
+   * joined); null when its work named none. A single operation's view and `Operation.list()` name it.
+   */
+  get workstream(): NamedWorkstream | null {
+    return namedWorkstream(this._known("workstream"));
   }
   get startedAt(): Date | null {
     return parseTime(this._known("started_at"));

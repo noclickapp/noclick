@@ -83,6 +83,7 @@ function itemOf(part: Part, status: BesideStatus, now: number): BesideItem {
         turnRunning: false,
         agent: { agentId: part.agentId, name: part.agent, task: part.doing, jobId: part.stop ?? null },
         spendUsd: null,
+        workstream: part.workstream ?? null,
     };
 }
 

@@ -164,3 +164,106 @@ test("a key and a connected app set their own as the account, and the policy rea
   assert.equal(read.last.query.get("key_id"), "key_7");
   assert.deepEqual([policy.kinds[0].own?.disposition, policy.effective("purchase", "key")], ["deny", "deny"]);
 });
+
+const AGENT = {
+  object: "agent", id: "ag_1", name: "buyer", model: "openrouter/x", harness: "sdk", instructions: "hi", tools: [],
+  user_id: null, workflow_id: "wf_1", parent_id: null, ttl_s: null, expires_at: null, budget_usd_per_month: 50,
+  created_at: "2026-09-25T10:00:00Z", approvals: {},
+};
+const UNDER_20 = { disposition: "allow", under_usd: 20, until: null, pending: false };
+
+test("an agent sets its own approvals on create, update and spawn, and the policy reads and explains for it", async () => {
+  const { api } = setup();
+  const created = api.on("POST", "/v1/agents", json({ ...AGENT, approvals: { purchase: UNDER_20 },
+    approval_changes: [{ ...CHANGE, scope: "agent", scope_id: "ag_1", changed_by: "owner", key_id: null, pending: false }] },
+  { status: 201 }));
+  const buyer = await nc.Agent.create("buyer", { instructions: "Buy what's asked.",
+    approvals: { purchase: { disposition: "allow", under_usd: 20 } } });
+  assert.deepEqual((created.last.body as { approvals: unknown }).approvals, { purchase: { disposition: "allow", under_usd: 20 } });
+  assert.equal(buyer.approvals.purchase.under_usd, 20);
+
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patched = api.on("PATCH", "/v1/agents/ag_1", json(AGENT));
+  await nc.Agent.fromId("ag_1").update({ approvals: { purchase: null, outside_other_connection: "allow" } });
+  assert.deepEqual(patched.last.body, { approvals: { purchase: null, outside_other_connection: "allow" } });
+
+  const spawned = api.on("POST", "/v1/agents/ag_1/children", json({ ...AGENT, id: "ag_2", parent_id: "ag_1" },
+    { status: 201 }));
+  await nc.Agent.fromId("ag_1").spawn("Buy a number.", { approvals: { purchase: "ask" } });
+  assert.deepEqual((spawned.last.body as { approvals: unknown }).approvals, { purchase: "ask" });
+
+  const read = api.on("GET", "/v1/approvals/policy", json({ ...POLICY, agent_id: "ag_2", kinds: [
+    { ...POLICY.kinds[0], own: null,
+      effective: { connected_app: "under_auto_approve", agent: "allow_under", app: "allow", key: "ask" } }] }));
+  const policy = await nc.ApprovalPolicy.get({ agentId: "ag_2" });
+  assert.equal(read.last.query.get("agent_id"), "ag_2");
+  assert.equal(policy.effective("purchase", "agent"), "allow_under");
+  const explained = api.on("POST", "/v1/approvals/policy/explain", json({
+    object: "approval_explanation", kind: "purchase", caller: "agent", disposition: "allow", source: "parent",
+    why: null, setting: { disposition: "allow", under_usd: 20, until: null }, bounds: false }));
+  const seen = await nc.ApprovalPolicy.explain("purchase", "agent", { amountUsd: 19, agentId: "ag_2" });
+  assert.equal((explained.last.body as { agent_id: unknown }).agent_id, "ag_2");
+  assert.deepEqual([seen.disposition, seen.source], ["allow", "parent"]);
+});
+
+test("agents attaching connections is a kind switched for the account and for one agent", async () => {
+  const { api } = setup();
+  const ATTACH = { kind: "attach_connection", description: "Giving a workflow's step a connection or a secret.",
+    approver: "owner", outside_only: false, settable: true,
+    defaults: { connected_app: "allow", assistant: "allow", agent: "allow", key: "allow", code: "allow" } };
+  api.on("GET", "/v1/approvals/policy", json({ ...POLICY, kinds: [ATTACH] }));
+  assert.equal((await nc.ApprovalPolicy.get()).default("attach_connection", "agent"), "allow");
+  const put = api.on("PUT", "/v1/approvals/policy", json({ ...POLICY, kinds: [ATTACH], changes: [] }));
+  await nc.ApprovalPolicy.set({ settings: { attach_connection: "ask" }, ceilings: { attach_connection: "allow" } });
+  assert.deepEqual(put.last.body, { settings: { attach_connection: "ask" }, ceilings: { attach_connection: "allow" } });
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patched = api.on("PATCH", "/v1/agents/ag_1", json(AGENT));
+  await nc.Agent.fromId("ag_1").update({ approvals: { attach_connection: "allow" } });
+  assert.deepEqual(patched.last.body, { approvals: { attach_connection: "allow" } });
+});
+
+const ROUTING = {
+  object: "approval_routing", approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, on_timeout: "escalate",
+  expires_in_s: 3600, effective_at: "2026-11-21T09:00:00+00:00", pending: false, before: null, change_id: "chg_2",
+};
+const STAGES = [
+  { approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, expires_in_s: 3600, on_timeout: "escalate",
+    source: "account" },
+  { approver: { object: "approver", kind: "owner" }, expires_in_s: 86400, on_timeout: "decline", source: "default" },
+];
+
+test("the account names who answers its held calls, and reads the chain back", async () => {
+  const { api } = setup();
+  const put = api.on("PUT", "/v1/approvals/policy", json({ ...POLICY, routing: ROUTING,
+    approvers: { agent: STAGES, key: STAGES } }));
+  const policy = await nc.ApprovalPolicy.set({ routing: { approver: { agent_id: "supervisor" }, on_timeout: "escalate",
+    expires_in_s: 3600 } });
+  assert.deepEqual(put.last.body, { routing: { approver: { agent_id: "supervisor" }, on_timeout: "escalate",
+    expires_in_s: 3600 } });
+  assert.equal(policy.routing?.approver && (policy.routing.approver as { kind: string }).kind, "agent");
+  assert.deepEqual(policy.approvers.key.map((s) => (s.approver as { kind: string }).kind), ["agent", "owner"]);
+  // null puts the owner back; leaving it out leaves it as it is.
+  await nc.ApprovalPolicy.set({ routing: null });
+  assert.deepEqual(put.last.body, { routing: null });
+  await nc.ApprovalPolicy.set({ settings: { purge: "allow" } });
+  assert.deepEqual(put.last.body, { settings: { purge: "allow" } });
+  api.on("POST", "/v1/approvals/policy/explain", json({
+    object: "approval_explanation", kind: "purchase", caller: "key", disposition: "ask", source: "default",
+    why: "Purchases through an API key always ask.", setting: null, bounds: false, approvers: STAGES }));
+  const seen = await nc.ApprovalPolicy.explain("purchase", "key");
+  assert.deepEqual(seen.approvers.map((s) => (s.approver as { kind: string }).kind), ["agent", "owner"]);
+});
+
+test("an agent names its own approver, and an approval says who it waits on", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patched = api.on("PATCH", "/v1/agents/ag_1", json({ ...AGENT, approvals: { routing: ROUTING } }));
+  await nc.Agent.fromId("ag_1").update({ approvals: { routing: { approver: { code: true } } } });
+  assert.deepEqual(patched.last.body, { approvals: { routing: { approver: { code: true } } } });
+  api.on("GET", "/v1/approvals/apr_1", json({ ...APPROVAL,
+    approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, on_timeout: "escalate", sent_to: [], status: "approved", decided_by: "agent",
+    decided_by_agent: { agent_id: "ag_9", name: "Supervisor" } }));
+  const approval = await nc.Approval.fromId("apr_1").hydrate();
+  assert.deepEqual([approval.approver.kind, approval.onTimeout, approval.decidedBy], ["agent", "escalate", "agent"]);
+  assert.equal(approval.decidedByAgent?.name, "Supervisor");
+});

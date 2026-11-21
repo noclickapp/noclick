@@ -3,5 +3,6 @@ GET /v1/notifications
 GET /v1/usage/billing
 GET /v1/usage/groups
 GET /v1/usage/limits
+GET /v1/workstreams
 POST /v1/usage/charges
 POST /v1/watch/tokens
