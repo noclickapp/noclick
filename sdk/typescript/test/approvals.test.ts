@@ -179,7 +179,7 @@ test("an agent sets its own approvals on create, update and spawn, and the polic
   { status: 201 }));
   const buyer = await nc.Agent.create("buyer", { instructions: "Buy what's asked.",
     approvals: { purchase: { disposition: "allow", under_usd: 20 } } });
-  assert.deepEqual(created.last.body.approvals, { purchase: { disposition: "allow", under_usd: 20 } });
+  assert.deepEqual((created.last.body as { approvals: unknown }).approvals, { purchase: { disposition: "allow", under_usd: 20 } });
   assert.equal(buyer.approvals.purchase.under_usd, 20);
 
   api.on("GET", "/v1/agents/ag_1", json(AGENT));
@@ -190,7 +190,7 @@ test("an agent sets its own approvals on create, update and spawn, and the polic
   const spawned = api.on("POST", "/v1/agents/ag_1/children", json({ ...AGENT, id: "ag_2", parent_id: "ag_1" },
     { status: 201 }));
   await nc.Agent.fromId("ag_1").spawn("Buy a number.", { approvals: { purchase: "ask" } });
-  assert.deepEqual(spawned.last.body.approvals, { purchase: "ask" });
+  assert.deepEqual((spawned.last.body as { approvals: unknown }).approvals, { purchase: "ask" });
 
   const read = api.on("GET", "/v1/approvals/policy", json({ ...POLICY, agent_id: "ag_2", kinds: [
     { ...POLICY.kinds[0], own: null,
@@ -202,6 +202,6 @@ test("an agent sets its own approvals on create, update and spawn, and the polic
     object: "approval_explanation", kind: "purchase", caller: "agent", disposition: "allow", source: "parent",
     why: null, setting: { disposition: "allow", under_usd: 20, until: null }, bounds: false }));
   const seen = await nc.ApprovalPolicy.explain("purchase", "agent", { amountUsd: 19, agentId: "ag_2" });
-  assert.equal(explained.last.body.agent_id, "ag_2");
+  assert.equal((explained.last.body as { agent_id: unknown }).agent_id, "ag_2");
   assert.deepEqual([seen.disposition, seen.source], ["allow", "parent"]);
 });
