@@ -60,8 +60,11 @@ class AccountPhones:
     @synced
     @classmethod
     async def get(cls, *, client: Optional[Client] = None) -> "AccountPhones":
-        """Read the numbers linked to the account, whether this NoClick sends codes to link one (``configured``) and
-        how many an account may link (``max_phones``).
+        """Read the numbers linked to the account.
+
+        Returns:
+            The linked numbers (``phones``), whether this NoClick sends codes to link one (``configured``) and how
+            many an account may link (``max_phones``).
 
         Usage::
 
@@ -93,6 +96,9 @@ class AccountPhones:
         """Link the challenge's number with the code texted to it. A wrong code raises ``noclick.InvalidRequest``
         (``reason`` ``invalid_code``) and can be tried again; an expired challenge (``noclick.Expired``) or too many
         tries (``noclick.RateLimited``) needs a new code.
+
+        Returns:
+            The number, linked: proven by a code (``source`` ``verify``), and when.
 
         Usage::
 
