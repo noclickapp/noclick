@@ -15,6 +15,8 @@ from platform_helpers import body, listing
 WF = "wf_1"
 EDITS = f"/v1/workflows/{WF}/edits"
 CREDENTIAL = "9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e"
+# An account connected in the app: its connection's id is credential:<this>.
+IN_APP = "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"
 
 HOOK = {"id": "hook", "type": "trigger-webhook", "position": {"x": 0, "y": 0},
         "config": {"label": "New order", "http_method": "POST", "webhook_url": "https://wf-1.noclick.run"}}
@@ -128,6 +130,22 @@ def test_a_graph_reads_the_whole_definition_into_typed_steps_notes_and_edges(api
     assert graph.step("writer") is writer and graph.step("Post it") is post
     with pytest.raises(nc.NotFound):
         graph.step("Nope")
+
+
+def test_a_steps_account_is_the_connection_naming_its_credential_id(api, client):
+    api.get(f"/v1/workflows/{WF}/graph").respond(json=read())
+    named = {"object": "connection", "id": "6f3c2d1e-0a9b-4c8d-9e7f-5a4b3c2d1e0f", "name": "openrouter",
+             "integration": "openrouter", "credential_type": "agent_openrouter", "origin": "api",
+             "status": "connected", "credential_id": CREDENTIAL}
+    in_app = {**named, "id": f"credential:{IN_APP}", "name": "OpenRouter key", "origin": "app",
+              "credential_id": IN_APP}
+    pending = {**named, "id": "0e1d2c3b-4a59-4687-9a8b-7c6d5e4f3a2b", "name": "later", "status": "pending",
+               "credential_id": None}
+    api.get("/v1/connections").respond(json=listing(named, in_app, pending))
+    writer = nc.Workflow.from_id(WF).graph().step("writer")
+    by_credential = {c.credential_id: c for c in nc.Connection.list() if c.credential_id}
+    assert by_credential[writer.connections["agent_openrouter"]].name == "openrouter"
+    assert [c.credential_id for c in nc.Connection.list()] == [CREDENTIAL, IN_APP, None]
 
 
 def test_the_workflows_version_comes_with_its_read_and_moves_with_each_answer(api, client):

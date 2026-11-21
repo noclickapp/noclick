@@ -409,6 +409,9 @@ class Connection(_Object):
     account: Optional[str] = field("account", doc=(
         "The account it reaches, as the app's Connections list names it: its login, else its email, else who a "
         "check verified it as, else the number it links; ``None`` when none is known."))
+    credential_id: Optional[str] = field("credential_id", doc=(
+        "The id of the account it holds, as a workflow step's ``connections`` names it, so a step's account is "
+        "matched to its connection; ``None`` while none is connected."))
     test_account: bool = field(
         "test_account", bool, doc="Whether it's a test account, which an app's preview writes through as well as reads.",
     )
