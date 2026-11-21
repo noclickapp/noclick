@@ -726,7 +726,7 @@ kadoa kajabi kantataox kapso karbon katana-mrp keap keila kenect-text-messaging 
 kintone kisi kit kiwify kizeo-forms klaviyo klicktipp knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes
 kudosity kumpeapps kvcore lagrowthmachine lakera-guard lambdatest landbot langbase langflow langfuse languagetool
 laposta lassocrm launchdarkly lead-forensics lead-prosper leadboxer leadfeeder leadmagic leadsforge leadsimple
-leanix leap leap-crm learnifier learnworlds leexi legalmatch lemlist lessonspace lettr levitate libretranslate
+leanix leap leap-crm learnifier learnworlds leexi legalmatch legl lemlist lessonspace lettr levitate libretranslate
 lightspeed line linear linkace linkedin linkly linkup linkwarden linode linq listclean listennotes liveagent lofty
 logo-dev lokalise lonescale looker loops loopy-loyalty loyverse luma lumapps lusha luxury-presence lytho magento-v2
 magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic mailersend mailgun mailjet mailmodo
