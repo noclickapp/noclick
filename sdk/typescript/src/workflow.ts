@@ -25,7 +25,7 @@ import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
 import {
-  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, parseTime, readScope, refId, str,
+  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, paginate, parseTime, readScope, refId, str,
 } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
@@ -34,6 +34,43 @@ import { WorkflowApproval } from "./workflowApproval.ts";
 import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
 export type WorkflowRunStatus = "running" | "succeeded" | "failed";
+
+/**
+ * One of your account's workflow folders, as the app's Automations page shows it: `Workflow.folders()` lists them,
+ * `Workflow.createFolder()` makes one and `workflow.moveTo()` files a workflow in one.
+ */
+export interface WorkflowFolder {
+  id: string;
+  name: string;
+  description: string | null;
+  /** The folder it's in; null at the top. */
+  parentId: string | null;
+  /** How deep it sits: 0 at the top, 10 at most. */
+  depth: number;
+  /** How many workflows are in it (not counting its folders'). */
+  workflowCount: number;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  raw: JsonObject;
+}
+
+function toFolder(raw: JsonObject): WorkflowFolder {
+  return {
+    id: String(raw.id),
+    name: String(raw.name),
+    description: str(raw.description),
+    parentId: str(raw.parent_id),
+    depth: Number(raw.depth),
+    workflowCount: Number(raw.workflow_count ?? 0),
+    createdAt: parseTime(raw.created_at),
+    updatedAt: parseTime(raw.updated_at),
+    raw,
+  };
+}
+
+function folderIdOf(folder: WorkflowFolder | string | null): string | null {
+  return folder !== null && typeof folder === "object" ? folder.id : folder;
+}
 
 /**
  * What one step did in a run: `status` is `succeeded`, `failed` (`error` says why) or `skipped`;
@@ -1564,6 +1601,10 @@ export class Workflow extends ApiObject {
   get access(): string {
     return this._field("access");
   }
+  /** The folder of your account's it's in (`Workflow.folders()`); null at the top, and for one shared with you. */
+  get folderId(): string | null {
+    return str(this._field("folder_id"));
+  }
   /**
    * What it's made of, at a glance, in a list too: at most four of its step types, its triggers first, then its
    * agents (one on a coding harness as `agent:<harness>`, `agent:codex`), then the rest, never a note.
@@ -1625,6 +1666,50 @@ export class Workflow extends ApiObject {
       json: compact({ name, instructions: options.instructions, description: options.description }),
     });
     return new Workflow({ raw, client: options.client });
+  }
+
+  /**
+   * Your account's workflow folders, as the app's Automations page shows them: the ones it made in its own workspace,
+   * the shallowest first, then by name. A workflow's `folderId` names the one it's in.
+   *
+   *     for (const folder of await Workflow.folders()) console.log("  ".repeat(folder.depth) + folder.name);
+   */
+  static async folders(options: { client?: NoClick } = {}): Promise<WorkflowFolder[]> {
+    const rows = await paginate(resolveClient(options.client), "/v1/workflows/folders", { user: null });
+    return rows.map(toFolder);
+  }
+
+  /**
+   * A new folder in your account's workspace, at the top or in `parent` (a folder or its id), as the app makes one. A
+   * name `parent`'s folders already have throws `Conflict`, naming that folder (`folder_id`).
+   *
+   *     const reports = await Workflow.createFolder("Reports");
+   *     await Workflow.fromName("Morning brief").moveTo(await Workflow.createFolder("Weekly", { parent: reports }));
+   */
+  static async createFolder(
+    name: string,
+    options: { description?: string; parent?: WorkflowFolder | string; client?: NoClick } = {},
+  ): Promise<WorkflowFolder> {
+    const raw = await resolveClient(options.client).request("POST", "/v1/workflows/folders", {
+      json: compact({ name, description: options.description, parent_id: folderIdOf(options.parent ?? null) }),
+      user: null,
+    });
+    return toFolder(asObject(raw));
+  }
+
+  /**
+   * Move it into one of your account's folders (a folder or its id), or out to the top with `null`, as dragging it does
+   * in the app. It takes what changing it takes: owning it and paying for it. Answers it read again, its `folderId`
+   * the folder it's in now.
+   *
+   *     const brief = Workflow.fromName("Morning brief");
+   *     await brief.moveTo(await Workflow.createFolder("Reports"));
+   *     await brief.moveTo(null);   // back to the top
+   */
+  async moveTo(folder: WorkflowFolder | string | null): Promise<this> {
+    return this.took(await this._request<JsonObject>("POST", `${await this.path()}/move`, {
+      json: { folder_id: folderIdOf(folder) },
+    }));
   }
 
   protected async _load(): Promise<JsonObject> {

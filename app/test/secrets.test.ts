@@ -282,11 +282,12 @@ describe('the guard', () => {
 });
 
 describe('the app', () => {
+    // It parses every module of the app, which grows with it: well past vitest's 5 seconds on a busy CI runner.
     it('keeps its secrets where they are meant to be', () => {
         const modules = appModules();
         expect(Object.keys(modules)).toEqual(expect.arrayContaining([ENV_READER, ...CLIENT_MAKERS, ...Object.values(SECRET_HOLDERS).flatMap((holders) => [...holders])]));
         expect(breaches(modules).join('\n')).toBe('');
-    });
+    }, 60_000);
 
     it('names no test file as a route, so the guard reads every route', () => {
         const routes = routeModules(readFileSync(join(SRC, 'routes.ts'), 'utf8'));
