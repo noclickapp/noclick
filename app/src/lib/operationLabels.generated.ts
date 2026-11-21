@@ -776,7 +776,7 @@ swarmsyncai sympla synap syncro synthflow-ai systemeio table tableau taggun tail
 talkjs talkroute tally tapfiliate taplio tave tavily teachable teamcamp teamup teamup-calendar teamwork
 teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal tentary text-request
 textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecompaniesapi thehive thinkific
-thoughtspot threads thrivecart ticket-tailor tidb-cloud tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp
+thoughtspot threads thrivecart ticket-tailor tidb-cloud tidely tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp
 timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti
 traccar track-pod trackdesk trackingmore trackvia trakt transloadit trello tremendous trestle trigger-dev
 tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot
