@@ -170,6 +170,7 @@ describe('the app', () => {
             'settings.popups',
             'settings.skills',
             'settings.usage',
+            'settings.workstreams',
             'shell.account.around',
             'shell.account.billing',
             'shell.account.items',

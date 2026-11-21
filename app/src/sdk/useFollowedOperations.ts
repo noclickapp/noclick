@@ -15,8 +15,9 @@ const RETRY_MS = 5000;
 const STATUS: Record<string, string> = { succeeded: 'completed', failed: 'failed', canceled: 'cancelled', expired: 'cancelled', awaiting_human: 'waiting' };
 // What an operation says beyond its status that its card reads: what it's doing and how far it got, and what a kind
 // adds (a build: the workflow it builds and the question it waits on; a deploy or check: the site's address; an
-// agent's job: its title, the agent and what it last told its parent), and when it started and ended.
-const CARRIED = ['summary', 'step', 'progress', 'workflow_id', 'question', 'url', 'title', 'agent_id', 'latest_update', 'started_at', 'finished_at'] as const;
+// agent's job: its title, the agent and what it last told its parent), the workstream its work belongs to, and when it
+// started and ended.
+const CARRIED = ['summary', 'step', 'progress', 'workflow_id', 'question', 'url', 'title', 'agent_id', 'latest_update', 'workstream', 'started_at', 'finished_at'] as const;
 
 /** An operation as the cards' job reads it, from its own JSON. */
 export function jobOf(raw: JsonObject): CoordinatorJob {

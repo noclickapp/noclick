@@ -88,7 +88,10 @@ export interface PlatformResourceEvent {
         /** The account's monthly spending cap was set or removed (`id` the account's). */
         | 'spend_cap'
         /** The email alerts NoClick sends the account's owner were switched (`id` the account's). */
-        | 'notifications';
+        | 'notifications'
+        /** One of the account's workstreams was renamed, merged, archived or brought back (`status`: `archived` or
+         *  `active`). */
+        | 'workstream';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;

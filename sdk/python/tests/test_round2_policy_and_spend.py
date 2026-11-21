@@ -300,6 +300,38 @@ def test_workstreams_are_listed_with_their_spend_and_renamed_by_name(api, client
     assert nc.Workstream.rename(site, "Bakery").name == "Bakery" and by_id.called
 
 
+def test_a_workstream_is_archived_brought_back_and_listed_apart(api, client):
+    row = {"object": "workstream", "id": "ws_1", "name": "Q3 launch", "created_at": "2026-11-20T10:00:00+00:00",
+           "updated_at": "2026-11-20T10:00:00+00:00"}
+    change = api.patch("/v1/workstreams/Q3%20launch").mock(
+        side_effect=lambda request: httpx.Response(200, json={**row, "archived": body(request)["archived"]}))
+    archived = nc.Workstream.archive("Q3 launch")
+    assert body(change.calls.last.request) == {"archived": True}
+    assert "noclick-user" not in change.calls.last.request.headers
+    assert archived.archived is True
+    listed = api.get("/v1/workstreams").respond(json={"object": "list", "unnamed_usd": 0.0, "data": [
+        {**row, "archived": True, "spent_usd": 2.0, "events": 4}]})
+    [put] = nc.Workstream.list(archived=True)
+    assert listed.calls.last.request.url.params["archived"] == "true"
+    assert (put.id, put.archived, put.spent_usd) == ("ws_1", True, 2.0)
+    nc.Workstream.list()
+    assert "archived" not in listed.calls.last.request.url.params
+    assert nc.Workstream.unarchive("Q3 launch").archived is False
+    assert body(change.calls.last.request) == {"archived": False}
+
+
+def test_an_operation_and_a_coding_job_name_their_workstream(api, client):
+    named = {"id": "ws_1", "name": "Bakery site"}
+    api.get("/v1/operations/op_1").respond(json={"object": "operation", "id": "op_1", "kind": "agent.task",
+                                                 "status": "running", "workstream": named})
+    assert nc.Operation.from_id("op_1").refresh().workstream == named
+    from noclick.agent_extras import CodingJob
+
+    job = CodingJob._from({"operation_id": "op_1", "status": "running", "text": "Hi.", "workstream": named})
+    assert job.workstream == named
+    assert CodingJob._from({"operation_id": "op_2", "status": "queued", "text": ""}).workstream is None
+
+
 def test_usage_for_one_agent(api, client):
     route = api.get("/v1/usage").respond(json=USAGE)
     nc.usage(group_by="user", agent=nc.Agent.from_id("agt_1"))
