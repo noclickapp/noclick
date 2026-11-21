@@ -1,0 +1,10 @@
+GET /v1/connections
+GET /v1/step_types/agent
+GET /v1/step_types/example-gone
+GET /v1/step_types/example-hook
+GET /v1/step_types/example-mail
+GET /v1/step_types/example-search
+GET /v1/step_types/state-manager
+POST /v1/workflows/wf_orders/steps/hook/values
+POST /v1/workflows/wf_orders/steps/mail-in/values
+POST /v1/workflows/wf_orders/steps/mail/options

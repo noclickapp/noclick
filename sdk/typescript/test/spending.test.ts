@@ -77,3 +77,22 @@ test("a deny rule carries its message, and only a deny rule may", async () => {
   assert.equal((policy.deny[0] as nc.Rule).message, "Web search comes with Pro.");
   await assert.rejects(nc.Policy.set({ allow: [rule] }), /Only a deny rule has a message/);
 });
+
+test("a budget for one run is sent with its budget and reads what comes back", async () => {
+  const { api } = setup();
+  const coder = {
+    object: "agent", id: "ag_c", name: "coder", model: "openrouter/x", harness: "sdk", instructions: "hi", tools: [],
+    user_id: null, workflow_id: "wf_1", parent_id: null, ttl_s: null, expires_at: null, budget_usd_per_month: 10,
+    created_at: "2026-09-25T10:00:00Z",
+  };
+  api.on("GET", "/v1/agents/ag_c", json(coder));
+  const patch = api.on("PATCH", "/v1/agents/ag_c", json({
+    ...coder, budget_usd_per_month: 2, budget_restore: { budget_usd_per_month: 10, operation_id: null } }));
+  const agent = await nc.Agent.fromId("ag_c").update({ budgetUsdPerMonth: 2, budgetForRun: true });
+  assert.deepEqual(patch.last.body, { budget_usd_per_month: 2, budget_for_run: true });
+  assert.equal(agent.budgetUsdPerMonth, 2);
+  assert.deepEqual(agent.budgetRestore, { budgetUsdPerMonth: 10, operationId: null });
+  // One that stands sends no flag.
+  await nc.Agent.fromId("ag_c").update({ budgetUsdPerMonth: 5 });
+  assert.deepEqual(patch.last.body, { budget_usd_per_month: 5 });
+});

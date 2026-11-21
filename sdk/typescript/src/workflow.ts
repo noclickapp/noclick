@@ -25,11 +25,14 @@ import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
 import {
-  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, paginate, parseTime, readScope, refId, str,
+  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, num, paginate, parseTime, readScope, refId,
+  str,
 } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
+import { Secret } from "./secret.ts";
+import type { SecretRef } from "./secret.ts";
 import { WorkflowApproval } from "./workflowApproval.ts";
 import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
@@ -137,6 +140,48 @@ export interface WorkflowRun {
   finishedAt: Date | null;
   steps: RunStep[];
   raw: JsonObject;
+}
+
+/**
+ * A workflow's test run, as the app's Test Run plays one: a staged event arrived at one of its triggers
+ * (`trigger`: `{step_id, type, name}`) and the agents it reached took a real turn while a simulated world
+ * answered every tool call, so nothing was sent and no account was touched. `testRun` is the run it played
+ * (`{key, name, custom}`; `null` for a message you typed). `reply` is the agent's closing words; `toolCalls` the
+ * calls it made, each with its `tool`, `arguments` and the `result` the world answered; `transcript` the run step
+ * by step (`role` `assistant` steps, its `text`, and `tool` steps; a coding harness's own shell and file steps carry
+ * `source` `harness`). `scenario` is the world it ran in, `note` says when it wrote nothing or what it did to act was
+ * simulated, and `costUsd` is what it cost you.
+ */
+export interface WorkflowRehearsal {
+  workflowId: string | null;
+  testRun: JsonObject | null;
+  trigger: JsonObject | null;
+  reply: string;
+  toolCalls: JsonObject[];
+  transcript: JsonObject[];
+  scenario: string | null;
+  note: string | null;
+  costUsd: number | null;
+  operationId: string | null;
+  raw: JsonObject;
+}
+
+/** What `Workflow.rehearse` stages: a test run the workflow offers, or a message you type on one of its triggers. */
+export interface WorkflowRehearseOptions extends CallOptions {
+  /** A test run the workflow offers, by its name or key, as its Test Run screen lists them. */
+  testRun?: string;
+  /** Instead of `testRun`: the trigger step (a `Step`, its id or its type) to stage `body` on. */
+  trigger?: StepRef;
+  /** With `trigger`: the staged message's body. */
+  body?: string;
+  /** With `trigger`: its subject or title. */
+  title?: string;
+  /** With `trigger`: who it's from, by name. */
+  author?: string;
+  /** With `trigger`: who it's from, by address or handle. */
+  handle?: string;
+  /** What the simulated world is like; its answers keep to it. Omitted, the staged situation's own. */
+  scenario?: string;
 }
 
 /**
@@ -384,6 +429,14 @@ export interface BuildQuestion {
  * A finished build: what the builder says it did (`summary`), the workflow's `steps` as they now
  * stand, and, when it published the workflow's app, `published` (`state` is `published`,
  * `renamed` or `unpublished`; unpublished, `trashId` restores it until `restorableUntil`).
+ *
+ * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
+ * workflow is as it was, whatever `summary` says), the `version` it ended on (what
+ * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, as an
+ * edit answers them). `sentBack` counts the times the build went back to the builder for settings
+ * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
+ * named in `unread`: then nothing says the workflow is ready.
  */
 export interface WorkflowBuildResult {
   workflowId: string | null;
@@ -391,6 +444,12 @@ export interface WorkflowBuildResult {
   steps: WorkflowStep[];
   appUrl: string | null;
   published: { state: string; url: string | null; trashId: string | null; restorableUntil: string | null } | null;
+  built: boolean | null;
+  version: number | null;
+  readiness: WorkflowReadiness | null;
+  verdicts: Record<string, JsonObject> | null;
+  sentBack: number;
+  unread: string[];
   raw: JsonObject;
 }
 
@@ -435,20 +494,110 @@ function toQuestion(value: unknown): BuildQuestion {
   };
 }
 
+function toReadiness(value: unknown): WorkflowReadiness {
+  const raw = asObject(value);
+  return {
+    status: str(raw.status) ?? "",
+    meaning: str(raw.meaning) ?? "",
+    issues: Array.isArray(raw.issues) ? (raw.issues as WorkflowReadiness["issues"]) : [],
+    warnings: Array.isArray(raw.warnings) ? (raw.warnings as WorkflowReadiness["warnings"]) : [],
+    unverified: Array.isArray(raw.unverified) ? (raw.unverified as WorkflowReadiness["unverified"]) : [],
+  };
+}
+
 function toBuildResult(value: unknown): WorkflowBuildResult {
   const raw = asObject(value);
+  const verdicts: Record<string, JsonObject> = {};
+  for (const [id, verdict] of Object.entries(asObject(raw.verdicts))) verdicts[id] = asObject(verdict);
   return {
     workflowId: str(raw.workflow_id),
     summary: str(raw.summary),
     steps: Array.isArray(raw.steps) ? raw.steps.map(toStep) : [],
     appUrl: str(raw.app_url),
     published: raw.published && typeof raw.published === "object" ? toPublished(asObject(raw.published)) : null,
+    built: typeof raw.built === "boolean" ? raw.built : null,
+    version: typeof raw.version === "number" ? raw.version : null,
+    readiness: raw.readiness && typeof raw.readiness === "object" ? toReadiness(raw.readiness) : null,
+    verdicts: raw.verdicts && typeof raw.verdicts === "object" ? verdicts : null,
+    sentBack: typeof raw.sent_back === "number" ? raw.sent_back : 0,
+    unread: Array.isArray(raw.unread) ? raw.unread.filter((name): name is string => typeof name === "string") : [],
+    raw,
+  };
+}
+
+/**
+ * A finished draft: the workflow's `version` once the drafted steps were written (one version of its history,
+ * `historyVersion`; `changed` false when the drafter changed nothing), a `summary` of what changed, and for each step
+ * it drafted (`steps`, by id) the verdict an edit answers (`config_valid`, `validation_error`, `missing_required`,
+ * `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a person (`unfilled`:
+ * a choice read from the connected account, a value only they know) and, for a step it couldn't draft (left as it
+ * was), its `error`.
+ */
+export interface WorkflowDraftResult {
+  workflowId: string;
+  mode: string;
+  version: number | null;
+  historyVersion: number | null;
+  changed: boolean;
+  summary: string | null;
+  steps: Record<string, JsonObject>;
+  raw: JsonObject;
+}
+
+/** A step to draft: a `Step`, its id, or `{ id, goal }` (what it's for, which a drafted step keeps). */
+export type DraftStep = StepRef | { id: StepRef; goal?: string };
+
+/** What `Workflow.draft` takes beside its steps. */
+export interface DraftOptions {
+  /**
+   * `full` (the default) picks each step's operation and fills its settings; `operation` picks only the operation;
+   * `fields` fills the settings of the operation a step has; `field` fills the one setting `field` names.
+   */
+  mode?: "full" | "operation" | "fields" | "field";
+  /** The setting mode `field` fills. */
+  field?: string;
+  /** What the workflow does, in words, for the drafter to read beside each step's goal. */
+  instructions?: string;
+}
+
+function toDraftResult(value: unknown): WorkflowDraftResult {
+  const raw = asObject(value);
+  const steps = asObject(raw.steps);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    mode: str(raw.mode) ?? "full",
+    version: typeof raw.version === "number" ? raw.version : null,
+    historyVersion: typeof raw.history_version === "number" ? raw.history_version : null,
+    changed: raw.changed === true,
+    summary: str(raw.summary),
+    steps: Object.fromEntries(Object.entries(steps).map(([id, step]) => [id, asObject(step)])),
     raw,
   };
 }
 
 registerResult("workflow.run", (result) => toWorkflowRun(result));
 registerResult("workflow.build", (result) => toBuildResult(result));
+registerResult("workflow.draft", (result) => toDraftResult(result));
+
+function toRehearsal(result: unknown, op: Operation<unknown>): WorkflowRehearsal {
+  const raw = asObject(result);
+  const obj = (value: unknown): JsonObject | null => (value && typeof value === "object" ? asObject(value) : null);
+  return {
+    workflowId: str(raw.workflow_id),
+    testRun: obj(raw.test_run),
+    trigger: obj(raw.trigger),
+    reply: str(raw.reply) ?? "",
+    toolCalls: Array.isArray(raw.tool_calls) ? (raw.tool_calls as JsonObject[]) : [],
+    transcript: Array.isArray(raw.transcript) ? (raw.transcript as JsonObject[]) : [],
+    scenario: str(raw.scenario),
+    note: str(raw.note),
+    costUsd: num(raw.cost_usd),
+    operationId: str(op._known("id")),
+    raw,
+  };
+}
+
+registerResult("workflow.rehearse", toRehearsal);
 
 /**
  * @internal How often `nextQuestion` looks while the build works (the server's wait answers only once it's
@@ -565,7 +714,8 @@ export interface Position {
 
 /**
  * How two steps of a graph are wired: `kind` is `data`, or `tools` for a step wired into an agent as its tools;
- * `handle` names which output of `from` it leaves (`null` for its only one).
+ * `handle` names which output of `from` it leaves (`null` for its only one), `targetHandle` which input of `to` it
+ * joins, for a step with several (a code step's `state`).
  */
 export interface GraphEdge {
   id: string | null;
@@ -573,6 +723,7 @@ export interface GraphEdge {
   to: string;
   kind: "data" | "tools";
   handle: string | null;
+  targetHandle: string | null;
 }
 
 /** A step, or its id. */
@@ -580,12 +731,23 @@ export type StepRef = Step | string;
 
 /** What `Step.update` (and a batch's `updateStep`) changes; a field left out is never touched. */
 export interface StepUpdate {
-  /** Settings to change, merged into the step's (a nested object merges, any other value replaces). */
+  /**
+   * Settings to change, merged into the step's (a nested object merges, any other value replaces, and `null` takes
+   * that setting out, a secret included).
+   */
   settings?: JsonObject;
   name?: string;
   operation?: string;
   /** `false` switches the step off; `true` back on. */
   enabled?: boolean;
+  /**
+   * An agent step's secrets: the account's own, in its shell's environment on every run, as `Secret` objects or
+   * their names, replacing the ones it had (`[]` takes them all off). Only a key acting for the whole account of the
+   * workflow's owner gives a step one, and an agent's own tools as your approval settings let them
+   * (`attach_connection`, allowed by default); any other caller keeps or drops what it was given. Their values never
+   * show in a read of the workflow, nor to the agent's model.
+   */
+  secrets?: SecretRef[];
 }
 
 /** What `addStep` takes beside the step's type. */
@@ -593,6 +755,8 @@ export interface AddStepOptions {
   /** What it does, one of its type's operations. */
   operation?: string;
   settings?: JsonObject;
+  /** An agent step's secrets, as `StepUpdate.secrets` takes them. */
+  secrets?: SecretRef[];
   /** Its name in the app. */
   name?: string;
   /** Its id; made from its type when left out. */
@@ -616,6 +780,8 @@ export interface AddNoteOptions {
   before?: StepRef;
   width?: number;
   height?: number;
+  /** Where it sits, instead of beside steps (`near`, or `after` and `before`). */
+  position?: Position;
 }
 
 /** What `Workflow.edit` checks and answers. */
@@ -624,6 +790,20 @@ export interface EditOptions {
   ifVersion?: number;
   /** `true`: the answer carries the graph as written. */
   includeGraph?: boolean;
+  /**
+   * `canvas`: the edits are a canvas's saves. Each setting `updateStep` sends replaces that setting whole and is kept
+   * as written (never rewritten nor refused for its value; the step's verdict says it isn't ready), an edge joins the
+   * handles it names, a connection sits under the slot it's given (one the step takes), and they join the canvas
+   * session's version (saves within five minutes of its first, whoever made them).
+   */
+  source?: "canvas";
+  /**
+   * A name the sender gives itself (letters, digits, `-` and `_`, up to 64; a canvas tab's own id): what the
+   * workflow's open canvases hear of this write names it, so the canvas that sent it knows the change is its own.
+   */
+  origin?: string;
+  /** In a browser, send the batch so it outlives the page (a closing tab's last save; `RequestOptions.keepalive`). */
+  keepalive?: boolean;
 }
 
 /** What `Workflow.update` changes; a field left out is never touched. */
@@ -632,6 +812,26 @@ export interface WorkflowUpdate {
   description?: string;
   /** Its settings to change, by top-level key; only its owner changes them. */
   settings?: JsonObject;
+  /**
+   * What the app shows of it (its canvas's viewport, the step open in its panel; 16 KB at most), replacing what's
+   * kept: never a version, nor a change anyone is told of.
+   */
+  displayMetadata?: JsonObject;
+  /**
+   * Its Interface tab's layout as the app draws it (each block's place on the grid, the tabs' order; 256 KB at most),
+   * replacing what's kept: part of its graph, so it moves the version.
+   */
+  interface?: JsonObject;
+}
+
+/** What `nameVersion` takes beside its label. */
+export interface NameVersionOptions {
+  /** A line about it. */
+  note?: string;
+  /** The version of its history to name; left out, the version the workflow is at now (a checkpoint). */
+  historyVersion?: number;
+  /** For the version it's at now: refused with `Conflict` when the workflow moved on since this version. */
+  ifVersion?: number;
 }
 
 /**
@@ -642,7 +842,8 @@ export interface WorkflowUpdate {
  * order (an added step's `id`, and what the
  * edit did on its own: `resolutions`, `harness_switch`, `coerced_values`, `stripped_trigger_refs`,
  * `http_auth_credential_hint`); and, for each step an op touched, whether it's ready to run (`steps`:
- * `config_valid`, `validation_error`, `missing_required`, `agent_credential_hint`). `graph` is the workflow as
+ * `config_valid`, `validation_error`, `missing_required`, `agent_credential_hint`, and `references`: each read of
+ * another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
  * history a restore put back.
  */
@@ -662,10 +863,12 @@ export interface WorkflowEdit {
 /**
  * One version of a workflow's history: its own number (`historyVersion`, what `versionAt` and `restore` take,
  * fixed once given), the workflow's `version` its latest write left, where the change came from (`source`: `api`,
- * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, or `baseline`, the workflow before its history
- * began), who began it (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it
- * (`authors`, its author first), a `summary` and its `changes`, and for a restore the version of the history it put
- * back (`restoredFrom`).
+ * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `baseline`, the workflow before its history
+ * began, or `checkpoint`, one saved in the app before its history was kept, numbered below 1), who began it
+ * (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it (`authors`, its author
+ * first), a `summary` and its `changes`, and for a restore the version of the history it put back (`restoredFrom`).
+ * A named version (a checkpoint: `Workflow.nameVersion`) has its `label` and `note`, who named it (`labeledBy`) and
+ * when (`labeledAt`), and is kept for good while it has a name.
  *
  * Saves in the app's canvas within five minutes of a session's first are one version, whoever made them. Any other
  * change (from your code, the builder, an MCP client, NoClick's assistant, a restore) is a version of its own, which
@@ -687,6 +890,10 @@ export interface WorkflowVersion {
   createdAt: Date | null;
   updatedAt: Date | null;
   graph: WorkflowGraph | null;
+  label: string | null;
+  note: string | null;
+  labeledBy: { user_id: string } | null;
+  labeledAt: Date | null;
   raw: JsonObject;
 }
 
@@ -820,12 +1027,14 @@ function nodeConfig(node: JsonObject): JsonObject {
 
 function toEdge(value: unknown): GraphEdge {
   const raw = asObject(value);
+  const tools = raw.targetHandle === TOOLS_HANDLE;
   return {
     id: str(raw.id),
     from: str(raw.source) ?? str(raw.sourceId) ?? "",
     to: str(raw.target) ?? str(raw.targetId) ?? "",
-    kind: raw.targetHandle === TOOLS_HANDLE ? "tools" : "data",
+    kind: tools ? "tools" : "data",
     handle: str(raw.sourceHandle),
+    targetHandle: tools ? null : str(raw.targetHandle),
   };
 }
 
@@ -840,21 +1049,48 @@ function stepId(step: StepRef): string {
   throw new TypeError("A step is a Step or its id.");
 }
 
-/** What `setConnection` sends: a credential's id. A connection connected in the app is `credential:<id>`. */
-async function connectionId(connection: Connection | string | null): Promise<string | null> {
-  const found = connection === null ? null : ((await refId(connection)) ?? null);
-  return found?.startsWith("credential:") ? found.slice("credential:".length) : found;
+/** An agent step's `secrets` as the API takes them: names (a `Secret` is its name, once it's loaded or created). */
+async function secretNames(secrets: unknown[]): Promise<string[]> {
+  const names: string[] = [];
+  for (const secret of secrets) {
+    if (secret instanceof Secret) names.push(String((await secret._ensure()).name));
+    else if (typeof secret === "string") names.push(secret);
+    else throw new TypeError("A secret is a Secret or its name.");
+  }
+  return names;
+}
+
+/** `op` as the API takes it: a connection given as an object is its ref, secrets given as objects their names. */
+async function sentOp(op: JsonObject): Promise<JsonObject> {
+  if (op.op === "set_connection") {
+    const connection = op.connection as Connection | string | null;
+    return { ...op, connection: connection === null ? null : ((await refId(connection)) ?? null) };
+  }
+  const settings = op.settings as JsonObject | undefined;
+  if ((op.op === "add_step" || op.op === "update_step") && Array.isArray(settings?.secrets) && settings.secrets.length) {
+    return { ...op, settings: { ...settings, secrets: await secretNames(settings.secrets) } };
+  }
+  return op;
+}
+
+/** A step's `settings`, with an agent step's `secrets` (sent as names). */
+function stepSettings(settings: JsonObject | undefined, secrets: SecretRef[] | undefined): JsonObject | undefined {
+  return secrets === undefined ? settings : { ...settings, secrets };
 }
 
 function addStepOp(type: string, options: AddStepOptions): JsonObject {
   return compact({
-    op: "add_step", type, operation: options.operation, settings: options.settings, name: options.name,
-    id: options.id ?? newId(type), position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
+    op: "add_step", type, operation: options.operation, settings: stepSettings(options.settings, options.secrets),
+    name: options.name, id: options.id ?? newId(type),
+    position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
   });
 }
 
 function updateStepOp(step: StepRef, update: StepUpdate): JsonObject {
-  return compact({ op: "update_step", id: stepId(step), settings: update.settings, name: update.name, operation: update.operation, enabled: update.enabled });
+  return compact({
+    op: "update_step", id: stepId(step), settings: stepSettings(update.settings, update.secrets), name: update.name,
+    operation: update.operation, enabled: update.enabled,
+  });
 }
 
 function edgeOp(op: string, from: StepRef, to: StepRef, fields: JsonObject): JsonObject {
@@ -868,12 +1104,16 @@ function noteOp(content: string, options: AddNoteOptions): JsonObject {
       color: options.color, near: options.near?.map(stepId), direction: options.direction,
       after: options.after === undefined ? undefined : stepId(options.after),
       before: options.before === undefined ? undefined : stepId(options.before), width: options.width, height: options.height,
+      position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
     }),
   };
 }
 
 function updateWorkflowOp(update: WorkflowUpdate): JsonObject {
-  return compact({ op: "update_workflow", name: update.name, description: update.description, settings: update.settings });
+  return compact({
+    op: "update_workflow", name: update.name, description: update.description, settings: update.settings,
+    display_metadata: update.displayMetadata, interface: update.interface,
+  });
 }
 
 /**
@@ -925,6 +1165,10 @@ function toWorkflowVersion(value: unknown, workflow: Workflow): WorkflowVersion 
     createdAt: parseTime(raw.created_at),
     updatedAt: parseTime(raw.updated_at),
     graph: definitionOf(raw, workflow),
+    label: str(raw.label),
+    note: str(raw.note),
+    labeledBy: raw.labeled_by && typeof raw.labeled_by === "object" ? { user_id: String(asObject(raw.labeled_by).user_id) } : null,
+    labeledAt: parseTime(raw.labeled_at),
     raw,
   };
 }
@@ -1024,7 +1268,10 @@ export class Step extends ApiObject {
     for (const [key, value] of Object.entries(this.config())) if (!OWN_FIELDS.has(key) && !key.endsWith("__label")) out[key] = value;
     return out;
   }
-  /** The accounts connected to it: each slot (a connection type, like `gmail_oauth`) to the id of the account there. */
+  /**
+   * The accounts connected to it: each slot (a connection type, like `gmail_oauth`) to the id of the account there,
+   * which the connection holding it names as its `credentialId`.
+   */
   get connections(): Record<string, string> {
     return { ...(asObject(this.config().credentialIds) as Record<string, string>) };
   }
@@ -1048,11 +1295,23 @@ export class Step extends ApiObject {
   }
   /**
    * Whether it's ready to run, as the last edit through this handle that touched it judged: `config_valid`, and
-   * when it isn't, `validation_error` and `missing_required`; an agent's `agent_credential_hint`. `null` until an
-   * edit judged it (a read doesn't).
+   * when it isn't, `validation_error` and `missing_required`; an agent's `agent_credential_hint`; and `references`
+   * (see `references`). `null` until an edit judged it (a read doesn't).
    */
   get verdict(): JsonObject | null {
     return this._verdict;
+  }
+  /**
+   * Each read of another step's output in its settings (`{{ $('x').key }}`) that won't resolve at run time, as the
+   * last edit through this handle that touched it judged: `{field, step, key, known_keys}` for a key `x`'s output
+   * isn't known to have (`known_keys`: what it has, from what `x` declares, its latest output in this workflow, or
+   * what your account's own runs of its type showed), or `{field, step, reference, missing, near}` for a step `x`
+   * the workflow doesn't have (`near`: the one it likely means). A read of a step whose output nothing has shown yet
+   * isn't judged. Empty when every read resolves, or before an edit judged it.
+   */
+  get references(): JsonObject[] {
+    const found = this._verdict?.references;
+    return Array.isArray(found) ? (found as JsonObject[]) : [];
   }
   /**
    * What the last edit through this handle answered for its change, beyond the step's id: `changed` for an
@@ -1087,7 +1346,8 @@ export class Step extends ApiObject {
 
   /**
    * Change its settings, name or operation, or switch it off or on. `settings` merge into what it has (a nested
-   * object merges, any other value replaces); a field you leave out is never touched. An agent given another
+   * object merges, any other value replaces, and `null` takes that setting out, a secret included); a field you leave
+   * out is never touched. An agent given another
    * `model` on another harness drops the old harness's own settings and connections, as the app does
    * (`notes.harness_switch` says what went). A value that can't be is refused with `InvalidRequest` naming the
    * field, and nothing changes. Resolves to this step as written, with `notes` and `verdict`.
@@ -1116,10 +1376,13 @@ export class Step extends ApiObject {
   /**
    * Wire this step into `other`. `kind: "data"` runs `other` after it with its output; `kind: "tools"` makes its
    * operations tools of `other`, an agent (or an MCP step). `handle` names which of this step's outputs, for a step
-   * with several. Connecting what's already connected changes nothing; `notes` holds the edge.
+   * with several, and `targetHandle` which of `other`'s inputs (a code step's `state`). Connecting what's already
+   * connected changes nothing; `notes` holds the edge.
    */
-  async connect(other: StepRef, options: { kind?: "data" | "tools"; handle?: string } = {}): Promise<this> {
-    return await this._edit(edgeOp("connect", this, other, { kind: options.kind ?? "data", handle: options.handle }), other);
+  async connect(other: StepRef, options: { kind?: "data" | "tools"; handle?: string; targetHandle?: string } = {}): Promise<this> {
+    return await this._edit(edgeOp("connect", this, other, {
+      kind: options.kind ?? "data", handle: options.handle, target_handle: options.targetHandle,
+    }), other);
   }
 
   /** Remove the edge from this step to `other`; one that isn't there throws `InvalidRequest`. */
@@ -1128,12 +1391,18 @@ export class Step extends ApiObject {
   }
 
   /**
-   * Connect an account to the step: a `Connection` connected in the app (`credential:<id>`) or its id. Its slot is
-   * the account's own type unless `slot` names it; `null` with `slot` takes the account in that slot off. Only an
-   * account your account may use is taken, and only one of a type the step takes.
+   * Connect an account to the step: one of the account's own connections, as a `Connection` (connected in the app,
+   * `credential:<id>`, or a named one), its ref or id, or a named connection's name; the step takes the account it
+   * holds. Its slot is the account's own type unless `slot` names it; `null` with `slot` takes the account in that
+   * slot off. One of a user's connections, one holding no working account, or one your account may not use is
+   * refused (`InvalidRequest` naming it), as is one of a type the step doesn't take; a caller that doesn't act for
+   * the whole account (a user's key, an app's code) only keeps one the workflow already uses. An agent's own tools
+   * attach your account's own connections in your account's own workflows, never another member's, a user's or one
+   * held for someone else, as your approval settings let them (`attach_connection`: allowed by default; asked, the
+   * edit waits for the owner's yes, `ApprovalRequired`).
    */
   async setConnection(connection: Connection | string | null, options: { slot?: string } = {}): Promise<this> {
-    return await this._edit({ op: "set_connection", id: this.id, connection: await connectionId(connection), ...compact({ slot: options.slot }) });
+    return await this._edit({ op: "set_connection", id: this.id, connection, ...compact({ slot: options.slot }) });
   }
 
   /** Have the step give `output` on test runs instead of running, so the steps after it can be tried. */
@@ -1291,7 +1560,8 @@ export class Step extends ApiObject {
  * step id, the paths of the settings left out (`api_key`, `auth.password`, `headers[0].value`), `settingsWithheld`
  * those of the workflow's own settings (`variable_definitions[1].value`), and `variablesWithheld` the graph's own
  * variables. The graph a `Conflict` carries holds the steps and edges alone: its `name`, `description`,
- * `settings` and `settingsWithheld` are `null`.
+ * `settings` and `settingsWithheld` are `null`. `displayMetadata` is what the app shows of the workflow (its
+ * canvas's viewport, the step open in its panel), read with `graph()`: never part of a version.
  */
 export class WorkflowGraph {
   readonly workflowId: string;
@@ -1305,6 +1575,7 @@ export class WorkflowGraph {
   readonly edges: GraphEdge[];
   readonly withheld: Record<string, string[]>;
   readonly variablesWithheld: string[];
+  readonly displayMetadata: JsonObject | null;
   readonly raw: JsonObject;
 
   /**
@@ -1329,6 +1600,7 @@ export class WorkflowGraph {
     this.edges = (Array.isArray(raw.edges) ? raw.edges : []).map(toEdge);
     this.withheld = withheld;
     this.variablesWithheld = Array.isArray(raw.variables_withheld) ? raw.variables_withheld.map(String) : [];
+    this.displayMetadata = own?.display_metadata && typeof own.display_metadata === "object" ? { ...asObject(own.display_metadata) } : null;
     this.raw = raw;
   }
 
@@ -1402,11 +1674,7 @@ export class EditBatch {
   /** @internal */
   async _send(): Promise<WorkflowEdit | null> {
     if (!this._ops.length) return null;
-    const ops: JsonObject[] = [];
-    for (const op of this._ops) {
-      ops.push(op.op === "set_connection" ? { ...op, connection: await connectionId(op.connection as Connection | string | null) } : op);
-    }
-    const edit = await this._workflow._send(ops, this._options);
+    const edit = await this._workflow._send(this._ops, this._options);
     for (const [index, step] of this._added) step._absorb(edit, edit.results[index] ?? null);
     this._result = edit;
     return edit;
@@ -1440,14 +1708,19 @@ export class EditBatch {
     this.queue({ op: "remove_step", id: stepId(step) });
   }
 
-  /** Queue an edge from `source` into `target`, as `Step.connect` makes it. */
-  connect(source: StepRef, target: StepRef, options: { kind?: "data" | "tools"; handle?: string } = {}): void {
-    this.queue(edgeOp("connect", source, target, { kind: options.kind ?? "data", handle: options.handle }));
+  /**
+   * Queue an edge from `source` into `target`, as `Step.connect` makes it; `id` names the edge (made for it when left
+   * out), as a canvas names its own.
+   */
+  connect(source: StepRef, target: StepRef, options: { kind?: "data" | "tools"; handle?: string; targetHandle?: string; id?: string } = {}): void {
+    this.queue(edgeOp("connect", source, target, {
+      kind: options.kind ?? "data", handle: options.handle, target_handle: options.targetHandle, id: options.id,
+    }));
   }
 
-  /** Queue removing the edge from `source` into `target`. */
-  disconnect(source: StepRef, target: StepRef, options: { handle?: string } = {}): void {
-    this.queue(edgeOp("disconnect", source, target, { handle: options.handle }));
+  /** Queue removing the edge from `source` into `target` (`id`: the one edge of that id, when two join them). */
+  disconnect(source: StepRef, target: StepRef, options: { handle?: string; id?: string } = {}): void {
+    this.queue(edgeOp("disconnect", source, target, { handle: options.handle, id: options.id }));
   }
 
   /** Queue connecting an account to a step, as `Step.setConnection` does (`null` with `slot` takes one off). */
@@ -1470,9 +1743,12 @@ export class EditBatch {
     this.queue(updateWorkflowOp(update));
   }
 
-  /** Queue moving a step (or a note) on the canvas. Moving things is never a version of its own. */
-  move(step: StepRef, position: Position): void {
-    this.queue({ op: "move", id: stepId(step), position: { x: position.x, y: position.y } });
+  /**
+   * Queue moving a step (or a note) on the canvas, and for one drawn at a size (a note) giving it `width` and
+   * `height`. Moving things is never a version of its own.
+   */
+  move(step: StepRef, position: Position, size: { width?: number; height?: number } = {}): void {
+    this.queue({ op: "move", id: stepId(step), position: { x: position.x, y: position.y }, ...compact({ width: size.width, height: size.height }) });
   }
 
   /** Queue laying every step out again, as the app's Tidy up does. */
@@ -1629,14 +1905,7 @@ export class Workflow extends ApiObject {
   }
   /** Whether it's set up to run, what its status means, and the issues in the way. */
   get readiness(): WorkflowReadiness {
-    const raw = asObject(this._field<unknown>("readiness"));
-    return {
-      status: str(raw.status) ?? "",
-      meaning: str(raw.meaning) ?? "",
-      issues: Array.isArray(raw.issues) ? (raw.issues as WorkflowReadiness["issues"]) : [],
-      warnings: Array.isArray(raw.warnings) ? (raw.warnings as WorkflowReadiness["warnings"]) : [],
-      unverified: Array.isArray(raw.unverified) ? (raw.unverified as WorkflowReadiness["unverified"]) : [],
-    };
+    return toReadiness(this._field<unknown>("readiness"));
   }
   /** The URLs it answers at. */
   get urls(): WorkflowUrl[] {
@@ -1815,10 +2084,16 @@ export class Workflow extends ApiObject {
   /** @internal One batch of `ops`; a refusal for a stale version carries the workflow as it stands (`Conflict.graph`). */
   async _send(ops: JsonObject[], options: EditOptions = {}): Promise<WorkflowEdit> {
     const path = await this.path();
+    const sent: JsonObject[] = [];
+    for (const op of ops) sent.push(await sentOp(op));
     let raw: unknown;
     try {
       raw = await this._request("POST", `${path}/edits`, {
-        json: compact({ ops, if_version: options.ifVersion, include_graph: options.includeGraph || undefined }),
+        json: compact({
+          ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source,
+          origin: options.origin,
+        }),
+        keepalive: options.keepalive,
       });
     } catch (err) {
       this._stale(err);
@@ -1899,8 +2174,11 @@ export class Workflow extends ApiObject {
    * A batch that can't be undone from its versions alone (one that removes a step holding an app, conversations or
    * files) may be held for the account's owner when an agent, a connected app or a deployed app's code sends it: it
    * throws `ApprovalRequired`, nothing of it has landed, and NoClick applies it once they approve (its `operation`
-   * settles then, with the batch's answer). The workflow one of your agents runs on changes through the agent: an
-   * edit of it throws `PermissionDenied` naming it (`details.agent_id`).
+   * settles then, with the batch's answer). The workflow one of your agents runs on is edited as its canvas edits it:
+   * the agent follows its prompt, harness and model, its own step stays (removing it throws `InvalidRequest` naming
+   * the agent, `details.agent_id`), and a key that couldn't change the agent can't change it this way either.
+   *
+   * `source: "canvas"` says the edits are a canvas's saves (`EditOptions.source`).
    */
   async edit(options: EditOptions, build: (batch: EditBatch) => unknown): Promise<WorkflowEdit | null> {
     const batch = new EditBatch(this, options);
@@ -1908,17 +2186,46 @@ export class Workflow extends ApiObject {
     return await batch._send();
   }
 
-  /** Its versions, newest first, kept 90 days: the first `limit` (20 by default; `null` for all), fetched page by page. */
-  async versions(options: { limit?: number | null } = {}): Promise<WorkflowVersion[]> {
+  /**
+   * Its versions, newest first, kept 90 days (a named one for good): the first `limit` (20 by default; `null` for
+   * all), fetched page by page. `named: true` lists only the named ones, its checkpoints.
+   */
+  async versions(options: { limit?: number | null; named?: boolean } = {}): Promise<WorkflowVersion[]> {
     const path = `${await this.path()}/versions`;
     const limit = options.limit === undefined ? 20 : (options.limit ?? undefined);
-    return await listAll({ path, user: null, client: this._client, limit }, (raw) => toWorkflowVersion(raw, this));
+    const query = options.named ? { named: "true" } : undefined;
+    return await listAll({ path, user: null, client: this._client, limit, query }, (raw) => toWorkflowVersion(raw, this));
   }
 
-  /** One page of its versions, newest first; pass `nextCursor` back as `cursor`. */
-  async versionsPage(options: PageOptions = {}): Promise<Page<WorkflowVersion>> {
+  /** One page of its versions, newest first (`named: true`: the named ones); pass `nextCursor` back as `cursor`. */
+  async versionsPage(options: PageOptions & { named?: boolean } = {}): Promise<Page<WorkflowVersion>> {
+    const { named, ...page } = options;
     const path = `${await this.path()}/versions`;
-    return await listPage({ ...options, path, user: null, client: this._client }, (raw) => toWorkflowVersion(raw, this));
+    const query = named ? { named: "true" } : undefined;
+    return await listPage({ ...page, path, user: null, client: this._client, query }, (raw) => toWorkflowVersion(raw, this));
+  }
+
+  /**
+   * Name a version of its history, keeping it for good while it has a name: the version it's at now (a checkpoint,
+   * as the app saves one; `ifVersion` refuses it with `Conflict` when the workflow moved on since you read it), or
+   * the one `historyVersion` names, or another name for a named one. No later change joins a named version. Naming
+   * the version it's at now when it has a name already throws `Conflict` naming it (`details.label`). Restore it
+   * with `restore({ historyVersion })`. A name someone else gave is changed only by them or the workflow's owner.
+   */
+  async nameVersion(label: string, options: NameVersionOptions = {}): Promise<WorkflowVersion> {
+    const path = `${await this.path()}/versions`;
+    const raw = options.historyVersion === undefined
+      ? await this._request("POST", path, { json: compact({ label, note: options.note, if_version: options.ifVersion }) })
+      : await this._request("PATCH", `${path}/${options.historyVersion}`, { json: { label, note: options.note ?? null } });
+    return toWorkflowVersion(raw, this);
+  }
+
+  /**
+   * Take a version's name away (a checkpoint deleted): it's kept 90 days from its last write then, as any version.
+   * Only who named it or the workflow's owner takes it away.
+   */
+  async unnameVersion(historyVersion: number): Promise<WorkflowVersion> {
+    return toWorkflowVersion(await this._request("PATCH", `${await this.path()}/versions/${historyVersion}`, { json: { label: null } }), this);
   }
 
   /**
@@ -1941,6 +2248,29 @@ export class Workflow extends ApiObject {
     const payload = await this._request("POST", `${await this.path()}/builds`, { json: compact({ instructions, publish }) });
     this.startedBuild = WorkflowBuild._from(payload, { client: this._client });
     return this.startedBuild;
+  }
+
+  /**
+   * Have NoClick's drafter (the builder's own) pick `steps`' operations and fill their settings, the steps together.
+   * Each step is a `Step`, its id, or `{ id, goal }`: its goal says what it's for (the drafter reads it, and a drafted
+   * step keeps it). `mode` `full` (the default) picks each step's operation and fills its settings (a step drafts
+   * against the operation each step it reads was given), `operation` picks only the operation, `fields` fills the
+   * settings of the operation a step has, `field` fills the one setting `field` names; `instructions` say what the
+   * workflow does. A step the workflow doesn't have, a note, a step that provides an agent its tools or a setting it
+   * doesn't have throws `InvalidRequest` before anything runs. What's drafted lands as one version of the workflow,
+   * written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost. The
+   * operation (kind `workflow.draft`) reports each step as it lands (`progress`); `wait()` resolves to the
+   * `WorkflowDraftResult`, each step's verdict among it, or throws when no step could be drafted.
+   */
+  async draft(steps: readonly DraftStep[], options: DraftOptions = {}): Promise<Operation<WorkflowDraftResult>> {
+    const entries = steps.map((step) =>
+      typeof step === "object" && !(step instanceof Step)
+        ? compact({ id: stepId(step.id), goal: step.goal })
+        : { id: stepId(step) });
+    const payload = await this._request("POST", `${await this.path()}/drafts`, {
+      json: compact({ steps: entries, mode: options.mode ?? "full", field: options.field, instructions: options.instructions }),
+    });
+    return Operation._fromPayload<WorkflowDraftResult>(payload, { client: this._client, kind: "workflow.draft", reader: toDraftResult });
   }
 
   /** Put the workflow's app live as it now stands, at `subdomain` (omitted, the address it has); the result's `published` holds its `url`. */
@@ -2022,6 +2352,35 @@ export class Workflow extends ApiObject {
       idempotencyKey: options.idempotencyKey,
     });
     return Operation._fromPayload<WorkflowRun>(payload, { client: this._client, user: scope, kind: "workflow.run", reader: toWorkflowRun });
+  }
+
+  /**
+   * A test run of the workflow, as the app's Test Run plays one: a staged event arrives at one of its triggers and
+   * the agents it reaches take a real turn (their models, instructions and tools) while a simulated world answers
+   * every tool call, so nothing is sent, no account is touched and its connections needn't be connected yet (its
+   * agents' model connections must be). The steps after an agent that would reach an account never run.
+   *
+   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them: a staged
+   * situation for one of its triggers, or one authored for it (`edit().addTestRun`). Or stage a message you type on
+   * `trigger` (a trigger `Step`, its id or its type): `body`, with `title`, `author` and `handle`. `scenario` says
+   * what the simulated world is like. One the workflow doesn't offer throws `NotFound` naming the ones it does.
+   * Billed as the app's Test Run is; an account has up to 10 queued or running at once (`QuotaExceeded` past that).
+   * `wait()` resolves to the `WorkflowRehearsal`: the agent's `reply` and the `toolCalls` it made with what the
+   * world answered.
+   */
+  async rehearse(options: WorkflowRehearseOptions): Promise<Operation<WorkflowRehearsal>> {
+    const scope = resolveScope(options.user);
+    const payload = await this._api.request("POST", `${await this.path()}/rehearsals`, {
+      json: compact({
+        test_run: options.testRun, trigger: options.trigger === undefined ? undefined : stepId(options.trigger),
+        body: options.body, title: options.title, author: options.author, handle: options.handle,
+        scenario: options.scenario,
+      }),
+      user: scope,
+    });
+    return Operation._fromPayload<WorkflowRehearsal>(payload, {
+      client: this._client, user: scope, kind: "workflow.rehearse", reader: toRehearsal,
+    });
   }
 
   /**

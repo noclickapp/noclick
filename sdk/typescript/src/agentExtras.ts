@@ -19,7 +19,8 @@ import type { NoClick } from "./client.ts";
 import { NotFound } from "./errors.ts";
 import { ApiObject, asList, asObject, compact, num, paginate, parseTime, str } from "./object.ts";
 import type { JsonObject, ObjectInit, Page, PageOptions } from "./object.ts";
-import { registerResult } from "./operation.ts";
+import { namedWorkstream, registerResult } from "./operation.ts";
+import type { NamedWorkstream } from "./operation.ts";
 import { toExecResult } from "./sandbox.ts";
 import type { ExecResult } from "./sandbox.ts";
 import type { UserOption } from "./scope.ts";
@@ -517,7 +518,10 @@ export interface CodingCredential {
   connected: boolean | null;
 }
 
-/** Its turn in flight (or a `lost` one): `title` as whoever handed it over named it, `text` the start of what it was asked. */
+/**
+ * Its turn in flight (or a `lost` one): `title` as whoever handed it over named it, `text` the start of what it was
+ * asked, `workstream` the one it belongs to as it reads now (null where none was named).
+ */
 export interface CodingJob {
   operationId: string;
   conversation: string | null;
@@ -526,6 +530,7 @@ export interface CodingJob {
   since: Date | null;
   title: string | null;
   text: string;
+  workstream: NamedWorkstream | null;
   lost: boolean;
   raw: JsonObject;
 }
@@ -619,7 +624,7 @@ function toCodingAgent(value: unknown): CodingAgent {
     job: job && {
       operationId: String(job.operation_id), conversation: str(job.conversation), status: String(job.status),
       step: str(job.step), since: parseTime(job.since), title: str(job.title), text: String(job.text ?? ""),
-      lost: Boolean(job.lost), raw: job,
+      workstream: namedWorkstream(job.workstream), lost: Boolean(job.lost), raw: job,
     },
     runs: (Array.isArray(raw.runs) ? raw.runs : []).map((value) => {
       const run = asObject(value);
