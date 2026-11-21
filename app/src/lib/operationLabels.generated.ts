@@ -677,7 +677,7 @@ bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bo
 brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless
 bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie
 bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner
-canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly carsxe casebook caspio cats
+canada-holidays canopy canopy-connect canva capgo captivated carbone cardclan cardly carsxe casebook caspio cats
 centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot check-cherry checkfront chili-piper
 chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci claid-ai clay
 clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign clickup cliengo
