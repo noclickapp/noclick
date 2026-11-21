@@ -41,16 +41,21 @@ def test_run_counts_read_every_status_and_take_a_user_filter(api, client):
     assert request.url.params["user_id"] == "all" and "NoClick-User" not in request.headers
 
 
-def test_latest_outputs_name_what_they_left_out(api, client):
+def test_latest_outputs_name_what_they_left_out_and_how_each_steps_last_run_ended(api, client):
     route = api.get("/v1/workflows/wf_1/outputs").respond(json={
         "object": "step_outputs", "workflow_id": "wf_1", "outputs": {"hook": {"order_id": "o_9"}},
-        "withheld": {"hook": ["_webhook.headers.Authorization"]}, "full": True, "truncated": []})
+        "withheld": {"hook": ["_webhook.headers.Authorization"]}, "full": True, "truncated": [],
+        "last_runs": {"hook": {"status": "succeeded", "finished_at": "2026-11-21T10:00:04+00:00", "error": None},
+                      "note": {"status": "failed", "finished_at": None, "error": "the shop answered 500"}}})
     intake = nc.Workflow.from_id("wf_1")
     latest = intake.latest_outputs(steps=[intake.step("hook"), "note"], full=True)
     params = route.calls.last.request.url.params
     assert (params["steps"], params["full"]) == ("hook,note", "true")
     assert (latest.outputs, latest.withheld, latest.full, latest.truncated) == (
         {"hook": {"order_id": "o_9"}}, {"hook": ["_webhook.headers.Authorization"]}, True, [])
+    assert latest.last_runs["note"] == nc.StepLastRun("failed", None, "the shop answered 500")
+    hook = latest.last_runs["hook"]
+    assert (hook.status, hook.finished_at.isoformat(), hook.error) == ("succeeded", "2026-11-21T10:00:04+00:00", None)
     intake.latest_outputs()
     assert dict(route.calls.last.request.url.params) == {}
 

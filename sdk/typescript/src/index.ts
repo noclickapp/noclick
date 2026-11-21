@@ -217,7 +217,7 @@ export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workf
 export type {
   AddNoteOptions, AddStepOptions, BuildQuestion, BuildQuestions, ClearedStepState, DraftOptions, DraftStep, EditOptions,
   ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
-  StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
+  StepConnection, StepLastRun, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
   StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
   WorkflowRunOptions, WorkflowRunStatus,

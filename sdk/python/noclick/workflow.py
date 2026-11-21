@@ -127,11 +127,23 @@ class WorkflowRunCounts:
 
 
 @dataclass(frozen=True)
+class StepLastRun:
+    """How a step's latest run ended (``LatestOutputs.last_runs``): its ``status``
+    (``succeeded``, ``failed``, ``skipped``), when it ``finished_at``, its ``error``."""
+
+    status: str
+    finished_at: Any
+    error: Optional[str]
+
+
+@dataclass(frozen=True)
 class LatestOutputs:
     """Each step's latest output, whatever run it's from (``Workflow.latest_outputs``):
     ``outputs`` by step id, each cut short as a run's steps are unless read ``full``
     (``truncated`` names the steps cut), never a secret (``withheld``: each step's paths left
-    out). A step that never stored one isn't in ``outputs``."""
+    out). A step that never stored one isn't in ``outputs``. ``last_runs``: how each step's
+    latest run ended, as the app's canvas marks it beside the step; a step never run isn't in
+    it."""
 
     workflow_id: str
     outputs: Dict[str, Any]
@@ -139,13 +151,17 @@ class LatestOutputs:
     full: bool
     truncated: List[str]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    last_runs: Dict[str, StepLastRun] = dc_field(default_factory=dict)
 
     @classmethod
     def _from(cls, raw: Any) -> "LatestOutputs":
         raw = raw if isinstance(raw, dict) else {}
+        last_runs = {str(step): StepLastRun(str(run.get("status") or ""), parse_time(run.get("finished_at")),
+                                            run.get("error"))
+                     for step, run in (raw.get("last_runs") or {}).items() if isinstance(run, dict)}
         return cls(raw.get("workflow_id") or "", dict(raw.get("outputs") or {}),
                    {step: list(paths) for step, paths in (raw.get("withheld") or {}).items()},
-                   bool(raw.get("full")), list(raw.get("truncated") or []), raw)
+                   bool(raw.get("full")), list(raw.get("truncated") or []), raw, last_runs)
 
 
 @dataclass(frozen=True)
@@ -1319,7 +1335,10 @@ class WorkflowGraph:
 
     An edge into a step with several inputs names which in ``target_handle`` (a code step's
     ``state``). ``display_metadata`` is what the app shows of the workflow (its canvas's
-    viewport, the step open in its panel), read with ``graph()``: never part of a version."""
+    viewport, the step open in its panel), read with ``graph()``: never part of a version.
+    ``access`` is what you may do with it (``owner``, ``editor`` or ``viewer``) and ``agent``
+    the agent whose own flow it is (``{id, name, yours}``, ``yours`` when it's your account's
+    own), both read with ``graph()``."""
 
     workflow_id: str
     version: int
@@ -1334,6 +1353,8 @@ class WorkflowGraph:
     variables_withheld: List[str]
     raw: Dict[str, Any] = dc_field(repr=False)
     display_metadata: Optional[Dict[str, Any]] = None
+    access: Optional[str] = None
+    agent: Optional[Dict[str, Any]] = None
 
     @classmethod
     def _from(cls, raw: Any, *, workflow: "Workflow", workflow_id: str, version: int,
@@ -1354,6 +1375,7 @@ class WorkflowGraph:
             edges=[_edge(e) for e in raw.get("edges") or [] if isinstance(e, dict)],
             withheld=withheld, variables_withheld=list(raw.get("variables_withheld") or []), raw=raw,
             display_metadata=dict(own["display_metadata"]) if isinstance(own.get("display_metadata"), dict) else None,
+            access=own.get("access"), agent=dict(own["agent"]) if isinstance(own.get("agent"), dict) else None,
         )
 
     def _node(self, step_id: str) -> Optional[Dict[str, Any]]:

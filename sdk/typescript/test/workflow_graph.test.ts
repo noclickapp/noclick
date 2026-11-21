@@ -574,6 +574,16 @@ test("a graph reads what the app shows and an edge's input", async () => {
   const graph = await nc.Workflow.fromId(WF).graph();
   assert.deepEqual(graph.displayMetadata, { viewport: { zoom: 2 } });
   assert.deepEqual(graph.edges, [{ id: "s-c", from: "state", to: "code", kind: "data", handle: null, targetHandle: "state" }]);
+  assert.deepEqual([graph.access, graph.agent], [null, null]);
+});
+
+test("a graph reads what its reader may do with it and whose agent it is", async () => {
+  const { api } = setup();
+  api.on("GET", `/v1/workflows/${WF}/graph`, json({
+    ...read(4, bare([HOOK])), access: "editor", agent: { id: "agt_1", name: "Support", yours: true },
+  }));
+  const graph = await nc.Workflow.fromId(WF).graph();
+  assert.deepEqual([graph.access, graph.agent], ["editor", { id: "agt_1", name: "Support", yours: true }]);
 });
 
 test("a batch held for the owner surfaces as its approval and lands nothing", async () => {

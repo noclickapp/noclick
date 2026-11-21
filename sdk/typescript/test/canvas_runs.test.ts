@@ -39,11 +39,13 @@ test("runCounts() reads every status and takes a userFilter", async () => {
   assert.equal(route.last.headers.get("NoClick-User"), null);
 });
 
-test("latestOutputs() names what each step left out", async () => {
+test("latestOutputs() names what each step left out, and how each step's last run ended", async () => {
   const { api } = setup();
   const body = {
     object: "step_outputs", workflow_id: "wf_1", outputs: { hook: { order_id: "o_9" } },
     withheld: { hook: ["_webhook.headers.Authorization"] }, full: true, truncated: [],
+    last_runs: { hook: { status: "succeeded", finished_at: "2026-11-21T10:00:04+00:00", error: null },
+      note: { status: "failed", finished_at: null, error: "the shop answered 500" } },
   };
   const route = api.on("GET", "/v1/workflows/wf_1/outputs", json(body), json(body));
   const intake = nc.Workflow.fromId("wf_1");
@@ -51,6 +53,10 @@ test("latestOutputs() names what each step left out", async () => {
   assert.deepEqual([route.last.query.get("steps"), route.last.query.get("full")], ["hook,note", "true"]);
   assert.deepEqual([latest.outputs, latest.withheld, latest.full, latest.truncated],
     [{ hook: { order_id: "o_9" } }, { hook: ["_webhook.headers.Authorization"] }, true, []]);
+  assert.deepEqual(latest.lastRuns, {
+    hook: { status: "succeeded", finishedAt: new Date("2026-11-21T10:00:04Z"), error: null },
+    note: { status: "failed", finishedAt: null, error: "the shop answered 500" },
+  });
   await intake.latestOutputs();
   assert.deepEqual([...route.last.query.keys()], []);
 });

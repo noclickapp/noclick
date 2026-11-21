@@ -548,6 +548,14 @@ def test_a_graph_reads_what_the_app_shows_and_an_edges_input(api, client):
     assert graph.display_metadata == {"viewport": {"zoom": 2}}
     assert graph.edges == [{"id": "s-c", "from": "state", "to": "code", "kind": "data", "handle": None,
                             "target_handle": "state"}]
+    assert (graph.access, graph.agent) == (None, None)
+
+
+def test_a_graph_reads_what_its_reader_may_do_and_whose_agent_it_is(api, client):
+    agent = {"id": "agt_1", "name": "Support", "yours": True}
+    api.get(f"/v1/workflows/{WF}/graph").respond(json={**read(graph=bare(HOOK)), "access": "editor", "agent": agent})
+    graph = nc.Workflow.from_id(WF).graph()
+    assert (graph.access, graph.agent) == ("editor", agent)
 
 
 def test_a_batch_held_for_the_owner_surfaces_as_its_approval_and_lands_nothing(api, client):

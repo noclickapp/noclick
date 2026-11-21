@@ -273,10 +273,18 @@ export interface WorkflowRunCounts {
   raw: JsonObject;
 }
 
+/** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
+export interface StepLastRun {
+  status: string;
+  finishedAt: Date | null;
+  error: string | null;
+}
+
 /**
  * Each step's latest output, whatever run it's from (`Workflow.latestOutputs`): `outputs` by step id, each cut short
  * as a run's steps are unless read `full` (`truncated` names the steps cut), never a secret (`withheld`: each step's
- * paths left out). A step that never stored one isn't in `outputs`.
+ * paths left out). A step that never stored one isn't in `outputs`. `lastRuns`: how each step's latest run ended, as
+ * the app's canvas marks it beside the step; a step never run isn't in it.
  */
 export interface LatestOutputs {
   workflowId: string;
@@ -284,6 +292,7 @@ export interface LatestOutputs {
   withheld: Record<string, string[]>;
   full: boolean;
   truncated: string[];
+  lastRuns: Record<string, StepLastRun>;
   raw: JsonObject;
 }
 
@@ -329,6 +338,10 @@ function toLatestOutputs(value: unknown): LatestOutputs {
     withheld,
     full: raw.full === true,
     truncated: asList(raw.truncated).map(String),
+    lastRuns: Object.fromEntries(Object.entries(asObject(raw.last_runs)).map(([step, value]) => {
+      const run = asObject(value);
+      return [step, { status: str(run.status) ?? "", finishedAt: parseTime(run.finished_at), error: str(run.error) }];
+    })),
     raw,
   };
 }
@@ -1608,6 +1621,10 @@ export class WorkflowGraph {
   readonly withheld: Record<string, string[]>;
   readonly variablesWithheld: string[];
   readonly displayMetadata: JsonObject | null;
+  /** What you may do with it, as the app's canvas judges it: `owner`, `editor` or `viewer` (null for a conflict's). */
+  readonly access: "owner" | "editor" | "viewer" | null;
+  /** The agent whose own flow it is (`yours`: your account's own agent), else null. */
+  readonly agent: { id: string; name: string; yours: boolean } | null;
   readonly raw: JsonObject;
 
   /**
@@ -1633,6 +1650,10 @@ export class WorkflowGraph {
     this.withheld = withheld;
     this.variablesWithheld = Array.isArray(raw.variables_withheld) ? raw.variables_withheld.map(String) : [];
     this.displayMetadata = own?.display_metadata && typeof own.display_metadata === "object" ? { ...asObject(own.display_metadata) } : null;
+    const access = own ? str(own.access) : null;
+    this.access = access === "owner" || access === "editor" || access === "viewer" ? access : null;
+    const agent = own?.agent && typeof own.agent === "object" ? asObject(own.agent) : null;
+    this.agent = agent ? { id: str(agent.id) ?? "", name: str(agent.name) ?? "", yours: agent.yours === true } : null;
     this.raw = raw;
   }
 
