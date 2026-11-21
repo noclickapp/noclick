@@ -72,19 +72,23 @@ export interface HoldKind {
   own: JsonObject | null;
 }
 
-/** One change to your account's approval switches, or to a key's, connected app's or agent's own. */
+/** One change to your account's approval switches, to a key's, connected app's or agent's own, or a connection's
+ *  approval rule lifted (`Connection.liftApproval`, or its owner's page in the app). */
 export interface PolicyChange {
   id: string;
   batchId: string;
-  /** Whose settings it changed: `account`, `key` or `connected_app`, and that key's or connected app's id. */
+  /** Whose settings it changed: `account`, `key`, `connected_app`, `agent` or `credential` (a connection's approval
+   *  rule), and that key's, connected app's, agent's or connection's account's id. */
   scope: string;
   scopeId: string | null;
-  /** The kind it changed. */
+  /** The kind it changed (`credential_rule` for a connection's rule). */
   kind: string;
-  /** `setting`, `ceiling` or `auto_approve` (a connected app's auto-approve amount). */
+  /** `setting`, `ceiling`, `auto_approve` (a connected app's auto-approve amount) or `operations` (a connection's
+   *  rule). */
   target: string;
   before: JsonObject | null;
-  /** What it set (`disposition`, `under_usd`, `until`); null put NoClick's default back. */
+  /** What it set (`disposition`, `under_usd`, `until`; a connection's rule, its `operations`); null put NoClick's
+   *  default back. */
   after: JsonObject | null;
   /** It lets a caller do more than before: a key's loosening waits out an undo window first. */
   loosens: boolean;
@@ -93,7 +97,8 @@ export interface PolicyChange {
   keyId: string | null;
   effectiveAt: Date | null;
   until: Date | null;
-  /** It still waits out its undo window: `ApprovalPolicy.undo` takes it back. */
+  /** It still waits out its undo window: `ApprovalPolicy.undo` takes it back. A lift of a connection's rule waiting is
+   *  taken back too by approval required for one of its operations again (`undoneBy` `superseded`). */
   pending: boolean;
   undoneAt: Date | null;
   undoneBy: string | null;
@@ -147,7 +152,8 @@ function ownApprovals(kind: string, entry: unknown): OwnApprovals {
   };
 }
 
-function policyChange(entry: unknown): PolicyChange {
+/** A change as the API sends it (`ApprovalPolicy.history`, `Connection.liftApproval`). */
+export function policyChange(entry: unknown): PolicyChange {
   const c = asObject(entry);
   return {
     id: String(c.id), batchId: String(c.batch_id), scope: String(c.scope ?? "account"),

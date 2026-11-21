@@ -88,17 +88,19 @@ class HoldKind:
 
 @dataclass(frozen=True)
 class PolicyChange:
-    """One change to your account's approval switches (``ApprovalPolicy.set``), or a key's or connected app's own
-    (``set_for_key``, ``set_for_connected_app``)."""
+    """One change to your account's approval switches (``ApprovalPolicy.set``), a key's or connected app's own
+    (``set_for_key``, ``set_for_connected_app``), or a connection's approval rule lifted (``Connection.lift_approval``,
+    or its owner's page in the app)."""
 
     id: str
     batch_id: str
-    #: The kind it changed, and whether its setting, its ceiling or (``auto_approve``) a connected app's auto-approve
-    #: amount.
+    #: The kind it changed, and whether its setting, its ceiling, (``auto_approve``) a connected app's auto-approve
+    #: amount or (``operations``, kind ``credential_rule``) a connection's approval rule.
     kind: str
     target: str
     before: Optional[Dict[str, Any]]
-    #: What it set (``disposition``, ``under_usd``, ``until``); None put NoClick's default back.
+    #: What it set (``disposition``, ``under_usd``, ``until``; a connection's rule, its ``operations``); None put
+    #: NoClick's default back.
     after: Optional[Dict[str, Any]]
     #: It lets a caller do more than before: a key's loosening waits out an undo window first.
     loosens: bool
@@ -108,13 +110,15 @@ class PolicyChange:
     key_id: Optional[str]
     effective_at: Any
     until: Any
-    #: It still waits out its undo window: ``ApprovalPolicy.undo`` takes it back.
+    #: It still waits out its undo window: ``ApprovalPolicy.undo`` takes it back. A lift of a connection's rule waiting
+    #: is taken back too by approval required for one of its operations again (``undone_by`` ``superseded``).
     pending: bool
     undone_at: Any
     undone_by: Optional[str]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
-    #: Whose settings it changed: ``account``, ``key`` or ``connected_app``, and that key's or connected app's id.
+    #: Whose settings it changed: ``account``, ``key``, ``connected_app`` or ``credential`` (a connection's approval
+    #: rule), and that key's, connected app's or connection's account's id.
     scope: str = "account"
     scope_id: Optional[str] = None
 

@@ -17,6 +17,8 @@
  * connection can do.
  */
 
+import { policyChange } from "./approval.ts";
+import type { PolicyChange } from "./approval.ts";
 import { resolveClient } from "./client.ts";
 import type { NoClick, RequestOptions } from "./client.ts";
 import { Conflict, InvalidRequest, NoClickError, NotFound, OperationCanceled, OperationExpired, OperationTimeout } from "./errors.ts";
@@ -625,7 +627,8 @@ export class Connection extends ApiObject {
   get organizationId(): string | null {
     return this._field<string | null | undefined>("organization_id") ?? null;
   }
-  /** Operations its owner approves call by call wherever it runs (`*`: all); `requireApproval` adds to them. */
+  /** Operations its owner approves call by call wherever it runs (`*`: all); `requireApproval` adds to them and
+   *  `liftApproval` lifts them. */
   get approvalOperations(): string[] {
     const ops = this._field<unknown>("approval_operations");
     return Array.isArray(ops) ? ops.map(String) : [];
@@ -960,14 +963,33 @@ export class Connection extends ApiObject {
 
   /**
    * From now on its owner approves each call of these operations wherever it runs (your code, agents, the
-   * app's workflows); `"*"` means every operation. It only adds to `approvalOperations`; lifting one is done
-   * in the app. On one shared with your account it throws `PermissionDenied`.
+   * app's workflows); `"*"` means every operation. It only adds to `approvalOperations` (`liftApproval`
+   * lifts). On one shared with your account it throws `PermissionDenied`.
    *
    *     await Connection.fromName("gmail").requireApproval("send_email_message", "delete_message");
    */
   async requireApproval(...operations: string[]): Promise<this> {
     this._raw = asObject(await this.act("POST", "/require_approval", { operations }));
     return this;
+  }
+
+  /**
+   * Let calls of these operations run without its owner's OK again: each named as `approvalOperations` names it,
+   * or none to lift every one (`"*"` lifts the rule for every operation, leaving any named on their own). Signed in
+   * as your account's owner it applies at once. From a key it needs one naming the `approvals:policy` scope (a key
+   * with every scope, `*`, holds it only when it's named too) and `credentials:use`, and it waits a 10-minute undo
+   * window, in which `ApprovalPolicy.undo(change.id)` takes it back; the owner is told. Requiring approval for one
+   * of them again meanwhile takes it back too. Returns the change it made (`pending` while it waits, `effectiveAt`
+   * when it takes effect). `PermissionDenied` without the scope or on one shared with your account; `Conflict` when
+   * it asks no approval, or a lift of the same operation already waits.
+   *
+   *     const [change] = await Connection.fromName("gmail").liftApproval("send_email_message");
+   *     console.log(change.pending, change.effectiveAt);
+   */
+  async liftApproval(...operations: string[]): Promise<PolicyChange[]> {
+    const query = operations.length ? { operations: operations.join(",") } : undefined;
+    this._raw = asObject(await this.act("DELETE", "/require_approval", undefined, false, query));
+    return asList(this._raw.approval_changes).map(policyChange);
   }
 
   /**
