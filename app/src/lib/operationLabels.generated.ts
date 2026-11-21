@@ -781,7 +781,7 @@ vimeo viral-loops virtuous-crm virustotal visma-eaccounting visualping visualstu
 volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit
 weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport
 weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase
-whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api
+whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wix wiza wodify-core wolfram-alpha-api
 woop-social word wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads
 ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno
 zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm
