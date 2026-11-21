@@ -673,8 +673,8 @@ bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-ap
 benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
 billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio bloom-growth
 bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo bookeo
-bookingmood bookwhen botconversa botpress botsonic botstar bouncer bouncify box brandfetch brandfolder braze
-breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless bsc-designer
+bookingmood bookspot bookwhen botconversa botpress botsonic botstar bouncer bouncify box brandfetch brandfolder
+braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless bsc-designer
 btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie bunnycdn
 businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner canada-holidays
 canopy canopy-connect canva carbone cardclan cardly carsxe casebook caspio cats centralstationcrm cert-seal
