@@ -91,7 +91,11 @@ export interface PlatformResourceEvent {
         | 'notifications'
         /** One of the account's workstreams was renamed, merged, archived or brought back (`status`: `archived` or
          *  `active`). */
-        | 'workstream';
+        | 'workstream'
+        /** Which of the app's popups the account's owner sees was switched (`id` the account's). */
+        | 'popups'
+        /** A number was linked to the account or unlinked (`id` the account's). */
+        | 'phones';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;

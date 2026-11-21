@@ -78,6 +78,12 @@ export const OWNER_ONLY = {
         operations: ['PUT /v1/usage/limits/account'],
         only: 'a cap above the one in place, or none where one is set; a key lowers it or sets one where there’s none',
     },
+    /** The numbers linked to the account, in Settings → Phone: a linked number signs in to the account. */
+    accountPhones: {
+        what: 'Linking phone numbers',
+        why: 'A number linked to the account signs in to it, so a key links one only with the account:phones scope, which an account’s key with every scope (*) doesn’t hold and this app’s key doesn’t carry.',
+        operations: ['GET /v1/account/phones', 'POST /v1/account/phones', 'POST /v1/account/phones/verify', 'DELETE /v1/account/phones/{phone}'],
+    },
     /** A team workspace's spending cap, which the account paying for the workspace sets, in Settings → Plan and
      *  billing. */
     teamCap: {

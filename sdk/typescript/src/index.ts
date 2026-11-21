@@ -77,6 +77,9 @@ export { Notifications } from "./notifications.ts";
 export { Key } from "./key.ts";
 export type { KeyOptions } from "./key.ts";
 export { ConnectedApp } from "./connectedApp.ts";
+export { Popups } from "./popups.ts";
+export { AccountPhones } from "./accountPhones.ts";
+export type { LinkedPhone, PhoneChallenge } from "./accountPhones.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {
   AccountCap, AgentBudget, CapChange, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,

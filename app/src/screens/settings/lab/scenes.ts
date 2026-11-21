@@ -37,6 +37,21 @@ export const SCENES: readonly SettingsScene[] = [
     { id: 'notifications', title: 'Each alert with its switch, some off', group: 'Notifications', world: { ...MEMBER, prefs: 'some-off' }, section: 'notifications' },
     { id: 'notifications-loading', title: 'While they’re read', group: 'Notifications', world: { ...MEMBER, prefs: 'waiting' }, section: 'notifications' },
 
+    { id: 'phone-none', title: 'No number linked yet', group: 'Phone', world: { ...MEMBER, phone: 'none' }, section: 'phone' },
+    { id: 'phone-linked', title: 'Two numbers linked, one on WhatsApp', group: 'Phone', world: { ...MEMBER, phone: 'linked' }, section: 'phone' },
+    { id: 'phone-confirm-unlink', title: 'Confirming an unlink', group: 'Phone', world: { ...MEMBER, phone: 'linked' }, section: 'phone', steps: [{ button: 'Unlink' }] },
+    {
+        id: 'phone-code-sent',
+        title: 'A code sent, waiting for it',
+        group: 'Phone',
+        world: { ...MEMBER, phone: 'none' },
+        section: 'phone',
+        steps: [{ type: 'input[type="tel"]', text: '4155550123' }, { button: 'Send code' }],
+    },
+    { id: 'phone-not-configured', title: 'Where phone verification isn’t set up', group: 'Phone', world: { ...MEMBER, phone: 'not-configured' }, section: 'phone' },
+
+    { id: 'popups', title: 'Each popup with its switch, one off', group: 'Popups', world: MEMBER, section: 'popups' },
+
     { id: 'billing', title: 'The plan, the balance, and a cap with what’s spent', group: 'Plan and billing', world: MEMBER, section: 'billing' },
     { id: 'billing-no-cap', title: 'New on Free: no cap yet', group: 'Plan and billing', world: { tier: 'free', balanceUsd: 0, capUsd: null, spentUsd: 3.21 }, section: 'billing' },
     { id: 'billing-cap-reached', title: 'At the cap', group: 'Plan and billing', world: { tier: 'member', balanceUsd: 0, capUsd: 20, spentUsd: 20.37 }, section: 'billing' },

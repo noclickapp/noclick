@@ -156,9 +156,9 @@ there, and Settings doesn't list it:
 | `settings.notifications` | Notifications: the email alerts sent to the owner | Each alert with its switch |
 | `settings.developer` | Developer: the way into the developer console | The console's row, at its address |
 | `settings.members` | Members: who's in the workspace and how they sign in | Nothing, and no section |
-| `settings.phone` | Phone: the numbers a person messages and calls from | Nothing, and no section |
+| `settings.phone` | Phone: the numbers the account's owner messages and calls NoClick from | The app's own, linked by a code (listed only where the page acts as the owner) |
 | `settings.skills` | Skills: the reusable context a builder loads | Nothing, and no section |
-| `settings.popups` | Popups: which of the deployment's popups appear | Nothing, and no section |
+| `settings.popups` | Popups: which of the app's popups and banners appear | The app's own |
 | `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
 
 The app shell's (`src/screens/shell/slots.ts`): the frame and sidebar a page sits in (see [The frame](#the-frame)).
@@ -256,12 +256,15 @@ in development only: `?scene=` picks a view, and `?as=key` answers as the API an
 and the balance as the account reads them (`GET /v1/account`), with NoClick's pages for changing the plan and adding
 funds, and the monthly spending cap with what its period spent (`Usage.limits` and `Usage.setAccountCap` in the SDK);
 Notifications, the email alerts NoClick sends the account's owner, one switch each (`Notifications.get` and
-`Notifications.update`); and Developer, the way into the console at `/developers`. It acts as the app's key: a key
-lowers the cap, or sets one where there's none, and raising or removing it opens NoClick's own Plan and billing (the
-owner's, `src/screens/console/ownerOnly.ts`). What only a deployment has (its people, linking a phone, its builder's
-skills, its own popups) is a slot no section stands in, so Settings doesn't list it. Its section is the address's
-`?section=`. `src/screens/settings/settingsAsKey.test.tsx` opens every scene of its lab as the owner and as a key and
-fails if a key's asks for what only the owner may have, or is refused; `/settings-lab` is the page over a made-up
+`Notifications.update`); Popups, which of the app's popups and banners appear, one switch each (`Popups.get` and
+`Popups.update`); and Developer, the way into the console at `/developers`. It acts as the app's key: a key lowers the
+cap, or sets one where there's none, and raising or removing it opens NoClick's own Plan and billing (the owner's,
+`src/screens/console/ownerOnly.ts`). Phone, the numbers linked to the account (`AccountPhones`), is listed only where
+the page acts as the owner: a linked number signs in to the account, so a key links one only with the `account:phones`
+scope, which this app's key doesn't carry. What only a deployment has (its people, its builder's skills) is a slot no
+section stands in, so Settings doesn't list it. Its section is the address's `?section=`.
+`src/screens/settings/settingsAsKey.test.tsx` opens every scene of its lab as the owner and as a key and fails if a
+key's asks for what only the owner may have, or is refused, or if any call sends or reads a secret; `/settings-lab` is the page over a made-up
 account (`src/screens/settings/lab`) in development only: `?scene=` picks a view, and `?as=key` answers as the API
 answers a key.
 

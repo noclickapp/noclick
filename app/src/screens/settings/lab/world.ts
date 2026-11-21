@@ -1,8 +1,8 @@
 // The Settings lab's world: every read Settings' own sections make on the platform API (the email alerts, the account,
-// its monthly spending cap, its workstreams), answered as the API answers the account's signed-in owner or one of its
-// keys (`actsAs`), and Usage's reads as the Usage lab's member (../../usage/lab/world.ts). A scene picks the alerts'
-// switches, the plan, the balance, the cap and what its period spent, and the workstreams; the rest is the same for
-// every scene. A host's own lab answers the
+// its monthly spending cap, its workstreams, its linked numbers, the app's popups), answered as the API answers the
+// account's signed-in owner or one of its keys (`actsAs`), and Usage's reads as the Usage lab's member
+// (../../usage/lab/world.ts). A scene picks the alerts' switches, the plan, the balance, the cap and what its period
+// spent, the workstreams and the linked numbers; the rest is the same for every scene. A host's own lab answers the
 // same reads with `settingsAnswers`.
 import type { NoClick } from 'noclick';
 import { workFixtureClient } from '@/screens/work/fixtures/client';
@@ -27,6 +27,9 @@ export interface SettingsApiWorld {
     /** The account's workstreams: a few open and one archived (as they are unless said), none yet, or a read that never
      *  answers. */
     workstreams?: 'some' | 'none' | 'waiting';
+    /** The numbers linked to the account: none (as they are unless said), two, or none where this NoClick sends no
+     *  codes. */
+    phone?: 'none' | 'linked' | 'not-configured';
 }
 
 /** The workstreams a world starts with, as GET /v1/workstreams lists them (`merged_into` is the lab's own: the one a
@@ -52,6 +55,15 @@ export const OWNER_EMAIL = 'ada@example.test';
 /** The account's billing period. */
 export const PERIOD = { period_start: '2026-10-01T00:00:00Z', resets_at: '2026-11-01T00:00:00Z' };
 const PREFS = { run_failure: true, credits: true, digest: false, approvals: true, referrals: false };
+/** The app's popups: the invite banner dismissed. */
+const POPUPS_SHOWN = { run_results: true, invite_banner: false, publish_banner: true };
+/** Two numbers linked, one proven by a code and one by texting NoClick on WhatsApp. */
+const PHONES = [
+    { phone: '+14155550123', verified_at: '2026-09-02T09:00:00Z', source: 'verify' },
+    { phone: '+447700900123', verified_at: '2026-10-11T09:00:00Z', source: 'whatsapp' },
+];
+const MAX_PHONES = 3;
+const KEY_REFUSES_PHONES = 'Only the signed-in account owner, or one of the account’s own secret keys holding the ‘account:phones’ scope, makes this call.';
 
 const KEY_REFUSES_RAISE =
     'One of the account’s keys lowers its monthly spending cap, or sets one where there’s none: raising or removing it is the owner’s.';
@@ -63,6 +75,9 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
     let prefs: Record<string, boolean> = { ...Object.fromEntries(NOTIFICATION_CATEGORIES.map((c) => [c.key, true])), ...PREFS };
     let cap = world.capUsd;
     let workstreams: LabWorkstream[] = world.workstreams === 'none' ? [] : WORKSTREAMS.map((w) => ({ ...w }));
+    let popups: Record<string, boolean> = { ...POPUPS_SHOWN };
+    let phones = world.phone === 'linked' ? PHONES.map((p) => ({ ...p })) : [];
+    let challenged: string | null = null;
     const workstreamView = ({ merged_into: _, ...w }: LabWorkstream) => ({ object: 'workstream', ...w, created_at: '2026-10-02T09:00:00Z', updated_at: '2026-10-02T09:00:00Z' });
     const capView = () => ({
         object: 'spend_cap',
@@ -89,6 +104,32 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
         if (route === 'PATCH /v1/notifications') {
             prefs = { ...prefs, ...(body?.categories as Record<string, boolean>) };
             return answer({ object: 'notifications', categories: prefs });
+        }
+        if (route === 'GET /v1/popups') return answer({ object: 'popups', popups });
+        if (route === 'PATCH /v1/popups') {
+            popups = { ...popups, ...(body?.popups as Record<string, boolean>) };
+            return answer({ object: 'popups', popups });
+        }
+        if (url.pathname.startsWith('/v1/account/phones')) {
+            if (actsAs === 'key') return refused(KEY_REFUSES_PHONES);
+            if (route === 'GET /v1/account/phones') {
+                return answer({ object: 'phones', configured: world.phone !== 'not-configured', max_phones: MAX_PHONES, phones });
+            }
+            if (route === 'POST /v1/account/phones') {
+                challenged = String(body?.phone);
+                return answer({ object: 'phone_challenge', id: 'ch_1', phone: challenged, expires_at: '2026-10-16T15:30:00Z' });
+            }
+            if (route === 'POST /v1/account/phones/verify' && challenged) {
+                const linked = { phone: challenged, verified_at: CLOCK, source: 'verify' };
+                challenged = null;
+                phones = [...phones.filter((p) => p.phone !== linked.phone), linked];
+                return answer({ object: 'phone', ...linked });
+            }
+            if (method === 'DELETE') {
+                const phone = decodeURIComponent(url.pathname.slice('/v1/account/phones/'.length));
+                phones = phones.filter((p) => p.phone !== phone);
+                return answer({ object: 'phone', phone, unlinked: true });
+            }
         }
         if (route === 'GET /v1/account') return answer(account());
         if (route === 'PATCH /v1/account') {

@@ -126,6 +126,8 @@ from .machine import (
 from .mcp_server import McpClient, McpServer
 from .key import Key
 from .notifications import Notifications
+from .popups import Popups
+from .account_phones import AccountPhones, LinkedPhone, PhoneChallenge
 from .operation import Operation, OperationEvent, OperationSummary, OperationTransition
 from .phone_number import (
     AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberHolderProfile, NumberPlace,
@@ -252,7 +254,8 @@ __all__ = [
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Workstream",
-    "AccountCap", "CapChange", "Notifications", "Key", "ConnectedApp",
+    "AccountCap", "CapChange", "Notifications", "Key", "ConnectedApp", "Popups", "AccountPhones", "LinkedPhone",
+    "PhoneChallenge",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",
