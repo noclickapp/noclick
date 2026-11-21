@@ -87,3 +87,17 @@ def test_a_deny_rule_carries_its_message_and_only_a_deny_rule_may(api, client):
     assert policy.deny[0].message == "Web search comes with Pro."
     with pytest.raises(ValueError, match="Only a deny rule has a message"):
         nc.Policy.set(allow=[rule], user=None)
+
+
+def test_a_budget_for_one_run_is_sent_with_its_budget_and_reads_what_comes_back(api, client):
+    coder = agent_row(id="ag_c", name="coder", budget_usd_per_month=10)
+    api.get("/v1/agents/ag_c").respond(json=coder)
+    patch = api.patch("/v1/agents/ag_c").respond(json={
+        **coder, "budget_usd_per_month": 2, "budget_restore": {"budget_usd_per_month": 10, "operation_id": None}})
+    agent = nc.Agent.from_id("ag_c").update(budget_usd_per_month=2, budget_for_run=True)
+    assert body(patch.calls.last.request) == {"budget_usd_per_month": 2, "budget_for_run": True}
+    assert agent.budget_usd_per_month == 2
+    assert agent.budget_restore == {"budget_usd_per_month": 10, "operation_id": None}
+    # One that stands sends no flag.
+    nc.Agent.from_id("ag_c").update(budget_usd_per_month=5)
+    assert body(patch.calls.last.request) == {"budget_usd_per_month": 5}

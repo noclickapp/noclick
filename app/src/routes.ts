@@ -39,6 +39,8 @@ export default [
     route('usage-lab', 'routes/usage-lab.tsx'),
     // Settings over made-up data: development only, as the console's lab.
     route('settings-lab', 'routes/settings-lab.tsx'),
+    // A workflow step's settings over made-up data: development only, as the console's lab.
+    route('step-form-lab', 'routes/step-form-lab.tsx'),
     // Last, so every other path has a route too: middleware runs only for a path that matches one, and the gate (the
     // root route's middleware) must see every request.
     route('*', 'routes/notFound.tsx'),

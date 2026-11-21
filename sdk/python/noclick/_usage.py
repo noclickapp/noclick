@@ -622,7 +622,9 @@ async def usage(
 class Workstream:
     """A line of work your spend is counted under. An agent names one when it starts work (a child's task, a message
     it hands another agent, an app's coding job; ``Agent.spawn(workstream=)``), from your workstreams or a new name,
-    and every charge of that work, and of what it starts, belongs to it. A person renames one."""
+    and every charge of that work, and of what it starts, belongs to it. A person renames one, or archives it once its
+    work is done: its charges still read under it, and it leaves the workstreams agents choose from until it's brought
+    back or an agent names it again."""
 
     id: str
     #: As it was first written; matched whatever its case.
@@ -632,17 +634,20 @@ class Workstream:
     events: int
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: Put away: out of the workstreams agents choose from, its charges still under it.
+    archived: bool = False
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "Workstream":
         return cls(raw["id"], raw["name"], float(raw.get("spent_usd") or 0), int(raw.get("events") or 0),
-                   parse_time(raw.get("created_at")), raw)
+                   parse_time(raw.get("created_at")), raw, bool(raw.get("archived")))
 
     @synced
     @staticmethod
-    async def list(*, user: Any = AMBIENT, client: Optional[Client] = None) -> List["Workstream"]:
-        """Your workstreams, most spent this month first, each with what it spent (as
-        ``noclick.usage(group_by="workstream")`` counts it). Needs the ``usage`` scope.
+    async def list(*, archived: bool = False, user: Any = AMBIENT,
+                   client: Optional[Client] = None) -> List["Workstream"]:
+        """Your open workstreams (``archived=True``: the ones put away), most spent this month first, each with what
+        it spent (as ``noclick.usage(group_by="workstream")`` counts it). Needs the ``usage`` scope.
 
         Returns:
             Each workstream's ``id``, ``name``, ``spent_usd`` and ``events``. What work nobody named one for spent is
@@ -653,7 +658,8 @@ class Workstream:
             for workstream in noclick.Workstream.list():
                 print(workstream.name, workstream.spent_usd)
         """
-        page = await resolve_client(client).request("GET", "/v1/workstreams", user=user) or {}
+        page = await resolve_client(client).request(
+            "GET", "/v1/workstreams", user=user, params={"archived": "true"} if archived else None) or {}
         return [Workstream._from(row) for row in page.get("data") or []]
 
     @synced
@@ -673,7 +679,43 @@ class Workstream:
             noclick.Workstream.rename("website", "Bakery site")
             noclick.Workstream.rename("Menu", "Bakery site")   # merges Menu into it
         """
+        return await Workstream._change(workstream, {"name": name}, client)
+
+    @synced
+    @staticmethod
+    async def archive(workstream: Any, *, client: Optional[Client] = None) -> "Workstream":
+        """Archive ``workstream`` (a ``Workstream``, its name in any case, or its id) once its work is done: its
+        charges still read under it, and it leaves ``Workstream.list()`` (``archived=True`` lists it) and the
+        workstreams agents choose from, until ``unarchive`` brings it back or an agent names it again. Your account's
+        alone. Needs the ``usage`` scope.
+
+        Returns:
+            The workstream, ``archived``, without this month's spend.
+
+        Usage::
+
+            noclick.Workstream.archive("Q3 launch")
+        """
+        return await Workstream._change(workstream, {"archived": True}, client)
+
+    @synced
+    @staticmethod
+    async def unarchive(workstream: Any, *, client: Optional[Client] = None) -> "Workstream":
+        """Bring an archived ``workstream`` back among your open ones. Your account's alone. Needs the ``usage``
+        scope.
+
+        Returns:
+            The workstream, open again, without this month's spend.
+
+        Usage::
+
+            noclick.Workstream.unarchive("Q3 launch")
+        """
+        return await Workstream._change(workstream, {"archived": False}, client)
+
+    @staticmethod
+    async def _change(workstream: Any, body: Dict[str, Any], client: Optional[Client]) -> "Workstream":
         ref = workstream.id if isinstance(workstream, Workstream) else str(workstream)
         raw = await resolve_client(client).request(
-            "PATCH", f"/v1/workstreams/{quote(ref, safe='')}", json={"name": name}, user=None) or {}
+            "PATCH", f"/v1/workstreams/{quote(ref, safe='')}", json=body, user=None) or {}
         return Workstream._from(raw)

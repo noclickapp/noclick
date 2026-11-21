@@ -2,6 +2,8 @@
 
 import { AgentMemory, AgentSandbox, AgentWorkspace, ShareLink, toCodingAgents } from "./agentExtras.ts";
 import { TrashItem, trashed } from "./trash.ts";
+import { wireSettings } from "./approval.ts";
+import type { ScopeApprovals } from "./approval.ts";
 import { attachmentIds, toAttachment, toAttachments, uploadFile } from "./attachment.ts";
 import type { Attachment, FileInput, UploadOptions } from "./attachment.ts";
 import type { AgentEvent, CodingAgents, Rehearsal } from "./agentExtras.ts";
@@ -1257,6 +1259,24 @@ function drifted(key: string, have: unknown, want: unknown): boolean {
   return !same(have, want);
 }
 
+/** An agent's own approval settings, as `create`, `update` and `spawn` take them. */
+export interface AgentApprovalsOption {
+  /**
+   * What its own calls wait for a person on, in place of the account's, by kind of hold (`ApprovalPolicy.get()` lists
+   * the settable ones): `"allow"`, `"ask"`, `"deny"`, or `{ disposition, under_usd?, until? }` (a purchase allowed at
+   * or under `under_usd`, asked above). Never looser than the account's ceiling for the kind (raise it with
+   * `ApprovalPolicy.set({ ceilings })`), a child's never looser than its parent's (which it follows where it sets
+   * none), and a purchase or a deletion past the default needs a monthly cap on the account. Loosening is the owner's:
+   * signed in, their own message to one of their agents, or a key naming `approvals:policy` (after a 10-minute undo
+   * window); an agent acting on its own waits for their yes. In `update`, a kind set to `null` goes back to the
+   * account's (a child's, to its parent's). `toolRules` turning `noclick.spend` or `noclick.delete` to `"allow"` set
+   * `purchase` or `delete` to allow with it. `routing` among them names who answers its held calls first, in place of
+   * its parent's or the account's approver (finally the owner), as `ApprovalPolicy.set`'s `routing` takes it: never
+   * the agent itself nor one of its children (its parent may approve its calls).
+   */
+  approvals?: ScopeApprovals;
+}
+
 export interface AgentCreateOptions extends AgentFields, CallOptions {
   /**
    * A temporary agent: after this many seconds it's `expired`, taking no turns (its pending
@@ -1568,6 +1588,11 @@ export interface SpawnOptions {
    * which makes one. Every charge of the job, and of what it starts, is counted under it.
    */
   workstream?: string;
+  /**
+   * The child's own approval settings (as `create` takes them), within its parent's, which it follows where it sets
+   * none: one looser than its parent's throws `InvalidRequest`.
+   */
+  approvals?: ScopeApprovals;
   /** Whose conversation `conversation` is (an account parent talking to a user: that user's thread). */
   user?: UserOption;
 }
@@ -1682,9 +1707,12 @@ export class Agent extends ApiObject {
    * With `allowExisting: true` a taken name returns the agent already there, as it is: nothing about it
    * changes, so it's made once and left alone after.
    */
-  static async create(name: string, options: AgentCreateOptions & AllowExisting & { instructions: string }): Promise<Agent> {
+  static async create(
+    name: string, options: AgentCreateOptions & AgentApprovalsOption & AllowExisting & { instructions: string },
+  ): Promise<Agent> {
     const scope = resolveScope(options.user);
-    const json = await wireBody(name, options, await agentId(options.parent), scope);
+    const json = defined({ ...await wireBody(name, options, await agentId(options.parent), scope),
+      approvals: wireSettings(options.approvals) });
     const raw = await createNamed("/v1/agents", json, { allowExisting: options.allowExisting, user: scope, client: options.client });
     return new Agent({ raw, client: options.client, user: scope });
   }
@@ -1919,6 +1947,13 @@ export class Agent extends ApiObject {
   get budgetUsdPerMonth(): number | null {
     return this._field("budget_usd_per_month");
   }
+  /** While a budget set for one run holds (`update({ budgetForRun: true })`), the budget that comes back as that run
+   *  ends and after which run (`operationId` null: its next turn); null otherwise. */
+  get budgetRestore(): { budgetUsdPerMonth: number | null; operationId: string | null } | null {
+    const held = this._field<JsonObject | null>("budget_restore");
+    return held ? { budgetUsdPerMonth: (held.budget_usd_per_month as number | null) ?? null,
+      operationId: (held.operation_id as string | null) ?? null } : null;
+  }
   /** The region its sandboxes run in, fixed when it was created; `null`: wherever NoClick has capacity. */
   get region(): RegionName | null {
     return this._field("region");
@@ -2009,6 +2044,14 @@ export class Agent extends ApiObject {
   /** How far its coding harness goes before asking a person where a conversation sets nothing. */
   get permissionMode(): PermissionMode {
     return this._field("permission_mode") ?? "full-access";
+  }
+  /**
+   * What its own calls wait for a person on in place of the account's, by kind of hold (`disposition`, `under_usd`,
+   * `until`, `effective_at`, `pending`), and `routing`: who answers its held calls first (`approver`, `on_timeout`,
+   * `expires_in_s`); empty where it sets none (a child follows its parent's).
+   */
+  get approvals(): Record<string, JsonObject> {
+    return { ...(asObject(this._field("approvals")) as Record<string, JsonObject>) };
   }
   /** Commands its sandbox (its container, on a machine) runs as it starts, after its repos and before its harness. */
   get setup(): string[] {
@@ -2479,14 +2522,21 @@ export class Agent extends ApiObject {
    * default model; `modelConnection: null` removes an `sdk` agent's own model key; `secrets` are those in its shell,
    * in place of the ones it has (`[]` takes them all away). `name` renames it, unique among its scope's agents: its
    * old name keeps reaching it and stays reserved for it (`formerNames`), and a NoClick keeps its name.
+   * `budgetForRun: true` with `budgetUsdPerMonth` sets that budget for one run alone (its turn under way, else its
+   * next one): the budget it replaced comes back once that run ends, however it ends (`budgetRestore` says what comes
+   * back meanwhile). A budget set without it stands until changed.
+   *
+   *     await coder.update({ budgetUsdPerMonth: 2, budgetForRun: true });
+   *     console.log(coder.budgetRestore);   // { budgetUsdPerMonth: 10, operationId: null }
    */
   async update(
     changes: Omit<AgentFields, "modelConnection"> & {
       name?: string;
       budgetUsdPerMonth?: number | null;
+      budgetForRun?: boolean;
       modelConnection?: string | Connection | null;
     } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "card" | "machine" |
-      "memories" | "skills" | "turnLimits" | "secrets">,
+      "memories" | "skills" | "turnLimits" | "secrets"> & AgentApprovalsOption,
   ): Promise<this> {
     const raw = await this._ensure();
     this._raw = await this._request<JsonObject>("PATCH", `/v1/agents/${raw.id}`, {
@@ -2502,6 +2552,7 @@ export class Agent extends ApiObject {
         tool_rules: changes.toolRules,
         can_request: integrationRefs(changes.canRequest),
         budget_usd_per_month: changes.budgetUsdPerMonth,
+        budget_for_run: changes.budgetForRun || undefined,
         timezone: changes.timezone,
         repos: await repoWires(changes.repos, resolveScope(this._callScope())),
         network: changes.network,
@@ -2522,6 +2573,7 @@ export class Agent extends ApiObject {
         app_testing: changes.appTesting,
         model_switching: await switchingWire(changes.modelSwitching, this._callScope()),
         secret_ids: await secretIdList(changes.secrets, { client: this._client, user: this._callScope() }),
+        approvals: wireSettings(changes.approvals),
       }),
     });
     return this;
@@ -3029,6 +3081,7 @@ export class Agent extends ApiObject {
         model_connection: await modelConnectionRef(options.modelConnection, owner),
         name: options.name,
         workstream: options.workstream,
+        approvals: wireSettings(options.approvals),
       }),
       user: scope,
     });

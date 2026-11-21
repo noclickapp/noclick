@@ -149,6 +149,33 @@ test("workstreams are listed with their spend and renamed by name or id", async 
   assert.equal(byId.count, 1);
 });
 
+test("a workstream is archived and brought back, and the archived ones are listed apart", async () => {
+  const { api } = setup();
+  const row = { object: "workstream", id: "ws_1", name: "Q3 launch", created_at: "2026-11-20T10:00:00+00:00", updated_at: "2026-11-20T10:00:00+00:00" };
+  const change = api.on("PATCH", "/v1/workstreams/Q3%20launch", (call: Call) => json({ ...row, archived: (call.body as nc.JsonObject).archived }));
+  const archived = await nc.Workstream.archive("Q3 launch");
+  assert.deepEqual(change.last.body, { archived: true });
+  assert.equal(change.last.headers.get("NoClick-User"), null);
+  assert.equal(archived.archived, true);
+  const listed = api.on("GET", "/v1/workstreams", json({ object: "list", unnamed_usd: 0, data: [{ ...row, archived: true, spent_usd: 2, events: 4 }] }));
+  const [put] = await nc.Workstream.list({ archived: true });
+  assert.equal(listed.last.query.get("archived"), "true");
+  assert.deepEqual([put.id, put.archived, put.spentUsd], ["ws_1", true, 2]);
+  await nc.Workstream.list();
+  assert.equal(listed.last.query.get("archived"), null);
+  const back = await nc.Workstream.unarchive("Q3 launch");
+  assert.deepEqual(change.last.body, { archived: false });
+  assert.equal(back.archived, false);
+});
+
+test("an operation and a coding agent's job name their workstream as it reads now", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/operations/op_1", json({ object: "operation", id: "op_1", kind: "agent.task", status: "running", workstream: { id: "ws_1", name: "Bakery site" } }));
+  api.on("GET", "/v1/operations/op_2", json({ object: "operation", id: "op_2", kind: "agent.task", status: "running", workstream: null }));
+  assert.deepEqual((await nc.Operation.fromId("op_1").refresh()).workstream, { id: "ws_1", name: "Bakery site" });
+  assert.equal((await nc.Operation.fromId("op_2").refresh()).workstream, null);
+});
+
 test("a spend cap refusal is SpendCapExceeded and is not retried", async () => {
   const { api, sleeps } = setup();
   const route = api.on("POST", "/v1/sandboxes", apiError(402, "spend_cap_exceeded", "User cap reached.", { cap: 5, spent: 5.01, scope: "user" }));

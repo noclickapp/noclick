@@ -2,7 +2,8 @@
 // gives, beside what it doesn't (people, a browser, resources, another scope's connection); a list turned back into
 // everything (its rules then saying what's on) keeps the rest, and adding it back keeps what was chosen.
 import { describe, expect, it } from 'vitest';
-import { EVERYTHING, holds, toEverything, toolRows, withAll, type ToolEntry } from '@/lib/agentTools';
+import type { Connection } from 'noclick';
+import { connectionFor, EVERYTHING, holds, toEverything, toolRows, withAll, type ToolEntry } from '@/lib/agentTools';
 
 const OWNER = { human: { owner: true }, tools: ['notify', 'ask'] };
 
@@ -32,6 +33,25 @@ describe('toolRows', () => {
         const rows = toolRows(['gmail', 'gmail.send_email', 'noclick.read', 'search'], []);
         expect(rows.map((r) => r.key)).toEqual(['app:gmail', 'noclick:noclick', 'noclick:search']);
         expect(rows[1]).toMatchObject({ line: 'Only read' });
+    });
+});
+
+describe('connectionFor', () => {
+    // An app's Slack account listed ahead of the account's Stripe connection of the same name.
+    const appSlack = { id: 'credential:c-alerts', name: 'alerts', integration: 'slack', origin: 'app' } as Connection;
+    const namedStripe = { id: 'conn-alerts', name: 'alerts', integration: 'stripe', origin: 'api' } as Connection;
+    const other = { id: 'conn-other', name: 'other', integration: 'gmail', origin: 'api' } as Connection;
+    const listed = [appSlack, namedStripe, other];
+
+    it('names what the platform resolves: an account connected in the app by its id, any other ref a named connection by its name', () => {
+        expect(connectionFor('alerts', listed)).toBe(namedStripe);
+        expect(connectionFor('credential:c-alerts', listed)).toBe(appSlack);
+        expect(connectionFor('connection:conn-other', listed)).toBe(other);
+        expect(toolRows(['alerts.list_charges'], listed)[0]).toMatchObject({ kind: 'app', connection: namedStripe, operations: ['list_charges'] });
+    });
+
+    it('never names an account connected in the app by its name, which names no connection', () => {
+        expect(connectionFor('alerts', [appSlack])).toBeNull();
     });
 });
 
