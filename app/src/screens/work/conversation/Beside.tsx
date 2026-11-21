@@ -354,7 +354,8 @@ const clock = (at: number) => new Date(at).toLocaleTimeString('en-US', { hour: '
 /** Where a running loop's row tells the time: when it runs next, or that a run of it works now. */
 const nextRun = (item: BesideItem) => (item.turnRunning ? 'Now' : item.loop?.nextAt ? clock(item.loop.nextAt) : null);
 
-/** Its hover card: what it runs on, where it stands, how long, and what it spent where that's metered. */
+/** Its hover card: what it runs on, the workstream it belongs to, where it stands, how long, and what it spent where
+ *  that's metered. */
 function RowCard({ item, runsOn }: { item: BesideItem; runsOn: string | null }) {
     const fact = (k: string, v: ReactNode) => (
         <div className="flex items-baseline justify-between gap-4">
@@ -366,6 +367,7 @@ function RowCard({ item, runsOn }: { item: BesideItem; runsOn: string | null }) 
         <div className="flex w-[240px] flex-col gap-1 text-[12px] leading-snug">
             <p className="text-[13px] font-medium">{item.title}</p>
             {runsOn && fact(item.kind === 'agent' ? 'Model' : 'Runs on', runsOn)}
+            {item.workstream && fact('Workstream', item.workstream)}
             {fact('Status', STATUS_WORD[item.status])}
             {item.loop && fact('Runs', item.loop.every)}
             {item.loop && isLive(item) && fact('Next run', nextRun(item) ?? 'When this run sets it')}

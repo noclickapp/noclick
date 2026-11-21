@@ -104,6 +104,34 @@ def test_a_new_question_raises_and_one_already_returned_does_not(api, client):
     assert build.wait().steps[0].id == "daily"
 
 
+def test_a_finished_build_carries_facts_beside_the_builders_words(api, client):
+    readiness = {"status": "needs_setup", "meaning": "Something is in the way.", "warnings": [], "unverified": [],
+                 "issues": [{"step": "mail", "code": "invalid_config", "message": "Email the brief: to is required"}]}
+    facts = {**RESULT, "built": True, "version": 7, "readiness": readiness, "sent_back": 2, "unread": [],
+             "verdicts": {"daily": {"config_valid": True},
+                          "mail": {"config_valid": False, "missing_required": ["to"]}}}
+    api.post("/v1/workflows/wf_1/builds").respond(status_code=202, json=building())
+    api.get("/v1/operations/op_b/wait").mock(side_effect=[_json(building("succeeded", result=facts)),
+                                                          _json(building("succeeded", result=RESULT))])
+    result = nc.Workflow.from_id("wf_1").build("Email it to the team too").wait()
+    assert (result.built, result.version, result.sent_back, result.unread) == (True, 7, 2, [])
+    assert result.readiness["status"] == "needs_setup" and result.readiness["issues"][0]["step"] == "mail"
+    assert result.verdicts["mail"] == {"config_valid": False, "missing_required": ["to"]}
+    # A result from before facts were carried, or whose facts weren't read, says none of them.
+    older = nc.Workflow.from_id("wf_1").build("Again").wait()
+    assert (older.built, older.version, older.readiness, older.verdicts, older.sent_back, older.unread) == (
+        None, None, None, None, 0, [])
+
+
+def test_facts_that_werent_read_are_none_and_named(api, client):
+    unread = {**RESULT, "built": None, "version": None, "readiness": None, "verdicts": None, "sent_back": 0,
+              "unread": ["built", "version", "readiness", "verdicts"]}
+    api.post("/v1/workflows/wf_1/builds").respond(status_code=202, json=building())
+    api.get("/v1/operations/op_b/wait").respond(json=building("succeeded", result=unread))
+    result = nc.Workflow.from_id("wf_1").build("Email it to the team too").wait()
+    assert result.readiness is None and result.unread == ["built", "version", "readiness", "verdicts"]
+
+
 def test_skip_goes_on_without_an_answer(api, client):
     api.post("/v1/workflows/wf_1/builds").respond(status_code=202, json=building())
     answered = api.post("/v1/workflows/wf_1/builds/op_b/answer").respond(json=building())

@@ -301,20 +301,102 @@ class WorkflowBuildResult:
     workflow's ``steps`` as they now stand, and, when it published the
     workflow's app, ``published`` (``{state, url}``: ``state`` is
     ``published``, ``renamed`` or ``unpublished``; unpublished, its
-    ``trash_id`` restores it until ``restorable_until``)."""
+    ``trash_id`` restores it until ``restorable_until``).
+
+    Beside the builder's words, facts no model wrote: whether it ``built``
+    anything (``False``: the workflow is as it was, whatever ``summary``
+    says), the ``version`` it ended on (what ``edit(if_version=...)`` takes),
+    its ``readiness`` as ``Workflow.readiness`` reads it (``status``,
+    ``meaning``, ``issues``, ``warnings``, ``unverified``), and each step's
+    verdict by step id (``verdicts``: ``config_valid``, ``validation_error``,
+    ``missing_required``, as an edit answers them). ``sent_back`` counts the
+    times the build went back to the builder for settings the run engine
+    rejects (at most 2) before it finished. A fact NoClick couldn't read is
+    ``None`` and named in ``unread``: then nothing says the workflow is
+    ready."""
 
     workflow_id: Optional[str]
     summary: Optional[str]
     steps: List[WorkflowStep]
     app_url: Optional[str]
     published: Optional[Dict[str, Any]] = None
+    built: Optional[bool] = None
+    version: Optional[int] = None
+    readiness: Optional[Dict[str, Any]] = None
+    verdicts: Optional[Dict[str, Dict[str, Any]]] = None
+    sent_back: int = 0
+    unread: List[str] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowBuildResult":
         raw = raw if isinstance(raw, dict) else {}
+        readiness, verdicts = raw.get("readiness"), raw.get("verdicts")
         return cls(raw.get("workflow_id"), raw.get("summary"), [WorkflowStep._from(s) for s in raw.get("steps") or []],
-                   raw.get("app_url"), raw.get("published"), raw)
+                   raw.get("app_url"), raw.get("published"), built=raw.get("built"), version=raw.get("version"),
+                   readiness=dict(readiness) if isinstance(readiness, dict) else None,
+                   verdicts=dict(verdicts) if isinstance(verdicts, dict) else None,
+                   sent_back=int(raw.get("sent_back") or 0), unread=list(raw.get("unread") or []), raw=raw)
+
+
+@dataclass(frozen=True)
+class WorkflowRehearsal:
+    """A workflow's test run, as the app's Test Run plays one: a staged event arrived at one of its triggers
+    (``trigger``: ``{step_id, type, name}``) and the agents it reached took a real turn while a simulated world
+    answered every tool call, so nothing was sent and no account was touched. ``test_run`` is the run it played
+    (``{key, name, custom}``; ``None`` for a message you typed). ``reply`` is the agent's closing words;
+    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered;
+    ``transcript`` the run step by step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding
+    harness's own shell and file steps carry ``source`` ``harness``). ``scenario`` is the world it ran in,
+    ``note`` says when it wrote nothing or what it did to act was simulated, and ``cost_usd`` is what it cost you."""
+
+    workflow_id: Optional[str]
+    test_run: Optional[Dict[str, Any]]
+    trigger: Optional[Dict[str, Any]]
+    reply: str
+    tool_calls: List[Dict[str, Any]]
+    transcript: List[Dict[str, Any]]
+    scenario: Optional[str]
+    note: Optional[str]
+    cost_usd: Optional[float]
+    operation_id: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+def _read_rehearsal(result: Any, op: Operation) -> WorkflowRehearsal:
+    result = result if isinstance(result, dict) else {}
+    return WorkflowRehearsal(
+        workflow_id=result.get("workflow_id"), test_run=result.get("test_run"), trigger=result.get("trigger"),
+        reply=result.get("reply") or "", tool_calls=list(result.get("tool_calls") or []),
+        transcript=list(result.get("transcript") or []), scenario=result.get("scenario"), note=result.get("note"),
+        cost_usd=result.get("cost_usd"), operation_id=op._known("id"), raw=result,
+    )
+
+
+@dataclass(frozen=True)
+class WorkflowDraftResult:
+    """A finished draft: the workflow's ``version`` once the drafted steps were written (one version of its
+    history, ``history_version``; ``changed`` false when the drafter changed nothing), a ``summary`` of what
+    changed, and for each step it drafted (``steps``, by id) the verdict an edit answers (``config_valid``,
+    ``validation_error``, ``missing_required``, ``references``) beside ``drafted``, its ``operation``, the
+    ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the connected account, a
+    value only they know) and, for a step it couldn't draft (left as it was), its ``error``."""
+
+    workflow_id: str
+    mode: str
+    version: Optional[int]
+    history_version: Optional[int]
+    changed: bool
+    summary: Optional[str]
+    steps: Dict[str, Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowDraftResult":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("mode") or "full", raw.get("version"),
+                   raw.get("history_version"), bool(raw.get("changed")), raw.get("summary"),
+                   {str(k): dict(v) for k, v in (raw.get("steps") or {}).items()}, raw)
 
 
 def _read_run(result: Any, op: Operation) -> WorkflowRun:
@@ -325,8 +407,14 @@ def _read_build(result: Any, op: Operation) -> WorkflowBuildResult:
     return WorkflowBuildResult._from(result)
 
 
+def _read_draft(result: Any, op: Operation) -> WorkflowDraftResult:
+    return WorkflowDraftResult._from(result)
+
+
 register_result("workflow.run", _read_run)
 register_result("workflow.build", _read_build)
+register_result("workflow.rehearse", _read_rehearsal)
+register_result("workflow.draft", _read_draft)
 
 # How often next_question looks while the build works (the server's wait answers only once it's done).
 _QUESTION_POLL_S = 2.0
@@ -469,9 +557,10 @@ def _node_config(node: Mapping[str, Any]) -> Dict[str, Any]:
 
 
 def _edge(raw: Mapping[str, Any]) -> Dict[str, Any]:
+    tools = raw.get("targetHandle") == _TOOLS_HANDLE
     return {"id": raw.get("id"), "from": raw.get("source") or raw.get("sourceId"),
-            "to": raw.get("target") or raw.get("targetId"),
-            "kind": "tools" if raw.get("targetHandle") == _TOOLS_HANDLE else "data", "handle": raw.get("sourceHandle")}
+            "to": raw.get("target") or raw.get("targetId"), "kind": "tools" if tools else "data",
+            "handle": raw.get("sourceHandle"), "target_handle": None if tools else raw.get("targetHandle")}
 
 
 def _new_id(kind: str) -> str:
@@ -494,22 +583,50 @@ def _position(value: Position) -> Dict[str, float]:
     return {"x": x, "y": y}
 
 
-async def _connection_id(connection: Any) -> Optional[str]:
-    """What ``set_connection`` sends: a credential's id. A connection connected in the app is ``credential:<id>``."""
-    found = await ref_id(connection)
-    return found[len("credential:"):] if found and found.startswith("credential:") else found
+async def _secret_names(secrets: Any) -> List[str]:
+    """An agent step's ``secrets`` as the API takes them: names (a ``noclick.Secret`` is its name, once it's loaded,
+    or created by ``from_name(..., create_if_missing=True)``)."""
+    from .secret import Secret
+
+    names: List[str] = []
+    for secret in [secrets] if isinstance(secrets, (str, Secret)) else secrets:
+        if isinstance(secret, Secret):
+            names.append((await secret._ensure())["name"])
+        elif isinstance(secret, str):
+            names.append(secret)
+        else:
+            raise TypeError(f"A secret is a noclick.Secret or its name, not {type(secret).__name__}")
+    return names
+
+
+async def _sent(op: Dict[str, Any]) -> Dict[str, Any]:
+    """``op`` as the API takes it: a connection given as an object is its ref, secrets given as objects their names."""
+    if op["op"] == "set_connection":
+        return {**op, "connection": await ref_id(op["connection"])}
+    settings = op.get("settings")
+    if op["op"] in ("add_step", "update_step") and isinstance(settings, Mapping) and settings.get("secrets"):
+        return {**op, "settings": {**settings, "secrets": await _secret_names(settings["secrets"])}}
+    return op
+
+
+def _step_settings(settings: Optional[Dict[str, Any]], secrets: Any) -> Optional[Dict[str, Any]]:
+    """A step's ``settings``, with an agent step's ``secrets`` (resolved to names when sent)."""
+    if secrets is None:
+        return settings
+    return {**(settings or {}), "secrets": list(secrets) if isinstance(secrets, (list, tuple)) else [secrets]}
 
 
 def _add_step_op(kind: str, operation: Optional[str], settings: Optional[Dict[str, Any]], name: Optional[str],
-                 step_id: Optional[str], position: Optional[Position]) -> Dict[str, Any]:
-    return compact(op="add_step", type=kind, operation=operation, settings=settings, name=name,
-                   id=step_id or _new_id(kind), position=_position(position) if position is not None else None)
+                 step_id: Optional[str], position: Optional[Position], secrets: Any = None) -> Dict[str, Any]:
+    return compact(op="add_step", type=kind, operation=operation, settings=_step_settings(settings, secrets),
+                   name=name, id=step_id or _new_id(kind),
+                   position=_position(position) if position is not None else None)
 
 
 def _update_step_op(step: Any, settings: Optional[Dict[str, Any]], name: Optional[str], operation: Optional[str],
-                    enabled: Optional[bool]) -> Dict[str, Any]:
-    return compact(op="update_step", id=_step_id(step), settings=settings, name=name, operation=operation,
-                   enabled=enabled)
+                    enabled: Optional[bool], secrets: Any = None) -> Dict[str, Any]:
+    return compact(op="update_step", id=_step_id(step), settings=_step_settings(settings, secrets), name=name,
+                   operation=operation, enabled=enabled)
 
 
 def _connect_op(op: str, source: Any, target: Any, **fields: Any) -> Dict[str, Any]:
@@ -520,9 +637,11 @@ def _note_op(content: str, note_id: Optional[str], **fields: Any) -> Dict[str, A
     return {"op": "add_note", "content": content, "id": note_id or _new_id(_NOTE), **compact(**fields)}
 
 
-def _update_workflow_op(name: Optional[str], description: Optional[str],
-                        settings: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    return compact(op="update_workflow", name=name, description=description, settings=settings)
+def _update_workflow_op(name: Optional[str], description: Optional[str], settings: Optional[Dict[str, Any]],
+                        display_metadata: Optional[Dict[str, Any]] = None,
+                        interface: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    return compact(op="update_workflow", name=name, description=description, settings=settings,
+                   display_metadata=display_metadata, interface=interface)
 
 
 @dataclass(frozen=True)
@@ -742,8 +861,20 @@ class Step(_Object):
     def verdict(self) -> Optional[Dict[str, Any]]:
         """Whether it's ready to run, as the last edit through this handle that touched it judged:
         ``config_valid``, and when it isn't, ``validation_error`` and ``missing_required``; an agent's
-        ``agent_credential_hint``. ``None`` until an edit judged it (a read doesn't)."""
+        ``agent_credential_hint``; and ``references`` (see ``references``). ``None`` until an edit judged it (a
+        read doesn't)."""
         return self._verdict
+
+    @property
+    def references(self) -> List[Dict[str, Any]]:
+        """Each read of another step's output in its settings (``{{ $('x').key }}``) that won't resolve at run
+        time, as the last edit through this handle that touched it judged: ``{field, step, key, known_keys}`` for a
+        key ``x``'s output isn't known to have (``known_keys``: what it has, from what ``x`` declares, its latest
+        output in this workflow, or what your account's own runs of its type showed), or ``{field, step,
+        reference, missing, near}`` for a step ``x`` the workflow doesn't have (``near``: the one it likely
+        means). A read of a step whose output nothing has shown yet isn't judged. Empty when every read resolves,
+        or before an edit judged it."""
+        return list((self._verdict or {}).get("references") or [])
 
     @property
     def notes(self) -> Dict[str, Any]:
@@ -827,14 +958,22 @@ class Step(_Object):
     @synced
     async def update(
         self, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
-        operation: Optional[str] = None, enabled: Optional[bool] = None,
+        operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
     ) -> "Step":
         """Change its settings, name or operation, or switch it off or on. ``settings`` merge
-        into what it has (a nested object merges, any other value replaces); a field you leave
-        out is never touched. An agent given another ``model`` on another harness drops the
+        into what it has (a nested object merges, any other value replaces, and ``None`` takes
+        that setting out, a secret included); a field you leave out is never touched. An agent
+        given another ``model`` on another harness drops the
         old harness's own settings and connections, as the app does (``notes["harness_switch"]``
         says what went). Values are judged as a run judges them: one that can't be is refused
         with ``noclick.InvalidRequest`` naming the field, and nothing changes.
+
+        ``secrets`` (an agent step's) are the account's own secrets in its shell's environment
+        on every run, ``noclick.Secret`` objects or their names, replacing the ones it had
+        (``[]`` takes them all off). Only a key acting for the whole account of the workflow's
+        owner gives a step one, and an agent's own tools as your approval settings let them
+        (``attach_connection``, allowed by default); any other caller keeps or drops what it
+        was given. Their values never show in a read of the workflow, nor to the agent's model.
 
         Returns:
             This step as written, with ``notes`` and ``verdict``.
@@ -845,8 +984,9 @@ class Step(_Object):
             send = brief.step("send_summary")
             send.update(settings={"to": "team@acme.com", "subject": "Today"}, name="Email the team")
             print(send.verdict)   # {"config_valid": True}
+            brief.step("summarize").update(secrets=["warehouse"])
         """
-        return await self._edit(_update_step_op(self, settings, name, operation, enabled))
+        return await self._edit(_update_step_op(self, settings, name, operation, enabled, secrets))
 
     @synced
     async def patch(self, field: str, patch: str) -> "Step":
@@ -878,11 +1018,13 @@ class Step(_Object):
         await self._workflow._send([{"op": "remove_step", "id": self.id}], include_graph=True)
 
     @synced
-    async def connect(self, other: Any, *, kind: str = "data", handle: Optional[str] = None) -> "Step":
+    async def connect(self, other: Any, *, kind: str = "data", handle: Optional[str] = None,
+                      target_handle: Optional[str] = None) -> "Step":
         """Wire this step into ``other`` (a ``Step`` or its id). ``kind="data"`` runs ``other``
         after it with its output; ``kind="tools"`` makes its operations tools of ``other``, an
         agent (or an MCP step). ``handle`` names which of this step's outputs, for a step with
-        several (an iteration's ``loop``). Connecting what's already connected changes nothing.
+        several (an iteration's ``loop``), and ``target_handle`` which of ``other``'s inputs (a
+        code step's ``state``). Connecting what's already connected changes nothing.
 
         Returns:
             This step; ``notes`` holds the edge (``edge_id``, ``kind``).
@@ -893,7 +1035,8 @@ class Step(_Object):
             brief.step("summarize").connect("send_summary")
             brief.step("linear").connect("triage_agent", kind="tools")
         """
-        return await self._edit(_connect_op("connect", self, other, kind=kind, handle=handle), other)
+        return await self._edit(_connect_op("connect", self, other, kind=kind, handle=handle,
+                                            target_handle=target_handle), other)
 
     @synced
     async def disconnect(self, other: Any, *, handle: Optional[str] = None) -> "Step":
@@ -911,11 +1054,18 @@ class Step(_Object):
 
     @synced
     async def set_connection(self, connection: Any, *, slot: Optional[str] = None) -> "Step":
-        """Connect an account to the step: a ``noclick.Connection`` connected in the app
-        (``credential:<id>``) or its id. Its slot is the account's own type unless ``slot``
-        names it. ``connection=None`` with ``slot`` takes the account in that slot off. Only
-        an account your account may use is taken (``noclick.InvalidRequest`` otherwise), and
-        only one of a type the step takes.
+        """Connect an account to the step: one of the account's own connections, as a
+        ``noclick.Connection`` (connected in the app, ``credential:<id>``, or a named one), its
+        ref or id, or a named connection's name; the step takes the account it holds. Its slot
+        is the account's own type unless ``slot`` names it. ``connection=None`` with ``slot``
+        takes the account in that slot off. One of a user's connections, one holding no
+        working account, or one your account may not use is refused (``noclick.InvalidRequest``
+        naming it), as is one of a type the step doesn't take; a caller that doesn't act for
+        the whole account (a user's key, an app's code) only keeps one the workflow already
+        uses. An agent's own tools attach your account's own connections in your account's own
+        workflows, never another member's, a user's or one held for someone else, as your
+        approval settings let them (``attach_connection``: allowed by default; asked, the edit
+        waits for the owner's yes, ``noclick.ApprovalRequired``).
 
         Returns:
             This step, its ``connections`` as written.
@@ -925,10 +1075,10 @@ class Step(_Object):
             brief = noclick.Workflow.from_name("Morning brief")
             gmail = noclick.Connection.from_id("credential:9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e")
             brief.step("send_summary").set_connection(gmail)
+            brief.step("post").set_connection("work-slack")  # a named connection, by its name
         """
-        op = {"op": "set_connection", "id": self.id, "connection": await _connection_id(connection),
-              **compact(slot=slot)}
-        return await self._edit(op)
+        return await self._edit({"op": "set_connection", "id": self.id, "connection": connection,
+                                 **compact(slot=slot)})
 
     @synced
     async def mock(self, output: Any) -> "Step":
@@ -1153,7 +1303,11 @@ class WorkflowGraph:
     the workflow's own settings (``variable_definitions[1].value``), and
     ``variables_withheld`` the graph's own variables. The graph a ``noclick.Conflict``
     carries holds the steps and edges alone: its ``name``, ``description``, ``settings``
-    and ``settings_withheld`` are ``None``."""
+    and ``settings_withheld`` are ``None``.
+
+    An edge into a step with several inputs names which in ``target_handle`` (a code step's
+    ``state``). ``display_metadata`` is what the app shows of the workflow (its canvas's
+    viewport, the step open in its panel), read with ``graph()``: never part of a version."""
 
     workflow_id: str
     version: int
@@ -1167,6 +1321,7 @@ class WorkflowGraph:
     withheld: Dict[str, List[str]]
     variables_withheld: List[str]
     raw: Dict[str, Any] = dc_field(repr=False)
+    display_metadata: Optional[Dict[str, Any]] = None
 
     @classmethod
     def _from(cls, raw: Any, *, workflow: "Workflow", workflow_id: str, version: int,
@@ -1186,6 +1341,7 @@ class WorkflowGraph:
             notes=[s for s, n in zip(made, nodes) if n.get("type") == _NOTE],
             edges=[_edge(e) for e in raw.get("edges") or [] if isinstance(e, dict)],
             withheld=withheld, variables_withheld=list(raw.get("variables_withheld") or []), raw=raw,
+            display_metadata=dict(own["display_metadata"]) if isinstance(own.get("display_metadata"), dict) else None,
         )
 
     def _node(self, step_id: str) -> Optional[Dict[str, Any]]:
@@ -1242,7 +1398,8 @@ class WorkflowEdit:
     ``harness_switch``, ``coerced_values``, ``stripped_trigger_refs``,
     ``http_auth_credential_hint``); and, for each step an op touched, whether it's ready
     to run (``steps``: ``config_valid``, ``validation_error``, ``missing_required``,
-    ``agent_credential_hint``). ``graph`` is the workflow as written, read as
+    ``agent_credential_hint``, and ``references``: each read of another step's output that
+    won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
     the version of its history a restore put back."""
 
@@ -1274,12 +1431,15 @@ class WorkflowVersion:
     """One version of a workflow's history: its own number (``history_version``, what
     ``version_at`` and ``restore`` take, fixed once given), the workflow's ``version``
     its latest write left, where the change came from (``source``: ``api``,
-    ``canvas``, ``builder``, ``mcp``, ``coordinator``, ``deploy``, ``restore``, or
-    ``baseline``, the workflow as it was before its history began), who began it
+    ``canvas``, ``builder``, ``mcp``, ``coordinator``, ``deploy``, ``restore``,
+    ``baseline``, the workflow as it was before its history began, or ``checkpoint``, one
+    saved in the app before its history was kept, numbered below 1), who began it
     (``author``: ``{user_id, key_id}``, ``None`` for the baseline) and everyone who
     wrote into it (``authors``, its author first), a ``summary`` and each of its
     ``changes``, and for a restore the version of the history it put back
-    (``restored_from``).
+    (``restored_from``). A named version (a checkpoint: ``Workflow.name_version``) has its
+    ``label`` and ``note``, who named it (``labeled_by``: ``{user_id}``) and when
+    (``labeled_at``), and is kept for good while it has a name.
 
     Saves in the app's canvas within five minutes of a session's first are one
     version, whoever made them. Any other change (from your code, the builder, an MCP
@@ -1303,6 +1463,10 @@ class WorkflowVersion:
     created_at: Any
     updated_at: Any
     graph: Optional[WorkflowGraph] = None
+    label: Optional[str] = None
+    note: Optional[str] = None
+    labeled_by: Optional[Dict[str, Any]] = None
+    labeled_at: Any = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -1314,7 +1478,9 @@ class WorkflowVersion:
             authors=[dict(a) for a in raw.get("authors") or []],
             summary=raw.get("summary"), changes=list(raw.get("changes") or []),
             restored_from=raw.get("restored_from"), created_at=parse_time(raw.get("created_at")),
-            updated_at=parse_time(raw.get("updated_at")), graph=_definition(raw, workflow), raw=raw,
+            updated_at=parse_time(raw.get("updated_at")), graph=_definition(raw, workflow),
+            label=raw.get("label"), note=raw.get("note"), labeled_by=raw.get("labeled_by"),
+            labeled_at=parse_time(raw.get("labeled_at")), raw=raw,
         )
 
 
@@ -1361,11 +1527,14 @@ class EditBatch:
     _workflow: "Workflow"
 
     @classmethod
-    def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool) -> "EditBatch":
+    def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool,
+            source: Optional[str] = None, origin: Optional[str] = None) -> "EditBatch":
         batch = cls.__new__(cls)
         batch._workflow = workflow
         batch._if_version = if_version
         batch._include_graph = include_graph
+        batch._source = source
+        batch._origin = origin
         batch._ops = []
         batch._added = []
         batch._result = None
@@ -1392,9 +1561,8 @@ class EditBatch:
     async def _send(self) -> Optional[WorkflowEdit]:
         if not self._ops:
             return None
-        ops = [{**op, "connection": await _connection_id(op["connection"])} if op["op"] == "set_connection" else op
-               for op in self._ops]
-        edit = await self._workflow._send(ops, if_version=self._if_version, include_graph=self._include_graph)
+        edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph,
+                                          source=self._source, origin=self._origin)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1417,10 +1585,12 @@ class EditBatch:
     def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
+        secrets: Any = None,
     ) -> Step:
         """Queue a new step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``),
         doing ``operation`` with ``settings``. ``id`` names it (made from its type when left
-        out); without ``position`` it's laid out beside the rest.
+        out); without ``position`` it's laid out beside the rest. An agent step's ``secrets``
+        are as ``Step.update`` takes them.
 
         Returns:
             The step, whose ``id`` later edits in the batch can name. Its fields load once the batch is sent.
@@ -1432,8 +1602,9 @@ class EditBatch:
                 post = e.add_step("automation-slack", operation="send_message_to_channel", name="Post it",
                                   settings={"channel": "#team", "text": "{{ $('summarize').text }}"})
                 e.connect("summarize", post)
+                e.set_connection(post, "work-slack")
         """
-        op = _add_step_op(type, operation, settings, name, id, position)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets)
         self._queue(op)
         step = Step._of(self._workflow, op["id"])
         self._added.append((len(self._ops) - 1, step))
@@ -1441,16 +1612,17 @@ class EditBatch:
 
     def update_step(
         self, step: Any, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
-        operation: Optional[str] = None, enabled: Optional[bool] = None,
+        operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
     ) -> None:
-        """Queue a change to a step, as ``Step.update`` makes it.
+        """Queue a change to a step, as ``Step.update`` makes it (``secrets`` too).
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_step("send_summary", settings={"subject": "Today"}, enabled=True)
+                e.update_step("summarize", secrets=["warehouse"])
         """
-        self._queue(_update_step_op(step, settings, name, operation, enabled))
+        self._queue(_update_step_op(step, settings, name, operation, enabled, secrets))
 
     def patch_step(self, step: Any, field: str, patch: str) -> None:
         """Queue a patch to one long text setting of a step, as ``Step.patch`` makes it.
@@ -1472,26 +1644,30 @@ class EditBatch:
         """
         self._queue({"op": "remove_step", "id": _step_id(step)})
 
-    def connect(self, source: Any, target: Any, *, kind: str = "data", handle: Optional[str] = None) -> None:
+    def connect(self, source: Any, target: Any, *, kind: str = "data", handle: Optional[str] = None,
+                target_handle: Optional[str] = None, id: Optional[str] = None) -> None:
         """Queue an edge from ``source`` into ``target``, as ``Step.connect`` makes it
-        (``kind="tools"`` wires ``source`` into an agent as its tools).
+        (``kind="tools"`` wires ``source`` into an agent as its tools). ``id`` names the edge
+        (made for it when left out), as a canvas names its own.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.connect("every_morning", "summarize")
         """
-        self._queue(_connect_op("connect", source, target, kind=kind, handle=handle))
+        self._queue(_connect_op("connect", source, target, kind=kind, handle=handle, target_handle=target_handle,
+                                id=id))
 
-    def disconnect(self, source: Any, target: Any, *, handle: Optional[str] = None) -> None:
-        """Queue removing the edge from ``source`` into ``target``.
+    def disconnect(self, source: Any, target: Any, *, handle: Optional[str] = None, id: Optional[str] = None) -> None:
+        """Queue removing the edge from ``source`` into ``target`` (``id``: the one edge of
+        that id, when two join them).
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.disconnect("summarize", "send_summary")
         """
-        self._queue(_connect_op("disconnect", source, target, handle=handle))
+        self._queue(_connect_op("disconnect", source, target, handle=handle, id=id))
 
     def set_connection(self, step: Any, connection: Any, *, slot: Optional[str] = None) -> None:
         """Queue connecting an account to a step, as ``Step.set_connection`` does
@@ -1527,27 +1703,35 @@ class EditBatch:
 
     def update_workflow(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
-        settings: Optional[Dict[str, Any]] = None,
+        settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
+        interface: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Queue a change to the workflow's own fields, as ``Workflow.update`` makes it.
+        ``display_metadata`` replaces what the app shows of it (its canvas's viewport, the step
+        open in its panel; 16 KB at most): never a version, nor a change anyone is told of.
+        ``interface`` replaces its Interface tab's layout as the app draws it (each block's
+        place on the grid, the tabs' order; 256 KB at most): part of its graph, so a version.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_workflow(description="Emails the team the day's calendar at 8.")
         """
-        self._queue(_update_workflow_op(name, description, settings))
+        self._queue(_update_workflow_op(name, description, settings, display_metadata, interface))
 
-    def move(self, step: Any, position: Position) -> None:
-        """Queue moving a step (or a note) on the canvas, to ``(x, y)``. Moving things is
-        never a version of its own.
+    def move(self, step: Any, position: Position, *, width: Optional[float] = None,
+             height: Optional[float] = None) -> None:
+        """Queue moving a step (or a note) on the canvas, to ``(x, y)``, and for one drawn at a
+        size (a note) giving it ``width`` and ``height``. Moving things is never a version of
+        its own.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.move("send_summary", (640, 120))
         """
-        self._queue({"op": "move", "id": _step_id(step), "position": _position(position)})
+        self._queue({"op": "move", "id": _step_id(step), "position": _position(position),
+                     **compact(width=width, height=height)})
 
     def layout(self) -> None:
         """Queue laying every step out again, as the app's Tidy up does.
@@ -1563,8 +1747,10 @@ class EditBatch:
         self, content: str, *, id: Optional[str] = None, color: Optional[int] = None,
         near: Optional[Sequence[Any]] = None, direction: Optional[str] = None, after: Any = None,
         before: Any = None, width: Optional[int] = None, height: Optional[int] = None,
+        position: Optional[Position] = None,
     ) -> Step:
-        """Queue a note on the canvas, as ``Workflow.add_note`` makes it.
+        """Queue a note on the canvas, as ``Workflow.add_note`` makes it (``position``: where it
+        sits, instead of beside steps).
 
         Returns:
             The note, a step of type ``stickyNote`` whose ``id`` later edits can name.
@@ -1576,7 +1762,8 @@ class EditBatch:
         """
         op = _note_op(content, id, color=color, near=[_step_id(s) for s in near] if near is not None else None,
                       direction=direction, after=_step_id(after) if after is not None else None,
-                      before=_step_id(before) if before is not None else None, width=width, height=height)
+                      before=_step_id(before) if before is not None else None, width=width, height=height,
+                      position=_position(position) if position is not None else None)
         self._queue(op)
         note = Step._of(self._workflow, op["id"])
         self._added.append((len(self._ops) - 1, note))
@@ -1984,13 +2171,15 @@ class Workflow(_Object):
         return Step._of(self, step_id, node=cached, withheld=withheld)
 
     async def _send(self, ops: Sequence[Dict[str, Any]], *, if_version: Optional[int] = None,
-                    include_graph: bool = False) -> WorkflowEdit:
+                    include_graph: bool = False, source: Optional[str] = None,
+                    origin: Optional[str] = None) -> WorkflowEdit:
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
+        sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=list(ops), if_version=if_version, include_graph=include_graph or None))
+                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2027,13 +2216,15 @@ class Workflow(_Object):
     async def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
+        secrets: Any = None,
     ) -> Step:
         """Add a step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``) doing
         ``operation`` with ``settings``, as one edit. ``id`` names it (made from its type when
         left out); without ``position`` it's laid out beside the rest. It's judged as the app's
         builder judges one: a type, operation or value that can't be is refused with
         ``noclick.InvalidRequest`` naming it, and a setting it can't run without yet is in its
-        ``verdict``. A trigger's schedule or webhook registers once it's added.
+        ``verdict``. A trigger's schedule or webhook registers once it's added. An agent step's
+        ``secrets`` are as ``Step.update`` takes them.
 
         Returns:
             The new ``Step``, with its ``verdict`` and what the edit said about it (``notes``).
@@ -2048,16 +2239,19 @@ class Workflow(_Object):
             brief.step("summarize").connect(send)
             print(send.id, send.verdict)
         """
-        op = _add_step_op(type, operation, settings, name, id, position)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets)
         return await self._edit_step(Step._of(self, op["id"]), op)
 
     @synced
     async def update(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
-        settings: Optional[Dict[str, Any]] = None,
+        settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
+        interface: Optional[Dict[str, Any]] = None,
     ) -> "Workflow":
         """Change its name, description or settings (by top-level key; only its owner changes
         those, and NoClick's own are refused). A field you leave out is never touched.
+        ``display_metadata`` replaces what the app shows of it (its canvas's viewport), never a
+        version; ``interface`` its Interface tab's layout as the app draws it, part of its graph.
 
         Returns:
             This workflow; it loads again the next time you read a field.
@@ -2067,7 +2261,8 @@ class Workflow(_Object):
             brief = noclick.Workflow.from_name("Morning brief")
             brief.update(name="Team brief", description="Emails the team the day's calendar at 8.")
         """
-        await self._send([_update_workflow_op(name, description, settings)], include_graph=True)
+        await self._send([_update_workflow_op(name, description, settings, display_metadata, interface)],
+                         include_graph=True)
         return self
 
     @synced
@@ -2110,7 +2305,8 @@ class Workflow(_Object):
         handle = step if isinstance(step, Step) else Step._of(self, _step_id(step))
         return await self._edit_step(handle, {"op": "move", "id": handle.id, "position": _position(position)})
 
-    def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False) -> EditBatch:
+    def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False,
+             source: Optional[str] = None, origin: Optional[str] = None) -> EditBatch:
         """Collect several edits and send them as one batch when the ``with`` block ends:
         they're applied in order and land as one version, or none of them do. With
         ``if_version`` (a version you read: ``version``, ``graph().version``, or the last
@@ -2123,9 +2319,19 @@ class Workflow(_Object):
         app, conversations or files) may be held for the account's owner when an agent, a
         connected app or a deployed app's code sends it: it raises ``noclick.ApprovalRequired``,
         nothing of it has landed, and NoClick applies it once they approve: its ``operation``
-        settles then, with the batch's answer. The workflow one of your agents runs on changes
-        through the agent: an edit of it raises ``noclick.PermissionDenied`` naming it
-        (``agent_id``).
+        settles then, with the batch's answer. The workflow one of your agents runs on is
+        edited as its canvas edits it: the agent follows its prompt, harness and model, its own
+        step stays (removing it raises ``noclick.InvalidRequest`` naming the agent), and a key
+        that couldn't change the agent can't change it this way either.
+
+        ``source="canvas"`` says the edits are a canvas's saves, as the app's canvas sends them:
+        each setting ``update_step`` sends replaces that setting whole and is kept as written
+        (never rewritten nor refused for its value; the step's verdict says it isn't ready),
+        an edge joins the handles it names, a connection sits under the slot it's given (one the
+        step takes), and they join the canvas session's version (saves within five minutes of its
+        first, whoever made them). ``origin`` is a name the sender gives itself (letters, digits,
+        ``-`` and ``_``, up to 64; a canvas tab's own id): what the workflow's open canvases hear
+        of the write names it, so the canvas that sent it knows the change is its own.
 
         Returns:
             An ``EditBatch`` to use as a context manager (``async with`` in async code);
@@ -2154,12 +2360,13 @@ class Workflow(_Object):
                     except noclick.Conflict as changed:
                         graph = changed.graph   # the workflow as it stands; decide again from it
         """
-        return EditBatch._of(self, if_version, include_graph)
+        return EditBatch._of(self, if_version, include_graph, source, origin)
 
     @synced
-    async def versions(self, *, limit: Optional[int] = 20) -> List[WorkflowVersion]:
-        """Its versions, newest first, kept 90 days: each one's number, where it came from,
-        who made it and what changed.
+    async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
+        """Its versions, newest first, kept 90 days (a named one for good): each one's number,
+        where it came from, who made it and what changed. ``named=True`` lists only the named
+        ones, its checkpoints.
 
         Returns:
             The first ``limit`` versions (20 by default; ``None`` for all of them), fetched page by page.
@@ -2172,11 +2379,61 @@ class Workflow(_Object):
         """
         return await list_all(
             f"{await self._path()}/versions", lambda raw, _scope: WorkflowVersion._from(raw, self),
-            user=None, limit=limit, client=self._client,
+            user=None, limit=limit, client=self._client, params=compact(named="true" if named else None),
         )
 
     @synced
-    async def versions_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None) -> Page:
+    async def name_version(
+        self, label: str, *, note: Optional[str] = None, history_version: Optional[int] = None,
+        if_version: Optional[int] = None,
+    ) -> WorkflowVersion:
+        """Name a version of its history, keeping it for good while it has a name: the version
+        it's at now (a checkpoint, as the app saves one; ``if_version`` refuses it with
+        ``noclick.Conflict`` when the workflow moved on since you read it), or the one
+        ``history_version`` names, or another name for a named one. No later change joins a
+        named version. Naming the version it's at now when it has a name already raises
+        ``noclick.Conflict`` naming it (``label``). Restore it with
+        ``restore(history_version=...)``. A name someone else gave is changed only by them or the
+        workflow's owner.
+
+        Returns:
+            The named ``WorkflowVersion``.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            saved = brief.name_version("Before the Slack change", note="Sends at 8.")
+            brief.step("send_summary").update(settings={"channel": "#team"})
+            brief.restore(history_version=saved.history_version)   # back to it
+        """
+        path = f"{await self._path()}/versions"
+        if history_version is None:
+            raw = await self._request("POST", path, json=compact(label=label, note=note, if_version=if_version))
+        else:
+            raw = await self._request("PATCH", f"{path}/{history_version}", json={"label": label, "note": note})
+        return WorkflowVersion._from(raw, self)
+
+    @synced
+    async def unname_version(self, history_version: int) -> WorkflowVersion:
+        """Take a version's name away (a checkpoint deleted): it's kept 90 days from its last
+        write then, as any version. Only who named it or the workflow's owner takes it away.
+
+        Returns:
+            The ``WorkflowVersion``, its ``label`` ``None``.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            for version in brief.versions(named=True, limit=None):
+                if version.label.startswith("tmp"):
+                    brief.unname_version(version.history_version)
+        """
+        path = f"{await self._path()}/versions/{history_version}"
+        return WorkflowVersion._from(await self._request("PATCH", path, json={"label": None}), self)
+
+    @synced
+    async def versions_page(self, *, cursor: Optional[str] = None, limit: Optional[int] = None,
+                            named: bool = False) -> Page:
         """One page of its versions, newest first; pass ``next_cursor`` back as ``cursor``.
 
         Returns:
@@ -2196,6 +2453,7 @@ class Workflow(_Object):
         return await list_page(
             f"{await self._path()}/versions", lambda raw, _scope: WorkflowVersion._from(raw, self),
             user=None, cursor=cursor, limit=limit, client=self._client,
+            params=compact(named="true" if named else None),
         )
 
     @synced
@@ -2244,6 +2502,47 @@ class Workflow(_Object):
         build = WorkflowBuild._from_payload(payload, client=self._client, user=None)
         self._started_build = build
         return build
+
+    @synced
+    async def draft(
+        self, steps: Sequence[Any], *, mode: str = "full", field: Optional[str] = None,
+        instructions: Optional[str] = None,
+    ) -> Operation:
+        """Have NoClick's drafter (the builder's own) pick ``steps``' operations and fill their settings, the steps
+        together. Each step is a ``Step``, its id, or ``{"id": ..., "goal": ...}``: its goal says what it's for (the
+        drafter reads it, and a drafted step keeps it). ``mode`` is ``full`` (pick each step's operation and fill
+        its settings; a step drafts against the operation each step it reads was given), ``operation`` (pick only
+        the operation), ``fields`` (fill the settings of the operation a step has) or ``field`` (fill the one
+        setting ``field`` names). ``instructions`` say what the workflow does. A step the workflow doesn't have, a
+        note, a step that provides an agent its tools or a setting it doesn't have raises
+        ``noclick.InvalidRequest`` before anything runs. What's drafted lands as one version of the workflow,
+        written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost.
+
+        Returns:
+            An operation (kind ``workflow.draft``) that reports each step as it lands (``progress``); ``wait()``
+            gives the ``WorkflowDraftResult``, each step's verdict among it, or raises when no step could be drafted.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            with brief.edit() as batch:
+                batch.add_step("automation-gmail", id="fetch")
+                batch.add_step("automation-slack", id="post")
+                batch.connect("fetch", "post")
+            drafted = brief.draft([{"id": "fetch", "goal": "Read today's unread email"},
+                                   {"id": "post", "goal": "Post a summary to #team"}]).wait()
+            for step_id, step in drafted.steps.items():
+                print(step_id, step["operation"], step["unfilled"], step["references"])
+        """
+        def entry(step: Any) -> Dict[str, Any]:
+            if isinstance(step, Mapping):
+                return compact(id=_step_id(step.get("id") or step.get("step")), goal=step.get("goal"))
+            return {"id": _step_id(step)}
+
+        payload = await self._request("POST", f"{await self._path()}/drafts", json=compact(
+            steps=[entry(s) for s in steps], mode=mode, field=field, instructions=instructions))
+        return Operation._from_payload(payload, client=self._client, user=None, kind="workflow.draft",
+                                       reader=_read_draft)
 
     @synced
     async def publish(self, *, subdomain: Optional[str] = None, title: Optional[str] = None) -> WorkflowBuild:
@@ -2425,6 +2724,61 @@ class Workflow(_Object):
             "POST", f"{await self._path()}/runs", json=body, user=scope, idempotency_key=idempotency_key,
         )
         return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.run", reader=_read_run)
+
+    @synced
+    async def rehearse(
+        self,
+        test_run: Optional[str] = None,
+        *,
+        trigger: Any = None,
+        body: Optional[str] = None,
+        title: Optional[str] = None,
+        author: Optional[str] = None,
+        handle: Optional[str] = None,
+        scenario: Optional[str] = None,
+        user: Any = AMBIENT,
+    ) -> Operation:
+        """A test run of the workflow, as the app's Test Run plays one: a staged
+        event arrives at one of its triggers and the agents it reaches take a
+        real turn (their models, instructions and tools) while a simulated world
+        answers every tool call, so nothing is sent, no account is touched and
+        its connections needn't be connected yet (its agents' model connections
+        must be). The steps after an agent that would reach an account never run.
+
+        ``test_run`` plays one the workflow offers, by its name or key, as its
+        Test Run screen lists them: a staged situation for one of its triggers,
+        or one authored for it (``edit().add_test_run``). Or stage a message you
+        type on ``trigger`` (a trigger ``Step``, its id or its type): ``body``,
+        with ``title``, ``author`` and ``handle``. ``scenario`` says what the
+        simulated world is like, in place of the staged situation's own. One
+        the workflow doesn't offer raises ``noclick.NotFound`` naming the ones
+        it does. Billed as the app's Test Run is; an account has up to 10
+        queued or running at once (``noclick.QuotaExceeded`` past that).
+
+        Returns:
+            The run's operation (kind ``workflow.rehearse``); ``.wait()`` gives the ``WorkflowRehearsal``: the
+            agent's ``reply`` and the ``tool_calls`` it made with what the world answered.
+
+        Usage::
+
+            inbox = noclick.Workflow.from_name("Support inbox")
+            test = inbox.rehearse("Refund request").wait()
+            print(test.reply)
+            for call in test.tool_calls:
+                print(call["tool"], call["arguments"])
+
+            # A message of your own, on the trigger step support_email:
+            test = inbox.rehearse(trigger="support_email", body="My order 1042 never came.",
+                                  title="Where is order 1042?", author="ana@example.com").wait()
+        """
+        scope = resolve_scope(user)
+        payload = await self._api.request(
+            "POST", f"{await self._path()}/rehearsals", user=scope,
+            json=compact(test_run=test_run, trigger=None if trigger is None else _step_id(trigger), body=body,
+                         title=title, author=author, handle=handle, scenario=scenario),
+        )
+        return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.rehearse",
+                                       reader=_read_rehearsal)
 
     @synced
     async def runs(

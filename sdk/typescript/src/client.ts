@@ -59,6 +59,11 @@ export interface RequestOptions {
   signal?: AbortSignal;
   /** `bytes` returns a `Uint8Array` instead of decoded JSON. */
   responseType?: "json" | "bytes";
+  /**
+   * In a browser, let the request outlive the page that sent it (fetch's `keepalive`), as a closing tab's last save
+   * needs. The browser caps such a body at 64 KB.
+   */
+  keepalive?: boolean;
 }
 
 /** The runtime's `process.env`, where it has one (never in a browser; on Cloudflare Workers, with `nodejs_compat`). */
@@ -278,6 +283,7 @@ export class NoClick {
         try {
           response = await fetchFn(url.toString(), {
             method: verb, headers: { Authorization: authorization, ...headers }, body, signal: controller.signal,
+            ...(options.keepalive ? { keepalive: true } : {}),
           });
         } catch (err) {
           if (options.signal?.aborted) throw err;
