@@ -750,8 +750,8 @@ paypal paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot pe
 perplexity persona personio phantombuster phone phone-harness picsart pidgeon pims pinata pinecone pingdom pinterest
 pipedrive pipeless pipeline-crm placetel planable planday planetscale platerecognizer plaud plausible pledge ploid
 pneumatic pocketsmith podium polar polygon polymarket polymarket-us poma-grill porkbun portalio postal-data-api
-postgres posthog postiz postman postmark postwire powerdns practice-better precisefp predictleads printful printify
-prisma process-street procore productboard productlane productplan project-broadcast projul promptlayer
+postgres posthog postiz postman postmark postwire powerdns practice-better precisefp precisely predictleads printful
+printify prisma process-street procore productboard productlane productplan project-broadcast projul promptlayer
 propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qomon qonto qonversion qovery quentn
 quickbase quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisely ramp rawg-video-games-database
 razorpay rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow recurly reddit reddit-ads
