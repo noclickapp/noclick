@@ -12,6 +12,8 @@ export interface Call {
   query: URLSearchParams;
   headers: Headers;
   body: unknown;
+  /** The request was sent to outlive its page (fetch's `keepalive`). */
+  keepalive: boolean;
 }
 
 type Reply = Response | Error | ((call: Call) => Response | Promise<Response>);
@@ -73,7 +75,9 @@ export class MockApi {
         // a raw text body stays a string
       }
     }
-    const call: Call = { method, path: url.pathname, query: url.searchParams, headers: new Headers(init.headers), body };
+    const call: Call = {
+      method, path: url.pathname, query: url.searchParams, headers: new Headers(init.headers), body, keepalive: init.keepalive === true,
+    };
     const route = this.routes.get(`${method} ${url.pathname}`);
     if (!route) return apiError(404, "not_found", `no mock route for ${method} ${url.pathname}`);
     return await route.reply(call);
