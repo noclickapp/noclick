@@ -226,8 +226,18 @@ export const TOKEN_SCOPE = 'credentials:token';
 
 /** Scopes a key holds only when they're named, never part of full access: those that read a secret (a provider's raw
  *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows), answering a call NoClick
- *  holds for the owner's yes, switching what it holds, and accepting the machines usage policy for the company. */
-export const EXPLICIT_SCOPES: readonly string[] = [TOKEN_SCOPE, 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy', 'machines:vetting'];
+ *  holds for the owner's yes, switching what it holds, accepting the machines usage policy for the company, and
+ *  making keys. */
+export const EXPLICIT_SCOPES: readonly string[] = [
+    TOKEN_SCOPE,
+    'cards:reveal',
+    'webhooks:reveal',
+    'agents:terminal',
+    'approvals:answer',
+    'approvals:policy',
+    'machines:vetting',
+    'keys:create',
+];
 
 /** Every scope but those a key holds only by name: the default for a new key. */
 export function fullAccessScopes(all: readonly string[]): string[] {
@@ -265,7 +275,8 @@ export function revokeKey(client: NoClick, keyId: string): Promise<KeyView> {
 }
 
 /** What an MCP connection may do, one OAuth scope each, in the order people read them. */
-export const CAPABILITY_GROUPS = ['read', 'build', 'deploy', 'spend', 'delete'] as const;
+/** The groups a connected app holds, in consent's order; `admin` only where its client asked for it by name. */
+export const CAPABILITY_GROUPS = ['read', 'build', 'deploy', 'spend', 'delete', 'admin'] as const;
 export type CapabilityGroup = (typeof CAPABILITY_GROUPS)[number];
 
 /** An MCP client a person allowed on the consent page (an OAuth grant, a principal of its own). */

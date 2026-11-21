@@ -265,7 +265,9 @@ const SCOPES = [
     'apps', 'browsers', 'cards', 'cards:reveal', 'databases', 'domains', 'domains:buy', 'repos', 'storage', 'volumes',
     'webhooks', 'webhooks:reveal', 'workflows',
 ];
-const FULL_NO_TOKENS = SCOPES.filter((s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy'].includes(s));
+const FULL_NO_TOKENS = SCOPES.filter(
+    (s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy', 'keys:create'].includes(s)
+);
 
 export const KEYS = [
     {
@@ -319,7 +321,7 @@ export const KEYS = [
 ] as const;
 
 // What a key holds only when it names them: the API lists them apart from `scopes`.
-const EXPLICIT = ['agents:terminal', 'approvals:answer', 'approvals:policy', 'cards:reveal', 'webhooks:reveal'];
+const EXPLICIT = ['agents:terminal', 'approvals:answer', 'approvals:policy', 'cards:reveal', 'keys:create', 'webhooks:reveal'];
 
 export const META = {
     scopes: SCOPES.filter((s) => !EXPLICIT.includes(s)),

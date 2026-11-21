@@ -87,6 +87,7 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'approvals:answer': 'approves or declines a call NoClick holds for your yes, from your code',
     'approvals:policy': 'switches what NoClick holds for your yes, for the whole account',
     'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
+    'keys:create': 'makes keys no wider than itself, which go when it’s revoked',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

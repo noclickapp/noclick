@@ -40,7 +40,7 @@ export const OWNER_ONLY = {
     /** The API keys section, a key's cap on Usage, a key's name beside a call in Logs, and Quickstart's "Create key". */
     keys: {
         what: 'API keys',
-        why: 'A key can’t list, make, change or revoke keys.',
+        why: 'A key can’t list, change or revoke keys, and makes one only while it holds keys:create, which a key with every scope doesn’t.',
         operations: ['GET /v1/keys', 'POST /v1/keys', 'PATCH /v1/keys/{key_id}', 'DELETE /v1/keys/{key_id}', 'GET /v1/public_endpoints'],
         at: { page: 'keys', link: 'Manage API keys on NoClick' },
     },

@@ -123,6 +123,7 @@ from .machine import (
     MachineShell, MachineSize, MachineSizeRegion,
 )
 from .mcp_server import McpClient, McpServer
+from .key import Key
 from .notifications import Notifications
 from .operation import Operation, OperationEvent, OperationSummary, OperationTransition
 from .phone_number import (
@@ -250,7 +251,7 @@ __all__ = [
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Workstream",
-    "AccountCap", "CapChange", "Notifications",
+    "AccountCap", "CapChange", "Notifications", "Key",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",
