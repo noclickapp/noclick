@@ -664,37 +664,37 @@ export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
 actionstep active-merge activecampaign acuity-scheduling adafruit-io adapty addevent addressfinder addresszen
 adobe-analytics adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha
 ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex akeneo akta alchemy alegra algolia alpaca altoviz
-alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache api-bible
-api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter appcircle apphud
-appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online artificial-analysis
-aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine attentive attio audienceful
-audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut bambooci bamboohr bandsintown
-bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api beaconchain beatapi beehiiv
-benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
-billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio bloom-growth
-bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo bookeo
-bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bouncer bouncify box brandfetch
-brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless
-bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie
-bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner
-canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly carsxe casebook caspio cats
-centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot check-cherry checkfront chili-piper
-chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci claid-ai clay
-clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign clickup cliengo
-climate cling cliniko clio clockify cloro cloudbeds cloudflare cloudsmith cloudtalk cloudzero clover cloze club-os
-coassemble coda codacy codat codesearch cody coinbase coingecko coinmarketcal coinmarketcap college-football-data
-combell cometapi commerce-layer common-room commusoft companycam companyenrich composio condens conductor configcat
-confluence conjur connecteam constant-contact consumerfinance contabo content-snare content-studio context-dev
-control-d conversion-tools convertapi converted-da-56088 conveyor convolo-ai coolify corbit-sms corrently coveo cpy
-cradl-ai craftmypdf credas credlys-acclaim-platform creem crelate crew-ai crisp crowdin crunchbase csvbox
-currents-api cursor custify customgpt cvent cycat cyclr cypher-learning dacast dadata-ru daily dart databox
-databricks datadog dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram
-deepimage deployhq deputy dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus
-discord discourse dixa dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub docraptor docsautomator
-docsbot-ai docspell docugenerate documenso docupilot docuseal docusign dodo doit dokploy domainsdb doorloop doppler
-doqs dovetail dpd2 dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact
-dropinblog dub dust dux-soup dv360 dynamic-mockups dynapictures dynatrace e2b easy-email-verification easybizy
-easybroker-archive ebi echtpost eduzz egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua
+alttext-ai amazing-marvin amazon-polly amplemarket amplience anakin-io anchor-browser android-texter any-db apache
+api-bible api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter
+appcircle apphud appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online
+artificial-analysis aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine
+attentive attio audienceful audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut
+bambooci bamboohr bandsintown bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api
+beaconchain beatapi beehiiv benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer
+bigoven bigquery bika bill billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq
+blitz-api blooio bloom-growth bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign
+bolna bonsai bonzo bookeo bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bouncer
+bouncify box brandfetch brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories browseai
+browserbase-tool browserless bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith
+bulkpublish bulksmscom bungie bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire
+campaign-cleaner canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly carsxe casebook
+caspio cats centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot check-cherry checkfront
+chili-piper chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci
+claid-ai clay clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign clickup
+cliengo climate cling cliniko clio clockify cloro cloudbeds cloudflare cloudsmith cloudtalk cloudzero clover cloze
+club-os coassemble coda codacy codat codesearch cody coinbase coingecko coinmarketcal coinmarketcap
+college-football-data combell cometapi commerce-layer common-room commusoft companycam companyenrich composio
+condens conductor configcat confluence conjur connecteam constant-contact consumerfinance contabo content-snare
+content-studio context-dev control-d conversion-tools convertapi converted-da-56088 conveyor convolo-ai coolify
+corbit-sms corrently coveo cpy cradl-ai craftmypdf credas credlys-acclaim-platform creem crelate crew-ai crisp
+crowdin crunchbase csvbox currents-api cursor custify customgpt cvent cycat cyclr cypher-learning dacast dadata-ru
+daily dart databox databricks datadog dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce
+deel deepgram deepimage deployhq deputy dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq
+directus discord discourse dixa dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub docraptor
+docsautomator docsbot-ai docspell docugenerate documenso docupilot docuseal docusign dodo doit dokploy domainsdb
+doorloop doppler doqs dovetail dpd2 dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign
+dropcontact dropinblog dub dust dux-soup dv360 dynamic-mockups dynapictures dynatrace e2b easy-email-verification
+easybizy easybroker-archive ebi echtpost eduzz egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua
 emaillistverify emailoctopus emailvalidation emelia emnify encharge encircle enforcedflow enginemailer enrich-layer
 env0 eodhd-apis epos-now esputnik etermin etsy event-tickets eventify everflow everhour everyaction evetech evoliz
 evolution-go exa excel exceptionless exercisecom exlibrisgroup exoscale expensify explorium extend extole extrovert
