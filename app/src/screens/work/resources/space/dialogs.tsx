@@ -12,6 +12,7 @@ import { ShellDialog } from '@/ui/ShellDialog';
 import { useWork } from '../../context';
 import { cn } from '@/ui/utils';
 import { resourceAddress } from '@/screens/resources/kinds';
+import { refFor } from '@/lib/agentTools';
 import { useWorkV1 } from '../../agents/reads';
 import { useWorkClient } from '../../client';
 import { useWorkNav } from '../../nav';
@@ -36,7 +37,8 @@ function useAccountItems(kind: SpaceKind): { loading: boolean; items: Candidate[
                 // NoClick's helpers work for it, not you: none is offered for a space.
                 return (await Agent.list({ client })).filter((a) => !a.helper).map((a) => make(a.id, a.name, a.harness ?? ''));
             case 'connections':
-                return (await Connection.list({ client })).map((c) => make(c.name, c.name, [c.integration, c.account].filter(Boolean).join(' · ')));
+                // By its ref: an account connected in the app goes by `credential:<id>`, never its name.
+                return (await Connection.list({ client })).map((c) => make(refFor(c), c.name, [c.integration, c.account].filter(Boolean).join(' · ')));
             case 'websites':
                 return (await Project.list({ client })).map((p) => make(p.id, p.name, p.url ?? 'Website'));
             case 'databases':

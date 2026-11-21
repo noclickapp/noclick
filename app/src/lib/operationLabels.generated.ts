@@ -692,15 +692,15 @@ dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce dee
 dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus discord discourse dixa
 dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub docraptor docsautomator docsbot-ai docspell
 docugenerate documenso docupilot docuseal docusign dodo doit dokploy domainsdb doorloop doppler doqs dovetail dpd2
-dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact dropinblog dub dust dux-soup dv360
-dynamic-mockups dynapictures dynatrace e2b easy-email-verification easybizy easybroker-archive ebi echtpost eduzz
-egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua emaillistverify emailoctopus emailvalidation emelia
-emnify encharge encircle enforcedflow enginemailer enrich-layer env0 eodhd-apis epos-now esputnik etermin etsy
-event-tickets eventify everflow everhour everyaction evetech evoliz evolution-go exa excel exceptionless exercisecom
-exlibrisgroup exoscale expensify explorium extend extole extrovert ez-texting ezeep-printing ezekia facebook
-facecheck factorial facturadirecta fal faraday fareharbor farmbrite fathom fatture-in-cloud feathr fec fellow felt
-fiber fidel-api figma figshare filevine fillout financial-datasets-ai findymail finmo finnhub fireberry firecrawl
-firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk
+dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact dropinblog dub dust dux-soup
+dv360 dynamic-mockups dynapictures dynatrace e2b easy-email-verification easybizy easybroker-archive ebi echtpost
+eduzz egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua emaillistverify emailoctopus emailvalidation
+emelia emnify encharge encircle enforcedflow enginemailer enrich-layer env0 eodhd-apis epos-now esputnik etermin
+etsy event-tickets eventify everflow everhour everyaction evetech evoliz evolution-go exa excel exceptionless
+exercisecom exlibrisgroup exoscale expensify explorium extend extole extrovert ez-texting ezeep-printing ezekia
+facebook facecheck factorial facturadirecta fal faraday fareharbor farmbrite fathom fatture-in-cloud feathr fec
+fellow felt fiber fidel-api figma figshare filevine fillout financial-datasets-ai findymail finmo finnhub fireberry
+firecrawl firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk
 followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry formspark formstack formstep fountain
 foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum fullenrich fullstory fundraise-up
 fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis gainsight-customer-communities
@@ -711,12 +711,12 @@ goodbarber goody google-ads google-ai-studio google-analytics google-books googl
 google-chat google-classroom google-cloud-natural-language google-cloud-storage google-contacts google-docs
 google-drive google-forms google-maps google-meet google-search-console google-sheets google-slides google-tasks
 google-translate gorgias gorilladesk gotify gotowebinar gov grafana granola graphhopper greenhouse griptape grocy
-grok gsmtasks gtmetrix gusto hackernews hackmd halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy
-hello-tracks helloasso here hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hipaatizer hitl
+grok gsmtasks gtmetrix gusto hackernews hackmd haku halopsa handwrytten harness harvey hasslefreebooks heartbeat
+hedy hello-tracks helloasso here hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hipaatizer hitl
 hitpay hive hivelocity hiver hjarni hlr-lookup holded homebase honeybadger honeycomb hookdeck hospitable hostfully
 housecall-pro houzz-pro http-request hubfit hubflo hubhopper hubspot hubstaff humanitec humanitix humanloop hunter
 hypeauditor hyperbrowser hyros iclosed icypeas id4i idealpostcodes idloom ignav-flights ignisign ignition ilert
-image-charts imagekit-io imagerouter imap immich inblog incident-io increase infinity infisical inforumobile
+image-charts imagekit-io imagerouter imap immich inblog incident-io increase infakt infinity infisical inforumobile
 inmobalia-crm inmobile-sms-gateway insightly instagram instantly instapaper instatus intelliprint intercom
 investorbase investorlift invofox invoiceninja invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io
 iplocate ironclad isn iterable itm-platform jackrabbit-class jev jigsawstack jinko jira
