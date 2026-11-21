@@ -922,7 +922,9 @@ class Step(_Object):
     async def clear_state(self) -> ClearedStepState:
         """Forget what the step keeps between runs, as the app's Clear state does: its state
         (an RSS step's seen items, a State step's values) and its conversations (an agent
-        step's threads), so its next run starts fresh. Takes what changing the workflow
+        step's threads), so its next run starts fresh. Clearing an agent step deletes its
+        conversations for good: a deletion, which through MCP waits for your account's owner
+        (preview it with ``POST /v1/delete_previews``). Takes what changing the workflow
         takes, and always acts for your account, never one of your users: an agent step's
         threads are every user's.
 
