@@ -3,7 +3,7 @@
 import { AgentMemory, AgentSandbox, AgentWorkspace, ShareLink, toCodingAgents } from "./agentExtras.ts";
 import { TrashItem, trashed } from "./trash.ts";
 import { wireSettings } from "./approval.ts";
-import type { ApprovalSetting } from "./approval.ts";
+import type { ScopeApprovals } from "./approval.ts";
 import { attachmentIds, toAttachment, toAttachments, uploadFile } from "./attachment.ts";
 import type { Attachment, FileInput, UploadOptions } from "./attachment.ts";
 import type { AgentEvent, CodingAgents, Rehearsal } from "./agentExtras.ts";
@@ -1270,9 +1270,11 @@ export interface AgentApprovalsOption {
    * signed in, their own message to one of their agents, or a key naming `approvals:policy` (after a 10-minute undo
    * window); an agent acting on its own waits for their yes. In `update`, a kind set to `null` goes back to the
    * account's (a child's, to its parent's). `toolRules` turning `noclick.spend` or `noclick.delete` to `"allow"` set
-   * `purchase` or `delete` to allow with it.
+   * `purchase` or `delete` to allow with it. `routing` among them names who answers its held calls first, in place of
+   * its parent's or the account's approver (finally the owner), as `ApprovalPolicy.set`'s `routing` takes it: never
+   * the agent itself, its parent or its child.
    */
-  approvals?: Record<string, ApprovalSetting>;
+  approvals?: ScopeApprovals;
 }
 
 export interface AgentCreateOptions extends AgentFields, CallOptions {
@@ -1590,7 +1592,7 @@ export interface SpawnOptions {
    * The child's own approval settings (as `create` takes them), within its parent's, which it follows where it sets
    * none: one looser than its parent's throws `InvalidRequest`.
    */
-  approvals?: Record<string, ApprovalSetting>;
+  approvals?: ScopeApprovals;
   /** Whose conversation `conversation` is (an account parent talking to a user: that user's thread). */
   user?: UserOption;
 }
@@ -2045,7 +2047,8 @@ export class Agent extends ApiObject {
   }
   /**
    * What its own calls wait for a person on in place of the account's, by kind of hold (`disposition`, `under_usd`,
-   * `until`, `effective_at`, `pending`); empty where it sets none (a child follows its parent's).
+   * `until`, `effective_at`, `pending`), and `routing`: who answers its held calls first (`approver`, `on_timeout`,
+   * `expires_in_s`); empty where it sets none (a child follows its parent's).
    */
   get approvals(): Record<string, JsonObject> {
     return { ...(asObject(this._field("approvals")) as Record<string, JsonObject>) };
