@@ -978,6 +978,11 @@ class Agent(_Object):
         "turns, readable for 30 days.",
     )
     budget_usd_per_month: Optional[float] = field("budget_usd_per_month")
+    budget_restore: Optional[Dict[str, Any]] = field(
+        "budget_restore", doc="While a budget set for one run holds (``update(budget_for_run=True)``), the budget that "
+        "comes back as that run ends and after which run: ``{budget_usd_per_month, operation_id}`` (``operation_id`` "
+        "None: its next turn). None otherwise.",
+    )
     region: Optional[str] = field(
         "region", doc="The region its sandboxes run in (``noclick.regions()``), fixed when it was created; ``None``: "
         "wherever NoClick has capacity.",
@@ -1082,8 +1087,8 @@ class Agent(_Object):
     approvals: Dict[str, Dict[str, Any]] = field(
         "approvals", lambda raw: dict(raw or {}),
         doc="What its own calls wait for a person on in place of the account's, by kind of hold (``disposition``, "
-        "``under_usd``, ``until``, ``effective_at``, ``pending``); empty where it sets none (a child follows its "
-        "parent's).",
+        "``under_usd``, ``until``, ``effective_at``, ``pending``), and ``routing``: who answers its held calls first "
+        "(``approver``, ``on_timeout``, ``expires_in_s``); empty where it sets none (a child follows its parent's).",
     )
     status: Optional[str] = field(
         "status",
@@ -1312,7 +1317,10 @@ class Agent(_Object):
         ``ApprovalPolicy.set(ceilings=...)``), a child's never looser than its parent's (which it follows where it
         sets none), and a purchase or a deletion past the default needs a monthly cap on the account. Loosening is
         the owner's: signed in, their own message to one of their agents, or a key naming ``approvals:policy``
-        (after a 10-minute undo window); an agent acting on its own waits for the owner's yes.
+        (after a 10-minute undo window); an agent acting on its own waits for the owner's yes. ``"routing"`` among
+        them names who answers its held calls first, in place of its parent's or the account's approver (finally the
+        owner), as ``ApprovalPolicy.set``'s ``routing`` takes it: its parent may approve its calls, never the agent
+        itself nor one of its children.
 
         ``can_request`` lets it ask its user to connect accounts at run time
         (a ``request_connection`` tool): integration names, single
@@ -2801,6 +2809,7 @@ class Agent(_Object):
         harness: Any = UNSET,
         model_connection: Any = UNSET,
         budget_usd_per_month: Any = UNSET,
+        budget_for_run: bool = False,
         can_request: Any = UNSET,
         timezone: Any = UNSET,
         repos: Any = UNSET,
@@ -2854,6 +2863,10 @@ class Agent(_Object):
         (``None`` for a kind puts back the account's, a child's its parent's); what changed is in
         ``agent.raw["approval_changes"]``. Anyone who may change the agent tightens them; an agent loosening its own
         or another's on its own initiative waits for the owner, and on the owner's own word it applies at once.
+        ``budget_for_run=True`` with ``budget_usd_per_month`` sets that budget for one run alone (its turn under
+        way, else its next one): the budget it replaced comes
+        back once that run ends, however it ends, and ``budget_restore`` says what comes back meanwhile. A budget
+        set without it stands until changed.
 
         Returns:
             This agent, updated. A field you leave out is unchanged, and changes apply from its next turn.
@@ -2896,6 +2909,12 @@ class Agent(_Object):
             Give its turns more room, and keep each to $3::
 
                 noclick.Agent.from_name("builder").update(turn_limits={"steps": 150, "usd": 3})
+
+            Hold its next job to $2, then give it its budget back::
+
+                coder = noclick.Agent.from_name("coder")
+                coder.update(budget_usd_per_month=2, budget_for_run=True)
+                print(coder.budget_restore)   # {'budget_usd_per_month': 10.0, 'operation_id': None}
         """
         changes = {
             k: v for k, v in dict(
@@ -2909,6 +2928,8 @@ class Agent(_Object):
             ).items()
             if v is not UNSET
         }
+        if budget_for_run:
+            changes["budget_for_run"] = True
         if network is not UNSET:
             changes["network"] = network_wire(network)
         if turn_limits is not UNSET:

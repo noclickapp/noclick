@@ -113,9 +113,9 @@ export interface ConnectOptions {
 }
 
 /** Connecting the AI account a pick needs, in the app's own AI dialog (Connections'), on one way that runs it at a time
- *  (the plan signed out, else the best), the others as "Or run it on" pills. What lands is picked (`credential:<id>`,
- *  the ref an agent takes it by) as soon as the account list reads it connected. The state lives in the host, which
- *  outlives the dialog. */
+ *  (the plan signed out, else the best), the others as "Or run it on" pills. What lands is picked (by the ref the dialog
+ *  hands back, the one an agent takes it by: `credential:<id>`, or a named connection's name) as soon as the account
+ *  list reads it connected. The state lives in the host, which outlives the dialog. */
 export function useConnectAi(onPicked: (account: string) => void): { connect: (harness: HarnessInfo, model: string, options?: ConnectOptions) => void; dialog: ReactNode } {
     const Connect = useSlot(CONNECT_MODEL);
     const client = useWorkClient();
@@ -147,8 +147,8 @@ export function useConnectAi(onPicked: (account: string) => void): { connect: (h
             others={ways.filter((w) => w.id !== way?.id).map((w) => ({ key: w.id, label: wayLabel(w), credentialType: wayType(w), onPick: () => setFocus(w.id) }))}
             client={client}
             onOpenChange={(o) => !o && setOpen(null)}
-            onConnected={(id) => {
-                setLanded(`credential:${id}`);
+            onConnected={({ ref }) => {
+                setLanded(ref);
                 rereadAccounts();
             }}
         />

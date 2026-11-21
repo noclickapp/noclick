@@ -834,7 +834,8 @@ class Step(_Object):
     @property
     def connections(self) -> Dict[str, str]:
         """The accounts connected to it: each slot (a connection type, like ``gmail_oauth``) to the id of the
-        account connected there. ``set_connection`` changes them."""
+        account connected there, which the connection holding it names as its ``credential_id``.
+        ``set_connection`` changes them."""
         found = self._config().get("credentialIds")
         return dict(found) if isinstance(found, dict) else {}
 
