@@ -761,9 +761,9 @@ rootly rosette-text-analytics rossum route4me royalmail rss rudder rumble rundec
 safetyculture sakari-sms salesforce salesforge salesloft salesmsg salesql salesrabbit salesrobot samanage samcart
 samdock samsara sanity sap-concur saucelabs savvycal scale-ai scalr scheduleonce schoolmaker scoro scrape-do
 scrapecreators scrapegraph-ai se-ranking seam search-api search1api sec securitytrails selectpdf sellercloud sellsy
-semanticscholar sematext semrush send-email send-pulse sendbird sendfox sendgrid sendlane sendspark sendx senta
-sentry seqera sequenzy serply serpstat sertifier serverless-function servicem8 servicetitan servicetrade setmore
-sevdesk seven-io shipmondo shippo shlink shopify shopvox shortcut shorten-rest showmojo sidetracker
+semanticscholar sematext semrush send-email send-pulse sendbird sendfox sendgrid sendlane sendsafely sendspark sendx
+senta sentry seqera sequenzy serply serpstat sertifier serverless-function servicem8 servicetitan servicetrade
+setmore sevdesk seven-io shipmondo shippo shlink shopify shopvox shortcut shorten-rest showmojo sidetracker
 sierra-interactive sigma signable signal8 signalwire signpath signrequest signupgenius signwell simla-com
 simple-localize simplero simplesat simplicate simplybook simplyrets simpro singlestore sirv skuvault skyvia slack
 slicktext sling slite small-improvements smartemailing smarthr smartlead smartproxy smartsheet smily smokeball
