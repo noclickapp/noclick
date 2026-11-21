@@ -763,8 +763,8 @@ salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucel
 scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api search1api sec
 securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse sendbird sendfox
 sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier serverless-function
-servicem8 servicetitan servicetrade setmore sevdesk seven-io shipmondo shippo shlink shopify shopvox shortcut
-shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath signrequest
+servicem8 servicetitan servicetrade setmore sevdesk seven-io shipengine shipmondo shippo shlink shopify shopvox
+shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath signrequest
 signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook simplyrets simpro
 singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements smartemailing smarthr smartlead
 smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go smtping snapchat sncf snitcher
@@ -787,12 +787,12 @@ videoupscaler vimeo viral-loops virtualbadgeio virtuous-crm virustotal visma-eac
 vocal-video voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm
 wati wayfront weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io
 webscraping-ai websupport weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063
-whatsapp wheelbase whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core
-wolfram-alpha-api woop-social word wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero
-yelp yelp-leads ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy
-zendesk zeno zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail
-zoho-creator zoho-crm zoho-inventory zoho-projects zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora
-zyte-api`.split(/\s+/)
+whatsapp wheelbase when-i-work whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza
+wodify-core wolfram-alpha-api woop-social word wordnik wordpress workable workiz workos workvivo wowza writer
+xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript
+zadarma zeeg zeffy zendesk zeno zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq
+zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory zoho-projects zoho-work-drive zoho-writer
+zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
