@@ -733,14 +733,14 @@ magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic mailers
 mailslurp mailsoftly maintainx manifestly manus manychat manyreach manyrequests mapbox marketsharp marketstack
 markup-ai mastodon mateo matillion mattermost me-qr-qr-code mediasilo meetgeekai meilisearch melo mem mem0
 membershipio memberspot memelord mentortools mercado-pago mercury merge-dev meshy messagebird meta method-crm
-metricool mews mezmo microsoft-bookings microsoft-entra-id microsoft-exchange microsoft-graph-security
-microsoft-onenote microsoft-power-bi microsoft-powerpoint microsoft-sharepoint microsoft-teams
-microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus mindbody minelead minerstat mineskin
-minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco modusign mollie-1 monday moneybird
-mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase mycashflow mycrm-leads namsor nango
-nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm net2phone netbox nethunt-crm
-netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok nifty-pm niftyimages nimbata
-ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
+metricool mews mezmo microsoft-bookings microsoft-dynamics365-business-c microsoft-entra-id microsoft-exchange
+microsoft-graph-security microsoft-onenote microsoft-power-bi microsoft-powerpoint microsoft-sharepoint
+microsoft-teams microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus mindbody minelead
+minerstat mineskin minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco modusign mollie-1
+monday moneybird mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase mycashflow mycrm-leads
+namsor nango nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm net2phone netbox
+nethunt-crm netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok nifty-pm
+niftyimages nimbata ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
 nutrient-document-web-services-api nutshell nylas obono octen office-365 okta ollama olostep omnisend onedesk
 onedrive onelake onepage-crm onesignal onlyoffice-docspace open-sea openalex opencage opendatasoft openfigi
 openlayer openpolicy openstates openstatus openwa opn-form opsgenie opusclip oracle-field-service oracle-hcm orgo
