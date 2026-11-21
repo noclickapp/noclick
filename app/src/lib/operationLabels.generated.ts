@@ -753,10 +753,10 @@ rei-pebble relevance-ai reloadify remote remove-bg render rentcast rentman repai
 reply-io resend resource-guru responder responsys reteno revolut-for-business rezdy rillet ringcentral ringover
 rippling ritekit rkvst roam rocket-reach rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics
 rossum route4me royalmail rss rudder rumble rundeck runpod runscope runsignup safetyculture sakari-sms salesforce
-salesloft salesmsg salesql salesrabbit salesrobot samanage samcart samdock sanity sap-concur saucelabs savvycal
-scale-ai scalr scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api
-search1api sec securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse
-sendbird sendfox sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier
+salesloft salesmsg salesql salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucelabs
+savvycal scale-ai scalr scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam
+search-api search1api sec securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email
+send-pulse sendbird sendfox sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier
 serverless-function servicem8 servicetitan servicetrade setmore sevdesk seven-io shipmondo shippo shlink shopify
 shopvox shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath
 signrequest signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook simplyrets
