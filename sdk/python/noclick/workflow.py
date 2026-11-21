@@ -30,7 +30,7 @@ from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from ._client import Client, resolve_client
-from ._object import Page, _Object, compact, csv, field, list_all, list_page, parse_time, ref_id
+from ._object import Page, _Object, compact, csv, field, list_all, list_page, parse_time, read_scope, ref_id
 from ._sync import run_sync, synced
 from ._scope import AMBIENT, resolve_scope
 from .exceptions import AnswerRequired, Conflict, NotFound
@@ -100,6 +100,87 @@ class StepOutput:
             preview=raw.get("preview"), output=raw.get("output"), path=raw.get("path"), full=bool(raw.get("full")),
             truncated=bool(raw.get("truncated")), withheld=list(raw.get("withheld") or []), raw=raw,
         )
+
+
+@dataclass(frozen=True)
+class WorkflowRunCounts:
+    """How many runs ``Workflow.runs`` lists (``Workflow.run_counts``): the ``total``,
+    ``by_status`` (``running``, ``succeeded``, ``failed``, each there even at 0) and
+    ``by_source`` (``api``, ``endpoint``, ``schedule``, ``trigger``, ``app``: only those with
+    runs). A run from code counts once, however many executions it spans."""
+
+    workflow_id: str
+    total: int
+    by_status: Dict[str, int]
+    by_source: Dict[str, int]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowRunCounts":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", int(raw.get("total") or 0),
+                   {"running": 0, "succeeded": 0, "failed": 0, **(raw.get("by_status") or {})},
+                   dict(raw.get("by_source") or {}), raw)
+
+
+@dataclass(frozen=True)
+class LatestOutputs:
+    """Each step's latest output, whatever run it's from (``Workflow.latest_outputs``):
+    ``outputs`` by step id, each cut short as a run's steps are unless read ``full``
+    (``truncated`` names the steps cut), never a secret (``withheld``: each step's paths left
+    out). A step that never stored one isn't in ``outputs``."""
+
+    workflow_id: str
+    outputs: Dict[str, Any]
+    withheld: Dict[str, List[str]]
+    full: bool
+    truncated: List[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "LatestOutputs":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", dict(raw.get("outputs") or {}),
+                   {step: list(paths) for step, paths in (raw.get("withheld") or {}).items()},
+                   bool(raw.get("full")), list(raw.get("truncated") or []), raw)
+
+
+@dataclass(frozen=True)
+class ExpressionPreview:
+    """What an expression gives (``Step.preview_expression``): ``ok``, with the value's ``kind``
+    (``object``, ``array``, ``string``, ``number``, ``boolean``, ``null``), an object's ``keys``
+    and a short ``preview``; or ``ok`` False with the ``error``."""
+
+    ok: bool
+    kind: Optional[str]
+    keys: Optional[List[str]]
+    preview: Optional[str]
+    error: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "ExpressionPreview":
+        raw = raw if isinstance(raw, dict) else {}
+        keys = raw.get("keys")
+        return cls(bool(raw.get("ok")), raw.get("kind"), list(keys) if isinstance(keys, list) else None,
+                   raw.get("preview"), raw.get("error"), raw)
+
+
+@dataclass(frozen=True)
+class ClearedStepState:
+    """What ``Step.clear_state`` forgot: how many of its state records and of its
+    conversations were deleted."""
+
+    step_id: str
+    state_rows_deleted: int
+    conversations_deleted: int
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "ClearedStepState":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("step_id") or "", int(raw.get("state_rows_deleted") or 0),
+                   int(raw.get("conversations_deleted") or 0), raw)
 
 
 @dataclass(frozen=True)
@@ -757,8 +838,11 @@ class Step(_Object):
 
     # --- what it produced --------------------------------------------------
 
+    async def _step_path(self) -> str:
+        return f"{await self._workflow._path()}/steps/{self.id}"
+
     async def _outputs_path(self) -> str:
-        return f"{await self._workflow._path()}/steps/{self.id}/outputs"
+        return f"{await self._step_path()}/outputs"
 
     @synced
     async def outputs(
@@ -807,6 +891,51 @@ class Step(_Object):
             params=compact(path=path, full="true" if full else None, iteration=iteration), user=resolve_scope(user),
         )
         return StepOutput._from(raw)
+
+    @synced
+    async def preview_expression(
+        self, expression: str, *, samples: Optional[Dict[str, Any]] = None, user: Any = AMBIENT,
+    ) -> ExpressionPreview:
+        """What an expression in one of the step's settings gives, evaluated as a run
+        evaluates it (what goes inside ``{{ }}``, like ``$('hook').order_id`` or
+        ``$json.items.length``), as the app's editor previews it while you type. It's
+        evaluated against what every other step last stored (never a secret, so an
+        expression reaching one finds nothing there), or against ``samples``, each step's
+        output by step id (``vars`` the workflow's variables). ``$json`` is the step's one
+        input's output, when it has one. Changes nothing.
+
+        Returns:
+            The ``ExpressionPreview``; an expression that fails has ``ok`` False and its ``error``.
+
+        Usage::
+
+            note = noclick.Workflow.from_name("order-intake").step("summarize")
+            print(note.preview_expression("$('hook').items.length").preview)   # 2
+        """
+        raw = await self._api.request(
+            "POST", f"{await self._step_path()}/expression",
+            json={"expression": expression, **compact(samples=samples)}, user=resolve_scope(user),
+        )
+        return ExpressionPreview._from(raw)
+
+    @synced
+    async def clear_state(self) -> ClearedStepState:
+        """Forget what the step keeps between runs, as the app's Clear state does: its state
+        (an RSS step's seen items, a State step's values) and its conversations (an agent
+        step's threads), so its next run starts fresh. Takes what changing the workflow
+        takes, and always acts for your account, never one of your users: an agent step's
+        threads are every user's.
+
+        Returns:
+            How many state records and conversations were deleted.
+
+        Usage::
+
+            feed = noclick.Workflow.from_name("news digest").step("rss")
+            print(feed.clear_state().state_rows_deleted)   # 1
+        """
+        raw = await self._api.request("POST", f"{await self._step_path()}/clear_state", user=None)
+        return ClearedStepState._from(raw)
 
 
 @dataclass(frozen=True)
@@ -2035,6 +2164,9 @@ class Workflow(_Object):
     @synced
     async def get_run(self, run_id: str) -> WorkflowRun:
         """One run, with what each step did (``steps``: status, error and output, in order).
+        While it runs, each step reads as it moves (``running``, then how it ended with its
+        output); ``noclick.watch`` says when, with a ``workflow_run`` change naming the run
+        (``change`` ``step`` when a step moved, ``run`` when it started or ended).
 
         Returns:
             The ``WorkflowRun``; an unknown id raises ``noclick.NotFound``.
@@ -2047,6 +2179,69 @@ class Workflow(_Object):
                 print(step.name, step.status, step.error)
         """
         return WorkflowRun._from(await self._request("GET", f"{await self._path()}/runs/{run_id}"))
+
+    @synced
+    async def stop_run(self, run_id: str, *, user: Any = AMBIENT) -> WorkflowRun:
+        """Stop a run that's running, however it started, as the app's stop does: the step
+        it's on stops at once and nothing after it runs. A run from code is its operation's
+        cancel (the operation reads ``canceled``). Takes what starting one takes; inside
+        ``as_user`` (or with ``user=``) only that user's runs.
+
+        Returns:
+            The run once it stopped (or as it stands after a few seconds). A run that already
+            ended raises ``noclick.Conflict``, as does any other that waits with nothing running
+            (an approval, a delay).
+
+        Usage::
+
+            intake = noclick.Workflow.from_name("order-intake")
+            for run in intake.runs(status="running"):
+                print(intake.stop_run(run.id).status)   # failed
+        """
+        raw = await self._api.request("POST", f"{await self._path()}/runs/{run_id}/stop", user=resolve_scope(user))
+        return WorkflowRun._from(raw)
+
+    @synced
+    async def run_counts(self, *, user_filter: Any = None, user: Any = AMBIENT) -> WorkflowRunCounts:
+        """How many runs ``runs()`` lists: in all, ``by_status`` and ``by_source``. Outside
+        ``as_user`` you count the runs recorded for your account; ``user_filter`` counts your
+        users'.
+
+        Returns:
+            The ``WorkflowRunCounts``.
+
+        Usage::
+
+            counts = noclick.Workflow.from_name("order-intake").run_counts()
+            print(counts.total, counts.by_status["failed"], counts.by_source)
+        """
+        user, user_id = await read_scope(user, user_filter)
+        raw = await self._api.request("GET", f"{await self._path()}/runs/counts",
+                                      params=compact(user_id=user_id), user=user)
+        return WorkflowRunCounts._from(raw)
+
+    @synced
+    async def latest_outputs(
+        self, *, steps: Optional[Sequence[Any]] = None, full: bool = False, user: Any = AMBIENT,
+    ) -> LatestOutputs:
+        """Each step's latest output, whatever run it's from, as the app's canvas shows the
+        workflow when it opens: cut short as a run's steps are unless ``full``, never a
+        secret. ``steps`` reads only those steps' (each a ``Step`` or its id). Inside
+        ``as_user`` (or with ``user=``) only that user's runs are read.
+
+        Returns:
+            The ``LatestOutputs``: ``outputs`` by step id, with what each ``withheld``.
+
+        Usage::
+
+            latest = noclick.Workflow.from_name("order-intake").latest_outputs()
+            print(latest.outputs["hook"]["order_id"], latest.withheld.get("hook"))
+        """
+        wanted = ",".join(_step_id(s) for s in steps) if steps else None
+        raw = await self._api.request("GET", f"{await self._path()}/outputs",
+                                      params=compact(steps=wanted, full="true" if full else None),
+                                      user=resolve_scope(user))
+        return LatestOutputs._from(raw)
 
     @synced
     async def approvals(self, *, status: Optional[str] = None, limit: Optional[int] = 20) -> List[WorkflowApproval]:
