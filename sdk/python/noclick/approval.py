@@ -39,6 +39,12 @@ one autonomous key buys unasked while everything else still asks::
 An agent does too (``Agent.update(approvals=...)``), and a child it spawns follows it, only ever tighter::
 
     noclick.Agent.from_name("buyer").update(approvals={"purchase": {"disposition": "allow", "under_usd": 20}})
+
+An agent gives your workflows' steps your account's own connections and secrets itself (``attach_connection``,
+allowed by default); switched to ``ask``, its edit waits for the owner's yes, and to ``deny``, it asks them which
+account to use::
+
+    noclick.ApprovalPolicy.set(settings={"attach_connection": "ask"})
 """
 
 from __future__ import annotations
@@ -59,7 +65,7 @@ STATUSES = ("pending", "approved", "declined", "expired", "used", "canceled")
 class HoldKind:
     """One kind of call NoClick may hold for a person: what it does by default, and what your account switched."""
 
-    #: Its name (``purchase``, ``delete``, ``raise_limit``, ...).
+    #: Its name (``purchase``, ``delete``, ``raise_limit``, ``attach_connection``, ...).
     kind: str
     #: What it covers, in a person's words.
     description: str

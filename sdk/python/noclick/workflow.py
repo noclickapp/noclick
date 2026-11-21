@@ -970,8 +970,9 @@ class Step(_Object):
         ``secrets`` (an agent step's) are the account's own secrets in its shell's environment
         on every run, ``noclick.Secret`` objects or their names, replacing the ones it had
         (``[]`` takes them all off). Only a key acting for the whole account of the workflow's
-        owner gives a step one; any other caller keeps or drops what it was given. Their values
-        never show in a read of the workflow, nor to the agent's model.
+        owner gives a step one, and an agent's own tools as your approval settings let them
+        (``attach_connection``, allowed by default); any other caller keeps or drops what it
+        was given. Their values never show in a read of the workflow, nor to the agent's model.
 
         Returns:
             This step as written, with ``notes`` and ``verdict``.
@@ -1059,8 +1060,11 @@ class Step(_Object):
         takes the account in that slot off. One of a user's connections, one holding no
         working account, or one your account may not use is refused (``noclick.InvalidRequest``
         naming it), as is one of a type the step doesn't take; a caller that doesn't act for
-        the whole account (a user's key, an agent's own tools) only keeps one the workflow
-        already uses.
+        the whole account (a user's key, an app's code) only keeps one the workflow already
+        uses. An agent's own tools attach your account's own connections in your account's own
+        workflows, never another member's, a user's or one held for someone else, as your
+        approval settings let them (``attach_connection``: allowed by default; asked, the edit
+        waits for the owner's yes, ``noclick.ApprovalRequired``).
 
         Returns:
             This step, its ``connections`` as written.
