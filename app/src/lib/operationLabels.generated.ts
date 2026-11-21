@@ -699,8 +699,8 @@ fixer-io flashquotes flat flatfile fleetio flowsavvy flutterwave fly folk follow
 forgejo formaloo formbricks formcarry formspark formstack formstep fountain foursquare fourthwall frame-io-v4 freee
 freshsales freshteam front fulcrum fullenrich fullstory fundraise-up fungenerators funnelchat funnelcockpit
 funtranslations fuseai futureagi gainsight-customer-communities geekflare gender-api genderapi-io genesiscloud
-geoapify geocodio geodatasource get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab
-givebutter gladia glean gleap gleif glide-apps globalping glofox gmail go-table go-to-connect go-to-training
+geoapify geocodio geodatasource get-the-referral getaccept getanyapi gettyimages giftbit giphy gitea github-rest
+gitlab givebutter gladia glean gleap gleif glide-apps globalping glofox gmail go-table go-to-connect go-to-training
 goatcounter gocardless gofundme-pro gohighlevel gong goodapi-plant-trees goodbarber goody google-ads
 google-ai-studio google-analytics google-books google-business-profile google-calendar google-chat google-classroom
 google-cloud-natural-language google-cloud-storage google-contacts google-docs google-drive google-forms google-maps
