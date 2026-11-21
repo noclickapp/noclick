@@ -205,3 +205,19 @@ test("an agent sets its own approvals on create, update and spawn, and the polic
   assert.equal((explained.last.body as { agent_id: unknown }).agent_id, "ag_2");
   assert.deepEqual([seen.disposition, seen.source], ["allow", "parent"]);
 });
+
+test("agents attaching connections is a kind switched for the account and for one agent", async () => {
+  const { api } = setup();
+  const ATTACH = { kind: "attach_connection", description: "Giving a workflow's step a connection or a secret.",
+    approver: "owner", outside_only: false, settable: true,
+    defaults: { connected_app: "allow", assistant: "allow", agent: "allow", key: "allow", code: "allow" } };
+  api.on("GET", "/v1/approvals/policy", json({ ...POLICY, kinds: [ATTACH] }));
+  assert.equal((await nc.ApprovalPolicy.get()).default("attach_connection", "agent"), "allow");
+  const put = api.on("PUT", "/v1/approvals/policy", json({ ...POLICY, kinds: [ATTACH], changes: [] }));
+  await nc.ApprovalPolicy.set({ settings: { attach_connection: "ask" }, ceilings: { attach_connection: "allow" } });
+  assert.deepEqual(put.last.body, { settings: { attach_connection: "ask" }, ceilings: { attach_connection: "allow" } });
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patched = api.on("PATCH", "/v1/agents/ag_1", json(AGENT));
+  await nc.Agent.fromId("ag_1").update({ approvals: { attach_connection: "allow" } });
+  assert.deepEqual(patched.last.body, { approvals: { attach_connection: "allow" } });
+});

@@ -30,6 +30,11 @@
  * any kind it may (`ApprovalPolicy.set`) so it needn't wait for a person at all. A key, or a connected app, sets its own
  * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`), and so does an agent
  * (`agent.update({ approvals })`), whose children follow it, only ever tighter.
+ *
+ * An agent gives your workflows' steps your account's own connections and secrets itself (`attach_connection`, allowed
+ * by default); switched to `ask`, its edit waits for the owner's yes, and to `deny`, it asks them which account to use:
+ *
+ *     await ApprovalPolicy.set({ settings: { attach_connection: "ask" } });
  */
 
 import { resolveClient } from "./client.ts";
@@ -39,7 +44,7 @@ import type { CallOptions, JsonObject, ObjectInit, ReadOptions } from "./object.
 
 /** One kind of call NoClick may hold for a person: what it does by default, and what your account switched. */
 export interface HoldKind {
-  /** Its name (`purchase`, `delete`, `raise_limit`, ...). */
+  /** Its name (`purchase`, `delete`, `raise_limit`, `attach_connection`, ...). */
   kind: string;
   /** What it covers, in a person's words. */
   description: string;
