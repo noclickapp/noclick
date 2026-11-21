@@ -7,12 +7,12 @@
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
 // hold to the table. And what it does with what it reads: every request goes through the app's client (none off its
 // origin), and no secret the account holds is in anything it reads or sends.
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, render, renderHook, waitFor } from '@testing-library/react';
 import { Position, ReactFlow, ReactFlowProvider, type Edge, type Node } from '@xyflow/react';
 import { NoClick } from 'noclick';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
-import { fill } from '@/slots';
+import { fill, standing } from '@/slots';
 import { applyNodeUpdate, createWorkflowNode } from '@/screens/canvas/applyNodeUpdate';
 import { isOwnerOnly } from '@/screens/console/ownerOnly';
 import AnimatedWorkflowEdge from './edges/AnimatedWorkflowEdge';
@@ -31,7 +31,7 @@ import {
     setGraphLoaded,
 } from './graph/liveGraphStore';
 import { V1_GRAPH_SAVES } from './graph/saves';
-import { GRAPH_SAVES } from './slots';
+import { GRAPH_SAVES, STEP_DRAWING } from './slots';
 
 type Json = Record<string, unknown>;
 
@@ -44,6 +44,14 @@ interface Call {
 
 /** Requests that left the app's client: a `fetch` of its own, an XHR, a socket. */
 const offClient: string[] = [];
+
+// The plain drawing loads with the first step a canvas draws (drawingStandards.tsx): loaded once here, with real timers,
+// so each canvas below draws its steps rather than their outlines.
+beforeAll(async () => {
+    const { result, unmount } = renderHook(() => standing(STEP_DRAWING).useLoaded([]));
+    await waitFor(() => expect(result.current).toBe(true));
+    unmount();
+});
 
 beforeEach(() => {
     vi.useFakeTimers();

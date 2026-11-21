@@ -4,8 +4,9 @@
 // closing tab's last save. What it asks of whoever renders the canvas is this: which way a record saves, the host's own
 // whole-graph save where it has one, the server's graph read again, and whether saves wait for now. The standard saves
 // every record as the edits that changed it (`POST /v1/workflows/{id}/edits`) and reads `GET /v1/workflows/{id}/graph`,
-// both through the client the canvas hands the store (`setCanvasEditsClient`).
-import { Workflow, type NoClick } from 'noclick';
+// both through the client the canvas hands the store (`setCanvasEditsClient`). The SDK loads with the first read
+// (../standardsSdk.ts).
+import type { NoClick } from 'noclick';
 
 /** How a record saves its graph: as the edits that changed it on `/v1` (`edits`), or whole through a host's own save
  *  over its socket (`socket`; NoClick's app has one, decided per workflow). Each record keeps the way it first saved. */
@@ -74,6 +75,7 @@ export const V1_GRAPH_SAVES: GraphSaves = {
     socket: null,
     read: async (workflowId, client) => {
         if (!client) return { graph: null, error: 'no client to read the workflow with (setCanvasEditsClient)' };
+        const { Workflow } = await import('../standardsSdk');
         const graph = await Workflow.fromId(workflowId, { client }).graph();
         return { graph: graph.raw, version: graph.version };
     },

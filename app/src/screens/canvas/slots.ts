@@ -19,7 +19,7 @@ import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
 import type { NodeDefinition, NodeDimensions } from './nodes/types';
 import type { AiEditInfo, Collaborator, Presence, PresenceOptions } from './presence';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
-import { catalogOutline, NoteAsReadme, plainDrawingOf, useV1StepRoles } from './drawingStandards';
+import { catalogOutline, NoteAsReadme, plainDrawingOf, usePlainDrawingLoaded, useV1StepRoles } from './drawingStandards';
 import {
     AgentChatOnNoClick,
     BuildWithNoClick,
@@ -450,11 +450,11 @@ export interface StepDrawing {
 
 /** How each step type is drawn on the canvas (nodes/lazyNodeTypes.tsx wraps each in its label, pills and hints). The
  *  standard draws a sticky note as a note and any other step as a plain step (nodes/PlainStep.tsx): its card with the
- *  glyph of the catalog the host loaded, if any, and a handle for each connection it holds. NoClick's app draws each
- *  integration's own node, loaded as its first step is drawn. */
+ *  glyph of the catalog the host loaded, if any, and a handle for each connection it holds, both loaded with the first
+ *  step drawn. NoClick's app draws each integration's own node, loaded as its first step is drawn. */
 export const STEP_DRAWING = slot<StepDrawing>('canvas.step.drawing', {
     types: null,
-    useLoaded: () => true,
+    useLoaded: usePlainDrawingLoaded,
     definition: plainDrawingOf,
     outline: catalogOutline,
 });

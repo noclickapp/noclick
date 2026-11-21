@@ -1,8 +1,9 @@
 // What stands in the canvas's slots (slots.ts) when no host fills them: each works over the platform API alone, with
 // the client a `ClientProvider` above gives, or says where on NoClick the thing is done and opens it there, never a gap.
+// The SDK loads with the first call (standardsSdk.ts).
 import { lazy, Suspense, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { ArrowUpRight, LayoutGrid, MessageCircle, Share2 } from 'lucide-react';
-import { stepType, Workflow, type NoClick, type StepType } from 'noclick';
+import type { NoClick, StepType } from 'noclick';
 import { useClient } from '@/sdk/client';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
@@ -188,10 +189,12 @@ function knownOf(client: NoClick, name: string): Known {
             every.count += 1;
             every.listeners.forEach((listener) => listener());
         };
-        stepType(name, { client }).then(
-            (type) => settle({ status: 'ready', schema: type.schema }, type),
-            (error: unknown) => settle({ status: 'failed', message: `This step’s settings couldn’t be read: ${error instanceof Error ? error.message : String(error)}` })
-        );
+        import('./standardsSdk')
+            .then(({ stepType }) => stepType(name, { client }))
+            .then(
+                (type) => settle({ status: 'ready', schema: type.schema }, type),
+                (error: unknown) => settle({ status: 'failed', message: `This step’s settings couldn’t be read: ${error instanceof Error ? error.message : String(error)}` })
+            );
     }
     return known;
 }
@@ -236,12 +239,13 @@ export function useV1StepSchema(type: string): StepSchemaRead {
 // ── a step's reads, on /v1 ─────────────────────────────────────────────────
 
 function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
-    const step = () => {
+    const step = async () => {
         if (!scope?.workflowId || !scope.nodeId) throw new Error('A step’s fields read through its workflow and step: draw them inside its form.');
+        const { Workflow } = await import('./standardsSdk');
         return Workflow.fromId(scope.workflowId, { client }).step(scope.nodeId);
     };
     const options: StepReads['options'] = async (request) => {
-        const page = await step().options(request.field_key ?? request.field_name, {
+        const page = await (await step()).options(request.field_key ?? request.field_name, {
             settings: request.context ?? undefined,
             search: request.search,
             pageToken: request.page_token,
@@ -258,12 +262,12 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
         // The API lists these as the step's own choices too, by the loader's field.
         lookup: options,
         value: async (request) => {
-            const loaded = await step().value(request.field_name, { settings: request.context });
+            const loaded = await (await step()).value(request.field_name, { settings: request.context });
             return { success: true, value: loaded.value ?? undefined, values: loaded.values ?? undefined };
         },
         validate: null,
         previewExpression: async (request) => {
-            const preview = await step().previewExpression(request.expression, { samples: request.sample_outputs as Record<string, never> });
+            const preview = await (await step()).previewExpression(request.expression, { samples: request.sample_outputs as Record<string, never> });
             const tokens = preview.raw.preview_tokens;
             return {
                 ok: preview.ok,
@@ -275,7 +279,7 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
             };
         },
         clearState: async () => {
-            await step().clearState();
+            await (await step()).clearState();
             return { success: true };
         },
         reconnectWebhookRelay: null,

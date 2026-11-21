@@ -1,12 +1,13 @@
 // @vitest-environment happy-dom
 // The canvas's drawing where no host fills its slots: what a step is by its type, read from the platform API once a
 // session; a step with no drawing of its own drawn plain, with a handle for each connection it holds; any type drawn as
-// it's met; a sticky note as a note, its text as a README is drawn; and a build from elsewhere opening a step's card.
+// it's met, the drawing loaded with the first step drawn; a sticky note as a note, its text as a README is drawn; and a
+// build from elsewhere opening a step's card.
 import { act, cleanup, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { ReactFlow, ReactFlowProvider, type Edge, type Node, type NodeProps } from '@xyflow/react';
 import { NoClick } from 'noclick';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
 import { standing } from '@/slots';
 import { createWorkflowNode } from './applyNodeUpdate';
@@ -108,15 +109,30 @@ describe('a step with no drawing of its own', () => {
         expect(screen.getByText('Branch')).toBeTruthy();
     });
 
-    it('is drawn for any type, as it’s met, and a note as a note', () => {
+    it('is drawn for any type, as it’s met, and a note as a note', async () => {
         const types = buildLazyNodeTypes({ mine: () => null });
         expect(typeof types['automation-anything']).toBe('function');
         expect(types['automation-anything']).toBe(types['automation-anything']);
         expect(types.mine).toBeTypeOf('function');
         // A promise's or React's checks never make a type.
         expect((types as Record<string, unknown>).then).toBeUndefined();
+        // The plain drawing loads with the first step drawn, for every type at once.
+        const { result } = renderHook(() => standing(STEP_DRAWING).useLoaded(['anything']));
+        await waitFor(() => expect(result.current).toBe(true));
         expect(standing(STEP_DRAWING).definition('stickyNote')?.label).toBe('Sticky Note');
-        expect(standing(STEP_DRAWING).useLoaded(['anything'])).toBe(true);
+        expect(standing(STEP_DRAWING).definition('automation-anything')?.label).toBe('Anything');
+    });
+
+    it('loads only when a step is first drawn: nothing is drawn plain until then', async () => {
+        // A session where nothing has drawn yet: what reads the slots alone loads none of the drawing.
+        vi.resetModules();
+        const [{ standing: freshStanding }, { STEP_DRAWING: FRESH_DRAWING }] = await Promise.all([import('@/slots'), import('./slots')]);
+        const drawing = freshStanding(FRESH_DRAWING);
+        expect(drawing.definition('log')).toBeUndefined();
+        const { result } = renderHook(() => drawing.useLoaded(['log']));
+        expect(result.current).toBe(false);
+        await waitFor(() => expect(result.current).toBe(true));
+        expect(drawing.definition('log')?.label).toBe('Log');
     });
 
     it('draws a note’s text as a README is drawn', async () => {

@@ -5,7 +5,7 @@
 // gets the same merging over its own wire.
 import type { Edge, Node } from '@xyflow/react';
 import { NoClick, Workflow } from 'noclick';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fill } from '@/slots';
 import { applyNodeUpdate, createWorkflowNode } from '@/screens/canvas/applyNodeUpdate';
 import { GRAPH_SAVES } from '../slots';
@@ -99,6 +99,12 @@ async function settle(ms = 2500) {
 }
 
 const edits = () => calls.filter((c) => c.method === 'POST' && c.path === `/v1/workflows/${WORKFLOW}/edits`);
+
+// The standard reads the graph with the SDK it loads at its first read (../standardsSdk.ts): loaded once here, with real
+// timers, since a module never finishes loading on the fake clock below.
+beforeAll(async () => {
+    await import('../standardsSdk');
+});
 
 beforeEach(() => {
     vi.useFakeTimers();
