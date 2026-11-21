@@ -35,6 +35,10 @@ one autonomous key buys unasked while everything else still asks::
 
     noclick.ApprovalPolicy.set(ceilings={"purchase": {"disposition": "allow", "under_usd": 50}})
     noclick.ApprovalPolicy.set_for_key(key_id, {"purchase": {"disposition": "allow", "under_usd": 20}})
+
+An agent does too (``Agent.update(approvals=...)``), and a child it spawns follows it, only ever tighter::
+
+    noclick.Agent.from_name("buyer").update(approvals={"purchase": {"disposition": "allow", "under_usd": 20}})
 """
 
 from __future__ import annotations
@@ -75,10 +79,10 @@ class HoldKind:
     #: The loosest a narrower scope may set it to, or None.
     ceiling: Optional[Dict[str, Any]] = None
     #: What each caller meets now: a default, or ``allow``, ``ask``, ``deny`` or ``allow_under`` (a purchase at or
-    #: under the setting's ``under_usd`` runs) by your account's setting (or the key's or connected app's own, read
-    #: with ``get(key_id=...)``).
+    #: under the setting's ``under_usd`` runs) by your account's setting (or the key's, connected app's or agent's
+    #: own, read with ``get(key_id=...)`` or ``get(agent_id=...)``).
     effective: Dict[str, str] = dc_field(default_factory=dict)
-    #: Read for a key or connected app: what it sets for itself, or None.
+    #: Read for a key, connected app or agent: what it sets for itself, or None.
     own: Optional[Dict[str, Any]] = None
 
 
@@ -146,6 +150,11 @@ def _wire_setting(value: Any) -> Any:
     if isinstance(value, dict):
         return {k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in value.items()}
     return value
+
+
+def settings_wire(settings: Dict[str, Any]) -> Dict[str, Any]:
+    """Approval settings by kind as the API takes them (an agent's ``approvals`` among them)."""
+    return {k: _wire_setting(v) for k, v in settings.items()}
 
 
 @dataclass(frozen=True)
@@ -240,12 +249,13 @@ class ApprovalPolicy:
     @synced
     @classmethod
     async def get(cls, *, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
-                  client: Optional[Client] = None) -> "ApprovalPolicy":
+                  agent_id: Optional[str] = None, client: Optional[Client] = None) -> "ApprovalPolicy":
         """What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit
         raised, a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default
         for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP,
-        code, an app's own code), and what your account switched. With ``key_id`` or ``connected_app_id``, also what
-        that key or connected app sets for itself (each kind's ``own``), which ``effective`` reads for its calls.
+        code, an app's own code), and what your account switched. With ``key_id``, ``connected_app_id`` or
+        ``agent_id``, also what that key, connected app or agent sets for itself (each kind's ``own``), which
+        ``effective`` reads for its calls (an agent's through its parent's, which it follows where it sets none).
 
         Returns:
             The policy: ``kinds``, each a ``HoldKind``, ``callers`` and ``spend_cap_set``.
@@ -258,10 +268,12 @@ class ApprovalPolicy:
                 print(kind.kind, kind.effective)
             mine = noclick.ApprovalPolicy.get(key_id=key_id)
             print(mine.effective("purchase", "key"))
+            buyer = noclick.ApprovalPolicy.get(agent_id=agent.id)
+            print(buyer.effective("purchase", "agent"))   # "allow_under" once it's allowed under an amount
         """
         return cls._from(await resolve_client(client).request(
-            "GET", "/v1/approvals/policy", params=compact(key_id=key_id, connected_app_id=connected_app_id),
-            user=None))
+            "GET", "/v1/approvals/policy",
+            params=compact(key_id=key_id, connected_app_id=connected_app_id, agent_id=agent_id), user=None))
 
     @synced
     @classmethod
@@ -305,10 +317,11 @@ class ApprovalPolicy:
     async def explain(
         cls, kind: str, caller: str, *, amount_usd: Optional[float] = None, quoted: bool = True,
         previewed: bool = True, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
-        client: Optional[Client] = None,
+        agent_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> ApprovalExplanation:
         """What a call of ``kind`` by ``caller`` would meet now, and why: the key's or connected app's own setting
-        (``key_id``, ``connected_app_id``: the call is its), your account's setting, what NoClick asks that caller
+        (``key_id``, ``connected_app_id``: the call is its), an agent's own or its parent's (``agent_id``, with
+        ``caller="agent"``: ``source`` ``agent`` or ``parent``), your account's setting, what NoClick asks that caller
         first, or the default. Nothing runs and nothing is held.
 
         Returns:
@@ -321,7 +334,7 @@ class ApprovalPolicy:
         """
         raw = await resolve_client(client).request("POST", "/v1/approvals/policy/explain", json=compact(
             kind=kind, caller=caller, amount_usd=amount_usd, quoted=quoted, previewed=previewed, key_id=key_id,
-            connected_app_id=connected_app_id), user=None)
+            connected_app_id=connected_app_id, agent_id=agent_id), user=None)
         return ApprovalExplanation(kind=raw["kind"], caller=raw["caller"], disposition=raw["disposition"],
                                    source=raw["source"], why=raw.get("why"), setting=raw.get("setting"), raw=raw)
 

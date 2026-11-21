@@ -28,7 +28,8 @@
  *
  * What NoClick holds, kind by kind and for which callers, reads as `ApprovalPolicy.get()`, and your account switches
  * any kind it may (`ApprovalPolicy.set`) so it needn't wait for a person at all. A key, or a connected app, sets its own
- * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`).
+ * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`), and so does an agent
+ * (`agent.update({ approvals })`), whose children follow it, only ever tighter.
  */
 
 import { resolveClient } from "./client.ts";
@@ -63,14 +64,15 @@ export interface HoldKind {
   ceiling: JsonObject | null;
   /**
    * What each caller meets now: a default, or `allow`, `ask`, `deny` or `allow_under` (a purchase at or under the
-   * setting's `under_usd` runs) by your account's setting (or the key's or connected app's own, read with `get({ keyId })`).
+   * setting's `under_usd` runs) by your account's setting (or the key's, connected app's or agent's own, read with
+   * `get({ keyId })` or `get({ agentId })`).
    */
   effective: Record<string, string>;
-  /** Read for a key or connected app: what it sets for itself, or null. */
+  /** Read for a key, connected app or agent: what it sets for itself, or null. */
   own: JsonObject | null;
 }
 
-/** One change to your account's approval switches, or to a key's or connected app's own. */
+/** One change to your account's approval switches, or to a key's, connected app's or agent's own. */
 export interface PolicyChange {
   id: string;
   batchId: string;
@@ -158,7 +160,8 @@ function policyChange(entry: unknown): PolicyChange {
   };
 }
 
-function wireSettings(settings: Record<string, ApprovalSetting> | undefined): JsonObject | undefined {
+/** @internal Approval settings by kind as the API takes them (an agent's `approvals` among them). */
+export function wireSettings(settings: Record<string, ApprovalSetting> | undefined): JsonObject | undefined {
   if (settings === undefined) return undefined;
   return Object.fromEntries(Object.entries(settings).map(([kind, value]) => [kind,
     value && typeof value === "object"
@@ -207,14 +210,16 @@ export class ApprovalPolicy {
    * What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit raised,
    * a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default for each
    * kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP, code, an app's
-   * own code), and what your account switched. With `keyId` or `connectedAppId`, also what that key or connected app
-   * sets for itself (each kind's `own`), which `effective` reads for its calls.
+   * own code), and what your account switched. With `keyId`, `connectedAppId` or `agentId`, also what that key,
+   * connected app or agent sets for itself (each kind's `own`), which `effective` reads for its calls (an agent's
+   * through its parent's, which it follows where it sets none).
    */
   static async get(
-    options: { keyId?: string; connectedAppId?: string; client?: NoClick } = {},
+    options: { keyId?: string; connectedAppId?: string; agentId?: string; client?: NoClick } = {},
   ): Promise<ApprovalPolicy> {
     const raw = await resolveClient(options.client).request("GET", "/v1/approvals/policy", {
-      query: { key_id: options.keyId, connected_app_id: options.connectedAppId }, user: null,
+      query: { key_id: options.keyId, connected_app_id: options.connectedAppId, agent_id: options.agentId },
+      user: null,
     });
     return new ApprovalPolicy(asObject(raw));
   }
@@ -238,19 +243,21 @@ export class ApprovalPolicy {
 
   /**
    * What a call of `kind` by `caller` would meet now, and why: the key's or connected app's own setting (`keyId`,
-   * `connectedAppId`: the call is its), your account's setting, what NoClick asks that caller first, or the default.
-   * Nothing runs and nothing is held.
+   * `connectedAppId`: the call is its), an agent's own or its parent's (`agentId`, with `caller` `"agent"`: `source`
+   * `agent` or `parent`), your account's setting, what NoClick asks that caller first, or the default. Nothing runs
+   * and nothing is held.
    */
   static async explain(
     kind: string, caller: string,
     options: {
       amountUsd?: number; quoted?: boolean; previewed?: boolean; keyId?: string; connectedAppId?: string;
-      client?: NoClick;
+      agentId?: string; client?: NoClick;
     } = {},
   ): Promise<ApprovalExplanation> {
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/approvals/policy/explain", {
       json: compact({ kind, caller, amount_usd: options.amountUsd, quoted: options.quoted ?? true,
-        previewed: options.previewed ?? true, key_id: options.keyId, connected_app_id: options.connectedAppId }),
+        previewed: options.previewed ?? true, key_id: options.keyId, connected_app_id: options.connectedAppId,
+        agent_id: options.agentId }),
       user: null,
     }));
     return {

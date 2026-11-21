@@ -56,7 +56,7 @@ export type { AgentMoveArrived, AgentMoveCreateOptions, AgentMoveSource, AgentMo
 export type { TerminalConnectOptions, TerminalEnd, TerminalState, TerminalStatus } from "./terminal.ts";
 export type {
   AgentCommand, AgentCommandInput, AgentCommands, AgentCommandSource, HarnessRequest,
-  PermissionMode, RequestDecision, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
+  PermissionMode, RequestDecision, AgentApprovalsOption, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
   ModelSwitching, ModelSwitchingChange, SwitchedFrom, ModelSwitchGrant, ModelSwitchResult,
   AgentHistoryOptions, AgentListOptions, AgentMovedFrom, AgentOrigin, AgentReply, AgentSkill, AgentStatus,
   AgentStep, AgentStepDiff, AgentStepKind, ChangedFile, DiffStat, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
