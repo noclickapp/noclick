@@ -976,12 +976,15 @@ export class Connection extends ApiObject {
   /**
    * Let calls of these operations run without its owner's OK again: each named as `approvalOperations` names it,
    * or none to lift every one (`"*"` lifts the rule for every operation, leaving any named on their own). Signed in
-   * as your account's owner it applies at once. From a key it needs one naming the `approvals:policy` scope (a key
-   * with every scope, `*`, holds it only when it's named too) and `credentials:use`, and it waits a 10-minute undo
-   * window, in which `ApprovalPolicy.undo(change.id)` takes it back; the owner is told. Requiring approval for one
-   * of them again meanwhile takes it back too. Returns the change it made (`pending` while it waits, `effectiveAt`
-   * when it takes effect). `PermissionDenied` without the scope or on one shared with your account; `Conflict` when
-   * it asks no approval, or a lift of the same operation already waits.
+   * as your account's owner it applies at once, and so it does from your agent (NoClick's assistant, or any agent of
+   * yours) on a turn your own message started, recorded as yours; one a model makes on its own (a turn no message of
+   * yours started, a connected app, a key used through MCP) waits for your approval. From a key it needs one naming
+   * the `approvals:policy` scope (a key with every scope, `*`, holds it only when it's named too) and
+   * `credentials:use`, and it waits a 10-minute undo window, in which `ApprovalPolicy.undo(change.id)` takes it back;
+   * the owner is told. Requiring approval for one of them again meanwhile takes it back too. Returns the change it
+   * made (`pending` while it waits, `effectiveAt` when it takes effect). `PermissionDenied` without the scope, for a
+   * call acting for one of your users or an app's code, or on one shared with your account; `Conflict` when it asks
+   * no approval, or a lift of the same operation already waits.
    *
    *     const [change] = await Connection.fromName("gmail").liftApproval("send_email_message");
    *     console.log(change.pending, change.effectiveAt);

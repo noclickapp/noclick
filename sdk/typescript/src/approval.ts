@@ -92,7 +92,8 @@ export interface PolicyChange {
   after: JsonObject | null;
   /** It lets a caller do more than before: a key's loosening waits out an undo window first. */
   loosens: boolean;
-  /** `owner` (signed in), `key` (with `keyId`) or `assistant` (NoClick's, once the owner approved a loosening). */
+  /** `owner` (signed in), `key` (with `keyId`), or through NoClick's tools `assistant` (NoClick's), `agent` or
+   *  `connection` (a connected app): on the owner's word or approval, or a loosening the account lets them make. */
   changedBy: string;
   keyId: string | null;
   effectiveAt: Date | null;

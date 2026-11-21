@@ -1284,10 +1284,13 @@ class Connection(_Object):
         """Let calls of these operations run without its owner's OK again: each named as
         ``approval_operations`` names it, or none to lift every one (``"*"`` lifts the rule for
         every operation, leaving any named on their own). Signed in as your account's owner it
-        applies at once. From a key it needs one naming the ``approvals:policy`` scope (a key with
-        every scope, ``*``, holds it only when it's named too) and ``credentials:use``, and it waits
-        a 10-minute undo window, in which ``noclick.ApprovalPolicy.undo(change.id)`` takes it back;
-        the owner is told. Requiring approval for one of them again meanwhile takes it back too.
+        applies at once, and so it does from your agent (NoClick's assistant, or any agent of yours)
+        on a turn your own message started, recorded as yours. One a model makes on its own (a turn
+        no message of yours started, a connected app, a key used through MCP) waits for your approval.
+        From a key it needs one naming the ``approvals:policy`` scope (a key with every scope, ``*``,
+        holds it only when it's named too) and ``credentials:use``, and it waits a 10-minute undo
+        window, in which ``noclick.ApprovalPolicy.undo(change.id)`` takes it back; the owner is told.
+        Requiring approval for one of them again meanwhile takes it back too.
 
         Returns:
             The change it made: ``pending`` while it waits, ``effective_at`` when it takes effect.
@@ -1295,7 +1298,7 @@ class Connection(_Object):
 
         Raises:
             noclick.PermissionDenied: a key without ``approvals:policy``, a call acting for one of
-                your users or through MCP, or one shared with your account.
+                your users, an app's code, or one shared with your account.
             noclick.InvalidRequest: an operation it asks no approval for.
             noclick.Conflict: it asks no approval at all, or a lift of the same operation already waits.
 

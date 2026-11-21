@@ -104,8 +104,9 @@ class PolicyChange:
     after: Optional[Dict[str, Any]]
     #: It lets a caller do more than before: a key's loosening waits out an undo window first.
     loosens: bool
-    #: ``owner`` (signed in), ``key`` (with ``key_id``) or ``assistant`` (NoClick's, once the owner approved a
-    #: loosening).
+    #: ``owner`` (signed in), ``key`` (with ``key_id``), or through NoClick's tools ``assistant`` (NoClick's),
+    #: ``agent`` or ``connection`` (a connected app): on the owner's word or approval, or a loosening the account
+    #: lets them make.
     changed_by: str
     key_id: Optional[str]
     effective_at: Any
