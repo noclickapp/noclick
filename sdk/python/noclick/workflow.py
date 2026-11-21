@@ -574,6 +574,36 @@ class StepValue:
         return cls(raw.get("field") or "", raw.get("value"), raw.get("values"), list(raw.get("withheld") or []), raw)
 
 
+@dataclass(frozen=True)
+class StepPublication:
+    """What ``Step.publish``, ``Step.rename_app`` and ``Step.unpublish`` left of an interface step's app: its
+    ``state`` (``published``, ``renamed`` or ``unpublished``) and ``url``, as a build's ``published`` names them;
+    the app itself (``project_id``, a ``noclick.Project``'s id, and its ``subdomain``); the release a publish made
+    (``deployment_id``); where it answered before a rename or an unpublish (``previous_url``); and, unpublished,
+    the trash entry that restores it (``trash_id``) until ``restorable_until``."""
+
+    workflow_id: str
+    step_id: str
+    action: str
+    state: str
+    url: Optional[str]
+    project_id: Optional[str]
+    subdomain: Optional[str]
+    deployment_id: Optional[str]
+    previous_url: Optional[str]
+    trash_id: Optional[str]
+    restorable_until: Any
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepPublication":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("step_id") or "", raw.get("action") or "",
+                   raw.get("state") or "", raw.get("url"), raw.get("project_id"), raw.get("subdomain"),
+                   raw.get("deployment_id"), raw.get("previous_url"), raw.get("trash_id"),
+                   parse_time(raw.get("restorable_until")), raw)
+
+
 class Step(_Object):
     """One step of a workflow's graph: its trigger, an app's operation, an agent, a
     note. ``Workflow.graph()`` reads them all; ``Workflow.step(id)`` is a handle to
@@ -1043,6 +1073,65 @@ class Step(_Object):
         """
         raw = await self._api.request("POST", f"{await self._step_path()}/clear_state", user=None)
         return ClearedStepState._from(raw)
+
+    # --- its app (an interface step) ---------------------------------------
+
+    async def _publication(self, body: Dict[str, Any]) -> StepPublication:
+        raw = await self._api.request("POST", f"{await self._step_path()}/publish", json=compact(**body), user=None)
+        return StepPublication._from(raw)
+
+    @synced
+    async def publish(self, subdomain: Optional[str] = None, *, title: Optional[str] = None) -> StepPublication:
+        """Put this interface step's app live as the app's canvas does, with no build: at
+        ``subdomain`` the first time (``morrow`` is ``morrow.noclick.app``); again, the saved
+        edits at the address it has (a ``subdomain`` other than its own raises
+        ``noclick.Conflict``: ``rename_app`` moves it). An app in the trash comes back where it
+        was. Its pages carry the account's one key for it. Takes what changing the workflow
+        takes, and through MCP ``deploy``, as ``Workflow.publish`` does.
+
+        Returns:
+            The ``StepPublication``: ``state`` ``published``, the app's ``url``, its
+            ``project_id`` and ``subdomain``, and the release (``deployment_id``).
+
+        Usage::
+
+            site = noclick.Workflow.from_name("Morrow Bakehouse site").step("page")
+            print(site.publish("morrow").url)   # https://morrow.noclick.app
+        """
+        return await self._publication({"action": "publish", "subdomain": subdomain, "title": title})
+
+    @synced
+    async def rename_app(self, subdomain: str) -> StepPublication:
+        """Move this interface step's app to ``subdomain``, publishing no edits; its old
+        address stops answering.
+
+        Returns:
+            The ``StepPublication``: ``state`` ``renamed``, the new ``url`` and where it was
+            (``previous_url``).
+
+        Usage::
+
+            noclick.Workflow.from_name("Morrow Bakehouse site").step("page").rename_app("morrow-bakery")
+        """
+        return await self._publication({"action": "rename", "subdomain": subdomain})
+
+    @synced
+    async def unpublish(self) -> StepPublication:
+        """Take this interface step's app down, to the trash: its public URL stops answering and
+        its page's key stops working. For 30 days its address stays its own, and restoring it
+        (or ``publish()``) brings it back there with the same key. One not published changes
+        nothing.
+
+        Returns:
+            The ``StepPublication``: ``state`` ``unpublished``, where it answered
+            (``previous_url``) and the ``trash_id`` that restores it until ``restorable_until``.
+
+        Usage::
+
+            gone = noclick.Workflow.from_name("Morrow Bakehouse site").step("page").unpublish()
+            noclick.TrashItem.from_id(gone.trash_id).restore()
+        """
+        return await self._publication({"action": "unpublish"})
 
 
 @dataclass(frozen=True)

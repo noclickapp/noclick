@@ -698,6 +698,46 @@ export interface StepValue {
   raw: JsonObject;
 }
 
+/**
+ * What `Step.publish`, `Step.renameApp` and `Step.unpublish` left of an interface step's app: its `state`
+ * (`published`, `renamed` or `unpublished`) and `url`, as a build's `published` names them; the app itself
+ * (`projectId`, a `Project`'s id, and its `subdomain`); the release a publish made (`deploymentId`); where it answered
+ * before a rename or an unpublish (`previousUrl`); and, unpublished, the trash entry that restores it (`trashId`)
+ * until `restorableUntil`.
+ */
+export interface StepPublication {
+  workflowId: string;
+  stepId: string;
+  action: string;
+  state: string;
+  url: string | null;
+  projectId: string | null;
+  subdomain: string | null;
+  deploymentId: string | null;
+  previousUrl: string | null;
+  trashId: string | null;
+  restorableUntil: Date | null;
+  raw: JsonObject;
+}
+
+function toStepPublication(value: unknown): StepPublication {
+  const raw = asObject(value);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    stepId: str(raw.step_id) ?? "",
+    action: str(raw.action) ?? "",
+    state: str(raw.state) ?? "",
+    url: str(raw.url),
+    projectId: str(raw.project_id),
+    subdomain: str(raw.subdomain),
+    deploymentId: str(raw.deployment_id),
+    previousUrl: str(raw.previous_url),
+    trashId: str(raw.trash_id),
+    restorableUntil: parseTime(raw.restorable_until),
+    raw,
+  };
+}
+
 function toStepOptions(value: unknown): StepOptions {
   const raw = asObject(value);
   return {
@@ -1167,6 +1207,41 @@ export class Step extends ApiObject {
     return toStepValue(await this._request("POST", `${await this._workflow._stepPath(this.id)}/values`, {
       json: compact({ field, settings: options.settings }),
     }));
+  }
+
+  private async publication(body: JsonObject): Promise<StepPublication> {
+    return toStepPublication(await this._api.request("POST", `${await this._workflow._stepPath(this.id)}/publish`, {
+      json: compact(body),
+      user: null,
+    }));
+  }
+
+  /**
+   * Put this interface step's app live as the app's canvas does, with no build: at `subdomain` the first time
+   * (`morrow` is morrow.noclick.app); again, the saved edits at the address it has (a `subdomain` other than its own
+   * throws `Conflict`: `renameApp` moves it). An app in the trash comes back where it was. Takes what changing the
+   * workflow takes, and through MCP `deploy`, as `Workflow.publish` does.
+   *
+   * @example
+   * const page = Workflow.fromName("Morrow Bakehouse site").step("page");
+   * console.log((await page.publish({ subdomain: "morrow" })).url); // https://morrow.noclick.app
+   */
+  async publish(options: PublishOptions = {}): Promise<StepPublication> {
+    return await this.publication({ action: "publish", subdomain: options.subdomain, title: options.title });
+  }
+
+  /** Move this interface step's app to `subdomain`, publishing no edits; its old address stops answering. */
+  async renameApp(subdomain: string): Promise<StepPublication> {
+    return await this.publication({ action: "rename", subdomain });
+  }
+
+  /**
+   * Take this interface step's app down, to the trash: its public URL stops answering and its page's key stops
+   * working. For 30 days its address stays its own, and restoring it (or `publish()`) brings it back there with the
+   * same key; the result's `trashId` restores it. One not published changes nothing.
+   */
+  async unpublish(): Promise<StepPublication> {
+    return await this.publication({ action: "unpublish" });
   }
 }
 

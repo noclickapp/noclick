@@ -604,6 +604,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_steps_options_create": ["List Step Options", "POST", "read"],
     "workflows_steps_outputs_get": ["Get Step Output", "GET", "read"],
     "workflows_steps_outputs_list": ["List Step Outputs", "GET", "read"],
+    "workflows_steps_publish": ["Publish Step", "POST", "write"],
     "workflows_steps_values_create": ["Load Step Value", "POST", "write"],
     "workflows_tables_delete": ["Delete Workflow Table", "DELETE", "destructive"],
     "workflows_tables_list": ["List Workflow Tables", "GET", "read"],
