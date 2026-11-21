@@ -180,6 +180,18 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.banner` | A strip across the top of the page | Nothing |
 | `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
 
+The workflow canvas's (`src/screens/canvas/slots.ts`): the canvas isn't one of this app's pages yet, and these are the
+parts of it only a host has. Connecting the account a step or an agent needs is the shared `connect.app` and
+`connect.model`.
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `canvas.builder` | Beside the canvas (over it on a phone): building the workflow by asking for it | A build of the open workflow (`Workflow.build`), its question answered on NoClick, then what it did |
+| `canvas.presence` | Other people editing it live: their pointers, selections and unsaved moves | Nobody else: others' changes arrive once they're saved |
+| `canvas.interface` | The Interface tab: the workflow's forms, tables and chats as a page | A note that it's laid out and published on NoClick, with the workflow's link there |
+| `canvas.agentChat` | An agent step's chat, a block of the Interface tab | A note that the agent is talked to on NoClick, with the link |
+| `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
+
 Work's are listed under [Work](#work).
 
 Fill one from a file in [`src/custom/`](src/custom/README.md), which is where everything your copy adds goes: every
