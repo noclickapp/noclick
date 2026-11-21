@@ -88,9 +88,9 @@ class HoldKind:
 
 @dataclass(frozen=True)
 class PolicyChange:
-    """One change to your account's approval switches (``ApprovalPolicy.set``), a key's or connected app's own
-    (``set_for_key``, ``set_for_connected_app``), or a connection's approval rule lifted (``Connection.lift_approval``,
-    or its owner's page in the app)."""
+    """One change to your account's approval switches (``ApprovalPolicy.set``), a key's, connected app's or agent's own
+    (``set_for_key``, ``set_for_connected_app``, an agent's ``approvals``), or a connection's approval rule lifted
+    (``Connection.lift_approval``, or its owner's page in the app)."""
 
     id: str
     batch_id: str
@@ -117,8 +117,8 @@ class PolicyChange:
     undone_by: Optional[str]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
-    #: Whose settings it changed: ``account``, ``key``, ``connected_app`` or ``credential`` (a connection's approval
-    #: rule), and that key's, connected app's or connection's account's id.
+    #: Whose settings it changed: ``account``, ``key``, ``connected_app``, ``agent`` or ``credential`` (a connection's
+    #: approval rule), and that key's, connected app's, agent's or connection's account's id.
     scope: str = "account"
     scope_id: Optional[str] = None
 
