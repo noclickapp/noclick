@@ -682,7 +682,7 @@ caspio cats centralstationcrm cert-seal certifier charla chaser chatbase chatbot
 chili-piper chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci
 claid-ai clay clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign
 clicktime clickup cliengo climate cling cliniko clio clockify cloro cloudbeds cloudflare cloudsmith cloudtalk
-cloudzero clover cloze club-os coassemble coda codacy codat codesearch cody coinbase coingecko coinmarketcal
+cloudzero clover cloze club-os coassemble coda codacy codat codesearch cody coinapi coinbase coingecko coinmarketcal
 coinmarketcap college-football-data combell cometapi commerce-layer common-room commusoft companycam companyenrich
 composio condens conductor configcat confluence conjur connecteam constant-contact consumerfinance contabo
 content-snare content-studio context-dev control-d conversion-tools convertapi converted-da-56088 conveyor
