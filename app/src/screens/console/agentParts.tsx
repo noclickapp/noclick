@@ -11,6 +11,7 @@ import { cn } from '@/ui/utils';
 import { ALL_USERS, Agent, Agents, Bucket, Connection, Database, Usage, type JsonObject, type ModelUsage, type HarnessInfo, type HarnessModel, type IntegrationInfo, type IntegrationOperation, type NoClick } from 'noclick';
 import { formatCount, formatMoney } from '@/screens/console/lib/format';
 import { useDebounce } from '@/lib/useDebounce';
+import { refFor } from '@/lib/agentTools';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { LinkShown, connectionLook, integrationNodeType, nameProblem, nodeTypeOf, useIntegrations, useScopeConnections } from './connections';
@@ -68,11 +69,13 @@ export function sharedConnectionOf(ref: string): { id: string; op: string | null
     return match ? { id: match[1], op: match[2] ?? null } : null;
 }
 
-/** Connections outside an agent's scope it could be given: other users' and, for a user's agent, the account's. Lab only. */
+/** Connections outside an agent's scope it could be given: other users' and, for a user's agent, the account's named
+ *  ones. An account connected in the app is only ever the account's own agents' (a `connection:<id>` names a named
+ *  connection). Lab only. */
 export function useOtherScopeConnections(user: string | null, enabled = true) {
     const { client, lab } = useConsole();
     const all = useV1(lab && enabled ? 'connections?all-scopes' : null, () => Connection.list({ client, userFilter: ALL_USERS, limit: 100 }));
-    return { error: all.error, data: all.data?.filter((c) => c.userId !== user) };
+    return { error: all.error, data: all.data?.filter((c) => c.userId !== user && c.origin !== 'app') };
 }
 
 /** Where a shared connection comes from, in a few words: `acme`, or `your account`. */
@@ -179,11 +182,11 @@ function providersText(names: readonly string[], catalog: readonly IntegrationIn
 }
 
 /**
- * Whether a move to `harness` keeps the model connection named `name`: a CLI harness keeps one of a
+ * Whether a move to `harness` keeps the model connection `ref` names: a CLI harness keeps one of a
  * provider that serves it; `sdk` starts on its default model, on NoClick's key, so it keeps none.
  */
-export function keepsModelConnection(name: string, harness: HarnessInfo, connections: readonly Connection[] | undefined): boolean {
-    const connection = connections?.find((c) => c.name === name);
+export function keepsModelConnection(ref: string, harness: HarnessInfo, connections: readonly Connection[] | undefined): boolean {
+    const connection = connections?.find((c) => refFor(c) === ref);
     return harness.modelConnection === 'required' && !!connection && harness.integrations.includes(connection.integration);
 }
 
@@ -218,7 +221,7 @@ export function ModelConnectionField({
     const [busy, setBusy] = useState(false);
     const listed = (connections.data ?? []).filter((c) => harness.integrations.includes(c.integration));
     // The one just made is offered at once, before the scope's list is read again.
-    const options = made && !listed.some((c) => c.name === made.name) ? [...listed, made] : listed;
+    const options = made && !listed.some((c) => c.id === made.id) ? [...listed, made] : listed;
     const labelOf = (n: string) => catalog.data?.find((i) => i.name === n)?.label ?? n;
     const required = harness.modelConnection === 'required';
     const plan = !!catalog.data?.find((i) => i.name === integration)?.subscription;
@@ -233,7 +236,7 @@ export function ModelConnectionField({
             invalidateV1('connections');
             setMade(connection);
             setCreating(false);
-            onChange(connection.name);
+            onChange(refFor(connection));
         } catch (err) {
             setError(err instanceof Error ? err.message : String(err));
         } finally {
@@ -248,8 +251,9 @@ export function ModelConnectionField({
             <Field label="Model connection" hint={hint}>
                 <select value={value} onChange={(e) => onChange(e.target.value)} className={cn(inputClass, 'px-2 [color-scheme:light] dark:[color-scheme:dark]')}>
                     <option value="">{required ? 'Choose a connection' : "None: NoClick's key"}</option>
+                    {/* Each by the ref an agent names it by: a key connected in the app by `credential:<id>`, never its name. */}
                     {options.map((c) => (
-                        <option key={c.id} value={c.name}>
+                        <option key={c.id} value={refFor(c)}>
                             {c.name} · {labelOf(c.integration)}
                             {c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}
                         </option>
@@ -394,7 +398,8 @@ export function purposeOf(agent: Agent): string {
 /**
  * Capabilities as toggles, the connections of the agent's scope (its user's,
  * or the account's): `gmail` wires every operation of the connection named
- * gmail, and the integrations whose operations need no account (`exa`).
+ * gmail, `credential:<id>` every one of an account connected in the app, and
+ * the integrations whose operations need no account (`exa`).
  */
 export function ToolPicker({ value, onChange, user }: { value: string[]; onChange: (tools: string[]) => void; user: string | null }) {
     const href = useConsoleHref();
@@ -415,8 +420,9 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
     const tooling = connections.data && models ? connections.data.filter((c) => !models.has(c.integration)) : undefined;
     const shown = (tooling ?? []).filter((c) => !needle || c.name.includes(needle) || c.integration.includes(needle));
     const shownDatabases = (databases.data ?? []).filter((d) => !needle || d.name.includes(needle));
-    // A name the scope gives a connection means that connection, so its integration isn't offered here.
-    const scopeNames = new Set((connections.data ?? []).map((c) => c.name));
+    // A name the scope gives a connection means that connection, so its integration isn't offered here. An account
+    // connected in the app takes no name: its ref is its id.
+    const scopeNames = new Set((connections.data ?? []).map(refFor));
     const shownFree = connections.data
         ? (catalog.data ?? []).filter(
               (i) =>
@@ -437,11 +443,15 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
     /** A database is picked whole; unpicking it drops every operation of it the agent had. */
     const usesDatabase = (id: string) => value.some((ref) => databaseRefOf(ref)?.id === id);
     const toggleDatabase = (id: string) => onChange(usesDatabase(id) ? value.filter((ref) => databaseRefOf(ref)?.id !== id) : [...value, databaseRef(id)]);
-    /** A chip's text: a database or bucket by name, a shared connection as `scope/name` (and the one operation of any). */
+    /** A chip's text: a database, bucket or account connected in the app by name, a shared connection as `scope/name`
+     *  (and the one operation of any). */
     const chipOf = (ref: string) => {
         const shared = sharedConnectionOf(ref);
         const connection = shared && others.data?.find((c) => c.id === shared.id);
         if (shared && connection) return `${scopeName(connection.userId)}/${connection.name}${shared.op ? `.${shared.op}` : ''}`;
+        const [base, op] = ref.split('.');
+        const app = connections.data?.find((c) => c.origin === 'app' && c.id === base);
+        if (app) return op ? `${app.name}.${op}` : app.name;
         const parsed = databaseRefOf(ref) ?? bucketRefOf(ref);
         const name = parsed && (databaseRefOf(ref) ? databases : buckets).data?.find((d) => d.id === parsed.id)?.name;
         return parsed && name ? (parsed.op ? `${name}.${parsed.op}` : name) : ref;
@@ -489,7 +499,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                     {shown.map((c) => (
                         <li key={c.id}>
                             <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-[13px] hover:bg-foreground/[0.04]">
-                                <input type="checkbox" checked={value.includes(c.name)} onChange={() => toggle(c.name)} />
+                                <input type="checkbox" checked={value.includes(refFor(c))} onChange={() => toggle(refFor(c))} />
                                 <CredentialMark credentialType={c.credentialType ?? ''} nodeType={nodeTypeOf(c)} />
                                 <span className="flex-1 font-mono text-[13px]">{c.name}</span>
                                 {c.status !== 'connected' && <span className="text-[12px] text-muted-foreground">{connectionLook(c).label.toLowerCase()}</span>}

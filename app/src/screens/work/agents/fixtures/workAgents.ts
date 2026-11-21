@@ -512,6 +512,14 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
         ],
     ]);
 
+    const listedConnections = (): Json[] =>
+        [
+            ...held.map((k, i) => ({ object: 'connection', id: `conn-${i}`, user_id: null, origin: 'api', created_at: ago(MIN), moved_from: options.moved === true && k === 'claude' ? { ...MOVED, to: { model: 'anthropic' } } : null, ...MODEL_CONNECTIONS[k] })),
+            { object: 'connection', id: 'credential:c-gh', name: 'github', integration: 'github', credential_type: 'github_oauth', status: 'connected', user_id: null, origin: 'app' },
+            { object: 'connection', id: 'credential:c-wa', name: 'whatsapp', integration: 'whatsapp', credential_type: 'whatsapp_qr', status: 'connected', user_id: null, origin: 'app' },
+            ...created.connections,
+        ].filter((c) => !deletedConnections.has(String((c as Json).name)) && !deletedConnections.has(String((c as Json).id)));
+
     const routes = (method: string, path: string, query: URLSearchParams, body: Json): Response => {
         const failing = fails.findIndex((f) => f.method === method && f.path === path);
         if (failing >= 0) {
@@ -536,15 +544,7 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
             const route = (id: string) => (/^(openrouter|opencode|opencode-go)\//.exec(id)?.[1] ?? 'maker');
             return list((MODELS[models[1]] ?? []).filter((m) => !q || JSON.stringify(m).toLowerCase().includes(q)).map((m) => ({ object: 'harness_model', canonical: m.id, route: route(String(m.id)), ...m })));
         }
-        if (method === 'GET' && path === '/v1/connections')
-            return list(
-                [
-                    ...held.map((k, i) => ({ object: 'connection', id: `conn-${i}`, user_id: null, origin: 'api', created_at: ago(MIN), moved_from: options.moved === true && k === 'claude' ? { ...MOVED, to: { model: 'anthropic' } } : null, ...MODEL_CONNECTIONS[k] })),
-                    { object: 'connection', id: 'credential:c-gh', name: 'github', integration: 'github', credential_type: 'github_oauth', status: 'connected', user_id: null, origin: 'app' },
-                    { object: 'connection', id: 'credential:c-wa', name: 'whatsapp', integration: 'whatsapp', credential_type: 'whatsapp_qr', status: 'connected', user_id: null, origin: 'app' },
-                    ...created.connections,
-                ].filter((c) => !deletedConnections.has(String((c as Json).name)) && !deletedConnections.has(String((c as Json).id)))
-            );
+        if (method === 'GET' && path === '/v1/connections') return list(listedConnections());
         const connection = path.match(/^\/v1\/connections\/([^/]+)$/);
         if (connection && method === 'DELETE') {
             deletedConnections.add(decodeURIComponent(connection[1]));
@@ -709,6 +709,15 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
             return json(row, 201);
         }
         if (method === 'GET' && path === `/v1/workspaces/${SPACE_ID}/noclick` && options.spaceNoClick) return json({ agent_id: SPACE_NOCLICK_ID, label: 'NoClick · NoClick' });
+        // Shared with a space, a connection is found as the platform finds one: an account connected in the app by
+        // `credential:<id>`, a named one by its name or id, and the link keeps its id.
+        const sharing = path.match(/^\/v1\/workspaces\/([^/]+)\/resources$/);
+        if (sharing && method === 'POST' && body.kind === 'connection') {
+            const ref = String(body.ref);
+            const found = listedConnections().find((c) => (ref.startsWith('credential:') ? c.origin === 'app' && c.id === ref : c.origin !== 'app' && (c.name === ref || c.id === ref)));
+            if (!found) return notFound(`No connection '${ref}' for this account.`);
+            return json({ object: 'workspace_resource', id: `wr-${++made}`, workspace_id: sharing[1], kind: 'connection', ref: found.id, name: found.name, members_level: 'use', guests_level: 'none', levels: ['none', 'agents', 'use'], added_by: { type: 'account', id: null, name: 'owner' }, added_at: ago(0) }, 201);
+        }
         const space = path.match(/^\/v1\/workspaces\/([^/]+)(\/members)?$/);
         if (space && method === 'GET' && !space[2]) return json({ object: 'workspace', id: space[1], name: 'NoClick', status: 'active', members: [], channel_count: 2, created_at: ago(MIN) });
         if (space && method === 'POST' && space[2]) {
