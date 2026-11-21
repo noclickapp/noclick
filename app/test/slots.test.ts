@@ -133,6 +133,11 @@ describe('the app', () => {
     it('declares each slot once, beside its screen, and fills none itself', () => {
         const modules = appModules();
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
+            'canvas.agentChat',
+            'canvas.builder',
+            'canvas.interface',
+            'canvas.presence',
+            'canvas.share',
             'channels.agent.face',
             'chat.approval',
             'chat.build.question',
