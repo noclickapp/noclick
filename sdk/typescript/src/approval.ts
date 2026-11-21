@@ -28,7 +28,13 @@
  *
  * What NoClick holds, kind by kind and for which callers, reads as `ApprovalPolicy.get()`, and your account switches
  * any kind it may (`ApprovalPolicy.set`) so it needn't wait for a person at all. A key, or a connected app, sets its own
- * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`).
+ * within the account's ceiling (`ApprovalPolicy.setForKey`, `ApprovalPolicy.setForConnectedApp`), and so does an agent
+ * (`agent.update({ approvals })`), whose children follow it, only ever tighter.
+ *
+ * An agent gives your workflows' steps your account's own connections and secrets itself (`attach_connection`, allowed
+ * by default); switched to `ask`, its edit waits for the owner's yes, and to `deny`, it asks them which account to use:
+ *
+ *     await ApprovalPolicy.set({ settings: { attach_connection: "ask" } });
  */
 
 import { resolveClient } from "./client.ts";
@@ -38,7 +44,7 @@ import type { CallOptions, JsonObject, ObjectInit, ReadOptions } from "./object.
 
 /** One kind of call NoClick may hold for a person: what it does by default, and what your account switched. */
 export interface HoldKind {
-  /** Its name (`purchase`, `delete`, `raise_limit`, ...). */
+  /** Its name (`purchase`, `delete`, `raise_limit`, `attach_connection`, ...). */
   kind: string;
   /** What it covers, in a person's words. */
   description: string;
@@ -63,35 +69,42 @@ export interface HoldKind {
   ceiling: JsonObject | null;
   /**
    * What each caller meets now: a default, or `allow`, `ask`, `deny` or `allow_under` (a purchase at or under the
-   * setting's `under_usd` runs) by your account's setting (or the key's or connected app's own, read with `get({ keyId })`).
+   * setting's `under_usd` runs) by your account's setting (or the key's, connected app's or agent's own, read with
+   * `get({ keyId })` or `get({ agentId })`).
    */
   effective: Record<string, string>;
-  /** Read for a key or connected app: what it sets for itself, or null. */
+  /** Read for a key, connected app or agent: what it sets for itself, or null. */
   own: JsonObject | null;
 }
 
-/** One change to your account's approval switches, or to a key's or connected app's own. */
+/** One change to your account's approval switches, to a key's, connected app's or agent's own, or a connection's
+ *  approval rule lifted (`Connection.liftApproval`, or its owner's page in the app). */
 export interface PolicyChange {
   id: string;
   batchId: string;
-  /** Whose settings it changed: `account`, `key` or `connected_app`, and that key's or connected app's id. */
+  /** Whose settings it changed: `account`, `key`, `connected_app`, `agent` or `credential` (a connection's approval
+   *  rule), and that key's, connected app's, agent's or connection's account's id. */
   scope: string;
   scopeId: string | null;
-  /** The kind it changed. */
+  /** The kind it changed (`credential_rule` for a connection's rule). */
   kind: string;
-  /** `setting`, `ceiling` or `auto_approve` (a connected app's auto-approve amount). */
+  /** `setting`, `ceiling`, `auto_approve` (a connected app's auto-approve amount) or `operations` (a connection's
+   *  rule). */
   target: string;
   before: JsonObject | null;
-  /** What it set (`disposition`, `under_usd`, `until`); null put NoClick's default back. */
+  /** What it set (`disposition`, `under_usd`, `until`; a connection's rule, its `operations`); null put NoClick's
+   *  default back. */
   after: JsonObject | null;
   /** It lets a caller do more than before: a key's loosening waits out an undo window first. */
   loosens: boolean;
-  /** `owner` (signed in), `key` (with `keyId`) or `assistant` (NoClick's, once the owner approved a loosening). */
+  /** `owner` (signed in), `key` (with `keyId`), or through NoClick's tools `assistant` (NoClick's), `agent` or
+   *  `connection` (a connected app): on the owner's word or approval, or a loosening the account lets them make. */
   changedBy: string;
   keyId: string | null;
   effectiveAt: Date | null;
   until: Date | null;
-  /** It still waits out its undo window: `ApprovalPolicy.undo` takes it back. */
+  /** It still waits out its undo window: `ApprovalPolicy.undo` takes it back. A lift of a connection's rule waiting is
+   *  taken back too by approval required for one of its operations again (`undoneBy` `superseded`). */
   pending: boolean;
   undoneAt: Date | null;
   undoneBy: string | null;
@@ -145,7 +158,8 @@ function ownApprovals(kind: string, entry: unknown): OwnApprovals {
   };
 }
 
-function policyChange(entry: unknown): PolicyChange {
+/** A change as the API sends it (`ApprovalPolicy.history`, `Connection.liftApproval`). */
+export function policyChange(entry: unknown): PolicyChange {
   const c = asObject(entry);
   return {
     id: String(c.id), batchId: String(c.batch_id), scope: String(c.scope ?? "account"),
@@ -158,7 +172,8 @@ function policyChange(entry: unknown): PolicyChange {
   };
 }
 
-function wireSettings(settings: Record<string, ApprovalSetting> | undefined): JsonObject | undefined {
+/** @internal Approval settings by kind as the API takes them (an agent's `approvals` among them). */
+export function wireSettings(settings: Record<string, ApprovalSetting> | undefined): JsonObject | undefined {
   if (settings === undefined) return undefined;
   return Object.fromEntries(Object.entries(settings).map(([kind, value]) => [kind,
     value && typeof value === "object"
@@ -207,14 +222,16 @@ export class ApprovalPolicy {
    * What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit raised,
    * a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default for each
    * kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP, code, an app's
-   * own code), and what your account switched. With `keyId` or `connectedAppId`, also what that key or connected app
-   * sets for itself (each kind's `own`), which `effective` reads for its calls.
+   * own code), and what your account switched. With `keyId`, `connectedAppId` or `agentId`, also what that key,
+   * connected app or agent sets for itself (each kind's `own`), which `effective` reads for its calls (an agent's
+   * through its parent's, which it follows where it sets none).
    */
   static async get(
-    options: { keyId?: string; connectedAppId?: string; client?: NoClick } = {},
+    options: { keyId?: string; connectedAppId?: string; agentId?: string; client?: NoClick } = {},
   ): Promise<ApprovalPolicy> {
     const raw = await resolveClient(options.client).request("GET", "/v1/approvals/policy", {
-      query: { key_id: options.keyId, connected_app_id: options.connectedAppId }, user: null,
+      query: { key_id: options.keyId, connected_app_id: options.connectedAppId, agent_id: options.agentId },
+      user: null,
     });
     return new ApprovalPolicy(asObject(raw));
   }
@@ -238,19 +255,21 @@ export class ApprovalPolicy {
 
   /**
    * What a call of `kind` by `caller` would meet now, and why: the key's or connected app's own setting (`keyId`,
-   * `connectedAppId`: the call is its), your account's setting, what NoClick asks that caller first, or the default.
-   * Nothing runs and nothing is held.
+   * `connectedAppId`: the call is its), an agent's own or its parent's (`agentId`, with `caller` `"agent"`: `source`
+   * `agent` or `parent`), your account's setting, what NoClick asks that caller first, or the default. Nothing runs
+   * and nothing is held.
    */
   static async explain(
     kind: string, caller: string,
     options: {
       amountUsd?: number; quoted?: boolean; previewed?: boolean; keyId?: string; connectedAppId?: string;
-      client?: NoClick;
+      agentId?: string; client?: NoClick;
     } = {},
   ): Promise<ApprovalExplanation> {
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/approvals/policy/explain", {
       json: compact({ kind, caller, amount_usd: options.amountUsd, quoted: options.quoted ?? true,
-        previewed: options.previewed ?? true, key_id: options.keyId, connected_app_id: options.connectedAppId }),
+        previewed: options.previewed ?? true, key_id: options.keyId, connected_app_id: options.connectedAppId,
+        agent_id: options.agentId }),
       user: null,
     }));
     return {

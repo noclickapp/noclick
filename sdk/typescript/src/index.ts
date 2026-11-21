@@ -26,8 +26,8 @@ export type { PhoneVerification, Spending, SpendingAction, UserFields, UserListO
 export { Session } from "./session.ts";
 export { Operation } from "./operation.ts";
 export type {
-  KindScopedFilters, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus, OperationStep,
-  OperationSummary, OperationTransition,
+  KindScopedFilters, NamedWorkstream, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus,
+  OperationStep, OperationSummary, OperationTransition,
   PortStep, TurnStep,
 } from "./operation.ts";
 export { ToolCall } from "./toolCall.ts";
@@ -48,7 +48,7 @@ export { Approval, ApprovalPolicy } from "./approval.ts";
 export type {
   ApprovalExplanation, ApprovalListOptions, ApprovalSetting, ApprovalStatus, HoldKind, OwnApprovals, PolicyChange,
 } from "./approval.ts";
-export type { Answer, HumanAskOptions, HumanOptions, HumanPick, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
+export type { Answer, HumanAnswerFields, HumanAskOptions, HumanConnectAsk, HumanOptions, HumanPick, HumanRequestFilters, HumanSecretAsk, HumanStepRef, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";
 export { TERMINAL_CLOSED_FOR_GOOD, TERMINAL_RENEW, Terminal, TerminalConnection } from "./terminal.ts";
 export { AgentMove } from "./agentMove.ts";
@@ -56,7 +56,7 @@ export type { AgentMoveArrived, AgentMoveCreateOptions, AgentMoveSource, AgentMo
 export type { TerminalConnectOptions, TerminalEnd, TerminalState, TerminalStatus } from "./terminal.ts";
 export type {
   AgentCommand, AgentCommandInput, AgentCommands, AgentCommandSource, HarnessRequest,
-  PermissionMode, RequestDecision, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
+  PermissionMode, RequestDecision, AgentApprovalsOption, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
   ModelSwitching, ModelSwitchingChange, SwitchedFrom, ModelSwitchGrant, ModelSwitchResult,
   AgentHistoryOptions, AgentListOptions, AgentMovedFrom, AgentOrigin, AgentReply, AgentSkill, AgentStatus,
   AgentStep, AgentStepDiff, AgentStepKind, ChangedFile, DiffStat, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
@@ -205,11 +205,12 @@ export type {
 } from "./webhook.ts";
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
-  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, EditOptions, ExpressionPreview, GraphEdge,
-  LatestOutputs, Position, PublishOptions, RunStep,
+  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, DraftOptions, DraftStep, EditOptions,
+  ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
   StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
-  StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowEdge, WorkflowEdit,
-  WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunCounts, WorkflowRunOptions, WorkflowRunStatus,
+  StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
+  WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
+  WorkflowRunOptions, WorkflowRunStatus,
   WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";

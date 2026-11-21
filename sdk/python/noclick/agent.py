@@ -18,6 +18,7 @@ from .trash import TrashItem, trashed
 from ._scope import AMBIENT, resolve_scope
 from .agent_conversations import AgentConversation, AgentStateRow, AgentToolServer, ConversationSettings
 from .agent_extras import AgentEvent, AgentMemory, AgentSandbox, AgentWorkspace, CodingAgents, ShareLink
+from .approval import settings_wire
 from .connection import model_connection_ref, tool_refs
 from .cron import Cron
 from .coordination import WAKEUP_STATUSES, Job, Wakeup, check_note, job_kinds, updates_wire, wake_condition
@@ -1083,6 +1084,12 @@ class Agent(_Object):
     permission_mode: Optional[str] = field(
         "permission_mode", doc="Its conversations' permission mode unless one sets its own.",
     )
+    approvals: Dict[str, Dict[str, Any]] = field(
+        "approvals", lambda raw: dict(raw or {}),
+        doc="What its own calls wait for a person on in place of the account's, by kind of hold (``disposition``, "
+        "``under_usd``, ``until``, ``effective_at``, ``pending``); empty where it sets none (a child follows its "
+        "parent's).",
+    )
     status: Optional[str] = field(
         "status",
         doc="``working`` (a turn queued or running), ``waiting`` (its turns wait on a person: a question, a held "
@@ -1221,6 +1228,7 @@ class Agent(_Object):
         sandbox_size: Optional[str] = None,
         app_testing: Optional[str] = None,
         model_switching: Any = None,
+        approvals: Optional[Mapping[str, Any]] = None,
         allow_existing: bool = False,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
@@ -1299,7 +1307,17 @@ class Agent(_Object):
         groups, ``"noclick.spend"``), or ``"*"`` for whatever the rest don't name. The most specific key naming a
         call decides it: ``allow`` runs it, ``ask`` holds it for the owner's yes, ``off`` refuses it; with none, it's
         allowed. With everything, ``{"*": "off", ...}`` keeps it to the apps the rules turn on, so an account
-        connected later starts off. ``tool_access()`` shows them app by app.
+        connected later starts off. ``tool_access()`` shows them app by app. ``"noclick.spend": "allow"`` and
+        ``"noclick.delete": "allow"`` also set its ``approvals`` for ``purchase`` and ``delete`` to allow.
+
+        ``approvals`` are what its own calls wait for a person on, in place of the account's, by kind of hold
+        (``noclick.ApprovalPolicy.get()`` lists the settable ones): ``"allow"``, ``"ask"``, ``"deny"``, or a dict
+        with ``disposition`` (a purchase also takes ``under_usd``: allowed at or under it, asked above; any kind
+        ``until``). Never looser than the account's ceiling for the kind (raise it with
+        ``ApprovalPolicy.set(ceilings=...)``), a child's never looser than its parent's (which it follows where it
+        sets none), and a purchase or a deletion past the default needs a monthly cap on the account. Loosening is
+        the owner's: signed in, their own message to one of their agents, or a key naming ``approvals:policy``
+        (after a 10-minute undo window); an agent acting on its own waits for the owner's yes.
 
         ``can_request`` lets it ask its user to connect accounts at run time
         (a ``request_connection`` tool): integration names, single
@@ -1507,6 +1525,8 @@ class Agent(_Object):
             sandbox_size=sandbox_size, app_testing=app_testing, model_switching=model_switching, user=scope,
             client=client,
         ), scope=scope)
+        if approvals is not None:
+            body = {**body, "approvals": settings_wire(dict(approvals))}
         raw = await cls._create_named("/v1/agents", body, allow_existing=allow_existing, user=scope, client=client)
         return cls._new(raw=raw, client=client, user=scope)
 
@@ -2540,6 +2560,7 @@ class Agent(_Object):
         model_connection: Any = None,
         name: Optional[str] = None,
         workstream: Optional[str] = None,
+        approvals: Optional[Mapping[str, Any]] = None,
         user: Any = AMBIENT,
     ) -> "Agent":
         """Make a child agent and start ``task`` (its first message, up to 16,000
@@ -2580,7 +2601,8 @@ class Agent(_Object):
         waking it in the conversation it spawned from. An agent holds up to 20 live
         children, and children spawn children up to 3 levels below an agent with no parent
         (``noclick.QuotaExceeded``). ``Agent.create(..., parent_id=)`` still makes a child
-        without starting anything.
+        without starting anything. The child follows its parent's ``approvals``; its own (as ``create`` takes them)
+        only tighten them, and one looser than its parent's raises ``noclick.InvalidRequest``.
 
         Returns:
             The child, loaded, with ``parent_id`` set to this agent and ``job`` its running task.
@@ -2627,6 +2649,7 @@ class Agent(_Object):
             tools=await tool_refs(tools, scope=owner), budget_usd_per_month=budget_usd, ttl_s=ttl_s,
             model=model, harness=harness, model_connection=await model_connection_ref(model_connection, scope=owner),
             name=name, workstream=workstream,
+            approvals=settings_wire(dict(approvals)) if approvals is not None else None,
         )
         response = await self._request(
             "POST", f"/v1/agents/{raw['id']}/children", json=body, user=self._talk_scope(user),
@@ -2804,6 +2827,7 @@ class Agent(_Object):
         app_testing: Any = UNSET,
         model_switching: Any = UNSET,
         secrets: Any = UNSET,
+        approvals: Any = UNSET,
     ) -> "Agent":
         """Change fields. Grants its user gave it are kept. A new ``harness`` without
         a ``model`` takes that harness's default model, and each conversation carries
@@ -2832,8 +2856,12 @@ class Agent(_Object):
         ``secrets`` are the secrets in its shell, as in ``create``, in place of those it has (``[]`` takes them all
         away). ``tool_rules`` are as in ``create``, in place of the ones it has (``{}`` clears them). ``name``
         renames it, unique among its scope's agents: its old name keeps reaching it and stays reserved for it
-        (``former_names``), and a NoClick keeps its name. ``budget_for_run=True`` with ``budget_usd_per_month``
-        sets that budget for one run alone (its turn under way, else its next one): the budget it replaced comes
+        (``former_names``), and a NoClick keeps its name. ``approvals`` changes the kinds it names, as in ``create``
+        (``None`` for a kind puts back the account's, a child's its parent's); what changed is in
+        ``agent.raw["approval_changes"]``. Anyone who may change the agent tightens them; an agent loosening its own
+        or another's on its own initiative waits for the owner, and on the owner's own word it applies at once.
+        ``budget_for_run=True`` with ``budget_usd_per_month`` sets that budget for one run alone (its turn under
+        way, else its next one): the budget it replaced comes
         back once that run ends, however it ends, and ``budget_restore`` says what comes back meanwhile. A budget
         set without it stands until changed.
 
@@ -2841,6 +2869,10 @@ class Agent(_Object):
             This agent, updated. A field you leave out is unchanged, and changes apply from its next turn.
 
         Usage:
+            Let it buy what costs $20 or less without asking (the account's ceiling must allow it)::
+
+                noclick.Agent.from_name("buyer").update(approvals={"purchase": {"disposition": "allow", "under_usd": 20}})
+
             Change what it does and what it can use::
 
                 support = noclick.Agent.from_name("support")
@@ -2917,6 +2949,8 @@ class Agent(_Object):
                 skill_refs(skills or [], user=self._call_scope(), client=self._client) or [])
         if secrets is not UNSET:
             changes["secret_ids"] = await secret_ids(secret_refs(secrets or [], user=self._call_scope(), client=self._client))
+        if approvals is not UNSET:
+            changes["approvals"] = settings_wire(dict(approvals or {}))
         for key, value in (("browser_profile_id", browser_profile), ("card_id", card), ("machine_id", machine)):
             if value is not UNSET:
                 changes[key] = await ref_id(value)

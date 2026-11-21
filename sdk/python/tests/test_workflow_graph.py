@@ -119,10 +119,12 @@ def test_a_graph_reads_the_whole_definition_into_typed_steps_notes_and_edges(api
     [note] = graph.notes
     assert (note.type, note.settings["content"]) == ("stickyNote", "Orders land here.")
     assert graph.edges == [
-        {"id": "hook-writer", "from": "hook", "to": "writer", "kind": "data", "handle": None},
-        {"id": "linear-writer", "from": "linear", "to": "writer", "kind": "tools", "handle": None},
-        {"id": "writer-post", "from": "writer", "to": "post", "kind": "data", "handle": None},
+        {"id": "hook-writer", "from": "hook", "to": "writer", "kind": "data", "handle": None, "target_handle": None},
+        {"id": "linear-writer", "from": "linear", "to": "writer", "kind": "tools", "handle": None,
+         "target_handle": None},
+        {"id": "writer-post", "from": "writer", "to": "post", "kind": "data", "handle": None, "target_handle": None},
     ]
+    assert graph.display_metadata is None
     assert graph.step("writer") is writer and graph.step("Post it") is post
     with pytest.raises(nc.NotFound):
         graph.step("Nope")
@@ -227,12 +229,18 @@ def test_each_step_method_is_one_op(api, client):
     assert all("if_version" not in body(c.request) and body(c.request)["include_graph"] for c in route.calls)
 
 
-def test_set_connection_takes_an_app_connection_or_its_id_and_none_takes_one_off(api, client):
+def test_set_connection_sends_a_connections_ref_its_name_or_id_and_none_takes_one_off(api, client):
     route = api.post(EDITS).respond(json=edited(5, [{"op": "set_connection", "id": "post", "slot": "slack_oauth"}],
                                                  graph=bare()))
     post = nc.Workflow.from_id(WF).step("post")
     post.set_connection(nc.Connection.from_id(f"credential:{CREDENTIAL}"))
-    assert body(route.calls.last.request)["ops"] == [{"op": "set_connection", "id": "post", "connection": CREDENTIAL}]
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "set_connection", "id": "post", "connection": f"credential:{CREDENTIAL}"}]
+    named = "4c1e9a2b-7f3d-4e8a-9b6c-2d5f8e1a3c7b"
+    post.set_connection(nc.Connection.from_id(named))
+    assert body(route.calls.last.request)["ops"][0]["connection"] == named
+    post.set_connection("work-slack")
+    assert body(route.calls.last.request)["ops"][0]["connection"] == "work-slack"
     post.set_connection(CREDENTIAL, slot="slack_oauth")
     assert body(route.calls.last.request)["ops"] == [
         {"op": "set_connection", "id": "post", "connection": CREDENTIAL, "slot": "slack_oauth"}]
@@ -259,6 +267,20 @@ def test_an_edit_surfaces_its_notes_and_verdicts(api, client):
     assert writer.verdict["config_valid"] is False and writer.verdict["missing_required"] == ["credentials"]
     assert writer.settings == {"model": "codex", "codex_model": "gpt-5"} and writer.connections == {}
     assert workflow.last_edit.steps["post"] == {"config_valid": True}
+    assert writer.references == [] and workflow.step("post").references == []
+
+
+def test_an_edit_names_the_reads_that_wont_resolve(api, client):
+    unresolved = [{"field": "message", "step": "hook", "key": "ordr_id", "known_keys": ["order_id", "total"]},
+                  {"field": "message", "step": "hok", "reference": "{{ $('hok').order_id }}", "missing": True,
+                   "near": "hook"}]
+    api.post(EDITS).respond(json=edited(
+        5, [{"op": "update_step", "id": "linear", "changed": True}],
+        steps={"linear": {"config_valid": True, "references": unresolved}}, graph=bare(HOOK, LINEAR, edges=[])))
+    workflow = nc.Workflow.from_id(WF)
+    linear = workflow.step("linear").update(settings={"title": "{{ $('hook').ordr_id }} {{ $('hok').order_id }}"})
+    assert linear.references == unresolved and linear.verdict["references"] == unresolved
+    assert workflow.last_edit.steps["linear"]["references"][0]["known_keys"] == ["order_id", "total"]
 
 
 def test_the_workflows_own_fields_notes_and_moves(api, client):
@@ -359,7 +381,33 @@ def test_a_batch_from_async_code(api, client):
 
     result = asyncio.run(main())
     assert result.version == 5 and body(route.calls.last.request) == {"if_version": 4, "ops": [
-        {"op": "remove_step", "id": "writer"}, {"op": "set_connection", "id": "post", "connection": CREDENTIAL}]}
+        {"op": "remove_step", "id": "writer"},
+        {"op": "set_connection", "id": "post", "connection": f"credential:{CREDENTIAL}"}]}
+
+
+def test_an_agent_steps_secrets_go_by_name_whatever_names_them(api, client):
+    """``secrets=`` on an agent step (its update, a batch's add or update, the workflow's add): names, or
+    ``noclick.Secret`` objects sent as their names; ``[]`` takes them all off. Never a value."""
+    route = api.post(EDITS).respond(json=edited(5, [{"op": "update_step", "id": "writer"}], graph=bare()))
+    api.get("/v1/secrets").respond(json=listing({"object": "secret", "id": "sec_1", "name": "shipping",
+                                                "keys": ["SHIPPING_TOKEN"], "user_id": None, "used_by": []}))
+    workflow = nc.Workflow.from_id(WF)
+    workflow.step("writer").update(secrets=["warehouse", nc.Secret.from_name("shipping")])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "update_step", "id": "writer", "settings": {"secrets": ["warehouse", "shipping"]}}]
+    workflow.step("writer").update(settings={"message": "Go."}, secrets="warehouse")
+    assert body(route.calls.last.request)["ops"][0]["settings"] == {"message": "Go.", "secrets": ["warehouse"]}
+    workflow.step("writer").update(secrets=[])
+    assert body(route.calls.last.request)["ops"][0]["settings"] == {"secrets": []}
+
+    with workflow.edit() as e:
+        e.add_step("agent", id="second", settings={"model": "openrouter/anthropic/claude-sonnet-4"},
+                   secrets=[nc.Secret.from_name("shipping")])
+        e.update_step("writer", secrets=["warehouse"])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "add_step", "type": "agent", "id": "second",
+         "settings": {"model": "openrouter/anthropic/claude-sonnet-4", "secrets": ["shipping"]}},
+        {"op": "update_step", "id": "writer", "settings": {"secrets": ["warehouse"]}}]
 
 
 # --- refusals ----------------------------------------------------------------------------
@@ -417,15 +465,71 @@ def test_an_op_that_cant_apply_is_named_and_nothing_lands(api, client):
     assert workflow._version is None and workflow.last_edit is None
 
 
-def test_an_agents_workflow_is_refused_as_its_agents(api, client):
-    """It changes through the agent: the refusal names it, and nothing about the handle moves."""
-    api.post(EDITS).respond(403, json={"error": {
-        "type": "permission_denied", "message": "'helper' is the workflow the agent 'helper' runs on.",
-        "next_step": "Change or message the agent (/v1/agents/ag_1).", "agent_id": "ag_1"}})
+def test_an_agents_workflow_keeps_its_agents_own_step(api, client):
+    """An agent's workflow is edited as its canvas edits it, but its own step stays: the refusal names the agent,
+    and nothing about the handle moves."""
+    api.post(EDITS).respond(400, json={"error": {
+        "type": "invalid_request", "message": "'agent' is the agent 'helper' itself: its workflow keeps it.",
+        "next_step": "Leave 'agent' in, or delete the agent (DELETE /v1/agents/ag_1).", "agent_id": "ag_1"}})
     workflow = nc.Workflow.from_id(WF)
-    with pytest.raises(nc.PermissionDenied) as refused:
-        workflow.step("agent").update(settings={"system_prompt": "Help."})
+    with pytest.raises(nc.InvalidRequest) as refused:
+        workflow.step("agent").remove()
     assert refused.value.agent_id == "ag_1" and workflow.last_edit is None
+
+
+def test_a_canvas_saves_as_one_batch_in_its_own_terms(api, client):
+    """A canvas's batch: named as a canvas's, its edge ids and inputs, a note where it sits, a resize, what the app
+    shows of the workflow, and a setting taken out by None."""
+    route = api.post(EDITS).respond(json=edited(5, []))
+    workflow = nc.Workflow.from_id(WF)
+    with workflow.edit(if_version=4, source="canvas") as e:
+        e.update_step("writer", settings={"system_prompt": "Be brief.", "channel__label": None})
+        e.connect("state", "code", target_handle="state", id="xy-edge__state-code")
+        e.disconnect("writer", "post", id="writer-post")
+        e.add_note("Read me", id="note-2", position=(40, -120), width=280, height=160)
+        e.move("note-2", (60, -140), width=320, height=200)
+        e.update_workflow(display_metadata={"viewport": {"x": 0, "y": 0, "zoom": 1}})
+    assert body(route.calls.last.request) == {"if_version": 4, "source": "canvas", "ops": [
+        {"op": "update_step", "id": "writer", "settings": {"system_prompt": "Be brief.", "channel__label": None}},
+        {"op": "connect", "from": "state", "to": "code", "kind": "data", "target_handle": "state",
+         "id": "xy-edge__state-code"},
+        {"op": "disconnect", "from": "writer", "to": "post", "id": "writer-post"},
+        {"op": "add_note", "content": "Read me", "id": "note-2", "width": 280, "height": 160,
+         "position": {"x": 40, "y": -120}},
+        {"op": "move", "id": "note-2", "position": {"x": 60, "y": -140}, "width": 320, "height": 200},
+        {"op": "update_workflow", "display_metadata": {"viewport": {"x": 0, "y": 0, "zoom": 1}}},
+    ]}
+
+
+def test_a_canvas_names_itself_on_its_batch_and_lays_out_its_interface(api, client):
+    """A canvas's own name on its batch (its tab's), an edge between the handles it was drawn on, a connection under
+    the slot it holds it in, and the Interface tab's layout as one of the workflow's own fields."""
+    route = api.post(EDITS).respond(json=edited(5, []))
+    workflow = nc.Workflow.from_id(WF)
+    layout = {"layout": [{"i": "post", "x": 0, "y": 0, "w": 6, "h": 4}], "tabOrder": ["post"]}
+    with workflow.edit(if_version=4, source="canvas", origin="canvas-tab-1") as e:
+        e.connect("writer", "post", handle="right", target_handle="left", id="xy-edge__writerright-postleft")
+        e.set_connection("writer", CREDENTIAL, slot="agent_claude_code")
+        e.update_workflow(interface=layout)
+    assert body(route.calls.last.request) == {"if_version": 4, "source": "canvas", "origin": "canvas-tab-1", "ops": [
+        {"op": "connect", "from": "writer", "to": "post", "kind": "data", "handle": "right", "target_handle": "left",
+         "id": "xy-edge__writerright-postleft"},
+        {"op": "set_connection", "id": "writer", "connection": CREDENTIAL, "slot": "agent_claude_code"},
+        {"op": "update_workflow", "interface": layout},
+    ]}
+    workflow.update(interface={"layout": [], "tabOrder": []})
+    assert body(route.calls.last.request) == {"include_graph": True, "ops": [
+        {"op": "update_workflow", "interface": {"layout": [], "tabOrder": []}}]}
+
+
+def test_a_graph_reads_what_the_app_shows_and_an_edges_input(api, client):
+    edges = [{"id": "s-c", "source": "state", "target": "code", "targetHandle": "state"}]
+    api.get(f"/v1/workflows/{WF}/graph").respond(json={**read(graph=bare(HOOK, edges=edges)),
+                                                       "display_metadata": {"viewport": {"zoom": 2}}})
+    graph = nc.Workflow.from_id(WF).graph()
+    assert graph.display_metadata == {"viewport": {"zoom": 2}}
+    assert graph.edges == [{"id": "s-c", "from": "state", "to": "code", "kind": "data", "handle": None,
+                            "target_handle": "state"}]
 
 
 def test_a_batch_held_for_the_owner_surfaces_as_its_approval_and_lands_nothing(api, client):
@@ -523,6 +627,39 @@ def test_restoring_a_version_is_a_version_of_its_own_and_checks_the_version_it_i
         7, 4, 2, "restored version 2")
     with pytest.raises(TypeError):
         workflow.restore(if_version=7)
+
+
+def test_naming_versions_keeps_them_and_a_name_comes_back_off(api, client):
+    named = version_row(5, 5, label="Before Slack", note="Sends at 8.", labeled_by={"user_id": "u_1"},
+                        labeled_at="2026-11-21T10:00:00Z")
+    now = api.post(f"/v1/workflows/{WF}/versions").respond(201, json=named)
+    patch = api.patch(f"/v1/workflows/{WF}/versions/5").mock(side_effect=[
+        httpx.Response(200, json={**named, "label": "Before the Slack change"}),
+        httpx.Response(200, json={**named, "label": None, "note": None, "labeled_by": None, "labeled_at": None})])
+    listed = api.get(f"/v1/workflows/{WF}/versions").respond(json=listing(named))
+    workflow = nc.Workflow.from_id(WF)
+    saved = workflow.name_version("Before Slack", note="Sends at 8.", if_version=4)
+    assert body(now.calls.last.request) == {"label": "Before Slack", "note": "Sends at 8.", "if_version": 4}
+    assert (saved.label, saved.note, saved.labeled_by, saved.labeled_at.year) == (
+        "Before Slack", "Sends at 8.", {"user_id": "u_1"}, 2026)
+    renamed = workflow.name_version("Before the Slack change", history_version=5)
+    assert body(patch.calls.last.request) == {"label": "Before the Slack change", "note": None}
+    assert renamed.label == "Before the Slack change"
+    assert workflow.unname_version(5).label is None
+    assert body(patch.calls.last.request) == {"label": None}
+    assert [v.label for v in workflow.versions(named=True)] == ["Before Slack"]
+    assert listed.calls.last.request.url.params["named"] == "true"
+    workflow.versions()
+    assert "named" not in listed.calls.last.request.url.params
+
+
+def test_naming_the_version_it_is_at_twice_is_a_conflict_naming_the_first(api, client):
+    api.post(f"/v1/workflows/{WF}/versions").respond(409, json={"error": {
+        "type": "conflict", "message": "Nothing changed since the version named 'Start'.",
+        "history_version": 2, "label": "Start"}})
+    with pytest.raises(nc.Conflict) as again:
+        nc.Workflow.from_id(WF).name_version("Start again")
+    assert again.value.details["label"] == "Start"
 
 
 def test_restore_without_a_version_still_brings_it_back_from_the_trash(api, client):
