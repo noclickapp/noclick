@@ -1,13 +1,31 @@
 // The canvas's slots (src/slots.ts): the places on a workflow's canvas a host may fill, each with what stands there
 // when none does (slotStandards.tsx). Connecting the account a step or an agent needs is the shared `connect.app` and
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
-// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people.
-import type { ComponentType, ReactNode, RefAttributes } from 'react';
+// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; and what a
+// step's settings form (`form/`) reads from whoever renders it. A host fills them before the canvas first draws (some
+// hold hooks the canvas and the form call).
+import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import { slot } from '@/slots';
 import type { ChatAttachment } from '@/ui/chat/useChatFiles';
 import type { AgentWiring } from './agentWiring';
+import type { NodeDisplayStrategy } from './form/referenceTypes';
+import type { StepReads } from './form/reads';
+import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
 import type { Collaborator, Presence, PresenceOptions } from './presence';
-import { AgentChatOnNoClick, BuildWithNoClick, InterfaceOnNoClick, NOBODY_ELSE, ShareOnNoClick } from './slotStandards';
+import {
+    AgentChatOnNoClick,
+    BuildWithNoClick,
+    InterfaceOnNoClick,
+    NOBODY_ELSE,
+    noclickStepLink,
+    ShareOnNoClick,
+    standardDisplayStrategy,
+    useNoTrack,
+    useV1ConnectionMissing,
+    useV1StepReads,
+    useV1StepSchema,
+    useV1WorkflowId,
+} from './slotStandards';
 
 // ── the builder chat ────────────────────────────────────────────────────────
 
@@ -196,3 +214,91 @@ export interface CanvasShareProps {
 /** Sharing the workflow with people and the workspace, opened from the canvas's top bar. The standard says who else may
  *  open it is chosen on NoClick, and opens the workflow there. */
 export const SHARE = slot<ComponentType<CanvasShareProps>>('canvas.share', ShareOnNoClick);
+
+// ── a step's settings form ──────────────────────────────────────────────────
+
+/** A step type's settings schema as read: the JSON Schema the form draws from (null for a type that takes no settings),
+ *  still on its way, or why it couldn't be read. */
+export type StepSchemaRead = { status: 'loading' } | { status: 'ready'; schema: Record<string, any> | null } | { status: 'failed'; message: string };
+
+export interface StepSchemas {
+    /** The type's schema, drawing again when it lands. */
+    useStepSchema: (type: string) => StepSchemaRead;
+}
+
+/** Where a step type's settings schema comes from. The standard reads `GET /v1/step_types/{type}` once a session (per
+ *  client), so the form works against any NoClick; NoClick's app hands the schemas it was built with. */
+export const STEP_SCHEMAS = slot<StepSchemas>('canvas.step.schemas', { useStepSchema: useV1StepSchema });
+
+export interface StepReadsHost {
+    /** What the form's fields read beside the step's settings, for the step around them (`StepContext`). */
+    useStepReads: () => StepReads;
+    /** The workflow the step is in, for a field drawn outside a step's form too. */
+    useWorkflowId: () => string | undefined;
+}
+
+/** A step's reads. The standard answers them on /v1 for the step the form is for: `POST
+ *  /v1/workflows/{id}/steps/{step}/options` and `/values`, `/expression` and `/clear_state`; it judges settings only when
+ *  they're saved. */
+export const STEP_READS = slot<StepReadsHost>('canvas.step.reads', { useStepReads: useV1StepReads, useWorkflowId: useV1WorkflowId });
+
+/** A step type's glyph, as the operation picker heads its list with it. */
+export interface StepMark {
+    Icon: ComponentType<Record<string, unknown>>;
+    iconColor?: string;
+}
+
+export interface StepMarks {
+    /** How references into a step type's output are offered and checked. */
+    displayStrategy: (type: string | undefined) => NodeDisplayStrategy;
+    /** The type's glyph; undefined where there's none. */
+    mark: (type: string) => StepMark | undefined;
+}
+
+/** What integrations' own definitions say of their steps: where references into their output are and their glyph.
+ *  The standard offers every field of a step's output as a reference and draws no glyph. */
+export const STEP_MARKS = slot<StepMarks>('canvas.step.marks', { displayStrategy: standardDisplayStrategy, mark: () => undefined });
+
+/** Whether a step still needs an account connected before it runs: by its type, the accounts it holds, its operation
+ *  and its settings. */
+export type ConnectionMissing = (type: string, credentialIds: Record<string, string>, step: { operation?: string; config: Record<string, any> }) => boolean;
+
+/** Whether a step still needs an account. The standard reads the step type's `connection` and its operation's
+ *  `needs_account` (from `GET /v1/step_types/{type}`). */
+export const STEP_CONNECTION = slot<{ useConnectionMissing: ConnectionMissing }>('canvas.step.connection', { useConnectionMissing: useV1ConnectionMissing });
+
+/** Where the form tells what a person did with it (an AI fill asked for, a field error shown). */
+export type Track = (event: string, properties?: Record<string, unknown>) => void;
+
+/** The form's analytics. The standard tells no one. */
+export const STEP_TRACK = slot<() => Track>('canvas.step.track', useNoTrack);
+
+/** A link to one of a step's fields, as "Copy link to field" copies it. The standard links to the step on NoClick's
+ *  canvas; null offers no link. */
+export const STEP_LINK = slot<((workflowId: string, nodeId: string, fieldKey?: string) => string) | null>('canvas.step.link', noclickStepLink);
+
+export type WidgetRenderer = (props: WidgetRenderProps) => ReactElement | null;
+
+/** A host's own widgets by `ui:widget` name, ahead of the form's (where it has some the form hasn't, or draws one its
+ *  own way). The standard adds none: a field whose widget isn't known draws by its type. */
+export const STEP_WIDGETS = slot<Readonly<Record<string, WidgetRenderer>>>('canvas.step.widgets', {});
+
+/** What a step type's own panel is handed: the step's settings, its operation and accounts, and how to change a setting. */
+export interface StepPanelProps {
+    config: Record<string, any>;
+    operation: string | undefined;
+    credentialIds: Record<string, string>;
+    onChange: (key: string, value: any) => void;
+}
+
+/** A step type's own panel above its fields, in place of the fields it lists. */
+export interface StepPanel {
+    /** Whether it shows for the step's operation. */
+    shows: (operation: string | undefined) => boolean;
+    /** The settings it edits, which the form then leaves out. */
+    fields: ReadonlySet<string>;
+    Panel: ComponentType<StepPanelProps>;
+}
+
+/** Step types' own panels, by type. The standard has none: their settings draw as fields. */
+export const STEP_PANELS = slot<Readonly<Record<string, StepPanel>>>('canvas.step.panels', {});
