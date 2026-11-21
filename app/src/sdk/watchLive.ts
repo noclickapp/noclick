@@ -133,6 +133,8 @@ export function frameOf(message: LiveMessage): Frame | null {
             return id && one(AGENT_CHANGES, change) ? ['platform:agent', { agent_id: id, change, conversation: null }] : null;
         case 'coding_agent':
             return one(CODING_CHANGES, change) ? ['platform:coding_agent', { agent_id: id, change }] : null;
+        case 'usage':
+            return ['platform:usage', { at: message.at?.toISOString() ?? null }];
         default: {
             const kind = object === 'agent_trigger' ? 'trigger' : object;
             return id && one(RESOURCE_KINDS, kind) ? ['platform:resource', { kind, id, status: message.status, parent_id: message.parent?.id ?? null, version: message.version }] : null;

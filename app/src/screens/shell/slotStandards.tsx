@@ -1,5 +1,6 @@
 // What stands in the shell's slots (slots.ts) when no host fills them: each works on the platform API alone.
 import { useMemo } from 'react';
+import { ReceiptText } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { signOut } from '@/lib/signOut';
 import { userDisplayName } from '@/lib/userDisplay';
@@ -8,7 +9,8 @@ import { KINDS, resourceAddress, type KindId } from '@/screens/resources/kinds';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
 import { useSlot } from '@/slots';
-import type { AccountMenuUser } from '@/ui/accountParts';
+import { ACCOUNT_MENU_ITEM, type AccountMenuUser } from '@/ui/accountParts';
+import { DropdownMenuItem } from '@/ui/dropdown-menu';
 import { LogoMark } from '@/ui/LogoMark';
 import { useTheme } from '@/ui/useTheme';
 import { SHELL_PAGES } from './pages';
@@ -25,6 +27,17 @@ export function AccountName({ user, onNavigate }: { user: AccountMenuUser; onNav
             <LogoMark className="ml-[13px] h-[18px] w-[18px] shrink-0" alt="NoClick" />
             <span className="truncate px-1.5 text-[14px] font-semibold tracking-[-0.01em] text-foreground">{userDisplayName({ email: user.email, name: user.display_name }, 'NoClick')}</span>
         </Link>
+    );
+}
+
+/** The account menu's billing row in this app: what each thing cost, at `/usage`. */
+export function UsageMenuItem() {
+    const navigate = useNavigate();
+    return (
+        <DropdownMenuItem className={ACCOUNT_MENU_ITEM} onSelect={() => navigate('/usage')}>
+            <ReceiptText className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>Usage</span>
+        </DropdownMenuItem>
     );
 }
 

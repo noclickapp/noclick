@@ -14,6 +14,8 @@ export default [
         route('connections', 'routes/connections.tsx'),
         // What the account owns and what it costs, acting as the app's key.
         route('resources', 'routes/resources.tsx'),
+        // What each thing cost, as it was used, acting as the app's key.
+        route('usage', 'routes/usage.tsx'),
     ]),
     route('login', 'routes/login.tsx'),
     route('logout', 'routes/logout.ts'),
@@ -31,6 +33,8 @@ export default [
     route('work-lab', 'routes/work-lab.tsx'),
     // Connections over made-up data: development only, as the console's lab.
     route('connections-lab', 'routes/connections-lab.tsx'),
+    // Usage over made-up data: development only, as the console's lab.
+    route('usage-lab', 'routes/usage-lab.tsx'),
     // Last, so every other path has a route too: middleware runs only for a path that matches one, and the gate (the
     // root route's middleware) must see every request.
     route('*', 'routes/notFound.tsx'),

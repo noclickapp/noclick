@@ -1,10 +1,10 @@
 // What moves while Work is open: the account's platform frames (a channel's messages, who's typing in it, an agent's
-// turn or step, a coding agent's place, a resource), which the host receives and hands here, so a view follows them with
+// turn or step, a coding agent's place, a resource, the account being charged), which the host receives and hands here, so a view follows them with
 // `useWorkFrames` (and a test delivers its own) without a connection of its own. Frames say what moved; the view reads it
 // again through the platform client. A `reset` says something may have moved that no frame named: every view reads
 // again what it shows.
 import { createContext, useContext, useEffect, useRef } from 'react';
-import type { PlatformAgentEvent, PlatformChannelEvent, PlatformChannelTypingEvent, PlatformCodingAgentEvent, PlatformResourceEvent } from '@/sdk/frames';
+import type { PlatformAgentEvent, PlatformChannelEvent, PlatformChannelTypingEvent, PlatformCodingAgentEvent, PlatformResourceEvent, PlatformUsageEvent } from '@/sdk/frames';
 
 /** Read again whatever is shown. `backstop`: a host with no live source (or one not live yet), on its timer;
  *  `stream`: the change stream said too much changed to name it, or opened without carrying on from its last change. */
@@ -18,6 +18,7 @@ export interface WorkFrames {
     'platform:channel_typing': PlatformChannelTypingEvent;
     'platform:coding_agent': PlatformCodingAgentEvent;
     'platform:resource': PlatformResourceEvent;
+    'platform:usage': PlatformUsageEvent;
     reset: WorkReset;
 }
 export type WorkFrameKind = keyof WorkFrames;

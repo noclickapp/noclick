@@ -214,3 +214,28 @@
         );
     }
 }
+
+/* The usage page's chart ink (src/screens/usage): five service hues, validated for colour-blind separation in both
+   themes, and the one-ink steps the rest of its marks use. */
+.usage-page {
+    --svc-1: #2a78d6;
+    --svc-2: #eb6834;
+    --svc-3: #1baf7a;
+    --svc-4: #4a3aa7;
+    --svc-5: #e87ba4;
+    --svc-rest: hsl(var(--foreground) / 0.22);
+    --ink: hsl(var(--foreground) / 0.62);
+    --ink-strong: hsl(var(--foreground) / 0.9);
+    --ink-faint: hsl(var(--foreground) / 0.16);
+    --grid: hsl(var(--foreground) / 0.07);
+}
+.dark .usage-page {
+    --svc-1: #3987e5;
+    --svc-2: #d95926;
+    --svc-3: #199e70;
+    --svc-4: #9085e9;
+    --svc-5: #d55181;
+    --ink: hsl(var(--foreground) / 0.58);
+    --ink-faint: hsl(var(--foreground) / 0.14);
+    --grid: hsl(var(--foreground) / 0.08);
+}

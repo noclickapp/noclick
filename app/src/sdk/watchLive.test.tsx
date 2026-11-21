@@ -216,6 +216,9 @@ describe('frames', () => {
         expect(at(change('coding_agent', null, { change: 'pause' }))).toEqual(['platform:coding_agent', { agent_id: null, change: 'pause' }]);
         expect(at(change('agent_trigger', 't-1', { status: 'active', parent: { object: 'agent', id: 'agt_1' } }))).toEqual(['platform:resource', { kind: 'trigger', id: 't-1', status: 'active', parent_id: 'agt_1', version: null }]);
         expect(at(change('workflow', 'wf_1', { version: 7 }))).toEqual(['platform:resource', { kind: 'workflow', id: 'wf_1', status: null, parent_id: null, version: 7 }]);
+        // The account was charged: when, and nothing about the charges.
+        expect(at(change('usage', null, { at: new Date('2026-10-16T15:20:00Z') }))).toEqual(['platform:usage', { at: '2026-10-16T15:20:00.000Z' }]);
+        expect(at(change('usage', null))).toEqual(['platform:usage', { at: null }]);
         expect(at({ type: 'typing', channelId: 'ch_1', workspaceId: 'ws_1', userId: 'usr_ana', typing: true, raw: {} })).toEqual(['platform:channel_typing', { channel_id: 'ch_1', workspace_id: 'ws_1', user_id: 'usr_ana', name: '', typing: true }]);
         // What no screen follows.
         expect(at(change('something_new', 'x_1'))).toBeNull();

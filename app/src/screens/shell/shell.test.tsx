@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // The app's frame and its sidebar. With no host's fills: the pages the app serves, the account's name atop it, nothing
-// at the foot but the account, whose plan the platform API names and whose menu offers the console and Community. With
+// at the foot but the account, whose plan the platform API names and whose menu offers the console, Usage and Community. With
 // a host's: every page, its card, balance and row at the foot (the balance kept, hidden, on a rail), its menu rows and
 // staff's, what opens around the account, and its banner. And how it moves: Resources' kinds from the address, the
 // builder's row, and on a phone the bar's name, a page's actions and way back, the sheet that closes as it goes, and
@@ -136,6 +136,12 @@ describe('the sidebar with nothing filled', () => {
         expect(within(menu).getByText('Send feedback')).toBeTruthy();
         fireEvent.click(within(menu).getByText('Developers'));
         expect(screen.getByTestId('where').textContent).toBe('/developers');
+    });
+
+    it('offers what each thing cost in the account menu, at /usage', async () => {
+        shell();
+        fireEvent.click(within(await openAccountMenu()).getByText('Usage'));
+        expect(screen.getByTestId('where').textContent).toBe('/usage');
     });
 });
 

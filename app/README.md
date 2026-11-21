@@ -39,7 +39,7 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server. It sits in the app's frame, as `/chat`, `/work`, `/connections` and `/resources` do: a sidebar on a laptop (the
+app's own server. It sits in the app's frame, as `/chat`, `/work`, `/connections`, `/resources` and `/usage` do: a sidebar on a laptop (the
 pages, search, and your account with its menu), a bar with the page's name and a menu on a phone, and ⌘K to go
 anywhere (see [The frame](#the-frame)). **Developers** in the account menu opens the console at `/developers`.
 `scripts/check.sh` at the
@@ -48,7 +48,7 @@ neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
 `http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
-Chat, `/connections-lab` for Connections): the same pages over
+Chat, `/connections-lab` for Connections, `/usage-lab` for Usage): the same pages over
 made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
@@ -168,7 +168,7 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.foot.invite` | The sidebar's foot, under the balance | Nothing |
 | `shell.account.session` | The account's plan, and signing out | The plan the API names; signing out of this app |
 | `shell.account.switchTo` | First in the account menu | This app's developer console |
-| `shell.account.billing` | The account menu's billing rows | Nothing |
+| `shell.account.billing` | The account menu's billing rows | Usage: this app's `/usage` |
 | `shell.account.items` | The account menu, above Community | Send feedback: a note to the NoClick team (`POST /v1/feedback`) |
 | `shell.account.staff` | The account menu's last rows | Nothing |
 | `shell.account.around` | Around the account row (what opens over it) | The feedback dialog that row opens |
@@ -218,6 +218,19 @@ What differs from NoClick's own Resources:
 - A workflow is named, not opened: this app has no canvas.
 - "Ask NoClick" drafts the message in this app's chat, and the ⌘K palette opens any item the page listed, from any
   page of the frame.
+
+## Usage
+
+`/usage` is what each thing cost, as it was used (`src/screens/usage`), opened from Usage in the account menu: what the
+billing period will come to at this pace, each day by service, where the money went (by service, automation, agent,
+site or person, and inside each), what's coming up, and every charge, a page at a time, with its own facts. It reads
+the account's ledger (`Usage.ledger`, `Usage.billing` and `Usage.charges` in the SDK): every charge the account was
+billed in its billing period, its automations' runs and its chat with NoClick included, not only its keys' calls. It is
+the same page NoClick's own app draws in Settings, and it acts as the app's key: a key reads the money behind it
+without auto top-up or friends' credit, so the balance shows as read, with NoClick's page for adding funds.
+`src/screens/usage/usageAsKey.test.tsx` opens every scene of its lab as a key and fails if one asks for what only the
+owner may have. `/usage-lab` is the page over made-up accounts (`src/screens/usage/fixtures.ts`, `src/screens/usage/lab`)
+in development only: `?scene=` picks a view, and `?as=key` answers as the API answers a key.
 
 ## Chat
 
@@ -412,12 +425,12 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work`, `/connections` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+The home, `/chat`, `/work`, `/connections`, `/resources` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
 own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
 (`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
 folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the
 pages this app serves (Resources opening onto its kinds), and your account at its foot with its menu (Developers,
-Community, the theme, signing out). On a phone: a bar with the page's name and a menu that opens the same sidebar as a
+Usage, Community, the theme, signing out). On a phone: a bar with the page's name and a menu that opens the same sidebar as a
 sheet; a page puts its own actions and its way back in that bar. ⌘K (or search) opens the palette: the pages,
 Resources' kinds and what Resources and Work handed it, the theme and signing out. The developer console draws the
 same frame with its own sidebar (its sections) and its own palette (`src/screens/console/ConsoleShell.tsx`). The
@@ -431,7 +444,8 @@ none does. Each change names an object and the page reads that object again; a c
 reopened without carrying on from where it was, has the page read everything it shows again. While the stream isn't
 live (opening, reconnecting, or refused because the API you call doesn't offer it yet), Work reads what it shows again
 when you come back to the tab and every minute while the page is shown, and the stream is asked for again every five
-minutes, so it turns on by itself once the API offers it. The console and Resources read again their own way meanwhile.
+minutes, so it turns on by itself once the API offers it. The console and Resources read again their own way meanwhile;
+Usage reads again when you come back to the tab, never on a timer.
 An agent's open conversation is live through its own stream either way.
 
 ## How it reaches NoClick
@@ -532,7 +546,8 @@ It doesn't:
   `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
   opens every page of the console as a key and fails if one asks the API for something only the owner may have;
   `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources,
-  `src/screens/work/workAsKey.test.tsx` for Work, `src/screens/chat/chatAsKey.test.tsx` for Chat, and
-  `src/screens/connections/connectionsAsKey.test.tsx` for Connections.
+  `src/screens/work/workAsKey.test.tsx` for Work, `src/screens/chat/chatAsKey.test.tsx` for Chat,
+  `src/screens/connections/connectionsAsKey.test.tsx` for Connections, and `src/screens/usage/usageAsKey.test.tsx` for
+  Usage.
 
 Apache-2.0, as the rest of this repository.

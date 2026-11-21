@@ -52,6 +52,13 @@ export interface PlatformCodingAgentEvent {
     change: 'turn' | 'place' | 'pause' | 'definition';
 }
 
+/** The account was charged, or given a charge back: one frame a burst of charges, naming nothing about them (no
+ *  amount, service or charge). A page showing what the account spent reads it again. */
+export interface PlatformUsageEvent {
+    /** When it was said; none where the host doesn't know. */
+    at: string | null;
+}
+
 /** A platform resource the account owns moved (a domain registered, a deployment went ready, a repo's branch moved, a
  *  call answered or ended, a call held for approval or the approval answered, and so on): the pages showing it read
  *  it again. */

@@ -11,7 +11,7 @@ import type { Cmd } from './palette/layout';
 import type { PaletteScope } from './palette/open';
 import type { HoldingPage, PaletteEntry } from './palette/sources';
 import { FeedbackAround, FeedbackMenuItem } from './feedback';
-import { AccountName, accountOnApp, paletteOnApp } from './slotStandards';
+import { AccountName, accountOnApp, paletteOnApp, UsageMenuItem } from './slotStandards';
 
 // ── the sidebar ─────────────────────────────────────────────────────────────
 
@@ -47,8 +47,8 @@ export const ACCOUNT_SESSION = slot<AccountSession>('shell.account.session', acc
 /** First in the account menu: the other place this account works. The standard is this app's developer console. */
 export const ACCOUNT_SWITCH = slot<AccountMenuSwitch | null>('shell.account.switchTo', { label: 'Developers', icon: Code2, to: '/developers' });
 
-/** The account menu's billing rows, under its header. Nothing stands there. */
-export const ACCOUNT_BILLING = slot<ComponentType | null>('shell.account.billing', null);
+/** The account menu's billing rows, under its header. The standard is this app's Usage, what each thing cost. */
+export const ACCOUNT_BILLING = slot<ComponentType | null>('shell.account.billing', UsageMenuItem);
 
 /** The account menu's rows of the host's own, above Community (a support chat). The standard sends NoClick feedback
  *  through the platform API (feedback.tsx). */
