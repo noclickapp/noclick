@@ -301,20 +301,42 @@ class WorkflowBuildResult:
     workflow's ``steps`` as they now stand, and, when it published the
     workflow's app, ``published`` (``{state, url}``: ``state`` is
     ``published``, ``renamed`` or ``unpublished``; unpublished, its
-    ``trash_id`` restores it until ``restorable_until``)."""
+    ``trash_id`` restores it until ``restorable_until``).
+
+    Beside the builder's words, facts no model wrote: whether it ``built``
+    anything (``False``: the workflow is as it was, whatever ``summary``
+    says), the ``version`` it ended on (what ``edit(if_version=...)`` takes),
+    its ``readiness`` as ``Workflow.readiness`` reads it (``status``,
+    ``meaning``, ``issues``, ``warnings``, ``unverified``), and each step's
+    verdict by step id (``verdicts``: ``config_valid``, ``validation_error``,
+    ``missing_required``, as an edit answers them). ``sent_back`` counts the
+    times the build went back to the builder for settings the run engine
+    rejects (at most 2) before it finished. A fact NoClick couldn't read is
+    ``None`` and named in ``unread``: then nothing says the workflow is
+    ready."""
 
     workflow_id: Optional[str]
     summary: Optional[str]
     steps: List[WorkflowStep]
     app_url: Optional[str]
     published: Optional[Dict[str, Any]] = None
+    built: Optional[bool] = None
+    version: Optional[int] = None
+    readiness: Optional[Dict[str, Any]] = None
+    verdicts: Optional[Dict[str, Dict[str, Any]]] = None
+    sent_back: int = 0
+    unread: List[str] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowBuildResult":
         raw = raw if isinstance(raw, dict) else {}
+        readiness, verdicts = raw.get("readiness"), raw.get("verdicts")
         return cls(raw.get("workflow_id"), raw.get("summary"), [WorkflowStep._from(s) for s in raw.get("steps") or []],
-                   raw.get("app_url"), raw.get("published"), raw)
+                   raw.get("app_url"), raw.get("published"), built=raw.get("built"), version=raw.get("version"),
+                   readiness=dict(readiness) if isinstance(readiness, dict) else None,
+                   verdicts=dict(verdicts) if isinstance(verdicts, dict) else None,
+                   sent_back=int(raw.get("sent_back") or 0), unread=list(raw.get("unread") or []), raw=raw)
 
 
 @dataclass(frozen=True)

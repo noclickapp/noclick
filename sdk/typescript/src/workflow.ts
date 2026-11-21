@@ -427,6 +427,14 @@ export interface BuildQuestion {
  * A finished build: what the builder says it did (`summary`), the workflow's `steps` as they now
  * stand, and, when it published the workflow's app, `published` (`state` is `published`,
  * `renamed` or `unpublished`; unpublished, `trashId` restores it until `restorableUntil`).
+ *
+ * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
+ * workflow is as it was, whatever `summary` says), the `version` it ended on (what
+ * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, as an
+ * edit answers them). `sentBack` counts the times the build went back to the builder for settings
+ * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
+ * named in `unread`: then nothing says the workflow is ready.
  */
 export interface WorkflowBuildResult {
   workflowId: string | null;
@@ -434,6 +442,12 @@ export interface WorkflowBuildResult {
   steps: WorkflowStep[];
   appUrl: string | null;
   published: { state: string; url: string | null; trashId: string | null; restorableUntil: string | null } | null;
+  built: boolean | null;
+  version: number | null;
+  readiness: WorkflowReadiness | null;
+  verdicts: Record<string, JsonObject> | null;
+  sentBack: number;
+  unread: string[];
   raw: JsonObject;
 }
 
@@ -478,14 +492,33 @@ function toQuestion(value: unknown): BuildQuestion {
   };
 }
 
+function toReadiness(value: unknown): WorkflowReadiness {
+  const raw = asObject(value);
+  return {
+    status: str(raw.status) ?? "",
+    meaning: str(raw.meaning) ?? "",
+    issues: Array.isArray(raw.issues) ? (raw.issues as WorkflowReadiness["issues"]) : [],
+    warnings: Array.isArray(raw.warnings) ? (raw.warnings as WorkflowReadiness["warnings"]) : [],
+    unverified: Array.isArray(raw.unverified) ? (raw.unverified as WorkflowReadiness["unverified"]) : [],
+  };
+}
+
 function toBuildResult(value: unknown): WorkflowBuildResult {
   const raw = asObject(value);
+  const verdicts: Record<string, JsonObject> = {};
+  for (const [id, verdict] of Object.entries(asObject(raw.verdicts))) verdicts[id] = asObject(verdict);
   return {
     workflowId: str(raw.workflow_id),
     summary: str(raw.summary),
     steps: Array.isArray(raw.steps) ? raw.steps.map(toStep) : [],
     appUrl: str(raw.app_url),
     published: raw.published && typeof raw.published === "object" ? toPublished(asObject(raw.published)) : null,
+    built: typeof raw.built === "boolean" ? raw.built : null,
+    version: typeof raw.version === "number" ? raw.version : null,
+    readiness: raw.readiness && typeof raw.readiness === "object" ? toReadiness(raw.readiness) : null,
+    verdicts: raw.verdicts && typeof raw.verdicts === "object" ? verdicts : null,
+    sentBack: typeof raw.sent_back === "number" ? raw.sent_back : 0,
+    unread: Array.isArray(raw.unread) ? raw.unread.filter((name): name is string => typeof name === "string") : [],
     raw,
   };
 }
@@ -1705,14 +1738,7 @@ export class Workflow extends ApiObject {
   }
   /** Whether it's set up to run, what its status means, and the issues in the way. */
   get readiness(): WorkflowReadiness {
-    const raw = asObject(this._field<unknown>("readiness"));
-    return {
-      status: str(raw.status) ?? "",
-      meaning: str(raw.meaning) ?? "",
-      issues: Array.isArray(raw.issues) ? (raw.issues as WorkflowReadiness["issues"]) : [],
-      warnings: Array.isArray(raw.warnings) ? (raw.warnings as WorkflowReadiness["warnings"]) : [],
-      unverified: Array.isArray(raw.unverified) ? (raw.unverified as WorkflowReadiness["unverified"]) : [],
-    };
+    return toReadiness(this._field<unknown>("readiness"));
   }
   /** The URLs it answers at. */
   get urls(): WorkflowUrl[] {

@@ -106,6 +106,40 @@ test("a new question throws, and one nextQuestion already returned does not", as
   assert.equal((await build.wait()).steps[0]?.id, "daily");
 });
 
+test("a finished build carries facts beside the builder's words", async () => {
+  const { api } = setup();
+  const readiness = {
+    status: "needs_setup", meaning: "Something is in the way.", warnings: [], unverified: [],
+    issues: [{ step: "mail", code: "invalid_config", message: "Email the brief: to is required" }],
+  };
+  const facts = {
+    ...RESULT, built: true, version: 7, readiness, sent_back: 2, unread: [],
+    verdicts: { daily: { config_valid: true }, mail: { config_valid: false, missing_required: ["to"] } },
+  };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  api.on("GET", "/v1/operations/op_b/wait", json(building({ status: "succeeded", result: facts })),
+    json(building({ status: "succeeded", result: RESULT })));
+  const result = await (await nc.Workflow.fromId("wf_1").build("Email it to the team too")).wait();
+  assert.deepEqual([result.built, result.version, result.sentBack, result.unread], [true, 7, 2, []]);
+  assert.equal(result.readiness?.status, "needs_setup");
+  assert.equal(result.readiness?.issues[0]?.step, "mail");
+  assert.deepEqual(result.verdicts?.mail, { config_valid: false, missing_required: ["to"] });
+  // A result from before facts were carried says none of them.
+  const older = await (await nc.Workflow.fromId("wf_1").build("Again")).wait();
+  assert.deepEqual([older.built, older.version, older.readiness, older.verdicts, older.sentBack, older.unread],
+    [null, null, null, null, 0, []]);
+});
+
+test("facts that weren't read are null and named", async () => {
+  const { api } = setup();
+  const unread = { ...RESULT, built: null, version: null, readiness: null, verdicts: null, sent_back: 0, unread: ["built", "version", "readiness", "verdicts"] };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  api.on("GET", "/v1/operations/op_b/wait", json(building({ status: "succeeded", result: unread })));
+  const result = await (await nc.Workflow.fromId("wf_1").build("Email it to the team too")).wait();
+  assert.equal(result.readiness, null);
+  assert.deepEqual(result.unread, ["built", "version", "readiness", "verdicts"]);
+});
+
 test("steps come with one workflow, and delete trashes it", async () => {
   const { api } = setup();
   api.on("GET", "/v1/workflows/wf_1", json({ ...WORKFLOW, steps: STEPS }));
