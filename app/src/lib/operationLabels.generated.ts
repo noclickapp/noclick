@@ -596,6 +596,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_files_delete": ["Delete Workflow File", "DELETE", "destructive"],
     "workflows_files_list": ["List Workflow Files", "GET", "read"],
     "workflows_folders_create": ["Create Workflow Folder", "POST", "write"],
+    "workflows_folders_delete": ["Delete Workflow Folder", "DELETE", "write"],
     "workflows_folders_list": ["List Workflow Folders", "GET", "read"],
     "workflows_get": ["Get Workflow", "GET", "read"],
     "workflows_graph": ["Get Workflow Graph", "GET", "read"],

@@ -710,3 +710,32 @@ def test_a_step_by_name_through_from_name_loads_the_workflow_once(api, client):
     workflow.step("writer").connect("post")
     assert lookup.call_count == 1 and route.call_count == 2
     assert lookup.calls.last.request.url.params["name"] == "Order intake"
+
+
+def test_an_edit_that_settles_waits_and_says_what_its_writes_left(api, client):
+    hook = {**HOOK, "config": {"label": "Hook", "webhook_url": "https://wf.noclick.run/hook"}}
+    route = api.post(EDITS).respond(json={
+        **edited(5, [{"op": "add_step", "id": "hook"}], graph=bare(hook, edges=[])), "settled": True,
+        "unregistered": {"stripe": "Finish setup before activation: connect a Stripe account."},
+        "warnings": ["Your Gmail account won't work in this workflow's automatic runs."]})
+    workflow = nc.Workflow.from_id(WF)
+    with workflow.edit(settle=True, include_graph=True) as e:
+        e.add_step("trigger-webhook", id="hook", name="Hook")
+    assert body(route.calls.last.request)["settle"] is True
+    assert e.result.settled is True and e.result.unregistered == {
+        "stripe": "Finish setup before activation: connect a Stripe account."}
+    assert e.result.warnings == ["Your Gmail account won't work in this workflow's automatic runs."]
+    assert e.result.graph.step("hook").settings["webhook_url"] == "https://wf.noclick.run/hook"
+    # Without settle the field isn't sent, and an answer without them reads as none.
+    route = api.post(EDITS).respond(json=edited(6, [{"op": "update_step", "id": "hook"}]))
+    with workflow.edit() as e:
+        e.update_step("hook", name="Order placed")
+    assert "settle" not in body(route.calls.last.request)
+    assert (e.result.settled, e.result.unregistered, e.result.warnings) == (None, {}, [])
+
+
+def test_settle_waits_for_what_earlier_edits_set_going_and_changes_nothing(api, client):
+    route = api.post(EDITS).respond(json={**edited(5, [], changed=False), "settled": False, "unregistered": {}})
+    settled = nc.Workflow.from_id(WF).settle()
+    assert body(route.calls.last.request) == {"ops": [], "settle": True}
+    assert settled.settled is False and settled.changed is False

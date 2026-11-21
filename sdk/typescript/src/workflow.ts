@@ -804,6 +804,13 @@ export interface EditOptions {
   origin?: string;
   /** In a browser, send the batch so it outlives the page (a closing tab's last save; `RequestOptions.keepalive`). */
   keepalive?: boolean;
+  /**
+   * `true`: wait, up to 30 seconds, for what the batch sets going (a trigger's registration: its webhook, its
+   * schedule, its inbox; a removed step's teardown) before the answer: `settled` says whether it finished in time,
+   * the graph (with `includeGraph`) carries what it wrote on the steps (a trigger's `webhook_url`), and
+   * `unregistered` names, by step, why each trigger it left unregistered can't be registered yet.
+   */
+  settle?: boolean;
 }
 
 /** What `Workflow.update` changes; a field left out is never touched. */
@@ -845,7 +852,10 @@ export interface NameVersionOptions {
  * `config_valid`, `validation_error`, `missing_required`, `agent_credential_hint`, and `references`: each read of
  * another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
- * history a restore put back.
+ * history a restore put back. `warnings` say what an edit did that won't work as it may look (a workspace member's
+ * own connection given to a team workflow's step, which its owner's automatic runs can't use). An edit sent with
+ * `settle` also says whether what it set going finished in time (`settled`) and, by step, why each trigger it left
+ * unregistered can't be registered yet (`unregistered`).
  */
 export interface WorkflowEdit {
   workflowId: string;
@@ -857,6 +867,9 @@ export interface WorkflowEdit {
   steps: Record<string, JsonObject>;
   graph: WorkflowGraph | null;
   restoredFrom: number | null;
+  warnings: string[];
+  settled: boolean | null;
+  unregistered: Record<string, string>;
   raw: JsonObject;
 }
 
@@ -1141,6 +1154,9 @@ function toWorkflowEdit(value: unknown, workflow: Workflow): WorkflowEdit {
     steps,
     graph: definitionOf(raw, workflow),
     restoredFrom: numberOrNull(raw.restored_from),
+    warnings: Array.isArray(raw.warnings) ? raw.warnings.map(String) : [],
+    settled: typeof raw.settled === "boolean" ? raw.settled : null,
+    unregistered: Object.fromEntries(Object.entries(asObject(raw.unregistered)).map(([k, v]) => [k, String(v)])),
     raw,
   };
 }
@@ -1841,14 +1857,19 @@ export class Workflow extends ApiObject {
     return await Workflow.fromId(workflowId, options).hydrate();
   }
 
-  /** The workflows your account can open (its own and those shared with it), most recently changed first; `q` is a prefix of the name. */
-  static async list(options: { q?: string; limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
-    return await listAll({ ...options, path: "/v1/workflows", user: null, query: { q: options.q } }, (raw) => new Workflow({ raw, client: options.client }));
+  /**
+   * The workflows your account can open (its own and those shared with it), most recently changed first; `q` is a
+   * prefix of the name, `search` text its name or description holds (in any case).
+   */
+  static async list(options: { q?: string; search?: string; limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
+    return await listAll({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+      (raw) => new Workflow({ raw, client: options.client }));
   }
 
   /** One page of workflows; pass `nextCursor` back as `cursor`. */
-  static async listPage(options: PageOptions & { q?: string; client?: NoClick } = {}): Promise<Page<Workflow>> {
-    return await listPage({ ...options, path: "/v1/workflows", user: null, query: { q: options.q } }, (raw) => new Workflow({ raw, client: options.client }));
+  static async listPage(options: PageOptions & { q?: string; search?: string; client?: NoClick } = {}): Promise<Page<Workflow>> {
+    return await listPage({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+      (raw) => new Workflow({ raw, client: options.client }));
   }
 
   get id(): string {
@@ -1964,6 +1985,21 @@ export class Workflow extends ApiObject {
       json: compact({ name, description: options.description, parent_id: folderIdOf(options.parent ?? null) }),
       user: null,
     });
+    return toFolder(asObject(raw));
+  }
+
+  /**
+   * Delete one of your account's folders (a folder or its id), as the app does: the workflows in it move to its parent
+   * (the top, for one at the top) and the folders in it go with it, their workflows moving to the top. No workflow is
+   * deleted. Answers the folder as it was.
+   *
+   *     for (const folder of await Workflow.folders()) {
+   *       if (folder.workflowCount === 0) await Workflow.deleteFolder(folder);
+   *     }
+   */
+  static async deleteFolder(folder: WorkflowFolder | string, options: { client?: NoClick } = {}): Promise<WorkflowFolder> {
+    const raw = await resolveClient(options.client).request(
+      "DELETE", `/v1/workflows/folders/${encodeURIComponent(folderIdOf(folder) ?? "")}`, { user: null });
     return toFolder(asObject(raw));
   }
 
@@ -2092,7 +2128,7 @@ export class Workflow extends ApiObject {
       raw = await this._request("POST", `${path}/edits`, {
         json: compact({
           ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source,
-          origin: options.origin,
+          origin: options.origin, settle: options.settle || undefined,
         }),
         keepalive: options.keepalive,
       });
@@ -2185,6 +2221,19 @@ export class Workflow extends ApiObject {
     const batch = new EditBatch(this, options);
     await build(batch);
     return await batch._send();
+  }
+
+  /**
+   * Wait, up to 30 seconds, for what earlier edits set going (their triggers' registrations, removed steps'
+   * teardowns), changing nothing, as an edit with `settle` waits for its own: `settled` says whether it finished in
+   * time, `unregistered` (by step) why each trigger left unregistered can't be yet, and with `includeGraph` the answer
+   * carries the workflow as that left it.
+   *
+   *     const settled = await brief.settle({ includeGraph: true });
+   *     console.log(settled.graph?.step("hook").settings.webhook_url);
+   */
+  async settle(options: { includeGraph?: boolean } = {}): Promise<WorkflowEdit> {
+    return await this._send([], { includeGraph: options.includeGraph, settle: true });
   }
 
   /**

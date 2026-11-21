@@ -1403,7 +1403,11 @@ class WorkflowEdit:
     ``agent_credential_hint``, and ``references``: each read of another step's output that
     won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
-    the version of its history a restore put back."""
+    the version of its history a restore put back. ``warnings`` say what an edit did that
+    won't work as it may look (a workspace member's own connection given to a team
+    workflow's step, which its owner's automatic runs can't use). An edit sent with
+    ``settle`` also says whether what it set going finished in time (``settled``) and, by
+    step, why each trigger it left unregistered can't be registered yet (``unregistered``)."""
 
     workflow_id: str
     version: int
@@ -1414,6 +1418,9 @@ class WorkflowEdit:
     steps: Dict[str, Dict[str, Any]]
     graph: Optional[WorkflowGraph]
     restored_from: Optional[int] = None
+    warnings: List[str] = dc_field(default_factory=list)
+    settled: Optional[bool] = None
+    unregistered: Dict[str, str] = dc_field(default_factory=dict)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -1424,7 +1431,9 @@ class WorkflowEdit:
             history_version=raw.get("history_version"), changed=bool(raw.get("changed")), summary=raw.get("summary"),
             results=[dict(r) for r in raw.get("results") or []],
             steps={str(k): dict(v) for k, v in (raw.get("steps") or {}).items()},
-            graph=_definition(raw, workflow), restored_from=raw.get("restored_from"), raw=raw,
+            graph=_definition(raw, workflow), restored_from=raw.get("restored_from"),
+            warnings=[str(w) for w in raw.get("warnings") or []], settled=raw.get("settled"),
+            unregistered={str(k): str(v) for k, v in (raw.get("unregistered") or {}).items()}, raw=raw,
         )
 
 
@@ -1530,13 +1539,14 @@ class EditBatch:
 
     @classmethod
     def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool,
-            source: Optional[str] = None, origin: Optional[str] = None) -> "EditBatch":
+            source: Optional[str] = None, origin: Optional[str] = None, settle: bool = False) -> "EditBatch":
         batch = cls.__new__(cls)
         batch._workflow = workflow
         batch._if_version = if_version
         batch._include_graph = include_graph
         batch._source = source
         batch._origin = origin
+        batch._settle = settle
         batch._ops = []
         batch._added = []
         batch._result = None
@@ -1564,7 +1574,7 @@ class EditBatch:
         if not self._ops:
             return None
         edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph,
-                                          source=self._source, origin=self._origin)
+                                          source=self._source, origin=self._origin, settle=self._settle)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1967,10 +1977,12 @@ class Workflow(_Object):
     @synced
     @classmethod
     async def list(
-        cls, *, q: Optional[str] = None, limit: Optional[int] = None, client: Optional[Client] = None,
+        cls, *, q: Optional[str] = None, search: Optional[str] = None, limit: Optional[int] = None,
+        client: Optional[Client] = None,
     ) -> List["Workflow"]:
         """Your account's workflows, most recently changed first. ``q`` is a
-        case-insensitive prefix of the name.
+        case-insensitive prefix of the name; ``search``, text its name or
+        description holds, in any case.
 
         Returns:
             Every matching workflow, fetched page by page (or the first ``limit``).
@@ -1982,14 +1994,14 @@ class Workflow(_Object):
         """
         return await list_all(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q}, user=None, limit=limit, client=client,
+            params={"q": q, "search": search}, user=None, limit=limit, client=client,
         )
 
     @synced
     @classmethod
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, q: Optional[str] = None,
-        client: Optional[Client] = None,
+        search: Optional[str] = None, client: Optional[Client] = None,
     ) -> Page:
         """One page of workflows; pass ``next_cursor`` back as ``cursor``.
 
@@ -2004,7 +2016,7 @@ class Workflow(_Object):
         """
         return await list_page(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q}, user=None, cursor=cursor, limit=limit, client=client,
+            params={"q": q, "search": search}, user=None, cursor=cursor, limit=limit, client=client,
         )
 
     @synced
@@ -2048,6 +2060,26 @@ class Workflow(_Object):
         raw = await resolve_client(client).request(
             "POST", "/v1/workflows/folders",
             json=compact(name=name, description=description, parent_id=_folder_id(parent)), user=None)
+        return WorkflowFolder._from(raw)
+
+    @synced
+    @classmethod
+    async def delete_folder(cls, folder: Union[WorkflowFolder, str], *, client: Optional[Client] = None) -> WorkflowFolder:
+        """Delete one of your account's folders (a ``WorkflowFolder`` or its
+        id), as the app does: the workflows in it move to its parent (the top,
+        for one at the top) and the folders in it go with it, their workflows
+        moving to the top. No workflow is deleted.
+
+        Returns:
+            The folder as it was.
+
+        Usage::
+
+            for folder in noclick.Workflow.folders():
+                if folder.workflow_count == 0:
+                    noclick.Workflow.delete_folder(folder)
+        """
+        raw = await resolve_client(client).request("DELETE", f"/v1/workflows/folders/{_folder_id(folder)}", user=None)
         return WorkflowFolder._from(raw)
 
     @synced
@@ -2176,14 +2208,15 @@ class Workflow(_Object):
 
     async def _send(self, ops: Sequence[Dict[str, Any]], *, if_version: Optional[int] = None,
                     include_graph: bool = False, source: Optional[str] = None,
-                    origin: Optional[str] = None) -> WorkflowEdit:
+                    origin: Optional[str] = None, settle: bool = False) -> WorkflowEdit:
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
         sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin))
+                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin,
+                settle=settle or None))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2310,7 +2343,7 @@ class Workflow(_Object):
         return await self._edit_step(handle, {"op": "move", "id": handle.id, "position": _position(position)})
 
     def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False,
-             source: Optional[str] = None, origin: Optional[str] = None) -> EditBatch:
+             source: Optional[str] = None, origin: Optional[str] = None, settle: bool = False) -> EditBatch:
         """Collect several edits and send them as one batch when the ``with`` block ends:
         they're applied in order and land as one version, or none of them do. With
         ``if_version`` (a version you read: ``version``, ``graph().version``, or the last
@@ -2336,6 +2369,12 @@ class Workflow(_Object):
         first, whoever made them). ``origin`` is a name the sender gives itself (letters, digits,
         ``-`` and ``_``, up to 64; a canvas tab's own id): what the workflow's open canvases hear
         of the write names it, so the canvas that sent it knows the change is its own.
+
+        ``settle=True`` waits, up to 30 seconds, for what the batch sets going (a trigger's
+        registration: its webhook, its schedule, its inbox; a removed step's teardown) before the
+        answer: ``result.settled`` says whether it finished in time, the graph (with
+        ``include_graph``) carries what it wrote on the steps (a trigger's ``webhook_url``), and
+        ``result.unregistered`` names, by step, why each trigger it left unregistered can't be yet.
 
         Returns:
             An ``EditBatch`` to use as a context manager (``async with`` in async code);
@@ -2364,7 +2403,26 @@ class Workflow(_Object):
                     except noclick.Conflict as changed:
                         graph = changed.graph   # the workflow as it stands; decide again from it
         """
-        return EditBatch._of(self, if_version, include_graph, source, origin)
+        return EditBatch._of(self, if_version, include_graph, source, origin, settle)
+
+    @synced
+    async def settle(self, *, include_graph: bool = False) -> WorkflowEdit:
+        """Wait, up to 30 seconds, for what earlier edits set going (their triggers' registrations,
+        removed steps' teardowns), changing nothing, as an edit with ``settle=True`` waits for its own.
+
+        Returns:
+            A ``WorkflowEdit``: ``settled`` (whether it finished in time), ``unregistered`` (by step,
+            why each trigger left unregistered can't be yet) and, with ``include_graph``, the workflow
+            as that left it.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            with brief.edit() as e:
+                e.add_step("trigger-webhook", id="hook", name="Order placed")
+            print(brief.settle(include_graph=True).graph.step("hook").settings["webhook_url"])
+        """
+        return await self._send([], include_graph=include_graph, settle=True)
 
     @synced
     async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
