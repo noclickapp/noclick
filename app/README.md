@@ -114,8 +114,8 @@ Some are drawn by several screens, so they are in `src/ui/slots.ts`:
 | Slot | Where it is | By default |
 |---|---|---|
 | `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, the AI company an AI account is with, and how an account reads in a list (its app and the line telling it apart) | A plain mark, the name read from its type, no company, and an account by the account it reaches, else its own name, else when it was connected |
-| `connect.app` | Connecting an app's account where it's needed (an agent's tools, a trigger's account), with the client of the screen drawing it | NoClick's connect page in a new tab |
-| `connect.model` | Connecting the AI account a model needs, from the model picker | NoClick's connect page in a new tab |
+| `connect.app` | Connecting an app's account where it's needed (an agent's tools, a trigger's account, a workflow step's account pickers, in place under them), and entering an account's values again, with the client of the screen drawing it. Its dialog hands back what lands by both its names: the ref an agent names it by (an account connected in the app's `credential:<id>`, a named connection's name), which an agent's tools are saved with, and the id of the account it holds | NoClick's connect page in a new tab, for a named connection, where an account is also connected again: nothing here takes an account's values |
+| `connect.model` | Connecting the AI account a model needs, from the model picker or an agent step's account pickers, handing back what lands by the same two names: the model picker picks its ref, the step keeps the account it holds | NoClick's connect page in a new tab, for a named connection |
 
 Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 
@@ -179,6 +179,18 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.account.around` | Around the account row (what opens over it) | The feedback dialog that row opens |
 | `shell.banner` | A strip across the top of the page | Nothing |
 | `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
+
+The workflow canvas's (`src/screens/canvas/slots.ts`): the canvas isn't one of this app's pages yet, and these are the
+parts of it only a host has. Connecting the account a step or an agent needs is the shared `connect.app` and
+`connect.model`.
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `canvas.builder` | Beside the canvas (over it on a phone): building the workflow by asking for it | A build of the open workflow (`Workflow.build`), its question answered on NoClick, then what it did |
+| `canvas.presence` | Other people editing it live: their pointers, selections and unsaved moves | Nobody else: others' changes arrive once they're saved |
+| `canvas.interface` | The Interface tab: the workflow's forms, tables and chats as a page | A note that it's laid out and published on NoClick, with the workflow's link there |
+| `canvas.agentChat` | An agent step's chat, a block of the Interface tab | A note that the agent is talked to on NoClick, with the link |
+| `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
 
 Work's are listed under [Work](#work).
 
