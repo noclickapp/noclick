@@ -786,8 +786,8 @@ uplisting upload-post uploadcare upstash-vector uptimecom uptimerobot urable url
 userback usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway
 vervoe veryfi vibe video video-db videoupscaler vimeo viral-loops virtuous-crm virustotal visma-eaccounting
 visualping visualstudio vocal-video voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete
-waiverfile walcu-crm wati wayfront weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow
-webscraper-io webscraping-ai websupport weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel
+waiverfile walcu-crm wallsio wati wayfront weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex
+webflow webscraper-io webscraping-ai websupport weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel
 whatsable-ca185063 whatsapp wheelbase when-i-work whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo
 wistia wiza wodify-core wolfram-alpha-api woop-social word wordnik wordpress workable workiz workos workvivo wowza
 writer xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme yousearch youtrack youtrust youtube
