@@ -160,3 +160,43 @@ async def step_type(name: str, *, client: Optional[Client] = None) -> StepType:
     """
     raw = await resolve_client(client).request("GET", f"/v1/step_types/{path_segment(name)}", user=None)
     return StepType._from(raw)
+
+
+@dataclass(frozen=True)
+class StepOutputShape:
+    """What a step of a type outputs, as your account's own runs and events of it showed it
+    (and those of people in a workspace with you), never another account's: ``shape``, its
+    fields' names and types, with ``suggested_refs``, the few references worth offering first
+    (``None`` until they're made). ``shape`` is ``None`` until your first run or event of it."""
+
+    type: str
+    operation: str
+    shape: Optional[Dict[str, Any]]
+    suggested_refs: Optional[List[Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "StepOutputShape":
+        refs = raw.get("suggested_refs")
+        return cls(raw["type"], raw["operation"], raw.get("shape"), list(refs) if isinstance(refs, list) else None,
+                   raw)
+
+
+@synced
+async def step_output_shape(name: str, *, operation: Optional[str] = None,
+                            client: Optional[Client] = None) -> StepOutputShape:
+    """What a step of type ``name`` outputs (its ``operation``'s, for a type with several),
+    learned from your account's own runs: the fields a later step's settings can reference,
+    as the app's canvas offers them. Needs the ``workflows`` scope.
+
+    Returns:
+        The ``StepOutputShape``; an unknown type raises ``noclick.NotFound`` naming the nearest.
+
+    Usage::
+
+        found = noclick.step_output_shape("automation-hubspot", operation="get_contact")
+        print(list((found.shape or {}).get("properties", {})))
+    """
+    raw = await resolve_client(client).request(
+        "GET", f"/v1/step_types/{path_segment(name)}/output_shape", params={"operation": operation}, user=None)
+    return StepOutputShape._from(raw)

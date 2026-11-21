@@ -160,3 +160,39 @@ export async function stepType(name: string, options: { client?: NoClick } = {})
   });
   return toStepType(asObject(raw));
 }
+
+/**
+ * What a step of a type outputs, as your account's own runs and events of it showed it (and those of people in a
+ * workspace with you), never another account's: `shape`, its fields' names and types, with `suggestedRefs`, the few
+ * references worth offering first (null until they're made). `shape` is null until your first run or event of it.
+ */
+export interface StepOutputShape {
+  type: string;
+  operation: string;
+  shape: JsonObject | null;
+  suggestedRefs: unknown[] | null;
+  raw: JsonObject;
+}
+
+/**
+ * What a step of type `name` outputs (its `operation`'s, for a type with several), learned from your account's own runs:
+ * the fields a later step's settings can reference, as the app's canvas offers them. Needs the `workflows` scope.
+ *
+ *     const { shape } = await stepOutputShape("automation-hubspot", { operation: "get_contact" });
+ *     console.log(Object.keys(shape?.properties ?? {}));
+ */
+export async function stepOutputShape(
+  name: string,
+  options: { operation?: string; client?: NoClick } = {},
+): Promise<StepOutputShape> {
+  const raw = asObject(await resolveClient(options.client).request(
+    "GET", `/v1/step_types/${encodeURIComponent(name)}/output_shape`, { query: { operation: options.operation }, user: null },
+  ));
+  return {
+    type: String(raw.type),
+    operation: String(raw.operation),
+    shape: raw.shape ? asObject(raw.shape) : null,
+    suggestedRefs: Array.isArray(raw.suggested_refs) ? raw.suggested_refs : null,
+    raw,
+  };
+}

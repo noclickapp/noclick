@@ -142,7 +142,9 @@ from .repo import Branch, Commit, CommitDiff, FileChange, Repo, RepoBackup, Repo
 from .sandbox import ExecResult, Sandbox, SandboxFiles
 from .secret import Secret
 from .session import Session
-from .step_type import StepType, StepTypeConnection, StepTypeOperation, step_type, step_types
+from .step_type import (
+    StepOutputShape, StepType, StepTypeConnection, StepTypeOperation, step_output_shape, step_type, step_types,
+)
 from .tool_call import ToolCall, ToolCallSummary
 from .trash import TrashItem
 from .toolkit import Toolkit, ToolResult
@@ -162,8 +164,9 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, EditBatch, RunStep, Step, StepOutput, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit,
-    WorkflowEndpoint, WorkflowGraph, WorkflowRun, WorkflowStep, WorkflowVersion,
+    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepOutput, Workflow,
+    WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint, WorkflowGraph, WorkflowRun, WorkflowRunCounts,
+    WorkflowStep, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
@@ -233,6 +236,8 @@ __all__ = [
     "WorkflowStep", "WorkflowApproval",
     "WorkflowGraph", "Step", "EditBatch", "WorkflowEdit", "WorkflowVersion", "WorkflowFile", "WorkflowTable", "TableRow",
     "RowsPage", "step_types", "step_type", "StepType", "StepTypeOperation", "StepTypeConnection",
+    "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "ExpressionPreview",
+    "ClearedStepState",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",

@@ -205,14 +205,15 @@ export type {
 } from "./webhook.ts";
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
-  AddNoteOptions, AddStepOptions, BuildQuestion, EditOptions, GraphEdge, Position, PublishOptions, RunStep,
+  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, EditOptions, ExpressionPreview, GraphEdge,
+  LatestOutputs, Position, PublishOptions, RunStep,
   StepConnection, StepOutput, StepOutputOptions, StepRef, StepTrigger, StepUpdate, WorkflowBuildResult, WorkflowEdge,
   WorkflowEdit,
-  WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunOptions, WorkflowRunStatus, WorkflowStep,
-  WorkflowUpdate, WorkflowUrl, WorkflowVersion,
+  WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunCounts, WorkflowRunOptions, WorkflowRunStatus,
+  WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
-export { stepType, stepTypes } from "./stepType.ts";
-export type { StepType, StepTypeConnection, StepTypeKind, StepTypeOperation } from "./stepType.ts";
+export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
+export type { StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation } from "./stepType.ts";
 export { WorkflowApproval } from "./workflowApproval.ts";
 export type {
   WorkflowApprovalAnswer, WorkflowApprovalField, WorkflowApprovalListOptions, WorkflowApprovalStatus,

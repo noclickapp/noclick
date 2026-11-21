@@ -24,7 +24,9 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
-import { ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, parseTime, refId, str } from "./object.ts";
+import {
+  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, parseTime, readScope, refId, str,
+} from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
@@ -174,6 +176,91 @@ export interface StepOutputOptions extends CallOptions {
   path?: string;
   full?: boolean;
   iteration?: number;
+}
+
+/**
+ * How many runs `Workflow.runs` lists (`Workflow.runCounts`): the `total`, `byStatus` (`running`, `succeeded`,
+ * `failed`, each there even at 0) and `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with
+ * runs). A run from code counts once, however many executions it spans.
+ */
+export interface WorkflowRunCounts {
+  workflowId: string;
+  total: number;
+  byStatus: Record<WorkflowRunStatus, number>;
+  bySource: Record<string, number>;
+  raw: JsonObject;
+}
+
+/**
+ * Each step's latest output, whatever run it's from (`Workflow.latestOutputs`): `outputs` by step id, each cut short
+ * as a run's steps are unless read `full` (`truncated` names the steps cut), never a secret (`withheld`: each step's
+ * paths left out). A step that never stored one isn't in `outputs`.
+ */
+export interface LatestOutputs {
+  workflowId: string;
+  outputs: JsonObject;
+  withheld: Record<string, string[]>;
+  full: boolean;
+  truncated: string[];
+  raw: JsonObject;
+}
+
+/**
+ * What an expression gives (`Step.previewExpression`): `ok`, with the value's `kind` (`object`, `array`, `string`,
+ * `number`, `boolean`, `null`), an object's `keys` and a short `preview`; or `ok` false with the `error`.
+ */
+export interface ExpressionPreview {
+  ok: boolean;
+  kind: string | null;
+  keys: string[] | null;
+  preview: string | null;
+  error: string | null;
+  raw: JsonObject;
+}
+
+/** What `Step.clearState` forgot: how many of its state records and of its conversations were deleted. */
+export interface ClearedStepState {
+  stepId: string;
+  stateRowsDeleted: number;
+  conversationsDeleted: number;
+  raw: JsonObject;
+}
+
+function toRunCounts(value: unknown): WorkflowRunCounts {
+  const raw = asObject(value);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    total: Number(raw.total ?? 0),
+    byStatus: { running: 0, succeeded: 0, failed: 0, ...(asObject(raw.by_status) as Record<string, number>) },
+    bySource: { ...(asObject(raw.by_source) as Record<string, number>) },
+    raw,
+  };
+}
+
+function toLatestOutputs(value: unknown): LatestOutputs {
+  const raw = asObject(value);
+  const withheld: Record<string, string[]> = {};
+  for (const [step, paths] of Object.entries(asObject(raw.withheld))) withheld[step] = asList(paths).map(String);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    outputs: asObject(raw.outputs),
+    withheld,
+    full: raw.full === true,
+    truncated: asList(raw.truncated).map(String),
+    raw,
+  };
+}
+
+function toExpressionPreview(value: unknown): ExpressionPreview {
+  const raw = asObject(value);
+  return {
+    ok: raw.ok === true,
+    kind: str(raw.kind),
+    keys: Array.isArray(raw.keys) ? raw.keys.map(String) : null,
+    preview: str(raw.preview),
+    error: str(raw.error),
+    raw,
+  };
 }
 
 function toEndpoint(value: unknown): WorkflowEndpoint {
@@ -949,6 +1036,40 @@ export class Step extends ApiObject {
     });
     return toStepOutput(raw);
   }
+
+  /**
+   * What an expression in one of the step's settings gives, evaluated as a run evaluates it (what goes inside `{{ }}`,
+   * like `$('hook').order_id` or `$json.items.length`), as the app's editor previews it while you type. It's evaluated
+   * against what every other step last stored (never a secret, so an expression reaching one finds nothing there),
+   * or against `samples`, each step's output by step id (`vars` the workflow's variables). `$json` is the step's one
+   * input's output, when it has one. Changes nothing; an expression that fails resolves with `ok` false and its
+   * `error`.
+   */
+  async previewExpression(expression: string, options: CallOptions & { samples?: JsonObject } = {}): Promise<ExpressionPreview> {
+    const { samples, client, user } = options;
+    const raw = await (client ?? this._api).request("POST", `${await this._workflow._stepPath(this.id)}/expression`, {
+      json: { expression, ...compact({ samples }) },
+      user,
+    });
+    return toExpressionPreview(raw);
+  }
+
+  /**
+   * Forget what the step keeps between runs, as the app's Clear state does: its state (an RSS step's seen items, a
+   * State step's values) and its conversations (an agent step's threads), so its next run starts fresh. Clearing an
+   * agent step deletes its conversations for good: a deletion, which through MCP waits for your account's owner (preview
+   * it with `POST /v1/delete_previews`). Takes what changing the workflow takes, and always acts for your account, never
+   * one of your users: an agent step's threads are every user's.
+   */
+  async clearState(): Promise<ClearedStepState> {
+    const raw = asObject(await this._api.request("POST", `${await this._workflow._stepPath(this.id)}/clear_state`, { user: null }));
+    return {
+      stepId: str(raw.step_id) ?? this.id,
+      stateRowsDeleted: Number(raw.state_rows_deleted ?? 0),
+      conversationsDeleted: Number(raw.conversations_deleted ?? 0),
+      raw,
+    };
+  }
 }
 
 /**
@@ -1379,9 +1500,14 @@ export class Workflow extends ApiObject {
     return `/v1/workflows/${typeof id === "string" ? id : (await this._ensure()).id}`;
   }
 
+  /** @internal Where one of its steps is. */
+  async _stepPath(stepId: string): Promise<string> {
+    return `${await this.path()}/steps/${stepId}`;
+  }
+
   /** @internal Where one of its steps' outputs are read. */
   async _stepOutputsPath(stepId: string): Promise<string> {
-    return `${await this.path()}/steps/${stepId}/outputs`;
+    return `${await this._stepPath(stepId)}/outputs`;
   }
 
   // --- its graph --------------------------------------------------------
@@ -1650,9 +1776,54 @@ export class Workflow extends ApiObject {
     return await listAll({ ...read, client: read.client ?? this._client, path, query: { status: csv(status) }, limit }, (raw) => toWorkflowRun(raw));
   }
 
-  /** One run, with what each step did (`steps`: status, error and output, in order); an unknown id throws `NotFound`. */
+  /**
+   * One run, with what each step did (`steps`: status, error and output, in order); an unknown id throws `NotFound`.
+   * While it runs, each step reads as it moves (`running`, then how it ended with its output); `watch` says when, with a
+   * `workflow_run` change naming the run (`change` `step` when a step moved, `run` when it started or ended).
+   */
   async getRun(runId: string): Promise<WorkflowRun> {
     return toWorkflowRun(await this._request("GET", `${await this.path()}/runs/${runId}`));
+  }
+
+  /**
+   * Stop a run that's running, however it started, as the app's stop does: the step it's on stops at once and nothing
+   * after it runs. A run from code is its operation's cancel (the operation reads `canceled`). Takes what starting one
+   * takes; inside `asUser` (or with `user`) only that user's runs. Resolves to the run once it stopped (or as it stands
+   * after a few seconds). A run that already ended throws `Conflict`, as does any other that waits with nothing running
+   * (an approval, a delay).
+   */
+  async stopRun(runId: string, options: CallOptions = {}): Promise<WorkflowRun> {
+    const raw = await (options.client ?? this._api).request("POST", `${await this.path()}/runs/${runId}/stop`, {
+      user: options.user,
+    });
+    return toWorkflowRun(raw);
+  }
+
+  /**
+   * How many runs `runs()` lists: in all, `byStatus` and `bySource`. Outside `asUser` you count the runs recorded for
+   * your account; `userFilter` counts your users'.
+   */
+  async runCounts(options: ReadOptions = {}): Promise<WorkflowRunCounts> {
+    const { user, userId } = await readScope(options);
+    const raw = await (options.client ?? this._api).request("GET", `${await this.path()}/runs/counts`, {
+      query: { user_id: userId },
+      user,
+    });
+    return toRunCounts(raw);
+  }
+
+  /**
+   * Each step's latest output, whatever run it's from, as the app's canvas shows the workflow when it opens: cut short
+   * as a run's steps are unless `full`, never a secret. `steps` reads only those steps' (their ids). Inside `asUser`
+   * (or with `user`) only that user's runs are read.
+   */
+  async latestOutputs(options: CallOptions & { steps?: readonly StepRef[]; full?: boolean } = {}): Promise<LatestOutputs> {
+    const { steps, full, client, user } = options;
+    const raw = await (client ?? this._api).request("GET", `${await this.path()}/outputs`, {
+      query: { steps: steps?.length ? steps.map(stepId).join(",") : undefined, full: full ? "true" : undefined },
+      user,
+    });
+    return toLatestOutputs(raw);
   }
 
   /**

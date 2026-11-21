@@ -28,7 +28,7 @@ import { checkedSocketUrl, spread } from "./sockets.ts";
 
 /** What `watch` follows: each an object as its read names it. */
 export type WatchedObject =
-  | "domain" | "deployment" | "repo" | "mcp_server" | "live_session" | "phone_call" | "workflow"
+  | "domain" | "deployment" | "repo" | "mcp_server" | "live_session" | "phone_call" | "workflow" | "workflow_run"
   | "durable_object_class" | "skill" | "memory" | "machine" | "sandbox" | "agent_move" | "connection" | "plan_usage"
   | "agent_trigger" | "approval" | "browser" | "agent" | "coding_agent" | "channel" | "workspace"
   | "workspace_resource" | "channel_sections" | "space_question" | "usage";
@@ -50,9 +50,12 @@ export interface WatchChange {
   objectId: string | null;
   /** Its status as its read gave it then (advisory: the read is the truth); null once it's gone. */
   status: string | null;
-  /** What it belongs to: a deployment's project, a call's phone number, a trigger's agent, ... */
+  /** What it belongs to: a deployment's project, a call's phone number, a trigger's agent, a run's workflow, ... */
   parent: { object: string; id: string } | null;
-  /** What moved: an agent's `turn`, `step`, `definition`, ...; a channel's `message`, `reaction`, `thread`, ... */
+  /**
+   * What moved: an agent's `turn`, `step`, `definition`, ...; a channel's `message`, `reaction`, `thread`, ...; a
+   * workflow run's `step` (one of its steps moved) or `run` (it started or ended).
+   */
   change: string | null;
   /** A workflow's graph version now. */
   version: number | null;
