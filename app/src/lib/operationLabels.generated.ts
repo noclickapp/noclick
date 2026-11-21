@@ -712,10 +712,10 @@ google-business-profile google-calendar google-chat google-classroom google-clou
 google-cloud-storage google-contacts google-docs google-drive google-forms google-maps google-meet
 google-search-console google-sheets google-slides google-tasks google-translate gorgias gorilladesk gotify
 gotowebinar gov grafana granola graphhopper greenhouse griptape grocy grok gsmtasks gtmetrix gusto hackernews hackmd
-halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here hetrixtools hetzner
-hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni hlr-lookup holded homebase
-honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request hubfit hubflo hubhopper
-hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed icypeas id4i
+haku halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here hetrixtools
+hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni hlr-lookup holded
+homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request hubfit hubflo
+hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed icypeas id4i
 idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts imagekit-io imagerouter imap immich inblog
 incident-io increase infinity infisical inforumobile inmobalia-crm inmobile-sms-gateway insightly instagram
 instantly instapaper instatus intelliprint intercom investorbase investorlift invofox invoiceninja invoicexpress
