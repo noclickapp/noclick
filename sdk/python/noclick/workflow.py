@@ -638,9 +638,10 @@ def _note_op(content: str, note_id: Optional[str], **fields: Any) -> Dict[str, A
 
 
 def _update_workflow_op(name: Optional[str], description: Optional[str], settings: Optional[Dict[str, Any]],
-                        display_metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                        display_metadata: Optional[Dict[str, Any]] = None,
+                        interface: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     return compact(op="update_workflow", name=name, description=description, settings=settings,
-                   display_metadata=display_metadata)
+                   display_metadata=display_metadata, interface=interface)
 
 
 @dataclass(frozen=True)
@@ -1527,12 +1528,13 @@ class EditBatch:
 
     @classmethod
     def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool,
-            source: Optional[str] = None) -> "EditBatch":
+            source: Optional[str] = None, origin: Optional[str] = None) -> "EditBatch":
         batch = cls.__new__(cls)
         batch._workflow = workflow
         batch._if_version = if_version
         batch._include_graph = include_graph
         batch._source = source
+        batch._origin = origin
         batch._ops = []
         batch._added = []
         batch._result = None
@@ -1560,7 +1562,7 @@ class EditBatch:
         if not self._ops:
             return None
         edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph,
-                                          source=self._source)
+                                          source=self._source, origin=self._origin)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1702,17 +1704,20 @@ class EditBatch:
     def update_workflow(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
         settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
+        interface: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Queue a change to the workflow's own fields, as ``Workflow.update`` makes it.
         ``display_metadata`` replaces what the app shows of it (its canvas's viewport, the step
         open in its panel; 16 KB at most): never a version, nor a change anyone is told of.
+        ``interface`` replaces its Interface tab's layout as the app draws it (each block's
+        place on the grid, the tabs' order; 256 KB at most): part of its graph, so a version.
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_workflow(description="Emails the team the day's calendar at 8.")
         """
-        self._queue(_update_workflow_op(name, description, settings, display_metadata))
+        self._queue(_update_workflow_op(name, description, settings, display_metadata, interface))
 
     def move(self, step: Any, position: Position, *, width: Optional[float] = None,
              height: Optional[float] = None) -> None:
@@ -2166,14 +2171,15 @@ class Workflow(_Object):
         return Step._of(self, step_id, node=cached, withheld=withheld)
 
     async def _send(self, ops: Sequence[Dict[str, Any]], *, if_version: Optional[int] = None,
-                    include_graph: bool = False, source: Optional[str] = None) -> WorkflowEdit:
+                    include_graph: bool = False, source: Optional[str] = None,
+                    origin: Optional[str] = None) -> WorkflowEdit:
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
         sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source))
+                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2240,11 +2246,12 @@ class Workflow(_Object):
     async def update(
         self, *, name: Optional[str] = None, description: Optional[str] = None,
         settings: Optional[Dict[str, Any]] = None, display_metadata: Optional[Dict[str, Any]] = None,
+        interface: Optional[Dict[str, Any]] = None,
     ) -> "Workflow":
         """Change its name, description or settings (by top-level key; only its owner changes
         those, and NoClick's own are refused). A field you leave out is never touched.
         ``display_metadata`` replaces what the app shows of it (its canvas's viewport), never a
-        version.
+        version; ``interface`` its Interface tab's layout as the app draws it, part of its graph.
 
         Returns:
             This workflow; it loads again the next time you read a field.
@@ -2254,7 +2261,8 @@ class Workflow(_Object):
             brief = noclick.Workflow.from_name("Morning brief")
             brief.update(name="Team brief", description="Emails the team the day's calendar at 8.")
         """
-        await self._send([_update_workflow_op(name, description, settings, display_metadata)], include_graph=True)
+        await self._send([_update_workflow_op(name, description, settings, display_metadata, interface)],
+                         include_graph=True)
         return self
 
     @synced
@@ -2298,7 +2306,7 @@ class Workflow(_Object):
         return await self._edit_step(handle, {"op": "move", "id": handle.id, "position": _position(position)})
 
     def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False,
-             source: Optional[str] = None) -> EditBatch:
+             source: Optional[str] = None, origin: Optional[str] = None) -> EditBatch:
         """Collect several edits and send them as one batch when the ``with`` block ends:
         they're applied in order and land as one version, or none of them do. With
         ``if_version`` (a version you read: ``version``, ``graph().version``, or the last
@@ -2319,8 +2327,11 @@ class Workflow(_Object):
         ``source="canvas"`` says the edits are a canvas's saves, as the app's canvas sends them:
         each setting ``update_step`` sends replaces that setting whole and is kept as written
         (never rewritten nor refused for its value; the step's verdict says it isn't ready),
-        and they join the canvas session's version (saves within five minutes of its first,
-        whoever made them).
+        an edge joins the handles it names, a connection sits under the slot it's given (one the
+        step takes), and they join the canvas session's version (saves within five minutes of its
+        first, whoever made them). ``origin`` is a name the sender gives itself (letters, digits,
+        ``-`` and ``_``, up to 64; a canvas tab's own id): what the workflow's open canvases hear
+        of the write names it, so the canvas that sent it knows the change is its own.
 
         Returns:
             An ``EditBatch`` to use as a context manager (``async with`` in async code);
@@ -2349,7 +2360,7 @@ class Workflow(_Object):
                     except noclick.Conflict as changed:
                         graph = changed.graph   # the workflow as it stands; decide again from it
         """
-        return EditBatch._of(self, if_version, include_graph, source)
+        return EditBatch._of(self, if_version, include_graph, source, origin)
 
     @synced
     async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
