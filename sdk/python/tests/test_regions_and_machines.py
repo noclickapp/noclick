@@ -311,7 +311,7 @@ OWN = {**MACHINE, "id": OWN_ID, "kind": "own", "name": "machine-3f2a1c", "size":
        "disk_gb": None, "os": None, "hostname": None, "status": "provisioning", "monthly_usd": 0.0,
        "max_monthly_usd": None, "ports": [], "agent_count": 0, "image": None, "last_seen_at": None,
        "max_conversations": None, "conversations_at_once": None, "agent_share": 0.75, "agent_share_fixed": False,
-       "pairing": PAIRING, "docker": True, "app_testing": "ask_first"}
+       "pairing": PAIRING, "docker": True, "app_testing": "ask_first", "workspaces": "local"}
 ONLINE = {**OWN, "name": "office-mini", "status": "running", "cpu": 8, "memory_gb": 32, "disk_gb": 450,
           "os": "Ubuntu 24.04.1 LTS", "hostname": "office-mini", "last_seen_at": "2026-11-10T14:02:00Z",
           "conversations_at_once": 6, "pairing": None}
@@ -340,6 +340,9 @@ def test_your_own_machine_is_added_with_a_code_and_set_up_on_the_server(api, cli
     assert (home.agent_share, home.agent_share_fixed, home.docker, home.app_testing) == (0.75, False, True, "ask_first")
     nc.Machine.add_own(app_testing="never")
     assert body(add.calls.last.request) == {"app_testing": "never"}
+    assert home.workspaces == "local"
+    nc.Machine.add_own(workspaces="saved")
+    assert body(add.calls.last.request) == {"workspaces": "saved"}
     assert home.new_pairing_code().pairing.code == "nc_mach_newer" and renew.called
     assert pairing.refused is None
 
@@ -373,6 +376,8 @@ def test_your_own_machine_lists_by_kind_and_takes_a_cap(api, client):
     assert body(patch.calls.last.request) == {"agent_share": 0.5}
     box.update(docker=True)
     assert body(patch.calls.last.request) == {"docker": True}
+    box.update(workspaces="saved")
+    assert body(patch.calls.last.request) == {"workspaces": "saved"}
 
 
 def test_whether_agents_run_on_machines_here(api, client):

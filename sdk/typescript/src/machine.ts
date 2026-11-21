@@ -43,6 +43,13 @@ export type MachineStatus =
   | "awaiting_approval" | "provisioning" | "running" | "offline" | "restarting" | "updating" | "stopped" | "failed";
 /** `noclick`: a machine NoClick runs, at a monthly price. `own`: a server you added, free. */
 export type MachineKind = "noclick" | "own";
+/**
+ * Where each conversation's workspace (`/workspace`) lives: `local` (your own machine's default: on its disk alone,
+ * never saved, so a turn ends without waiting on a save; a conversation that starts elsewhere, or whose agent leaves,
+ * starts with an empty one) or `saved` (in NoClick's volumes, saved after every turn; always on a machine NoClick
+ * runs).
+ */
+export type MachineWorkspaces = "local" | "saved";
 
 /**
  * Your own machine until its server is set up: the one-time code (and the command carrying it), which NoClick
@@ -218,6 +225,12 @@ export interface MachineAddOwnOptions extends CallOptions {
   appTesting?: AppTesting;
   /** Sent alone, `true` chooses `appTesting: "by_itself"` and `false` `"never"`. */
   docker?: boolean;
+  /**
+   * Where each conversation's workspace lives (`MachineWorkspaces`): `local` unless it says. Either way, a checkout
+   * kept on the server borrows from its repo cache, package managers share their caches, and its volumes are mounted
+   * read-only.
+   */
+  workspaces?: MachineWorkspaces;
 }
 
 export interface MachineCreateOptions extends CallOptions {
@@ -454,7 +467,7 @@ export class Machine extends ApiObject {
       json: compact({
         name: options.name, max_conversations: options.maxConversations, agent_share: options.agentShare,
         docker: options.docker,
-        app_testing: options.appTesting,
+        app_testing: options.appTesting, workspaces: options.workspaces,
       }),
       user: null,
     });
@@ -546,6 +559,10 @@ export class Machine extends ApiObject {
   /** Your own machine: whether its agents run apps and test databases (`AppTesting`); `never` on one NoClick runs. */
   get appTesting(): AppTesting {
     return this._field<AppTesting | null>("app_testing") ?? "never";
+  }
+  /** Where each conversation's workspace lives (`MachineWorkspaces`): `saved` on a machine NoClick runs. */
+  get workspaces(): MachineWorkspaces {
+    return this._field<MachineWorkspaces | null>("workspaces") ?? "saved";
   }
   /** Whether agents run on machines on this API yet (`Machine.agentsEnabledHere()`). */
   get agentsEnabled(): boolean | null {
@@ -748,17 +765,18 @@ export class Machine extends ApiObject {
    * smaller disk moves a running machine to a new host (a larger size on Hetzner keeps its disk, so moving back
    * down stays a resize), since no host shrinks a disk in place: its user's home is copied over and each conversation loads its files
    * from where they're saved, a longer restart (what's on its disk must fit the smaller one; a move that fails
-   * leaves it on its old host). Your own machine takes `maxConversations`, `agentShare`, `appTesting` and `docker` instead of a size
-   * or a price; its server takes them within seconds, each conversation's container at its next start.
+   * leaves it on its old host). Your own machine takes `maxConversations`, `agentShare`, `appTesting`, `docker` and
+   * `workspaces` instead of a size or a price; its server takes them within seconds, each conversation's container at
+   * its next start.
    */
   async update(changes: {
     name?: string; size?: MachineSizeName; volumes?: Record<string, VolumeRef>; network?: boolean | string[];
     maxMonthlyUsd?: number; maxConversations?: number | null; agentShare?: number | null; docker?: boolean;
-    appTesting?: AppTesting;
+    appTesting?: AppTesting; workspaces?: MachineWorkspaces;
   }): Promise<this> {
     const json = defined({
       name: changes.name, size: changes.size, network: changes.network, max_monthly_usd: changes.maxMonthlyUsd,
-      docker: changes.docker, app_testing: changes.appTesting,
+      docker: changes.docker, app_testing: changes.appTesting, workspaces: changes.workspaces,
       volumes: await volumeMountIds(changes.volumes, { client: this._client, user: this._callScope() }),
     });
     // Your own machine: null goes back to what its server takes, and to its agents' default share.

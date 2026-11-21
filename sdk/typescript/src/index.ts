@@ -245,7 +245,7 @@ export type { Version } from "./versions.ts";
 export { Machine, MachineFiles } from "./machine.ts";
 export type {
   MachineAddOwnOptions, MachineAgentState, MachineCreateOptions, MachineFileEntry, MachineHealth, MachineKind, MachinePairing, MachinePort, MachineShell, MachineRefusal, MachineSize, MachineSizeName, MachineSizeRegion, MachineHost, MachineHostName,
-  MachineStatus,
+  MachineStatus, MachineWorkspaces,
 } from "./machine.ts";
 export { feedback } from "./feedback.ts";
 export type { FeedbackKind } from "./feedback.ts";

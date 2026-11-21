@@ -389,6 +389,11 @@ class Machine(_Object):
         "app_testing", doc="Your own machine: whether its agents run apps and test databases: ``by_itself``, "
         "``ask_first`` (the default: each agent asks its owner first) or ``never``; an agent on it gets the stricter of "
         "this and its own ``app_testing``. ``never`` on a machine NoClick runs.")
+    workspaces: Optional[str] = field(
+        "workspaces", doc="Where each conversation's workspace (``/workspace``) lives: ``local`` (your own machine's "
+        "default: on its disk alone, never saved, so a turn ends without waiting on a save; a conversation that starts "
+        "elsewhere starts with an empty one) or ``saved`` (in NoClick's volumes, saved after every turn; always on a "
+        "machine NoClick runs).")
     agents_enabled: Optional[bool] = field("agents_enabled", doc="Whether agents run on machines on this API yet "
                                                                  "(``Machine.agents_enabled_here()``).")
     region: Optional[str] = field("region", doc="The region it runs in (``noclick.regions()``), fixed when it was created.")
@@ -551,7 +556,7 @@ class Machine(_Object):
     async def add_own(
         cls, *, name: Optional[str] = None, max_conversations: Optional[int] = None,
         agent_share: Optional[float] = None, docker: Optional[bool] = None, app_testing: Optional[str] = None,
-        client: Optional[Client] = None,
+        workspaces: Optional[str] = None, client: Optional[Client] = None,
     ) -> "Machine":
         """Add a Linux server you run (x86-64 or ARM64, with sudo) as a machine your
         account's agents run on, in containers: free, its agents' model calls at
@@ -568,7 +573,13 @@ class Machine(_Object):
         conversation's container then running its own Docker inside its gVisor sandbox
         (no host socket, nothing privileged on the server; a container whose agent's
         network is limited runs without it); ``docker`` alone chooses ``"by_itself"``
-        (true) or ``"never"`` (false). Called again before a
+        (true) or ``"never"`` (false); ``workspaces`` is where each conversation's
+        workspace lives (``"local"`` unless it says: on the server's disk alone, kept
+        across its containers and never saved, so a turn ends without waiting on a
+        save, and a conversation that starts elsewhere or whose agent leaves starts
+        with an empty one; ``"saved"``: in NoClick's volumes, saved after every turn).
+        Either way, a checkout kept on the server borrows from its repo cache, package
+        managers share their caches, and its volumes are mounted read-only. Called again before a
         server pairs, it returns that same machine, with its code while the code is
         good and a new one once it expired: add one per server, after the last one
         paired. The account's own, never a user's (``as_user`` doesn't apply).
@@ -588,7 +599,7 @@ class Machine(_Object):
         raw = await resolve_client(client).request(
             "POST", "/v1/machines/own",
             json=compact(name=name, max_conversations=max_conversations, agent_share=agent_share, docker=docker,
-                         app_testing=app_testing),
+                         app_testing=app_testing, workspaces=workspaces),
             user=None)
         return cls._new(raw=raw, client=client, user=None)
 
@@ -853,7 +864,7 @@ class Machine(_Object):
         self, *, name: Any = UNSET, size: Any = UNSET, volumes: Any = UNSET, network: Any = UNSET,
         max_monthly_usd: Any = UNSET, max_conversations: Any = UNSET, agent_share: Any = UNSET,
         docker: Any = UNSET,
-        app_testing: Any = UNSET,
+        app_testing: Any = UNSET, workspaces: Any = UNSET,
     ) -> "Machine":
         """Rename it, change its size, volumes, network or price ceiling. New volumes and
         network apply without a restart (each conversation's from its next turn). A larger
@@ -863,8 +874,8 @@ class Machine(_Object):
         loads its files from where they're saved, a longer restart (what's on its disk
         must fit the smaller one; a move that fails leaves it on its old host).
         Your own machine takes ``max_conversations`` (``None``: what its server takes)
-        ``agent_share`` (``None``: 0.75), ``app_testing`` and ``docker`` (as in ``add_own``) instead of a
-        size or a price; its server takes them within seconds, each conversation's
+        ``agent_share`` (``None``: 0.75), ``app_testing``, ``docker`` and ``workspaces`` (as in ``add_own``)
+        instead of a size or a price; its server takes them within seconds, each conversation's
         container at its next start.
 
         Returns:
@@ -879,7 +890,7 @@ class Machine(_Object):
                           network=None if network is UNSET else network,
                           max_monthly_usd=None if max_monthly_usd is UNSET else max_monthly_usd)
         for key, value in (("max_conversations", max_conversations), ("agent_share", agent_share), ("docker", docker),
-                           ("app_testing", app_testing)):
+                           ("app_testing", app_testing), ("workspaces", workspaces)):
             if value is not UNSET:
                 changes[key] = value
         if volumes is not UNSET:

@@ -259,7 +259,7 @@ const OWN = {
   ...MACHINE, id: OWN_ID, kind: "own", name: "machine-3f2a1c", size: null, cpu: null, memory_gb: null, disk_gb: null,
   os: null, hostname: null, status: "provisioning", monthly_usd: 0, max_monthly_usd: null, ports: [], agent_count: 0,
   image: null, last_seen_at: null, max_conversations: null, conversations_at_once: null, agent_share: 0.75,
-  agent_share_fixed: false, pairing: PAIRING, docker: true, app_testing: "ask_first",
+  agent_share_fixed: false, pairing: PAIRING, docker: true, app_testing: "ask_first", workspaces: "local",
 };
 
 test("your own machine: added with a code, set up on the server, then online or offline", async () => {
@@ -294,6 +294,9 @@ test("your own machine: added with a code, set up on the server, then online or 
   assert.deepEqual([home.agentShare, home.agentShareFixed, home.docker, home.appTesting], [0.75, false, true, "ask_first"]);
   await nc.Machine.addOwn({ appTesting: "never" });
   assert.deepEqual(add.last.body, { app_testing: "never" });
+  assert.equal(home.workspaces, "local");
+  await nc.Machine.addOwn({ workspaces: "saved" });
+  assert.deepEqual(add.last.body, { workspaces: "saved" });
 
   await home.newPairingCode();
   assert.equal(renew.count, 1);
@@ -318,6 +321,8 @@ test("your own machine: added with a code, set up on the server, then online or 
   assert.deepEqual(update.last.body, { docker: true });
   await box.update({ appTesting: "by_itself" });
   assert.deepEqual(update.last.body, { app_testing: "by_itself" });
+  await box.update({ workspaces: "saved" });
+  assert.deepEqual(update.last.body, { workspaces: "saved" });
 });
 
 test("whether agents run on machines here: the list says so, and each machine", async () => {
