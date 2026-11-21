@@ -30,7 +30,9 @@ from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from ._client import Client, path_segment, resolve_client
-from ._object import Page, _Object, compact, csv, field, list_all, list_page, parse_time, read_scope, ref_id
+from ._object import (
+    Page, _Object, compact, csv, field, list_all, list_page, paginate, parse_time, read_scope, ref_id,
+)
 from ._sync import run_sync, synced
 from ._scope import AMBIENT, resolve_scope
 from .exceptions import AnswerRequired, Conflict, NotFound
@@ -1316,6 +1318,36 @@ class WorkflowVersion:
         )
 
 
+@dataclass(frozen=True)
+class WorkflowFolder:
+    """One of your account's workflow folders, as the app's Automations page shows it:
+    ``Workflow.folders()`` lists them, ``Workflow.create_folder()`` makes one and
+    ``workflow.move_to()`` files a workflow in one."""
+
+    id: str
+    name: str
+    description: Optional[str]
+    #: The folder it's in; ``None`` at the top.
+    parent_id: Optional[str]
+    #: How deep it sits: 0 at the top, 10 at most.
+    depth: int
+    #: How many workflows are in it (not counting its folders').
+    workflow_count: int
+    created_at: Any
+    updated_at: Any
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "WorkflowFolder":
+        return cls(raw["id"], raw["name"], raw.get("description"), raw.get("parent_id"), int(raw["depth"]),
+                   int(raw.get("workflow_count") or 0), parse_time(raw.get("created_at")),
+                   parse_time(raw.get("updated_at")), raw)
+
+
+def _folder_id(folder: Union["WorkflowFolder", str, None]) -> Optional[str]:
+    return folder.id if isinstance(folder, WorkflowFolder) else folder
+
+
 class EditBatch:
     """The edits ``Workflow.edit()`` collects: each method queues one, and the ``with``
     block's end sends them as one batch, applied in order as one version, or not at all
@@ -1612,6 +1644,9 @@ class Workflow(_Object):
         "A JSON schema of what ``run`` takes: a form's fields, any object for a webhook, empty if nothing."))
     app_url: Optional[str] = field("app_url", doc="Where to open it in the NoClick app.")
     access: str = field("access", doc="Your account's access: ``owner``, ``editor`` or ``viewer``.")
+    folder_id: Optional[str] = field("folder_id", doc=(
+        "The folder of your account's it's in (``Workflow.folders()``); ``None`` at the top, and for one shared with "
+        "you."))
     step_types: List[str] = field("step_types", lambda raw: [str(t) for t in raw or []], doc=(
         "What it's made of, at a glance, in a list too: at most four of its step types, its triggers first, then "
         "its agents (one on a coding harness as ``agent:<harness>``, ``agent:codex``), then the rest, never a note."))
@@ -1780,6 +1815,67 @@ class Workflow(_Object):
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
             params={"q": q}, user=None, cursor=cursor, limit=limit, client=client,
         )
+
+    @synced
+    @classmethod
+    async def folders(cls, *, client: Optional[Client] = None) -> List[WorkflowFolder]:
+        """Your account's workflow folders, as the app's Automations page shows
+        them: the ones it made in its own workspace, the shallowest first, then
+        by name. A workflow's ``folder_id`` names the one it's in.
+
+        Returns:
+            Each folder, with its ``parent_id`` (``None`` at the top) and its ``workflow_count``.
+
+        Usage::
+
+            for folder in noclick.Workflow.folders():
+                print("  " * folder.depth + folder.name, folder.workflow_count)
+        """
+        rows = await paginate(resolve_client(client), "/v1/workflows/folders", user=None)
+        return [WorkflowFolder._from(row) for row in rows]
+
+    @synced
+    @classmethod
+    async def create_folder(
+        cls, name: str, *, description: Optional[str] = None, parent: Union[WorkflowFolder, str, None] = None,
+        client: Optional[Client] = None,
+    ) -> WorkflowFolder:
+        """A new folder in your account's workspace, at the top or in
+        ``parent`` (a ``WorkflowFolder`` or its id), as the app makes one. A
+        name ``parent``'s folders already have raises ``noclick.Conflict``,
+        naming that folder (``folder_id``).
+
+        Returns:
+            The new folder.
+
+        Usage::
+
+            reports = noclick.Workflow.create_folder("Reports")
+            weekly = noclick.Workflow.create_folder("Weekly", parent=reports)
+            noclick.Workflow.from_name("Morning brief").move_to(weekly)
+        """
+        raw = await resolve_client(client).request(
+            "POST", "/v1/workflows/folders",
+            json=compact(name=name, description=description, parent_id=_folder_id(parent)), user=None)
+        return WorkflowFolder._from(raw)
+
+    @synced
+    async def move_to(self, folder: Union[WorkflowFolder, str, None]) -> "Workflow":
+        """Move it into one of your account's folders (a ``WorkflowFolder`` or
+        its id), or out to the top with ``None``, as dragging it does in the app.
+        It takes what changing it takes: owning it and paying for it.
+
+        Returns:
+            This workflow, read again (``folder_id`` is the folder it's in now).
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            brief.move_to(noclick.Workflow.create_folder("Reports"))
+            brief.move_to(None)   # back to the top
+        """
+        return self._took(await self._request("POST", f"{await self._path()}/move",
+                                              json={"folder_id": _folder_id(folder)}))
 
     async def _load(self) -> Dict[str, Any]:
         raw = await self._read_view()
