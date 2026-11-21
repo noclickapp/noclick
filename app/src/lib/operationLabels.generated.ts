@@ -669,7 +669,7 @@ api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverv
 appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online artificial-analysis
 aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine attentive attio audienceful
 audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut bambooci bamboohr bandsintown
-bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api beaconchain beatapi beehiiv
+bannerbear base44 basedash baserow baseten basin batchdialer bc-gov-news bclaws beach-day-api beaconchain beatapi beehiiv
 benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
 billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio bloom-growth
 bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo bookeo
