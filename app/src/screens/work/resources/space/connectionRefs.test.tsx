@@ -3,7 +3,7 @@
 // its name, an account connected in the NoClick app by `credential:<id>`. Named by its name, an app account shared
 // with a space, given to one from home or deleted from home named no connection, or, where a named connection had its
 // name, that other account: the one shared or deleted for good.
-import { cleanup, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, configure, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import { Connection } from 'noclick';
 import { Toaster } from 'sonner';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -16,6 +16,9 @@ import { AddDialog } from './dialogs';
 
 type Json = Record<string, unknown>;
 
+// Each wait is on the page's own state; a full parallel run can take longer than a second to load a page's code.
+configure({ asyncUtilTimeout: 10_000 });
+vi.setConfig({ testTimeout: 30_000 });
 beforeEach(() => {
     // Nothing real is called: the reads beside the views find nothing.
     vi.stubGlobal('fetch', async () => new Response(null, { status: 404 }));

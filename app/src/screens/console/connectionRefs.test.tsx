@@ -4,16 +4,19 @@
 // account agent's event trigger, tools and model connection saved an app account by its name, which names no
 // connection (the API refuses it) or, where a connection has that name, another account. What an agent already holds
 // by `credential:<id>` reads as that account, never as a connection that was deleted.
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 import { DeveloperConsole } from './DeveloperConsole';
 import { AGENTS, FIXTURE_NOW, FIXTURE_NOW_MS, FIXTURE_USER, apiError, fixtureId, ok, type FixtureReply, type FixtureRequest, type FixtureRoute } from './fixtures/core';
 import { makeFixtureFetch } from './fixtures/fixtureFetch';
 
 type Json = Record<string, unknown>;
 
+// Each wait is on the page's own state; a full parallel run can take longer than a second to load a page's code.
+configure({ asyncUtilTimeout: 10_000 });
+vi.setConfig({ testTimeout: 30_000 });
 afterEach(cleanup);
 
 const BASE = '/developers';
