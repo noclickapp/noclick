@@ -760,7 +760,7 @@ responsys reteno revolut-for-business rezdy rillet ringcentral ringover rippling
 rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics rossum route4me royalmail rss rudder rumble
 rundeck runn runpod runscope runsignup safetyculture sakari-sms salesforce salesforge salesloft salesmsg salesql
 salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucelabs savvycal scale-ai scalr
-scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api search1api sec
+scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai screenshotbase se-ranking seam search-api search1api sec
 securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse sendbird sendfox
 sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier serverless-function
 servicem8 servicetitan servicetrade setmore sevdesk seven-io shipengine shipmondo shippo shlink shopify shopvox
