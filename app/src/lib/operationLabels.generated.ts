@@ -722,7 +722,7 @@ investorlift invofox invoiceninja invoicexpress ionoscloud ip2location-io ip2pro
 ironclad isn iterable itm-platform jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca
 jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller
 junglescout just-eat just-one-api justcall jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
-kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp
+kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klasio klaviyo klicktipp
 knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard
 lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper
 leadboxer leadfeeder leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch
