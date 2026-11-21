@@ -244,3 +244,49 @@ def test_the_policy_reads_and_explains_for_one_agent(api, client):
     seen = nc.ApprovalPolicy.explain("purchase", "agent", amount_usd=19, agent_id="ag_2")
     assert body(explained.calls.last.request)["agent_id"] == "ag_2"
     assert (seen.disposition, seen.source) == ("allow", "parent")
+
+
+ROUTING = {"object": "approval_routing",
+           "approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"}, "on_timeout": "escalate",
+           "expires_in_s": 3600, "effective_at": "2026-11-21T09:00:00+00:00", "pending": False, "before": None,
+           "change_id": "chg_2"}
+STAGES = [{"approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"}, "expires_in_s": 3600,
+           "on_timeout": "escalate", "source": "account"},
+          {"approver": {"object": "approver", "kind": "owner"}, "expires_in_s": 86400, "on_timeout": "decline",
+           "source": "default"}]
+
+
+def test_the_account_names_who_answers_and_reads_the_chain_back(api, client):
+    put = api.put("/v1/approvals/policy").respond(json={**POLICY, "routing": ROUTING,
+                                                        "approvers": {"agent": STAGES, "key": STAGES}})
+    policy = nc.ApprovalPolicy.set(routing={"approver": {"agent_id": "supervisor"}, "on_timeout": "escalate",
+                                            "expires_in_s": 3600})
+    assert body(put.calls.last.request) == {"routing": {"approver": {"agent_id": "supervisor"},
+                                                        "on_timeout": "escalate", "expires_in_s": 3600}}
+    assert policy.routing["approver"]["kind"] == "agent"
+    assert [s["approver"]["kind"] for s in policy.approvers["key"]] == ["agent", "owner"]
+    # None puts the owner back; leaving it out leaves it as it is.
+    nc.ApprovalPolicy.set(routing=None)
+    assert body(put.calls.last.request) == {"routing": None}
+    nc.ApprovalPolicy.set(settings={"purge": "allow"})
+    assert body(put.calls.last.request) == {"settings": {"purge": "allow"}}
+    api.post("/v1/approvals/policy/explain").respond(json={
+        "object": "approval_explanation", "kind": "purchase", "caller": "key", "disposition": "ask",
+        "source": "default", "why": "Purchases through an API key always ask.", "setting": None, "bounds": False,
+        "approvers": STAGES})
+    assert [s["approver"]["kind"] for s in nc.ApprovalPolicy.explain("purchase", "key").approvers] == [
+        "agent", "owner"]
+
+
+def test_an_agent_names_its_own_approver_and_an_approval_says_who_it_waits_on(api, client):
+    patched = api.patch("/v1/agents/ag_1").respond(json=agent_row(approvals={"routing": ROUTING}))
+    api.get("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    nc.Agent.from_id("ag_1").update(approvals={"routing": {"approver": {"code": True}}})
+    assert body(patched.calls.last.request) == {"approvals": {"routing": {"approver": {"code": True}}}}
+    routed = {**APPROVAL, "approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"},
+              "on_timeout": "escalate", "sent_to": [], "status": "approved", "decided_by": "agent",
+              "decided_by_agent": {"agent_id": "ag_9", "name": "Supervisor"}}
+    api.get("/v1/approvals/apr_1").respond(json=routed)
+    approval = nc.Approval.from_id("apr_1")
+    assert (approval.approver["kind"], approval.on_timeout, approval.decided_by) == ("agent", "escalate", "agent")
+    assert approval.decided_by_agent["name"] == "Supervisor"
