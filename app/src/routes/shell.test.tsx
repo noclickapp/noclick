@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-// The app's pages in the shell's frame, as its routes draw it (routes.ts: the home, the chat, Work and Resources in
-// one layout, the developer console outside it). The sidebar goes to each page and to Resources' kinds by their
-// routes and marks the one open, the account's name leads home, search opens the palette, and the account menu offers
+// The app's pages in the shell's frame, as its routes draw it (routes.ts: the home, the chat, Work, Resources and
+// Settings in one layout, the developer console outside it). The sidebar goes to each page and to Resources' kinds by
+// their routes and marks the one open, the account's name leads home, search opens the palette, and the account menu offers
 // the console (with a sidebar of its own) and signing out. On a phone: the page's name in the bar and the pages as a sheet
 // that closes as it goes. All of it reads only the account's status, which a key may.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
@@ -47,7 +47,7 @@ function open(address: string) {
             {
                 path: '/',
                 element: <Shell />,
-                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }, { path: 'usage', ...page }],
+                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }, { path: 'usage', ...page }, { path: 'settings', ...page }],
             },
             { path: '/developers/*', ...page },
         ],
@@ -96,7 +96,7 @@ afterEach(() => {
 describe('the frame on a laptop', () => {
     it('lists the pages the app serves, marks the one open, and goes to each by its route', async () => {
         open('/');
-        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Connections', 'Resources']);
+        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Connections', 'Resources', 'Settings']);
         expect(current()).toEqual([]);
         fireEvent.click(nav().getByRole('button', { name: 'Work' }));
         expect(where()).toBe('/work');
@@ -104,6 +104,9 @@ describe('the frame on a laptop', () => {
         fireEvent.click(nav().getByRole('button', { name: 'Connections' }));
         expect(where()).toBe('/connections');
         expect(current()).toEqual(['Connections']);
+        fireEvent.click(nav().getByRole('button', { name: 'Settings' }));
+        expect(where()).toBe('/settings');
+        expect(current()).toEqual(['Settings']);
         fireEvent.click(nav().getByRole('button', { name: 'Chat' }));
         expect(where()).toBe('/chat');
         expect(current()).toEqual(['Chat']);

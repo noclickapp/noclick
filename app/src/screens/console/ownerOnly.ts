@@ -70,6 +70,22 @@ export const OWNER_ONLY = {
         why: 'A key reads the account and can’t change it.',
         operations: ['PATCH /v1/account'],
     },
+    /** Raising or removing the account's monthly spending cap, in Settings → Plan and billing (lowering it, or setting
+     *  one where there's none, a key may: the same operation). */
+    accountCap: {
+        what: 'Raising or removing the spending cap',
+        why: 'A key lowers the account’s monthly spending cap, or sets one where there’s none; raising or removing it is the owner’s.',
+        operations: ['PUT /v1/usage/limits/account'],
+        only: 'a cap above the one in place, or none where one is set; a key lowers it or sets one where there’s none',
+    },
+    /** A team workspace's spending cap, which the account paying for the workspace sets, in Settings → Plan and
+     *  billing. */
+    teamCap: {
+        what: 'A team workspace’s spending cap',
+        appOnly: true,
+        why: 'The API reads and sets the account’s own cap, so a key can’t read or set the cap of a team workspace that another account may pay for.',
+        operations: [],
+    },
     /** The palette's jump to whatever an id names. */
     objectLookup: {
         what: 'Finding an object by its id',

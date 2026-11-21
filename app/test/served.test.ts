@@ -231,9 +231,20 @@ describe('the developer console, under the production server', () => {
         }
     });
 
-    it('draws the home, the chat, Work, Connections and Resources in the app’s frame, and the console in it with its own sidebar', async () => {
+    it('serves Settings to the owner at /settings, behind the sign-in', async () => {
+        expect((await get(configured, '/settings')).headers.get('location')).toBe('/login?next=%2Fsettings');
         const cookie = await signedInCookie();
-        for (const path of ['/', '/chat', '/work', '/connections', '/resources?kind=domains']) {
+        for (const path of ['/settings', '/settings?section=billing']) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain('<title>Settings · NoClick</title>');
+            expect(page.headers.get('x-frame-options'), path).toBe('DENY');
+        }
+    });
+
+    it('draws the home, the chat, Work, Connections, Resources and Settings in the app’s frame, and the console in it with its own sidebar', async () => {
+        const cookie = await signedInCookie();
+        for (const path of ['/', '/chat', '/work', '/connections', '/resources?kind=domains', '/settings']) {
             const page = await get(configured, path, { headers: { cookie } });
             expect(page.status, path).toBe(200);
             expect(page.body, path).toContain('data-testid="app-sidebar"');
@@ -248,7 +259,7 @@ describe('the developer console, under the production server', () => {
 
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
-        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key']) {
+        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key', '/settings-lab', '/settings-lab?scene=billing&as=key']) {
             expect((await get(configured, path, { headers: { cookie } })).status, path).toBe(404);
         }
         const files = builtFiles();

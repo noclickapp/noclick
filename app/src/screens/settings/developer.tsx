@@ -1,9 +1,11 @@
 // Settings → Developer: building on NoClick from your own code starts in the developer console, which this opens, and
-// under it whatever a host kept of the keys made before the console (the older-keys slot).
+// under it whatever a host kept of the keys made before the console (the older-keys slot). `DeveloperSection` opens the
+// console at the address of the console context it's drawn in.
 import { Link } from 'react-router';
 import { ArrowRight } from 'lucide-react';
 import { useSlot } from '@/slots';
 import { BUTTON_PRIMARY } from '@/ui/buttons';
+import { useConsole } from '@/screens/console/hooks/useConsole';
 import { SettingsGroup, SettingsHeader, SettingsRow } from './parts';
 import { OLDER_KEYS } from './slots';
 
@@ -27,4 +29,9 @@ export function DeveloperView({ consoleHref }: { consoleHref: string }) {
             {OlderKeys && <OlderKeys />}
         </div>
     );
+}
+
+/** The section where the app draws it: the console at its own address. */
+export function DeveloperSection() {
+    return <DeveloperView consoleHref={useConsole().basePath} />;
 }

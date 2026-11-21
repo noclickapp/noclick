@@ -39,7 +39,7 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server. It sits in the app's frame, as `/chat`, `/work`, `/connections`, `/resources` and `/usage` do: a sidebar on a laptop (the
+app's own server. It sits in the app's frame, as `/chat`, `/work`, `/connections`, `/resources`, `/settings` and `/usage` do: a sidebar on a laptop (the
 pages, search, and your account with its menu), a bar with the page's name and a menu on a phone, and ⌘K to go
 anywhere (see [The frame](#the-frame)). **Developers** in the account menu opens the console at `/developers`.
 `scripts/check.sh` at the
@@ -48,7 +48,7 @@ neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
 `http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
-Chat, `/connections-lab` for Connections, `/usage-lab` for Usage): the same pages over
+Chat, `/connections-lab` for Connections, `/usage-lab` for Usage, `/settings-lab` for Settings): the same pages over
 made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
@@ -144,12 +144,16 @@ them, and without one the page shows what each thing cost:
 | `usage.charge.run` | The run a charge belonged to, opened from its facts | What the charges read says of it, with its automation on NoClick |
 | `usage.charge.ask` | A charge's facts: asking about it | Nobody, and no button |
 
-Settings' (`src/screens/settings/slots.ts`): a section whose body is the deployment's is a slot its host fills, and
-with none Settings doesn't list it:
+Settings' (`src/screens/settings/slots.ts`): every section's body is a slot. Where the app has a section of its own it
+stands there, and a host fills it only to draw its own; a section whose body is only the deployment's has nothing
+there, and Settings doesn't list it:
 
 | Slot | Where it is | By default |
 |---|---|---|
-| `settings.billing` | Plan and billing: the plan, adding money, the spending cap | Nothing, and no section |
+| `settings.usage` | Usage: what each thing cost | The Usage page |
+| `settings.billing` | Plan and billing: the plan, adding money, the spending cap | The plan and balance as read, with NoClick's pages for them, and the cap (a key lowers it) |
+| `settings.notifications` | Notifications: the email alerts sent to the owner | Each alert with its switch |
+| `settings.developer` | Developer: the way into the developer console | The console's row, at its address |
 | `settings.members` | Members: who's in the workspace and how they sign in | Nothing, and no section |
 | `settings.phone` | Phone: the numbers a person messages and calls from | Nothing, and no section |
 | `settings.skills` | Skills: the reusable context a builder loads | Nothing, and no section |
@@ -232,6 +236,21 @@ the balance runs out at this pace the headline says so, never that work stops: a
 `src/screens/usage/usageAsKey.test.tsx` opens every scene of its lab as a key and fails if one asks for what only the
 owner may have. `/usage-lab` is the page over made-up accounts (`src/screens/usage/fixtures.ts`, `src/screens/usage/lab`)
 in development only: `?scene=` picks a view, and `?as=key` answers as the API answers a key.
+
+## Settings
+
+`/settings` is Settings (`src/screens/settings`), in the sidebar: Usage, the page above; Plan and billing, the plan
+and the balance as the account reads them (`GET /v1/account`), with NoClick's pages for changing the plan and adding
+funds, and the monthly spending cap with what its period spent (`Usage.limits` and `Usage.setAccountCap` in the SDK);
+Notifications, the email alerts NoClick sends the account's owner, one switch each (`Notifications.get` and
+`Notifications.update`); and Developer, the way into the console at `/developers`. It acts as the app's key: a key
+lowers the cap, or sets one where there's none, and raising or removing it opens NoClick's own Plan and billing (the
+owner's, `src/screens/console/ownerOnly.ts`). What only a deployment has (its people, linking a phone, its builder's
+skills, its own popups) is a slot no section stands in, so Settings doesn't list it. Its section is the address's
+`?section=`. `src/screens/settings/settingsAsKey.test.tsx` opens every scene of its lab as the owner and as a key and
+fails if a key's asks for what only the owner may have, or is refused; `/settings-lab` is the page over a made-up
+account (`src/screens/settings/lab`) in development only: `?scene=` picks a view, and `?as=key` answers as the API
+answers a key.
 
 ## Chat
 
@@ -426,7 +445,7 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work`, `/connections`, `/resources` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+The home, `/chat`, `/work`, `/connections`, `/resources`, `/settings` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
 own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
 (`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
 folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the
@@ -446,7 +465,7 @@ reopened without carrying on from where it was, has the page read everything it 
 live (opening, reconnecting, or refused because the API you call doesn't offer it yet), Work reads what it shows again
 when you come back to the tab and every minute while the page is shown, and the stream is asked for again every five
 minutes, so it turns on by itself once the API offers it. The console and Resources read again their own way meanwhile;
-Usage reads again when you come back to the tab, never on a timer.
+Usage and Settings read again when you come back to the tab, never on a timer.
 An agent's open conversation is live through its own stream either way.
 
 ## How it reaches NoClick
@@ -548,7 +567,7 @@ It doesn't:
   opens every page of the console as a key and fails if one asks the API for something only the owner may have;
   `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources,
   `src/screens/work/workAsKey.test.tsx` for Work, `src/screens/chat/chatAsKey.test.tsx` for Chat,
-  `src/screens/connections/connectionsAsKey.test.tsx` for Connections, and `src/screens/usage/usageAsKey.test.tsx` for
-  Usage.
+  `src/screens/connections/connectionsAsKey.test.tsx` for Connections, `src/screens/usage/usageAsKey.test.tsx` for
+  Usage, and `src/screens/settings/settingsAsKey.test.tsx` for Settings.
 
 Apache-2.0, as the rest of this repository.
