@@ -6,12 +6,12 @@
  *     const run = await (await brief.run()).wait();
  *
  * Your keys read every workflow your account can open in the app, its own and those shared with it
- * (`access`), and change, build and run the ones it owns and pays for. NoClick's builder (the one in
- * the app) builds and changes one from what you describe: a `WorkflowBuild` you wait on, which may
- * stop to ask something first, and which can publish the workflow's app too. A run starts where its
- * trigger does, with the inputs as the trigger's payload. A run started inside `asUser` (or with
- * `user`) is recorded for that user and counts toward their spend cap; its steps still use the
- * app's connections.
+ * (`access`), and change, build and run the ones they can edit (one a team workspace's owner pays
+ * for is billed to them). NoClick's builder (the one in the app) builds and changes one from what
+ * you describe: a `WorkflowBuild` you wait on, which may stop to ask something first, and which can
+ * publish the workflow's app too. A run starts where its trigger does, with the inputs as the
+ * trigger's payload. A run started inside `asUser` (or with `user`) is recorded for that user and
+ * counts toward their spend cap; its steps still use the app's connections.
  *
  * A workflow's graph is also a handle you change directly: `graph()` reads its steps, each `Step`
  * changes with one call (`update`, `connect`, ...), and `edit()` sends several changes as one batch
@@ -1796,8 +1796,9 @@ export interface WorkflowRunOptions extends CallOptions {
 /**
  * A workflow built in the NoClick app: its trigger, steps and outputs. Run it with
  * `run(inputs)`; `inputs` names what its trigger takes. `access` is your account's: `owner`,
- * `editor` or `viewer` (one shared with it); changing, building and running take owning it and
- * paying for it.
+ * `editor` or `viewer` (one shared with it); building, running and testing it take edit access,
+ * billed to whoever pays for it (a team workspace's owner); pausing and deleting it take owning it
+ * and paying for it.
  *
  * It's also a handle to its graph: `graph()` reads its steps whole, each `Step` changes with one
  * call, and `edit()` sends several changes as one version, checked against the version you read
