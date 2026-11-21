@@ -683,8 +683,8 @@ connecteam constant-contact consumerfinance contabo content-snare content-studio
 conversion-tools convertapi converted-da-56088 conveyor convolo-ai coolify corbit-sms corrently coveo cpy cradl-ai
 craftmypdf credas credlys-acclaim-platform creem crelate crew-ai crisp crowdin crunchbase csvbox currents-api cursor
 custify customgpt cvent cycat cyclr cypher-learning dacast dadata-ru daily dart databox databricks datadog
-dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram deepimage deployhq deputy
-dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus discord discourse dixa
+dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram deepimage deepl deployhq
+deputy dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus discord discourse dixa
 dnsfilter dnsimple dnsmadeeasy dock-certs docker-hub docraptor docsautomator docsbot-ai docspell docugenerate
 documenso docupilot docuseal docusign dodo dokploy domainsdb doorloop doppler doqs dovetail dpd2 dreamstudio dromo
 drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact dropinblog dub dust dux-soup dv360 dynamic-mockups
