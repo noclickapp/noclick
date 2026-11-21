@@ -673,37 +673,37 @@ bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-ap
 benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
 billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio bloom-growth
 bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo bookeo
-bookingmood bookspot bookwhen botconversa botpress botsonic botstar bouncer bouncify box brandfetch brandfolder
-braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless bsc-designer
-btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie bunnycdn
-businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner canada-holidays
-canopy canopy-connect canva captivated carbone cardclan cardly carsxe casebook caspio cats centralstationcrm
-cert-seal certifier charla chaser chatbase chatbotkit chatwoot check-cherry checkfront chili-piper chmeetings
-chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci claid-ai clay clearblade
-clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign clickup cliengo climate cling
-cliniko clio clockify cloro cloudbeds cloudflare cloudsmith cloudtalk cloudzero clover cloze club-os coassemble coda
-codacy codat codesearch cody coinbase coingecko coinmarketcal coinmarketcap college-football-data combell cometapi
-commerce-layer common-room commusoft companycam companyenrich composio condens conductor configcat confluence conjur
-connecteam constant-contact consumerfinance contabo content-snare content-studio context-dev control-d
-conversion-tools convertapi converted-da-56088 conveyor convolo-ai coolify corbit-sms corrently coveo cpy cradl-ai
-craftmypdf credas credlys-acclaim-platform creem crelate crew-ai crisp crowdin crunchbase csvbox currents-api cursor
-custify customgpt cvent cycat cyclr cypher-learning dacast dadata-ru daily dart databox databricks datadog
-dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram deepimage deployhq deputy
-dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus discord discourse dixa
-dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub docraptor docsautomator docsbot-ai docspell
-docugenerate documenso docupilot docuseal docusign dodo doit dokploy domainsdb doorloop doppler doqs dovetail dpd2
-dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact dropinblog dub dust dux-soup
-dv360 dynamic-mockups dynapictures dynatrace e2b easy-email-verification easybizy easybroker-archive ebi echtpost
-eduzz egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua emaillistverify emailoctopus emailvalidation
-emelia emnify encharge encircle enforcedflow enginemailer enrich-layer env0 eodhd-apis epos-now esputnik etermin
-etsy event-tickets eventify everflow everhour everyaction evetech evoliz evolution-go exa excel exceptionless
-exercisecom exlibrisgroup exoscale expensify explorium extend extole extrovert ez-texting ezeep-printing ezekia
-facebook facecheck factorial facturadirecta fal faraday fareharbor farmbrite fathom fatture-in-cloud feathr fec
-fellow felt fiber fidel-api figma figshare filevine fillout financial-datasets-ai findymail finmo finnhub fireberry
-firecrawl firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk
-followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry formspark formstack formstep fountain
-foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum fullenrich fullstory function-point
-fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis
+bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bouncer bouncify box brandfetch
+brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless
+bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie
+bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner
+canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly carsxe casebook caspio cats
+centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot check-cherry checkfront chili-piper
+chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle circleback circleci claid-ai clay
+clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse clicksend clicksign clickup cliengo
+climate cling cliniko clio clockify cloro cloudbeds cloudflare cloudsmith cloudtalk cloudzero clover cloze club-os
+coassemble coda codacy codat codesearch cody coinbase coingecko coinmarketcal coinmarketcap college-football-data
+combell cometapi commerce-layer common-room commusoft companycam companyenrich composio condens conductor configcat
+confluence conjur connecteam constant-contact consumerfinance contabo content-snare content-studio context-dev
+control-d conversion-tools convertapi converted-da-56088 conveyor convolo-ai coolify corbit-sms corrently coveo cpy
+cradl-ai craftmypdf credas credlys-acclaim-platform creem crelate crew-ai crisp crowdin crunchbase csvbox
+currents-api cursor custify customgpt cvent cycat cyclr cypher-learning dacast dadata-ru daily dart databox
+databricks datadog dataforseo datagma datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram
+deepimage deployhq deputy dev-cycle devin devto dex dialpad digicert digistore24 digitalocean directiq directus
+discord discourse dixa dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub docraptor docsautomator
+docsbot-ai docspell docugenerate documenso docupilot docuseal docusign dodo doit dokploy domainsdb doorloop doppler
+doqs dovetail dpd2 dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact
+dropinblog dub dust dux-soup dv360 dynamic-mockups dynapictures dynatrace e2b easy-email-verification easybizy
+easybroker-archive ebi echtpost eduzz egnyte elai elastic-email elasticsearch elevenlabs elmah eloqua
+emaillistverify emailoctopus emailvalidation emelia emnify encharge encircle enforcedflow enginemailer enrich-layer
+env0 eodhd-apis epos-now esputnik etermin etsy event-tickets eventify everflow everhour everyaction evetech evoliz
+evolution-go exa excel exceptionless exercisecom exlibrisgroup exoscale expensify explorium extend extole extrovert
+ez-texting ezeep-printing ezekia facebook facecheck factorial facturadirecta fal faraday fareharbor farmbrite fathom
+fatture-in-cloud feathr fec fellow felt fiber fidel-api figma figshare filevine fillout financial-datasets-ai
+findymail finmo finnhub fireberry firecrawl firestore firmable fixer fixer-io flashquotes flat flatfile fleetio
+flokzu flowsavvy flutterwave fly folk followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry
+formspark formstack formstep fountain foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum
+fullenrich fullstory fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis
 gainsight-customer-communities geekflare gender-api genderapi-io genesiscloud geoapify geocodio geodatasource
 get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab givebutter gladia glean gleap gleif
 glide-apps globalping glofox gmail go-table go-to-connect go-to-training goatcounter gocardless gofundme-pro
@@ -757,43 +757,43 @@ quickbase quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisel
 razorpay rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow recurly reddit reddit-ads
 redirect-pizza redirection redis reducto refersion reflect regiondo rei-pebble relevance-ai reloadify remote
 remove-bg render rentcast rentman repairdesk repairshopr repliz reply reply-io resend resource-guru responder
-responsys reteno revolut-for-business rezdy rillet ringcentral ringover rippling ritekit rkvst roam rocket-reach
-rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics rossum route4me royalmail rss rudder rumble
-rundeck runn runpod runscope runsignup safetyculture sakari-sms salesforce salesforge salesloft salesmsg salesql
-salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucelabs savvycal scale-ai scalr
-scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api search1api sec
-securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse sendbird sendfox
-sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier serverless-function
-servicem8 servicetitan servicetrade setmore sevdesk seven-io shipengine shipmondo shippo shlink shopify shopvox
-shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath signrequest
-signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook simplyrets simpro
-singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements smartemailing smarthr smartlead
-smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go smtping snapchat sncf snitcher
-snowflake snyk softr solcast soundcloud soundee spacebring speechmatics spiro splitwise spotify spotio2 sprig spydra
-squadcast squarespace-commerce stack-exchange stackitdns staffbase starbridge starton statsig statuspage statuspal
-stibee stigg stora strale streak stream-chat streamtime stripe studio-by-ai21-labs sumoquote sumup supabase supadata
-super-dispatch supermemory supernormal superset superwall suprsend sure-send surecart surevoip surf svix swaggerhub
-swarmsyncai sympla synap syncro synthflow-ai systemeio table tableau taggun tailscale talenthr talentlms talkable
-talkjs talkroute tally tapfiliate taplio tave tavily teachable teamcamp teamup teamup-calendar teamwork
-teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal tentary text-request
-textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecompaniesapi thehive thinkific
-thoughtspot threads thrivecart ticket-tailor tidb-cloud tidely tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp
-timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti
-traccar track-pod trackdesk trackingmore trackvia trakt transloadit trekksoft trello tremendous trestle trigger-dev
-tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot
-typecast typeform typefully unifi unione unipile uniswap-api universe unleash uplisting upload-post uploadcare
-upstash-vector uptimecom uptimerobot urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro valuecase
-vast-ai vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db
-videoupscaler vimeo viral-loops virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video
-voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront
-weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport
-weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase
-when-i-work whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core
-wolfram-alpha-api woop-social word wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero
-yelp yelp-leads ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy
-zendesk zeno zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail
-zoho-creator zoho-crm zoho-inventory zoho-projects zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora
-zyte-api`.split(/\s+/)
+responsys retell-ai reteno revolut-for-business rezdy rillet ringcentral ringover rippling ritekit rkvst roam
+rocket-reach rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics rossum route4me royalmail rss
+rudder rumble rundeck runn runpod runscope runsignup safetyculture sakari-sms salesforce salesforge salesloft
+salesmsg salesql salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucelabs savvycal
+scale-ai scalr scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api
+search1api sec securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse
+sendbird sendfox sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier
+serverless-function servicem8 servicetitan servicetrade setmore sevdesk seven-io shipengine shipmondo shippo shlink
+shopify shopvox shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire
+signpath signrequest signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook
+simplyrets simpro singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements smartemailing
+smarthr smartlead smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go smtping
+snapchat sncf snitcher snowflake snyk softr solcast soundcloud soundee spacebring speechmatics spiro splitwise
+spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange stackitdns staffbase starbridge starton
+statsig statuspage statuspal stibee stigg stora strale streak stream-chat streamtime stripe studio-by-ai21-labs
+sumoquote sumup supabase supadata super-dispatch supermemory supernormal superset superwall suprsend sure-send
+surecart surevoip surf svix swaggerhub swarmsyncai sympla synap syncro synthflow-ai systemeio table tableau taggun
+tailscale talenthr talentlms talkable talkjs talkroute tally tapfiliate taplio tave tavily teachable teamcamp teamup
+teamup-calendar teamwork teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal
+tentary text-request textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecompaniesapi
+thehive thinkific thoughtspot threads thrivecart ticket-tailor tidb-cloud tidely tidio tidy tidycal tik-hub tiktok
+tiktok-ads timecamp timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden
+topdesk touchsms tovuti traccar track-pod trackdesk trackingmore trackvia trakt transloadit trekksoft trello
+tremendous trestle trigger-dev tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twilio
+twitter twittershots typebot typecast typeform typefully unifi unione unipile uniswap-api universe unleash uplisting
+upload-post uploadcare upstash-vector uptimecom uptimerobot urable urlscanio us-global-mail uscreen userback
+usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway vervoe
+veryfi vibe video video-db videoupscaler vimeo viral-loops virtuous-crm virustotal visma-eaccounting visualping
+visualstudio vocal-video voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile
+walcu-crm wati wayfront weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io
+webscraping-ai websupport weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063
+whatsapp wheelbase when-i-work whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza
+wodify-core wolfram-alpha-api woop-social word wordnik wordpress workable workiz workos workvivo wowza writer
+xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript
+zadarma zeeg zeffy zendesk zeno zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq
+zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory zoho-projects zoho-work-drive zoho-writer
+zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
