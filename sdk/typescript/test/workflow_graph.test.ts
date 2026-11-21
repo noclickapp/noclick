@@ -237,12 +237,17 @@ test("each step method is one op", async () => {
   }
 });
 
-test("setConnection takes an app connection or its id, and null takes one off", async () => {
+test("setConnection sends a connection's ref, its name or id, and null takes one off", async () => {
   const { api } = setup();
   const route = api.on("POST", EDITS, json(edited(5, [{ op: "set_connection", id: "post", slot: "slack_oauth" }], { graph: bare() })));
   const post = nc.Workflow.fromId(WF).step("post");
   await post.setConnection(nc.Connection.fromId(`credential:${CREDENTIAL}`));
-  assert.deepEqual(ops(route), [{ op: "set_connection", id: "post", connection: CREDENTIAL }]);
+  assert.deepEqual(ops(route), [{ op: "set_connection", id: "post", connection: `credential:${CREDENTIAL}` }]);
+  const named = "4c1e9a2b-7f3d-4e8a-9b6c-2d5f8e1a3c7b";
+  await post.setConnection(nc.Connection.fromId(named));
+  assert.deepEqual(ops(route), [{ op: "set_connection", id: "post", connection: named }]);
+  await post.setConnection("work-slack");
+  assert.deepEqual(ops(route), [{ op: "set_connection", id: "post", connection: "work-slack" }]);
   await post.setConnection(CREDENTIAL, { slot: "slack_oauth" });
   assert.deepEqual(ops(route), [{ op: "set_connection", id: "post", connection: CREDENTIAL, slot: "slack_oauth" }]);
   await post.setConnection(null, { slot: "slack_oauth" });
@@ -378,8 +383,34 @@ test("a connection given to a batch is resolved when it's sent", async () => {
     e.setConnection("post", nc.Connection.fromId(`credential:${CREDENTIAL}`));
   });
   assert.deepEqual(route.last.body, {
-    ops: [{ op: "remove_step", id: "writer" }, { op: "set_connection", id: "post", connection: CREDENTIAL }], if_version: 4,
+    ops: [{ op: "remove_step", id: "writer" }, { op: "set_connection", id: "post", connection: `credential:${CREDENTIAL}` }],
+    if_version: 4,
   });
+});
+
+test("an agent step's secrets go by name, whatever names them", async () => {
+  // `secrets` on an agent step (its update, a batch's add or update, the workflow's add): names, or `Secret` objects
+  // sent as their names; [] takes them all off. Never a value.
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json(edited(5, [{ op: "update_step", id: "writer" }], { graph: bare() })));
+  api.on("GET", "/v1/secrets", json(listing([
+    { object: "secret", id: "sec_1", name: "shipping", keys: ["SHIPPING_TOKEN"], user_id: null, used_by: [] }])));
+  const workflow = nc.Workflow.fromId(WF);
+  await workflow.step("writer").update({ secrets: ["warehouse", nc.Secret.fromName("shipping")] });
+  assert.deepEqual(ops(route), [{ op: "update_step", id: "writer", settings: { secrets: ["warehouse", "shipping"] } }]);
+  await workflow.step("writer").update({ settings: { message: "Go." }, secrets: ["warehouse"] });
+  assert.deepEqual(ops(route), [{ op: "update_step", id: "writer", settings: { message: "Go.", secrets: ["warehouse"] } }]);
+  await workflow.step("writer").update({ secrets: [] });
+  assert.deepEqual(ops(route), [{ op: "update_step", id: "writer", settings: { secrets: [] } }]);
+
+  await workflow.edit({}, async (e) => {
+    e.addStep("agent", { id: "second", settings: { model: "openrouter/anthropic/claude-sonnet-4" }, secrets: [nc.Secret.fromName("shipping")] });
+    e.updateStep("writer", { secrets: ["warehouse"] });
+  });
+  assert.deepEqual(ops(route), [
+    { op: "add_step", type: "agent", id: "second", settings: { model: "openrouter/anthropic/claude-sonnet-4", secrets: ["shipping"] } },
+    { op: "update_step", id: "writer", settings: { secrets: ["warehouse"] } },
+  ]);
 });
 
 // --- refusals ----------------------------------------------------------------------------

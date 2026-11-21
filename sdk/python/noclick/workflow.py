@@ -551,22 +551,50 @@ def _position(value: Position) -> Dict[str, float]:
     return {"x": x, "y": y}
 
 
-async def _connection_id(connection: Any) -> Optional[str]:
-    """What ``set_connection`` sends: a credential's id. A connection connected in the app is ``credential:<id>``."""
-    found = await ref_id(connection)
-    return found[len("credential:"):] if found and found.startswith("credential:") else found
+async def _secret_names(secrets: Any) -> List[str]:
+    """An agent step's ``secrets`` as the API takes them: names (a ``noclick.Secret`` is its name, once it's loaded,
+    or created by ``from_name(..., create_if_missing=True)``)."""
+    from .secret import Secret
+
+    names: List[str] = []
+    for secret in [secrets] if isinstance(secrets, (str, Secret)) else secrets:
+        if isinstance(secret, Secret):
+            names.append((await secret._ensure())["name"])
+        elif isinstance(secret, str):
+            names.append(secret)
+        else:
+            raise TypeError(f"A secret is a noclick.Secret or its name, not {type(secret).__name__}")
+    return names
+
+
+async def _sent(op: Dict[str, Any]) -> Dict[str, Any]:
+    """``op`` as the API takes it: a connection given as an object is its ref, secrets given as objects their names."""
+    if op["op"] == "set_connection":
+        return {**op, "connection": await ref_id(op["connection"])}
+    settings = op.get("settings")
+    if op["op"] in ("add_step", "update_step") and isinstance(settings, Mapping) and settings.get("secrets"):
+        return {**op, "settings": {**settings, "secrets": await _secret_names(settings["secrets"])}}
+    return op
+
+
+def _step_settings(settings: Optional[Dict[str, Any]], secrets: Any) -> Optional[Dict[str, Any]]:
+    """A step's ``settings``, with an agent step's ``secrets`` (resolved to names when sent)."""
+    if secrets is None:
+        return settings
+    return {**(settings or {}), "secrets": list(secrets) if isinstance(secrets, (list, tuple)) else [secrets]}
 
 
 def _add_step_op(kind: str, operation: Optional[str], settings: Optional[Dict[str, Any]], name: Optional[str],
-                 step_id: Optional[str], position: Optional[Position]) -> Dict[str, Any]:
-    return compact(op="add_step", type=kind, operation=operation, settings=settings, name=name,
-                   id=step_id or _new_id(kind), position=_position(position) if position is not None else None)
+                 step_id: Optional[str], position: Optional[Position], secrets: Any = None) -> Dict[str, Any]:
+    return compact(op="add_step", type=kind, operation=operation, settings=_step_settings(settings, secrets),
+                   name=name, id=step_id or _new_id(kind),
+                   position=_position(position) if position is not None else None)
 
 
 def _update_step_op(step: Any, settings: Optional[Dict[str, Any]], name: Optional[str], operation: Optional[str],
-                    enabled: Optional[bool]) -> Dict[str, Any]:
-    return compact(op="update_step", id=_step_id(step), settings=settings, name=name, operation=operation,
-                   enabled=enabled)
+                    enabled: Optional[bool], secrets: Any = None) -> Dict[str, Any]:
+    return compact(op="update_step", id=_step_id(step), settings=_step_settings(settings, secrets), name=name,
+                   operation=operation, enabled=enabled)
 
 
 def _connect_op(op: str, source: Any, target: Any, **fields: Any) -> Dict[str, Any]:
@@ -896,7 +924,7 @@ class Step(_Object):
     @synced
     async def update(
         self, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
-        operation: Optional[str] = None, enabled: Optional[bool] = None,
+        operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
     ) -> "Step":
         """Change its settings, name or operation, or switch it off or on. ``settings`` merge
         into what it has (a nested object merges, any other value replaces); a field you leave
@@ -904,6 +932,12 @@ class Step(_Object):
         old harness's own settings and connections, as the app does (``notes["harness_switch"]``
         says what went). Values are judged as a run judges them: one that can't be is refused
         with ``noclick.InvalidRequest`` naming the field, and nothing changes.
+
+        ``secrets`` (an agent step's) are the account's own secrets in its shell's environment
+        on every run, ``noclick.Secret`` objects or their names, replacing the ones it had
+        (``[]`` takes them all off). Only a key acting for the whole account of the workflow's
+        owner gives a step one; any other caller keeps or drops what it was given. Their values
+        never show in a read of the workflow, nor to the agent's model.
 
         Returns:
             This step as written, with ``notes`` and ``verdict``.
@@ -914,8 +948,9 @@ class Step(_Object):
             send = brief.step("send_summary")
             send.update(settings={"to": "team@acme.com", "subject": "Today"}, name="Email the team")
             print(send.verdict)   # {"config_valid": True}
+            brief.step("summarize").update(secrets=["warehouse"])
         """
-        return await self._edit(_update_step_op(self, settings, name, operation, enabled))
+        return await self._edit(_update_step_op(self, settings, name, operation, enabled, secrets))
 
     @synced
     async def patch(self, field: str, patch: str) -> "Step":
@@ -980,11 +1015,15 @@ class Step(_Object):
 
     @synced
     async def set_connection(self, connection: Any, *, slot: Optional[str] = None) -> "Step":
-        """Connect an account to the step: a ``noclick.Connection`` connected in the app
-        (``credential:<id>``) or its id. Its slot is the account's own type unless ``slot``
-        names it. ``connection=None`` with ``slot`` takes the account in that slot off. Only
-        an account your account may use is taken (``noclick.InvalidRequest`` otherwise), and
-        only one of a type the step takes.
+        """Connect an account to the step: one of the account's own connections, as a
+        ``noclick.Connection`` (connected in the app, ``credential:<id>``, or a named one), its
+        ref or id, or a named connection's name; the step takes the account it holds. Its slot
+        is the account's own type unless ``slot`` names it. ``connection=None`` with ``slot``
+        takes the account in that slot off. One of a user's connections, one holding no
+        working account, or one your account may not use is refused (``noclick.InvalidRequest``
+        naming it), as is one of a type the step doesn't take; a caller that doesn't act for
+        the whole account (a user's key, an agent's own tools) only keeps one the workflow
+        already uses.
 
         Returns:
             This step, its ``connections`` as written.
@@ -994,10 +1033,10 @@ class Step(_Object):
             brief = noclick.Workflow.from_name("Morning brief")
             gmail = noclick.Connection.from_id("credential:9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e")
             brief.step("send_summary").set_connection(gmail)
+            brief.step("post").set_connection("work-slack")  # a named connection, by its name
         """
-        op = {"op": "set_connection", "id": self.id, "connection": await _connection_id(connection),
-              **compact(slot=slot)}
-        return await self._edit(op)
+        return await self._edit({"op": "set_connection", "id": self.id, "connection": connection,
+                                 **compact(slot=slot)})
 
     @synced
     async def mock(self, output: Any) -> "Step":
@@ -1462,9 +1501,7 @@ class EditBatch:
     async def _send(self) -> Optional[WorkflowEdit]:
         if not self._ops:
             return None
-        ops = [{**op, "connection": await _connection_id(op["connection"])} if op["op"] == "set_connection" else op
-               for op in self._ops]
-        edit = await self._workflow._send(ops, if_version=self._if_version, include_graph=self._include_graph)
+        edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1487,10 +1524,12 @@ class EditBatch:
     def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
+        secrets: Any = None,
     ) -> Step:
         """Queue a new step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``),
         doing ``operation`` with ``settings``. ``id`` names it (made from its type when left
-        out); without ``position`` it's laid out beside the rest.
+        out); without ``position`` it's laid out beside the rest. An agent step's ``secrets``
+        are as ``Step.update`` takes them.
 
         Returns:
             The step, whose ``id`` later edits in the batch can name. Its fields load once the batch is sent.
@@ -1502,8 +1541,9 @@ class EditBatch:
                 post = e.add_step("automation-slack", operation="send_message_to_channel", name="Post it",
                                   settings={"channel": "#team", "text": "{{ $('summarize').text }}"})
                 e.connect("summarize", post)
+                e.set_connection(post, "work-slack")
         """
-        op = _add_step_op(type, operation, settings, name, id, position)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets)
         self._queue(op)
         step = Step._of(self._workflow, op["id"])
         self._added.append((len(self._ops) - 1, step))
@@ -1511,16 +1551,17 @@ class EditBatch:
 
     def update_step(
         self, step: Any, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
-        operation: Optional[str] = None, enabled: Optional[bool] = None,
+        operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
     ) -> None:
-        """Queue a change to a step, as ``Step.update`` makes it.
+        """Queue a change to a step, as ``Step.update`` makes it (``secrets`` too).
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_step("send_summary", settings={"subject": "Today"}, enabled=True)
+                e.update_step("summarize", secrets=["warehouse"])
         """
-        self._queue(_update_step_op(step, settings, name, operation, enabled))
+        self._queue(_update_step_op(step, settings, name, operation, enabled, secrets))
 
     def patch_step(self, step: Any, field: str, patch: str) -> None:
         """Queue a patch to one long text setting of a step, as ``Step.patch`` makes it.
@@ -2058,9 +2099,10 @@ class Workflow(_Object):
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
+        sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=list(ops), if_version=if_version, include_graph=include_graph or None))
+                ops=sent, if_version=if_version, include_graph=include_graph or None))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2097,13 +2139,15 @@ class Workflow(_Object):
     async def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
+        secrets: Any = None,
     ) -> Step:
         """Add a step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``) doing
         ``operation`` with ``settings``, as one edit. ``id`` names it (made from its type when
         left out); without ``position`` it's laid out beside the rest. It's judged as the app's
         builder judges one: a type, operation or value that can't be is refused with
         ``noclick.InvalidRequest`` naming it, and a setting it can't run without yet is in its
-        ``verdict``. A trigger's schedule or webhook registers once it's added.
+        ``verdict``. A trigger's schedule or webhook registers once it's added. An agent step's
+        ``secrets`` are as ``Step.update`` takes them.
 
         Returns:
             The new ``Step``, with its ``verdict`` and what the edit said about it (``notes``).
@@ -2118,7 +2162,7 @@ class Workflow(_Object):
             brief.step("summarize").connect(send)
             print(send.id, send.verdict)
         """
-        op = _add_step_op(type, operation, settings, name, id, position)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets)
         return await self._edit_step(Step._of(self, op["id"]), op)
 
     @synced

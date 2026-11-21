@@ -227,12 +227,18 @@ def test_each_step_method_is_one_op(api, client):
     assert all("if_version" not in body(c.request) and body(c.request)["include_graph"] for c in route.calls)
 
 
-def test_set_connection_takes_an_app_connection_or_its_id_and_none_takes_one_off(api, client):
+def test_set_connection_sends_a_connections_ref_its_name_or_id_and_none_takes_one_off(api, client):
     route = api.post(EDITS).respond(json=edited(5, [{"op": "set_connection", "id": "post", "slot": "slack_oauth"}],
                                                  graph=bare()))
     post = nc.Workflow.from_id(WF).step("post")
     post.set_connection(nc.Connection.from_id(f"credential:{CREDENTIAL}"))
-    assert body(route.calls.last.request)["ops"] == [{"op": "set_connection", "id": "post", "connection": CREDENTIAL}]
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "set_connection", "id": "post", "connection": f"credential:{CREDENTIAL}"}]
+    named = "4c1e9a2b-7f3d-4e8a-9b6c-2d5f8e1a3c7b"
+    post.set_connection(nc.Connection.from_id(named))
+    assert body(route.calls.last.request)["ops"][0]["connection"] == named
+    post.set_connection("work-slack")
+    assert body(route.calls.last.request)["ops"][0]["connection"] == "work-slack"
     post.set_connection(CREDENTIAL, slot="slack_oauth")
     assert body(route.calls.last.request)["ops"] == [
         {"op": "set_connection", "id": "post", "connection": CREDENTIAL, "slot": "slack_oauth"}]
@@ -373,7 +379,33 @@ def test_a_batch_from_async_code(api, client):
 
     result = asyncio.run(main())
     assert result.version == 5 and body(route.calls.last.request) == {"if_version": 4, "ops": [
-        {"op": "remove_step", "id": "writer"}, {"op": "set_connection", "id": "post", "connection": CREDENTIAL}]}
+        {"op": "remove_step", "id": "writer"},
+        {"op": "set_connection", "id": "post", "connection": f"credential:{CREDENTIAL}"}]}
+
+
+def test_an_agent_steps_secrets_go_by_name_whatever_names_them(api, client):
+    """``secrets=`` on an agent step (its update, a batch's add or update, the workflow's add): names, or
+    ``noclick.Secret`` objects sent as their names; ``[]`` takes them all off. Never a value."""
+    route = api.post(EDITS).respond(json=edited(5, [{"op": "update_step", "id": "writer"}], graph=bare()))
+    api.get("/v1/secrets").respond(json=listing({"object": "secret", "id": "sec_1", "name": "shipping",
+                                                "keys": ["SHIPPING_TOKEN"], "user_id": None, "used_by": []}))
+    workflow = nc.Workflow.from_id(WF)
+    workflow.step("writer").update(secrets=["warehouse", nc.Secret.from_name("shipping")])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "update_step", "id": "writer", "settings": {"secrets": ["warehouse", "shipping"]}}]
+    workflow.step("writer").update(settings={"message": "Go."}, secrets="warehouse")
+    assert body(route.calls.last.request)["ops"][0]["settings"] == {"message": "Go.", "secrets": ["warehouse"]}
+    workflow.step("writer").update(secrets=[])
+    assert body(route.calls.last.request)["ops"][0]["settings"] == {"secrets": []}
+
+    with workflow.edit() as e:
+        e.add_step("agent", id="second", settings={"model": "openrouter/anthropic/claude-sonnet-4"},
+                   secrets=[nc.Secret.from_name("shipping")])
+        e.update_step("writer", secrets=["warehouse"])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "add_step", "type": "agent", "id": "second",
+         "settings": {"model": "openrouter/anthropic/claude-sonnet-4", "secrets": ["shipping"]}},
+        {"op": "update_step", "id": "writer", "settings": {"secrets": ["warehouse"]}}]
 
 
 # --- refusals ----------------------------------------------------------------------------

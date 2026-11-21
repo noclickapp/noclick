@@ -31,6 +31,8 @@ import {
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
+import { Secret } from "./secret.ts";
+import type { SecretRef } from "./secret.ts";
 import { WorkflowApproval } from "./workflowApproval.ts";
 import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
@@ -682,6 +684,13 @@ export interface StepUpdate {
   operation?: string;
   /** `false` switches the step off; `true` back on. */
   enabled?: boolean;
+  /**
+   * An agent step's secrets: the account's own, in its shell's environment on every run, as `Secret` objects or
+   * their names, replacing the ones it had (`[]` takes them all off). Only a key acting for the whole account of the
+   * workflow's owner gives a step one; any other caller keeps or drops what it was given. Their values never show in
+   * a read of the workflow, nor to the agent's model.
+   */
+  secrets?: SecretRef[];
 }
 
 /** What `addStep` takes beside the step's type. */
@@ -689,6 +698,8 @@ export interface AddStepOptions {
   /** What it does, one of its type's operations. */
   operation?: string;
   settings?: JsonObject;
+  /** An agent step's secrets, as `StepUpdate.secrets` takes them. */
+  secrets?: SecretRef[];
   /** Its name in the app. */
   name?: string;
   /** Its id; made from its type when left out. */
@@ -937,21 +948,48 @@ function stepId(step: StepRef): string {
   throw new TypeError("A step is a Step or its id.");
 }
 
-/** What `setConnection` sends: a credential's id. A connection connected in the app is `credential:<id>`. */
-async function connectionId(connection: Connection | string | null): Promise<string | null> {
-  const found = connection === null ? null : ((await refId(connection)) ?? null);
-  return found?.startsWith("credential:") ? found.slice("credential:".length) : found;
+/** An agent step's `secrets` as the API takes them: names (a `Secret` is its name, once it's loaded or created). */
+async function secretNames(secrets: unknown[]): Promise<string[]> {
+  const names: string[] = [];
+  for (const secret of secrets) {
+    if (secret instanceof Secret) names.push(String((await secret._ensure()).name));
+    else if (typeof secret === "string") names.push(secret);
+    else throw new TypeError("A secret is a Secret or its name.");
+  }
+  return names;
+}
+
+/** `op` as the API takes it: a connection given as an object is its ref, secrets given as objects their names. */
+async function sentOp(op: JsonObject): Promise<JsonObject> {
+  if (op.op === "set_connection") {
+    const connection = op.connection as Connection | string | null;
+    return { ...op, connection: connection === null ? null : ((await refId(connection)) ?? null) };
+  }
+  const settings = op.settings as JsonObject | undefined;
+  if ((op.op === "add_step" || op.op === "update_step") && Array.isArray(settings?.secrets) && settings.secrets.length) {
+    return { ...op, settings: { ...settings, secrets: await secretNames(settings.secrets) } };
+  }
+  return op;
+}
+
+/** A step's `settings`, with an agent step's `secrets` (sent as names). */
+function stepSettings(settings: JsonObject | undefined, secrets: SecretRef[] | undefined): JsonObject | undefined {
+  return secrets === undefined ? settings : { ...settings, secrets };
 }
 
 function addStepOp(type: string, options: AddStepOptions): JsonObject {
   return compact({
-    op: "add_step", type, operation: options.operation, settings: options.settings, name: options.name,
-    id: options.id ?? newId(type), position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
+    op: "add_step", type, operation: options.operation, settings: stepSettings(options.settings, options.secrets),
+    name: options.name, id: options.id ?? newId(type),
+    position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
   });
 }
 
 function updateStepOp(step: StepRef, update: StepUpdate): JsonObject {
-  return compact({ op: "update_step", id: stepId(step), settings: update.settings, name: update.name, operation: update.operation, enabled: update.enabled });
+  return compact({
+    op: "update_step", id: stepId(step), settings: stepSettings(update.settings, update.secrets), name: update.name,
+    operation: update.operation, enabled: update.enabled,
+  });
 }
 
 function edgeOp(op: string, from: StepRef, to: StepRef, fields: JsonObject): JsonObject {
@@ -1237,12 +1275,15 @@ export class Step extends ApiObject {
   }
 
   /**
-   * Connect an account to the step: a `Connection` connected in the app (`credential:<id>`) or its id. Its slot is
-   * the account's own type unless `slot` names it; `null` with `slot` takes the account in that slot off. Only an
-   * account your account may use is taken, and only one of a type the step takes.
+   * Connect an account to the step: one of the account's own connections, as a `Connection` (connected in the app,
+   * `credential:<id>`, or a named one), its ref or id, or a named connection's name; the step takes the account it
+   * holds. Its slot is the account's own type unless `slot` names it; `null` with `slot` takes the account in that
+   * slot off. One of a user's connections, one holding no working account, or one your account may not use is
+   * refused (`InvalidRequest` naming it), as is one of a type the step doesn't take; a caller that doesn't act for
+   * the whole account (a user's key, an agent's own tools) only keeps one the workflow already uses.
    */
   async setConnection(connection: Connection | string | null, options: { slot?: string } = {}): Promise<this> {
-    return await this._edit({ op: "set_connection", id: this.id, connection: await connectionId(connection), ...compact({ slot: options.slot }) });
+    return await this._edit({ op: "set_connection", id: this.id, connection, ...compact({ slot: options.slot }) });
   }
 
   /** Have the step give `output` on test runs instead of running, so the steps after it can be tried. */
@@ -1511,11 +1552,7 @@ export class EditBatch {
   /** @internal */
   async _send(): Promise<WorkflowEdit | null> {
     if (!this._ops.length) return null;
-    const ops: JsonObject[] = [];
-    for (const op of this._ops) {
-      ops.push(op.op === "set_connection" ? { ...op, connection: await connectionId(op.connection as Connection | string | null) } : op);
-    }
-    const edit = await this._workflow._send(ops, this._options);
+    const edit = await this._workflow._send(this._ops, this._options);
     for (const [index, step] of this._added) step._absorb(edit, edit.results[index] ?? null);
     this._result = edit;
     return edit;
@@ -1917,10 +1954,12 @@ export class Workflow extends ApiObject {
   /** @internal One batch of `ops`; a refusal for a stale version carries the workflow as it stands (`Conflict.graph`). */
   async _send(ops: JsonObject[], options: EditOptions = {}): Promise<WorkflowEdit> {
     const path = await this.path();
+    const sent: JsonObject[] = [];
+    for (const op of ops) sent.push(await sentOp(op));
     let raw: unknown;
     try {
       raw = await this._request("POST", `${path}/edits`, {
-        json: compact({ ops, if_version: options.ifVersion, include_graph: options.includeGraph || undefined }),
+        json: compact({ ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined }),
       });
     } catch (err) {
       this._stale(err);
