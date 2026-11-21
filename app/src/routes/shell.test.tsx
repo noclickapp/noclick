@@ -47,7 +47,7 @@ function open(address: string) {
             {
                 path: '/',
                 element: <Shell />,
-                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'resources', ...page }],
+                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }],
             },
             { path: '/developers/*', ...page },
         ],
@@ -96,11 +96,14 @@ afterEach(() => {
 describe('the frame on a laptop', () => {
     it('lists the pages the app serves, marks the one open, and goes to each by its route', async () => {
         open('/');
-        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Resources']);
+        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Connections', 'Resources']);
         expect(current()).toEqual([]);
         fireEvent.click(nav().getByRole('button', { name: 'Work' }));
         expect(where()).toBe('/work');
         expect(current()).toEqual(['Work']);
+        fireEvent.click(nav().getByRole('button', { name: 'Connections' }));
+        expect(where()).toBe('/connections');
+        expect(current()).toEqual(['Connections']);
         fireEvent.click(nav().getByRole('button', { name: 'Chat' }));
         expect(where()).toBe('/chat');
         expect(current()).toEqual(['Chat']);

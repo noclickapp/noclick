@@ -37,6 +37,12 @@ export const billingSettingsUrl = (site: string) => `${site}/dashboard?tab=setti
 /** Where the owner links their phone, so a text from it reaches their own account (Settings → Phone). */
 export const phoneSettingsUrl = (site: string) => `${site}/dashboard?tab=settings&section=phone`;
 
+/** An account connected in the NoClick app, on its page under Connections (who may use it, and more). */
+export const connectionUrl = (site: string, accountId: string) => `${site}/dashboard?tab=connections&view=connected&account=${encodeURIComponent(accountId)}`;
+
+/** Which of a connected account's actions wait for its owner's OK, on its page in the NoClick app. */
+export const accountApprovalsUrl = (site: string, accountId: string) => `${site}/credential/permissions/${encodeURIComponent(accountId)}`;
+
 /** An automation on its canvas in the NoClick app. */
 export const workflowUrl = (site: string, workflowId: string) => `${site}/dashboard?workflow=${encodeURIComponent(workflowId)}`;
 

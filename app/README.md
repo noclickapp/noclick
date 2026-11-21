@@ -2,7 +2,7 @@
 
 NoClick's app: the screens for working with a NoClick account, built only on the TypeScript SDK in
 [`../sdk/typescript`](../sdk/typescript). It runs with your NoClick key on its server, behind a password only you
-know. So far it has your account at a glance, the chat, Work, Resources and NoClick's developer console; NoClick's
+know. So far it has your account at a glance, the chat, Work, Connections, Resources and NoClick's developer console; NoClick's
 screens move in here one at a time.
 
 ## Configuration
@@ -39,7 +39,7 @@ pnpm test
 
 `pnpm start` listens on every network interface unless `HOST` is set: run `HOST=127.0.0.1 pnpm start` to keep it
 to this machine. Open the address, sign in with `APP_PASSWORD`, and the first screen reads your account through the
-app's own server. It sits in the app's frame, as `/chat`, `/work` and `/resources` do: a sidebar on a laptop (the
+app's own server. It sits in the app's frame, as `/chat`, `/work`, `/connections` and `/resources` do: a sidebar on a laptop (the
 pages, search, and your account with its menu), a bar with the page's name and a menu on a phone, and ⌘K to go
 anywhere (see [The frame](#the-frame)). **Developers** in the account menu opens the console at `/developers`.
 `scripts/check.sh` at the
@@ -48,7 +48,7 @@ neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
 `http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
-Chat): the same pages over
+Chat, `/connections-lab` for Connections): the same pages over
 made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
@@ -161,7 +161,7 @@ A host fills what it keeps in its sidebar and menu:
 
 | Slot | Where it is | By default |
 |---|---|---|
-| `shell.pages` | The pages the sidebar lists | The pages this app serves: Chat, Work and Resources |
+| `shell.pages` | The pages the sidebar lists | The pages this app serves: Chat, Work, Connections and Resources |
 | `shell.workspace` | Atop the sidebar, beside search | The account's name |
 | `shell.foot.card` | The sidebar's foot, while it's open | Nothing |
 | `shell.foot.balance` | The sidebar's foot, kept mounted on the rail | Nothing |
@@ -195,7 +195,8 @@ client, answered from canned `/v1` responses, with no account and no network. It
 
 `/work-lab` is Work over its own made-up data (`src/screens/work/fixtures`), likewise in development only: `?scene=`
 picks a view (its index lists them all), and `?as=key` answers as the API answers a key. `/chat-lab` is the same for
-the chat (`src/screens/chat/fixtures`, `src/screens/chat/lab`).
+the chat (`src/screens/chat/fixtures`, `src/screens/chat/lab`), and `/connections-lab` for Connections
+(`src/screens/connections/fixtures`, `src/screens/connections/lab`).
 
 ## Resources
 
@@ -288,6 +289,51 @@ Its slots (`src/screens/chat/slots.ts`), besides Work's `work.reply.markdown` an
 | `chat.connect.email` | The Connect menu's email | NoClick's inbox, its mail switched on or off |
 | `chat.places` | Where a card's links go (Resources, an automation's canvas) | This app's `/resources`; the canvas on NoClick |
 
+## Connections
+
+`/connections` is the apps and accounts your agents and automations act through (`src/screens/connections`): every app
+and AI company in one grid, the popular ones first, each a button away from connecting another account; your accounts
+(Connected, and Shared with me), the broken ones first; and an account's own page, with proof it works in its
+provider's own words (your channels, your repositories, who it signs in as, or its refusal), the automations that use
+it, who it's shared by, and Rename, Reconnect and Delete (which names what still uses it first). Below the catalog,
+the setup guides for using NoClick itself from an MCP client. It reads the accounts the platform API lists: those
+connected in NoClick's app and the named connections code made.
+
+**No secret passes through this app.** Connecting an app or an AI account makes a named connection (its name made up,
+such as `gmail-lq2x`) and opens its connect page on NoClick in a new tab, where the account is signed in to or its key
+typed; the page lists it once it lands. Reconnecting opens the account's own connect link the same way, so an account
+connected in NoClick's app is connected again in place. A check asks the provider through NoClick, at most 20 a minute
+an account, once a session when an account's page first opens.
+
+What stays yours, on NoClick's own pages, signed in:
+
+- **Choosing who else may use an account**, and taking one shared with you off your list: the API doesn't share
+  accounts, so the Access section says whose it is and links to the account on NoClick.
+- **Lifting an account's approvals**: the API only adds them, so Approvals opens its page on NoClick.
+
+What differs from NoClick's own Connections:
+
+- There is no Workspace tab: this app reads the account's own workspace.
+- The catalog is the integrations the API lists, each AI provider its own tile, drawn with plain marks.
+- Environment variables and MCP servers' keys aren't listed: the API doesn't list them as connections.
+- No WhatsApp number's agent on its page.
+
+`src/screens/connections/connectionsAsKey.test.tsx` opens every scene of its lab as the owner and as a key, fails if
+the key's views ask for anything the API refuses every key, keeps every call either makes in `connectionsCalls.txt`,
+and holds that connecting an app sends no secret.
+
+Its slots (`src/screens/connections/slots.ts`), besides the shared `connection.mark`, `connect.app`, `connect.model` and
+`mcp.client.marks`:
+
+| Slot | Where it is | By default |
+|---|---|---|
+| `connections.reads` | Around the page: the accounts it lists | Every connection the API lists in the workspace the page shows |
+| `connections.apps` | The apps the catalog lists and accounts are matched to | The integrations the API lists |
+| `connections.connect` | Connecting another account of an app from the catalog | NoClick's connect page in a new tab |
+| `connections.ai` | The AI companies in the catalog, and connecting one | Each model provider the API lists, connected through `connect.model` |
+| `connections.account.access` | An account's Access section | Whose it is, and a link to share it on NoClick |
+| `connections.account.more` | More of an account's page, after its proof | Nothing |
+
 ## Work
 
 `/work` is where the account's people and agents work (`src/screens/work`): its spaces, each with its channels,
@@ -343,7 +389,7 @@ What differs from NoClick's own Work:
   app has no canvas.
 - Connecting an app's account or an AI account opens NoClick's connect page in a new tab, and Work waits for the
   account to land. A tool server (MCP) that asks you to sign in is added on NoClick, or with its key.
-- Adding funds opens NoClick's page for it, and the account's connections open NoClick's. Resources opens this app's.
+- Adding funds opens NoClick's page for it. Resources and Connections open this app's.
 - An app is drawn with a plain mark and the name read from its type; a coding harness the app has no drawing of
   (OpenCode, Hermes, OpenClaw) with a plain dot.
 - Only the account's own agents are listed: NoClick's app also lists those of the account's platform users.
@@ -366,7 +412,7 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+The home, `/chat`, `/work`, `/connections` and `/resources` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
 own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
 (`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
 folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the
@@ -486,6 +532,7 @@ It doesn't:
   `test/slots.test.ts` keeps each slot declared once, beside its screen. `src/screens/console/consoleAsKey.test.tsx`
   opens every page of the console as a key and fails if one asks the API for something only the owner may have;
   `src/screens/resources/resourcesAsKey.test.tsx` does the same for Resources,
-  `src/screens/work/workAsKey.test.tsx` for Work, and `src/screens/chat/chatAsKey.test.tsx` for Chat.
+  `src/screens/work/workAsKey.test.tsx` for Work, `src/screens/chat/chatAsKey.test.tsx` for Chat, and
+  `src/screens/connections/connectionsAsKey.test.tsx` for Connections.
 
 Apache-2.0, as the rest of this repository.

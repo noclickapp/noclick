@@ -15,7 +15,7 @@ import { makeFixtureFetch } from './fixtures/fixtureFetch';
 import { TRY_IT_OPERATION_ID } from './fixtures/pages/b';
 import { CARDS } from './fixtures/pages/h_identity';
 import { BOOKING_APP_ID } from './fixtures/pages/e_build';
-import { isOwnerOnly, OWNER_ONLY, OWNER_ONLY_OPERATIONS, ownerOnlyWhy } from './ownerOnly';
+import { isOwnerOnly, OWNER_ONLY, OWNER_ONLY_OPERATIONS, ownerOnlyWhy, type OwnerOnlyRow } from './ownerOnly';
 import { visibleKinds } from './resourceKinds';
 import { LOG_VIEWS, SECTIONS, SETTINGS_PAGES } from './sections';
 
@@ -220,8 +220,9 @@ describe('a console acting as a key', () => {
     });
 
     it('names something the console does for every row of what only the owner can do', () => {
-        for (const row of Object.values(OWNER_ONLY)) {
-            expect(row.operations.length).toBeGreaterThan(0);
+        for (const row of Object.values(OWNER_ONLY) as OwnerOnlyRow[]) {
+            // A row with no operation is something the API doesn't offer at all, and says so.
+            expect(row.operations.length > 0, row.what).toBe(!row.appOnly);
             for (const operation of row.operations) expect(operation).toMatch(/^(GET|POST|PATCH|PUT|DELETE) \/v1\/[a-z_]+(\/(\{[a-z_]+\}|[a-z_]+))*$/);
         }
         expect(new Set(OWNER_ONLY_OPERATIONS).size).toBe(OWNER_ONLY_OPERATIONS.length);

@@ -25,8 +25,9 @@ export async function reconnectByLink(client: NoClick, connection: Connection | 
 }
 
 /** Makes a connection of `integration` (of `credentialType` where it says) and opens its connect page on NoClick in a
- *  new tab; resolves with the connection once an account lands there. */
-async function connectByLink(client: NoClick, integration: string, credentialType?: string): Promise<Connection> {
+ *  new tab, opened as it's asked for so the browser lets it open; resolves with the connection once an account lands
+ *  there. It carries no secret: the account is connected on NoClick's page. */
+export async function connectByLink(client: NoClick, integration: string, credentialType?: string): Promise<Connection> {
     const tab = openTabForLater();
     try {
         const connection = await Connection.create(`${integration}-${Date.now().toString(36)}`, { client, integration, credentialType });

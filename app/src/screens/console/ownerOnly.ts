@@ -4,7 +4,8 @@
 // account's API keys (a server holding a key, as this app's does). NoClick's API refuses a key a handful of
 // operations, 403 `permission_denied`: making and reading keys, approving a command line's sign-in, changing the
 // account, and a few more; and a few others need a scope the account's `*` key doesn't hold (an agent's sandbox, a
-// card's number). Each row below names one thing a screen does that rests on such operations. Everything that offers
+// card's number). Each row below names one thing a screen does that rests on such operations, or (`appOnly`) one the
+// API doesn't offer at all, done only signed in to NoClick's own app. Everything that offers
 // it reads this table through `useOwnerOnly`: the sidebar and the palette (which leave an owner-only section out), a
 // section opened by its address (which says why it isn't here, and links to where its owner does it), and each page's
 // own buttons and reads. So a screen acting as a key never calls an operation that would refuse it (consoleAsKey and
@@ -17,8 +18,11 @@ export interface OwnerOnlyRow {
     what: string;
     /** Why a key can't, in one sentence. */
     why: string;
-    /** The operations it rests on, as `METHOD /v1/path/{param}`. */
+    /** The operations it rests on, as `METHOD /v1/path/{param}`; none for what the API doesn't offer (`appOnly`). */
     operations: readonly string[];
+    /** What the API doesn't offer at all, so it rests on no operation: only a person signed in to NoClick's own app does
+     *  it, and a screen acting as a key says so where it would offer it. */
+    appOnly?: true;
     /** Where its owner does it: the page of NoClick's own console, and what the link to it says. Absent where no page
      *  there is the place for it. */
     at?: { page: string; link: string };
@@ -128,6 +132,22 @@ export const OWNER_ONLY = {
         why: 'A key answers a call NoClick holds for the owner’s yes only with the approvals:answer scope, which an account’s key with every scope (*) doesn’t hold, and never one made with it.',
         operations: ['POST /v1/humans/requests/{request_id}/answer'],
         only: 'a held call (its request reads `owner_only`); a key answers the account’s other requests',
+    },
+    /** Choosing who else may use an account connected in the app, and leaving one shared with you, on its page in
+     *  Connections. */
+    connectionSharing: {
+        what: 'Sharing a connected account',
+        appOnly: true,
+        why: 'The API doesn’t share connected accounts, so a key can’t choose who else uses one.',
+        operations: [],
+    },
+    /** Letting a connected account's action run without the owner's OK again, on its Approvals page (adding one is
+     *  `POST /v1/connections/{ref}/require_approval`, which a key may make). */
+    connectionApprovals: {
+        what: 'Lifting a connected account’s approvals',
+        appOnly: true,
+        why: 'The API only adds approvals to a connected account, so a key can’t let one of its actions run without the owner’s OK again.',
+        operations: [],
     },
 } as const satisfies Record<string, OwnerOnlyRow>;
 

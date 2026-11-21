@@ -118,7 +118,7 @@ describe('the pages', () => {
 describe('the sidebar with nothing filled', () => {
     it('lists the pages the app serves, under the account’s name', () => {
         shell({ current: 'work' });
-        expect(navButtons().map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Resources']);
+        expect(navButtons().map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Connections', 'Resources']);
         expect(screen.getByRole('button', { name: 'Work' }).getAttribute('aria-current')).toBe('page');
         expect(screen.getByText('Ada Lovelace', { selector: 'span.truncate.px-1\\.5' })).toBeTruthy();
     });

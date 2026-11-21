@@ -17,7 +17,7 @@ import { AccountName, accountOnApp, paletteOnApp } from './slotStandards';
 
 /** The pages the sidebar lists, in the shell's order: those this app serves. The standard is the pages the open app
  *  has routes for; a host that serves them all lists them all. */
-export const PAGES = slot<readonly ShellPageId[]>('shell.pages', ['chat', 'work', 'resources']);
+export const PAGES = slot<readonly ShellPageId[]>('shell.pages', ['chat', 'work', 'connections', 'resources']);
 
 /** Atop the sidebar, beside search: the workspace. `onNavigate` closes a phone's sheet when it goes somewhere. The
  *  standard names the account and leads home. */

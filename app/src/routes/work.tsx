@@ -8,7 +8,6 @@
 import { useEffect, useMemo } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
-import { openTabForLater } from '@/lib/oauthPopup';
 import { signOut } from '@/lib/signOut';
 import { askInChat } from '@/screens/chat/asks';
 import { readAccountStatus } from '@/screens/account/status';
@@ -63,14 +62,13 @@ export default function WorkRoute() {
         }),
         [client, api, country, account?.id, account?.email]
     );
-    // Resources and the chat are this app's own pages; connections are made on NoClick.
+    // Resources, Connections and the chat are this app's own pages.
     const work = useMemo<WorkContextValue>(
         () => ({
             ask: askInChat(navigate),
             openPage: (page, params = {}) => {
-                if (page !== 'resources') return void openTabForLater({ url: `${NOCLICK_SITE}/dashboard?tab=connections` });
                 const search = new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => !!entry[1]));
-                navigate(`/resources${search.size ? `?${search}` : ''}`);
+                navigate(`/${page}${search.size ? `?${search}` : ''}`);
             },
             palette: { remember: (entries) => rememberPaletteEntries('Work', entries), open: () => openCommandPalette() },
         }),

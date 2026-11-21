@@ -1,0 +1,12 @@
+GET /v1/connections
+GET /v1/connections/credential:cred_github
+GET /v1/connections/credential:cred_linear
+GET /v1/integrations
+POST /v1/connections/credential:cred_discord/verify
+POST /v1/connections/credential:cred_github/verify
+POST /v1/connections/credential:cred_gmail_ops/verify
+POST /v1/connections/credential:cred_hubspot/verify
+POST /v1/connections/credential:cred_linear/verify
+POST /v1/connections/credential:cred_notion/verify
+POST /v1/connections/credential:cred_stripe/verify
+POST /v1/connections/credential:cred_whatsapp/verify

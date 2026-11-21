@@ -10,6 +10,8 @@ export default [
         route('chat', 'routes/chat.tsx'),
         // The account's spaces, channels, agents and people, acting as the app's key.
         route('work', 'routes/work.tsx'),
+        // The apps and accounts its agents and automations act through, acting as the app's key.
+        route('connections', 'routes/connections.tsx'),
         // What the account owns and what it costs, acting as the app's key.
         route('resources', 'routes/resources.tsx'),
     ]),
@@ -27,6 +29,8 @@ export default [
     route('chat-lab', 'routes/chat-lab.tsx'),
     // Work over made-up data: development only, as the console's lab.
     route('work-lab', 'routes/work-lab.tsx'),
+    // Connections over made-up data: development only, as the console's lab.
+    route('connections-lab', 'routes/connections-lab.tsx'),
     // Last, so every other path has a route too: middleware runs only for a path that matches one, and the gate (the
     // root route's middleware) must see every request.
     route('*', 'routes/notFound.tsx'),

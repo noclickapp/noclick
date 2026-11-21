@@ -220,9 +220,20 @@ describe('the developer console, under the production server', () => {
         expect(page.headers.get('x-frame-options')).toBe('DENY');
     });
 
-    it('draws the home, the chat, Work and Resources in the app’s frame, and the console in it with its own sidebar', async () => {
+    it('serves Connections to the owner at /connections, behind the sign-in', async () => {
+        expect((await get(configured, '/connections')).headers.get('location')).toBe('/login?next=%2Fconnections');
         const cookie = await signedInCookie();
-        for (const path of ['/', '/chat', '/work', '/resources?kind=domains']) {
+        for (const path of ['/connections', '/connections?view=connected&account=credential%3Ac_1']) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain('<title>Connections · NoClick</title>');
+            expect(page.headers.get('x-frame-options'), path).toBe('DENY');
+        }
+    });
+
+    it('draws the home, the chat, Work, Connections and Resources in the app’s frame, and the console in it with its own sidebar', async () => {
+        const cookie = await signedInCookie();
+        for (const path of ['/', '/chat', '/work', '/connections', '/resources?kind=domains']) {
             const page = await get(configured, path, { headers: { cookie } });
             expect(page.status, path).toBe(200);
             expect(page.body, path).toContain('data-testid="app-sidebar"');
@@ -237,14 +248,14 @@ describe('the developer console, under the production server', () => {
 
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
-        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key']) {
+        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key']) {
             expect((await get(configured, path, { headers: { cookie } })).status, path).toBe(404);
         }
         const files = builtFiles();
         expect(files.length).toBeGreaterThan(20);
         // The console lab's own note, a value only its fixtures hold (the moment they are set at), a made-up agent of
-        // Work's fixtures, and the chat's fixtures' NoClick.
-        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05|agt_wirefern|8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01/.test(readFileSync(file, 'utf8')));
+        // Work's fixtures, the chat's fixtures' NoClick, and a made-up bot of Connections' fixtures.
+        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05|agt_wirefern|8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01|northwind-release-bot/.test(readFileSync(file, 'utf8')));
         expect(carrying.map((file) => file.slice(APP.length + 1))).toEqual([]);
     });
 });
