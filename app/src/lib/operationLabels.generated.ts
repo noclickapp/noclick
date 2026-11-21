@@ -727,9 +727,9 @@ maildroppa mailercloud mailerlite-classic mailersend mailgun mailjet mailmodo ma
 manifestly manus manychat manyreach manyrequests mapbox marketsharp marketstack markup-ai mastodon mateo matillion
 mattermost me-qr-qr-code mediasilo meetgeekai meilisearch melo mem mem0 membershipio memberspot memelord mentortools
 mercado-pago mercury merge-dev meshy messagebird meta method-crm metricool mews mezmo microsoft-bookings
-microsoft-entra-id microsoft-exchange microsoft-graph-security microsoft-onenote microsoft-power-bi
-microsoft-powerpoint microsoft-sharepoint microsoft-teams microsoft-teams-events microsoft-todo mighty-networks
-mightycall mihu-ai milvus mindbody minelead minerstat mineskin minimax mirakl miro mist mixmax
+microsoft-dynamics365-business-c microsoft-entra-id microsoft-exchange microsoft-graph-security microsoft-onenote
+microsoft-power-bi microsoft-powerpoint microsoft-sharepoint microsoft-teams microsoft-teams-events microsoft-todo
+mighty-networks mightycall mihu-ai milvus mindbody minelead minerstat mineskin minimax mirakl miro mist mixmax
 mobile-message-ca21345 mobile-text-alerts moco mollie-1 monday moneybird mongodb moonclerk moskit motaword moxo
 msg91 mural mx-technologies mycase mycashflow mycrm-leads namsor nango nanonets-ocr nationbuilder nebl neetocal
 neetoform neo4j neon neoncrm net2phone netbox nethunt-crm netlicensing netlify neutrino new-relic newie nextcloud
