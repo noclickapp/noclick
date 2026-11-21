@@ -210,6 +210,26 @@ def test_an_agent_sets_its_own_on_create_update_and_spawn(api, client):
         nc.Agent.from_id("ag_1").spawn("Buy a number.", approvals={"purchase": "allow"})
 
 
+ATTACH = {"kind": "attach_connection", "description": "Giving a workflow's step a connection or a secret.",
+          "approver": "owner", "outside_only": False, "settable": True,
+          "defaults": {"connected_app": "allow", "assistant": "allow", "agent": "allow", "key": "allow",
+                       "code": "allow"}}
+
+
+def test_agents_attaching_connections_is_a_kind_switched_for_the_account_and_one_agent(api, client):
+    read = api.get("/v1/approvals/policy").respond(json={**POLICY, "kinds": [ATTACH]})
+    assert nc.ApprovalPolicy.get().default("attach_connection", "agent") == "allow"
+    assert read.called
+    put = api.put("/v1/approvals/policy").respond(json={**POLICY, "kinds": [ATTACH], "changes": []})
+    nc.ApprovalPolicy.set(settings={"attach_connection": "ask"}, ceilings={"attach_connection": "allow"})
+    assert body(put.calls.last.request) == {"settings": {"attach_connection": "ask"},
+                                            "ceilings": {"attach_connection": "allow"}}
+    patched = api.patch("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    api.get("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    nc.Agent.from_id("ag_1").update(approvals={"attach_connection": "allow"})
+    assert body(patched.calls.last.request) == {"approvals": {"attach_connection": "allow"}}
+
+
 def test_the_policy_reads_and_explains_for_one_agent(api, client):
     read = api.get("/v1/approvals/policy").respond(json={**POLICY, "agent_id": "ag_1", "kinds": [
         {**POLICY["kinds"][0], "own": None,

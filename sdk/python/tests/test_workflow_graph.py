@@ -501,6 +501,27 @@ def test_a_canvas_saves_as_one_batch_in_its_own_terms(api, client):
     ]}
 
 
+def test_a_canvas_names_itself_on_its_batch_and_lays_out_its_interface(api, client):
+    """A canvas's own name on its batch (its tab's), an edge between the handles it was drawn on, a connection under
+    the slot it holds it in, and the Interface tab's layout as one of the workflow's own fields."""
+    route = api.post(EDITS).respond(json=edited(5, []))
+    workflow = nc.Workflow.from_id(WF)
+    layout = {"layout": [{"i": "post", "x": 0, "y": 0, "w": 6, "h": 4}], "tabOrder": ["post"]}
+    with workflow.edit(if_version=4, source="canvas", origin="canvas-tab-1") as e:
+        e.connect("writer", "post", handle="right", target_handle="left", id="xy-edge__writerright-postleft")
+        e.set_connection("writer", CREDENTIAL, slot="agent_claude_code")
+        e.update_workflow(interface=layout)
+    assert body(route.calls.last.request) == {"if_version": 4, "source": "canvas", "origin": "canvas-tab-1", "ops": [
+        {"op": "connect", "from": "writer", "to": "post", "kind": "data", "handle": "right", "target_handle": "left",
+         "id": "xy-edge__writerright-postleft"},
+        {"op": "set_connection", "id": "writer", "connection": CREDENTIAL, "slot": "agent_claude_code"},
+        {"op": "update_workflow", "interface": layout},
+    ]}
+    workflow.update(interface={"layout": [], "tabOrder": []})
+    assert body(route.calls.last.request) == {"include_graph": True, "ops": [
+        {"op": "update_workflow", "interface": {"layout": [], "tabOrder": []}}]}
+
+
 def test_a_graph_reads_what_the_app_shows_and_an_edges_input(api, client):
     edges = [{"id": "s-c", "source": "state", "target": "code", "targetHandle": "state"}]
     api.get(f"/v1/workflows/{WF}/graph").respond(json={**read(graph=bare(HOOK, edges=edges)),
