@@ -1,14 +1,16 @@
-// The step form over fixtures: the real form for one step of a made-up workflow, its schema, dropdowns, loaded values
-// and previews answered as the platform API answers them (../fixtures/world.ts), so every scene opens with no account
-// and no network. `?scene=` picks one (scenes.ts; with none, the index lists them); `?as=key` draws it acting as one of
-// the account's keys rather than its signed-in owner. The step before the one open is a webhook whose last output the
-// fields can reference.
+// The step form over fixtures: the real form for one step of a made-up workflow, or its account pickers, its schema,
+// dropdowns, loaded values, previews and the account's connections answered as the platform API answers them
+// (../fixtures/world.ts), so every scene opens with no account and no network. `?scene=` picks one (scenes.ts; with
+// none, the index lists them); `?as=key` draws it acting as one of the account's keys rather than its signed-in owner.
+// The step before the one open is a webhook whose last output the fields can reference.
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import type { Node } from '@xyflow/react';
 import { ClientProvider } from '@/sdk/client';
 import { workFixtureClient } from '@/screens/work/fixtures/client';
 import { NodeConfig } from '../NodeConfig';
+import { NodeCredentials } from '../NodeCredentials';
+import { StepContext } from '../reads';
 import { ReferenceAutocompleteProvider } from '../ReferenceAutocompleteContext';
 import { ReferenceHoverProvider } from '../ReferenceHoverContext';
 import { formFetch, type Observe } from '../fixtures/world';
@@ -66,15 +68,23 @@ export function SceneView({ scene, actsAs, observe }: { scene: StepFormScene; ac
     const client = useMemo(() => workFixtureClient(formFetch({ actsAs, observe }), { maxRetries: 0 }), [actsAs, observe]);
     const [config, setConfig] = useState(scene.step.config);
     const [operation, setOperation] = useState(scene.step.operation);
+    const [credentialIds, setCredentialIds] = useState(scene.step.credentialIds ?? {});
+    const scope = useMemo(() => ({ workflowId: scene.step.workflowId, nodeId: scene.step.nodeId }), [scene.step.workflowId, scene.step.nodeId]);
     return (
         <div className="min-h-screen bg-background p-6 text-foreground">
             <div className="mx-auto max-w-[480px]" data-testid="step-form">
                 <ClientProvider client={client}>
-                    <ReferenceHoverProvider>
-                        <ReferenceAutocompleteProvider inputNodes={UPSTREAM}>
-                            <NodeConfig {...scene.step} config={config} operation={operation} onChange={setConfig} onOperationChange={setOperation} />
-                        </ReferenceAutocompleteProvider>
-                    </ReferenceHoverProvider>
+                    {scene.part === 'accounts' ? (
+                        <StepContext.Provider value={scope}>
+                            <NodeCredentials nodeType={scene.step.nodeType} nodeData={{ operation, config }} credentialIds={credentialIds} onChange={setCredentialIds} />
+                        </StepContext.Provider>
+                    ) : (
+                        <ReferenceHoverProvider>
+                            <ReferenceAutocompleteProvider inputNodes={UPSTREAM}>
+                                <NodeConfig {...scene.step} config={config} operation={operation} onChange={setConfig} onOperationChange={setOperation} />
+                            </ReferenceAutocompleteProvider>
+                        </ReferenceHoverProvider>
+                    )}
                 </ClientProvider>
             </div>
         </div>
