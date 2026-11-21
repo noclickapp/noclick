@@ -193,6 +193,7 @@ parts of it only a host has. Connecting the account a step or an agent needs is 
 | `canvas.interface` | The Interface tab: the workflow's forms, tables and chats as a page | A note that it's laid out and published on NoClick, with the workflow's link there |
 | `canvas.agentChat` | An agent step's chat, a block of the Interface tab | A note that the agent is talked to on NoClick, with the link |
 | `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
+| `canvas.graph.saves` | How the workflow's graph is saved and read again, beyond `/v1` (asked by the graph store, `graph/liveGraphStore.ts`) | Every save as the edits that changed it (`POST /v1/workflows/{id}/edits`), the graph read from `/v1` |
 
 Work's are listed under [Work](#work).
 

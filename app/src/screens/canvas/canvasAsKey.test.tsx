@@ -1,0 +1,194 @@
+// @vitest-environment happy-dom
+// The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
+// graph: the store that saves it, graph/liveGraphStore.ts) opens a workflow, edits it in each way a canvas does,
+// meets another writer's change and closes, over fixtures that refuse what only the account's signed-in owner may do
+// (screens/console/ownerOnly.ts) exactly as the API refuses a key, and none of it asks for one. What it calls, as the
+// owner and as a key, is kept in canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call
+// on its real API as a key and hold to the table. And what it does with what it reads: every request goes through the
+// app's client (none off its origin), and no secret the account holds is in anything it reads or sends.
+import type { Edge } from '@xyflow/react';
+import { NoClick } from 'noclick';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fill } from '@/slots';
+import { applyNodeUpdate, createWorkflowNode } from '@/screens/canvas/applyNodeUpdate';
+import { isOwnerOnly } from '@/screens/console/ownerOnly';
+import { graphFetch, SECRETS, stored, WORKFLOW, type EditAnswer } from './graph/fixtures';
+import {
+    flushAllGraphsNow,
+    graphRecords,
+    markGraphDirty,
+    recordDeletedNodes,
+    recordGraphSnapshot,
+    reloadFromServer,
+    setCanvasEditsClient,
+    setCanvasMounted,
+    setGraphLoaded,
+} from './graph/liveGraphStore';
+import { V1_GRAPH_SAVES } from './graph/saves';
+import { GRAPH_SAVES } from './slots';
+
+type Json = Record<string, unknown>;
+
+interface Call {
+    method: string;
+    path: string;
+    body: Json;
+    answer: Promise<string>;
+}
+
+/** Requests that left the app's client: a `fetch` of its own, an XHR, a socket. */
+const offClient: string[] = [];
+
+beforeEach(() => {
+    vi.useFakeTimers();
+    offClient.length = 0;
+    for (const id of Object.keys(graphRecords)) delete graphRecords[id];
+    fill(GRAPH_SAVES, V1_GRAPH_SAVES);
+    vi.stubGlobal('fetch', (input: RequestInfo | URL) => {
+        offClient.push(`fetch ${String(input)}`);
+        return Promise.reject(new Error('the canvas reached the network outside its client'));
+    });
+    for (const name of ['WebSocket', 'EventSource'] as const) {
+        vi.stubGlobal(
+            name,
+            class {
+                constructor(url: string) {
+                    offClient.push(`${name} ${url}`);
+                    throw new Error(`no ${name}`);
+                }
+            }
+        );
+    }
+    const open = XMLHttpRequest.prototype.open;
+    vi.spyOn(XMLHttpRequest.prototype, 'open').mockImplementation(function (this: XMLHttpRequest, ...args: Parameters<typeof open>) {
+        offClient.push(`XHR ${String(args[1])}`);
+        return open.apply(this, args);
+    });
+});
+
+afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    setCanvasEditsClient(null);
+});
+
+const asLine = ({ method, path }: { method: string; path: string }) => `${method} ${path}`;
+
+/** Lets what's queued run: the debounce, the answers and what the store does with them. */
+async function settle(ms = 2500) {
+    await vi.advanceTimersByTimeAsync(ms);
+    for (let i = 0; i < 30; i++) await Promise.resolve();
+}
+
+/** A workflow opened, edited in each way a canvas does, moved on by another writer, then the tab closed. */
+async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
+    const calls: Call[] = [];
+    const theirs = stored();
+    theirs.nodes.push({ id: 'theirs', type: 'log', position: { x: 0, y: 400 }, config: { label: 'Theirs' } });
+    const answers: Array<(body: Json) => EditAnswer> = [() => ({ conflict: { version: 7, graph: theirs } })];
+    setCanvasEditsClient(new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: graphFetch({
+            actsAs,
+            edit: (body) => (answers.shift() ?? ((b: Json) => ({ version: ((b.if_version as number) ?? 4) + 1 })))(body),
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    }));
+
+    // Opened: the graph read from the API.
+    recordGraphSnapshot(WORKFLOW, false, { nodes: [], edges: [] }, false);
+    setCanvasMounted(WORKFLOW, false, true);
+    setGraphLoaded(WORKFLOW, true);
+    expect(await reloadFromServer(WORKFLOW)).toBe(true);
+    await settle();
+    const rec = graphRecords[WORKFLOW];
+    expect(rec.nodes.map((n) => n.id)).toEqual(['hook', 'agent', 'slack', 'victim']);
+
+    // Edited: a rename, another account chosen, a step added and connected, one moved and one deleted.
+    rec.nodes = rec.nodes.map((n) => {
+        if (n.id === 'agent') return applyNodeUpdate(n, { label: 'Sorter', credentialIds: { agent_openai: 'cred_openai_2' } });
+        if (n.id === 'hook') return { ...n, position: { x: -40, y: 80 } };
+        return n;
+    });
+    rec.nodes = [...rec.nodes.filter((n) => n.id !== 'victim'), createWorkflowNode('mine', 'log', { x: 960, y: 240 }, { label: 'Mine' })];
+    rec.edges = [...rec.edges, { id: 'slack-mine', source: 'slack', target: 'mine' } as Edge];
+    recordDeletedNodes(WORKFLOW, ['victim']);
+    markGraphDirty(WORKFLOW);
+    // Refused for another writer's change, merged, and saved again on their version.
+    await settle();
+    await settle();
+    expect(rec.graphVersion).toBe(8);
+    expect(rec.nodes.map((n) => n.id)).toEqual(['hook', 'agent', 'slack', 'mine', 'theirs']);
+
+    // Closed with one more change.
+    rec.nodes = rec.nodes.map((n) => (n.id === 'slack' ? applyNodeUpdate(n, { config: { channel: 'C02' } }) : n));
+    markGraphDirty(WORKFLOW);
+    flushAllGraphsNow();
+    await settle(0);
+    return calls;
+}
+
+/** Every key anywhere in `value`. */
+function keysIn(value: unknown): string[] {
+    if (Array.isArray(value)) return value.flatMap(keysIn);
+    if (!value || typeof value !== 'object') return [];
+    return Object.entries(value).flatMap(([key, inner]) => [key, ...keysIn(inner)]);
+}
+
+/** Holds that nothing the canvas read or sent carries a secret the account holds, nor a credential's data. */
+async function holdsNoSecret(calls: Call[]) {
+    for (const call of calls) {
+        const sent = JSON.stringify(call.body);
+        const read = await call.answer;
+        for (const secret of Object.values(SECRETS)) {
+            expect(sent, `${asLine(call)} sent a secret`).not.toContain(secret);
+            expect(read, `${asLine(call)} read a secret`).not.toContain(secret);
+        }
+        const keys = keysIn(call.body);
+        for (const key of ['credential_id', 'credentialIds', 'credential_ids', 'credential_data', 'data', 'token', 'api_key']) {
+            expect(keys, `${asLine(call)} sent ${key}`).not.toContain(key);
+        }
+    }
+}
+
+describe('the canvas acting as a key', () => {
+    it('opens, edits, merges and closes a workflow without asking for what only the account’s owner may do', async () => {
+        const called = new Set<string>();
+        const refused: string[] = [];
+        for (const actsAs of ['owner', 'key'] as const) {
+            for (const id of Object.keys(graphRecords)) delete graphRecords[id];
+            const calls = await session(actsAs);
+            await holdsNoSecret(calls);
+            for (const call of calls) {
+                called.add(asLine(call));
+                if (actsAs === 'key' && isOwnerOnly(call.method, call.path)) refused.push(asLine(call));
+                expect(await call.answer, `${asLine(call)} was refused`).not.toContain('permission_denied');
+            }
+        }
+        expect(refused).toEqual([]);
+        expect(offClient).toEqual([]);
+        await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./canvasCalls.txt');
+    });
+
+    it('chooses an account by its id and never sends its values, saving each change as the edit that made it', async () => {
+        const calls = await session('key');
+        const edits = calls.filter((c) => asLine(c) === `POST /v1/workflows/${WORKFLOW}/edits`);
+        // The same changes again on their version, in the order the merge holds the steps.
+        expect(edits.map((e) => [e.body.if_version ?? null, (e.body.ops as Json[]).map((op) => op.op).sort()])).toEqual([
+            [4, ['add_step', 'connect', 'move', 'remove_step', 'set_connection', 'update_step']],
+            [7, ['add_step', 'connect', 'move', 'remove_step', 'set_connection', 'update_step']],
+            [null, ['update_step']],
+        ]);
+        expect((edits[0].body.ops as Json[]).find((op) => op.op === 'set_connection')).toEqual({
+            op: 'set_connection', id: 'agent', connection: 'cred_openai_2', slot: 'agent_openai',
+        });
+        await holdsNoSecret(calls);
+        expect(offClient).toEqual([]);
+    });
+});

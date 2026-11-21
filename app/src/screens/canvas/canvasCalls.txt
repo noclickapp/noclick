@@ -1,0 +1,2 @@
+GET /v1/workflows/wf_orders/graph
+POST /v1/workflows/wf_orders/edits

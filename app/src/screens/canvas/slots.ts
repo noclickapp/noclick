@@ -1,9 +1,10 @@
 // The canvas's slots (src/slots.ts): the places on a workflow's canvas a host may fill, each with what stands there
 // when none does (slotStandards.tsx). Connecting the account a step or an agent needs is the shared `connect.app` and
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
-// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; and what a
-// step's settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in
-// accountStandards.tsx). A host fills them before the canvas first draws (some hold hooks the canvas and the form call).
+// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; what a step's
+// settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
+// and how the graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts). A host fills them before
+// the canvas first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
 import type { AccountCredential } from '@/screens/connections/model';
@@ -13,6 +14,7 @@ import type { AgentWiring } from './agentWiring';
 import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { StepReads } from './form/reads';
 import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
+import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
 import type { Collaborator, Presence, PresenceOptions } from './presence';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
 import {
@@ -391,3 +393,11 @@ export const STEP_ACCOUNTS = slot<StepAccountsHost>('canvas.step.accounts', {
     Share: null,
     forms: {},
 });
+
+// ── the graph's saves ───────────────────────────────────────────────────────
+
+/** How the canvas's graph is saved and read again (graph/saves.ts), asked by the graph store outside any component:
+ *  which way each workflow's record saves, a host's own whole-graph save, the graph read again and whether saves wait
+ *  for another writer. The standard saves every record as the edits that changed it (`POST
+ *  /v1/workflows/{id}/edits`), reads `GET /v1/workflows/{id}/graph` and never waits. */
+export const GRAPH_SAVES = slot<GraphSaves>('canvas.graph.saves', V1_GRAPH_SAVES);
