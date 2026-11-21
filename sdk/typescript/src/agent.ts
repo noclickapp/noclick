@@ -3,7 +3,7 @@
 import { AgentMemory, AgentSandbox, AgentWorkspace, ShareLink, toCodingAgents } from "./agentExtras.ts";
 import { TrashItem, trashed } from "./trash.ts";
 import { wireSettings } from "./approval.ts";
-import type { ApprovalSetting } from "./approval.ts";
+import type { ScopeApprovals } from "./approval.ts";
 import { attachmentIds, toAttachment, toAttachments, uploadFile } from "./attachment.ts";
 import type { Attachment, FileInput, UploadOptions } from "./attachment.ts";
 import type { AgentEvent, CodingAgents, Rehearsal } from "./agentExtras.ts";
@@ -1270,9 +1270,11 @@ export interface AgentApprovalsOption {
    * signed in, their own message to one of their agents, or a key naming `approvals:policy` (after a 10-minute undo
    * window); an agent acting on its own waits for their yes. In `update`, a kind set to `null` goes back to the
    * account's (a child's, to its parent's). `toolRules` turning `noclick.spend` or `noclick.delete` to `"allow"` set
-   * `purchase` or `delete` to allow with it.
+   * `purchase` or `delete` to allow with it. `routing` among them names who answers its held calls first, in place of
+   * its parent's or the account's approver (finally the owner), as `ApprovalPolicy.set`'s `routing` takes it: never
+   * the agent itself nor one of its children (its parent may approve its calls).
    */
-  approvals?: Record<string, ApprovalSetting>;
+  approvals?: ScopeApprovals;
 }
 
 export interface AgentCreateOptions extends AgentFields, CallOptions {
@@ -1590,7 +1592,7 @@ export interface SpawnOptions {
    * The child's own approval settings (as `create` takes them), within its parent's, which it follows where it sets
    * none: one looser than its parent's throws `InvalidRequest`.
    */
-  approvals?: Record<string, ApprovalSetting>;
+  approvals?: ScopeApprovals;
   /** Whose conversation `conversation` is (an account parent talking to a user: that user's thread). */
   user?: UserOption;
 }
@@ -1945,6 +1947,13 @@ export class Agent extends ApiObject {
   get budgetUsdPerMonth(): number | null {
     return this._field("budget_usd_per_month");
   }
+  /** While a budget set for one run holds (`update({ budgetForRun: true })`), the budget that comes back as that run
+   *  ends and after which run (`operationId` null: its next turn); null otherwise. */
+  get budgetRestore(): { budgetUsdPerMonth: number | null; operationId: string | null } | null {
+    const held = this._field<JsonObject | null>("budget_restore");
+    return held ? { budgetUsdPerMonth: (held.budget_usd_per_month as number | null) ?? null,
+      operationId: (held.operation_id as string | null) ?? null } : null;
+  }
   /** The region its sandboxes run in, fixed when it was created; `null`: wherever NoClick has capacity. */
   get region(): RegionName | null {
     return this._field("region");
@@ -2038,7 +2047,8 @@ export class Agent extends ApiObject {
   }
   /**
    * What its own calls wait for a person on in place of the account's, by kind of hold (`disposition`, `under_usd`,
-   * `until`, `effective_at`, `pending`); empty where it sets none (a child follows its parent's).
+   * `until`, `effective_at`, `pending`), and `routing`: who answers its held calls first (`approver`, `on_timeout`,
+   * `expires_in_s`); empty where it sets none (a child follows its parent's).
    */
   get approvals(): Record<string, JsonObject> {
     return { ...(asObject(this._field("approvals")) as Record<string, JsonObject>) };
@@ -2512,11 +2522,18 @@ export class Agent extends ApiObject {
    * default model; `modelConnection: null` removes an `sdk` agent's own model key; `secrets` are those in its shell,
    * in place of the ones it has (`[]` takes them all away). `name` renames it, unique among its scope's agents: its
    * old name keeps reaching it and stays reserved for it (`formerNames`), and a NoClick keeps its name.
+   * `budgetForRun: true` with `budgetUsdPerMonth` sets that budget for one run alone (its turn under way, else its
+   * next one): the budget it replaced comes back once that run ends, however it ends (`budgetRestore` says what comes
+   * back meanwhile). A budget set without it stands until changed.
+   *
+   *     await coder.update({ budgetUsdPerMonth: 2, budgetForRun: true });
+   *     console.log(coder.budgetRestore);   // { budgetUsdPerMonth: 10, operationId: null }
    */
   async update(
     changes: Omit<AgentFields, "modelConnection"> & {
       name?: string;
       budgetUsdPerMonth?: number | null;
+      budgetForRun?: boolean;
       modelConnection?: string | Connection | null;
     } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "card" | "machine" |
       "memories" | "skills" | "turnLimits" | "secrets"> & AgentApprovalsOption,
@@ -2535,6 +2552,7 @@ export class Agent extends ApiObject {
         tool_rules: changes.toolRules,
         can_request: integrationRefs(changes.canRequest),
         budget_usd_per_month: changes.budgetUsdPerMonth,
+        budget_for_run: changes.budgetForRun || undefined,
         timezone: changes.timezone,
         repos: await repoWires(changes.repos, resolveScope(this._callScope())),
         network: changes.network,
