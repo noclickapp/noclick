@@ -715,7 +715,8 @@ class CodingCredential:
 @dataclass(frozen=True)
 class CodingJob:
     """A coding agent's turn in flight (or a ``lost`` one): ``title`` as whoever handed it over named it, ``text`` the
-    start of what it was asked."""
+    start of what it was asked, ``workstream`` the one it belongs to as it reads now (``{"id", "name"}``; ``None``
+    where none was named)."""
 
     operation_id: str
     conversation: Optional[str]
@@ -726,11 +727,13 @@ class CodingJob:
     text: str
     lost: bool
     raw: Dict[str, Any] = dc_field(repr=False)
+    workstream: Optional[Dict[str, str]] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "CodingJob":
         return cls(raw["operation_id"], raw.get("conversation"), raw["status"], raw.get("step"),
-                   parse_time(raw.get("since")), raw.get("title"), raw.get("text") or "", bool(raw.get("lost")), raw)
+                   parse_time(raw.get("since")), raw.get("title"), raw.get("text") or "", bool(raw.get("lost")), raw,
+                   raw.get("workstream"))
 
 
 @dataclass(frozen=True)
