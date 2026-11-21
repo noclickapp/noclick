@@ -8,7 +8,8 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/ui/tooltip';
 import { BesideCard, BesideRail, type BesideAsk } from './Beside';
-import type { BesideItem } from './besideItems';
+import { agentItem, type BesideItem } from './besideItems';
+import type { Operation } from 'noclick';
 
 afterEach(cleanup);
 
@@ -70,5 +71,17 @@ describe('Work’s Beside', () => {
         // Helpers below them, counted with ink dots.
         expect(card.textContent).toContain('Beside it1 running');
         expect(card.innerHTML).not.toMatch(/emerald|red-/);
+    });
+
+    it('names the workstream a NoClick agent’s task belongs to on its card, as its operation names it', async () => {
+        const started = { child: { agentId: 'pages', name: 'morrow-pages', task: 'Write the pages', jobId: 'op-pages' }, step: { at: Date.now() - 60_000 } } as Parameters<typeof agentItem>[0];
+        const job = { id: 'op-pages', status: 'running', workstream: { id: 'ws-launch', name: 'Spring launch' }, startedAt: null, createdAt: null, finishedAt: null, result: null } as unknown as Operation;
+        const named = agentItem(started, job, undefined, null);
+        expect(named.workstream).toBe('Spring launch');
+        expect(agentItem(started, { ...job, workstream: null } as unknown as Operation, undefined, null).workstream).toBeNull();
+        draw(<BesideRail items={[named]} facts={null} face={{ id: 'main', kind: 'agent', name: 'Main' }} look={() => ({ harness: null, runsOn: null })} selected={null} onSelect={() => undefined} stoppable={() => false} onStop={() => undefined} fresh={new Set()} />);
+        fireEvent.focus(within(screen.getByTestId('beside-rail')).getByRole('button', { name: 'Write the pages: Running' }));
+        const card = await screen.findByRole('tooltip');
+        expect(card.textContent).toContain('WorkstreamSpring launch');
     });
 });

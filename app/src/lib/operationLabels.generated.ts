@@ -649,7 +649,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workspaces_unarchive": ["Unarchive Workspace", "POST", "write"],
     "workspaces_update": ["Update Workspace", "PATCH", "write"],
     "workstreams_list": ["List Workstreams", "GET", "read"],
-    "workstreams_update": ["Rename Workstream", "PATCH", "write"],
+    "workstreams_update": ["Update Workstream", "PATCH", "write"],
 };
 
 /** The integrations an agent may call operations of, each by its node type without `automation-` (an agent's

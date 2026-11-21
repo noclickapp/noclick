@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-// What Settings shows in its slots: with no host, the app's own sections (Usage, Plan and billing, Notifications,
-// Developer as the console's way in alone) and none of those whose body is only a deployment's (Settings leaves them
+// What Settings shows in its slots: with no host, the app's own sections (Usage, Workstreams, Plan and billing,
+// Notifications, Developer as the console's way in alone) and none of those whose body is only a deployment's (Settings leaves them
 // out); with a host, each section it fills, and the older keys it kept under the console's row.
 import { cleanup, render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -11,9 +11,10 @@ import { BillingStandard } from './billing';
 import { DeveloperSection, DeveloperView } from './developer';
 import { NotificationsSection } from './notifications';
 import { visibleSections } from './sections';
-import { BILLING, DEVELOPER, MEMBERS, NOTIFICATIONS, OLDER_KEYS, PHONE, POPUPS, SKILLS, USAGE, useSectionBodies } from './slots';
+import { BILLING, DEVELOPER, MEMBERS, NOTIFICATIONS, OLDER_KEYS, PHONE, POPUPS, SKILLS, USAGE, WORKSTREAMS, useSectionBodies } from './slots';
+import { WorkstreamsSection } from './workstreams';
 
-const SECTION_SLOTS = [USAGE, BILLING, MEMBERS, SKILLS, NOTIFICATIONS, PHONE, POPUPS, DEVELOPER];
+const SECTION_SLOTS = [USAGE, WORKSTREAMS, BILLING, MEMBERS, SKILLS, NOTIFICATIONS, PHONE, POPUPS, DEVELOPER];
 
 afterEach(() => {
     cleanup();
@@ -25,11 +26,11 @@ const everything = { inOrganization: true, hasMembers: true, phoneLinking: true 
 
 describe('with no host', () => {
     it('draws the app’s own sections and none of the deployment’s, which Settings leaves out', () => {
-        expect(SECTION_SLOTS.map((section) => standing(section))).toEqual([UsagePage, BillingStandard, null, null, NotificationsSection, null, null, DeveloperSection]);
+        expect(SECTION_SLOTS.map((section) => standing(section))).toEqual([UsagePage, WorkstreamsSection, BillingStandard, null, null, NotificationsSection, null, null, DeveloperSection]);
         const { result } = renderHook(() => useSectionBodies());
-        expect(result.current.bodies).toEqual({ usage: UsagePage, billing: BillingStandard, notifications: NotificationsSection, developer: DeveloperSection });
+        expect(result.current.bodies).toEqual({ usage: UsagePage, workstreams: WorkstreamsSection, billing: BillingStandard, notifications: NotificationsSection, developer: DeveloperSection });
         expect(result.current.unfilled).toEqual(['organization', 'skills', 'phone', 'popups']);
-        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'billing', 'notifications', 'developer']);
+        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'workstreams', 'billing', 'notifications', 'developer']);
     });
 
     it('opens the developer console from Developer, with nothing under it', () => {
@@ -51,9 +52,9 @@ describe('with a host', () => {
         fill(BILLING, Plan);
         fill(PHONE, Phone);
         const { result } = renderHook(() => useSectionBodies());
-        expect(result.current.bodies).toEqual({ usage: UsagePage, billing: Plan, notifications: NotificationsSection, phone: Phone, developer: DeveloperSection });
+        expect(result.current.bodies).toEqual({ usage: UsagePage, workstreams: WorkstreamsSection, billing: Plan, notifications: NotificationsSection, phone: Phone, developer: DeveloperSection });
         expect(result.current.unfilled).toEqual(['organization', 'skills', 'popups']);
-        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'billing', 'notifications', 'phone', 'developer']);
+        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'workstreams', 'billing', 'notifications', 'phone', 'developer']);
     });
 
     it('shows the older keys it kept under the console’s row', () => {

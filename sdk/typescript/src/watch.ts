@@ -31,7 +31,8 @@ export type WatchedObject =
   | "domain" | "deployment" | "repo" | "mcp_server" | "live_session" | "phone_call" | "workflow" | "workflow_run"
   | "durable_object_class" | "skill" | "memory" | "machine" | "sandbox" | "agent_move" | "connection" | "plan_usage"
   | "agent_trigger" | "approval" | "browser" | "agent" | "coding_agent" | "channel" | "workspace"
-  | "workspace_resource" | "channel_sections" | "space_question" | "usage" | "spend_cap" | "notifications";
+  | "workspace_resource" | "channel_sections" | "space_question" | "usage" | "spend_cap" | "notifications"
+  | "workstream";
 
 /** The socket is open: `resumed` when it carried on from the last change you got, so nothing was missed. */
 export interface WatchReady {

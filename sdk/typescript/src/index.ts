@@ -26,8 +26,8 @@ export type { PhoneVerification, Spending, SpendingAction, UserFields, UserListO
 export { Session } from "./session.ts";
 export { Operation } from "./operation.ts";
 export type {
-  KindScopedFilters, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus, OperationStep,
-  OperationSummary, OperationTransition,
+  KindScopedFilters, NamedWorkstream, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus,
+  OperationStep, OperationSummary, OperationTransition,
   PortStep, TurnStep,
 } from "./operation.ts";
 export { ToolCall } from "./toolCall.ts";
