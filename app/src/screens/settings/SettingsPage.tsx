@@ -1,6 +1,6 @@
 // Settings: one page, its sections listed in groups in a column of their own beside the open one on a laptop, and on a
 // phone a list a section opens over (SettingsFrame). Each section's body is a slot (slots.ts): the app's own where it
-// has one (Usage, Plan and billing, Notifications, Developer), and a host's for what only a deployment has; a section
+// has one (Usage, Workstreams, Plan and billing, Notifications, Developer), and a host's for what only a deployment has; a section
 // nobody draws isn't listed. Whoever draws the page says what it knows of the account (`SectionContext`) and where the
 // open section lives (`SettingsAddress`): `/settings` keeps it in the address's `?section=` (`useSettingsAddress`). The
 // app's sections read with the client and live frames `SettingsScope` hands them, acting as whoever the console context

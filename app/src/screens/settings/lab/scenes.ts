@@ -22,6 +22,18 @@ const MEMBER: SettingsApiWorld = { tier: 'member', balanceUsd: 42.5, capUsd: 50,
 export const SCENES: readonly SettingsScene[] = [
     { id: 'settings', title: 'As it opens: Usage beside the sections, and a phone’s list', group: 'Settings', world: MEMBER },
 
+    { id: 'workstreams', title: 'The lines of work agents named, with what each spent, and one archived', group: 'Workstreams', world: MEMBER, section: 'workstreams' },
+    { id: 'workstreams-none', title: 'No workstreams yet', group: 'Workstreams', world: { ...MEMBER, workstreams: 'none' }, section: 'workstreams' },
+    { id: 'workstreams-loading', title: 'While they’re read', group: 'Workstreams', world: { ...MEMBER, workstreams: 'waiting' }, section: 'workstreams' },
+    {
+        id: 'workstreams-merge',
+        title: 'Renaming one onto another’s name: the merge said first',
+        group: 'Workstreams',
+        world: MEMBER,
+        section: 'workstreams',
+        steps: [{ button: 'Rename Menu refresh' }, { type: '#workstream-name', text: 'spring LAUNCH' }],
+    },
+
     { id: 'notifications', title: 'Each alert with its switch, some off', group: 'Notifications', world: { ...MEMBER, prefs: 'some-off' }, section: 'notifications' },
     { id: 'notifications-loading', title: 'While they’re read', group: 'Notifications', world: { ...MEMBER, prefs: 'waiting' }, section: 'notifications' },
 

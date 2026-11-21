@@ -9,6 +9,7 @@ import { _registerApprovalFactory } from "./errors.ts";
 import { asObject, compact, csv, listAll, listPage, str } from "./object.ts";
 import type { JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult, withKinds } from "./operation.ts";
+import type { Workflow } from "./workflow.ts";
 import type { KindScopedFilters, OperationSummary } from "./operation.ts";
 import { resolveScope, userIdOf } from "./scope.ts";
 import type { UserOption } from "./scope.ts";
@@ -24,6 +25,10 @@ export interface Answer {
   value: string | null;
   choices: string[];
   values: string[];
+  /** A `connect` question's: the connection set on the step, by its ref (also its `value`; `choice` is its name). */
+  connection: string | null;
+  /** A `secret` question's: the secret its values went into, never the values. */
+  secret: string | null;
   raw: unknown;
 }
 
@@ -38,6 +43,47 @@ export interface HumanPick {
   arguments?: JsonObject;
 }
 
+/** A workflow step a question fills in: its workflow (a `Workflow` or its id) and its id in the graph. */
+export interface HumanStepRef {
+  workflow: string | Workflow;
+  stepId: string;
+}
+
+/**
+ * Which of the account's connections a workflow step uses (`Human.ask`'s `connect`, asked of the owner): the app or
+ * model provider (`integration`) or the one kind of credential (`credentialType`), and the step; `slot` narrows it
+ * to one kind the step keys connections by.
+ */
+export interface HumanConnectAsk {
+  integration?: string;
+  credentialType?: string;
+  step: HumanStepRef & { slot?: string };
+}
+
+/**
+ * A secret's values (`Human.ask`'s `secret`): typed on NoClick's page and kept as the account's secret `name`, its
+ * `keys` each a value; with `step`, an agent step's shell gets it too (the owner's only).
+ */
+export interface HumanSecretAsk {
+  name: string;
+  keys: string[];
+  step?: HumanStepRef;
+}
+
+/**
+ * What `HumanRequest.answer` takes: a question's choice(s) and/or text, a connect question's connection, or a secret
+ * question's values.
+ */
+export interface HumanAnswerFields {
+  choice?: string;
+  choices?: string[];
+  text?: string;
+  /** One of the account's connections that fits (a `Connection`, or its ref or name). */
+  connection?: string | Connection;
+  /** A value for each of the secret's keys: kept in the secret, never with the answer. */
+  secretValues?: Record<string, string>;
+}
+
 /** What `Human.ask` takes beside its question. */
 export interface HumanAskOptions {
   /** The answers they choose from (up to 20); left out, they answer in their own words. */
@@ -46,8 +92,17 @@ export interface HumanAskOptions {
   pick?: HumanPick;
   /** They may choose several of the options, or of a pick's choices. */
   multiple?: boolean;
+  /** Asked of the owner: which of the account's connections a workflow step uses. NoClick sets the one they choose as them, and an account holding just one that fits answers at once with it. Needs the `workflows` scope. */
+  connect?: HumanConnectAsk;
+  /** A secret's values, typed on NoClick's page (its link carries a key: the request's id alone opens nothing), never shown to you or a model. Needs the `secrets` scope. */
+  secret?: HumanSecretAsk;
   via?: Via;
   expiresInS?: number;
+}
+
+function stepRef(step: HumanStepRef & { slot?: string }): JsonObject {
+  const workflowId = typeof step.workflow === "string" ? step.workflow : step.workflow.id;
+  return compact({ workflow_id: workflowId, step_id: step.stepId, slot: step.slot });
 }
 
 const strings = (value: unknown): string[] =>
@@ -88,11 +143,13 @@ registerResult("human.ask", (result): Answer => {
       value: str(body.value),
       choices: strings(body.choices),
       values: strings(body.values),
+      connection: str(body.connection),
+      secret: str(body.secret),
       raw: result,
     };
   }
   const text = result === null || result === undefined ? null : String(result);
-  return { choice: null, text, value: null, choices: [], values: [], raw: result };
+  return { choice: null, text, value: null, choices: [], values: [], connection: null, secret: null, raw: result };
 });
 registerResult("human.approve", (result) =>
   result && typeof result === "object" ? Boolean((result as JsonObject).approved) : Boolean(result),
@@ -220,13 +277,36 @@ export class HumanRequest<T> extends Operation<T> {
     return str(this._view.note);
   }
 
-  private async answer(approved: boolean, note: string | undefined): Promise<this> {
+  private async respond(body: JsonObject): Promise<this> {
     const requestId = this.requestId;
     if (!requestId) throw new TypeError("This request has no request id to answer; list it with HumanRequest.list(...).");
     this._view = asObject(await this._request("POST", `/v1/humans/requests/${encodeURIComponent(requestId)}/answer`, {
-      json: compact({ approved, note }),
+      json: compact(body),
     }));
     return this;
+  }
+
+  /**
+   * Answer a question from your own code, as the person it waits on (who may: as `approve` says): a `choice` (or
+   * `choices`) and/or `text`; a connect question's `connection` (one of the account's that fits), which NoClick sets
+   * on the step as your key, so it needs the `workflows` scope and a key acting for your whole account, never a
+   * user's or an agent's own tools; a secret question's `secretValues`, kept in the secret and never with the
+   * answer, which needs the `secrets` scope.
+   *
+   * @example
+   * for (const request of await HumanRequest.list({ status: "pending", kind: "ask", answerable: "code" })) {
+   *   if (request.request.connect) await request.answer({ connection: "work-slack" });
+   * }
+   */
+  answer(fields: HumanAnswerFields): Promise<this> {
+    const connection = fields.connection instanceof Connection ? fields.connection._ref : fields.connection;
+    return this.respond({
+      choice: fields.choice,
+      choices: fields.choices?.length ? [...fields.choices] : undefined,
+      text: fields.text,
+      connection,
+      secret_values: fields.secretValues ? { ...fields.secretValues } : undefined,
+    });
   }
 
   /**
@@ -241,12 +321,12 @@ export class HumanRequest<T> extends Operation<T> {
    * thread's latest message).
    */
   approve(options: { note?: string } = {}): Promise<this> {
-    return this.answer(true, options.note);
+    return this.respond({ approved: true, note: options.note });
   }
 
   /** Decline it: a held call never runs, and the agent gets a turn saying so, with your `note`. */
   decline(options: { note?: string } = {}): Promise<this> {
-    return this.answer(false, options.note);
+    return this.respond({ approved: false, note: options.note });
   }
 }
 
@@ -473,6 +553,20 @@ export class Human {
           })
         : undefined,
       multiple: options.multiple ? true : undefined,
+      connect: options.connect
+        ? compact({
+            integration: options.connect.integration,
+            credential_type: options.connect.credentialType,
+            step: stepRef(options.connect.step),
+          })
+        : undefined,
+      secret: options.secret
+        ? compact({
+            name: options.secret.name,
+            keys: [...options.secret.keys],
+            step: options.secret.step ? stepRef(options.secret.step) : undefined,
+          })
+        : undefined,
       via: via(options.via),
       expires_in_s: options.expiresInS,
     });

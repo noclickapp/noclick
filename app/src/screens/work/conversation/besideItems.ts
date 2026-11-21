@@ -37,6 +37,8 @@ export interface BesideItem {
     /** What it has cost in dollars, where the platform meters it on its own (a NoClick agent's task); null where it
      *  doesn't. */
     spendUsd: number | null;
+    /** The workstream a NoClick agent's task belongs to, as its operation names it now; none where nobody named one. */
+    workstream?: string | null;
     /** A loop's: how it comes round, when it runs next (null while its run works, or once it's over), and the
      *  wake-up it is, which Stop cancels. */
     loop?: { every: string; nextAt: number | null; runs: number; wakeup: Wakeup };
@@ -122,6 +124,7 @@ export function agentItem(started: { child: Child; step: Step }, job: Operation 
         turnRunning: false,
         agent: child,
         spendUsd,
+        workstream: job?.workstream?.name ?? null,
     };
 }
 
