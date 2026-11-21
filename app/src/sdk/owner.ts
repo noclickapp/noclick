@@ -283,7 +283,7 @@ export type CapabilityGroup = (typeof CAPABILITY_GROUPS)[number];
 export interface ConnectedAppView {
     object: 'connected_app';
     id: string;
-    client: { name: string; uri: string | null };
+    client: { name: string; uri: string | null; id: string };
     capabilities: string[];
     spend_cap_usd_per_month: number | null;
     /** Purchases under this go through without asking; null always asks. */
@@ -296,6 +296,9 @@ export interface ConnectedAppView {
     created_at: string;
     last_used_at: string | null;
     revoked_at: string | null;
+    /** Once revoked, its owner may turn it back on as it was (`restoreConnectedApp`): a connection NoClick itself makes
+     *  (its assistant's). A client a person connected connects again instead. */
+    restorable: boolean;
 }
 
 export async function listConnectedApps(client: NoClick, options: { cursor?: string | null } = {}): Promise<Page<ConnectedAppView>> {
@@ -309,6 +312,11 @@ export async function listConnectedApps(client: NoClick, options: { cursor?: str
 /** Returns the revoked view (`revoked_at` set). */
 export function revokeConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
     return client.request<ConnectedAppView>('DELETE', `/v1/connected_apps/${encodeURIComponent(appId)}`, account);
+}
+
+/** Turns a revoked connection NoClick makes back on, as it was; returns it live (`revoked_at` null). */
+export function restoreConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
+    return client.request<ConnectedAppView>('POST', `/v1/connected_apps/${encodeURIComponent(appId)}/restore`, account);
 }
 
 export function resolveObject(client: NoClick, ref: string, signal?: AbortSignal): Promise<ObjectRef> {

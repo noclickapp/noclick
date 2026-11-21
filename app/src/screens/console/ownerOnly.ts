@@ -47,8 +47,8 @@ export const OWNER_ONLY = {
     /** The apps a person connected over MCP, on the API keys page. */
     connectedApps: {
         what: 'Connected apps',
-        why: 'A key can’t list or revoke the apps a person connected.',
-        operations: ['GET /v1/connected_apps', 'DELETE /v1/connected_apps/{grant_id}'],
+        why: 'A key can’t list, revoke or restore the apps a person connected.',
+        operations: ['GET /v1/connected_apps', 'DELETE /v1/connected_apps/{grant_id}', 'POST /v1/connected_apps/{grant_id}/restore'],
         at: { page: 'keys', link: 'See connected apps on NoClick' },
     },
     /** The page `noclick login` opens, where a person approves a command line's sign-in. */

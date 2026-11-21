@@ -1,10 +1,12 @@
 // Connected apps on the API keys page: the MCP clients a person allowed on the
 // consent page (OAuth grants, each a principal of its own), with the bounds set
 // there (what it can do, its cap and auto-approve amount, which user) and Revoke.
-// Revoked grants stay listed, muted, so a revocation is visible after the fact.
+// Revoked grants stay listed, muted, so a revocation is visible after the fact;
+// one NoClick itself makes (its assistant's) offers Restore, which turns it back
+// on as it was.
 import { useCallback, useId, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
-import { CAPABILITY_GROUPS, listConnectedApps, revokeConnectedApp, type ConnectedAppView } from '@/sdk/owner';
+import { CAPABILITY_GROUPS, listConnectedApps, restoreConnectedApp, revokeConnectedApp, type ConnectedAppView } from '@/sdk/owner';
 import { formatMoney } from '@/screens/console/lib/format';
 import { MCP_URL } from '@/screens/console/lib/snippets';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -74,7 +76,51 @@ function RevokeAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: () 
             }
         >
             <p className="m-0 text-[13px] text-muted-foreground">
-                {app.client.name}&apos;s next call fails. To use it again, connect it again and allow it.
+                {app.client.name}&apos;s next call fails.{' '}
+                {app.restorable ? 'You can restore it here, as it is now.' : 'To use it again, connect it again and allow it.'}
+            </p>
+            {error && <p className="m-0 mt-2 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
+        </ConsoleDialog>
+    );
+}
+
+function RestoreAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: () => void }) {
+    const { client } = useConsole();
+    const [error, setError] = useState<string | null>(null);
+    const [busy, setBusy] = useState(false);
+    const restore = async () => {
+        setBusy(true);
+        try {
+            await restoreConnectedApp(client, app.id);
+            invalidateV1('connected_apps');
+            toast.success(`${app.client.name} restored`);
+            onClose();
+        } catch (e) {
+            setError(formError(e).message);
+        } finally {
+            setBusy(false);
+        }
+    };
+    const cap = app.spend_cap_usd_per_month == null ? 'no monthly cap of its own' : `a cap of ${formatMoney(app.spend_cap_usd_per_month)} a month`;
+    return (
+        <ConsoleDialog
+            open
+            onOpenChange={(o) => !o && onClose()}
+            size="sm"
+            title={`Restore ${app.client.name}?`}
+            footer={
+                <>
+                    <ConsoleButton variant="ghost" onClick={onClose}>
+                        Cancel
+                    </ConsoleButton>
+                    <ConsoleButton variant="primary" onClick={restore} disabled={busy}>
+                        Restore
+                    </ConsoleButton>
+                </>
+            }
+        >
+            <p className="m-0 text-[13px] text-muted-foreground">
+                It comes back as it was when you revoked it: it can {orderCapabilities(app.capabilities).join(', ')}, with {cap}, and its own approval settings. Its next call works.
             </p>
             {error && <p className="m-0 mt-2 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
         </ConsoleDialog>
@@ -85,6 +131,7 @@ export function ConnectedApps() {
     const { client } = useConsole();
     const headingId = useId();
     const [revoking, setRevoking] = useState<ConnectedAppView | null>(null);
+    const [restoring, setRestoring] = useState<ConnectedAppView | null>(null);
     const fetchPage = useCallback((cursor: string | null) => listConnectedApps(client, { cursor }), [client]);
     const apps = usePaged('connected_apps', fetchPage, (a) => a.id);
 
@@ -186,7 +233,9 @@ export function ConnectedApps() {
                 onRetry={apps.refresh}
                 loadMoreError={apps.loadMoreError}
                 rowActions={(a) =>
-                    a.revoked_at ? null : (
+                    a.revoked_at ? (
+                        a.restorable ? <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Restore', onSelect: () => setRestoring(a) }]} /> : null
+                    ) : (
                         <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Revoke', danger: true, onSelect: () => setRevoking(a) }]} />
                     )
                 }
@@ -201,6 +250,7 @@ export function ConnectedApps() {
                 }
             />
             {revoking && <RevokeAppDialog app={revoking} onClose={() => setRevoking(null)} />}
+            {restoring && <RestoreAppDialog app={restoring} onClose={() => setRestoring(null)} />}
         </section>
     );
 }
