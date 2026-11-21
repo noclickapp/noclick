@@ -1796,9 +1796,9 @@ export interface WorkflowRunOptions extends CallOptions {
 /**
  * A workflow built in the NoClick app: its trigger, steps and outputs. Run it with
  * `run(inputs)`; `inputs` names what its trigger takes. `access` is your account's: `owner`,
- * `editor` or `viewer` (one shared with it); building, running and testing it take edit access,
- * billed to whoever pays for it (a team workspace's owner); pausing and deleting it take owning it
- * and paying for it.
+ * `editor` or `viewer` (one shared with it); building, running, testing and publishing it take
+ * edit access, billed to whoever pays for it (a team workspace's owner; its app stays its owner's);
+ * pausing and deleting it take owning it and paying for it.
  *
  * It's also a handle to its graph: `graph()` reads its steps whole, each `Step` changes with one
  * call, and `edit()` sends several changes as one version, checked against the version you read
