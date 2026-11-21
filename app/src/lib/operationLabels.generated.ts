@@ -721,7 +721,7 @@ inmobile-sms-gateway insightly instagram instantly instapaper instatus intellipr
 investorlift invofox invoiceninja invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate
 ironclad isn iterable itm-platform jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca
 jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller
-junglescout just-eat just-one-api justcall jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
+junglescout just-eat just-one-api justcall jvzoo jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
 kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp
 knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard
 lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper
@@ -736,22 +736,22 @@ merge-dev meshy messagebird meta method-crm metricool mews mezmo microsoft-booki
 microsoft-exchange microsoft-graph-security microsoft-onenote microsoft-power-bi microsoft-powerpoint
 microsoft-sharepoint microsoft-teams microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus
 mindbody minelead minerstat mineskin minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco
-mollie-1 monday moneybird mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase mycashflow
-mycrm-leads namsor nango nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm net2phone
-netbox nethunt-crm netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok nifty-pm
-niftyimages nimbata ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
+modusign mollie-1 monday moneybird mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase
+mycashflow mycrm-leads namsor nango nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm
+net2phone netbox nethunt-crm netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok
+nifty-pm niftyimages nimbata ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
 nutrient-document-web-services-api nutshell nylas obono octen office-365 okta ollama olostep omnisend onedesk
 onedrive onelake onepage-crm onesignal onlyoffice-docspace open-sea openalex opencage opendatasoft openfigi
 openlayer openpolicy openstates openstatus openwa opn-form opsgenie opusclip oracle-field-service oracle-hcm orgo
-orshot osv outlook outreach outscraper-ca1391 outseta owler ownerrez paddle padlet-1 pagerduty pagespeed paperform
-paradym parallel parcellab parma parsera parseur partnerstack passkit-membership past-dev payaca payments paypal
-paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot people-data-labs perfect-venue perigon
+orshot osv otasync outlook outreach outscraper-ca1391 outseta owler ownerrez paddle padlet-1 pagerduty pagespeed
+paperform paradym parallel parcellab parma parsera parseur partnerstack passkit-membership past-dev payaca payments
+paypal paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot people-data-labs perfect-venue perigon
 perplexity persona personio phantombuster phone phone-harness pidgeon pims pinata pinecone pingdom pinterest
 pipedrive pipeless pipeline-crm pitchbox placetel planable planday planetscale platerecognizer plaud plausible
 pledge ploid pneumatic pocketsmith podium polar polygon polymarket polymarket-us poma-grill porkbun portalio
 postal-data-api postgres posthog postiz postman postmark postwire powerdns practice-better precisefp predictleads
 printful printify prisma process-street procore productboard productlane productplan project-broadcast projul
-promptlayer propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qonto qonversion qovery
+promptlayer propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qomon qonto qonversion qovery
 quentn quickbase quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisely ramp
 rawg-video-games-database razorpay rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow
 recurly reddit reddit-ads redirect-pizza redirection redis reducto refersion reflect regiondo rei-pebble
