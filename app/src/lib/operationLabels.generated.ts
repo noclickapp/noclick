@@ -656,13 +656,13 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
  *  tool for one is named by it, `-` as `_`: `google_drive__…`). */
 export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
     `123formbuilder 2chat 46elks 7shifts abcgymsales ably abyssale abysshub accredible-certificates acculynx act-crm
-actionstep active-merge activecampaign adafruit-io adapty addevent addressfinder addresszen adobe-analytics
-adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha ahrefs ai-ml-api
-aimtell air airbyte airtable airtop airwallex akeneo akta alchemy alegra algolia alpaca altoviz alttext-ai
-amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache api-bible api-ninjas
-api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter appcircle apphud appointedd
-appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online artificial-analysis aryeo asana
-ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine attentive attio audienceful
+actionstep active-merge activecampaign acuity-scheduling adafruit-io adapty addevent addressfinder addresszen
+adobe-analytics adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha
+ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex akeneo akta alchemy alegra algolia alpaca altoviz
+alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache api-bible
+api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter appcircle apphud
+appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online artificial-analysis
+aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine attentive attio audienceful
 audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut bambooci bamboohr bandsintown
 bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api beaconchain beatapi beehiiv
 benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
