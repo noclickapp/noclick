@@ -764,7 +764,7 @@ scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-rankin
 securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse sendbird sendfox
 sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier serverless-function
 servicem8 servicetitan servicetrade setmore sevdesk seven-io shipmondo shippo shlink shopify shopvox shortcut
-shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath signrequest
+shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signify signpath signrequest
 signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook simplyrets simpro
 singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements smartemailing smarthr smartlead
 smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go smtping snapchat sncf snitcher
