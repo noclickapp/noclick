@@ -11,6 +11,8 @@ import { apiError, json, listing, setup } from "./helpers.ts";
 const WF = "wf_1";
 const EDITS = `/v1/workflows/${WF}/edits`;
 const CREDENTIAL = "9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e";
+// An account connected in the app: its connection's id is credential:<this>.
+const IN_APP = "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f";
 
 const HOOK = {
   id: "hook", type: "trigger-webhook", position: { x: 0, y: 0 },
@@ -137,6 +139,23 @@ test("a graph reads the whole definition into typed steps, notes and edges", asy
   assert.equal(graph.step("writer"), writer);
   assert.equal(graph.step("Post it"), post);
   assert.throws(() => graph.step("Nope"), nc.NotFound);
+});
+
+test("a step's account is the connection naming its credential id", async () => {
+  const { api } = setup();
+  api.on("GET", `/v1/workflows/${WF}/graph`, json(read()));
+  const named = {
+    object: "connection", id: "6f3c2d1e-0a9b-4c8d-9e7f-5a4b3c2d1e0f", name: "openrouter", integration: "openrouter",
+    credential_type: "agent_openrouter", origin: "api", status: "connected", credential_id: CREDENTIAL,
+  };
+  const inApp = { ...named, id: `credential:${IN_APP}`, name: "OpenRouter key", origin: "app", credential_id: IN_APP };
+  const pending = { ...named, id: "0e1d2c3b-4a59-4687-9a8b-7c6d5e4f3a2b", name: "later", status: "pending", credential_id: null };
+  api.on("GET", "/v1/connections", json(listing([named, inApp, pending])));
+  const writer = (await nc.Workflow.fromId(WF).graph()).step("writer");
+  const connections = await nc.Connection.list();
+  const byCredential = new Map(connections.filter((c) => c.credentialId).map((c) => [c.credentialId, c]));
+  assert.equal(byCredential.get(writer.connections.agent_openrouter)?.name, "openrouter");
+  assert.deepEqual(connections.map((c) => c.credentialId), [CREDENTIAL, IN_APP, null]);
 });
 
 test("the workflow's version comes with its read and moves with each answer", async () => {

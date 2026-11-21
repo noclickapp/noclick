@@ -2,9 +2,11 @@
 // when none does (slotStandards.tsx). Connecting the account a step or an agent needs is the shared `connect.app` and
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
 // people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; and what a
-// step's settings form (`form/`) reads from whoever renders it. A host fills them before the canvas first draws (some
-// hold hooks the canvas and the form call).
+// step's settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in
+// accountStandards.tsx). A host fills them before the canvas first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
+import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
+import type { AccountCredential } from '@/screens/connections/model';
 import { slot } from '@/slots';
 import type { ChatAttachment } from '@/ui/chat/useChatFiles';
 import type { AgentWiring } from './agentWiring';
@@ -12,6 +14,7 @@ import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { StepReads } from './form/reads';
 import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
 import type { Collaborator, Presence, PresenceOptions } from './presence';
+import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
 import {
     AgentChatOnNoClick,
     BuildWithNoClick,
@@ -302,3 +305,89 @@ export interface StepPanel {
 
 /** Step types' own panels, by type. The standard has none: their settings draw as fields. */
 export const STEP_PANELS = slot<Readonly<Record<string, StepPanel>>>('canvas.step.panels', {});
+
+// ── a step's accounts ────────────────────────────────────────────────────────
+
+/** The ways a step's accounts are connected, as read: still on their way, why they couldn't be read, or each way in (a
+ *  credential type the step takes, a sign-in first), with the app they're of. */
+export type AccountWaysRead =
+    | { status: 'loading' }
+    | { status: 'failed'; message: string }
+    | {
+          status: 'ready';
+          ways: CredentialRequirement[];
+          /** The app, as people name it ("Notion"). */
+          app: string;
+          /** Its name among the integrations the API lists, where its accounts connect there; null where none do. */
+          integration: string | null;
+          /** The model provider whose AI account the ways are (an agent's), connected through `connect.model`; null
+           *  for an app's. */
+          model: string | null;
+          /** Whether the step runs with no account, on NoClick's own key, billed by use. */
+          optional: boolean;
+      };
+
+/** An account a step can be given, as a list of them reads it. */
+export interface StepAccount extends AccountCredential {
+    /** Over the plan's cap on accounts of its kind: listed by the host, never offered. */
+    over_cap?: boolean;
+    /** Whether it's yours, where a read of a workflow's accounts says so instead of `access_type`. */
+    owned_by_me?: boolean;
+    /** Whose it is, where it's another person's and runs this workflow as its owner's. */
+    owner_name?: string | null;
+}
+
+export interface StepAccountList {
+    /** Every account the person can give a step, those shared with them too; empty while `loading`. */
+    accounts: StepAccount[];
+    loading: boolean;
+    /** Why they couldn't be read, where they couldn't. */
+    error: string | null;
+    reload: () => Promise<void>;
+    /** Whether every account a step can hold is listed under the id the step keeps for it, so one that isn't listed is
+     *  gone or isn't the person's to use. */
+    namesEvery: boolean;
+}
+
+/** What a step type's own account form is handed (where choosing its account depends on more than its type). */
+export interface StepAccountFormProps {
+    /** The step's operation and settings (`config` holds them nested). */
+    nodeData: { operation?: string; config?: Record<string, unknown> };
+    /** Its accounts: credential type → the account's id. */
+    credentialIds: Record<string, string>;
+    onCredentialIdsChange: (credentialIds: Record<string, string>) => void;
+    /** A compact host (a question someone was asked): picking and connecting only. */
+    compact?: boolean;
+    /** Hears an account just connected here, never one picked from the list. */
+    onConnected?: (credentialId: string) => void;
+}
+
+export interface StepAccountsHost {
+    /** How a step type's accounts are connected, for the step's operation and settings. */
+    useWays: (type: string, step: StepSettings) => AccountWaysRead;
+    /** The accounts the person can give a step. */
+    useAccounts: () => StepAccountList;
+    /** Saves a step's account of a kind as it's chosen (null takes it off), for the step the form is for; null where
+     *  whoever renders the form saves a step's accounts from what it's told. */
+    useSave: () => ((credentialType: string, credentialId: string | null) => Promise<void>) | null;
+    /** Deletes one of the person's own accounts, answering why it couldn't (null once it's gone); null offers no
+     *  Delete. */
+    useRemove: () => ((credentialId: string) => Promise<string | null>) | null;
+    /** Choosing who else may use one of the person's own accounts; null offers no Share. */
+    Share: ComponentType<{ account: { id: string; name: string } | null; onClose: () => void }> | null;
+    /** Step types' own account forms, by type, in place of the pickers. */
+    forms: Readonly<Record<string, ComponentType<StepAccountFormProps>>>;
+}
+
+/** A step's accounts: the pickers' ways in, the accounts they list, saving a choice and what else can be done with an
+ *  account. The standard reads the step type's schema and the account's connections on /v1 and saves a choice as the
+ *  step's `set_connection` edit; it shares and deletes nothing (Connections does), and has no form of a type's own.
+ *  Connecting one goes through `connect.app` (an app's) and `connect.model` (an AI account), the only ways to. */
+export const STEP_ACCOUNTS = slot<StepAccountsHost>('canvas.step.accounts', {
+    useWays: useV1AccountWays,
+    useAccounts: useV1Accounts,
+    useSave: useV1SaveAccount,
+    useRemove: () => null,
+    Share: null,
+    forms: {},
+});

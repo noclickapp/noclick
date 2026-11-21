@@ -11,7 +11,8 @@ export type Dialog = { kind: 'create'; of: SpaceKind } | { kind: 'add'; of: Spac
 export interface Pane {
     spaceId: string;
     share: SpaceShare;
-    /** The account's connections, by id and by name (a space names one either way). */
+    /** The account's connections, by id and by ref (a space names one either way): a named one also by its name, an
+     *  account connected in the app never by its name. */
     connections: ReadonlyMap<string, Connection>;
     now: string;
     onAt(at: SpaceAt): void;
