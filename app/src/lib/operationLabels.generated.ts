@@ -711,8 +711,8 @@ goodbarber goody google-ads google-ai-studio google-analytics google-books googl
 google-chat google-classroom google-cloud-natural-language google-cloud-storage google-contacts google-docs
 google-drive google-forms google-maps google-meet google-search-console google-sheets google-slides google-tasks
 google-translate gorgias gorilladesk gotify gotowebinar gov grafana granola graphhopper greenhouse griptape grocy
-grok gsmtasks gtmetrix gusto hackernews hackmd halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy
-hello-tracks helloasso here hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive
+grok gsmtasks gtmetrix gusto hackernews hackmd haku halopsa handwrytten harness harvey hasslefreebooks heartbeat
+hedy hello-tracks helloasso here hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive
 hivelocity hiver hjarni hlr-lookup holded homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro
 houzz-pro http-request hubfit hubflo hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor
 hyperbrowser hyros iclosed icypeas id4i idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts
