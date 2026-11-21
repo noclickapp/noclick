@@ -1,2 +1,6 @@
+GET /v1/step_types/agent
+GET /v1/step_types/automation-slack
+GET /v1/step_types/log
+GET /v1/step_types/trigger-webhook
 GET /v1/workflows/wf_orders/graph
 POST /v1/workflows/wf_orders/edits

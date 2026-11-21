@@ -194,6 +194,10 @@ parts of it only a host has. Connecting the account a step or an agent needs is 
 | `canvas.agentChat` | An agent step's chat, a block of the Interface tab | A note that the agent is talked to on NoClick, with the link |
 | `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
 | `canvas.graph.saves` | How the workflow's graph is saved and read again, beyond `/v1` (asked by the graph store, `graph/liveGraphStore.ts`) | Every save as the edits that changed it (`POST /v1/workflows/{id}/edits`), the graph read from `/v1` |
+| `canvas.step.drawing` | How each step type is drawn (`nodes/lazyNodeTypes.tsx`), and what it draws as before its node loads | A sticky note as a note; any other step as a plain step (`nodes/PlainStep.tsx`): its card, the catalog's glyph where the host loaded it, and a handle for each connection it holds |
+| `canvas.step.roles` | What a step is by its type, for its node, handles and hints: a trigger, an agent's tool, an older type's new name | What `GET /v1/step_types/{type}` says, read once a session and drawn again as each lands |
+| `canvas.step.editing` | Which steps a build is working on, to open their cards while it lands | None known: a build the canvas follows marks the steps it adds in their data, which opens them all the same |
+| `canvas.note.markdown` | A sticky note's text, drawn from its Markdown | Drawn as a code repository's README is |
 
 Work's are listed under [Work](#work).
 

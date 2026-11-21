@@ -1,6 +1,6 @@
-// A made-up workflow and the platform API's answers for the graph store's calls (its read and its edits), for the
-// store's tests and the canvas acting as a key (../canvasAsKey.test.tsx). The server holds secrets in some steps'
-// settings and never reads one back, as the API withholds them (`withheld`).
+// A made-up workflow and the platform API's answers for the graph store's calls (its read and its edits) and the step
+// types the canvas's drawing reads, for the store's tests and the canvas acting as a key (../canvasAsKey.test.tsx). The
+// server holds secrets in some steps' settings and never reads one back, as the API withholds them (`withheld`).
 import { refusedToAccountKey } from '@/screens/console/ownerOnly';
 
 type Json = Record<string, unknown>;
@@ -48,6 +48,25 @@ export function asRead(graph: { nodes: Json[]; edges: Json[] }): Json {
     return { nodes, edges: graph.edges, withheld };
 }
 
+const operation = (name: string, trigger = false): Json => ({ name, label: name, description: null, trigger, needs_account: !trigger });
+const stepType = (type: string, label: string, more: Json): Json => ({
+    object: 'step_type', type, label, description: null, category: null, kinds: [], trigger: false, operations: [], connection: null,
+    retired: null, schema: null, ...more,
+});
+
+/** What the API says of the workflow's step types (`GET /v1/step_types/{type}`), as the canvas's drawing reads them: the
+ *  webhook starts runs, Slack can be an agent's tools and starts runs on a message, an older type answers as the one it
+ *  became. */
+export const STEP_TYPES: Record<string, Json> = {
+    'trigger-webhook': stepType('trigger-webhook', 'Webhook', { kinds: ['trigger'], trigger: true }),
+    agent: stepType('agent', 'AI Agent', { operations: [operation('default')] }),
+    'automation-slack': stepType('automation-slack', 'Slack', {
+        category: 'communication', kinds: ['trigger', 'tool'], operations: [operation('send_message'), operation('on_channel_message', true)],
+    }),
+    log: stepType('log', 'Log', { operations: [operation('default')] }),
+    'trigger-form-input': stepType('interface-form', 'Form', { kinds: ['trigger'], trigger: true }),
+};
+
 export type Observe = (method: string, path: string, answered: Promise<Response>, body: Json, init: RequestInit | undefined) => void;
 
 /** How the API answers an edit: it landed at `version`, or was refused for a stale version with the graph as it stands. */
@@ -82,6 +101,11 @@ export function graphFetch(options: {
                 object: 'workflow_graph', workflow_id: WORKFLOW, version: version(), name: 'Orders', description: null,
                 settings: {}, settings_withheld: [], display_metadata: null, graph: asRead(server()),
             });
+        }
+        const kind = path.match(/^\/v1\/step_types\/([^/]+)$/);
+        if (method === 'GET' && kind) {
+            const found = STEP_TYPES[kind[1]];
+            return found ? Response.json(found) : refused(404, 'not_found', `No step type '${kind[1]}'.`);
         }
         const edits = path.match(/^\/v1\/workflows\/([^/]+)\/edits$/);
         if (method === 'POST' && edits) {

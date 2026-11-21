@@ -3,8 +3,9 @@
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
 // people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; what a step's
 // settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
-// and how the graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts). A host fills them before
-// the canvas first draws (some hold hooks the canvas and the form call).
+// what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); and how the
+// graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts). A host fills them before the canvas
+// first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
 import type { AccountCredential } from '@/screens/connections/model';
@@ -15,8 +16,10 @@ import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { StepReads } from './form/reads';
 import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
 import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
-import type { Collaborator, Presence, PresenceOptions } from './presence';
+import type { NodeDefinition, NodeDimensions } from './nodes/types';
+import type { AiEditInfo, Collaborator, Presence, PresenceOptions } from './presence';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
+import { catalogOutline, NoteAsReadme, plainDrawingOf, useV1StepRoles } from './drawingStandards';
 import {
     AgentChatOnNoClick,
     BuildWithNoClick,
@@ -393,6 +396,72 @@ export const STEP_ACCOUNTS = slot<StepAccountsHost>('canvas.step.accounts', {
     Share: null,
     forms: {},
 });
+
+// ── drawing the steps and connections ───────────────────────────────────────
+
+/** What a step is in a workflow, by its type, as the drawing reads it. */
+export interface StepRoles {
+    /** Whether a step of the type, with its operation, starts runs: it takes nothing in, and wears the trigger's bolt. */
+    trigger: (type: string | null | undefined, operation: string | null | undefined) => boolean;
+    /** Whether an agent can use a step of the type as its tools: it has a handle on top to wire it into one. */
+    tool: (type: string | null | undefined) => boolean;
+    /** The type an older one became (a step saved before two types merged), or the type itself. */
+    canonical: (type: string) => string;
+}
+
+/** What steps are by their type, as their nodes, connections and hints are drawn: a trigger's bolt and missing input, a
+ *  tool's handle on top, an older type drawn as the one it became. The standard knows a type once `GET
+ *  /v1/step_types/{type}` has read it (the step form's read, once a session per client), drawing again as each lands;
+ *  NoClick's app knows every type from the catalog it was built with. */
+export const STEP_ROLES = slot<{ useRoles: () => StepRoles }>('canvas.step.roles', { useRoles: useV1StepRoles });
+
+/** A build working on a step: what it's doing, and whose it is where it's another person's. */
+export interface StepEdit {
+    info?: AiEditInfo;
+    /** The person whose build it is; undefined for this canvas's own. */
+    by?: string;
+}
+
+/** Which steps a build is working on right now, asked by each step's card every tenth of a second to open while it
+ *  lands. The standard knows of none: a build the canvas follows marks the steps it adds and configures in their data
+ *  (`mcpAnimationState`), which opens their cards all the same; NoClick's app also knows its own builder's edits and
+ *  those other people's builders are making. */
+export const STEP_EDITING = slot<{ editing: (nodeId: string) => StepEdit | null }>('canvas.step.editing', { editing: () => null });
+
+/** What a step type draws as before its node loads: its size and glyph. */
+export interface StepOutline {
+    dimensions?: NodeDimensions;
+    /** The glyph's markup, as a catalog serializes it. */
+    iconHtml?: string;
+    iconColor?: string;
+}
+
+export interface StepDrawing {
+    /** The types the canvas draws (React Flow's node types), older ones included; null for any type, each drawn as the
+     *  canvas meets it. */
+    types: readonly string[] | null;
+    /** Loads the nodes of `types`, drawing again as they land; true once all have. */
+    useLoaded: (types: Iterable<string | null | undefined>) => boolean;
+    /** A type's node once loaded (an older type's, the node of the one it became). */
+    definition: (type: string) => NodeDefinition | undefined;
+    /** What a type draws as until its node loads. */
+    outline: (type: string) => StepOutline | undefined;
+}
+
+/** How each step type is drawn on the canvas (nodes/lazyNodeTypes.tsx wraps each in its label, pills and hints). The
+ *  standard draws a sticky note as a note and any other step as a plain step (nodes/PlainStep.tsx): its card with the
+ *  glyph of the catalog the host loaded, if any, and a handle for each connection it holds. NoClick's app draws each
+ *  integration's own node, loaded as its first step is drawn. */
+export const STEP_DRAWING = slot<StepDrawing>('canvas.step.drawing', {
+    types: null,
+    useLoaded: () => true,
+    definition: plainDrawingOf,
+    outline: catalogOutline,
+});
+
+/** A sticky note's text, drawn from its Markdown. The standard draws it as a code repository's README is; NoClick's
+ *  app as its chat draws a reply. */
+export const NOTE_MARKDOWN = slot<ComponentType<{ content: string; className?: string }>>('canvas.note.markdown', NoteAsReadme);
 
 // ── the graph's saves ───────────────────────────────────────────────────────
 

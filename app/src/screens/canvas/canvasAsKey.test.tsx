@@ -1,18 +1,24 @@
 // @vitest-environment happy-dom
 // The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
-// graph: the store that saves it, graph/liveGraphStore.ts) opens a workflow, edits it in each way a canvas does,
-// meets another writer's change and closes, over fixtures that refuse what only the account's signed-in owner may do
-// (screens/console/ownerOnly.ts) exactly as the API refuses a key, and none of it asks for one. What it calls, as the
-// owner and as a key, is kept in canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call
-// on its real API as a key and hold to the table. And what it does with what it reads: every request goes through the
-// app's client (none off its origin), and no secret the account holds is in anything it reads or sends.
-import type { Edge } from '@xyflow/react';
+// graph: the store that saves it, graph/liveGraphStore.ts; and its drawing: the steps and connections, nodes/ and
+// edges/) opens a workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws what
+// it holds, over fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
+// exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
+// canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
+// hold to the table. And what it does with what it reads: every request goes through the app's client (none off its
+// origin), and no secret the account holds is in anything it reads or sends.
+import { act, cleanup, render } from '@testing-library/react';
+import { Position, ReactFlow, ReactFlowProvider, type Edge, type Node } from '@xyflow/react';
 import { NoClick } from 'noclick';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ClientProvider } from '@/sdk/client';
 import { fill } from '@/slots';
 import { applyNodeUpdate, createWorkflowNode } from '@/screens/canvas/applyNodeUpdate';
 import { isOwnerOnly } from '@/screens/console/ownerOnly';
+import AnimatedWorkflowEdge from './edges/AnimatedWorkflowEdge';
+import { CustomConnectionLine } from './edges/CustomConnectionLine';
 import { graphFetch, SECRETS, stored, WORKFLOW, type EditAnswer } from './graph/fixtures';
+import { buildLazyNodeTypes } from './nodes/lazyNodeTypes';
 import {
     flushAllGraphsNow,
     graphRecords,
@@ -67,6 +73,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+    cleanup();
     vi.clearAllTimers();
     vi.useRealTimers();
     vi.unstubAllGlobals();
@@ -134,6 +141,47 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     return calls;
 }
 
+const HANDLE = 16;
+/** Where a step's handles sit, by its type: a test's DOM has no layout to measure them in. */
+function handlesOf(type: string): NonNullable<Node['handles']> {
+    const at = (id: string | null, kind: 'source' | 'target', position: Position, x: number, y: number) => ({ id, type: kind, position, x, y, width: HANDLE, height: HANDLE });
+    const handles = [at(null, 'source', Position.Right, 82, 37)];
+    if (type !== 'trigger-webhook') handles.push(at(null, 'target', Position.Left, -8, 37));
+    if (type === 'agent') handles.push(at('bottom', 'target', Position.Bottom, 37, 82));
+    if (type === 'automation-slack') handles.push(at('top', 'source', Position.Top, 37, -8));
+    return handles;
+}
+
+/** The workflow as the store holds it, drawn: each step as the canvas's node types draw it and each connection as its
+ *  edge does, with what the API says of each step's type. */
+async function drawing(actsAs: 'owner' | 'key', graph: { nodes: Node[]; edges: Edge[] }): Promise<{ calls: Call[]; container: HTMLElement }> {
+    const calls: Call[] = [];
+    const client = new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: graphFetch({
+            actsAs,
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    });
+    const nodes = graph.nodes.map((n) => ({ ...n, width: 90, height: 90, handles: handlesOf(String(n.type)) }));
+    const edges = graph.edges.map((e) => ({ ...e, type: 'animated' }));
+    const { container } = render(
+        <ClientProvider client={client}>
+            <div style={{ width: 1600, height: 900 }}>
+                <ReactFlowProvider>
+                    <ReactFlow nodes={nodes} edges={edges} nodeTypes={buildLazyNodeTypes()} edgeTypes={{ animated: AnimatedWorkflowEdge }} connectionLineComponent={CustomConnectionLine} />
+                </ReactFlowProvider>
+            </div>
+        </ClientProvider>
+    );
+    await act(() => settle(500));
+    return { calls, container };
+}
+
 /** Every key anywhere in `value`. */
 function keysIn(value: unknown): string[] {
     if (Array.isArray(value)) return value.flatMap(keysIn);
@@ -164,6 +212,9 @@ describe('the canvas acting as a key', () => {
         for (const actsAs of ['owner', 'key'] as const) {
             for (const id of Object.keys(graphRecords)) delete graphRecords[id];
             const calls = await session(actsAs);
+            const { nodes, edges } = graphRecords[WORKFLOW];
+            calls.push(...(await drawing(actsAs, { nodes, edges })).calls);
+            cleanup();
             await holdsNoSecret(calls);
             for (const call of calls) {
                 called.add(asLine(call));
@@ -190,5 +241,35 @@ describe('the canvas acting as a key', () => {
         });
         await holdsNoSecret(calls);
         expect(offClient).toEqual([]);
+    });
+
+    it('draws each step and connection as the API says of its type, reading nothing else', async () => {
+        recordGraphSnapshot(WORKFLOW, false, { nodes: [], edges: [] }, false);
+        const { nodes, edges } = stored();
+        const graph = {
+            nodes: nodes.map((n) => createWorkflowNode(String(n.id), String(n.type), n.position as { x: number; y: number }, n.config as Record<string, unknown>)),
+            edges: edges as Edge[],
+        };
+        const { calls, container } = await drawing('key', graph);
+        expect(calls.map(asLine).sort()).toEqual([
+            'GET /v1/step_types/agent',
+            'GET /v1/step_types/automation-slack',
+            'GET /v1/step_types/log',
+            'GET /v1/step_types/trigger-webhook',
+        ]);
+        await holdsNoSecret(calls);
+        expect(offClient).toEqual([]);
+        const node = (id: string) => container.querySelector(`.react-flow__node[data-id="${id}"]`) as HTMLElement;
+        expect([...container.querySelectorAll('.react-flow__node')].map((n) => n.getAttribute('data-id'))).toEqual(['hook', 'agent', 'slack', 'victim']);
+        // The webhook starts runs: the bolt, and nothing flows in.
+        expect(node('hook').querySelector('.react-flow__handle-left')).toBeNull();
+        expect(node('hook').querySelector('[title^="Trigger"] svg.lucide-zap')).not.toBeNull();
+        // Slack can be an agent's tools: its handle on top; the agent takes tools in from below.
+        expect(node('slack').querySelector('.react-flow__handle-top')).not.toBeNull();
+        expect(node('agent').querySelector('.react-flow__handle-bottom')).not.toBeNull();
+        expect(node('victim').querySelector('.react-flow__handle-top')).toBeNull();
+        // Each step's label, and each connection.
+        expect(container.textContent).toContain('Agent');
+        expect([...container.querySelectorAll('.react-flow__edge')].map((e) => e.getAttribute('data-id'))).toEqual(['hook-agent', 'agent-slack']);
     });
 });
