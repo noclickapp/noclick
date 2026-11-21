@@ -1,0 +1,293 @@
+// What stands in the canvas's slots (slots.ts) when no host fills them: each works over the platform API alone, with
+// the client a `ClientProvider` above gives, or says where on NoClick the thing is done and opens it there, never a gap.
+import { lazy, Suspense, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
+import { ArrowUpRight, LayoutGrid, MessageCircle, Share2 } from 'lucide-react';
+import { stepType, Workflow, type NoClick, type StepType } from 'noclick';
+import { useClient } from '@/sdk/client';
+import { ConsoleContext } from '@/screens/console/hooks/useConsole';
+import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
+import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
+import { DIALOG_MARK, ShellDialog } from '@/ui/ShellDialog';
+import { cn } from '@/ui/utils';
+import { useStepScope, type StepReads, type StepScope } from './form/reads';
+import { displayStrategyOf } from './form/strategyDefaults';
+import type { NodeDisplayStrategy } from './form/referenceTypes';
+import type { Presence } from './presence';
+import type { CanvasBlockProps, CanvasBuilderProps, CanvasInterfaceProps, CanvasPresence, CanvasShareProps, StepSchemaRead, Track } from './slots';
+
+/** NoClick's own site, as the console the canvas is drawn in names it (a canvas outside one links to noclick.com). */
+function useSite(): string {
+    return useContext(ConsoleContext)?.site ?? NOCLICK_SITE;
+}
+
+const external = { target: '_blank', rel: 'noopener noreferrer' } as const;
+
+// ── the builder chat ────────────────────────────────────────────────────────
+
+// Loaded with the first one drawn: it carries the platform client, which a host that fills the slot never needs.
+const BuilderPanel = lazy(() => import('./BuilderPanel'));
+
+/** A build of the workflow from what's asked for, over the platform API (BuilderPanel.tsx). */
+export function BuildWithNoClick(props: CanvasBuilderProps) {
+    return (
+        <Suspense fallback={null}>
+            <BuilderPanel {...props} />
+        </Suspense>
+    );
+}
+
+// ── other people on the canvas ──────────────────────────────────────────────
+
+const nothing = () => undefined;
+
+/** Nobody else here, ever: one value, so what reads it never changes. */
+const ALONE: Presence = {
+    collaborators: [],
+    nodeSelections: new Map(),
+    updateLocalCursor: nothing,
+    updateLocalSelection: nothing,
+    broadcastNodeDrag: nothing,
+    broadcastNodeAdd: nothing,
+    broadcastNodeRemove: nothing,
+    broadcastNodeUpdate: nothing,
+    broadcastEdgeAdd: nothing,
+    broadcastEdgeRemove: nothing,
+    broadcastAiEditingStart: nothing,
+    broadcastAiEditingUpdate: nothing,
+    broadcastAiEditingEnd: nothing,
+};
+
+function JustTheSteps({ children }: { children: ReactNode }) {
+    return <>{children}</>;
+}
+
+/** No one else drawn on the canvas, and nothing this person does sent anywhere until it's saved. */
+export const NOBODY_ELSE: CanvasPresence = {
+    usePresence: () => ALONE,
+    Layer: JustTheSteps,
+    Cursors: () => null,
+    Avatars: () => null,
+};
+
+// ── the Interface tab ───────────────────────────────────────────────────────
+
+/** Where something about the workflow is done on NoClick, with the way there. */
+function OnNoClick({ mark, title, line, workflowId, action }: { mark: ReactNode; title: string; line: string; workflowId?: string | null; action: string }) {
+    const site = useSite();
+    return (
+        <div className="flex max-w-[400px] flex-col items-center gap-3 text-center">
+            <span className={DIALOG_MARK}>{mark}</span>
+            <h2 className="text-[15px] font-semibold text-foreground">{title}</h2>
+            <p className="text-[14px] leading-relaxed text-muted-foreground">{line}</p>
+            {workflowId && (
+                <a href={workflowUrl(site, workflowId)} {...external} className={cn(BUTTON_SECONDARY, 'mt-1')}>
+                    {action}
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+            )}
+        </div>
+    );
+}
+
+/** The Interface tab where no host lays it out: it says the page is laid out and published on NoClick. */
+export function InterfaceOnNoClick({ workflowId }: CanvasInterfaceProps) {
+    return (
+        <div className="flex min-h-0 flex-1 items-center justify-center bg-background p-8" data-testid="canvas-interface-standard">
+            <OnNoClick
+                mark={<LayoutGrid className="h-5 w-5" />}
+                title="The interface is laid out on NoClick"
+                line="This automation’s forms, tables and chats are arranged into a page, and published, in NoClick’s app."
+                workflowId={workflowId}
+                action="Open on NoClick"
+            />
+        </div>
+    );
+}
+
+// ── an agent's chat ─────────────────────────────────────────────────────────
+
+/** An agent's chat where no host has one: it says the agent is talked to on NoClick. */
+export function AgentChatOnNoClick({ config, workflowId }: CanvasBlockProps) {
+    const name = typeof config.label === 'string' ? config.label.trim() : '';
+    return (
+        <div className="flex h-full w-full items-center justify-center p-6" data-testid="canvas-agent-chat-standard">
+            <OnNoClick
+                mark={<MessageCircle className="h-5 w-5" />}
+                title={`Talk to ${name || 'this agent'} on NoClick`}
+                line="Its chat, with its model, triggers and tools, is in NoClick’s app."
+                workflowId={workflowId}
+                action="Open on NoClick"
+            />
+        </div>
+    );
+}
+
+// ── sharing ─────────────────────────────────────────────────────────────────
+
+/** Sharing where no host offers it: who else may open the automation is chosen on NoClick. */
+export function ShareOnNoClick({ open, onOpenChange, workflow }: CanvasShareProps) {
+    const site = useSite();
+    return (
+        <ShellDialog
+            open={open}
+            onOpenChange={onOpenChange}
+            mark={<Share2 className="h-5 w-5" />}
+            title="Share this automation"
+            description="Who else may open and edit it is chosen on NoClick, signed in as its owner."
+            footer={
+                <>
+                    <button type="button" className={BUTTON_GHOST} onClick={() => onOpenChange(false)}>
+                        Cancel
+                    </button>
+                    {workflow && (
+                        <a href={workflowUrl(site, workflow.id)} {...external} className={BUTTON_PRIMARY}>
+                            Share on NoClick
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                        </a>
+                    )}
+                </>
+            }
+        />
+    );
+}
+
+// ── a step type's schema: GET /v1/step_types/{type}, once a session ───────────
+
+interface Known {
+    read: StepSchemaRead;
+    type?: StepType;
+    listeners: Set<() => void>;
+}
+
+// Per client, so two clients (the app's and a fixture lab's) never mix; kept for the session, since a type's settings
+// change only with a release.
+const sessions = new WeakMap<NoClick, Map<string, Known>>();
+
+function knownOf(client: NoClick, name: string): Known {
+    let types = sessions.get(client);
+    if (!types) sessions.set(client, (types = new Map()));
+    let known = types.get(name);
+    if (!known) {
+        const made: Known = { read: { status: 'loading' }, listeners: new Set() };
+        types.set(name, (known = made));
+        const settle = (read: StepSchemaRead, type?: StepType) => {
+            made.read = read;
+            made.type = type;
+            made.listeners.forEach((listener) => listener());
+        };
+        stepType(name, { client }).then(
+            (type) => settle({ status: 'ready', schema: type.schema }, type),
+            (error: unknown) => settle({ status: 'failed', message: `This step’s settings couldn’t be read: ${error instanceof Error ? error.message : String(error)}` })
+        );
+    }
+    return known;
+}
+
+/** The type as `GET /v1/step_types/{type}` described it, once read this session. */
+export function knownStepType(client: NoClick, name: string): StepType | undefined {
+    return sessions.get(client)?.get(name)?.type;
+}
+
+export function useV1StepSchema(type: string): StepSchemaRead {
+    const client = useClient();
+    const known = knownOf(client, type);
+    return useSyncExternalStore(
+        (listener) => {
+            known.listeners.add(listener);
+            return () => void known.listeners.delete(listener);
+        },
+        () => known.read,
+        () => known.read
+    );
+}
+
+// ── a step's reads, on /v1 ─────────────────────────────────────────────────
+
+function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
+    const step = () => {
+        if (!scope?.workflowId || !scope.nodeId) throw new Error('A step’s fields read through its workflow and step: draw them inside its form.');
+        return Workflow.fromId(scope.workflowId, { client }).step(scope.nodeId);
+    };
+    return {
+        options: async (request) => {
+            const page = await step().options(request.field_key ?? request.field_name, {
+                settings: request.context ?? undefined,
+                search: request.search,
+                pageToken: request.page_token,
+            });
+            // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
+            return {
+                success: true,
+                options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
+                next_page_token: page.nextPageToken,
+            };
+        },
+        value: async (request) => {
+            const loaded = await step().value(request.field_name, { settings: request.context });
+            return { success: true, value: loaded.value ?? undefined, values: loaded.values ?? undefined };
+        },
+        validate: null,
+        previewExpression: async (request) => {
+            const preview = await step().previewExpression(request.expression, { samples: request.sample_outputs as Record<string, never> });
+            const tokens = preview.raw.preview_tokens;
+            return {
+                ok: preview.ok,
+                kind: preview.kind ?? undefined,
+                keys: preview.keys,
+                preview: preview.preview ?? undefined,
+                preview_tokens: Array.isArray(tokens) ? (tokens as Array<{ t: string; v: string }>) : undefined,
+                error: preview.error ?? undefined,
+            };
+        },
+        clearState: async () => {
+            await step().clearState();
+            return { success: true };
+        },
+        reconnectWebhookRelay: null,
+    };
+}
+
+export function useV1StepReads(): StepReads {
+    const client = useClient();
+    const scope = useStepScope();
+    const workflowId = scope?.workflowId;
+    const nodeId = scope?.nodeId;
+    return useMemo(() => v1StepReads(client, { workflowId, nodeId }), [client, workflowId, nodeId]);
+}
+
+export function useV1WorkflowId(): string | undefined {
+    return useStepScope()?.workflowId;
+}
+
+// ── the step form's other standards ───────────────────────────────────────
+
+export function standardDisplayStrategy(): NodeDisplayStrategy {
+    return displayStrategyOf(undefined);
+}
+
+/** Whether the step still needs an account, from what `GET /v1/step_types/{type}` said of the type (read before the
+ *  form drew): its connection, and whether its operation needs an account. */
+export function useV1ConnectionMissing(type: string, credentialIds: Record<string, string>, step: { operation?: string }): boolean {
+    const known = knownStepType(useClient(), type);
+    const connection = known?.connection;
+    if (!connection) return false;
+    const operation = step.operation ? known.operations.find((op) => op.name === step.operation) : undefined;
+    if (operation ? !operation.needsAccount : !connection.needed) return false;
+    return !connection.credentialTypes.some((credentialType) => Boolean(credentialIds[credentialType]));
+}
+
+const noTrack: Track = () => undefined;
+
+export function useNoTrack(): Track {
+    return noTrack;
+}
+
+/** The step on NoClick's own canvas, where this app has none of its own yet. */
+export function noclickStepLink(workflowId: string, nodeId: string, fieldKey?: string): string {
+    const url = new URL('/dashboard', NOCLICK_SITE);
+    url.searchParams.set('tab', 'workflows');
+    url.searchParams.set('workflow', workflowId);
+    url.searchParams.set('node', nodeId);
+    if (fieldKey) url.searchParams.set('field', fieldKey);
+    return url.toString();
+}
