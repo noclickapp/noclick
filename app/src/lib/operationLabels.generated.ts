@@ -747,7 +747,7 @@ orshot osv outlook outreach outscraper-ca1391 outseta owler ownerrez paddle padl
 paradym parallel parcellab parma parsera parseur partnerstack passkit-membership past-dev payaca payments paypal
 paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot people-data-labs perfect-venue perigon
 perplexity persona personio phantombuster phone phone-harness pidgeon pims pinata pinecone pingdom pinterest
-pipedrive pipeless pipeline-crm placetel planable planday planetscale platerecognizer plaud plausible pledge ploid
+pipedrive pipeless pipeline-crm pitchbox placetel planable planday planetscale platerecognizer plaud plausible pledge ploid
 pneumatic pocketsmith podium polar polygon polymarket polymarket-us poma-grill porkbun portalio postal-data-api
 postgres posthog postiz postman postmark postwire powerdns practice-better precisefp predictleads printful printify
 prisma process-street procore productboard productlane productplan project-broadcast projul promptlayer
