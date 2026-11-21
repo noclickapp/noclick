@@ -768,7 +768,7 @@ statuspage statuspal stibee stigg strale streak stream-chat streamtime stripe st
 supabase supadata super-dispatch supermemory supernormal superset superwall suprsend sure-send surecart surevoip
 surf svix swaggerhub swarmsyncai sympla synap syncro synthflow-ai systemeio table tableau taggun tailscale talenthr
 talentlms talkable talkjs talkroute tally tapfiliate taplio tave tavily teachable teamcamp teamup teamup-calendar
-teamwork teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal tentary
+teamwork teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal tentary terros
 text-request textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecompaniesapi thehive
 thinkific thoughtspot threads thrivecart ticket-tailor tidb-cloud tidio tidy tidycal tik-hub tiktok tiktok-ads
 timecamp timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms
