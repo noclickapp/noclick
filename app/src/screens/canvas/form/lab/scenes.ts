@@ -39,6 +39,13 @@ export const SCENES: readonly StepFormScene[] = [
         step: { ...MAIL, operation: 'send_message', config: { channel: 'C02' }, credentialIds: CONNECTED },
     },
     {
+        id: 'accounts-named',
+        title: 'An account a named connection holds, as the step keeps it',
+        group: 'A step’s accounts',
+        part: 'accounts',
+        step: { ...MAIL, operation: 'send_message', config: { channel: 'C02' }, credentialIds: { example_mail_token: 'cred_mail_shipping' } },
+    },
+    {
         id: 'accounts-revoked',
         title: 'An account that was disconnected',
         group: 'A step’s accounts',

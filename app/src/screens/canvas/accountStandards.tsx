@@ -7,7 +7,7 @@ import { requirementsFromSchema, runsOnNoClickKey, type StepSettings } from '@/l
 import { humanizeCredentialLabel } from '@/lib/credentialLabels';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
-import { CONNECTIONS_READ, credentialIdOf } from '@/screens/connections/apiAccounts';
+import { CONNECTIONS_READ } from '@/screens/connections/apiAccounts';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { useStepScope } from './form/reads';
 import { knownStepType, useV1StepSchema } from './slotStandards';
@@ -50,14 +50,17 @@ export function useV1AccountWays(type: string, step: StepSettings): AccountWaysR
     }, [read, type, step, client]);
 }
 
-/** A connection the API lists, as the pickers list an account: one connected in the app by its credential's id (what a
- *  step keeps), a named one by its own. */
-function accountOf(connection: Connection): StepAccount {
+/** A connection holding an account: what a step can be given. */
+type Holding = Connection & { credentialId: string };
+
+/** A connection the API lists, as the pickers list an account: by the id of the account it holds, what a step keeps,
+ *  whether it was connected in the app or is a named one. */
+function accountOf(connection: Holding): StepAccount {
     const shared = connection.shared;
     const health = connection.health;
     const disconnected = connection.raw.disconnected as { since?: string | null } | null | undefined;
     return {
-        id: credentialIdOf(connection),
+        id: connection.credentialId,
         name: connection.name,
         credential_type: connection.credentialType ?? '',
         metadata: connection.account ? { verified_as: connection.account } : {},
@@ -78,19 +81,20 @@ const STEP_ACCOUNTS_READ = `${CONNECTIONS_READ}:step-accounts`;
 export function useV1Accounts(): StepAccountList {
     const client = useClient();
     const read = useV1(STEP_ACCOUNTS_READ, () => Connection.list({ client }), { client });
-    const accounts = useMemo(() => (read.data ?? []).map(accountOf), [read.data]);
+    // One still waiting for its account holds none a step could keep.
+    const accounts = useMemo(() => (read.data ?? []).filter((c): c is Holding => c.credentialId !== null).map(accountOf), [read.data]);
     return {
         accounts,
         loading: read.loading,
         error: read.error === undefined ? null : `Your accounts couldn’t be read: ${errorText(read.error)}`,
         reload: read.refresh,
-        // A step keeps a named connection's account by its credential's id, which the API doesn't name with it.
-        namesEvery: false,
+        // Every connection names the account it holds, so one a step holds that isn't listed is gone or another's.
+        namesEvery: true,
     };
 }
 
-/** Saves a step's account as the step's `set_connection` edit, by its id (the API finds a named connection by its own
- *  id, else the account connected in the app with that credential id); none takes the slot's off. A credential
+/** Saves a step's account as the step's `set_connection` edit, by the id of the account (the API takes it as the
+ *  credential a connection of the account's holds); none takes the slot's off. A credential
  *  variable is a setting of the workflow's, never a connection, so it isn't saved here. */
 export function useV1SaveAccount(): ((credentialType: string, credentialId: string | null) => Promise<void>) | null {
     const client = useClient();

@@ -257,10 +257,10 @@ describe('the step form acting as a key', () => {
             { name: expect.stringMatching(/^example_search-/), integration: 'example_search' },
         ]));
         await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/example_search-/));
-        // Once the account lands there, the step takes it by its connection's id.
+        // Once the account lands there, the step takes it by the id of the account its connection holds.
         await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
         const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
-        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'search', connection: expect.stringMatching(/^conn_examplesearch/), slot: 'example_search_api_key' }], include_graph: true });
+        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'search', connection: expect.stringMatching(/^cred_conn_examplesearch/), slot: 'example_search_api_key' }], include_graph: true });
         await settled(record);
         await holdsNoSecret(record.calls);
         expect(offClient).toEqual([]);
@@ -281,8 +281,20 @@ describe('the step form acting as a key', () => {
         await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/openai-/));
         await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
         const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
-        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'agent', connection: expect.stringMatching(/^conn_openai/), slot: 'agent_openai' }], include_graph: true });
+        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'agent', connection: expect.stringMatching(/^cred_conn_openai/), slot: 'agent_openai' }], include_graph: true });
         await settled(record);
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('names the account a step keeps through a named connection, as the step reads after a reload', { timeout: 30_000 }, async () => {
+        const record = recorder();
+        draw(scene('accounts-named'), 'key', record.observe);
+        // The step keeps the account's id; the connection holding it names it, so its picker shows its name.
+        expect(await screen.findByRole('button', { name: 'shipping-mail' }, { timeout: 8000 })).toBeTruthy();
+        expect(screen.queryByText(/isn’t one you can use|no longer exists/)).toBeNull();
+        await settled(record);
+        expect(record.calls.map(asLine)).toEqual(expect.arrayContaining(['GET /v1/connections']));
         await holdsNoSecret(record.calls);
         expect(offClient).toEqual([]);
     });

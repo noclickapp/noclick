@@ -164,7 +164,8 @@ const CHANNELS = [
 ];
 
 /** The account's connections, as `GET /v1/connections` lists them: accounts connected in the app (`credential:<id>`), one
- *  of them revoked and one shared with it. Never a secret: the API answers none. */
+ *  of them revoked and one shared with it, and a named one, each naming the account it holds (`credential_id`). Never a
+ *  secret: the API answers none. */
 const CONNECTIONS: Json[] = [
     connection('cred_mail', 'Orders mailbox', 'example_mail', 'example_mail_token', { account: 'orders@example.test' }),
     connection('cred_mail_2', 'Support mailbox', 'example_mail', 'example_mail_token', { account: 'support@example.test' }),
@@ -174,6 +175,7 @@ const CONNECTIONS: Json[] = [
     }),
     connection('cred_mail_team', 'Team mailbox', 'example_mail', 'example_mail_oauth', { access: 'view', shared: { with: 'you', by: { name: 'Grace Hopper', email: null } } }),
     connection('cred_openai', 'Team key', 'openai', 'agent_openai'),
+    { ...connection('cred_mail_shipping', 'shipping-mail', 'example_mail', 'example_mail_token', { account: 'shipping@example.test' }), id: 'conn_shipping', origin: 'api' },
 ];
 
 /** The way in a connection of each integration holds when none is named: its first. */
@@ -181,7 +183,7 @@ const FIRST_WAY: Record<string, string> = { example_mail: 'example_mail_oauth', 
 
 function connection(id: string, name: string, integration: string, credentialType: string, more: Json = {}): Json {
     return {
-        object: 'connection', id: `credential:${id}`, name, connect_link: null, integration, credential_type: credentialType, status: 'connected',
+        object: 'connection', id: `credential:${id}`, credential_id: id, name, connect_link: null, integration, credential_type: credentialType, status: 'connected',
         user_id: null, disconnected: null, origin: 'app', access: 'owner', shared: null, organization_id: null, approval_operations: [],
         test_account: false, account: null, plan: null, usage: null, verification: null, health: null, used_by: [],
         connected_at: '2026-09-01T09:00:00Z', created_at: '2026-09-01T09:00:00Z', updated_at: '2026-09-01T09:00:00Z', ...more,
@@ -212,7 +214,7 @@ export function formFetch({ actsAs = 'owner', observe }: { actsAs?: 'owner' | 'k
             const name = String(body.name);
             const id = `conn_${name.replace(/[^a-z0-9]/gi, '').slice(0, 20)}`;
             const pending = {
-                ...connection(id, name, String(body.integration), String(body.credential_type ?? FIRST_WAY[String(body.integration)]), { status: 'pending', origin: 'api' }),
+                ...connection(id, name, String(body.integration), String(body.credential_type ?? FIRST_WAY[String(body.integration)]), { status: 'pending', origin: 'api', credential_id: null }),
                 id,
                 connect_link: { url: `https://noclick.test/connect/${encodeURIComponent(name)}`, operation_id: `op_${id}`, expires_at: '2026-11-27T12:00:00Z' },
             };
@@ -221,7 +223,7 @@ export function formFetch({ actsAs = 'owner', observe }: { actsAs?: 'owner' | 'k
         }
         const waited = /^\/v1\/operations\/op_([^/]+)\/wait$/.exec(path);
         if (method === 'GET' && waited && made.has(waited[1])) {
-            made.set(waited[1], { ...made.get(waited[1])!, status: 'connected', connect_link: null, account: 'new@example.test' });
+            made.set(waited[1], { ...made.get(waited[1])!, status: 'connected', connect_link: null, account: 'new@example.test', credential_id: `cred_${waited[1]}` });
             return Response.json({ object: 'operation', id: `op_${waited[1]}`, kind: 'credential.connect', status: 'succeeded', result: { connection: waited[1] }, error: null });
         }
         const one = /^\/v1\/connections\/([^/]+)$/.exec(path);

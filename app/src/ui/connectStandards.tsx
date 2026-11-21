@@ -42,6 +42,13 @@ export async function connectByLink(client: NoClick, integration: string, creden
     }
 }
 
+/** The id of the account a connection that landed holds: what a step keeps, and what `credential:<id>` names for one
+ *  connected in the app. */
+function heldBy(connection: Connection): string {
+    if (connection.credentialId === null) throw new Error(`${connection.name} was connected, but the API didn’t say which account it holds.`);
+    return connection.credentialId;
+}
+
 /** Waits on a connect page in another tab, saying so; the account that lands is handed on. */
 function LinkConnect({ title, description, start, onConnected, onClose, extra }: { title: string; description: string; start: () => Promise<Connection>; onConnected: (credentialId: string) => void; onClose: () => void; extra?: ReactNode }) {
     const [waiting, setWaiting] = useState(false);
@@ -59,7 +66,7 @@ function LinkConnect({ title, description, start, onConnected, onClose, extra }:
         start().then(
             (connection) => {
                 if (!live.current) return;
-                onConnected(connection.id.replace(/^credential:/, ''));
+                onConnected(heldBy(connection));
                 onClose();
             },
             (error: unknown) => {
@@ -176,7 +183,7 @@ export function AppConnectInPlace({ app, integration, credentialType, repairs, o
             (connection) => {
                 if (!live.current) return;
                 setWaiting(false);
-                onConnected({ id: connection.id.replace(/^credential:/, ''), name: connection.name, credential_type: connection.credentialType ?? credentialType ?? '' }, checkOf(connection.verification));
+                onConnected({ id: heldBy(connection), name: connection.name, credential_type: connection.credentialType ?? credentialType ?? '' }, checkOf(connection.verification));
             },
             (error: unknown) => {
                 if (!live.current) return;
