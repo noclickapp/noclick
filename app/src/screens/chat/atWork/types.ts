@@ -29,6 +29,8 @@ export interface CodingJob {
     since: string;
     title: string | null;
     text: string;
+    /** The workstream it belongs to, as it reads now; null where whoever handed it over named none. */
+    workstream?: { id: string; name: string } | null;
     lost?: true;
     place_seen?: false;
 }
@@ -148,6 +150,8 @@ export interface FollowedOperation {
     title: string | null;
     /** Its whole text's first 120 characters (a task's, a run's automation). */
     summary: string | null;
+    /** The workstream its work belongs to, as it reads now; null where nobody named one. */
+    workstream: { id: string; name: string } | null;
     agent_id: string | null;
     latest_update: JobUpdate | null;
     created_at: string;

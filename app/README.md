@@ -151,6 +151,7 @@ there, and Settings doesn't list it:
 | Slot | Where it is | By default |
 |---|---|---|
 | `settings.usage` | Usage: what each thing cost | The Usage page |
+| `settings.workstreams` | Workstreams: the lines of work spend is counted under | Each workstream with what it spent this month, renamed and archived through the API |
 | `settings.billing` | Plan and billing: the plan, adding money, the spending cap | The plan and balance as read, with NoClick's pages for them, and the cap (a key lowers it) |
 | `settings.notifications` | Notifications: the email alerts sent to the owner | Each alert with its switch |
 | `settings.developer` | Developer: the way into the developer console | The console's row, at its address |

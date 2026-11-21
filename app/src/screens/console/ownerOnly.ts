@@ -161,9 +161,8 @@ export const OWNER_ONLY = {
      *  `POST /v1/connections/{ref}/require_approval`, which a key may make). */
     connectionApprovals: {
         what: 'Lifting a connected account’s approvals',
-        appOnly: true,
-        why: 'The API only adds approvals to a connected account, so a key can’t let one of its actions run without the owner’s OK again.',
-        operations: [],
+        why: 'Lifting one takes the owner, their word through an agent, or a key they gave the approvals:policy scope, which this app’s key doesn’t carry.',
+        operations: ['DELETE /v1/connections/{ref}/require_approval'],
     },
 } as const satisfies Record<string, OwnerOnlyRow>;
 

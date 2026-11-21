@@ -131,6 +131,9 @@ function useBackstop(on: boolean, fn: () => void, ms = BACKSTOP_MS) {
 
 const STATUSES = new Set(['running', 'waiting', 'completed', 'failed', 'cancelled']);
 
+const workstreamOf = (raw: Record<string, unknown> | undefined): FollowedOperation['workstream'] =>
+    raw && typeof raw.id === 'string' && typeof raw.name === 'string' ? { id: raw.id, name: raw.name } : null;
+
 /** An operation the chat follows, as the tab reads it. */
 export function followedOf(job: CoordinatorJob): FollowedOperation {
     const update = obj(job, 'latest_update');
@@ -141,6 +144,7 @@ export function followedOf(job: CoordinatorJob): FollowedOperation {
         step: str(job, 'step') ?? null,
         title: str(job, 'title') ?? null,
         summary: str(job, 'summary') ?? null,
+        workstream: workstreamOf(obj(job, 'workstream')),
         agent_id: str(job, 'agent_id') ?? null,
         latest_update: update ? (update as unknown as JobUpdate) : null,
         created_at: job.created_at,
