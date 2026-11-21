@@ -1272,7 +1272,7 @@ export interface AgentApprovalsOption {
    * account's (a child's, to its parent's). `toolRules` turning `noclick.spend` or `noclick.delete` to `"allow"` set
    * `purchase` or `delete` to allow with it. `routing` among them names who answers its held calls first, in place of
    * its parent's or the account's approver (finally the owner), as `ApprovalPolicy.set`'s `routing` takes it: never
-   * the agent itself, its parent or its child.
+   * the agent itself nor one of its children (its parent may approve its calls).
    */
   approvals?: ScopeApprovals;
 }

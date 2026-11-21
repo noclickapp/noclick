@@ -1319,7 +1319,8 @@ class Agent(_Object):
         the owner's: signed in, their own message to one of their agents, or a key naming ``approvals:policy``
         (after a 10-minute undo window); an agent acting on its own waits for the owner's yes. ``"routing"`` among
         them names who answers its held calls first, in place of its parent's or the account's approver (finally the
-        owner), as ``ApprovalPolicy.set``'s ``routing`` takes it: never the agent itself, its parent or its child.
+        owner), as ``ApprovalPolicy.set``'s ``routing`` takes it: its parent may approve its calls, never the agent
+        itself nor one of its children.
 
         ``can_request`` lets it ask its user to connect accounts at run time
         (a ``request_connection`` tool): integration names, single
