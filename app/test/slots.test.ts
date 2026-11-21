@@ -138,6 +138,7 @@ describe('the app', () => {
             'canvas.interface',
             'canvas.presence',
             'canvas.share',
+            'canvas.step.accounts',
             'canvas.step.connection',
             'canvas.step.link',
             'canvas.step.marks',

@@ -22,7 +22,7 @@ import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
-import { EVERYTHING } from '@/lib/agentTools';
+import { EVERYTHING, refFor } from '@/lib/agentTools';
 import type { ConsolePageProps } from '../sections';
 import {
     CAPABILITY_REFS,
@@ -337,7 +337,7 @@ function ModelConnectionFact({ agent, save }: { agent: Agent; save: SaveAgent })
     const harnesses = useHarnesses();
     const connections = useScopeConnections(agent.userId);
     const harness = harnesses.data?.find((h) => h.name === agent.harness);
-    const connection = agent.modelConnection ? connections.data?.find((c) => c.name === agent.modelConnection) : undefined;
+    const connection = agent.modelConnection ? connections.data?.find((c) => refFor(c) === agent.modelConnection) : undefined;
     const [draft, setDraft] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const apply = async () => {
@@ -376,7 +376,7 @@ function ModelConnectionFact({ agent, save }: { agent: Agent; save: SaveAgent })
             {agent.modelConnection ? (
                 <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
                     <Link to={where} className={LINK}>
-                        {agent.modelConnection}
+                        {connection?.name ?? agent.modelConnection}
                     </Link>
                     {connection && <StatusPill look={connectionLook(connection)} />}
                     {connections.data && !connection && (
@@ -570,7 +570,9 @@ function ToolList({ agent }: { agent: Agent }) {
     const people = agent.tools.flatMap((e) => personToolOf(e) ?? []);
     const hasBuckets = refs.some((t) => bucketRefOf(t));
     const buckets = useScopeBuckets(agent.userId, hasBuckets);
-    const byName = new Map((connections.data ?? []).map((c) => [c.name, c]));
+    // A ref names one of the scope's connections as the platform reads it: `credential:<id>` an account connected in
+    // the app, any other a connection by its name.
+    const byRef = new Map((connections.data ?? []).map((c) => [refFor(c), c]));
     // The agents capability: one row however its tools are listed.
     const agentsTools = [...new Set(refs.flatMap((t) => agentsToolsOf(t) ?? []))];
     // Everything on the account is its own row, never a tool policy judges: its runs are judged as the operations they run.
@@ -581,7 +583,7 @@ function ToolList({ agent }: { agent: Agent }) {
     const byId = new Map((others.data ?? []).map((c) => [c.id, c]));
     const known = connections.data && (!hasShared || others.data);
     // Only a name with no connection in the scope needs the catalog: it may be an integration that needs no account.
-    const unnamed = !!known && tools.some((t) => !CAPABILITY_REFS.has(t) && !sharedConnectionOf(t) && !byName.has(t.split('.')[0]));
+    const unnamed = !!known && tools.some((t) => !CAPABILITY_REFS.has(t) && !sharedConnectionOf(t) && !byRef.has(t.split('.')[0]));
     const integrations = useIntegrations(unnamed);
     // A catalog that can't be read leaves those rows unjudged, not the rest.
     const settled = known && (!unnamed || integrations.data || integrations.error !== undefined);
@@ -590,7 +592,7 @@ function ToolList({ agent }: { agent: Agent }) {
         const shared = sharedConnectionOf(ref);
         if (shared) return { connection: byId.get(shared.id), op: shared.op, shared: true, name: byId.get(shared.id)?.name ?? '', free: undefined };
         const [name, op] = ref.split('.');
-        const connection = byName.get(name);
+        const connection = byRef.get(name);
         return { connection, op: op ?? null, shared: false, name, free: connection ? undefined : accountFreeIntegration(name, integrations.data) };
     };
     /** Each database it uses, with the operations it has (the whole database is all three). */
@@ -709,7 +711,8 @@ function ToolList({ agent }: { agent: Agent }) {
                                     {connection && <span className="shrink-0 text-[12px] text-muted-foreground">from {scopeName(connection.userId)}</span>}
                                 </span>
                             ) : (
-                                <span className="truncate text-[14px] text-foreground">{ref}</span>
+                                // An account connected in the app reads by its name, not the id its ref holds.
+                                <span className="truncate text-[14px] text-foreground">{connection?.origin === 'app' ? `${connection.name}${op ? `.${op}` : ''}` : ref}</span>
                             )}
                             {connection && connection.status !== 'connected' ? (
                                 <StatusPill look={connectionLook(connection)} />
@@ -1403,9 +1406,12 @@ function triggerTitle(t: AgentTrigger, userId: string | null): ReactNode {
             return `Webhook ${specText(t, 'name')}`;
         case 'event': {
             const filters = Object.entries((t.spec.filters as JsonObject | undefined) ?? {});
+            // An account connected in the app is named by its id: it reads as the account it hears through.
+            const through = specText(t, 'connection');
+            const who = through.startsWith('credential:') ? (t.summary?.account ?? t.summary?.app ?? 'Your account connected in the app') : through;
             return (
                 <>
-                    {specText(t, 'connection')} sends {specText(t, 'event')}
+                    {who} sends {specText(t, 'event')}
                     {filters.length > 0 && <span className="text-muted-foreground"> where {filters.map(([k, v]) => `${k} is ${String(v)}`).join(', ')}</span>}
                 </>
             );
@@ -1548,8 +1554,9 @@ function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: 
     const [message, setMessage] = useState('');
     // A queue trigger reads a queue in the agent's own scope.
     const queues = useV1(kind === 'queue' ? `queues?scope=${agent.userId ?? NO_USER}` : null, () => Queue.list({ client, userFilter: agent.userId ?? NO_USER }));
-    // The picked connection's app events, from its integration's catalog.
-    const picked = (connections.data ?? []).find((c) => c.name === connection);
+    // The picked connection's app events, from its integration's catalog. It's held by the ref a trigger names it by:
+    // an account connected in the app by `credential:<id>`, never its name.
+    const picked = (connections.data ?? []).find((c) => refFor(c) === connection);
     const events = useV1(kind === 'event' && picked?.integration ? `integrations/${picked.integration}/events` : null, () => picked!.events());
     const eventInfo = events.data?.find((e) => e.name === event.trim());
     // NoClick's own events, from the catalog, the ones it sends today.
@@ -1650,7 +1657,7 @@ function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: 
                                 <select value={connection} onChange={(e) => setConnection(e.target.value)} className={inputClass}>
                                     <option value="">{connections.data ? (connections.data.length ? 'Pick one' : 'No connections in its scope') : 'Loading…'}</option>
                                     {(connections.data ?? []).map((c) => (
-                                        <option key={c.id} value={c.name}>
+                                        <option key={c.id} value={refFor(c)}>
                                             {c.name}
                                         </option>
                                     ))}
