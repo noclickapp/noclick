@@ -114,8 +114,8 @@ Some are drawn by several screens, so they are in `src/ui/slots.ts`:
 | Slot | Where it is | By default |
 |---|---|---|
 | `connection.mark` | Beside a connection's, an account's or an integration's name, in the console and in Work: its mark, what it is called, the AI company an AI account is with, and how an account reads in a list (its app and the line telling it apart) | A plain mark, the name read from its type, no company, and an account by the account it reaches, else its own name, else when it was connected |
-| `connect.app` | Connecting an app's account where it's needed (an agent's tools, a trigger's account), with the client of the screen drawing it | NoClick's connect page in a new tab |
-| `connect.model` | Connecting the AI account a model needs, from the model picker | NoClick's connect page in a new tab |
+| `connect.app` | Connecting an app's account where it's needed (an agent's tools, a trigger's account, a workflow step's account pickers, in place under them), and entering an account's values again, with the client of the screen drawing it | NoClick's connect page in a new tab, where an account is also connected again: nothing here takes an account's values |
+| `connect.model` | Connecting the AI account a model needs, from the model picker or an agent step's account pickers | NoClick's connect page in a new tab |
 
 Resources' (`src/screens/resources/slots.ts`; see [Resources](#resources)):
 

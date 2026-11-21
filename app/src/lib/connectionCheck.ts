@@ -15,6 +15,9 @@ export interface ConnectionCheck {
     account_label?: string | null;
     /** `reachability` when the provider has nothing of the account's own to show: it only accepted the key. */
     proves?: string;
+    /** The setting the samples can fill (a step's channel, picked from the account's own); null where they answer
+     *  none. */
+    answers_field?: string | null;
     /** The provider's own words when it turned the account down. */
     error?: string | null;
     /** What to do about a refusal, in NoClick's words. */
