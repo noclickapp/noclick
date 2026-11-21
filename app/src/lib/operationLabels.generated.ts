@@ -671,9 +671,9 @@ aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenu
 audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut bambooci bamboohr bandsintown
 bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api beaconchain beatapi beehiiv
 benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer bigoven bigquery bika bill
-billetweb birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio bloom-growth
-bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo bookeo
-bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bouncer bouncify box brandfetch
+billetweb birdeye bitbadges bitly bitrise bitsnap bitwarden bizzabo bkper blackboard blinq blitz-api blooio
+bloom-growth bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce boldsign bolna bonsai bonzo
+bookeo bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar bouncer bouncify box brandfetch
 brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories browseai browserbase-tool browserless
 bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite builtwith bulkpublish bulksmscom bungie
 bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly callerapi callfire campaign-cleaner
