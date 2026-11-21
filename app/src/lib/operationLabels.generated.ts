@@ -779,7 +779,7 @@ textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecomp
 thoughtspot threads thrivecart ticket-tailor tidb-cloud tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp
 timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti
 traccar track-pod trackdesk trackingmore trackvia trakt transloadit trello tremendous trestle trigger-dev
-tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot
+tripadvisor tripworks true-list truss tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot
 typecast typeform typefully unifi unione unipile uniswap-api universe unleash uplisting upload-post uploadcare
 upstash-vector uptimecom uptimerobot urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro vast-ai
 vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler
