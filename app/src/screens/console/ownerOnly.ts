@@ -101,7 +101,7 @@ export const OWNER_ONLY = {
     /** Asking NoClick for machines. */
     machineAccess: {
         what: 'Asking for machines',
-        why: 'Only a person signed in to NoClick asks for machines and accepts their usage policy.',
+        why: 'Only a person signed in to NoClick asks for machines and accepts their usage policy, or the account’s server with a key given the machines:vetting scope, which this app’s key doesn’t carry.',
         operations: ['POST /v1/machines/vetting'],
         at: { page: 'resources/machines', link: 'Ask on NoClick' },
     },

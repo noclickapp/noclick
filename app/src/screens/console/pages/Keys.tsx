@@ -86,6 +86,7 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'agents:terminal': 'opens a coding agent’s terminal, which shows its sandbox’s keys and tokens',
     'approvals:answer': 'approves or declines a call NoClick holds for your yes, from your code',
     'approvals:policy': 'switches what NoClick holds for your yes, for the whole account',
+    'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

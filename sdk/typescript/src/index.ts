@@ -97,7 +97,8 @@ export { Inbox, InboxMessage } from "./inbox.ts";
 export type { InboxCreateOptions, InboxReply, InboxSenders, InboxSendOptions, InboxThread } from "./inbox.ts";
 export { PhoneNumber, PhoneNumberOrder, PortRequest, TextingRegistration, TransferOut } from "./phoneNumber.ts";
 export type {
-  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberPlace,
+  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder,
+  NumberHolderProfile, NumberPlace,
   NumberRequirement, NumberRequirements, PhoneNumberBuyOptions,
   PhoneCall, PhoneCallers, PhoneNumberSource, PhoneNumberType, PhoneText, PortDetails, PortInOptions,
   PortRequestNumber, StreetAddress, TextingContact, TextingRegistrationDetails, TranscriptTurn,

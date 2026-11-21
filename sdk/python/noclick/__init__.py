@@ -126,7 +126,8 @@ from .mcp_server import McpClient, McpServer
 from .notifications import Notifications
 from .operation import Operation, OperationEvent, OperationSummary, OperationTransition
 from .phone_number import (
-    AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberPlace, PhoneCall, PhoneNumber,
+    AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberHolderProfile, NumberPlace,
+    PhoneCall, PhoneNumber,
     PhoneNumberOrder, PhoneText, PortRequest, TextingRegistration, TransferOut,
 )
 from .policy import Policy, PolicyVerdict, Rule
@@ -209,7 +210,7 @@ __all__ = [
     "Workspace", "WorkspaceMember", "WorkspaceInvite", "MyWorkspace", "WorkspaceResource", "SpaceQuestion",
     "Inbox", "InboxMessage", "InboxReply", "InboxThread",
     "PhoneNumber", "AvailableNumber", "PhoneCall", "ConnectableNumber", "PortRequest", "TextingRegistration",
-    "PhoneText", "TransferOut", "NumberHolder", "NumberCoverage", "NumberPlace", "NumberDocument", "PhoneNumberOrder",
+    "PhoneText", "TransferOut", "NumberHolder", "NumberHolderProfile", "NumberCoverage", "NumberPlace", "NumberDocument", "PhoneNumberOrder",
     "Sandbox", "SandboxFiles", "ExecResult", "Machine", "MachineSize", "MachineSizeRegion", "MachineHost", "MachinePort", "MachinePairing", "MachineRefusal", "MachineFiles", "MachineFileEntry", "MachineHealth", "MachineShell",
     "regions", "Region",
     "Browser", "BrowserLiveView", "BrowserProfile", "BrowserLogin", "PageState", "ActResult", "SiteLogin",
