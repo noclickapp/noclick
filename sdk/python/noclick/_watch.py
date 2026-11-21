@@ -37,8 +37,9 @@ from ._sync import synced
 from .exceptions import Error
 
 # The room's close codes: renew (lifetime reached: reconnect), refused (the token, or access), too many connections.
+# Its others (4400, the first frame wasn't the token; 4408, no token in time) are retried as any drop is.
 CLOSE_RENEW, CLOSE_REFUSED, CLOSE_TOO_MANY = 4000, 4401, 4429
-# The socket's subprotocol; the token rides beside it, never in the URL.
+# The socket's subprotocol, offered alone: the token is the socket's first frame, never a header or the URL.
 WATCH_PROTOCOL = "noclick.watch"
 _BACKOFF_S = (0.5, 1.0, 2.0, 5.0, 10.0, 30.0)
 # A connection that stayed up this long after `ready` starts the backoff again; one that drops sooner keeps it
@@ -271,9 +272,10 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
             code: Optional[int] = None
             reason = ""
             try:
-                # The token is offered as the socket's subprotocol: the edge checks it before the room sees it.
-                async with connect(_with_cursor(_socket_url(url), after), subprotocols=[WATCH_PROTOCOL, secret],
+                async with connect(_with_cursor(_socket_url(url), after), subprotocols=[WATCH_PROTOCOL],
                                    ping_interval=_PING_S, ping_timeout=_PING_S, max_size=2 ** 16) as socket:
+                    # The token is the first frame (headers and URLs reach logs); `ready` says it checked out.
+                    await socket.send(json.dumps({"type": "auth", "token": secret}))
                     async for frame in socket:
                         if frame == "pong":
                             continue

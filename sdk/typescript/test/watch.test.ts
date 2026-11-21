@@ -1,6 +1,6 @@
-// Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token is offered as
-// the socket's subprotocol (never the URL), a reconnect resumes after the last change (the URL's `after`), and only
-// what retrying can't fix ends it.
+// Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The socket offers only the
+// protocol's name and sends the token as its first frame (never a header or the URL), a reconnect resumes after the
+// last change (the URL's `after`), and only what retrying can't fix ends it.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -45,6 +45,7 @@ class FakeSocket {
 }
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
+const auth = (token: string) => JSON.stringify({ type: "auth", token });
 
 /** Every wait `watch` makes takes no time; the list is how long each would have been. */
 function noWaits(t: { mock: { method: (...args: never[]) => unknown } }): number[] {
@@ -92,8 +93,8 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
 
   const first = await opened(1);
   assert.equal(first.url, "wss://api.test/v1/watch/socket/r_1");
-  assert.deepEqual(first.protocols, ["noclick.watch", "tok_1"], "the token rides the protocol, beside its name");
-  assert.deepEqual(first.sent, [], "and nothing is sent first");
+  assert.deepEqual(first.protocols, ["noclick.watch"], "only the protocol's name rides the header");
+  assert.deepEqual(first.sent, [auth("tok_1")], "the token is the first frame, sent as the socket opens");
   assert.deepEqual(minted.last.body, { objects: ["deployment"] });
   first.receive({ type: "ready", resumed: false });
   first.receive({ type: "change", id: "c_1", at: "2026-11-18T10:00:00Z", object: "deployment", object_id: "d1",
@@ -104,7 +105,8 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
 
   const second = await opened(2);
   assert.equal(second.url, "wss://api.test/v1/watch/socket/r_2?after=c_1");
-  assert.deepEqual(second.protocols, ["noclick.watch", "tok_2"]);
+  assert.deepEqual(second.protocols, ["noclick.watch"]);
+  assert.deepEqual(second.sent, [auth("tok_2")], "each socket sends its own fresh token first");
   second.receive({ type: "ready", resumed: true });
   second.receive({ type: "reset" });
   await tick();
@@ -246,7 +248,8 @@ test("on this machine a plain ws:// socket will do", async () => {
     for await (const _ of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) { /* reading */ }
   })();
   const socket = await opened(1);
-  assert.deepEqual(socket.protocols, ["noclick.watch", "tok_1"]);
+  assert.deepEqual(socket.protocols, ["noclick.watch"]);
+  assert.deepEqual(socket.sent, [auth("tok_1")]);
   controller.abort();
   await run;
 });
@@ -273,7 +276,7 @@ test("frames that are not JSON objects, or carry wrong types, never reach the re
   for (const message of seen) assert.ok(["ready", "change", "typing", "reset"].includes(message.type));
 });
 
-test("the token rides the socket's protocol, never the URL, and a browser's origin is sent with the token call", async () => {
+test("the token is the socket's first frame, never its protocol or URL, and a browser's origin goes with the token call", async () => {
   FakeSocket.opened = [];
   const { api } = setup();
   const minted = api.on("POST", "/v1/watch/tokens", json(TOKEN(1), { status: 201 }));
@@ -285,7 +288,8 @@ test("the token rides the socket's protocol, never the URL, and a browser's orig
     })();
     const socket = await opened(1);
     assert.ok(!socket.url.includes("tok_1"));
-    assert.deepEqual(socket.protocols, ["noclick.watch", "tok_1"]);
+    assert.deepEqual(socket.protocols, ["noclick.watch"]);
+    assert.deepEqual(socket.sent, [auth("tok_1")]);
     assert.deepEqual(minted.last.body, { origin: "https://app.example" });
     controller.abort();
     await run;
@@ -328,6 +332,33 @@ test("a socket that goes silent is dropped and reconnects", async (t) => {
   assert.equal(socket.closedWith, 4000, "nothing heard for over a minute: closed");
   controller.abort();
   await run;
+});
+
+test("a socket closed for its first frame (4400) or its silence (4408) backs off and sends a fresh token, never giving up", async (t) => {
+  FakeSocket.opened = [];
+  t.mock.method(Math, "random", () => 0.5);
+  const waits = noWaits(t);
+  const { api } = setup();
+  const minted = api.on("POST", "/v1/watch/tokens", json(TOKEN(1), { status: 201 }), json(TOKEN(2), { status: 201 }),
+    json(TOKEN(3), { status: 201 }), json(TOKEN(4), { status: 201 }));
+  const controller = new AbortController();
+  const seen: nc.WatchMessage[] = [];
+  const run = (async () => {
+    for await (const message of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) seen.push(message);
+  })();
+  (await opened(1)).end(4408, 'No {"type": "auth"} frame within 30 s of connecting');
+  (await opened(2)).end(4400, 'The first frame must be {"type": "auth", "token": "<token>"}');
+  (await opened(3)).end(4408, "late again");
+  const fourth = await opened(4);
+  fourth.receive({ type: "ready", resumed: false });
+  await tick();
+  controller.abort();
+  await run;
+  assert.deepEqual(FakeSocket.opened.map((s) => s.sent[0]), [auth("tok_1"), auth("tok_2"), auth("tok_3"), auth("tok_4")]);
+  assert.equal(minted.calls.length, 4, "a new token for each socket");
+  // The token calls' own 60 s timeouts aside: the backoff climbs, as for any drop.
+  assert.deepEqual(waits.filter((ms) => ms > 0 && ms < 60_000), [500, 1_000, 2_000]);
+  assert.deepEqual(seen.map((m) => m.type), ["ready"]);
 });
 
 test("a room turned away waits half a minute, spread, before trying again", async (t) => {
@@ -381,7 +412,8 @@ for (const url of ["wss://api.noclick.com/v1/watch/socket/r_1", "ws://localhost:
     const { opened: sockets, error } = await firstOutcome(url);
     assert.equal(error, null);
     assert.equal(sockets.length, 1);
-    assert.deepEqual(sockets[0].protocols, ["noclick.watch", "tok_secret"]);
+    assert.deepEqual(sockets[0].protocols, ["noclick.watch"]);
+    assert.deepEqual(sockets[0].sent, [auth("tok_secret")]);
   });
 }
 

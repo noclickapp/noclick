@@ -1,6 +1,6 @@
-"""Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The token is offered as
-the socket's subprotocol (never the URL), a reconnect resumes after the last change (the URL's ``after``), and only
-what retrying can't fix ends it."""
+"""Watch: a token from POST /v1/watch/tokens, then a socket that says which objects changed. The socket offers only the
+protocol's name and sends the token as its first frame (never a header or the URL), a reconnect resumes after the last
+change (the URL's ``after``), and only what retrying can't fix ends it."""
 
 import json
 import sys
@@ -101,9 +101,10 @@ def test_watch_authenticates_first_yields_what_it_knows_and_resumes_after_a_rene
     assert seen[3].resumed is True
     first, second = connect.opened
     assert first.url == "wss://api.test/v1/watch/socket/r_1"
-    assert first.subprotocols == ["noclick.watch", "tok_1"] and first.sent == [], "the token rides the protocol"
+    assert first.subprotocols == ["noclick.watch"], "only the protocol's name rides the header"
+    assert first.sent == [{"type": "auth", "token": "tok_1"}], "the token is the first frame"
     assert second.url == "wss://api.test/v1/watch/socket/r_2?after=c_1"
-    assert second.subprotocols == ["noclick.watch", "tok_2"]
+    assert second.subprotocols == ["noclick.watch"] and second.sent == [{"type": "auth", "token": "tok_2"}]
     assert statuses == ["connecting", "live", "reconnecting", "live", "stopped"]
 
 
@@ -226,6 +227,21 @@ def test_a_dropped_socket_waits_a_spread_backoff(api, client, monkeypatch, no_wa
     assert no_waits == [_watch._BACKOFF_S[0] * 0.5]
 
 
+def test_a_socket_closed_for_its_first_frame_or_its_silence_backs_off_with_a_fresh_token(api, client, monkeypatch,
+                                                                                         no_waits):
+    """4400 (the first frame wasn't the token) and 4408 (no token in time) are drops like any other: each next socket
+    gets a new token, sent first, after a climbing backoff, and watch never gives up on them."""
+    api.post("/v1/watch/tokens").mock(side_effect=[httpx.Response(201, json=token(n)) for n in (1, 2, 3, 4)])
+    monkeypatch.setattr(_watch.random, "random", lambda: 0.5)
+    connect = FakeConnect(([], 4408), ([], 4400), ([], 4408), ([{"type": "ready", "resumed": False}], 1000))
+    monkeypatch.setattr(_watch, "_connector", lambda: connect)
+    for message in nc.watch():
+        assert message.type == "ready"
+        break
+    assert [socket.sent for socket in connect.opened] == [[{"type": "auth", "token": f"tok_{n}"}] for n in (1, 2, 3, 4)]
+    assert no_waits == [0.5, 1.0, 2.0]
+
+
 def test_the_token_never_appears_in_a_repr_an_error_or_the_url(api, client, monkeypatch, no_waits):
     api.post("/v1/watch/tokens").respond(201, json=token(1))
     minted = nc.watch_token()
@@ -312,7 +328,7 @@ def test_a_refused_socket_waits_out_a_revokes_margin_before_its_next_token(api, 
     assert len(no_waits) == 1 and 8.0 <= no_waits[0] <= 12.0, no_waits
 
 
-def test_a_resume_rides_the_url_and_the_token_the_protocol(api, client, monkeypatch, no_waits):
+def test_a_resume_rides_the_url_and_the_token_the_first_frame(api, client, monkeypatch, no_waits):
     api.post("/v1/watch/tokens").respond(201, json={**token(1), "url": "wss://api.test/v1/watch/socket/r_1?x=1"})
     change = {"type": "change", "id": "c_AbCdEfGh_7", "at": "2026-11-18T10:00:00Z", "object": "domain",
               "object_id": "d1"}
@@ -326,7 +342,8 @@ def test_a_resume_rides_the_url_and_the_token_the_protocol(api, client, monkeypa
             break
     assert connect.opened[0].url == "wss://api.test/v1/watch/socket/r_1?x=1"
     assert connect.opened[1].url == "wss://api.test/v1/watch/socket/r_1?x=1&after=c_AbCdEfGh_7"
-    assert all("tok_1" not in socket.url for socket in connect.opened)
+    assert all("tok_1" not in socket.url and socket.subprotocols == ["noclick.watch"] for socket in connect.opened)
+    assert [socket.sent for socket in connect.opened] == [[{"type": "auth", "token": "tok_1"}]] * 2
 
 
 def test_review3_FINDING_a_connection_that_drops_right_after_ready_never_backs_off(api, client, monkeypatch,

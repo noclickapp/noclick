@@ -122,9 +122,12 @@ export interface WatchOptions extends WatchTokenOptions {
   WebSocket?: typeof WebSocket;
 }
 
-/** The close codes the room sends: renew (lifetime reached), refused (token or access), too many connections. */
+/**
+ * The close codes the room sends: renew (lifetime reached), refused (token or access), too many connections. Its
+ * others (4400, the first frame wasn't the token; 4408, no token in time) are retried as any drop is.
+ */
 const WATCH_CLOSE = { renew: 4000, refused: 4401, tooMany: 4429 } as const;
-/** The socket's subprotocol; the token rides beside it, never in the URL. */
+/** The socket's subprotocol, offered alone: the token is the socket's first frame, never a header or the URL. */
 const WATCH_PROTOCOL = "noclick.watch";
 
 const PING_MS = 30_000;
@@ -260,11 +263,13 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
         await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
         continue;
       }
-      // The token is offered as the socket's subprotocol: the edge checks it before the room ever sees the socket.
-      const ws = new Socket(withCursor(socketUrl(token.url), after), [WATCH_PROTOCOL, token.token]);
+      const ws = new Socket(withCursor(socketUrl(token.url), after), [WATCH_PROTOCOL]);
       socket = ws;
       let lastHeard = Date.now();
+      const secret = token.token;
       ws.onopen = () => {
+        // The token is the first frame (headers and URLs reach logs); the room answers `ready` once it checks out.
+        ws.send(JSON.stringify({ type: "auth", token: secret }));
         pinger = setInterval(() => {
           if (Date.now() - lastHeard > 2 * PING_MS) ws.close(4000, "no answer");
           else ws.send("ping");
