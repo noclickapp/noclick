@@ -64,8 +64,14 @@ it('restores the assistant’s revoked connection from its row, as it was', asyn
     await within(section).findByText(assistant.client.name, {}, WAIT);
     expect(within(section).queryByRole('button', { name: `Actions for ${revokedClient.client.name}` })).toBeNull();
     fireEvent.keyDown(within(section).getByRole('button', { name: 'Actions for Claude' }), { key: 'Enter' });
-    expect((await screen.findAllByRole('menuitem')).map((item) => item.textContent)).toEqual(['Revoke']);
-    fireEvent.keyDown(document.activeElement ?? document.body, { key: 'Escape' });
+    const menu = await screen.findAllByRole('menuitem');
+    expect(menu.map((item) => item.textContent)).toEqual(['Revoke']);
+    fireEvent.click(menu[0]);
+    const revoking = await screen.findByRole('dialog', { name: 'Revoke Claude?' }, WAIT);
+    expect(revoking.textContent).toContain('To use it again, connect it again and allow it.');
+    fireEvent.click(within(revoking).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull(), WAIT);
+    expect(made.some((call) => call.startsWith('DELETE'))).toBe(false);
 
     fireEvent.keyDown(within(section).getByRole('button', { name: `Actions for ${assistant.client.name}` }), { key: 'Enter' });
     const [restore] = await screen.findAllByRole('menuitem');

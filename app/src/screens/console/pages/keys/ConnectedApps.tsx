@@ -41,59 +41,25 @@ export function autoApproveLabel(app: Pick<ConnectedAppView, 'capabilities' | 'a
     return app.auto_approve_under_usd == null ? 'Always asks' : `Under ${formatMoney(app.auto_approve_under_usd)}`;
 }
 
-function RevokeAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: () => void }) {
-    const { client } = useConsole();
-    const [error, setError] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
-    const revoke = async () => {
-        setBusy(true);
-        try {
-            await revokeConnectedApp(client, app.id);
-            invalidateV1('connected_apps');
-            toast.success(`${app.client.name} revoked`);
-            onClose();
-        } catch (e) {
-            setError(formError(e).message);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <ConsoleDialog
-            open
-            onOpenChange={(o) => !o && onClose()}
-            size="sm"
-            title={`Revoke ${app.client.name}?`}
-            footer={
-                <>
-                    <ConsoleButton variant="ghost" onClick={onClose}>
-                        Cancel
-                    </ConsoleButton>
-                    <ConsoleButton variant="danger" onClick={revoke} disabled={busy}>
-                        Revoke
-                    </ConsoleButton>
-                </>
-            }
-        >
-            <p className="m-0 text-[13px] text-muted-foreground">
-                {app.client.name}&apos;s next call fails.{' '}
-                {app.restorable ? 'You can restore it here, as it is now.' : 'To use it again, connect it again and allow it.'}
-            </p>
-            {error && <p className="m-0 mt-2 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
-        </ConsoleDialog>
-    );
-}
+/** What a row's menu does to a connection: revoke it, or turn a revoked one NoClick makes back on. */
+type AppAction = 'revoke' | 'restore';
 
-function RestoreAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: () => void }) {
+const ACTIONS = {
+    revoke: { call: revokeConnectedApp, verb: 'Revoke', done: 'revoked', variant: 'danger' },
+    restore: { call: restoreConnectedApp, verb: 'Restore', done: 'restored', variant: 'primary' },
+} as const;
+
+function AppActionDialog({ app, action, onClose }: { app: ConnectedAppView; action: AppAction; onClose: () => void }) {
     const { client } = useConsole();
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
-    const restore = async () => {
+    const { call, verb, done, variant } = ACTIONS[action];
+    const act = async () => {
         setBusy(true);
         try {
-            await restoreConnectedApp(client, app.id);
+            await call(client, app.id);
             invalidateV1('connected_apps');
-            toast.success(`${app.client.name} restored`);
+            toast.success(`${app.client.name} ${done}`);
             onClose();
         } catch (e) {
             setError(formError(e).message);
@@ -107,20 +73,22 @@ function RestoreAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: ()
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
-            title={`Restore ${app.client.name}?`}
+            title={`${verb} ${app.client.name}?`}
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>
                         Cancel
                     </ConsoleButton>
-                    <ConsoleButton variant="primary" onClick={restore} disabled={busy}>
-                        Restore
+                    <ConsoleButton variant={variant} onClick={act} disabled={busy}>
+                        {verb}
                     </ConsoleButton>
                 </>
             }
         >
             <p className="m-0 text-[13px] text-muted-foreground">
-                It comes back as it was when you revoked it: it can {orderCapabilities(app.capabilities).join(', ')}, with {cap}, and its own approval settings. Its next call works.
+                {action === 'restore'
+                    ? `It comes back as it was when you revoked it: it can ${orderCapabilities(app.capabilities).join(', ')}, with ${cap}, and its own approval settings. Its next call works.`
+                    : `${app.client.name}’s next call fails. ${app.restorable ? 'You can restore it here, as it is now.' : 'To use it again, connect it again and allow it.'}`}
             </p>
             {error && <p className="m-0 mt-2 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
         </ConsoleDialog>
@@ -130,8 +98,7 @@ function RestoreAppDialog({ app, onClose }: { app: ConnectedAppView; onClose: ()
 export function ConnectedApps() {
     const { client } = useConsole();
     const headingId = useId();
-    const [revoking, setRevoking] = useState<ConnectedAppView | null>(null);
-    const [restoring, setRestoring] = useState<ConnectedAppView | null>(null);
+    const [acting, setActing] = useState<{ app: ConnectedAppView; action: AppAction } | null>(null);
     const fetchPage = useCallback((cursor: string | null) => listConnectedApps(client, { cursor }), [client]);
     const apps = usePaged('connected_apps', fetchPage, (a) => a.id);
 
@@ -234,9 +201,9 @@ export function ConnectedApps() {
                 loadMoreError={apps.loadMoreError}
                 rowActions={(a) =>
                     a.revoked_at ? (
-                        a.restorable ? <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Restore', onSelect: () => setRestoring(a) }]} /> : null
+                        a.restorable ? <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Restore', onSelect: () => setActing({ app: a, action: 'restore' }) }]} /> : null
                     ) : (
-                        <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Revoke', danger: true, onSelect: () => setRevoking(a) }]} />
+                        <MoreMenu label={`Actions for ${a.client.name}`} items={[{ label: 'Revoke', danger: true, onSelect: () => setActing({ app: a, action: 'revoke' }) }]} />
                     )
                 }
                 nextCursor={apps.nextCursor}
@@ -249,8 +216,7 @@ export function ConnectedApps() {
                     </p>
                 }
             />
-            {revoking && <RevokeAppDialog app={revoking} onClose={() => setRevoking(null)} />}
-            {restoring && <RestoreAppDialog app={restoring} onClose={() => setRestoring(null)} />}
+            {acting && <AppActionDialog app={acting.app} action={acting.action} onClose={() => setActing(null)} />}
         </section>
     );
 }
