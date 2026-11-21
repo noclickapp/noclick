@@ -209,7 +209,8 @@ export type {
   LatestOutputs, Position, PublishOptions, RunStep,
   StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
   StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowEdge, WorkflowEdit,
-  WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunCounts, WorkflowRunOptions, WorkflowRunStatus,
+  WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
+  WorkflowRunOptions, WorkflowRunStatus,
   WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";

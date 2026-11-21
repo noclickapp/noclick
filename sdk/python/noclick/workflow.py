@@ -317,6 +317,40 @@ class WorkflowBuildResult:
                    raw.get("app_url"), raw.get("published"), raw)
 
 
+@dataclass(frozen=True)
+class WorkflowRehearsal:
+    """A workflow's test run, as the app's Test Run plays one: a staged event arrived at one of its triggers
+    (``trigger``: ``{step_id, type, name}``) and the agents it reached took a real turn while a simulated world
+    answered every tool call, so nothing was sent and no account was touched. ``test_run`` is the run it played
+    (``{key, name, custom}``; ``None`` for a message you typed). ``reply`` is the agent's closing words;
+    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered;
+    ``transcript`` the run step by step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding
+    harness's own shell and file steps carry ``source`` ``harness``). ``scenario`` is the world it ran in,
+    ``note`` says when it wrote nothing or what it did to act was simulated, and ``cost_usd`` is what it cost you."""
+
+    workflow_id: Optional[str]
+    test_run: Optional[Dict[str, Any]]
+    trigger: Optional[Dict[str, Any]]
+    reply: str
+    tool_calls: List[Dict[str, Any]]
+    transcript: List[Dict[str, Any]]
+    scenario: Optional[str]
+    note: Optional[str]
+    cost_usd: Optional[float]
+    operation_id: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+def _read_rehearsal(result: Any, op: Operation) -> WorkflowRehearsal:
+    result = result if isinstance(result, dict) else {}
+    return WorkflowRehearsal(
+        workflow_id=result.get("workflow_id"), test_run=result.get("test_run"), trigger=result.get("trigger"),
+        reply=result.get("reply") or "", tool_calls=list(result.get("tool_calls") or []),
+        transcript=list(result.get("transcript") or []), scenario=result.get("scenario"), note=result.get("note"),
+        cost_usd=result.get("cost_usd"), operation_id=op._known("id"), raw=result,
+    )
+
+
 def _read_run(result: Any, op: Operation) -> WorkflowRun:
     return WorkflowRun._from(result)
 
@@ -327,6 +361,7 @@ def _read_build(result: Any, op: Operation) -> WorkflowBuildResult:
 
 register_result("workflow.run", _read_run)
 register_result("workflow.build", _read_build)
+register_result("workflow.rehearse", _read_rehearsal)
 
 # How often next_question looks while the build works (the server's wait answers only once it's done).
 _QUESTION_POLL_S = 2.0
@@ -2438,6 +2473,61 @@ class Workflow(_Object):
             "POST", f"{await self._path()}/runs", json=body, user=scope, idempotency_key=idempotency_key,
         )
         return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.run", reader=_read_run)
+
+    @synced
+    async def rehearse(
+        self,
+        test_run: Optional[str] = None,
+        *,
+        trigger: Any = None,
+        body: Optional[str] = None,
+        title: Optional[str] = None,
+        author: Optional[str] = None,
+        handle: Optional[str] = None,
+        scenario: Optional[str] = None,
+        user: Any = AMBIENT,
+    ) -> Operation:
+        """A test run of the workflow, as the app's Test Run plays one: a staged
+        event arrives at one of its triggers and the agents it reaches take a
+        real turn (their models, instructions and tools) while a simulated world
+        answers every tool call, so nothing is sent, no account is touched and
+        its connections needn't be connected yet (its agents' model connections
+        must be). The steps after an agent that would reach an account never run.
+
+        ``test_run`` plays one the workflow offers, by its name or key, as its
+        Test Run screen lists them: a staged situation for one of its triggers,
+        or one authored for it (``edit().add_test_run``). Or stage a message you
+        type on ``trigger`` (a trigger ``Step``, its id or its type): ``body``,
+        with ``title``, ``author`` and ``handle``. ``scenario`` says what the
+        simulated world is like, in place of the staged situation's own. One
+        the workflow doesn't offer raises ``noclick.NotFound`` naming the ones
+        it does. Billed as the app's Test Run is; an account has up to 10
+        queued or running at once (``noclick.QuotaExceeded`` past that).
+
+        Returns:
+            The run's operation (kind ``workflow.rehearse``); ``.wait()`` gives the ``WorkflowRehearsal``: the
+            agent's ``reply`` and the ``tool_calls`` it made with what the world answered.
+
+        Usage::
+
+            inbox = noclick.Workflow.from_name("Support inbox")
+            test = inbox.rehearse("Refund request").wait()
+            print(test.reply)
+            for call in test.tool_calls:
+                print(call["tool"], call["arguments"])
+
+            # A message of your own, on the trigger step support_email:
+            test = inbox.rehearse(trigger="support_email", body="My order 1042 never came.",
+                                  title="Where is order 1042?", author="ana@example.com").wait()
+        """
+        scope = resolve_scope(user)
+        payload = await self._api.request(
+            "POST", f"{await self._path()}/rehearsals", user=scope,
+            json=compact(test_run=test_run, trigger=None if trigger is None else _step_id(trigger), body=body,
+                         title=title, author=author, handle=handle, scenario=scenario),
+        )
+        return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.rehearse",
+                                       reader=_read_rehearsal)
 
     @synced
     async def runs(

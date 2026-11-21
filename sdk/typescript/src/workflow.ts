@@ -25,7 +25,8 @@ import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
 import {
-  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, paginate, parseTime, readScope, refId, str,
+  ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, num, paginate, parseTime, readScope, refId,
+  str,
 } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
@@ -137,6 +138,48 @@ export interface WorkflowRun {
   finishedAt: Date | null;
   steps: RunStep[];
   raw: JsonObject;
+}
+
+/**
+ * A workflow's test run, as the app's Test Run plays one: a staged event arrived at one of its triggers
+ * (`trigger`: `{step_id, type, name}`) and the agents it reached took a real turn while a simulated world
+ * answered every tool call, so nothing was sent and no account was touched. `testRun` is the run it played
+ * (`{key, name, custom}`; `null` for a message you typed). `reply` is the agent's closing words; `toolCalls` the
+ * calls it made, each with its `tool`, `arguments` and the `result` the world answered; `transcript` the run step
+ * by step (`role` `assistant` steps, its `text`, and `tool` steps; a coding harness's own shell and file steps carry
+ * `source` `harness`). `scenario` is the world it ran in, `note` says when it wrote nothing or what it did to act was
+ * simulated, and `costUsd` is what it cost you.
+ */
+export interface WorkflowRehearsal {
+  workflowId: string | null;
+  testRun: JsonObject | null;
+  trigger: JsonObject | null;
+  reply: string;
+  toolCalls: JsonObject[];
+  transcript: JsonObject[];
+  scenario: string | null;
+  note: string | null;
+  costUsd: number | null;
+  operationId: string | null;
+  raw: JsonObject;
+}
+
+/** What `Workflow.rehearse` stages: a test run the workflow offers, or a message you type on one of its triggers. */
+export interface WorkflowRehearseOptions extends CallOptions {
+  /** A test run the workflow offers, by its name or key, as its Test Run screen lists them. */
+  testRun?: string;
+  /** Instead of `testRun`: the trigger step (a `Step`, its id or its type) to stage `body` on. */
+  trigger?: StepRef;
+  /** With `trigger`: the staged message's body. */
+  body?: string;
+  /** With `trigger`: its subject or title. */
+  title?: string;
+  /** With `trigger`: who it's from, by name. */
+  author?: string;
+  /** With `trigger`: who it's from, by address or handle. */
+  handle?: string;
+  /** What the simulated world is like; its answers keep to it. Omitted, the staged situation's own. */
+  scenario?: string;
 }
 
 /**
@@ -449,6 +492,26 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
 
 registerResult("workflow.run", (result) => toWorkflowRun(result));
 registerResult("workflow.build", (result) => toBuildResult(result));
+
+function toRehearsal(result: unknown, op: Operation<unknown>): WorkflowRehearsal {
+  const raw = asObject(result);
+  const obj = (value: unknown): JsonObject | null => (value && typeof value === "object" ? asObject(value) : null);
+  return {
+    workflowId: str(raw.workflow_id),
+    testRun: obj(raw.test_run),
+    trigger: obj(raw.trigger),
+    reply: str(raw.reply) ?? "",
+    toolCalls: Array.isArray(raw.tool_calls) ? (raw.tool_calls as JsonObject[]) : [],
+    transcript: Array.isArray(raw.transcript) ? (raw.transcript as JsonObject[]) : [],
+    scenario: str(raw.scenario),
+    note: str(raw.note),
+    costUsd: num(raw.cost_usd),
+    operationId: str(op._known("id")),
+    raw,
+  };
+}
+
+registerResult("workflow.rehearse", toRehearsal);
 
 /**
  * @internal How often `nextQuestion` looks while the build works (the server's wait answers only once it's
@@ -2035,6 +2098,35 @@ export class Workflow extends ApiObject {
       idempotencyKey: options.idempotencyKey,
     });
     return Operation._fromPayload<WorkflowRun>(payload, { client: this._client, user: scope, kind: "workflow.run", reader: toWorkflowRun });
+  }
+
+  /**
+   * A test run of the workflow, as the app's Test Run plays one: a staged event arrives at one of its triggers and
+   * the agents it reaches take a real turn (their models, instructions and tools) while a simulated world answers
+   * every tool call, so nothing is sent, no account is touched and its connections needn't be connected yet (its
+   * agents' model connections must be). The steps after an agent that would reach an account never run.
+   *
+   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them: a staged
+   * situation for one of its triggers, or one authored for it (`edit().addTestRun`). Or stage a message you type on
+   * `trigger` (a trigger `Step`, its id or its type): `body`, with `title`, `author` and `handle`. `scenario` says
+   * what the simulated world is like. One the workflow doesn't offer throws `NotFound` naming the ones it does.
+   * Billed as the app's Test Run is; an account has up to 10 queued or running at once (`QuotaExceeded` past that).
+   * `wait()` resolves to the `WorkflowRehearsal`: the agent's `reply` and the `toolCalls` it made with what the
+   * world answered.
+   */
+  async rehearse(options: WorkflowRehearseOptions): Promise<Operation<WorkflowRehearsal>> {
+    const scope = resolveScope(options.user);
+    const payload = await this._api.request("POST", `${await this.path()}/rehearsals`, {
+      json: compact({
+        test_run: options.testRun, trigger: options.trigger === undefined ? undefined : stepId(options.trigger),
+        body: options.body, title: options.title, author: options.author, handle: options.handle,
+        scenario: options.scenario,
+      }),
+      user: scope,
+    });
+    return Operation._fromPayload<WorkflowRehearsal>(payload, {
+      client: this._client, user: scope, kind: "workflow.rehearse", reader: toRehearsal,
+    });
   }
 
   /**

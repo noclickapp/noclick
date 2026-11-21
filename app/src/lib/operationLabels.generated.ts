@@ -596,6 +596,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_move": ["Move Workflow", "POST", "write"],
     "workflows_outputs_list": ["Latest Outputs", "GET", "read"],
     "workflows_pause": ["Pause Workflow", "POST", "write"],
+    "workflows_rehearsals_create": ["Rehearse Workflow", "POST", "write"],
     "workflows_restore": ["Restore Workflow", "POST", "write"],
     "workflows_resume": ["Resume Workflow", "POST", "write"],
     "workflows_runs_counts_list": ["Count Runs", "GET", "read"],
