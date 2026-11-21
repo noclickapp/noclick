@@ -221,3 +221,49 @@ test("agents attaching connections is a kind switched for the account and for on
   await nc.Agent.fromId("ag_1").update({ approvals: { attach_connection: "allow" } });
   assert.deepEqual(patched.last.body, { approvals: { attach_connection: "allow" } });
 });
+
+const ROUTING = {
+  object: "approval_routing", approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, on_timeout: "escalate",
+  expires_in_s: 3600, effective_at: "2026-11-21T09:00:00+00:00", pending: false, before: null, change_id: "chg_2",
+};
+const STAGES = [
+  { approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, expires_in_s: 3600, on_timeout: "escalate",
+    source: "account" },
+  { approver: { object: "approver", kind: "owner" }, expires_in_s: 86400, on_timeout: "decline", source: "default" },
+];
+
+test("the account names who answers its held calls, and reads the chain back", async () => {
+  const { api } = setup();
+  const put = api.on("PUT", "/v1/approvals/policy", json({ ...POLICY, routing: ROUTING,
+    approvers: { agent: STAGES, key: STAGES } }));
+  const policy = await nc.ApprovalPolicy.set({ routing: { approver: { agent_id: "supervisor" }, on_timeout: "escalate",
+    expires_in_s: 3600 } });
+  assert.deepEqual(put.last.body, { routing: { approver: { agent_id: "supervisor" }, on_timeout: "escalate",
+    expires_in_s: 3600 } });
+  assert.equal(policy.routing?.approver && (policy.routing.approver as { kind: string }).kind, "agent");
+  assert.deepEqual(policy.approvers.key.map((s) => (s.approver as { kind: string }).kind), ["agent", "owner"]);
+  // null puts the owner back; leaving it out leaves it as it is.
+  await nc.ApprovalPolicy.set({ routing: null });
+  assert.deepEqual(put.last.body, { routing: null });
+  await nc.ApprovalPolicy.set({ settings: { purge: "allow" } });
+  assert.deepEqual(put.last.body, { settings: { purge: "allow" } });
+  api.on("POST", "/v1/approvals/policy/explain", json({
+    object: "approval_explanation", kind: "purchase", caller: "key", disposition: "ask", source: "default",
+    why: "Purchases through an API key always ask.", setting: null, bounds: false, approvers: STAGES }));
+  const seen = await nc.ApprovalPolicy.explain("purchase", "key");
+  assert.deepEqual(seen.approvers.map((s) => (s.approver as { kind: string }).kind), ["agent", "owner"]);
+});
+
+test("an agent names its own approver, and an approval says who it waits on", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patched = api.on("PATCH", "/v1/agents/ag_1", json({ ...AGENT, approvals: { routing: ROUTING } }));
+  await nc.Agent.fromId("ag_1").update({ approvals: { routing: { approver: { code: true } } } });
+  assert.deepEqual(patched.last.body, { approvals: { routing: { approver: { code: true } } } });
+  api.on("GET", "/v1/approvals/apr_1", json({ ...APPROVAL,
+    approver: { object: "approver", kind: "agent", agent_id: "ag_9" }, on_timeout: "escalate", sent_to: [], status: "approved", decided_by: "agent",
+    decided_by_agent: { agent_id: "ag_9", name: "Supervisor" } }));
+  const approval = await nc.Approval.fromId("apr_1").hydrate();
+  assert.deepEqual([approval.approver.kind, approval.onTimeout, approval.decidedBy], ["agent", "escalate", "agent"]);
+  assert.equal(approval.decidedByAgent?.name, "Supervisor");
+});

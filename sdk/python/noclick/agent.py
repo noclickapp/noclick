@@ -1087,8 +1087,8 @@ class Agent(_Object):
     approvals: Dict[str, Dict[str, Any]] = field(
         "approvals", lambda raw: dict(raw or {}),
         doc="What its own calls wait for a person on in place of the account's, by kind of hold (``disposition``, "
-        "``under_usd``, ``until``, ``effective_at``, ``pending``); empty where it sets none (a child follows its "
-        "parent's).",
+        "``under_usd``, ``until``, ``effective_at``, ``pending``), and ``routing``: who answers its held calls first "
+        "(``approver``, ``on_timeout``, ``expires_in_s``); empty where it sets none (a child follows its parent's).",
     )
     status: Optional[str] = field(
         "status",
@@ -1317,7 +1317,10 @@ class Agent(_Object):
         ``ApprovalPolicy.set(ceilings=...)``), a child's never looser than its parent's (which it follows where it
         sets none), and a purchase or a deletion past the default needs a monthly cap on the account. Loosening is
         the owner's: signed in, their own message to one of their agents, or a key naming ``approvals:policy``
-        (after a 10-minute undo window); an agent acting on its own waits for the owner's yes.
+        (after a 10-minute undo window); an agent acting on its own waits for the owner's yes. ``"routing"`` among
+        them names who answers its held calls first, in place of its parent's or the account's approver (finally the
+        owner), as ``ApprovalPolicy.set``'s ``routing`` takes it: its parent may approve its calls, never the agent
+        itself nor one of its children.
 
         ``can_request`` lets it ask its user to connect accounts at run time
         (a ``request_connection`` tool): integration names, single
