@@ -56,6 +56,10 @@ export function Hero({ view, compact }: { view: UsageView; compact?: boolean }) 
     if (!view.chargeCount) {
         line = `nothing spent yet, ${first} to ${last}`;
         sub = 'Each model call, call minute or day of hosting counts here as it’s charged';
+    } else if (p.capped && view.refillUnknown) {
+        // Whether a refill keeps work going isn't the reader's to know: only when the balance runs out at this pace.
+        line = r.blocked ? 'this month: the balance has run out' : `this month; at this pace the balance runs out ${dayLabel(r.runsOut!)}`;
+        sub = `The pace would need ~${roundMoney(p.demand)} this period`;
     } else if (p.capped) {
         line = r.blocked ? 'this month: work is paused until there’s money for it' : `this month, then work stops ${dayLabel(r.runsOut!)}`;
         sub = `The pace would need ~${roundMoney(p.demand)}; add funds to keep going`;

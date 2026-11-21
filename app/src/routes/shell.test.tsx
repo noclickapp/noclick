@@ -47,7 +47,7 @@ function open(address: string) {
             {
                 path: '/',
                 element: <Shell />,
-                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }],
+                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }, { path: 'usage', ...page }],
             },
             { path: '/developers/*', ...page },
         ],
@@ -181,6 +181,15 @@ describe('the frame on a phone', () => {
         await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
         expect(within(bar()).queryByText('Work')).toBeNull();
         expect(bar().textContent).toBe('');
+    });
+
+    it('names Usage in the bar, though the sidebar lists it nowhere', async () => {
+        asPhone();
+        open('/usage');
+        await waitFor(() => expect(within(screen.getByRole('banner')).getByText('Usage')).toBeTruthy());
+        fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+        const sheet = await screen.findByRole('dialog');
+        expect(within(sheet).queryAllByRole('button').filter((b) => b.getAttribute('aria-current') === 'page')).toEqual([]);
     });
 
     it('goes home from the account’s name in the sheet, closing it', async () => {

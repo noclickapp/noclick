@@ -1,7 +1,8 @@
 // `/usage`: what each thing cost, as it was used (src/screens/usage), read with the app's key through the app's own
 // server, as every screen's calls are. A key reads the money behind it without auto top-up or friends' credit, so the
-// balance shows as read, with NoClick's page for adding funds. It reads again when the account's change stream says
-// the account was charged, where the API serves the stream, and when the page comes back into view.
+// balance shows as read, with NoClick's page for adding funds, and the headline says when the balance runs out at this
+// pace, never that work stops. It reads again when the account's change stream says the account was charged, where
+// the API serves the stream, and when the page comes back into view.
 import { useMemo } from 'react';
 import { UsagePage } from '@/screens/usage/UsagePage';
 import { useClient } from '@/sdk/client';

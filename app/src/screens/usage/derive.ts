@@ -377,6 +377,9 @@ export interface UsageView {
     fundsAdded: { usd: number; fee: number; count: number };
     included: { used: number; total: number | null; dailyUsed: number | null; daily: number | null };
     runway: Runway;
+    /** Whether auto top-up would refill the balance is more than the reader is told (one of the account's keys): where
+     *  the balance runs out at this pace is said, never that work stops there. */
+    refillUnknown: boolean;
     upcoming: UpcomingItem[];
     /** Charges recorded this period. */
     chargeCount: number;
@@ -637,6 +640,8 @@ export function deriveView(snap: UsageSnapshot): UsageView {
         fundsAdded: billing?.funds ?? { usd: 0, fee: 0, count: 0 },
         included,
         runway,
+        // Auto top-up needs funds added first, so without a balance nothing could refill it.
+        refillUnknown: !!billing && hasBalance && billing.autoTopUp === undefined,
         upcoming,
         chargeCount: sum(cur.map((r) => r.n)),
         includedLeft: round(includedLeft),

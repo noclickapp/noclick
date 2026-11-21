@@ -227,7 +227,8 @@ site or person, and inside each), what's coming up, and every charge, a page at 
 the account's ledger (`Usage.ledger`, `Usage.billing` and `Usage.charges` in the SDK): every charge the account was
 billed in its billing period, its automations' runs and its chat with NoClick included, not only its keys' calls. It is
 the same page NoClick's own app draws in Settings, and it acts as the app's key: a key reads the money behind it
-without auto top-up or friends' credit, so the balance shows as read, with NoClick's page for adding funds.
+without auto top-up or friends' credit, so the balance shows as read, with NoClick's page for adding funds, and where
+the balance runs out at this pace the headline says so, never that work stops: a refill isn't a key's to know of.
 `src/screens/usage/usageAsKey.test.tsx` opens every scene of its lab as a key and fails if one asks for what only the
 owner may have. `/usage-lab` is the page over made-up accounts (`src/screens/usage/fixtures.ts`, `src/screens/usage/lab`)
 in development only: `?scene=` picks a view, and `?as=key` answers as the API answers a key.

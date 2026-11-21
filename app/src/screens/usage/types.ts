@@ -214,7 +214,9 @@ export interface UsageBilling {
     /** What friends who joined through the account's link added this period, each by the friend's first name (null
      *  without one); money in that no one paid, so never counted as funds added. */
     referrals?: { usd: number; friend: string | null; at: string }[];
-    autoTopUp: AutoTopUpState | null;
+    /** Null where it's off; absent where the reader isn't told (one of the account's keys: it names a payment
+     *  method). */
+    autoTopUp?: AutoTopUpState | null;
     recurring: RecurringChargeRow[];
     domains: DomainRow[];
 }
