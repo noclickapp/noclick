@@ -76,6 +76,7 @@ export type { BrandFields } from "./brand.ts";
 export { Notifications } from "./notifications.ts";
 export { Key } from "./key.ts";
 export type { KeyOptions } from "./key.ts";
+export { ConnectedApp } from "./connectedApp.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {
   AccountCap, AgentBudget, CapChange, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,

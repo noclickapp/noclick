@@ -42,7 +42,7 @@ PAGE_OF_MODULE = {
     "region": "Region", "_attachment": "Agent", "_feedback": "feedback", "trash": "TrashItem", "versions": "Secret",
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "workflow_resources": "Workflow", "_watch": "watch",
-    "step_type": "Workflow", "notifications": "Notifications", "key": "Key",
+    "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "connected_app": "ConnectedApp",
     "workflow_approval": "Workflow", "workflow_example": "Workflow",
 }
 # Module docstrings that describe internals rather than the page's names.
@@ -60,7 +60,7 @@ GROUPS: List[Tuple[str, List[str]]] = [
                        "Channel", "Subscription",
                        "Workspace", "A2AMember"]),
     ("Tools for your own LLM", ["Toolkit", "ToolResult", "McpServer", "AI"]),
-    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Approval", "Policy"]),
+    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Approval", "Policy", "ConnectedApp"]),
     ("Acting in the world", ["Inbox", "PhoneNumber", "Browser", "BrowserProfile", "BrowserLogin", "Card", "Sandbox",
                              "Machine", "compute"]),
     ("Build and host", ["Project", "Deployment", "Schedule", "ProjectEmail", "ProjectPayments", "ProjectSignIn", "ProjectAI", "ProjectLive", "Repo",

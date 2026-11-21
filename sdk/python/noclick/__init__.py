@@ -111,6 +111,7 @@ from .exceptions import (
     UpstreamError,
     WebhookSignatureError,
 )
+from .connected_app import ConnectedApp
 from .export import ExportBundle, ExportItem
 from .human import Answer, Human, HumanOperations, HumanRequest, OwnerEmail, OwnerLine, OwnerReach
 from .inbox import Inbox, InboxMessage, InboxReply, InboxThread
@@ -251,7 +252,7 @@ __all__ = [
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Workstream",
-    "AccountCap", "CapChange", "Notifications", "Key",
+    "AccountCap", "CapChange", "Notifications", "Key", "ConnectedApp",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",
