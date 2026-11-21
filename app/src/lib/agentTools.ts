@@ -54,10 +54,12 @@ const inEverything = (base: string) =>
 /** Whether `tools` holds everything on the account. */
 export const holdsEverything = (tools: readonly ToolEntry[]) => tools.some((t) => refOf(t) === EVERYTHING);
 
-/** The connection a ref names: by id for `credential:` and `connection:`, else by name. */
+/** The connection a ref names, as the platform resolves an agent's tools and its triggers: by id for `credential:` (an
+ *  account connected in the app) and `connection:`, else a named connection by its name, never an account connected in
+ *  the app, whose name names no connection. */
 export function connectionFor(base: string, connections: readonly Connection[]): Connection | null {
     if (base.startsWith('credential:') || base.startsWith('connection:')) return connections.find((c) => c.id === base || `connection:${c.id}` === base) ?? null;
-    return connections.find((c) => c.name === base) ?? null;
+    return connections.find((c) => c.origin !== 'app' && c.name === base) ?? null;
 }
 
 /** The ref an agent names a connection by: its id when connected in the app, else its name. */

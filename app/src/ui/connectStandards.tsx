@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { Connection, type NoClick, type Verification } from 'noclick';
 import { toast } from 'sonner';
+import { refFor } from '@/lib/agentTools';
 import { openTabForLater } from '@/lib/oauthPopup';
 import { useClient } from '@/sdk/client';
 import { errorText } from '@/screens/console/pages/resources/shared';
@@ -12,7 +13,7 @@ import { BUTTON_GHOST, BUTTON_PRIMARY } from '@/ui/buttons';
 import { ShellDialog } from '@/ui/ShellDialog';
 import { cn } from '@/ui/utils';
 import type { ConnectionCheck } from '@/lib/connectionCheck';
-import type { AppConnecting, InPlaceConnectProps, ModelConnectProps } from './slots';
+import type { AppConnecting, InPlaceConnectProps, LandedConnection, ModelConnectProps } from './slots';
 
 /** A connection that stopped working (a Connection, or its ref), connected again at its connect page on NoClick, in a
  *  new tab opened as it's asked for, so the browser lets it open. */
@@ -49,8 +50,10 @@ function heldBy(connection: Connection): string {
     return connection.credentialId;
 }
 
-/** Waits on a connect page in another tab, saying so; the account that lands is handed on. */
-function LinkConnect({ title, description, start, onConnected, onClose, extra }: { title: string; description: string; start: () => Promise<Connection>; onConnected: (credentialId: string) => void; onClose: () => void; extra?: ReactNode }) {
+/** Waits on a connect page in another tab, saying so; the connection that lands is handed on by both its names: its ref
+ *  (here the name of the named connection it made, since `credential:<id>` names only an account connected in the app)
+ *  and the account it holds. */
+function LinkConnect({ title, description, start, onConnected, onClose, extra }: { title: string; description: string; start: () => Promise<Connection>; onConnected: (landed: LandedConnection) => void; onClose: () => void; extra?: ReactNode }) {
     const [waiting, setWaiting] = useState(false);
     const [problem, setProblem] = useState<string | null>(null);
     const live = useRef(true);
@@ -63,18 +66,20 @@ function LinkConnect({ title, description, start, onConnected, onClose, extra }:
     const go = () => {
         setWaiting(true);
         setProblem(null);
-        start().then(
-            (connection) => {
-                if (!live.current) return;
-                onConnected(heldBy(connection));
-                onClose();
-            },
-            (error: unknown) => {
-                if (!live.current) return;
-                setWaiting(false);
-                setProblem(errorText(error));
-            }
-        );
+        start()
+            .then((connection): LandedConnection => ({ ref: refFor(connection), credentialId: heldBy(connection) }))
+            .then(
+                (landed) => {
+                    if (!live.current) return;
+                    onConnected(landed);
+                    onClose();
+                },
+                (error: unknown) => {
+                    if (!live.current) return;
+                    setWaiting(false);
+                    setProblem(errorText(error));
+                }
+            );
     };
     return (
         <ShellDialog
