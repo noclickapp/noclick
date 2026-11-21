@@ -1,5 +1,7 @@
 GET /v1/account
 GET /v1/account/phones
+GET /v1/builder_skills
+GET /v1/builder_skills/s1
 GET /v1/notifications
 GET /v1/popups
 GET /v1/usage/billing

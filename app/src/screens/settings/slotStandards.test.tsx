@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // What Settings shows in its slots: with no host, the app's own sections (Usage, Workstreams, Plan and billing,
-// Notifications, Phone, Popups, Developer as the console's way in alone) and none of those whose body is only a
+// Notifications, Phone, Popups, Skills, Developer as the console's way in alone) and none of those whose body is only a
 // deployment's (Settings leaves them out); with a host, each section it fills, and the older keys it kept under the
 // console's row.
 import { cleanup, render, renderHook, screen } from '@testing-library/react';
@@ -13,6 +13,7 @@ import { DeveloperSection, DeveloperView } from './developer';
 import { NotificationsSection } from './notifications';
 import { PhoneSection } from './phone';
 import { PopupsSection } from './popups';
+import { SkillsSection } from './skills';
 import { visibleSections } from './sections';
 import { BILLING, DEVELOPER, MEMBERS, NOTIFICATIONS, OLDER_KEYS, PHONE, POPUPS, SKILLS, USAGE, WORKSTREAMS, useSectionBodies } from './slots';
 import { WorkstreamsSection } from './workstreams';
@@ -30,15 +31,17 @@ const everything = { inOrganization: true, hasMembers: true, phoneLinking: true 
 describe('with no host', () => {
     it('draws the app’s own sections and none of the deployment’s, which Settings leaves out', () => {
         expect(SECTION_SLOTS.map((section) => standing(section))).toEqual([
-            UsagePage, WorkstreamsSection, BillingStandard, null, null, NotificationsSection, PhoneSection, PopupsSection, DeveloperSection,
+            UsagePage, WorkstreamsSection, BillingStandard, null, SkillsSection, NotificationsSection, PhoneSection, PopupsSection, DeveloperSection,
         ]);
         const { result } = renderHook(() => useSectionBodies());
         expect(result.current.bodies).toEqual({
-            usage: UsagePage, workstreams: WorkstreamsSection, billing: BillingStandard, notifications: NotificationsSection, phone: PhoneSection,
-            popups: PopupsSection, developer: DeveloperSection,
+            usage: UsagePage, workstreams: WorkstreamsSection, billing: BillingStandard, skills: SkillsSection, notifications: NotificationsSection,
+            phone: PhoneSection, popups: PopupsSection, developer: DeveloperSection,
         });
-        expect(result.current.unfilled).toEqual(['organization', 'skills']);
-        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'workstreams', 'billing', 'notifications', 'phone', 'popups', 'developer']);
+        expect(result.current.unfilled).toEqual(['organization']);
+        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual([
+            'usage', 'workstreams', 'billing', 'skills', 'notifications', 'phone', 'popups', 'developer',
+        ]);
     });
 
     it('opens the developer console from Developer, with nothing under it', () => {
@@ -61,11 +64,13 @@ describe('with a host', () => {
         fill(PHONE, Phone);
         const { result } = renderHook(() => useSectionBodies());
         expect(result.current.bodies).toEqual({
-            usage: UsagePage, workstreams: WorkstreamsSection, billing: Plan, notifications: NotificationsSection, phone: Phone, popups: PopupsSection,
-            developer: DeveloperSection,
+            usage: UsagePage, workstreams: WorkstreamsSection, billing: Plan, skills: SkillsSection, notifications: NotificationsSection, phone: Phone,
+            popups: PopupsSection, developer: DeveloperSection,
         });
-        expect(result.current.unfilled).toEqual(['organization', 'skills']);
-        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual(['usage', 'workstreams', 'billing', 'notifications', 'phone', 'popups', 'developer']);
+        expect(result.current.unfilled).toEqual(['organization']);
+        expect(visibleSections(everything, result.current.unfilled).map((s) => s.id)).toEqual([
+            'usage', 'workstreams', 'billing', 'skills', 'notifications', 'phone', 'popups', 'developer',
+        ]);
     });
 
     it('shows the older keys it kept under the console’s row', () => {

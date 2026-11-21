@@ -79,6 +79,8 @@ export type { KeyOptions } from "./key.ts";
 export { ConnectedApp } from "./connectedApp.ts";
 export { Popups } from "./popups.ts";
 export { AccountPhones } from "./accountPhones.ts";
+export { BuilderSkill } from "./builderSkill.ts";
+export type { BuilderSkillFields } from "./builderSkill.ts";
 export type { LinkedPhone, PhoneChallenge } from "./accountPhones.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {

@@ -184,6 +184,8 @@ describe('the app', () => {
             'settings.phone',
             'settings.popups',
             'settings.skills',
+            'settings.skills.editor',
+            'settings.skills.share',
             'settings.usage',
             'settings.workstreams',
             'shell.account.around',

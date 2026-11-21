@@ -157,7 +157,9 @@ there, and Settings doesn't list it:
 | `settings.developer` | Developer: the way into the developer console | The console's row, at its address |
 | `settings.members` | Members: who's in the workspace and how they sign in | Nothing, and no section |
 | `settings.phone` | Phone: the numbers the account's owner messages and calls NoClick from | The app's own, linked by a code (listed only where the page acts as the owner) |
-| `settings.skills` | Skills: the reusable context a builder loads | Nothing, and no section |
+| `settings.skills` | Skills: the skills NoClick's builder loads for the account | The app's own, through `/v1/builder_skills` |
+| `settings.skills.editor` | Skills: the editor a skill opens in | Its words (name, description, text) |
+| `settings.skills.share` | Skills: sharing one of the account's skills | Nothing, and no Share button |
 | `settings.popups` | Popups: which of the app's popups and banners appear | The app's own |
 | `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
 

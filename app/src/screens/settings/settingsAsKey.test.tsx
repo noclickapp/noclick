@@ -162,6 +162,20 @@ describe('Settings acting as a key', () => {
         cleanup();
     });
 
+    it('lets a key make a builder skill, open it, and delete one', { timeout: 30_000 }, async () => {
+        show('skills', 'key');
+        fireEvent.change(await screen.findByLabelText('Skill name', {}, { timeout: 10_000 }), { target: { value: 'Pricing rules' } });
+        fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+        // A new skill opens in its editor at once.
+        await waitFor(() => expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe('Pricing rules'));
+        fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+        expect(await screen.findByText('Pricing rules')).toBeTruthy();
+        fireEvent.click(screen.getAllByTitle('Delete')[0]);
+        fireEvent.click(await screen.findByRole('button', { name: /^Delete/ }));
+        await waitFor(() => expect(screen.queryByText('Pricing rules')).toBeNull());
+        cleanup();
+    });
+
     it('lets a key turn a dismissed popup back on', { timeout: 30_000 }, async () => {
         show('popups', 'key');
         const banner = await screen.findByRole('switch', { name: 'Collaboration invite banner' }, { timeout: 10_000 });

@@ -30,6 +30,9 @@ export interface SettingsApiWorld {
     /** The numbers linked to the account: none (as they are unless said), two, or none where this NoClick sends no
      *  codes. */
     phone?: 'none' | 'linked' | 'not-configured';
+    /** The skills NoClick's builder loads: two of the account's and one shared with it (as they are unless said), or
+     *  none. */
+    skills?: 'some' | 'none';
 }
 
 /** The workstreams a world starts with, as GET /v1/workstreams lists them (`merged_into` is the lab's own: the one a
@@ -63,6 +66,16 @@ const PHONES = [
     { phone: '+447700900123', verified_at: '2026-10-11T09:00:00Z', source: 'whatsapp' },
 ];
 const MAX_PHONES = 3;
+/** A builder skill as GET /v1/builder_skills lists it. */
+const builderSkill = (id: string, name: string, description: string, over: Record<string, unknown> = {}) => ({
+    object: 'builder_skill', id, name, description, scope: 'owned', owner_id: ACCOUNT_ID, enabled: true, muted: false,
+    has_text: true, has_workflow: false, created_at: '2026-09-14T09:00:00Z', updated_at: '2026-09-14T09:00:00Z', ...over,
+});
+const SKILLS = [
+    builderSkill('s1', 'Brand voice', 'How we write.'),
+    builderSkill('s2', 'Weekly report', 'The steps of the Monday report.', { has_text: false, has_workflow: true, enabled: false }),
+    builderSkill('s3', 'Support tone', 'How support answers.', { scope: 'shared', owner_id: 'u_priya' }),
+];
 const KEY_REFUSES_PHONES = 'Only the signed-in account owner, or one of the account’s own secret keys holding the ‘account:phones’ scope, makes this call.';
 
 const KEY_REFUSES_RAISE =
@@ -78,6 +91,8 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
     let popups: Record<string, boolean> = { ...POPUPS_SHOWN };
     let phones = world.phone === 'linked' ? PHONES.map((p) => ({ ...p })) : [];
     let challenged: string | null = null;
+    let skills: Record<string, unknown>[] = world.skills === 'none' ? [] : SKILLS.map((s) => ({ ...s, body_text: s.has_text ? `${s.name}: as written.` : null, body_workflow: null }));
+    const skillView = ({ body_text: _text, body_workflow: _workflow, ...listed }: Record<string, unknown>) => listed;
     const workstreamView = ({ merged_into: _, ...w }: LabWorkstream) => ({ object: 'workstream', ...w, created_at: '2026-10-02T09:00:00Z', updated_at: '2026-10-02T09:00:00Z' });
     const capView = () => ({
         object: 'spend_cap',
@@ -130,6 +145,25 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
                 phones = phones.filter((p) => p.phone !== phone);
                 return answer({ object: 'phone', phone, unlinked: true });
             }
+        }
+        if (route === 'GET /v1/builder_skills') return answer({ object: 'list', data: skills.map(skillView) });
+        if (route === 'POST /v1/builder_skills') {
+            const made = { ...builderSkill(`s${skills.length + 1}`, String(body?.name), String(body?.description ?? '')), has_text: false, body_text: null, body_workflow: null };
+            skills = [made, ...skills];
+            return answer(made);
+        }
+        if (url.pathname.startsWith('/v1/builder_skills/')) {
+            const id = decodeURIComponent(url.pathname.slice('/v1/builder_skills/'.length));
+            const found = skills.find((s) => s.id === id);
+            if (!found) return Promise.resolve(Response.json({ error: { type: 'not_found', message: `No builder skill '${id}'.` } }, { status: 404 }));
+            if (method === 'GET') return answer(found);
+            if (method === 'DELETE') {
+                skills = skills.filter((s) => s.id !== id);
+                return answer({ object: 'builder_skill', id, deleted: true });
+            }
+            const changed = { ...found, ...body, ...(typeof body?.body_text === 'string' ? { has_text: !!body.body_text.trim() } : {}) };
+            skills = skills.map((s) => (s.id === id ? changed : s));
+            return answer(changed);
         }
         if (route === 'GET /v1/account') return answer(account());
         if (route === 'PATCH /v1/account') {

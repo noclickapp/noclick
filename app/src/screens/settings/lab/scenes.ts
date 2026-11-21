@@ -52,6 +52,10 @@ export const SCENES: readonly SettingsScene[] = [
 
     { id: 'popups', title: 'Each popup with its switch, one off', group: 'Popups', world: MEMBER, section: 'popups' },
 
+    { id: 'skills', title: 'Yours and one shared with you', group: 'Skills', world: { ...MEMBER, skills: 'some' }, section: 'skills' },
+    { id: 'skills-none', title: 'None yet', group: 'Skills', world: { ...MEMBER, skills: 'none' }, section: 'skills' },
+    { id: 'skills-editor', title: 'One open in the editor', group: 'Skills', world: { ...MEMBER, skills: 'some' }, section: 'skills', steps: [{ click: '[role="button"][tabindex="0"]' }] },
+
     { id: 'billing', title: 'The plan, the balance, and a cap with what’s spent', group: 'Plan and billing', world: MEMBER, section: 'billing' },
     { id: 'billing-no-cap', title: 'New on Free: no cap yet', group: 'Plan and billing', world: { tier: 'free', balanceUsd: 0, capUsd: null, spentUsd: 3.21 }, section: 'billing' },
     { id: 'billing-cap-reached', title: 'At the cap', group: 'Plan and billing', world: { tier: 'member', balanceUsd: 0, capUsd: 20, spentUsd: 20.37 }, section: 'billing' },

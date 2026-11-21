@@ -128,6 +128,7 @@ from .key import Key
 from .notifications import Notifications
 from .popups import Popups
 from .account_phones import AccountPhones, LinkedPhone, PhoneChallenge
+from .builder_skill import BuilderSkill
 from .operation import Operation, OperationEvent, OperationSummary, OperationTransition
 from .phone_number import (
     AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberHolderProfile, NumberPlace,
@@ -255,7 +256,7 @@ __all__ = [
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Workstream",
     "AccountCap", "CapChange", "Notifications", "Key", "ConnectedApp", "Popups", "AccountPhones", "LinkedPhone",
-    "PhoneChallenge",
+    "PhoneChallenge", "BuilderSkill",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",
