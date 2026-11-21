@@ -728,7 +728,7 @@ kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lake
 langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper leadboxer leadfeeder
 leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch lemlist lessonspace
 lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup linkwarden linode linq listclean
-listennotes liveagent lofty logo-dev lokalise lonescale looker loops loopy-loyalty loyverse luma lumapps lusha
+listennotes liveagent localazy lofty logo-dev lokalise lonescale looker loops loopy-loyalty loyverse luma lumapps lusha
 luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic mailersend
 mailgun mailjet mailmodo mailslurp mailsoftly maintainx manifestly manus manychat manyreach manyrequests mapbox
 marketsharp marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code mediasilo meetgeekai meilisearch
