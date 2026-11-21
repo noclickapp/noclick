@@ -1268,7 +1268,10 @@ export class Step extends ApiObject {
     for (const [key, value] of Object.entries(this.config())) if (!OWN_FIELDS.has(key) && !key.endsWith("__label")) out[key] = value;
     return out;
   }
-  /** The accounts connected to it: each slot (a connection type, like `gmail_oauth`) to the id of the account there. */
+  /**
+   * The accounts connected to it: each slot (a connection type, like `gmail_oauth`) to the id of the account there,
+   * which the connection holding it names as its `credentialId`.
+   */
   get connections(): Record<string, string> {
     return { ...(asObject(this.config().credentialIds) as Record<string, string>) };
   }
