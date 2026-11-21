@@ -767,7 +767,7 @@ shipmondo shippo shlink shopify shopvox shortcut shorten-rest showmojo sidetrack
 signal8 signalwire signpath signrequest signupgenius signwell simla-com simple-localize simplero simplesat
 simplicate simplybook simplyrets simpro singlestore sirv skuvault skyvia slack slicktext sling slite
 small-improvements smartemailing smarthr smartlead smartproxy smartsheet smily smokeball smol-machines smoove smsapi
-smsglobal smtp2go smtping snapchat sncf snitcher snowflake snyk softr solcast soundcloud soundee spacebring
+smsglobal smtp2go smtping snapchat sncf snitcher snowflake snyk socket softr solcast soundcloud soundee spacebring
 speechmatics spiro splitwise spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange stackitdns
 staffbase starbridge starton statsig statuspage statuspal stibee stigg stora strale streak stream-chat streamtime
 stripe studio-by-ai21-labs sumoquote sumup supabase supadata super-dispatch supermemory supernormal superset
