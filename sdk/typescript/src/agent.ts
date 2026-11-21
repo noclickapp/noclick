@@ -1945,6 +1945,13 @@ export class Agent extends ApiObject {
   get budgetUsdPerMonth(): number | null {
     return this._field("budget_usd_per_month");
   }
+  /** While a budget set for one run holds (`update({ budgetForRun: true })`), the budget that comes back as that run
+   *  ends and after which run (`operationId` null: its next turn); null otherwise. */
+  get budgetRestore(): { budgetUsdPerMonth: number | null; operationId: string | null } | null {
+    const held = this._field<JsonObject | null>("budget_restore");
+    return held ? { budgetUsdPerMonth: (held.budget_usd_per_month as number | null) ?? null,
+      operationId: (held.operation_id as string | null) ?? null } : null;
+  }
   /** The region its sandboxes run in, fixed when it was created; `null`: wherever NoClick has capacity. */
   get region(): RegionName | null {
     return this._field("region");
@@ -2512,11 +2519,18 @@ export class Agent extends ApiObject {
    * default model; `modelConnection: null` removes an `sdk` agent's own model key; `secrets` are those in its shell,
    * in place of the ones it has (`[]` takes them all away). `name` renames it, unique among its scope's agents: its
    * old name keeps reaching it and stays reserved for it (`formerNames`), and a NoClick keeps its name.
+   * `budgetForRun: true` with `budgetUsdPerMonth` sets that budget for one run alone (its turn under way, else its
+   * next one): the budget it replaced comes back once that run ends, however it ends (`budgetRestore` says what comes
+   * back meanwhile). A budget set without it stands until changed.
+   *
+   *     await coder.update({ budgetUsdPerMonth: 2, budgetForRun: true });
+   *     console.log(coder.budgetRestore);   // { budgetUsdPerMonth: 10, operationId: null }
    */
   async update(
     changes: Omit<AgentFields, "modelConnection"> & {
       name?: string;
       budgetUsdPerMonth?: number | null;
+      budgetForRun?: boolean;
       modelConnection?: string | Connection | null;
     } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "card" | "machine" |
       "memories" | "skills" | "turnLimits" | "secrets"> & AgentApprovalsOption,
@@ -2535,6 +2549,7 @@ export class Agent extends ApiObject {
         tool_rules: changes.toolRules,
         can_request: integrationRefs(changes.canRequest),
         budget_usd_per_month: changes.budgetUsdPerMonth,
+        budget_for_run: changes.budgetForRun || undefined,
         timezone: changes.timezone,
         repos: await repoWires(changes.repos, resolveScope(this._callScope())),
         network: changes.network,
