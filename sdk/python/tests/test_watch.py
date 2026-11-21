@@ -14,7 +14,7 @@ from platform_helpers import body
 
 
 def token(n):
-    return {"object": "watch_token", "url": f"wss://api.test/v1/watch/socket/r_{n}", "token": f"tok_{n}",
+    return {"object": "watch_token", "url": f"wss://api.test/v1/watch/socket/r_{n}?ticket=tk_{n}", "token": f"tok_{n}",
             "expires_at": "2026-11-18T10:01:00Z", "connection_ends_at": "2026-11-18T10:15:00Z",
             "objects": ["deployment", "channel"], "user_id": None}
 
@@ -75,7 +75,7 @@ def test_watch_token_asks_for_the_objects_the_origin_and_the_user(api, client):
     t = nc.watch_token(objects=["deployment"], origin="https://app.example", user="user_42")
     assert body(route.calls.last.request) == {"objects": ["deployment"], "origin": "https://app.example"}
     assert route.calls.last.request.headers["NoClick-User"] == "user_42"
-    assert (t.url, t.token, t.objects) == ("wss://api.test/v1/watch/socket/r_1", "tok_1", ["deployment", "channel"])
+    assert (t.url, t.token, t.objects) == ("wss://api.test/v1/watch/socket/r_1?ticket=tk_1", "tok_1", ["deployment", "channel"])
     assert "tok_1" not in repr(t)
 
 
@@ -100,10 +100,10 @@ def test_watch_authenticates_first_yields_what_it_knows_and_resumes_after_a_rene
         "deployment", "d1", "ready", {"object": "project", "id": "p1"})
     assert seen[3].resumed is True
     first, second = connect.opened
-    assert first.url == "wss://api.test/v1/watch/socket/r_1"
+    assert first.url == "wss://api.test/v1/watch/socket/r_1?ticket=tk_1", "the url as minted, its ticket and all"
     assert first.subprotocols == ["noclick.watch"], "only the protocol's name rides the header"
     assert first.sent == [{"type": "auth", "token": "tok_1"}], "the token is the first frame"
-    assert second.url == "wss://api.test/v1/watch/socket/r_2?after=c_1"
+    assert second.url == "wss://api.test/v1/watch/socket/r_2?ticket=tk_2&after=c_1"
     assert second.subprotocols == ["noclick.watch"] and second.sent == [{"type": "auth", "token": "tok_2"}]
     assert statuses == ["connecting", "live", "reconnecting", "live", "stopped"]
 

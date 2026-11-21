@@ -88,6 +88,10 @@ export type WatchStatus = "connecting" | "live" | "reconnecting" | "stopped";
 
 /** A single-use token for the socket at `url`, good until `expiresAt`. */
 export interface WatchToken {
+  /**
+   * The socket's address, carrying its ticket (which lets the socket wait for this token and nothing more): open it
+   * as it is, and send `token` as its first frame.
+   */
   url: string;
   token: string;
   expiresAt: Date | null;
@@ -114,7 +118,10 @@ export interface WatchTokenOptions {
 export interface WatchOptions extends WatchTokenOptions {
   /** Stops watching (the generator returns). */
   signal?: AbortSignal;
-  /** Where a token comes from, when not this client: your own server's endpoint that calls `watchToken`. */
+  /**
+   * Where a token comes from, when not this client: your own server's endpoint that calls `watchToken` and passes its
+   * `url` and `token` on as they are.
+   */
   token?: () => Promise<{ url: string; token: string }>;
   /** Where the socket stands, as it moves. */
   onStatus?: (status: WatchStatus) => void;

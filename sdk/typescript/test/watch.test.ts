@@ -8,7 +8,7 @@ import * as nc from "../src/index.ts";
 import { apiError, json, setup } from "./helpers.ts";
 
 const TOKEN = (n: number) => ({
-  object: "watch_token", url: `wss://api.test/v1/watch/socket/r_${n}`, token: `tok_${n}`,
+  object: "watch_token", url: `wss://api.test/v1/watch/socket/r_${n}?ticket=tk_${n}`, token: `tok_${n}`,
   expires_at: "2026-11-18T10:01:00Z", connection_ends_at: "2026-11-18T10:15:00Z", objects: ["deployment", "channel"],
   user_id: null,
 });
@@ -73,7 +73,7 @@ test("watchToken asks for the objects, the page's origin and the user, and reads
   const token = await nc.watchToken({ objects: ["deployment"], origin: "https://app.example", user: "user_42" });
   assert.deepEqual(minted.last.body, { objects: ["deployment"], origin: "https://app.example" });
   assert.equal(minted.last.headers.get("NoClick-User"), "user_42");
-  assert.deepEqual([token.url, token.token, token.objects], ["wss://api.test/v1/watch/socket/r_1", "tok_1", ["deployment", "channel"]]);
+  assert.deepEqual([token.url, token.token, token.objects], ["wss://api.test/v1/watch/socket/r_1?ticket=tk_1", "tok_1", ["deployment", "channel"]]);
   assert.equal(token.connectionEndsAt?.toISOString(), "2026-11-18T10:15:00.000Z");
 });
 
@@ -92,7 +92,7 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
   })();
 
   const first = await opened(1);
-  assert.equal(first.url, "wss://api.test/v1/watch/socket/r_1");
+  assert.equal(first.url, "wss://api.test/v1/watch/socket/r_1?ticket=tk_1", "the url as minted, its ticket and all");
   assert.deepEqual(first.protocols, ["noclick.watch"], "only the protocol's name rides the header");
   assert.deepEqual(first.sent, [auth("tok_1")], "the token is the first frame, sent as the socket opens");
   assert.deepEqual(minted.last.body, { objects: ["deployment"] });
@@ -104,7 +104,7 @@ test("watch authenticates first, yields ready and changes, ignores unknown types
   first.end(4000, "lifetime");
 
   const second = await opened(2);
-  assert.equal(second.url, "wss://api.test/v1/watch/socket/r_2?after=c_1");
+  assert.equal(second.url, "wss://api.test/v1/watch/socket/r_2?ticket=tk_2&after=c_1");
   assert.deepEqual(second.protocols, ["noclick.watch"]);
   assert.deepEqual(second.sent, [auth("tok_2")], "each socket sends its own fresh token first");
   second.receive({ type: "ready", resumed: true });

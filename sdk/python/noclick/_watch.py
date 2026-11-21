@@ -91,6 +91,8 @@ class WatchRefused(Error):
 class WatchToken:
     """A single-use token for the socket at ``url``, good until ``expires_at``."""
 
+    #: The socket's address, carrying its ticket (which lets the socket wait for this token and nothing more): open
+    #: it as it is, and send ``token`` as its first frame.
     url: str
     token: str = field(repr=False)
     expires_at: Any
@@ -224,7 +226,7 @@ async def watch(*, objects: Optional[Sequence[str]] = None, user: Any = AMBIENT,
     after the last change it gave you; raises only what trying again can't fix: the token call refused (a revoked
     key, a scope the key lacks, a deployment where watching isn't available) or ``WatchRefused``, the room refusing
     two fresh tokens in a row. ``token``: where tokens come from instead of this client, a function returning
-    ``(url, token)``. ``on_status`` hears ``connecting``, ``live``, ``reconnecting`` and ``stopped``.
+    ``(url, token)`` as ``watch_token`` gave them. ``on_status`` hears ``connecting``, ``live``, ``reconnecting`` and ``stopped``.
 
     A change can be lost (a deploy, a dropped connection, a busy second), and nothing says so but these: read again
     what you show on ``reset``, on a ``ready`` that didn't resume, and on a slow timer of your own if it must never be
