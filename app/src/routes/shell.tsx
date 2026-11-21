@@ -1,6 +1,6 @@
 // The frame around the signed-in owner's pages (src/screens/shell/AppFrame.tsx): the home, the chat, Work,
-// Connections, Resources and Usage draw inside it, each its own route below, and the sidebar goes to a page by its
-// route (Usage is opened from the account menu, and a phone's bar names it all the same). The account is the
+// Connections, Resources, Settings and Usage draw inside it, each its own route below, and the sidebar goes to a page
+// by its route (Usage is opened from the account menu, and a phone's bar names it all the same). The account is the
 // one the app's key acts in, as `GET /v1/status` names it. The developer console, reached from the account menu, draws
 // the same frame with its own sidebar (src/screens/console/ConsoleShell.tsx). The frame reads nothing on the server, so
 // moving between the pages never waits on it.

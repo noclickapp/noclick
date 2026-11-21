@@ -68,7 +68,7 @@ describe('the open app’s palette', () => {
         show();
         openPalette();
         expect(sections()).toEqual(['Go to', 'Account']);
-        expect(rows()).toEqual(['Chat', 'Work', 'Connections', 'Resources', 'Switch to light theme', 'Switch to dark theme', 'Switch to system theme', 'Open keyboard shortcuts', 'Sign out']);
+        expect(rows()).toEqual(['Chat', 'Work', 'Connections', 'Resources', 'Settings', 'Switch to light theme', 'Switch to dark theme', 'Switch to system theme', 'Open keyboard shortcuts', 'Sign out']);
     });
 
     it('finds a Resources kind by a word for it and goes to its route', () => {
@@ -86,8 +86,6 @@ describe('the open app’s palette', () => {
         openPalette();
         search('automations');
         expect(rows()).not.toContain('Automations');
-        search('settings');
-        expect(rows()).not.toContain('Settings');
     });
 
     it('finds what a page handed it', () => {

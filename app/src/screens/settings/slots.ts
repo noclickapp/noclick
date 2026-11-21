@@ -1,16 +1,34 @@
-// Settings' slots: the places in it a host may fill (src/slots.ts), each with what stands there otherwise. A section
-// whose body is the deployment's (its plan and billing, its people, linking a phone, the builder's skills, its own
-// popups) is a slot a host fills; nobody stands there by default, and Settings then doesn't list the section. So is
-// what a deployment kept of the keys made before its developer console.
+// Settings' slots: the places in it a host may fill (src/slots.ts), each with what stands there otherwise. Every
+// section's body is one. Where the app has a section of its own, it stands there (Usage, Plan and billing,
+// Notifications, Developer), so a host fills one only to draw its own. A section whose body is only the deployment's
+// (its people, linking a phone, the builder's skills, its own popups) has nobody standing there, and Settings then
+// doesn't list it. So is what a deployment kept of the keys made before its developer console.
 import { useMemo, type ComponentType } from 'react';
 import { slot, useSlot } from '@/slots';
+import { UsagePage } from '@/screens/usage/UsagePage';
+import { BillingStandard } from './billing';
+import { DeveloperSection } from './developer';
+import { NotificationsSection } from './notifications';
 import type { SettingsSectionId } from './sections';
 
-/** A section's body, drawn when the section is open: a host's component, or null where it has none. */
+/** A section's body, drawn when the section is open: a component, or null where there's none. */
 export type SectionBody = ComponentType | null;
 
-/** Plan and billing: the plan, how money is added and how much may be spent. */
-export const BILLING = slot<SectionBody>('settings.billing', null);
+/** Usage: what each thing cost, as it was used. The standard is the app's Usage page, read with the client and live
+ *  frames the page is drawn under. */
+export const USAGE = slot<SectionBody>('settings.usage', UsagePage);
+
+/** Plan and billing: the plan, how money is added and how much may be spent. The standard shows the plan and the
+ *  balance as the account reads them, with NoClick's pages for changing them, and the monthly spending cap. */
+export const BILLING = slot<SectionBody>('settings.billing', BillingStandard);
+
+/** Notifications: the email alerts sent to the account's owner. The standard reads and switches them with the client
+ *  and live frames the page is drawn under. */
+export const NOTIFICATIONS = slot<SectionBody>('settings.notifications', NotificationsSection);
+
+/** Developer: the way into the developer console. The standard opens it at the address of the console context the
+ *  page is drawn in. */
+export const DEVELOPER = slot<SectionBody>('settings.developer', DeveloperSection);
 
 /** Members: who's in the workspace, inviting more, how they sign in. */
 export const MEMBERS = slot<SectionBody>('settings.members', null);
@@ -28,23 +46,30 @@ export const POPUPS = slot<SectionBody>('settings.popups', null);
  *  there. */
 export const OLDER_KEYS = slot<ComponentType | null>('settings.developer.olderKeys', null);
 
-/** The sections a host draws, and the ones it doesn't (no host filled their slot), which Settings leaves out. */
-export function useHostSections(): { bodies: Partial<Record<SettingsSectionId, ComponentType>>; unfilled: readonly SettingsSectionId[] } {
+/** Each section's body as it stands, and the sections with none (no host filled a section that is only a
+ *  deployment's), which Settings leaves out. */
+export function useSectionBodies(): { bodies: Partial<Record<SettingsSectionId, ComponentType>>; unfilled: readonly SettingsSectionId[] } {
+    const usage = useSlot(USAGE);
     const billing = useSlot(BILLING);
     const organization = useSlot(MEMBERS);
-    const phone = useSlot(PHONE);
     const skills = useSlot(SKILLS);
+    const notifications = useSlot(NOTIFICATIONS);
+    const phone = useSlot(PHONE);
     const popups = useSlot(POPUPS);
+    const developer = useSlot(DEVELOPER);
     return useMemo(() => {
         const all: [SettingsSectionId, SectionBody][] = [
+            ['usage', usage],
             ['billing', billing],
             ['organization', organization],
-            ['phone', phone],
             ['skills', skills],
+            ['notifications', notifications],
+            ['phone', phone],
             ['popups', popups],
+            ['developer', developer],
         ];
         const bodies: Partial<Record<SettingsSectionId, ComponentType>> = {};
         for (const [id, body] of all) if (body) bodies[id] = body;
         return { bodies, unfilled: all.filter(([, body]) => !body).map(([id]) => id) };
-    }, [billing, organization, phone, skills, popups]);
+    }, [usage, billing, organization, skills, notifications, phone, popups, developer]);
 }

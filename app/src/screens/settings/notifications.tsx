@@ -1,10 +1,11 @@
 // Settings → Notifications: the email alerts NoClick sends the account's owner, one switch a category. The same
-// preferences decide every send and the one-click unsubscribe link each alert email carries. Whoever draws it reads
-// and writes them; this draws what it's told.
+// preferences decide every send and the one-click unsubscribe link each alert email carries. `NotificationsView` draws
+// what it's told; `NotificationsSection` is the section with its read (reads.ts).
 import { cn } from '@/ui/utils';
 import { Switch } from '@/ui/switch';
 import notificationCategories from './notificationCategories.json';
 import { SettingsGroup, SettingsHeader, SettingsRow } from './parts';
+import { useNotificationPrefs } from './reads';
 
 /** Whether each category's emails are on, by its key; a category not named is on. */
 export type NotificationPrefs = Record<string, boolean>;
@@ -42,4 +43,10 @@ export function NotificationsView({ prefs, onToggle }: { prefs: NotificationPref
             </SettingsGroup>
         </div>
     );
+}
+
+/** The section with its read: the client and live frames its host hands it. */
+export function NotificationsSection() {
+    const { prefs, toggle } = useNotificationPrefs();
+    return <NotificationsView prefs={prefs} onToggle={(key, enabled) => void toggle(key, enabled)} />;
 }

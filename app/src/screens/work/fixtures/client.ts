@@ -1,5 +1,5 @@
-// The client Work's, Connections' and Usage's fixtures, labs and tests run the real views with: NoClick's SDK over a
-// fake /v1's `fetch`, so no call leaves the page. It holds no key.
+// The client Work's, Connections', Usage's and Settings' fixtures, labs and tests run the real views with: NoClick's
+// SDK over a fake /v1's `fetch`, so no call leaves the page. It holds no key.
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import { FIXTURE_BEARER } from '@/screens/console/fixtures/client';
 
