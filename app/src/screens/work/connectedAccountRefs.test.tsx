@@ -3,18 +3,21 @@
 // account connected in the app by `credential:<id>`, never one rule for the other. An account connected from Work,
 // where no host fills the connect slots, is a named connection the standard makes (its connect page on NoClick), so an
 // agent given it with `credential:` in front of its id pointed at no account (an app's tools refused, a model's account
-// never picked).
+// never picked); and an app event heard through an account connected in the app goes by its `credential:` ref, never
+// its name.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { Agent } from 'noclick';
+import { Agent, Connection } from 'noclick';
 import { Toaster } from 'sonner';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { fill } from '@/slots';
 import { CONNECTION_MARK } from '@/ui/slots';
 import { WorkProviders } from './agents/fixtures/providers';
+import { fakeWork, id } from './agents/fixtures/workAgents';
 import { AgentConversation } from './conversation/AgentConversation';
 import { AGENT_ID, fakeWorkAgent, settingsFor } from './conversation/fixtures/workAgent';
 import { APPS } from './slots';
 import { ToolsPanel } from './tools/ToolsPanel';
+import { TriggersTab } from './triggers/TriggersTab';
 
 type Json = Record<string, unknown>;
 
@@ -100,4 +103,24 @@ it('runs an agent on the AI account it connects by the connection’s name, the 
     expect(patches(fake)[0]).toEqual({ harness: 'claude_code', model: 'claude-sonnet-5-5', model_connection: connection.name });
     expect(namedOnThePlatform(String(patches(fake)[0].model_connection), fake.connections)).toBe(connection);
     expect(await screen.findByText('WhatsApp runs on Claude Code now')).toBeTruthy();
+});
+
+it('hears an app event through an account connected in the app by its `credential:` ref, never its name', async () => {
+    const fake = fakeWork();
+    const agent = await Agent.get(id(1), { client: fake.client });
+    render(
+        <WorkProviders client={fake.client}>
+            <TriggersTab agent={agent} name={agent.name} phone={false} openId={null} onOpen={() => undefined} adding={{ kind: 'event', integration: 'whatsapp', event: 'message_received' }} onAdding={() => undefined} />
+            <Toaster />
+        </WorkProviders>
+    );
+    const add = await screen.findByRole('button', { name: 'Add trigger' });
+    await waitFor(() => expect((add as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(add);
+
+    const added = () => fake.requests.filter((r) => r.method === 'POST' && r.path === `/v1/agents/${id(1)}/triggers`).map((r) => r.body as Json);
+    await waitFor(() => expect(added()).toHaveLength(1));
+    expect(added()[0]).toMatchObject({ kind: 'event', connection: 'credential:c-wa', event: 'message_received' });
+    const listed = (await Connection.list({ client: fake.client })).map((c) => c.raw as Json);
+    expect(namedOnThePlatform(String(added()[0].connection), listed)).toMatchObject({ id: 'credential:c-wa', origin: 'app' });
 });
