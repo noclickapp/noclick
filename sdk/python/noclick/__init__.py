@@ -165,8 +165,9 @@ from ._watch import (
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
     BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepOption, StepOptions,
-    StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowEdit, WorkflowEndpoint,
-    WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts, WorkflowStep, WorkflowVersion,
+    StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
+    WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
+    WorkflowStep, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_example import WorkflowExample, workflow_example, workflow_examples
@@ -234,7 +235,7 @@ __all__ = [
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
-    "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal",
+    "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",

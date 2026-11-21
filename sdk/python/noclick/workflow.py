@@ -373,6 +373,32 @@ def _read_rehearsal(result: Any, op: Operation) -> WorkflowRehearsal:
     )
 
 
+@dataclass(frozen=True)
+class WorkflowDraftResult:
+    """A finished draft: the workflow's ``version`` once the drafted steps were written (one version of its
+    history, ``history_version``; ``changed`` false when the drafter changed nothing), a ``summary`` of what
+    changed, and for each step it drafted (``steps``, by id) the verdict an edit answers (``config_valid``,
+    ``validation_error``, ``missing_required``, ``references``) beside ``drafted``, its ``operation``, the
+    ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the connected account, a
+    value only they know) and, for a step it couldn't draft (left as it was), its ``error``."""
+
+    workflow_id: str
+    mode: str
+    version: Optional[int]
+    history_version: Optional[int]
+    changed: bool
+    summary: Optional[str]
+    steps: Dict[str, Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowDraftResult":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("mode") or "full", raw.get("version"),
+                   raw.get("history_version"), bool(raw.get("changed")), raw.get("summary"),
+                   {str(k): dict(v) for k, v in (raw.get("steps") or {}).items()}, raw)
+
+
 def _read_run(result: Any, op: Operation) -> WorkflowRun:
     return WorkflowRun._from(result)
 
@@ -381,9 +407,14 @@ def _read_build(result: Any, op: Operation) -> WorkflowBuildResult:
     return WorkflowBuildResult._from(result)
 
 
+def _read_draft(result: Any, op: Operation) -> WorkflowDraftResult:
+    return WorkflowDraftResult._from(result)
+
+
 register_result("workflow.run", _read_run)
 register_result("workflow.build", _read_build)
 register_result("workflow.rehearse", _read_rehearsal)
+register_result("workflow.draft", _read_draft)
 
 # How often next_question looks while the build works (the server's wait answers only once it's done).
 _QUESTION_POLL_S = 2.0
@@ -2456,6 +2487,47 @@ class Workflow(_Object):
         build = WorkflowBuild._from_payload(payload, client=self._client, user=None)
         self._started_build = build
         return build
+
+    @synced
+    async def draft(
+        self, steps: Sequence[Any], *, mode: str = "full", field: Optional[str] = None,
+        instructions: Optional[str] = None,
+    ) -> Operation:
+        """Have NoClick's drafter (the builder's own) pick ``steps``' operations and fill their settings, the steps
+        together. Each step is a ``Step``, its id, or ``{"id": ..., "goal": ...}``: its goal says what it's for (the
+        drafter reads it, and a drafted step keeps it). ``mode`` is ``full`` (pick each step's operation and fill
+        its settings; a step drafts against the operation each step it reads was given), ``operation`` (pick only
+        the operation), ``fields`` (fill the settings of the operation a step has) or ``field`` (fill the one
+        setting ``field`` names). ``instructions`` say what the workflow does. A step the workflow doesn't have, a
+        note, a step that provides an agent its tools or a setting it doesn't have raises
+        ``noclick.InvalidRequest`` before anything runs. What's drafted lands as one version of the workflow,
+        written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost.
+
+        Returns:
+            An operation (kind ``workflow.draft``) that reports each step as it lands (``progress``); ``wait()``
+            gives the ``WorkflowDraftResult``, each step's verdict among it, or raises when no step could be drafted.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            with brief.edit() as batch:
+                batch.add_step("automation-gmail", id="fetch")
+                batch.add_step("automation-slack", id="post")
+                batch.connect("fetch", "post")
+            drafted = brief.draft([{"id": "fetch", "goal": "Read today's unread email"},
+                                   {"id": "post", "goal": "Post a summary to #team"}]).wait()
+            for step_id, step in drafted.steps.items():
+                print(step_id, step["operation"], step["unfilled"], step["references"])
+        """
+        def entry(step: Any) -> Dict[str, Any]:
+            if isinstance(step, Mapping):
+                return compact(id=_step_id(step.get("id") or step.get("step")), goal=step.get("goal"))
+            return {"id": _step_id(step)}
+
+        payload = await self._request("POST", f"{await self._path()}/drafts", json=compact(
+            steps=[entry(s) for s in steps], mode=mode, field=field, instructions=instructions))
+        return Operation._from_payload(payload, client=self._client, user=None, kind="workflow.draft",
+                                       reader=_read_draft)
 
     @synced
     async def publish(self, *, subdomain: Optional[str] = None, title: Optional[str] = None) -> WorkflowBuild:

@@ -525,8 +525,59 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
   };
 }
 
+/**
+ * A finished draft: the workflow's `version` once the drafted steps were written (one version of its history,
+ * `historyVersion`; `changed` false when the drafter changed nothing), a `summary` of what changed, and for each step
+ * it drafted (`steps`, by id) the verdict an edit answers (`config_valid`, `validation_error`, `missing_required`,
+ * `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a person (`unfilled`:
+ * a choice read from the connected account, a value only they know) and, for a step it couldn't draft (left as it
+ * was), its `error`.
+ */
+export interface WorkflowDraftResult {
+  workflowId: string;
+  mode: string;
+  version: number | null;
+  historyVersion: number | null;
+  changed: boolean;
+  summary: string | null;
+  steps: Record<string, JsonObject>;
+  raw: JsonObject;
+}
+
+/** A step to draft: a `Step`, its id, or `{ id, goal }` (what it's for, which a drafted step keeps). */
+export type DraftStep = StepRef | { id: StepRef; goal?: string };
+
+/** What `Workflow.draft` takes beside its steps. */
+export interface DraftOptions {
+  /**
+   * `full` (the default) picks each step's operation and fills its settings; `operation` picks only the operation;
+   * `fields` fills the settings of the operation a step has; `field` fills the one setting `field` names.
+   */
+  mode?: "full" | "operation" | "fields" | "field";
+  /** The setting mode `field` fills. */
+  field?: string;
+  /** What the workflow does, in words, for the drafter to read beside each step's goal. */
+  instructions?: string;
+}
+
+function toDraftResult(value: unknown): WorkflowDraftResult {
+  const raw = asObject(value);
+  const steps = asObject(raw.steps);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    mode: str(raw.mode) ?? "full",
+    version: typeof raw.version === "number" ? raw.version : null,
+    historyVersion: typeof raw.history_version === "number" ? raw.history_version : null,
+    changed: raw.changed === true,
+    summary: str(raw.summary),
+    steps: Object.fromEntries(Object.entries(steps).map(([id, step]) => [id, asObject(step)])),
+    raw,
+  };
+}
+
 registerResult("workflow.run", (result) => toWorkflowRun(result));
 registerResult("workflow.build", (result) => toBuildResult(result));
+registerResult("workflow.draft", (result) => toDraftResult(result));
 
 function toRehearsal(result: unknown, op: Operation<unknown>): WorkflowRehearsal {
   const raw = asObject(result);
@@ -2173,6 +2224,29 @@ export class Workflow extends ApiObject {
     const payload = await this._request("POST", `${await this.path()}/builds`, { json: compact({ instructions, publish }) });
     this.startedBuild = WorkflowBuild._from(payload, { client: this._client });
     return this.startedBuild;
+  }
+
+  /**
+   * Have NoClick's drafter (the builder's own) pick `steps`' operations and fill their settings, the steps together.
+   * Each step is a `Step`, its id, or `{ id, goal }`: its goal says what it's for (the drafter reads it, and a drafted
+   * step keeps it). `mode` `full` (the default) picks each step's operation and fills its settings (a step drafts
+   * against the operation each step it reads was given), `operation` picks only the operation, `fields` fills the
+   * settings of the operation a step has, `field` fills the one setting `field` names; `instructions` say what the
+   * workflow does. A step the workflow doesn't have, a note, a step that provides an agent its tools or a setting it
+   * doesn't have throws `InvalidRequest` before anything runs. What's drafted lands as one version of the workflow,
+   * written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost. The
+   * operation (kind `workflow.draft`) reports each step as it lands (`progress`); `wait()` resolves to the
+   * `WorkflowDraftResult`, each step's verdict among it, or throws when no step could be drafted.
+   */
+  async draft(steps: readonly DraftStep[], options: DraftOptions = {}): Promise<Operation<WorkflowDraftResult>> {
+    const entries = steps.map((step) =>
+      typeof step === "object" && !(step instanceof Step)
+        ? compact({ id: stepId(step.id), goal: step.goal })
+        : { id: stepId(step) });
+    const payload = await this._request("POST", `${await this.path()}/drafts`, {
+      json: compact({ steps: entries, mode: options.mode ?? "full", field: options.field, instructions: options.instructions }),
+    });
+    return Operation._fromPayload<WorkflowDraftResult>(payload, { client: this._client, kind: "workflow.draft", reader: toDraftResult });
   }
 
   /** Put the workflow's app live as it now stands, at `subdomain` (omitted, the address it has); the result's `published` holds its `url`. */

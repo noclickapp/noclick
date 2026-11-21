@@ -582,6 +582,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_builds_create": ["Start Build", "POST", "write"],
     "workflows_create": ["Create Workflow", "POST", "write"],
     "workflows_delete": ["Delete Workflow", "DELETE", "destructive"],
+    "workflows_drafts_create": ["Draft Steps", "POST", "write"],
     "workflows_edits_create": ["Edit Workflow", "POST", "write"],
     "workflows_endpoint": ["Call Endpoint", "POST", "outbound"],
     "workflows_endpoint_replace": ["Put Endpoint", "PUT", "outbound"],
