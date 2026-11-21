@@ -743,8 +743,9 @@ export interface StepUpdate {
   /**
    * An agent step's secrets: the account's own, in its shell's environment on every run, as `Secret` objects or
    * their names, replacing the ones it had (`[]` takes them all off). Only a key acting for the whole account of the
-   * workflow's owner gives a step one; any other caller keeps or drops what it was given. Their values never show in
-   * a read of the workflow, nor to the agent's model.
+   * workflow's owner gives a step one, and an agent's own tools as your approval settings let them
+   * (`attach_connection`, allowed by default); any other caller keeps or drops what it was given. Their values never
+   * show in a read of the workflow, nor to the agent's model.
    */
   secrets?: SecretRef[];
 }
@@ -791,10 +792,18 @@ export interface EditOptions {
   includeGraph?: boolean;
   /**
    * `canvas`: the edits are a canvas's saves. Each setting `updateStep` sends replaces that setting whole and is kept
-   * as written (never rewritten nor refused for its value; the step's verdict says it isn't ready), and they join the
-   * canvas session's version (saves within five minutes of its first, whoever made them).
+   * as written (never rewritten nor refused for its value; the step's verdict says it isn't ready), an edge joins the
+   * handles it names, a connection sits under the slot it's given (one the step takes), and they join the canvas
+   * session's version (saves within five minutes of its first, whoever made them).
    */
   source?: "canvas";
+  /**
+   * A name the sender gives itself (letters, digits, `-` and `_`, up to 64; a canvas tab's own id): what the
+   * workflow's open canvases hear of this write names it, so the canvas that sent it knows the change is its own.
+   */
+  origin?: string;
+  /** In a browser, send the batch so it outlives the page (a closing tab's last save; `RequestOptions.keepalive`). */
+  keepalive?: boolean;
 }
 
 /** What `Workflow.update` changes; a field left out is never touched. */
@@ -808,6 +817,11 @@ export interface WorkflowUpdate {
    * kept: never a version, nor a change anyone is told of.
    */
   displayMetadata?: JsonObject;
+  /**
+   * Its Interface tab's layout as the app draws it (each block's place on the grid, the tabs' order; 256 KB at most),
+   * replacing what's kept: part of its graph, so it moves the version.
+   */
+  interface?: JsonObject;
 }
 
 /** What `nameVersion` takes beside its label. */
@@ -1098,7 +1112,7 @@ function noteOp(content: string, options: AddNoteOptions): JsonObject {
 function updateWorkflowOp(update: WorkflowUpdate): JsonObject {
   return compact({
     op: "update_workflow", name: update.name, description: update.description, settings: update.settings,
-    display_metadata: update.displayMetadata,
+    display_metadata: update.displayMetadata, interface: update.interface,
   });
 }
 
@@ -1379,7 +1393,10 @@ export class Step extends ApiObject {
    * holds. Its slot is the account's own type unless `slot` names it; `null` with `slot` takes the account in that
    * slot off. One of a user's connections, one holding no working account, or one your account may not use is
    * refused (`InvalidRequest` naming it), as is one of a type the step doesn't take; a caller that doesn't act for
-   * the whole account (a user's key, an agent's own tools) only keeps one the workflow already uses.
+   * the whole account (a user's key, an app's code) only keeps one the workflow already uses. An agent's own tools
+   * attach your account's own connections in your account's own workflows, never another member's, a user's or one
+   * held for someone else, as your approval settings let them (`attach_connection`: allowed by default; asked, the
+   * edit waits for the owner's yes, `ApprovalRequired`).
    */
   async setConnection(connection: Connection | string | null, options: { slot?: string } = {}): Promise<this> {
     return await this._edit({ op: "set_connection", id: this.id, connection, ...compact({ slot: options.slot }) });
@@ -2069,7 +2086,11 @@ export class Workflow extends ApiObject {
     let raw: unknown;
     try {
       raw = await this._request("POST", `${path}/edits`, {
-        json: compact({ ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source }),
+        json: compact({
+          ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source,
+          origin: options.origin,
+        }),
+        keepalive: options.keepalive,
       });
     } catch (err) {
       this._stale(err);

@@ -509,6 +509,43 @@ test("a canvas saves as one batch in its own terms", async () => {
   });
 });
 
+test("a canvas names itself on its batch and a closing tab's last one outlives the page", async () => {
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json(edited(5, [])));
+  const layout = { layout: [{ i: "post", x: 0, y: 0, w: 6, h: 4 }], tabOrder: ["post"] };
+  await nc.Workflow.fromId(WF).edit({ ifVersion: 4, source: "canvas", origin: "canvas-tab-1" }, (e) => {
+    e.connect("writer", "post", { handle: "right", targetHandle: "left", id: "xy-edge__writerright-postleft" });
+    e.setConnection("writer", CREDENTIAL, { slot: "agent_claude_code" });
+    e.updateWorkflow({ interface: layout });
+  });
+  assert.equal(route.last.keepalive, false);
+  assert.deepEqual(route.last.body, {
+    ops: [
+      { op: "connect", from: "writer", to: "post", kind: "data", handle: "right", target_handle: "left",
+        id: "xy-edge__writerright-postleft" },
+      { op: "set_connection", id: "writer", connection: CREDENTIAL, slot: "agent_claude_code" },
+      { op: "update_workflow", interface: layout },
+    ],
+    if_version: 4, source: "canvas", origin: "canvas-tab-1",
+  });
+  await nc.Workflow.fromId(WF).edit({ source: "canvas", origin: "canvas-tab-1", keepalive: true }, (e) => {
+    e.updateStep("writer", { settings: { system_prompt: "Last words." } });
+  });
+  assert.equal(route.last.keepalive, true);
+  assert.deepEqual(route.last.body, {
+    ops: [{ op: "update_step", id: "writer", settings: { system_prompt: "Last words." } }],
+    source: "canvas", origin: "canvas-tab-1",
+  });
+});
+
+test("the Interface tab's layout is one of the workflow's own fields", async () => {
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json(edited(6, [])));
+  const layout = { layout: [], tabOrder: [] };
+  await nc.Workflow.fromId(WF).update({ interface: layout });
+  assert.deepEqual(route.last.body, { ops: [{ op: "update_workflow", interface: layout }], include_graph: true });
+});
+
 test("a graph reads what the app shows and an edge's input", async () => {
   const { api } = setup();
   api.on("GET", `/v1/workflows/${WF}/graph`, json({
