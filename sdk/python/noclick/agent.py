@@ -978,6 +978,11 @@ class Agent(_Object):
         "turns, readable for 30 days.",
     )
     budget_usd_per_month: Optional[float] = field("budget_usd_per_month")
+    budget_restore: Optional[Dict[str, Any]] = field(
+        "budget_restore", doc="While a budget set for one run holds (``update(budget_for_run=True)``), the budget that "
+        "comes back as that run ends and after which run: ``{budget_usd_per_month, operation_id}`` (``operation_id`` "
+        "None: its next turn). None otherwise.",
+    )
     region: Optional[str] = field(
         "region", doc="The region its sandboxes run in (``noclick.regions()``), fixed when it was created; ``None``: "
         "wherever NoClick has capacity.",
@@ -2801,6 +2806,7 @@ class Agent(_Object):
         harness: Any = UNSET,
         model_connection: Any = UNSET,
         budget_usd_per_month: Any = UNSET,
+        budget_for_run: bool = False,
         can_request: Any = UNSET,
         timezone: Any = UNSET,
         repos: Any = UNSET,
@@ -2854,6 +2860,10 @@ class Agent(_Object):
         (``None`` for a kind puts back the account's, a child's its parent's); what changed is in
         ``agent.raw["approval_changes"]``. Anyone who may change the agent tightens them; an agent loosening its own
         or another's on its own initiative waits for the owner, and on the owner's own word it applies at once.
+        ``budget_for_run=True`` with ``budget_usd_per_month`` sets that budget for one run alone (its turn under
+        way, else its next one): the budget it replaced comes
+        back once that run ends, however it ends, and ``budget_restore`` says what comes back meanwhile. A budget
+        set without it stands until changed.
 
         Returns:
             This agent, updated. A field you leave out is unchanged, and changes apply from its next turn.
@@ -2896,6 +2906,12 @@ class Agent(_Object):
             Give its turns more room, and keep each to $3::
 
                 noclick.Agent.from_name("builder").update(turn_limits={"steps": 150, "usd": 3})
+
+            Hold its next job to $2, then give it its budget back::
+
+                coder = noclick.Agent.from_name("coder")
+                coder.update(budget_usd_per_month=2, budget_for_run=True)
+                print(coder.budget_restore)   # {'budget_usd_per_month': 10.0, 'operation_id': None}
         """
         changes = {
             k: v for k, v in dict(
@@ -2909,6 +2925,8 @@ class Agent(_Object):
             ).items()
             if v is not UNSET
         }
+        if budget_for_run:
+            changes["budget_for_run"] = True
         if network is not UNSET:
             changes["network"] = network_wire(network)
         if turn_limits is not UNSET:
