@@ -277,10 +277,15 @@ class WorkflowStep:
 @dataclass(frozen=True)
 class BuildQuestion:
     """What a build waits on. Each of ``inputs`` is ``{id, label, type,
-    description, options?}``; answer them with ``build.answer({id: value})``
-    where ``answerable_from_code``. An input of type ``credential`` (an account
-    to connect) or ``env`` (secret values) needs a person: send them to
-    ``answer_url``, and the build goes on once they answer."""
+    description, options?, request_id?}``: ``request_id`` is the human request
+    that asks it, which NoClick sent the person whose build it is (``sent_to``)
+    and any client answers (its page, a chat's card, their texts,
+    ``POST /v1/humans/requests/{id}/answer``); the build goes on once each is
+    answered. Or answer them all at once with
+    ``build.answer({id: value})``, which goes on now: an input of type
+    ``credential`` takes a connection's ref or name, one of type ``env`` its
+    values in ``secret_values`` (both with a key acting for the whole
+    account). ``answer_url`` is a page anyone holding it answers on."""
 
     id: Optional[str]
     title: Optional[str]
@@ -288,12 +293,13 @@ class BuildQuestion:
     answer_url: Optional[str]
     answerable_from_code: bool
     raw: Dict[str, Any] = dc_field(repr=False)
+    sent_to: List[str] = dc_field(default_factory=list)
 
     @classmethod
     def _from(cls, raw: Any) -> "BuildQuestion":
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("id"), raw.get("title"), list(raw.get("inputs") or []), raw.get("answer_url"),
-                   bool(raw.get("answerable_from_code")), raw)
+                   bool(raw.get("answerable_from_code")), raw, list(raw.get("sent_to") or []))
 
 
 @dataclass(frozen=True)
@@ -429,8 +435,9 @@ class WorkflowBuild(Operation):
     why the build failed.
 
     While it builds, ``step`` is ``building``. When the builder needs something
-    it's ``awaiting_human`` (step ``asking``) and ``question`` says what:
-    answer it with ``answer()``, or send a person to its ``answer_url``.
+    it's ``awaiting_human`` (step ``asking``) and ``question`` says what: each
+    input is a human request NoClick sent the person whose build it is, and the
+    build goes on once they answer; or answer it all now with ``answer()``.
     ``wait()`` stops at a question it hasn't shown you, raising
     ``noclick.AnswerRequired`` with it; called again, it waits through that
     question for its answer. ``next_question()`` returns as soon as there is one."""
@@ -454,8 +461,8 @@ class WorkflowBuild(Operation):
                 asks = question.title or next((i.get("label") for i in question.inputs if i.get("label")), None)
                 err = AnswerRequired(
                     f"The build is waiting on an answer: {asks or 'the builder has a question'}",
-                    next_step=("Answer it with build.answer({input id: value}) where question.answerable_from_code, "
-                               "else send a person to question.answer_url; then call wait() again."),
+                    next_step=("Answer it with build.answer({input id: value}), or let the person NoClick sent each "
+                               "input's request (question.sent_to) answer it; then call wait() again."),
                     details={"operation_id": self._id(), "question": raw["question"]},
                 )
                 err.question = question
@@ -479,9 +486,6 @@ class WorkflowBuild(Operation):
 
             build = noclick.Workflow.from_name("Morning brief").build("Also post it to #team on Slack")
             while (question := build.next_question(timeout=600)) is not None:
-                if not question.answerable_from_code:
-                    print("A person answers this:", question.answer_url)
-                    break
                 build.answer({question.inputs[0]["id"]: "#team"})
             print(build.wait().summary)
         """
@@ -507,11 +511,16 @@ class WorkflowBuild(Operation):
     @synced
     async def answer(
         self, values: Optional[Dict[str, Any]] = None, *, message: Optional[str] = None, skip: bool = False,
+        secret_values: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> "WorkflowBuild":
-        """Answer the question the build waits on, by input id; ``message`` tells
-        the builder anything else, ``skip=True`` goes on without answering. An
-        input only a person can answer (an account to connect, secret values)
-        raises ``noclick.InvalidRequest`` naming ``answer_url``.
+        """Answer the question the build waits on, all at once, by input id: the
+        build goes on now. Each value answers its input's human request as your
+        key; those you leave unanswered are withdrawn. A choice, words, or for a
+        ``credential`` input a connection's ref or name; an ``env`` input's values
+        go in ``secret_values`` (``{input id: {KEY: value}}``), kept as the
+        account's secret and never shown to a model. An account or a secret
+        takes a key acting for the whole account. ``message`` tells the builder
+        anything else, ``skip=True`` goes on without answering.
 
         Returns:
             This build, ``running`` again.
@@ -520,13 +529,14 @@ class WorkflowBuild(Operation):
 
             build = noclick.Workflow.from_name("Morning brief").build("Send it on Slack too")
             question = build.next_question()
-            if question and question.answerable_from_code:
+            if question:
                 build.answer({"channel": "#team"}, message="Keep it under five lines")
             print(build.wait().steps)
         """
         workflow_id = self.workflow_id or (self._sync_raw().get("input") or {}).get("workflow_id")
         raw = await self._request("POST", f"/v1/workflows/{workflow_id}/builds/{self._id()}/answer",
-                                  json=compact(values=values or {}, message=message, skip=skip or None))
+                                  json=compact(values=values or {}, secret_values=secret_values, message=message,
+                                               skip=skip or None))
         self._absorb(raw)
         return self
 
@@ -1878,12 +1888,13 @@ class Workflow(_Object):
     @classmethod
     async def create(
         cls, name: str, *, instructions: Optional[str] = None, description: Optional[str] = None,
-        client: Optional[Client] = None,
+        questions: Optional[str] = None, client: Optional[Client] = None,
     ) -> "Workflow":
         """A new workflow in your account. With ``instructions`` NoClick's
         builder starts building it: wait on ``latest_build``. A name your
         account already has raises ``noclick.Conflict`` (change that one with
-        ``build``).
+        ``build``). ``questions="assume"``: the builder asks nothing, as
+        ``build()`` takes it.
 
         Returns:
             The new workflow; ``latest_build`` is its build when ``instructions`` describe it.
@@ -1897,8 +1908,8 @@ class Workflow(_Object):
             print(result.summary, [step.name for step in result.steps])
         """
         api = resolve_client(client)
-        raw = await api.request("POST", "/v1/workflows",
-                                json=compact(name=name, instructions=instructions, description=description))
+        raw = await api.request("POST", "/v1/workflows", json=compact(
+            name=name, instructions=instructions, description=description, questions=questions))
         return cls._new(raw=raw, client=client, user=None)
 
     @property
@@ -2540,13 +2551,20 @@ class Workflow(_Object):
 
     @synced
     async def build(self, instructions: Optional[str] = None, *,
-                    publish: Union[None, bool, Dict[str, Any]] = None) -> WorkflowBuild:
+                    publish: Union[None, bool, Dict[str, Any]] = None,
+                    questions: Optional[str] = None) -> WorkflowBuild:
         """Change the workflow by describing the change; NoClick's builder makes
         it, reading the workflow as it stands. ``publish=True`` then puts its
         app live (or pass ``{"subdomain": "morrow", "title": ...}``; ``publish()``
         and ``unpublish()`` publish without a change). One build at a time:
         another in progress raises ``noclick.Conflict``. A change costs AI
         usage, as building in the app does.
+
+        What the builder can't decide it asks the person whose build it is (you
+        as the account's owner, or the user your key acts for): each input of its
+        question is a human request NoClick sends them, which any client answers.
+        ``questions="assume"`` asks nothing: the builder decides, and its summary
+        and the workflow's readiness say what it assumed and what's missing.
 
         Returns:
             A ``WorkflowBuild``: ``wait()`` gives the ``WorkflowBuildResult`` (its ``steps``, and what was
@@ -2560,7 +2578,7 @@ class Workflow(_Object):
         """
         options = {} if publish is True else publish or None
         payload = await self._request("POST", f"{await self._path()}/builds",
-                                      json=compact(instructions=instructions, publish=options))
+                                      json=compact(instructions=instructions, publish=options, questions=questions))
         build = WorkflowBuild._from_payload(payload, client=self._client, user=None)
         self._started_build = build
         return build

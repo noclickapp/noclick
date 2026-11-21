@@ -410,11 +410,17 @@ export interface WorkflowUrl {
   public: boolean;
 }
 
+/** Whether a build asks what it can't decide (`ask`, the default) or asks nothing (`assume`). */
+export type BuildQuestions = "ask" | "assume";
+
 /**
- * What a build waits on. Each of `inputs` is `{ id, label, type, description, options? }`; answer
- * them with `build.answer({ [id]: value })` where `answerableFromCode`. An input of type
- * `credential` (an account to connect) or `env` (secret values) needs a person: send them to
- * `answerUrl`, and the build goes on once they answer.
+ * What a build waits on. Each of `inputs` is `{ id, label, type, description, options?, request_id? }`:
+ * `request_id` is the human request that asks it, which NoClick sent the person whose build it is
+ * (`sentTo`) and any client answers (its page, a chat's card, their texts,
+ * `POST /v1/humans/requests/{id}/answer`); the build goes on once each is answered. Or answer them all
+ * at once with `build.answer({ [id]: value })`, which goes on now: an input of type `credential` takes
+ * a connection's ref or name, one of type `env` its values in `secretValues` (both with a key acting
+ * for the whole account). `answerUrl` is a page anyone holding it answers on.
  */
 export interface BuildQuestion {
   id: string | null;
@@ -422,6 +428,8 @@ export interface BuildQuestion {
   inputs: JsonObject[];
   answerUrl: string | null;
   answerableFromCode: boolean;
+  /** Where NoClick sent its requests (`web`, `email`, `whatsapp`, `imessage`). */
+  sentTo: string[];
   raw: JsonObject;
 }
 
@@ -490,6 +498,7 @@ function toQuestion(value: unknown): BuildQuestion {
     inputs: Array.isArray(raw.inputs) ? (raw.inputs as JsonObject[]) : [],
     answerUrl: str(raw.answer_url),
     answerableFromCode: raw.answerable_from_code === true,
+    sentTo: Array.isArray(raw.sent_to) ? raw.sent_to.filter((c): c is string => typeof c === "string") : [],
     raw,
   };
 }
@@ -612,8 +621,9 @@ const BUILD_DONE = ["succeeded", "failed", "canceled", "expired"];
  * resolves to the `WorkflowBuildResult`, or throws why the build failed.
  *
  * While it builds, `step` is `building`. When the builder needs something it's `awaiting_human`
- * (step `asking`) and `question` says what: answer it with `answer()`, or send a person to its
- * `answerUrl`. `wait()` stops at a question it hasn't shown you, throwing `AnswerRequired` with it;
+ * (step `asking`) and `question` says what: each input is a human request NoClick sent the person
+ * whose build it is, and the build goes on once they answer; or answer it all now with `answer()`.
+ * `wait()` stops at a question it hasn't shown you, throwing `AnswerRequired` with it;
  * called again, it waits through that question for its answer. `nextQuestion()` resolves as soon as
  * there is one.
  */
@@ -642,7 +652,7 @@ export class WorkflowBuild extends Operation<WorkflowBuildResult> {
       if (!this._shown(question)) {
         const asks = question.title ?? question.inputs.map((input) => input.label).find((label) => typeof label === "string");
         const err = new AnswerRequired(`The build is waiting on an answer: ${asks ?? "the builder has a question"}`, {
-          nextStep: "Answer it with build.answer({ inputId: value }) where question.answerableFromCode, else send a person to question.answerUrl; then call wait() again.",
+          nextStep: "Answer it with build.answer({ inputId: value }), or let the person NoClick sent each input's request (question.sentTo) answer it; then call wait() again.",
           details: { operation_id: this._id(), question: raw.question as JsonObject },
         });
         err.question = question;
@@ -690,14 +700,20 @@ export class WorkflowBuild extends Operation<WorkflowBuildResult> {
   }
 
   /**
-   * Answer the question the build waits on, by input id; `message` tells the builder anything
-   * else, `skip: true` goes on without answering. An input only a person can answer (an account
-   * to connect, secret values) throws `InvalidRequest` naming `answerUrl`. Resolves to this build,
+   * Answer the question the build waits on, all at once, by input id: the build goes on now. Each
+   * value answers its input's human request as your key; those you leave unanswered are withdrawn.
+   * A choice, words, or for a `credential` input a connection's ref or name; an `env` input's values
+   * go in `secretValues` (`{ [inputId]: { KEY: value } }`), kept as the account's secret and never
+   * shown to a model. An account or a secret takes a key acting for the whole account. `message`
+   * tells the builder anything else, `skip: true` goes on without answering. Resolves to this build,
    * `running` again.
    */
-  async answer(values: JsonObject = {}, options: { message?: string; skip?: boolean } = {}): Promise<this> {
+  async answer(
+    values: JsonObject = {},
+    options: { message?: string; skip?: boolean; secretValues?: Record<string, Record<string, string>> } = {},
+  ): Promise<this> {
     const raw = await this._request("POST", `/v1/workflows/${this.workflowId}/builds/${this._id()}/answer`, {
-      json: compact({ values, message: options.message, skip: options.skip || undefined }),
+      json: compact({ values, secret_values: options.secretValues, message: options.message, skip: options.skip || undefined }),
     });
     this._absorb(raw);
     return this;
@@ -1947,14 +1963,14 @@ export class Workflow extends ApiObject {
   /**
    * A new workflow in your account. With `instructions` NoClick's builder starts building it:
    * wait on `latestBuild`. A name your account already has throws `Conflict` (change that one with
-   * `build`).
+   * `build`). `questions: "assume"`: the builder asks nothing, as `build()` takes it.
    */
   static async create(
     name: string,
-    options: { instructions?: string; description?: string; client?: NoClick } = {},
+    options: { instructions?: string; description?: string; questions?: BuildQuestions; client?: NoClick } = {},
   ): Promise<Workflow> {
     const raw = await resolveClient(options.client).request<JsonObject>("POST", "/v1/workflows", {
-      json: compact({ name, instructions: options.instructions, description: options.description }),
+      json: compact({ name, instructions: options.instructions, description: options.description, questions: options.questions }),
     });
     return new Workflow({ raw, client: options.client });
   }
@@ -2292,10 +2308,20 @@ export class Workflow extends ApiObject {
    * and `unpublish()` publish without a change). One build at a time: another in progress throws
    * `Conflict`. A change costs AI usage, as building in the app does. `wait()` resolves to the
    * `WorkflowBuildResult`; `nextQuestion()` resolves to anything it asks first.
+   *
+   * What the builder can't decide it asks the person whose build it is (you as the account's owner,
+   * or the user your key acts for): each input of its question is a human request NoClick sends
+   * them, which any client answers. `questions: "assume"` asks nothing: the builder decides, and its
+   * summary and the workflow's readiness say what it assumed and what's missing.
    */
-  async build(instructions?: string, options: { publish?: boolean | JsonObject } = {}): Promise<WorkflowBuild> {
+  async build(
+    instructions?: string,
+    options: { publish?: boolean | JsonObject; questions?: BuildQuestions } = {},
+  ): Promise<WorkflowBuild> {
     const publish = options.publish === true ? {} : options.publish || undefined;
-    const payload = await this._request("POST", `${await this.path()}/builds`, { json: compact({ instructions, publish }) });
+    const payload = await this._request("POST", `${await this.path()}/builds`, {
+      json: compact({ instructions, publish, questions: options.questions }),
+    });
     this.startedBuild = WorkflowBuild._from(payload, { client: this._client });
     return this.startedBuild;
   }

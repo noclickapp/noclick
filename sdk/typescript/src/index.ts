@@ -209,7 +209,7 @@ export type {
 } from "./webhook.ts";
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
-  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, DraftOptions, DraftStep, EditOptions,
+  AddNoteOptions, AddStepOptions, BuildQuestion, BuildQuestions, ClearedStepState, DraftOptions, DraftStep, EditOptions,
   ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
   StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
   StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
