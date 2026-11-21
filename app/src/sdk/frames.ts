@@ -84,7 +84,11 @@ export interface PlatformResourceEvent {
         | 'space_question'
         | 'trigger'
         | 'approval'
-        | 'browser';
+        | 'browser'
+        /** The account's monthly spending cap was set or removed (`id` the account's). */
+        | 'spend_cap'
+        /** The email alerts NoClick sends the account's owner were switched (`id` the account's). */
+        | 'notifications';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;

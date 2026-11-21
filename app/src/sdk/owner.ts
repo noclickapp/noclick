@@ -54,6 +54,9 @@ export interface AccountView {
      *  its plan's included usage): what a purchase, or an agent on a costly model on NoClick's key, needs. */
     balance: { remaining_usd: number | null; funds_usd?: number | null; purchase_floor_usd?: number; resets_at: string | null; unlimited?: boolean };
     month: { period_start: string; resets_at: string; spent_usd: number };
+    /** The owner's view only: the account's monthly spending cap (`cap_usd` null while none is set; where one is, what
+     *  its billing period spent and whether it's `reached`) and who set it last. Null when it can't be read now. */
+    spend_cap?: SpendCapView | null;
     counts: AccountCounts;
     limits: {
         sandboxes_live_max: number;
@@ -82,6 +85,17 @@ export interface AccountView {
         error_types: { type: string; status: number }[];
         mcp_tools: string[];
     };
+}
+
+/** The account's monthly spending cap, as `/v1/account` and `/v1/usage/limits` answer it. */
+export interface SpendCapView {
+    object: 'spend_cap';
+    cap_usd: number | null;
+    spent_usd?: number;
+    period_start?: string;
+    resets_at?: string;
+    reached?: boolean;
+    set_by?: Record<string, unknown> | null;
 }
 
 /** The account's default for a paused user's message and button. */
@@ -188,8 +202,12 @@ export function getAccount(client: NoClick, signal?: AbortSignal): Promise<Accou
     return client.request<AccountView>('GET', '/v1/account', { ...account, signal });
 }
 
-/** Changes only the fields sent; `default_region: null` clears it, and `spending_paused: null` the default. */
-export function updateAccount(client: NoClick, input: { default_region?: string | null; spending_paused?: PausedSpendingDefault | null }): Promise<AccountView> {
+/** Changes only the fields sent; `default_region: null` clears it, `spending_paused: null` the default, and
+ *  `spend_cap_usd: null` the monthly spending cap (whole dollars; only the signed-in owner sets, raises or removes it). */
+export function updateAccount(
+    client: NoClick,
+    input: { default_region?: string | null; spending_paused?: PausedSpendingDefault | null; spend_cap_usd?: number | null }
+): Promise<AccountView> {
     return client.request<AccountView>('PATCH', '/v1/account', { ...account, json: input });
 }
 
