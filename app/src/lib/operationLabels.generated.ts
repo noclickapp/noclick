@@ -719,79 +719,80 @@ hyperbrowser hyros iclosed icypeas id4i idealpostcodes ignav-flights ignisign ig
 imagekit-io imagerouter imap immich inblog incident-io increase infinity infisical inforumobile inmobalia-crm
 inmobile-sms-gateway insightly instagram instantly instapaper instatus intelliprint intercom investorbase
 investorlift invofox invoiceninja invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate
-ironclad isn iterable itm-platform jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca
-jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller
-junglescout just-eat just-one-api justcall jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
-kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp
-knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard
-lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper
-leadboxer leadfeeder leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch
-lemlist lessonspace lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup linkwarden
-linode linq listclean listennotes liveagent lofty logo-dev lokalise looker loops loopy-loyalty loyverse luma lumapps
-lusha luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic
-mailersend mailgun mailjet mailmodo mailslurp mailsoftly maintainx manifestly manus manychat manyreach manyrequests
-mapbox marketsharp marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code mediasilo meetgeekai
-meilisearch melo mem mem0 membershipio memberspot memelord mentortools mercado-pago mercury merge-dev meshy
-messagebird meta method-crm metricool mews mezmo microsoft-bookings microsoft-entra-id microsoft-exchange
-microsoft-graph-security microsoft-onenote microsoft-power-bi microsoft-powerpoint microsoft-sharepoint
-microsoft-teams microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus mindbody minelead
-minerstat mineskin minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco mollie-1 monday
-moneybird mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase mycashflow mycrm-leads namsor
-nango nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm net2phone netbox nethunt-crm
-netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok nifty-pm niftyimages nimbata
-ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
-nutrient-document-web-services-api nutshell nylas obono octen office-365 okta ollama olostep omnisend onedesk
-onedrive onelake onepage-crm onesignal onlyoffice-docspace open-sea openalex opencage opendatasoft openfigi
-openlayer openpolicy openstates openstatus openwa opn-form opsgenie opusclip oracle-field-service oracle-hcm orgo
-orshot osv outlook outreach outscraper-ca1391 outseta owler ownerrez paddle padlet-1 pagerduty pagespeed paperform
-paradym parallel parcellab parma parsera parseur partnerstack passkit-membership past-dev payaca payments paypal
-paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot people-data-labs perfect-venue perigon
-perplexity persona personio phantombuster phone phone-harness pidgeon pims pinata pinecone pingdom pinterest
-pipedrive pipeless pipeline-crm placetel planable planday planetscale platerecognizer plaud plausible pledge ploid
-pneumatic pocketsmith podium polar polygon polymarket polymarket-us poma-grill porkbun portalio postal-data-api
-postgres posthog postiz postman postmark postwire powerdns practice-better precisefp predictleads printful printify
-prisma process-street procore productboard productlane productplan project-broadcast projul promptlayer
-propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qonto qonversion qovery quentn quickbase
-quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisely ramp rawg-video-games-database razorpay
-rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow recurly reddit reddit-ads
-redirect-pizza redirection redis reducto refersion reflect regiondo rei-pebble relevance-ai reloadify remote
-remove-bg render rentcast rentman repairdesk repairshopr repliz reply reply-io resend resource-guru responder
-responsys reteno revolut-for-business rezdy rillet ringcentral ringover rippling ritekit rkvst roam rocket-reach
-rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics rossum route4me royalmail rss rudder rumble
-rundeck runpod runscope runsignup safetyculture sakari-sms salesforce salesforge salesloft salesmsg salesql
-salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur saucelabs savvycal scale-ai scalr
-scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking seam search-api search1api sec
-securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush send-email send-pulse sendbird sendfox
-sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply serpstat sertifier serverless-function
-servicem8 servicetitan servicetrade setmore sevdesk seven-io shipmondo shippo shlink shopify shopvox shortcut
-shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8 signalwire signpath signrequest
-signupgenius signwell simla-com simple-localize simplero simplesat simplicate simplybook simplyrets simpro
-singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements smartemailing smarthr smartlead
-smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go smtping snapchat sncf snitcher
-snowflake snyk softr solcast soundcloud soundee spacebring speechmatics spiro splitwise spotify spotio2 sprig spydra
-squadcast squarespace-commerce stack-exchange stackitdns staffbase starbridge starton statsig statuspage statuspal
-stibee stigg stora strale streak stream-chat streamtime stripe studio-by-ai21-labs sumoquote sumup supabase supadata
-super-dispatch supermemory supernormal superset superwall suprsend sure-send surecart surevoip surf svix swaggerhub
-swarmsyncai sympla synap syncro synthflow-ai systemeio table tableau taggun tailscale talenthr talentlms talkable
-talkjs talkroute tally tapfiliate taplio tave tavily teachable teamcamp teamup teamup-calendar teamwork
-teamwork-desk telegram telematicssdk telnyx teltel telzio templated templatefox temporal tentary text-request
-textcortex textline textmagic thanks-io the-events-calendar the-odds-api thecompaniesapi thehive thinkific
-thoughtspot threads thrivecart ticket-tailor tidb-cloud tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp
-timeero timelinesai timelink timely timerex tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti
-traccar track-pod trackdesk trackingmore trackvia trakt transloadit trekksoft trello tremendous trestle trigger-dev
-tripadvisor tripworks true-list tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot
-typecast typeform typefully unifi unione unipile uniswap-api universe unleash uplisting upload-post uploadcare
-upstash-vector uptimecom uptimerobot urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro valuecase
-vast-ai vaultre vcita vdocipher vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db
-videoupscaler vimeo viral-loops virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video
-voiceflow volunteerhub voluum voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront
-weatherbit weaviate webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport
-weezevent-da56471 weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase
-whoisfreaks whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api
-woop-social word wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads
-ynab yodeck youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno
-zenoti zenrows zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm
-zoho-inventory zoho-projects zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
+ironclad isn iterable itm-platform jackrabbit-class jaicob jev jigsawstack jinko jira
+jira-service-management-alert-ca jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it
+json2video jumpcloud jumpseller junglescout just-eat just-one-api justcall jwplayer kadoa kajabi kantataox kapso
+karbon katana-mrp keap keila kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify
+kizeo-forms klaviyo klicktipp knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore
+lagrowthmachine lakera-guard lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm
+launchdarkly lead-forensics lead-prosper leadboxer leadfeeder leadmagic leadsforge leadsimple leanix leap leap-crm
+learnifier learnworlds leexi legalmatch lemlist lessonspace lettr levitate libretranslate lightspeed line linear
+linkace linkedin linkly linkup linkwarden linode linq listclean listennotes liveagent lofty logo-dev lokalise looker
+loops loopy-loyalty loyverse luma lumapps lusha luxury-presence lytho magento-v2 magic-hour magicplan mailchimp
+maildroppa mailercloud mailerlite-classic mailersend mailgun mailjet mailmodo mailslurp mailsoftly maintainx
+manifestly manus manychat manyreach manyrequests mapbox marketsharp marketstack markup-ai mastodon mateo matillion
+mattermost me-qr-qr-code mediasilo meetgeekai meilisearch melo mem mem0 membershipio memberspot memelord mentortools
+mercado-pago mercury merge-dev meshy messagebird meta method-crm metricool mews mezmo microsoft-bookings
+microsoft-entra-id microsoft-exchange microsoft-graph-security microsoft-onenote microsoft-power-bi
+microsoft-powerpoint microsoft-sharepoint microsoft-teams microsoft-teams-events microsoft-todo mighty-networks
+mightycall mihu-ai milvus mindbody minelead minerstat mineskin minimax mirakl miro mist mixmax
+mobile-message-ca21345 mobile-text-alerts moco mollie-1 monday moneybird mongodb moonclerk moskit motaword moxo
+msg91 mural mx-technologies mycase mycashflow mycrm-leads namsor nango nanonets-ocr nationbuilder navigatr nebl
+neetocal neetoform neo4j neon neoncrm net2phone netbox nethunt-crm netlicensing netlify neutrino new-relic newie
+nextcloud nextdoor nfusionsolutions ngrok nifty-pm niftyimages nimbata ninety nmkr-studio nocodb northflank notion
+notra nozbe-teams numverify nusii-proposals nutrient-document-web-services-api nutshell nylas obono octen office-365
+okta ollama olostep omnisend onedesk onedrive onelake onepage-crm onesignal onlyoffice-docspace open-sea openalex
+opencage opendatasoft openfigi openlayer openpolicy openstates openstatus openwa opn-form opsgenie opusclip
+oracle-field-service oracle-hcm orgo orshot osv outlook outreach outscraper-ca1391 outseta owler ownerrez paddle
+padlet-1 pagerduty pagespeed paperform paradym parallel parcellab parma parsera parseur partnerstack
+passkit-membership past-dev payaca payments paypal paypro paystack pdfco pdfless peaka peekalink peerdom pennylane
+penpot people-data-labs perfect-venue perigon perplexity persona personio phantombuster phone phone-harness pidgeon
+pims pinata pinecone pingdom pinterest pipedrive pipeless pipeline-crm placetel planable planday planetscale
+platerecognizer plaud plausible pledge ploid pneumatic pocketsmith podium polar polygon polymarket polymarket-us
+poma-grill porkbun portalio postal-data-api postgres posthog postiz postman postmark postwire powerdns
+practice-better precisefp predictleads printful printify prisma process-street procore productboard productlane
+productplan project-broadcast projul promptlayer propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1
+qdrant qonto qonversion qovery quentn quickbase quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic
+raisely ramp rawg-video-games-database razorpay rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee
+recruiterflow recurly reddit reddit-ads redirect-pizza redirection redis reducto refersion reflect regiondo
+rei-pebble relevance-ai reloadify remote remove-bg render rentcast rentman repairdesk repairshopr repliz reply
+reply-io resend resource-guru responder responsys reteno revolut-for-business rezdy rillet ringcentral ringover
+rippling ritekit rkvst roam rocket-reach rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics
+rossum route4me royalmail rss rudder rumble rundeck runpod runscope runsignup safetyculture sakari-sms salesforce
+salesforge salesloft salesmsg salesql salesrabbit salesrobot samanage samcart samdock samsara sanity sap-concur
+saucelabs savvycal scale-ai scalr scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai se-ranking
+seam search-api search1api sec securitytrails selectpdf sellercloud sellsy semanticscholar sematext semrush
+send-email send-pulse sendbird sendfox sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply
+serpstat sertifier serverless-function servicem8 servicetitan servicetrade setmore sevdesk seven-io shipmondo shippo
+shlink shopify shopvox shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable signal8
+signalwire signpath signrequest signupgenius signwell simla-com simple-localize simplero simplesat simplicate
+simplybook simplyrets simpro singlestore sirv skuvault skyvia slack slicktext sling slite small-improvements
+smartemailing smarthr smartlead smartproxy smartsheet smily smokeball smol-machines smoove smsapi smsglobal smtp2go
+smtping snapchat sncf snitcher snowflake snyk softr solcast soundcloud soundee spacebring speechmatics spiro
+splitwise spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange stackitdns staffbase starbridge
+starton statsig statuspage statuspal stibee stigg stora strale streak stream-chat streamtime stripe
+studio-by-ai21-labs sumoquote sumup supabase supadata super-dispatch supermemory supernormal superset superwall
+suprsend sure-send surecart surevoip surf svix swaggerhub swarmsyncai sympla synap syncro synthflow-ai systemeio
+table tableau taggun tailscale talenthr talentlms talkable talkjs talkroute tally tapfiliate taplio tave tavily
+teachable teamcamp teamup teamup-calendar teamwork teamwork-desk telegram telematicssdk telnyx teltel telzio
+templated templatefox temporal tentary text-request textcortex textline textmagic thanks-io the-events-calendar
+the-odds-api thecompaniesapi thehive thinkific thoughtspot threads thrivecart ticket-tailor tidb-cloud tidio tidy
+tidycal tik-hub tiktok tiktok-ads timecamp timeero timelinesai timelink timely timerex tinyfish tinyurl todoist
+tomba tomtom toneden topdesk touchsms tovuti traccar track-pod trackdesk trackingmore trackvia trakt transloadit
+trekksoft trello tremendous trestle trigger-dev tripadvisor tripworks true-list tryfundable turbot-pipes turso
+twelve-data twilio twitter twittershots typebot typecast typeform typefully unifi unione unipile uniswap-api
+universe unleash uplisting upload-post uploadcare upstash-vector uptimecom uptimerobot urable urlscanio
+us-global-mail uscreen userback usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher vectara vendasta
+vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler vimeo viral-loops virtuous-crm
+virustotal visma-eaccounting visualping visualstudio vocal-video voiceflow volunteerhub voluum voucherify voyage
+vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit weaviate webcrawlerapi webcrm
+weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport weezevent-da56471 weeztix
+weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase whoisfreaks whop wikimedia
+wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api woop-social word wordnik wordpress
+workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme yousearch
+youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno zenoti zenrows zenzap zep zeplin
+zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory zoho-projects
+zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
