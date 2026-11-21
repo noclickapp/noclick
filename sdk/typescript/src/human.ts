@@ -13,12 +13,45 @@ import type { KindScopedFilters, OperationSummary } from "./operation.ts";
 import { resolveScope, userIdOf } from "./scope.ts";
 import type { UserOption } from "./scope.ts";
 
-/** What the person chose (`choice`) and/or wrote (`text`). */
+/**
+ * What the person chose (`choice`) and/or wrote (`text`). A `pick`'s answer names the choice in the
+ * account too (`value`: a repository's `owner/name`, a channel's id); a question asked with
+ * `multiple` names each one they chose (`choices`, and a pick's `values`).
+ */
 export interface Answer {
   choice: string | null;
   text: string | null;
+  value: string | null;
+  choices: string[];
+  values: string[];
   raw: unknown;
 }
+
+/**
+ * Something to pick in a connected account (`Human.ask`'s `pick`): the connection (a `Connection`, or
+ * its id or name) and the field its lookup lists (`connection.lookup` names them: `repository`,
+ * `team_id`, `channel`), with the values that field depends on (a spreadsheet's id for its sheets).
+ */
+export interface HumanPick {
+  connection: string | Connection;
+  field: string;
+  arguments?: JsonObject;
+}
+
+/** What `Human.ask` takes beside its question. */
+export interface HumanAskOptions {
+  /** The answers they choose from (up to 20); left out, they answer in their own words. */
+  options?: string[];
+  /** In place of `options`: something in a connected account. The choices are read from it, and an account that holds just one answers at once with it. */
+  pick?: HumanPick;
+  /** They may choose several of the options, or of a pick's choices. */
+  multiple?: boolean;
+  via?: Via;
+  expiresInS?: number;
+}
+
+const strings = (value: unknown): string[] =>
+  Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : [];
 
 /** An email confirmed for the owner (`Human.confirmEmail`). */
 export interface OwnerEmail {
@@ -49,9 +82,17 @@ export type Via = "auto" | string | string[];
 registerResult("human.ask", (result): Answer => {
   if (result && typeof result === "object") {
     const body = result as JsonObject;
-    return { choice: str(body.choice), text: str(body.text), raw: result };
+    return {
+      choice: str(body.choice),
+      text: str(body.text),
+      value: str(body.value),
+      choices: strings(body.choices),
+      values: strings(body.values),
+      raw: result,
+    };
   }
-  return { choice: null, text: result === null || result === undefined ? null : String(result), raw: result };
+  const text = result === null || result === undefined ? null : String(result);
+  return { choice: null, text, value: null, choices: [], values: [], raw: result };
 });
 registerResult("human.approve", (result) =>
   result && typeof result === "object" ? Boolean((result as JsonObject).approved) : Boolean(result),
@@ -408,11 +449,30 @@ export class Human {
     return HumanRequest._fromResponse<T>(raw, { client: this.client, user: scope, kind: `human.${kind}` });
   }
 
-  /** Ask a question; `wait()` resolves to an `Answer`. */
-  ask(message: string, options: { options?: string[]; via?: Via; expiresInS?: number } = {}): Promise<HumanRequest<Answer>> {
+  /**
+   * Ask a question; `wait()` resolves to an `Answer`. `pick` asks, in place of `options`, for
+   * something in one of their connected accounts, and `multiple` lets them choose several.
+   *
+   * @example
+   * const answer = await (await Human.owner().ask("Which repositories should the reviewer watch?", {
+   *   pick: { connection: "github", field: "repository" },
+   *   multiple: true,
+   * })).wait();
+   * console.log(answer.values); // ["acme/site", "acme/api"]
+   */
+  ask(message: string, options: HumanAskOptions = {}): Promise<HumanRequest<Answer>> {
+    const pick = options.pick;
     return this.send<Answer>("ask", {
       message,
       options: options.options?.length ? [...options.options] : undefined,
+      pick: pick
+        ? compact({
+            connection: pick.connection instanceof Connection ? pick.connection._ref : pick.connection,
+            field: pick.field,
+            arguments: pick.arguments,
+          })
+        : undefined,
+      multiple: options.multiple ? true : undefined,
       via: via(options.via),
       expires_in_s: options.expiresInS,
     });

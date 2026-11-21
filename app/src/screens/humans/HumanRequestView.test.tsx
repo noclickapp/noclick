@@ -49,6 +49,26 @@ describe('HumanRequestView', () => {
         expect(onAnswer).toHaveBeenLastCalledWith({ choice: undefined, text: 'Enterprise, for the team', decision: undefined });
     });
 
+    it('takes several of a question of several, in the order it offers them', () => {
+        const onAnswer = vi.fn();
+        render(<HumanRequestView request={{ ...ASK, options: ['Mon', 'Tue', 'Wed'], multiple: true }} brand={BRAND} onAnswer={onAnswer} />);
+        expect(screen.getByText('Choose any that apply.')).toBeTruthy();
+        expect(screen.queryByRole('radio')).toBeNull();
+        const send = screen.getByRole('button', { name: 'Send answer' }) as HTMLButtonElement;
+        expect(send.disabled).toBe(true);
+        // No box is required of the form: none, or any, of them answers it beside words.
+        expect(screen.getAllByRole('checkbox').every((box) => !(box as HTMLInputElement).required)).toBe(true);
+        fireEvent.click(screen.getByRole('checkbox', { name: 'Wed' }));
+        fireEvent.click(screen.getByRole('checkbox', { name: 'Mon' }));
+        fireEvent.click(screen.getByRole('checkbox', { name: 'Tue' }));
+        fireEvent.click(screen.getByRole('checkbox', { name: 'Tue' }));
+        expect(screen.getByLabelText('Note')).toBeTruthy();
+        fireEvent.click(send);
+        expect(onAnswer).toHaveBeenLastCalledWith({ choices: ['Mon', 'Wed'], text: '', decision: undefined });
+        expect(answerFromFields({ choices: ['Mon', 'Wed'], text: ' ' })).toEqual({ choices: ['Mon', 'Wed'] });
+        expect(answerSummary({ choices: ['Mon', 'Wed'], text: 'mornings' })).toBe('Mon, Wed — mornings');
+    });
+
     it('in preview is contained and never submits', () => {
         const onAnswer = vi.fn();
         const { container } = render(<HumanRequestView request={APPROVE} brand={BRAND} preview onAnswer={onAnswer} />);

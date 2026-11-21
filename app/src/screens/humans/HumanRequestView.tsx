@@ -21,10 +21,12 @@ export const DEFAULT_BRAND: Brand = { name: 'NoClick', logo_url: null, color: nu
 export type HumanRequestKind = 'ask' | 'approve' | 'notify' | 'hand_off';
 export type HumanRequestStatus = 'pending' | 'answered' | 'delivered' | 'expired' | 'canceled';
 
-/** An approval's answer (`approved`, its `text`), or a question's (`choice`, `text`). */
+/** An approval's answer (`approved`, its `text`), or a question's (`choice`, `text`; `choices` for a question of
+ *  several). */
 export interface HumanRequestAnswer {
     approved?: boolean;
     choice?: string | null;
+    choices?: string[] | null;
     text?: string | null;
 }
 
@@ -51,6 +53,8 @@ export interface HumanRequestContent {
     kind: HumanRequestKind;
     message: string;
     options: string[];
+    /** They may choose several of the options. */
+    multiple?: boolean;
     details: Record<string, unknown>;
     status: HumanRequestStatus;
     answer: HumanRequestAnswer | null;
@@ -58,17 +62,20 @@ export interface HumanRequestContent {
     handoff?: HandOff | null;
 }
 
-/** What the person submitted; `decision` is the approval button they pressed. */
+/** What the person submitted; `choices` are a question of several's ticked options; `decision` is the approval
+ *  button they pressed. */
 export interface AnswerFields {
     choice?: string;
+    choices?: string[];
     text?: string;
     decision?: 'approve' | 'deny';
 }
 
-/** The body the answer routes take: a choice and/or text, or `approved` with an optional note. */
+/** The body the answer routes take: a choice (or several) and/or text, or `approved` with an optional note. */
 export function answerFromFields(fields: AnswerFields): Record<string, unknown> {
     const body: Record<string, unknown> = {};
     if (fields.choice) body.choice = fields.choice;
+    if (fields.choices?.length) body.choices = fields.choices;
     if (fields.text?.trim()) body.text = fields.text;
     if (fields.decision === 'approve' || fields.decision === 'deny') body.approved = fields.decision === 'approve';
     return body;
@@ -173,7 +180,7 @@ export function answerSummary(answer: HumanRequestAnswer | null, who = 'You'): s
         const verdict = `${who} ${answer.approved ? 'approved' : 'declined'} this.`;
         return answer.text ? `${verdict} ${answer.text}` : verdict;
     }
-    return answer ? [answer.choice, answer.text].filter(Boolean).join(' — ') : null;
+    return answer ? [answer.choice, answer.choices?.join(', '), answer.text].filter(Boolean).join(' — ') : null;
 }
 
 function Closed({ req }: { req: HumanRequestContent }) {
@@ -211,48 +218,56 @@ export function AnswerForm({
     onAnswer,
     className,
 }: {
-    req: Pick<HumanRequestContent, 'kind' | 'options'>;
+    req: Pick<HumanRequestContent, 'kind' | 'options' | 'multiple'>;
     busy?: boolean;
     onAnswer?: (fields: AnswerFields) => void;
     className?: string;
 }) {
     const [choice, setChoice] = useState('');
+    const [picked, setPicked] = useState<string[]>([]);
     const [text, setText] = useState('');
     // Server markup leaves Send enabled (`required` guards it); readiness gates it once hydrated.
     const [hydrated, setHydrated] = useState(false);
     useEffect(() => setHydrated(true), []);
     const hasOptions = req.kind === 'ask' && req.options.length > 0;
+    // A question of several: any of its options, ticked as checkboxes (`choices`), in the order it offers them.
+    const several = hasOptions && !!req.multiple;
+    const chosen = several ? picked.length > 0 : !!choice;
     // A question's options are what most people pick; an answer in words takes its place, and beside a pick it's a note.
-    const ready = !!choice || !!text.trim();
-    const noted = req.kind !== 'ask' || !!choice;
+    const ready = chosen || !!text.trim();
+    const noted = req.kind !== 'ask' || chosen;
     const textLabel = noted ? 'Add a note (optional)' : hasOptions ? 'Or answer in your own words' : 'Your answer';
+    const toggle = (option: string) =>
+        setPicked((was) => req.options.filter((o) => (o === option ? !was.includes(o) : was.includes(o))));
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const submitter = (e.nativeEvent as SubmitEvent).submitter;
         const pressed = submitter?.getAttribute('name') === 'decision' ? submitter.getAttribute('value') : null;
         const decision = pressed === 'approve' || pressed === 'deny' ? pressed : undefined;
         if (req.kind === 'approve' ? !decision : !ready) return;
-        onAnswer?.({ choice: choice || undefined, text, decision });
+        onAnswer?.(several ? { choices: picked, text, decision } : { choice: choice || undefined, text, decision });
     };
     return (
         <form method="post" onSubmit={onSubmit} className={cn('mt-6 space-y-3', className)}>
             {hasOptions ? (
-                <div role="radiogroup" className="space-y-2">
+                <div role={several ? 'group' : 'radiogroup'} aria-label={several ? 'Choose any' : undefined} className="space-y-2">
+                    {several ? <p className="text-[13px] text-muted-foreground">Choose any that apply.</p> : null}
                     {req.options.map((option) => (
                         <label
                             key={option}
-                            className="block w-full cursor-pointer rounded-lg border border-border px-3 py-2.5 text-left text-sm transition-colors hover:bg-foreground/[0.04] has-[:checked]:border-foreground/40 has-[:checked]:bg-foreground/[0.08] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
+                            className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5 text-left text-sm transition-colors hover:bg-foreground/[0.04] has-[:checked]:border-foreground/40 has-[:checked]:bg-foreground/[0.08] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
                         >
                             <input
-                                type="radio"
-                                name="choice"
+                                type={several ? 'checkbox' : 'radio'}
+                                name={several ? 'choices' : 'choice'}
                                 value={option}
-                                required={!text.trim()}
-                                checked={choice === option}
-                                onChange={() => setChoice(option)}
+                                required={!several && !text.trim()}
+                                checked={several ? picked.includes(option) : choice === option}
+                                onChange={() => (several ? toggle(option) : setChoice(option))}
                                 className="sr-only"
                             />
-                            {option}
+                            <span className="min-w-0">{option}</span>
+                            {several && picked.includes(option) ? <Check aria-hidden className="h-4 w-4 shrink-0" /> : null}
                         </label>
                     ))}
                 </div>

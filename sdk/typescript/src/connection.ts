@@ -684,8 +684,13 @@ export class Connection extends ApiObject {
     return this._api.consoleUrl("resources", "connections");
   }
 
+  /** @internal Its id once known, else the ref or name it was named by (`Human.ask`'s `pick` sends it). */
+  get _ref(): string {
+    return String(this._known("id") ?? this._hints.ref ?? this._hints.name);
+  }
+
   private get path(): string {
-    return `/v1/connections/${encodeURIComponent(String(this._known("id") ?? this._hints.ref ?? this._hints.name))}`;
+    return `/v1/connections/${encodeURIComponent(this._ref)}`;
   }
 
   /** @internal Every call on the connection goes to the team workspace it was read in (`organizationId`). */

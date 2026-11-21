@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
 
 from ._client import Client, path_segment, resolve_client
 from ._object import Page, compact, csv, list_all, list_page
@@ -20,14 +20,19 @@ def _request_params(status: Many, status_not: Many, kind: Many, answerable: Opti
 
 @dataclass(frozen=True)
 class Answer:
-    """What the person chose (``choice``) and/or wrote (``text``)."""
+    """What the person chose (``choice``) and/or wrote (``text``). A ``pick``'s answer names the
+    choice in the account too (``value``: a repository's ``owner/name``, a channel's id); a question
+    asked with ``multiple`` names each one they chose (``choices``, and a pick's ``values``)."""
 
     choice: Optional[str]
     text: Optional[str]
     raw: Any = dc_field(repr=False)
+    value: Optional[str] = None
+    choices: List[str] = dc_field(default_factory=list)
+    values: List[str] = dc_field(default_factory=list)
 
     def __str__(self) -> str:
-        return self.choice or self.text or ""
+        return self.choice or ", ".join(self.choices) or self.text or ""
 
 
 @dataclass(frozen=True)
@@ -62,7 +67,8 @@ class OwnerReach:
 
 def _read_answer(result: Any, _op: Operation) -> Answer:
     if isinstance(result, dict):
-        return Answer(result.get("choice"), result.get("text"), result)
+        return Answer(result.get("choice"), result.get("text"), result, value=result.get("value"),
+                      choices=list(result.get("choices") or []), values=list(result.get("values") or []))
     return Answer(None, None if result is None else str(result), result)
 
 
@@ -293,6 +299,16 @@ def _seconds(expires_in: Union[None, int, float, timedelta]) -> Optional[int]:
     return int(expires_in)
 
 
+def _pick(pick: Optional[Mapping[str, Any]]) -> Optional[Dict[str, Any]]:
+    """The request's ``pick`` as sent: its ``connection`` a name or id, a ``Connection``'s own."""
+    if pick is None:
+        return None
+    body = dict(pick)
+    if isinstance(body.get("connection"), Connection):
+        body["connection"] = body["connection"]._ref()
+    return body
+
+
 _TOOLS = ("notify", "ask", "hand_off")
 
 
@@ -513,7 +529,8 @@ class Human:
     def only(self, *tools: str) -> HumanOperations:
         """Some of the tools this person gives an agent, for ``tools=``. In an agent's tools
         a ``Human`` gives it three, each addressed only to this person: ``notify`` (a
-        message), ``ask`` (a question, with ``options`` if it has some: the turn waits,
+        message), ``ask`` (a question, with ``options`` if it has some, or a ``pick`` from one of
+        their connected accounts: the turn waits,
         ``awaiting_human``, and the answer arrives as the conversation's next turn) and
         ``hand_off`` (the conversation goes to this person: a page and an email with the
         transcript, the agent's summary and a reply box; their replies post as ``person``
@@ -570,14 +587,25 @@ class Human:
         message: str,
         *,
         options: Optional[Sequence[str]] = None,
+        pick: Optional[Mapping[str, Any]] = None,
+        multiple: bool = False,
         via: Union[str, Sequence[str]] = "auto",
         expires_in: Union[None, int, float, timedelta] = None,
     ) -> HumanRequest:
         """Ask a question; ``.wait()`` returns an ``Answer``.
 
+        ``pick`` asks, in place of ``options``, for something in a connected account:
+        ``{"connection": ..., "field": ..., "arguments": ...}``, the connection (a ``Connection``,
+        or its id or name) and the field its lookup lists (``connection.lookup`` names them:
+        ``repository``, ``team_id``, ``channel``), with the values that field depends on. NoClick
+        reads the choices from the account, the person picks from it, and an account that holds
+        just one answers at once with it, asking nobody. ``multiple`` lets them choose several of
+        the options, or of a pick's choices.
+
         Returns:
             The request, already sent. ``wait()`` blocks until the person answers
-            and gives what they picked (``choice``) and wrote (``text``).
+            and gives what they picked (``choice``, a pick's ``value`` beside it; each of
+            several in ``choices`` and ``values``) and wrote (``text``).
 
         Usage:
             Offer choices, then wait for the pick::
@@ -589,6 +617,14 @@ class Human:
                 answer = request.wait()
                 print(answer.choice or answer.text)
 
+            Ask which repositories, from the person's own GitHub::
+
+                answer = noclick.Human.owner().ask(
+                    "Which repositories should the reviewer watch?",
+                    pick={"connection": "github", "field": "repository"}, multiple=True,
+                ).wait()
+                print(answer.values)   # ['acme/site', 'acme/api']
+
             With ``via=["web"]`` nothing is sent: pass the answer page on
             yourself. ``expires_in`` is in seconds (or a ``timedelta``)::
 
@@ -597,8 +633,8 @@ class Human:
                 print(request.url)
         """
         return await self._send("ask", {
-            "message": message, "options": list(options) if options else None,
-            "via": _via(via), "expires_in_s": _seconds(expires_in),
+            "message": message, "options": list(options) if options else None, "pick": _pick(pick),
+            "multiple": True if multiple else None, "via": _via(via), "expires_in_s": _seconds(expires_in),
         })
 
     @synced

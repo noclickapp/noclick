@@ -48,7 +48,7 @@ export { Approval, ApprovalPolicy } from "./approval.ts";
 export type {
   ApprovalExplanation, ApprovalListOptions, ApprovalSetting, ApprovalStatus, HoldKind, OwnApprovals, PolicyChange,
 } from "./approval.ts";
-export type { Answer, HumanOptions, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
+export type { Answer, HumanAskOptions, HumanOptions, HumanPick, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";
 export { TERMINAL_CLOSED_FOR_GOOD, TERMINAL_RENEW, Terminal, TerminalConnection } from "./terminal.ts";
 export { AgentMove } from "./agentMove.ts";
