@@ -727,12 +727,12 @@ kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lake
 langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper leadboxer leadfeeder
 leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch lemlist lessonspace
 lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup linkwarden linode linq listclean
-listennotes liveagent lofty logo-dev lokalise looker loops loopy-loyalty loyverse luma lumapps lusha luxury-presence
-lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic mailersend mailgun mailjet
-mailmodo mailslurp mailsoftly maintainx manifestly manus manychat manyreach manyrequests mapbox marketsharp
-marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code mediasilo meetgeekai meilisearch melo mem
-mem0 membershipio memberspot memelord mentortools mercado-pago mercury merge-dev meshy messagebird meta method-crm
-metricool mews mezmo microsoft-bookings microsoft-entra-id microsoft-exchange microsoft-graph-security
+listennotes listrak liveagent lofty logo-dev lokalise looker loops loopy-loyalty loyverse luma lumapps lusha
+luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud mailerlite-classic mailersend
+mailgun mailjet mailmodo mailslurp mailsoftly maintainx manifestly manus manychat manyreach manyrequests mapbox
+marketsharp marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code mediasilo meetgeekai meilisearch
+melo mem mem0 membershipio memberspot memelord mentortools mercado-pago mercury merge-dev meshy messagebird meta
+method-crm metricool mews mezmo microsoft-bookings microsoft-entra-id microsoft-exchange microsoft-graph-security
 microsoft-onenote microsoft-power-bi microsoft-powerpoint microsoft-sharepoint microsoft-teams
 microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus mindbody minelead minerstat mineskin
 minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco mollie-1 monday moneybird mongodb
