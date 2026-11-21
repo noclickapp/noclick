@@ -260,13 +260,13 @@ export const AGENTS = [
 ] as const;
 
 const SCOPES = [
-    'agents', 'agents:terminal', 'ai', 'approvals:answer', 'approvals:policy', 'brand', 'channels', 'credentials:request', 'credentials:token', 'credentials:use', 'dicts', 'humans', 'inbox', 'mcp_servers', 'operations', 'phone', 'policy', 'queues', 'sandboxes', 'secrets', 'tools', 'usage', 'users',
+    'account:phones', 'agents', 'agents:terminal', 'ai', 'approvals:answer', 'approvals:policy', 'brand', 'channels', 'credentials:request', 'credentials:token', 'credentials:use', 'dicts', 'humans', 'inbox', 'mcp_servers', 'operations', 'phone', 'policy', 'queues', 'sandboxes', 'secrets', 'tools', 'usage', 'users',
     // Designed, not built yet.
     'apps', 'browsers', 'cards', 'cards:reveal', 'databases', 'domains', 'domains:buy', 'repos', 'storage', 'volumes',
     'webhooks', 'webhooks:reveal', 'workflows',
 ];
 const FULL_NO_TOKENS = SCOPES.filter(
-    (s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy', 'keys:create'].includes(s)
+    (s) => !['credentials:token', 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy', 'keys:create', 'account:phones'].includes(s)
 );
 
 export const KEYS = [
@@ -321,7 +321,7 @@ export const KEYS = [
 ] as const;
 
 // What a key holds only when it names them: the API lists them apart from `scopes`.
-const EXPLICIT = ['agents:terminal', 'approvals:answer', 'approvals:policy', 'cards:reveal', 'keys:create', 'webhooks:reveal'];
+const EXPLICIT = ['account:phones', 'agents:terminal', 'approvals:answer', 'approvals:policy', 'cards:reveal', 'keys:create', 'webhooks:reveal'];
 
 export const META = {
     scopes: SCOPES.filter((s) => !EXPLICIT.includes(s)),

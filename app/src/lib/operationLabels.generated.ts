@@ -396,6 +396,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "policy_evaluate": ["Evaluate", "POST", "read"],
     "policy_remove": ["Remove Rules", "POST", "sensitive"],
     "policy_replace": ["Put Policy", "PUT", "sensitive"],
+    "popups_list": ["Get Popups", "GET", "read"],
+    "popups_update": ["Update Popups", "PATCH", "write"],
     "projects_analytics_list": ["Project Analytics", "GET", "read"],
     "projects_analytics_summary": ["Projects Analytics Summary", "GET", "read"],
     "projects_bindings_create": ["Bind", "POST", "write"],

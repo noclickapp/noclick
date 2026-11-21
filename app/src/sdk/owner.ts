@@ -226,8 +226,8 @@ export const TOKEN_SCOPE = 'credentials:token';
 
 /** Scopes a key holds only when they're named, never part of full access: those that read a secret (a provider's raw
  *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows), answering a call NoClick
- *  holds for the owner's yes, switching what it holds, accepting the machines usage policy for the company, and
- *  making keys. */
+ *  holds for the owner's yes, switching what it holds, accepting the machines usage policy for the company, making
+ *  keys, and linking a phone number (which signs in to the account). */
 export const EXPLICIT_SCOPES: readonly string[] = [
     TOKEN_SCOPE,
     'cards:reveal',
@@ -237,6 +237,7 @@ export const EXPLICIT_SCOPES: readonly string[] = [
     'approvals:policy',
     'machines:vetting',
     'keys:create',
+    'account:phones',
 ];
 
 /** Every scope but those a key holds only by name: the default for a new key. */

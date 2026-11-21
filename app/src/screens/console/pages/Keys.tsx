@@ -57,7 +57,11 @@ import { Field, Section } from './resources/shared';
 export const READ_ONLY_SCOPES = ['usage', 'operations'] as const;
 
 export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: readonly string[] }[] = [
-    { label: 'Admin', covers: 'Users, usage, policy, brand and the operations your calls started.', scopes: ['users', 'usage', 'policy', 'brand', 'operations'] },
+    {
+        label: 'Admin',
+        covers: 'Users, usage, policy, brand and the operations your calls started, and linking phone numbers to the account.',
+        scopes: ['users', 'usage', 'policy', 'brand', 'operations', 'account:phones'],
+    },
     { label: 'Connect', covers: "Ask users to connect services, and use their connections.", scopes: ['credentials:request', 'credentials:use', TOKEN_SCOPE] },
     { label: 'Tools', covers: 'Run integration operations and toolkits, host them as MCP servers, call AI models and draw pictures for replies.', scopes: ['tools', 'mcp_servers', 'ai', 'render'] },
     { label: 'People', covers: 'Ask, notify and request approvals from people, and approve, decline or switch off the calls NoClick holds for your yes.', scopes: ['humans', 'approvals:answer', 'approvals:policy'] },
@@ -88,6 +92,7 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'approvals:policy': 'switches what NoClick holds for your yes, for the whole account',
     'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
     'keys:create': 'makes keys no wider than itself, which go when it’s revoked',
+    'account:phones': 'links phone numbers to the account, each of which signs in to it',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

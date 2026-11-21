@@ -43,6 +43,7 @@ PAGE_OF_MODULE = {
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "workflow_resources": "Workflow", "_watch": "watch",
     "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "connected_app": "ConnectedApp",
+    "popups": "Popups", "account_phones": "AccountPhones",
     "workflow_approval": "Workflow", "workflow_example": "Workflow",
 }
 # Module docstrings that describe internals rather than the page's names.
@@ -67,7 +68,7 @@ GROUPS: List[Tuple[str, List[str]]] = [
                         "Domain", "DomainPurchase", "Workflow", "estimate", "Estimate"]),
     ("Data", ["Database", "Bucket", "Volume", "Dict", "Queue", "Secret"]),
     ("In production", ["Operation", "TrashItem", "Event", "Webhook", "watch", "ToolCall", "ApiRequest", "usage", "Usage",
-                       "Notifications", "ExportBundle", "feedback"]),
+                       "Notifications", "Popups", "AccountPhones", "ExportBundle", "feedback"]),
     ("Errors", ["Error", "NeedsConnection", "CredentialDisconnected", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused",
                 "Conflict",
                 "WebhookSignatureError"]),
