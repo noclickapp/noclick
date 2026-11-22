@@ -19,8 +19,9 @@ import { AgentConversation } from './AgentConversation';
 import { AGENT_ID, CONNECTIONS, fakeWorkAgent, settingsFor } from './fixtures/workAgent';
 
 // The connect popup as the picker opens it (the `connect.model` slot): its title, and a sign-in that lands the
-// account it was opened for. It opens on the Claude plan's way, the one account this test's company has.
-const signIn = { landed: 'cred-1' };
+// account it was opened for, saved in the app and handed back by its ref and the account it holds. It opens on the
+// Claude plan's way, the one account this test's company has.
+const signIn = { landed: { ref: 'credential:cred-1', credentialId: 'cred-1' } };
 fill(CONNECT_MODEL, ({ credentialType, title, onConnected }) =>
     credentialType && ['agent_anthropic', 'agent_claude_code_oauth'].includes(credentialType) ? (
         <div role="dialog" aria-label={title}>
