@@ -939,6 +939,7 @@ cloudzero
 clover
 cloze
 club-os
+cmappsa
 coassemble
 coda
 codacy
