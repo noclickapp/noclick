@@ -1041,6 +1041,7 @@ dnsimple
 dnsmadeeasy
 docamatic
 dock-certs
+docker-engine
 docker-hub
 docraptor
 docsautomator
