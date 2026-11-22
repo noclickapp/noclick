@@ -767,6 +767,7 @@ askell
 assemblyai
 assemblycom
 asset-panda
+assignar
 atlas-admin
 atlas-ai-revenue-engine
 attentive
