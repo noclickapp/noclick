@@ -65,6 +65,9 @@ deploys it; its three settings are the Worker's secrets (`npx wrangler secret pu
 two), which [`.dev.vars.example`](../.dev.vars.example) names for a host that asks for them. Neither file is read by
 `pnpm dev`, `pnpm build` or `pnpm start`.
 
+Vercel needs no file: import the repository with `app` as the project's root directory (the whole repository is
+still cloned, so the SDK's source is there to build with) and set the three settings as environment variables.
+
 ## The developer console
 
 `/developers` is NoClick's developer console (`src/screens/console`): the account's agents, users and resources
