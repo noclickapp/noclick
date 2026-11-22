@@ -15,6 +15,7 @@ import { useInPhoneShell } from '@/ui/phoneBar';
 import { createPanelWidth } from '@/ui/panelWidth';
 import { ResizeEdge } from '@/ui/ResizeEdge';
 import { resourceAddress, type KindId } from '@/screens/resources/kinds';
+import { refFor } from '@/lib/agentTools';
 import { Skeleton } from '@/ui/skeleton';
 import { useWork } from '../context';
 import { cn } from '@/ui/utils';
@@ -73,8 +74,8 @@ function usePane(spaceId: string): Pane & { dialog: Dialog; setDialog: (d: Dialo
     const connectionsRead = useConnections();
     const [at, onAt] = useAt();
     const [dialog, setDialog] = useState<Dialog>(null);
-    // A space names a connection by its id or its name.
-    const connections = useMemo(() => new Map((connectionsRead.data ?? []).flatMap((c) => [[c.id, c] as const, [c.name, c] as const])), [connectionsRead.data]);
+    // A space names a connection by its id or its ref: a named one's name, never an app account's.
+    const connections = useMemo(() => new Map((connectionsRead.data ?? []).flatMap((c) => [[c.id, c] as const, [refFor(c), c] as const])), [connectionsRead.data]);
     return {
         spaceId,
         share,
@@ -104,7 +105,7 @@ export function SpaceResourcesNav({ spaceId }: { spaceId: string }) {
     const [, go] = useWorkPlace();
     // A phone shows this list alone, so nothing in it is open, and the overview opens over it as the kinds do.
     const phone = useInPhoneShell();
-    const broken = new Set((connections.data ?? []).filter((c) => c.status === 'disconnected').flatMap((c) => [c.id, c.name]));
+    const broken = new Set((connections.data ?? []).filter((c) => c.status === 'disconnected').flatMap((c) => [c.id, refFor(c)]));
     const row = (current: boolean, icon: LucideIcon, label: string, figure: ReactNode, onClick: () => void) => {
         const Icon = icon;
         return (
