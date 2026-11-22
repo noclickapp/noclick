@@ -722,7 +722,7 @@ incident-io increase infakt infinity infisical inforumobile infraspeak inmobalia
 instagram instantly instapaper instatus intelliprint intercom investorbase investorlift invofox invoiceninja
 invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate ironclad isn iterable itm-platform
 jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca jira-software-server
-jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller junglescout just-eat
+jiraservicemanagement jobadder jobber jogg-ai join-it joomla json2video jumpcloud jumpseller junglescout just-eat
 just-one-api justcall jvzoo jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila kenect-text-messaging
 kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp knowify kobotoolbox kommo
 kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard lambdatest landbot langbase
