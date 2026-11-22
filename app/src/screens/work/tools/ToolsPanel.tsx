@@ -232,9 +232,9 @@ export function ToolsPanel({ agent, name, conversation, onClose }: ToolsPanelPro
                     app={connecting}
                     name={name}
                     client={client}
-                    onConnected={(credentialId) => {
+                    onConnected={({ ref }) => {
                         rereadAccounts();
-                        void add(`credential:${credentialId}`, connecting.label);
+                        void add(ref, connecting.label);
                     }}
                     onClose={() => setConnecting(null)}
                 />

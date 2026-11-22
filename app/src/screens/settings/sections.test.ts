@@ -35,7 +35,7 @@ describe('the list’s groups', () => {
     });
 
     it('keep their order and leave out a group with nothing left in it', () => {
-        const groups = groupSections(visibleSections(PERSONAL, ['usage', 'billing', 'organization']));
+        const groups = groupSections(visibleSections(PERSONAL, ['usage', 'workstreams', 'billing', 'organization']));
         expect(groups.map((g) => g.label)).toEqual(['Preferences', 'Build']);
         expect(groups[0].items.map((s) => s.id)).toEqual(['notifications', 'popups']);
     });

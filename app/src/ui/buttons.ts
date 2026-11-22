@@ -15,3 +15,7 @@ export const BUTTON_DANGER =
 export const TAP_AREA = "after:absolute after:left-1/2 after:top-1/2 after:h-full after:min-h-10 after:w-full after:min-w-10 after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']";
 // A small outlined pill on a row (Connect, Buy, New), beside the row's own tap target.
 export const BUTTON_OUTLINE_SM = `relative inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:ring-foreground/[0.14] ${TAP_AREA}`;
+// A quiet action in a line of text (Never mind, Connect another account, Ask someone who can): text that underlines on
+// hover, no pill.
+export const INLINE_ACTION =
+    'self-start rounded-sm text-[13px] text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';

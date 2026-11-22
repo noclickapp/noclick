@@ -229,6 +229,32 @@ def test_numbers_abroad_filters_coverage_places_and_an_address(api, client):
                     "country": "NL", "phone": "+31612345670"}}
 
 
+def test_a_holder_profile_is_filed_once_and_a_purchase_files_it(api, client):
+    holder = {"name": "Dana Ruiz", "street": "Keizersgracht 1", "city": "Amsterdam", "postal_code": "1015 CJ",
+              "country": "NL", "phone": "+31612345670"}
+    profile = {"object": "phone_number_holder", "user_id": "user_42", "holder": holder,
+               "requirements": {"req_type": "Passport"}, "accepted_at": "2026-11-20T09:30:00+00:00",
+               "updated_at": "2026-11-20T09:31:00+00:00"}
+    put = api.put("/v1/phone_numbers/holder").respond(json=profile)
+    get = api.get("/v1/phone_numbers/holder").respond(json=profile)
+    delete = api.delete("/v1/phone_numbers/holder").respond(204)
+    buy = api.post("/v1/phone_numbers").respond(json=NUMBER)
+    filed = nc.PhoneNumber.set_holder_profile(nc.NumberHolder(**holder), requirements={"req_type": "Passport"},
+                                              accepted_at="2026-11-20T09:30:00Z", user="user_42")
+    assert body(put.calls.last.request) == {"holder": holder, "requirements": {"req_type": "Passport"},
+                                            "accepted_at": "2026-11-20T09:30:00Z"}
+    assert put.calls.last.request.headers["NoClick-User"] == "user_42"
+    assert (filed.holder.name, filed.requirements, filed.user_id) == ("Dana Ruiz", {"req_type": "Passport"}, "user_42")
+    assert nc.PhoneNumber.holder_profile(user="user_42").accepted_at.year == 2026
+    assert get.calls.last.request.headers["NoClick-User"] == "user_42"
+    with pytest.raises(TypeError, match="accepted_at"):
+        nc.PhoneNumber.set_holder_profile(nc.NumberHolder(**holder))
+    nc.PhoneNumber.buy("+31612345678", country="NL", type="mobile", max_monthly_usd=3, holder_on_file=True)
+    assert body(buy.calls.last.request) == {"number": "+31612345678", "country": "NL", "type": "mobile",
+                                            "max_monthly_usd": 3, "holder_on_file": True}
+    assert nc.PhoneNumber.set_holder_profile(None) is None and delete.call_count == 1
+
+
 IDENTITY_TYPE = {"id": "req_type", "kind": "textual", "name": "Identity Document Type", "description": "",
                  "example": "Passport", "values": ["Identity card", "Driving license", "Passport", "Other"]}
 IDENTITY = {"id": "req_doc", "kind": "document", "name": "Identity Document", "description": "", "example": "",
