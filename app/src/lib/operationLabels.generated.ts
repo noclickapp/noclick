@@ -630,6 +630,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_tables_delete": ["Delete Workflow Table", "DELETE", "destructive"],
     "workflows_tables_list": ["List Workflow Tables", "GET", "read"],
     "workflows_tables_rows_list": ["List Workflow Table Rows", "GET", "read"],
+    "workflows_test_runs_list": ["List Test Runs", "GET", "read"],
     "workflows_versions_create": ["Name Workflow Version", "POST", "write"],
     "workflows_versions_get": ["Get Workflow Version", "GET", "read"],
     "workflows_versions_list": ["List Workflow Versions", "GET", "read"],

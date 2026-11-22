@@ -5,9 +5,10 @@
 // settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
 // what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); how the
 // graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts); the palette steps are added from;
-// what a copy carries and a paste reads (`surface/`); and what showing a workflow's runs and each step's results reads
-// (`runs/`, standards in runs/standards.tsx). A host fills them before the canvas first draws (some hold hooks the
-// canvas and the form call).
+// what a copy carries and a paste reads (`surface/`); what showing a workflow's runs and each step's results reads
+// (`runs/`, standards in runs/standards.tsx); and what a workflow's Test Run reads, with the pieces its frames and a
+// run's story draw with (`testRun/`, standards in testRun/standards.tsx and testRun/frameParts.tsx). A host fills them
+// before the canvas first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import type { Node } from '@xyflow/react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
@@ -25,6 +26,9 @@ import type { RunFixes, RunReadsHost, RunResults, SavedOutputsHost } from './run
 import { RunStepsOnV1, useNothingSaved, useV1Fix, useV1RunReads } from './runs/standards';
 import type { ClipboardParser } from './surface/clipboard/types';
 import type { AddStepRequest } from './surface/useClickToAddNode';
+import { FRAME_STANDARD, type FrameParts } from './testRun/frameParts';
+import type { TestRunHost } from './testRun/reads';
+import { useKeptHere, useV1Scenarios, useV1TestRun, useV1Unmet, v1Authoring } from './testRun/standards';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
 import { catalogOutline, NoteAsReadme, plainDrawingOf, usePlainDrawingLoaded, useV1StepRoles } from './drawingStandards';
 import {
@@ -542,5 +546,29 @@ export const RUN_FIXES = slot<RunFixes>('canvas.runs.fixes', { ask: null, useFix
 /** One run's results, opened from the run log or the pill. The standard lists what each step did (`GET
  *  /v1/workflows/{id}/runs/{run}`: its status, error and output), read again as its steps move, and says that a run
  *  replayed on the canvas and the calls its agents made are in NoClick's app (the API has neither a run's graph as it
- *  ran nor its tool calls). NoClick's app draws the run as a story: what came in, what its agents did, what went out. */
+ *  ran nor its tool calls). NoClick's app draws the run as a story (runs/story/): what came in, what its agents did,
+ *  what went out, from the run's stored record with its agents' calls, which the API doesn't give yet. */
 export const RUN_RESULTS = slot<RunResults>('canvas.runs.results', RunStepsOnV1);
+
+// ── a workflow's Test Run ───────────────────────────────────────────────────
+
+/** What a workflow's Test Run screen reads (testRun/reads.ts): the situations it can stage, a run of one, where the
+ *  workflow's own test runs are kept, what it still needs connected, and sharing a finished run. The standard is the
+ *  platform API's: `GET /v1/workflows/{id}/test_runs`, a `workflow.rehearse` operation (`POST .../rehearsals`) whose
+ *  steps arrive when it ends, the workflow's `rehearsal_authoring` setting through an `update_workflow` edit (written
+ *  before a run plays it), and the workflow's own steps for what's unconnected; it shares nothing. NoClick's app shows
+ *  a run's steps as they happen and shares a finished run as a page. */
+export const TEST_RUN = slot<TestRunHost>('canvas.testRun', {
+    useScenarios: useV1Scenarios,
+    useRun: useV1TestRun,
+    runsSaved: true,
+    authoring: v1Authoring,
+    useUnmet: useV1Unmet,
+    Share: null,
+    useKept: useKeptHere,
+});
+
+/** What the frames of a Test Run and of a run's story draw with whoever renders them (testRun/frameParts.tsx): a
+ *  message's or a reply's text from its Markdown, and the mark of work under way. The standard draws Markdown as a
+ *  README is, and a live dot. The frames read it through `FRAMES` there, which names this same place. */
+export const FRAME_PARTS = slot<FrameParts>('canvas.frames', FRAME_STANDARD);

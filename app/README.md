@@ -218,6 +218,8 @@ results opened from a row of the log.
 | `canvas.runs.saved` | Outputs saved under a name, to pin on a step later and share | None: the API has none, so the output shown is only pinned as the step's mock (an edit of the workflow) |
 | `canvas.runs.fixes` | What can be done about a failed step: asking the builder about it, and the fix the API names | No builder asked; adding funds and the spending cap open in NoClick's app; a link stays a link |
 | `canvas.runs.results` | One run's results, opened from the run log | What each step did (`GET /v1/workflows/{id}/runs/{run}`), read again as its steps move, with a note that a run replayed on the canvas and its agents' calls are in NoClick's app |
+| `canvas.testRun` | What a workflow's Test Run reads (`testRun/reads.ts`): the situations it can stage, a run of one, where the workflow's own test runs are kept, what it still needs connected, sharing a finished run | The workflow's test runs (`GET /v1/workflows/{id}/test_runs`), a run as a `workflow.rehearse` operation (`POST .../rehearsals`) whose steps arrive when it ends, the workflow's own test runs in its settings (an `update_workflow` edit), what's unconnected from the workflow's own steps (`GET /v1/workflows/{id}`); nothing is shared |
+| `canvas.frames` | What the frames of a Test Run and of a run's story draw with (`testRun/frameParts.tsx`): a message's or a reply's text from its Markdown, and the mark of work under way | Markdown drawn as a README is; a live dot |
 
 Work's are listed under [Work](#work).
 

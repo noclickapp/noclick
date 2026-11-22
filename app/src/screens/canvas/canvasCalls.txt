@@ -1,4 +1,5 @@
 GET /v1/operations/op_new/wait
+GET /v1/operations/op_test/wait
 GET /v1/step_types
 GET /v1/step_types/agent
 GET /v1/step_types/automation-slack
@@ -6,6 +7,7 @@ GET /v1/step_types/automation-slack/output_shape
 GET /v1/step_types/log
 GET /v1/step_types/trigger-webhook
 GET /v1/step_types/trigger-webhook/output_shape
+GET /v1/workflows/wf_orders
 GET /v1/workflows/wf_orders/graph
 GET /v1/workflows/wf_orders/outputs
 GET /v1/workflows/wf_orders/runs
@@ -17,6 +19,8 @@ GET /v1/workflows/wf_orders/steps/hook/outputs
 GET /v1/workflows/wf_orders/steps/hook/outputs/run_4
 GET /v1/workflows/wf_orders/steps/hook/outputs/run_5
 GET /v1/workflows/wf_orders/steps/unrun/outputs
+GET /v1/workflows/wf_orders/test_runs
 POST /v1/workflows/wf_orders/edits
+POST /v1/workflows/wf_orders/rehearsals
 POST /v1/workflows/wf_orders/runs
 POST /v1/workflows/wf_orders/runs/run_3/stop

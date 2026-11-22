@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
 // The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
 // graph: the store that saves it, graph/liveGraphStore.ts; its drawing: the steps and connections, nodes/ and edges/;
-// its editing surface with the palette, surface/ and WorkflowCanvas.tsx; and its runs and results, runs/) opens a
-// workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws what it holds; the
-// canvas on its own adds a step from the palette, connects, moves, copies and pastes, deletes and brings back steps
-// and follows another writer's commit; and it reads its run log, a step's outputs and one run's results, runs it
-// (whole, and one step alone) and stops a run, over fixtures
-// that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
+// its editing surface with the palette, surface/ and WorkflowCanvas.tsx; its runs and results, runs/; and its Test
+// Run, testRun/) opens a workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws
+// what it holds; the canvas on its own adds a step from the palette, connects, moves, copies and pastes, deletes and
+// brings back steps and follows another writer's commit; and it reads its run log, a step's outputs and one run's
+// results, runs it (whole, and one step alone) and stops a run, lists its test runs, adds one and plays it, over
+// fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
 // exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
 // hold to the table. And what it does with what it reads: every request goes through the app's client (none off its
@@ -43,6 +43,10 @@ import type { WorkflowExecutionLog } from './runs/RunLog';
 import { useRunLog } from './runs/useRunLog';
 import { useWorkflowRuns } from './runs/useRun';
 import { GRAPH_SAVES, RUN_READS, RUN_RESULTS, STEP_DRAWING } from './slots';
+import { forgetAuthoring } from './testRun/authoring';
+import { testRunFetch } from './testRun/fixtures';
+import { forgetTestRuns } from './testRun/standards';
+import { TestRunScreen } from './testRun/TestRunScreen';
 import { WorkflowCanvas } from './WorkflowCanvas';
 
 type Json = Record<string, unknown>;
@@ -74,7 +78,7 @@ beforeAll(async () => {
     await waitFor(() => expect(result.current).toBe(true));
     unmount();
     // The standards' SDK and the standard's results view load with their first use: once here, too.
-    await Promise.all([import('./standardsSdk'), import('./runs/RunSteps')]);
+    await Promise.all([import('./standardsSdk'), import('./runs/RunSteps'), import('@/screens/resources/CodeView')]);
 });
 
 beforeEach(() => {
@@ -414,6 +418,39 @@ async function runsAndResults(actsAs: 'owner' | 'key'): Promise<Call[]> {
     return calls;
 }
 
+/** The workflow's Test Run: the test runs it offers and keeps, what it still needs connected, a run added and named
+ *  (written to the workflow's settings as an edit), then played: its operation, waited for. On real timers. */
+async function testRun(actsAs: 'owner' | 'key'): Promise<Call[]> {
+    const calls: Call[] = [];
+    forgetAuthoring();
+    forgetTestRuns();
+    const client = new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: testRunFetch({
+            actsAs,
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    });
+    const { container, unmount } = render(
+        <ClientProvider client={client}>
+            <TestRunScreen icons={{}} live={{ workflowId: WORKFLOW }} />
+        </ClientProvider>
+    );
+    await screen.findByText('Sample event', { selector: 'span' });
+    await waitFor(() => expect(container.textContent).toContain('To make this real'));
+    fireEvent.click(container.querySelector('[title^="New test run"]')!);
+    const name = container.querySelector('input[placeholder="Name this test run"]') as HTMLInputElement;
+    fireEvent.keyDown(name, { key: 'Enter', target: Object.assign(name, { value: `A run added as the ${actsAs}` }) });
+    fireEvent.click(screen.getAllByRole('button').find((b) => b.textContent?.trim() === 'Test Run')!);
+    await waitFor(() => expect(container.textContent).toContain('What it would have sent'));
+    unmount();
+    return calls;
+}
+
 /** Every key anywhere in `value`. */
 function keysIn(value: unknown): string[] {
     if (Array.isArray(value)) return value.flatMap(keysIn);
@@ -438,7 +475,7 @@ async function holdsNoSecret(calls: Call[]) {
 }
 
 describe('the canvas acting as a key', () => {
-    it('opens, edits, merges, closes, draws and runs a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
+    it('opens, edits, merges, closes, draws, runs and tests a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
         const called = new Set<string>();
         const refused: string[] = [];
         for (const actsAs of ['owner', 'key'] as const) {
@@ -452,6 +489,8 @@ describe('the canvas acting as a key', () => {
             cleanup();
             vi.useRealTimers();
             calls.push(...(await runsAndResults(actsAs)));
+            cleanup();
+            calls.push(...(await testRun(actsAs)));
             cleanup();
             vi.useFakeTimers();
             await holdsNoSecret(calls);
