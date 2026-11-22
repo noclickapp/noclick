@@ -1,9 +1,10 @@
-// A question the agent asked the owner (human__ask), under the turn that asked it: answered right here, by a tap on
-// one of its options (or, with Something else, in the owner's own words), by picking from their own account for a
-// question about it (which repository, team or channel: the canvas's own picker, filled from the account), or, for
-// an open question, by writing the answer, through the request's own answer route; the agent's next turn then carries
-// on with it. Answered, expired or withdrawn, it reads back as one line. A question to someone else only shows that it
-// waits on them.
+// A question asked of the account's owner (an agent's human__ask, or each input of a build's question), under the
+// turn that asked it: answered right here, by a tap on one of its options (or, with Something else, in the owner's
+// own words), by picking from their own account for a question about it (which repository, team or channel: the
+// canvas's own picker, filled from the account), by choosing the connection a workflow step uses or typing a secret
+// it needs (the host's form, else its page on NoClick), or, for an open question, by writing the answer, through the
+// request's own answer route; whatever asked then carries on with it. Answered, expired or withdrawn, it reads back as
+// one line. A question to someone else only shows that it waits on them.
 import { MessageCircleQuestion } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { GlyphTile, InlineCard, PILL_PRIMARY, PILL_QUIET, PILL_SECONDARY, Receipt, Status } from '@/ui/chat/primitives';
@@ -11,7 +12,7 @@ import { FIELD } from '@/ui/fields';
 import { useHumanRequest } from '@/screens/humans/useHumanRequest';
 import { useSlot } from '@/slots';
 import { useClient } from '@/sdk/client';
-import { QUESTION_PICK } from '../slots';
+import { QUESTION_PICK, QUESTION_STEP } from '../slots';
 import { list, str, type CoordinatorToolCall } from '@/lib/toolCalls';
 import { cn } from '@/ui/utils';
 
@@ -46,12 +47,26 @@ function OpenAnswer({ disabled, focused = false, onSend }: { disabled: boolean; 
 }
 
 export function OwnerQuestionCard({ call }: { call: CoordinatorToolCall }) {
-    const { question, unreadable, answering, failure, answer } = useHumanRequest(useClient(), str(call.result, 'request_id') ?? '');
+    const offered = list(call.args, 'options').filter((o): o is string => typeof o === 'string');
+    return <OwnerQuestion requestId={str(call.result, 'request_id') ?? ''} asked={str(call.args, 'question')} offered={offered} />;
+}
+
+export interface OwnerQuestionProps {
+    /** The human request (`/v1/humans/requests/{id}`). */
+    requestId: string;
+    /** What it asks and offers, until the request is read. */
+    asked?: string;
+    offered?: readonly string[];
+}
+
+/** One question to the owner, read and answered through its request. */
+export function OwnerQuestion({ requestId, asked: askedBefore, offered = [] }: OwnerQuestionProps) {
+    const { question, unreadable, answering, failure, answer } = useHumanRequest(useClient(), requestId);
     const Pick = useSlot(QUESTION_PICK);
+    const Step = useSlot(QUESTION_STEP);
     // An answer that isn't one of the options, written under the card.
     const [inWords, setInWords] = useState(false);
-    const asked = question?.message || str(call.args, 'question') || 'A question';
-    const offered = list(call.args, 'options').filter((o): o is string => typeof o === 'string');
+    const asked = question?.message || askedBefore || 'A question';
     const options = question ? question.options : offered;
     const status = question?.status ?? 'pending';
     const given = question?.answer;
@@ -63,7 +78,12 @@ export function OwnerQuestionCard({ call }: { call: CoordinatorToolCall }) {
             </Receipt>
         );
     }
-    if (status === 'answered') return <Receipt>You answered · {given?.choice || given?.text || 'answered'}</Receipt>;
+    if (status === 'answered' && question?.connect) {
+        const only = question.answered_by === 'account' ? ' · the only one in your account' : '';
+        return <Receipt>{question.connect.label} · {given?.account || given?.choice || given?.connection}{only}</Receipt>;
+    }
+    if (status === 'answered' && question?.secret) return <Receipt>Kept as {given?.secret || question.secret.name}</Receipt>;
+    if (status === 'answered') return <Receipt>You answered · {given?.choices?.join(', ') || given?.choice || given?.text || 'answered'}</Receipt>;
     if (status === 'expired') return <Receipt tone="info">Nobody answered in time · {asked}</Receipt>;
     if (status === 'canceled') return <Receipt tone="info">Withdrawn · {asked}</Receipt>;
     if (unreadable && !question) return <Receipt tone="info">Asked · {asked}</Receipt>;
@@ -72,8 +92,9 @@ export function OwnerQuestionCard({ call }: { call: CoordinatorToolCall }) {
     const mine = question ? question.owner_can_answer !== false : true;
     const ready = !!question && !answering;
     const pick = question?.pick ?? null;
+    const fillsStep = !!(question?.connect || question?.secret);
     // A pick's choices are the account's, picked from all of it below rather than from the first few as buttons.
-    const choices = !pick && options && options.length > 0 ? options : null;
+    const choices = !pick && !fillsStep && options && options.length > 0 ? options : null;
     return (
         <div data-testid="owner-question">
             <InlineCard
@@ -107,9 +128,14 @@ export function OwnerQuestionCard({ call }: { call: CoordinatorToolCall }) {
                         <Pick pick={pick} question={asked} onAnswer={(choice) => void answer({ choice })} />
                     </div>
                 )}
+                {mine && question && fillsStep && (
+                    <div className="mt-3" data-testid="owner-question-step">
+                        <Step question={question} onAnswer={(given) => void answer(given)} disabled={!ready} />
+                    </div>
+                )}
             </InlineCard>
             {/* A written answer stands under the card, never inside it. */}
-            {mine && !pick && (!choices || inWords) && question && (
+            {mine && !pick && !fillsStep && (!choices || inWords) && question && (
                 <div className="mt-2.5 max-w-[560px]">
                     <OpenAnswer disabled={!ready} focused={inWords} onSend={(text) => void answer({ text })} />
                 </div>

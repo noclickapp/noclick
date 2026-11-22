@@ -118,6 +118,29 @@ class NumberHolder:
 
 
 @dataclass(frozen=True)
+class NumberHolderProfile:
+    """The number holder profile on file (``PhoneNumber.set_holder_profile``): who your numbers (or a
+    user's) are registered to where their country asks, the answers to what those countries ask, by
+    requirement id, and when the holder accepted having them filed in their name. A purchase files it
+    with ``holder_on_file=True``; where your approval settings make ``person_filing`` standing, an app's
+    code buying a number that files it runs with no one asked."""
+
+    holder: NumberHolder
+    requirements: Dict[str, str]
+    accepted_at: Any
+    user_id: Optional[str] = None
+    raw: Dict[str, Any] = dc_field(repr=False, default_factory=dict)
+
+    @classmethod
+    def _from(cls, raw: Optional[Dict[str, Any]]) -> Optional["NumberHolderProfile"]:
+        if not raw:
+            return None
+        holder = dict(raw.get("holder") or {})
+        return cls(NumberHolder(**{k: holder.get(k) for k in NumberHolder.__dataclass_fields__ if k in holder}),
+                   dict(raw.get("requirements") or {}), parse_time(raw.get("accepted_at")), raw.get("user_id"), raw)
+
+
+@dataclass(frozen=True)
 class NumberCoverage:
     """A country numbers are for sale in, the kinds in stock there, the kinds that can text, the kinds
     bought with documents the carrier reviews first (``documents_types``) and the kinds that ask a step
@@ -886,6 +909,7 @@ class PhoneNumber(_Object):
         type: Optional[str] = None,
         address: Optional[NumberHolder] = None,
         requirements: Optional[Mapping[str, Union[str, NumberDocument]]] = None,
+        holder_on_file: bool = False,
         name: Optional[str] = None,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
@@ -898,7 +922,10 @@ class PhoneNumber(_Object):
         (a ``noclick.NumberHolder``, with a ``phone`` where a requirement's ``kind`` is
         ``contact``). One whose country asks for documents takes ``requirements``: each
         textual and document requirement's answer by its ``id`` (the text, or a
-        ``noclick.NumberDocument`` from ``PhoneNumber.upload_document``).
+        ``noclick.NumberDocument`` from ``PhoneNumber.upload_document``). ``holder_on_file=True`` files
+        the holder profile on file in their place (``PhoneNumber.set_holder_profile``: yours, or inside
+        ``as_user`` the user's), with the answers it holds that the number's country asks; with none on
+        file it raises ``noclick.ActionRequired``.
         ``name`` is what your code calls it, unique among its user's numbers
         (``noclick.Conflict`` with ``existing_id`` when taken, before anything is bought);
         ``PhoneNumber.from_name`` finds it by that.
@@ -951,11 +978,69 @@ class PhoneNumber(_Object):
                          max_upfront_usd=max_upfront_usd if max_upfront_usd is not None
                          else (picked.upfront_usd if picked else None),
                          address=address._wire() if address is not None else None,
-                         requirements=_requirements_wire(requirements), name=name), user=scope,
+                         requirements=_requirements_wire(requirements), name=name,
+                         holder_on_file=True if holder_on_file else None), user=scope,
         )
         if (raw or {}).get("object") == "phone_number_order":
             return PhoneNumberOrder._new(raw=raw, client=client, user=scope)
         return cls._new(raw=raw, client=client, user=scope)
+
+    @synced
+    @staticmethod
+    async def holder_profile(*, user: Any = None, client: Optional[Client] = None) -> Optional[NumberHolderProfile]:
+        """The number holder profile on file: your account's, or with ``user=`` (a ``User`` or your id
+        for one) that user's.
+
+        Returns:
+            The profile, or ``None`` until one is filed.
+
+        Usage::
+
+            profile = noclick.PhoneNumber.holder_profile()
+            print(profile.holder.name if profile else "No holder on file yet")
+        """
+        return NumberHolderProfile._from(await resolve_client(client).request(
+            "GET", "/v1/phone_numbers/holder", user=user))
+
+    @synced
+    @staticmethod
+    async def set_holder_profile(
+        holder: Optional[NumberHolder],
+        *,
+        accepted_at: Any = None,
+        requirements: Optional[Mapping[str, Union[str, NumberDocument]]] = None,
+        user: Any = None,
+        client: Optional[Client] = None,
+    ) -> Optional[NumberHolderProfile]:
+        """File (or with ``None`` clear) the number holder profile: your account's, or with ``user=``
+        that user's. ``holder`` is who numbers are registered to where their country asks,
+        ``requirements`` the answers to what those countries ask by requirement id (the text, or a
+        ``noclick.NumberDocument``), and ``accepted_at`` when the holder accepted having them filed with
+        the carrier in their name (required: only the person accepts it, and your server records when
+        they did). A purchase files it with ``PhoneNumber.buy(..., holder_on_file=True)``.
+
+        Returns:
+            The profile now on file (``None`` once cleared).
+
+        Usage::
+
+            noclick.PhoneNumber.set_holder_profile(
+                noclick.NumberHolder(name="Dana Reyes", street="1 Ferry Building", city="London",
+                                     postal_code="EC1A 1BB", country="GB", phone="+447911123456"),
+                accepted_at=accepted_at,   # when Dana agreed to have her details filed
+                user="user_42")
+            number = noclick.PhoneNumber.buy(pick, max_monthly_usd=5, holder_on_file=True, user="user_42")
+        """
+        api = resolve_client(client)
+        if holder is None:
+            await api.request("DELETE", "/v1/phone_numbers/holder", user=user)
+            return None
+        if accepted_at is None:
+            raise TypeError("Pass accepted_at=: when the holder accepted having their details filed.")
+        return NumberHolderProfile._from(await api.request(
+            "PUT", "/v1/phone_numbers/holder", user=user,
+            json=compact(holder=holder._wire(), requirements=_requirements_wire(requirements),
+                         accepted_at=iso_time(accepted_at))))
 
     @synced
     @staticmethod
