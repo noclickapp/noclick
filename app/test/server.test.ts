@@ -46,12 +46,13 @@ function configure(overrides: Record<string, string> = {}) {
 beforeEach(() => {
     configure();
     api.requests.length = 0;
+    api.refused.clear();
 });
 afterEach(() => {
     vi.unstubAllEnvs();
 });
 
-const config = (): AppConfig => ({ password: PASSWORD, sessionSecret: SECRET, apiUrl: api.url });
+const config = (): AppConfig => ({ password: PASSWORD, sessionSecret: SECRET, apiUrl: api.url, keyGiven: false });
 
 /** What a page of the app's own sends with a POST: the browser names the page's origin. */
 const SAME_ORIGIN = { origin: ORIGIN, 'sec-fetch-site': 'same-origin' };
@@ -183,6 +184,75 @@ describe('before every setting is usable', () => {
         const response = await read(await send('/', { method: 'HEAD' }));
         expect(response.status).toBe(503);
         expect(response.body).toBe('');
+    });
+});
+
+describe('a copy deployed on NoClick, which gives it its key', () => {
+    // The bearer NoClick's app hosting gives a production release; nobody sets or pastes it.
+    const GIVEN = 'nk_app_release.bearer';
+    const WAITING = {
+        reason: 'account_key_waiting',
+        message: 'This app’s key to the account waits for the account’s owner to approve it.',
+        next_step: 'The owner approves it from the link NoClick sent them, or signed in to NoClick; it works at once after.',
+    };
+
+    it('says it waits for its owner’s yes in place of every page, then opens with no new release', async () => {
+        const clock = vi.spyOn(Date, 'now');
+        const started = 1_800_000_000_000;
+        clock.mockReturnValue(started);
+        configure({ NOCLICK_API_KEY: GIVEN });
+        api.refused.set(GIVEN, WAITING);
+
+        const page = await read(await send('/'));
+        expect(page.status).toBe(503);
+        expect(page.body).toContain('This app is waiting for its key');
+        expect(page.body).toContain('waits for the account’s owner to approve it');
+        expect(page.body).toContain('There is nothing to paste');
+        // Nothing asks the reader to set a variable, and the key itself is nowhere.
+        expect(page.body).not.toContain('Finish setting up this app');
+        expect(page.body).not.toContain('.env.example');
+        expect(page.body).not.toContain(GIVEN);
+        const proxied = await read(await send('/api/v1/status', { headers: BEARER }));
+        expect(proxied.status).toBe(503);
+        expect(JSON.parse(proxied.body).error).toMatchObject({ missing: ['NOCLICK_API_KEY'], next_step: expect.stringContaining('approves it from the link') });
+        // One question to the API answers every request for a few seconds.
+        expect(api.requests.filter((request) => request.url === '/v1/status')).toHaveLength(1);
+        expect(api.requests[0].headers.authorization).toBe(`Bearer ${GIVEN}`);
+
+        // The owner approves: the same release, the same bearer, and the next look finds it works.
+        api.refused.clear();
+        clock.mockReturnValue(started + 6_000);
+        const opened = await send('/');
+        expect(opened.status).toBe(302);
+        expect(opened.headers.get('location')).toBe('/login');
+        const cookie = await signIn();
+        const status = await read(await send('/api/v1/status', { headers: { ...BEARER, cookie } }));
+        expect(status.status).toBe(200);
+        expect(api.requests.at(-1)?.headers.authorization).toBe(`Bearer ${GIVEN}`);
+        clock.mockRestore();
+    });
+
+    it('goes on when the API can’t be asked, and leaves a key somebody set alone', async () => {
+        // A key somebody created and set: the app never asks where it stands.
+        expect((await send('/')).status).toBe(302);
+        expect(api.requests).toEqual([]);
+        // A given key whose standing can't be read: nothing is known, so the app opens and says so in its log.
+        const logged = consoleOutput.length;
+        configure({ NOCLICK_API_KEY: 'nk_app_other.bearer', NOCLICK_API_URL: 'http://127.0.0.1:9' });
+        expect((await send('/')).status).toBe(302);
+        const said = consoleOutput.slice(logged).join('\n');
+        expect(said).toContain('couldn\'t ask NoClick\'s API whether the key NoClick gave it works yet');
+        expect(said).not.toContain('nk_app_other');
+    });
+
+    it('says a release NoClick gave no key has none, with nothing to paste', async () => {
+        configure({ NOCLICK_API_KEY: '', NOCLICK_PROJECT_ID: 'prj_1', NOCLICK_DEPLOYMENT_TOKEN: 'nk_dep_preview' });
+        const page = await read(await send('/'));
+        expect(page.status).toBe(503);
+        expect(page.body).toContain('This app is waiting for its key');
+        expect(page.body).toContain('this release has none');
+        expect(page.body).not.toContain('developer console');
+        expect(page.body).not.toContain('nk_dep_preview');
     });
 });
 
