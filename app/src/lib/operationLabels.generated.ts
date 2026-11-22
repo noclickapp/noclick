@@ -1900,6 +1900,7 @@ scoro
 scrape-do
 scrapecreators
 scrapegraph-ai
+screenshotbase
 se-ranking
 seam
 search-api
