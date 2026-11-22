@@ -114,12 +114,13 @@ export const LAB_RAW_KEY = 'nk_live_lab5ecret0000000000000000000000000000';
 export const LAB_SETUP_CODE = 'nc_setup_lab0000000000000000000000000000';
 export const LAB_SESSION_TOKEN = 'nk_sess_lab.eyJ1c2VyIjoiYWNtZSJ9.signature';
 
-/** MCP clients a person allowed on the consent page: spending within a cap, pinned to a user, and one revoked. */
+/** MCP clients a person allowed on the consent page: spending within a cap, pinned to a user, and one revoked; and
+ *  NoClick's assistant's own connection, revoked, which its owner restores. */
 export const CONNECTED_APPS = [
     {
         object: 'connected_app',
         id: fixtureId(1, 60),
-        client: { name: 'Claude', uri: 'https://claude.ai' },
+        client: { name: 'Claude', uri: 'https://claude.ai', id: 'c-claude' },
         capabilities: ['read', 'build', 'spend'],
         spend_cap_usd_per_month: 50,
         auto_approve_under_usd: 5,
@@ -130,11 +131,12 @@ export const CONNECTED_APPS = [
         created_at: ago(9 * DAY),
         last_used_at: ago(3 * MIN),
         revoked_at: null,
+        restorable: false,
     },
     {
         object: 'connected_app',
         id: fixtureId(1, 61),
-        client: { name: 'Cursor', uri: null },
+        client: { name: 'Cursor', uri: null, id: 'c-cursor' },
         capabilities: ['read', 'build', 'deploy'],
         spend_cap_usd_per_month: null,
         auto_approve_under_usd: null,
@@ -145,11 +147,12 @@ export const CONNECTED_APPS = [
         created_at: ago(2 * DAY),
         last_used_at: null,
         revoked_at: null,
+        restorable: false,
     },
     {
         object: 'connected_app',
         id: fixtureId(1, 62),
-        client: { name: 'ChatGPT', uri: 'https://chatgpt.com' },
+        client: { name: 'ChatGPT', uri: 'https://chatgpt.com', id: 'https://chatgpt.com/connector/oauth/abc' },
         capabilities: ['read', 'spend', 'delete'],
         spend_cap_usd_per_month: 20,
         auto_approve_under_usd: null,
@@ -160,6 +163,23 @@ export const CONNECTED_APPS = [
         created_at: ago(20 * DAY),
         last_used_at: ago(6 * DAY),
         revoked_at: ago(DAY),
+        restorable: false,
+    },
+    {
+        object: 'connected_app',
+        id: fixtureId(1, 63),
+        client: { name: 'NoClick (your assistant)', uri: null, id: 'noclick:coordinator' },
+        capabilities: ['read', 'build', 'deploy', 'spend', 'delete'],
+        spend_cap_usd_per_month: 25,
+        auto_approve_under_usd: null,
+        spent_usd_this_month: 1.2,
+        user_id: null,
+        profile: 'default',
+        resource: 'https://mcp.noclick.com',
+        created_at: ago(30 * DAY),
+        last_used_at: ago(2 * DAY),
+        revoked_at: ago(HOUR),
+        restorable: true,
     },
 ] as const;
 
@@ -239,6 +259,18 @@ export const routes: FixtureRoute[] = [
             const app = CONNECTED_APPS.find((a) => a.id === r.params.id);
             if (!app) return apiError(404, 'not_found', `No connected app ${r.params.id}.`);
             return ok({ ...app, revoked_at: app.revoked_at ?? new Date(FIXTURE_NOW_MS).toISOString() });
+        },
+    },
+    {
+        method: 'POST',
+        path: '/v1/connected_apps/:id/restore',
+        reply: (r) => {
+            const app = CONNECTED_APPS.find((a) => a.id === r.params.id);
+            if (!app) return apiError(404, 'not_found', `No connected app ${r.params.id}.`);
+            if (app.revoked_at && !app.restorable) {
+                return apiError(409, 'conflict', `${app.client.name} is a client you connected, so it isn't restored: connect it again.`);
+            }
+            return ok({ ...app, revoked_at: null });
         },
     },
 
