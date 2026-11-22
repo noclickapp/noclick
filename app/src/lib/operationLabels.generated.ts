@@ -1158,6 +1158,7 @@ fireberry
 firecrawl
 firestore
 firmable
+fivetran
 fixer
 fixer-io
 flashquotes
