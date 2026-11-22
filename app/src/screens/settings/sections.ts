@@ -1,10 +1,10 @@
 // Settings' sections: one table that Settings lists and the command palette jumps to, with who sees each, and the
 // groups the list shows them in. Whoever draws Settings says what it knows of the account (`SectionContext`); which
 // sections show follows from that alone (`visibleSections`).
-import { BarChart3, Bell, Brain, Building2, Code2, CreditCard, Eye, Smartphone, type LucideIcon } from 'lucide-react';
+import { BarChart3, Bell, Brain, Building2, Code2, CreditCard, Eye, Layers, Smartphone, type LucideIcon } from 'lucide-react';
 
 /** A section's id, as the address's `?section=` names it. */
-export type SettingsSectionId = 'usage' | 'billing' | 'organization' | 'skills' | 'notifications' | 'phone' | 'popups' | 'developer';
+export type SettingsSectionId = 'usage' | 'workstreams' | 'billing' | 'organization' | 'skills' | 'notifications' | 'phone' | 'popups' | 'developer';
 
 /** What decides whether a section shows. */
 export interface SectionContext {
@@ -33,6 +33,13 @@ export const SETTINGS_SECTION_DEFS: readonly SettingsSectionDef[] = [
         description: 'Track AI, compute, and resource costs',
         icon: BarChart3,
         keywords: 'costs spend spending credits money',
+    },
+    {
+        id: 'workstreams',
+        label: 'Workstreams',
+        description: 'Rename and archive the lines of work spend is counted under',
+        icon: Layers,
+        keywords: 'workstream projects lines of work rename archive merge spend',
     },
     {
         id: 'billing',
@@ -89,7 +96,7 @@ export const SETTINGS_SECTION_DEFS: readonly SettingsSectionDef[] = [
 
 /** The section list's groups, in order; a section shows in the first that names it. */
 export const SETTINGS_GROUPS: readonly { label: string; sections: readonly SettingsSectionId[] }[] = [
-    { label: 'Workspace', sections: ['usage', 'billing', 'organization'] },
+    { label: 'Workspace', sections: ['usage', 'workstreams', 'billing', 'organization'] },
     { label: 'Preferences', sections: ['notifications', 'phone', 'popups'] },
     { label: 'Build', sections: ['skills', 'developer'] },
 ];
