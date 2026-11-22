@@ -1339,6 +1339,7 @@ imagekit-io
 imagerouter
 imap
 immich
+implisense-api
 inblog
 incident-io
 increase
