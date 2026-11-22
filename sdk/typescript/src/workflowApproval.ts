@@ -1,9 +1,20 @@
 /**
  * A workflow's Approval steps: the runs that wait at one for a yes or a no, read and answered from your own code. A
- * run that reaches an Approval step waits there, for 7 days at most. NoClick asks your account's owner to answer it:
- * a one-tap link on the app they text NoClick on (else by email), or a card in the web chat while they're watching
- * it. Your code may answer it too, with one of your account's secret keys that names the `approvals:answer` scope (a
- * key with every scope, `*`, holds it only when it's named too).
+ * run that reaches an Approval step waits there, for 7 days unless the step says otherwise. By default NoClick asks
+ * your account's owner to answer it: a one-tap link on the app they text NoClick on (else by email), or a card in
+ * the web chat while they're watching it. A step can name its own approver, the same shapes your account's approval
+ * routing takes (`ApprovalPolicy.set({ routing })`, which an unset step follows): a person (`{ email }`), one of
+ * your users (`{ user_id }`), one of your agents (`{ agent_id }`: it answers with its `approvals__answer` tool,
+ * never on a run its own turn started) or your code (`{ code: true }`); how long they have (`expires_in_s`, 60
+ * seconds to 7 days); and what happens when they don't answer (`on_timeout`: `"decline"` ends the run,
+ * `"escalate"` asks the next approver up, finally the owner):
+ *
+ *     await invoices.addStep("approval", { settings: {
+ *       title: "Pay this invoice?", approver: { agent_id: "Finance lead" }, on_timeout: "escalate",
+ *       expires_in_s: 3600 } });
+ *
+ * Whoever it waits on, your code may answer it too, with one of your account's secret keys that names the
+ * `approvals:answer` scope (a key with every scope, `*`, holds it only when it's named too).
  *
  *     const invoices = Workflow.fromName("Invoices");
  *     for (const approval of await invoices.approvals({ status: "pending" })) {
@@ -11,7 +22,8 @@
  *     }
  *
  * Whoever answers first decides: the run goes on once, down the step's approved or rejected branch, with the form's
- * values as they were answered, and every later answer throws `Conflict`, as one after the 7 days throws `Expired`.
+ * values as they were answered, and every later answer throws `Conflict`, as one after its run ended unanswered
+ * throws `Expired`.
  *
  * Rather than poll, your code can hear each one: a webhook subscribed to `workflow.approval.requested` gets it as its
  * run starts waiting, and to `workflow.approval.decided` as it's answered. The event's `data` is the approval as it
@@ -112,23 +124,39 @@ export class WorkflowApproval extends ApiObject {
   get createdAt(): Date | null {
     return parseTime(this._field("created_at"));
   }
-  /** When it lapses unanswered (7 days after it was asked). */
+  /** When the approver it waits on must answer by (7 days after it was asked, unless the step's `expires_in_s` says
+   *  otherwise; an escalation gives the next approver theirs). */
   get expiresAt(): Date | null {
     return parseTime(this._field("expires_at"));
+  }
+  /** Who it waits on (or waited on last): `kind` `owner`, `person` (with `email`), `user` (`user_id`), `agent`
+   *  (`agent_id`) or `code`: the step's approver, else your account's, else the owner. */
+  get approver(): JsonObject {
+    return this._field("approver");
+  }
+  /** What happens if they don't answer by `expiresAt`: `decline` (the run ends) or `escalate` (the next approver up
+   *  answers it, finally the owner). */
+  get onTimeout(): "decline" | "escalate" | null {
+    return this._field("on_timeout");
   }
   get decidedAt(): Date | null {
     return parseTime(this._field("decided_at"));
   }
   /**
-   * Who decided: `owner` (signed in, or from NoClick's link or the web chat), `code` or `app` (someone who may edit
-   * the workflow, in the NoClick app); null while it waits.
+   * Who decided: `owner` (signed in, or from NoClick's link or the web chat), `person` (a person or user named
+   * approver, from the link NoClick emailed them), `agent` (an agent named approver), `code` or `app` (someone who
+   * may edit the workflow, in the NoClick app); null while it waits.
    */
-  get decidedBy(): "owner" | "code" | "app" | null {
+  get decidedBy(): "owner" | "person" | "agent" | "code" | "app" | null {
     return this._field("decided_by");
   }
   /** The key whose code decided (`key_id`, `key_name`); null otherwise. */
   get decidedByKey(): { key_id: string; key_name: string | null } | null {
     return this._field("decided_by_key");
+  }
+  /** The agent named approver that decided (`agent_id`, `name`); null otherwise. */
+  get decidedByAgent(): { agent_id: string; name: string | null } | null {
+    return this._field("decided_by_agent");
   }
   /** What whoever decided wrote with it. */
   get note(): string | null {
@@ -159,7 +187,7 @@ export class WorkflowApproval extends ApiObject {
    * Approve it from your own code, with one of your account's secret keys that names the `approvals:answer` scope:
    * the run goes on down the step's approved branch, once, with `values` (by field name) as the form's values where
    * you give them. Throws `PermissionDenied` for a key without the scope or one acting for a user, `Conflict` once
-   * it was answered, and `Expired` after its 7 days.
+   * it was answered, and `Expired` once it lapsed unanswered.
    */
   approve(options: WorkflowApprovalAnswer = {}): Promise<this> {
     return this.answer(true, options);
