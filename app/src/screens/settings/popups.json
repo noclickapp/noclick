@@ -1,0 +1,17 @@
+[
+    {
+        "key": "run_results",
+        "label": "Run results",
+        "description": "The outputs popup shown after a workflow run finishes."
+    },
+    {
+        "key": "invite_banner",
+        "label": "Collaboration invite banner",
+        "description": "The nudge to share a live invite link for the workflow."
+    },
+    {
+        "key": "publish_banner",
+        "label": "Publish banner",
+        "description": "The nudge to publish your interface to the web."
+    }
+]
