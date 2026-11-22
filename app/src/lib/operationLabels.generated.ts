@@ -946,6 +946,7 @@ clockify
 cloro
 closum
 cloudbeds
+cloudbees
 cloudflare
 cloudsmith
 cloudtalk
