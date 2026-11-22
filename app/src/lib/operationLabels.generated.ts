@@ -2005,6 +2005,7 @@ smol-machines
 smoove
 smsapi
 smsglobal
+smsmobileapi
 smtp2go
 smtping
 snapchat
