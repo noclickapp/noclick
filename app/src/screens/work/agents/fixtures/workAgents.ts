@@ -488,6 +488,8 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
     let made = 0;
     let move: Json | null = null;
     const created = { connections: [] as Json[], inboxes: [] as Json[], members: [] as Json[] };
+    /** What's shared with a space, as GET /v1/workspaces/{id}/resources lists it. */
+    const spaceLinks: Json[] = [];
 
     const sandboxFiles: Record<string, string> = {
         '/workspace/notes.md': '# Wirefern\n\nRetries stop after the first failure since Friday.\n',
@@ -710,13 +712,36 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
         }
         if (method === 'GET' && path === `/v1/workspaces/${SPACE_ID}/noclick` && options.spaceNoClick) return json({ agent_id: SPACE_NOCLICK_ID, label: 'NoClick · NoClick' });
         // Shared with a space, a connection is found as the platform finds one: an account connected in the app by
-        // `credential:<id>`, a named one by its name or id, and the link keeps its id.
+        // `credential:<id>`, a named one by its name or id, and the link keeps its id; one shared already is refused.
         const sharing = path.match(/^\/v1\/workspaces\/([^/]+)\/resources$/);
         if (sharing && method === 'POST' && body.kind === 'connection') {
             const ref = String(body.ref);
             const found = listedConnections().find((c) => (ref.startsWith('credential:') ? c.origin === 'app' && c.id === ref : c.origin !== 'app' && (c.name === ref || c.id === ref)));
             if (!found) return notFound(`No connection '${ref}' for this account.`);
-            return json({ object: 'workspace_resource', id: `wr-${++made}`, workspace_id: sharing[1], kind: 'connection', ref: found.id, name: found.name, members_level: 'use', guests_level: 'none', levels: ['none', 'agents', 'use'], added_by: { type: 'account', id: null, name: 'owner' }, added_at: ago(0) }, 201);
+            const existing = spaceLinks.find((l) => l.workspace_id === sharing[1] && l.kind === 'connection' && l.ref === found.id);
+            if (existing) return json({ error: { type: 'conflict', message: 'That connection is already shared with this workspace.', existing_id: existing.id } }, 409);
+            const link = { object: 'workspace_resource', id: `wr-${++made}`, workspace_id: sharing[1], kind: 'connection', ref: found.id, name: found.name, members_level: 'use', guests_level: 'none', levels: ['none', 'agents', 'use'], added_by: { type: 'account', id: null, name: 'owner' }, added_at: ago(0) };
+            spaceLinks.push(link);
+            return json(link, 201);
+        }
+        if (sharing && method === 'GET') return list(spaceLinks.filter((l) => l.workspace_id === sharing[1]));
+        // The space's Resources tab in one read, as its owner reads it: its agents, and what's shared with it under the
+        // ref its link keeps.
+        const summary = path.match(/^\/v1\/workspaces\/([^/]+)\/summary$/);
+        if (summary && method === 'GET') {
+            const linked = (kind: string) =>
+                spaceLinks.filter((l) => l.workspace_id === summary[1] && l.kind === kind).map((l) => ({ id: l.id, ref: l.ref, name: l.name, linked: true, members_level: l.members_level, guests_level: l.guests_level, level: 'use', used_by: [] }));
+            const none = { count: 0, items: [] };
+            return json({
+                object: 'workspace_summary',
+                workspace_id: summary[1],
+                kinds: {
+                    agents: { count: agents.length, working: 0, waiting: 0, idle: agents.length, items: agents.map((a) => ({ id: a.id, name: a.name, noclick: a.noclick === true, state: 'idle', harness: a.harness, model: a.model })) },
+                    machines: { count: 0, up: 0, items: [], shared: [] },
+                    connections: { count: linked('connection').length, items: linked('connection') },
+                    ...Object.fromEntries(['channels', 'numbers', 'email', 'skills', 'memories', 'websites', 'databases', 'files', 'code'].map((k) => [k, none])),
+                },
+            });
         }
         const space = path.match(/^\/v1\/workspaces\/([^/]+)(\/members)?$/);
         if (space && method === 'GET' && !space[2]) return json({ object: 'workspace', id: space[1], name: 'NoClick', status: 'active', members: [], channel_count: 2, created_at: ago(MIN) });

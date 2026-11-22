@@ -90,6 +90,11 @@ class HoldKind:
     defaults: Dict[str, str]
     #: Whether your account may switch it (``ApprovalPolicy.set``).
     settable: bool = False
+    #: What it may be set to: most kinds ``allow``, ``ask`` or ``deny``; terms a person accepts and what an app's code
+    #: files in a person's name (``terms``, ``person_filing``) ``ask``, ``standing`` (runs with what it needs on file,
+    #: a registrant's acceptance or a number holder's profile, else refused with the step that files it, never held)
+    #: or ``deny``.
+    dispositions: List[str] = dc_field(default_factory=list)
     #: What your account set it to (``disposition``, ``under_usd``, ``until``, ``effective_at``, ``pending``), or None.
     setting: Optional[Dict[str, Any]] = None
     #: The loosest a narrower scope may set it to, or None.
@@ -232,7 +237,8 @@ class ApprovalPolicy:
         return cls(
             kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
                             outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]),
-                            settable=bool(k.get("settable")), setting=k.get("setting"), ceiling=k.get("ceiling"),
+                            settable=bool(k.get("settable")), dispositions=list(k.get("dispositions") or []),
+                            setting=k.get("setting"), ceiling=k.get("ceiling"),
                             effective=dict(k.get("effective") or k["defaults"]), own=k.get("own"))
                    for k in raw.get("kinds") or []],
             callers=dict(raw.get("callers") or {}), raw=raw, spend_cap_set=bool(raw.get("spend_cap_set")),
@@ -316,9 +322,10 @@ class ApprovalPolicy:
         routing: Any = UNSET, client: Optional[Client] = None,
     ) -> "ApprovalPolicy":
         """Switch what NoClick holds for a person, for your whole account, from the kinds a ``get`` lists as
-        ``settable``: each named kind to ``"allow"``, ``"ask"`` or ``"deny"``, a dict with ``disposition`` (and for a
-        purchase ``under_usd``, allowed at or under it, asked above; any kind may take ``until``, when it lapses back),
-        or None for NoClick's default. Kinds you don't name stay as they are. ``ceilings`` are the loosest a narrower
+        ``settable``: each named kind to ``"allow"``, ``"ask"`` or ``"deny"`` (``terms`` and ``person_filing`` take
+        ``"standing"`` in place of ``"allow"``: what's on file decides, never a person), a dict with ``disposition``
+        (and for a purchase ``under_usd``, allowed at or under it, asked above; any kind may take ``until``, when it
+        lapses back), or None for NoClick's default. Kinds you don't name stay as they are. ``ceilings`` are the loosest a narrower
         scope (a key, an agent) may set.
 
         ``routing`` names who answers what your account's callers hold, in place of the owner: ``approver``
@@ -339,8 +346,8 @@ class ApprovalPolicy:
         Raises:
             noclick.PermissionDenied: the caller may not switch them, or loosening a purchase or a deletion past the
                 default while the account has no monthly spending cap (``reason`` ``spend_cap_required``).
-            noclick.InvalidRequest: a kind not settable yet, ``under_usd`` on anything but a purchase allowed, or a
-                setting looser than its ceiling.
+            noclick.InvalidRequest: a kind not settable yet, a disposition the kind doesn't take, ``under_usd`` on
+                anything but a purchase allowed, or a setting looser than its ceiling.
 
         Usage::
 
@@ -348,6 +355,9 @@ class ApprovalPolicy:
                 "purchase": {"disposition": "allow", "under_usd": 20},
                 "purge": "allow",
                 "outside_outbound": "allow",
+                # An app's code buys domains and numbers with the registrant and holder on file, unasked.
+                "terms": "standing",
+                "person_filing": "standing",
             })
             noclick.ApprovalPolicy.set(routing={"approver": {"agent_id": "supervisor"}, "on_timeout": "escalate"})
         """
