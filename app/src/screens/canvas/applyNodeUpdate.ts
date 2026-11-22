@@ -88,6 +88,9 @@ const TOP_LEVEL_FIELDS: ReadonlyArray<{
     { name: '_lastRunStatus', persist: false, restore: false },
     { name: '_lastRunAt', persist: false, restore: false },
     { name: '_lastRunError', persist: false, restore: false },
+    // The paths of the settings a read of the workflow held back (a secret: a key, a token, a header's value), which
+    // the form shows as saved and unread. A save that leaves one out keeps it, so it's never written back.
+    { name: 'withheld', persist: false, restore: false },
 
     // Display-only per-item sample set when "Loop over each item" injects an
     // iteration node, so its panel can offer draggable {{id.item.*}} fields before
