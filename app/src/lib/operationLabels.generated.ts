@@ -1940,6 +1940,7 @@ sendbird
 sendfox
 sendgrid
 sendlane
+sendsafely
 sendspark
 sendx
 senta
