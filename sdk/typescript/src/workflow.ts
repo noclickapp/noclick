@@ -1688,7 +1688,8 @@ export class Step extends ApiObject {
  *
  * A secret is never read back, and writing a step or the settings back without one keeps it: `withheld` names, by
  * step id, the paths of the settings left out (`api_key`, `auth.password`, `headers[0].value`), `settingsWithheld`
- * those of the workflow's own settings (`variable_definitions[1].value`), and `variablesWithheld` the graph's own
+ * those of the workflow's own settings (`variable_definitions[1].value`: a variable's value, whatever its name; one
+ * with no value yet reads as blank, so you can tell which still need one), and `variablesWithheld` the graph's own
  * variables. The graph a `Conflict` carries holds the steps and edges alone: its `name`, `description`,
  * `settings` and `settingsWithheld` are `null`. `displayMetadata` is what the app shows of the workflow (its
  * canvas's viewport, the step open in its panel), read with `graph()`: never part of a version.

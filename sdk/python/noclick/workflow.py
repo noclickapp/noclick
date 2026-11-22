@@ -1374,7 +1374,8 @@ class WorkflowGraph:
     A secret is never read back, and writing a step or the settings back without one keeps
     it: ``withheld`` names, by step id, the paths of the settings left out
     (``api_key``, ``auth.password``, ``headers[0].value``), ``settings_withheld`` those of
-    the workflow's own settings (``variable_definitions[1].value``), and
+    the workflow's own settings (``variable_definitions[1].value``: a variable's value, whatever its
+    name; one with no value yet reads as blank, so you can tell which still need one), and
     ``variables_withheld`` the graph's own variables. The graph a ``noclick.Conflict``
     carries holds the steps and edges alone: its ``name``, ``description``, ``settings``
     and ``settings_withheld`` are ``None``.
