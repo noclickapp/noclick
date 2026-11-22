@@ -715,7 +715,7 @@ gotify gotowebinar gov grafana granola graphhopper greenhouse griptape grocy gro
 hackmd haku halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here
 hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni
 hlr-lookup holded homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request
-hubfit hubflo hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed
+hubfit hubflo hubhopper hubspot hubstaff humanitec humanitix humanloop hunter huntress hypeauditor hyperbrowser hyros iclosed
 icypeas id4i idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts imagekit-io imagerouter imap
 immich inblog incident-io increase infakt infinity infisical inforumobile infraspeak inmobalia-crm
 inmobile-sms-gateway insightly instagram instantly instapaper instatus intelliprint intercom investorbase
