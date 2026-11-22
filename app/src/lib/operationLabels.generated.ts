@@ -700,7 +700,7 @@ enginemailer enrich-layer env0 eodhd-apis epos-now esputnik etermin etsy event-t
 everyaction evetech evoliz evolution-go exa excel exceptionless exercisecom exlibrisgroup exoscale expensify
 explorium extend extole extrovert ez-texting ezeep-printing ezekia facebook facecheck factorial facturadirecta fal
 faraday fareharbor farmbrite fathom fatture-in-cloud feathr fec fellow felt fiber fidel-api figma figshare filevine
-fillout financial-datasets-ai findymail finmo finnhub fireberry firecrawl firestore firmable fixer fixer-io
+fillout financial-datasets-ai findymail finmo finnhub fireberry firecrawl firestore firmable fivetran fixer fixer-io
 flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk followupboss fomo force24 forcemanager
 forgejo formaloo formbricks formcarry formspark formstack formstep fountain foursquare fourthwall frame-io-v4 freee
 freshsales freshteam front fulcrum fullenrich fullstory function-point fundraise-up fungenerators funnelchat
