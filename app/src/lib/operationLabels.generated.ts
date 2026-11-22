@@ -1156,6 +1156,7 @@ explorium
 extend
 extole
 extrovert
+extruct-ai
 ez-texting
 ezeep-printing
 ezekia
