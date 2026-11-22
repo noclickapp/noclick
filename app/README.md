@@ -184,12 +184,16 @@ A host fills what it keeps in its sidebar and menu:
 
 The workflow canvas's (`src/screens/canvas/slots.ts`): the canvas isn't one of this app's pages yet, and these are the
 parts of it only a host has. Its editing surface is the app's own (`WorkflowCanvas.tsx` over `surface/`): steps selected,
-added from the palette (`GET /v1/step_types`), moved, removed and connected as the workflow's rules allow
-(`surface/connectionRules.ts`), undone and done again from the keyboard, and other writers' changes followed through the
-account's change stream (`graph/followCommits.ts`), so it renders inside the app's live frames. Connecting the account a
-step or an agent needs is the shared `connect.app` and `connect.model`. What's heavy in a default (the SDK, the plain
-step's drawing) loads the first time it's used, so a host that fills a slot never downloads it: whatever reads one of
-these imports them all.
+added from the palette (on their own, after a step from its "+", into a connection from its "+": `useClickToAddNode.ts`),
+moved, removed and connected as the workflow's rules allow (`surface/connectionRules.ts`), copied, cut, pasted and
+duplicated (`useWorkflowCopyPaste.ts`, `useCanvasContextMenu.tsx`: the right-click menus on the canvas, a step and a
+selection), laid out (`autolayout.ts`), saved to a file and read from one (`workflowFile.ts`), undone and done again
+from the keyboard, and other writers' changes followed through the account's change stream (`graph/followCommits.ts`),
+so it renders inside the app's live frames. A copy and a saved file carry a step's settings without their secrets
+(`stepSecrets.ts`: what a read of the workflow would show of the step); its accounts go along by their ids. Connecting
+the account a step or an agent needs is the shared `connect.app` and `connect.model`. What's heavy in a default (the
+SDK, the plain step's drawing, the palette's listing) loads the first time it's used, so a host that fills a slot never
+downloads it: whatever reads one of these imports them all.
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -203,6 +207,8 @@ these imports them all.
 | `canvas.step.roles` | What a step is by its type, for its node, handles and hints and the connections it takes: a trigger, an agent's tool, a step nothing connects to, an older type's new name | What `GET /v1/step_types/{type}` says, read once a session and drawn again as each lands |
 | `canvas.step.editing` | Which steps a build is working on, to open their cards while it lands | None known: a build the canvas follows marks the steps it adds in their data, which opens them all the same |
 | `canvas.note.markdown` | A sticky note's text, drawn from its Markdown | Drawn as a code repository's README is |
+| `canvas.palette` | The palette a step is added from, wherever the canvas frames it (with the canvas's own search box, or its own) | Every kind of step the platform lists (`GET /v1/step_types`; with a search, its best matches by name or by what they do), loaded when it first opens |
+| `canvas.clipboard` | What a copied step's settings carry onto the clipboard and into a saved file, and what else a paste and a file are read as beyond the canvas's own format | A step's settings without their secrets; the canvas's own format alone |
 
 Work's are listed under [Work](#work).
 

@@ -135,9 +135,11 @@ describe('the app', () => {
         expect(uses(modules).declared.map((use) => use.name).sort()).toEqual([
             'canvas.agentChat',
             'canvas.builder',
+            'canvas.clipboard',
             'canvas.graph.saves',
             'canvas.interface',
             'canvas.note.markdown',
+            'canvas.palette',
             'canvas.presence',
             'canvas.share',
             'canvas.step.accounts',

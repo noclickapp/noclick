@@ -3,6 +3,7 @@
 // The SDK loads with the first call (standardsSdk.ts).
 import { lazy, Suspense, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { ArrowUpRight, LayoutGrid, MessageCircle, Share2 } from 'lucide-react';
+import type { Node } from '@xyflow/react';
 import type { NoClick, StepType } from 'noclick';
 import { useClient } from '@/sdk/client';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
@@ -10,11 +11,13 @@ import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
 import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { DIALOG_MARK, ShellDialog } from '@/ui/ShellDialog';
 import { cn } from '@/ui/utils';
+import { buildSaveConfig } from './applyNodeUpdate';
 import { useStepScope, type StepReads, type StepScope } from './form/reads';
 import { displayStrategyOf } from './form/strategyDefaults';
 import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { Presence } from './presence';
-import type { CanvasBlockProps, CanvasBuilderProps, CanvasInterfaceProps, CanvasPresence, CanvasShareProps, StepSchemaRead, Track } from './slots';
+import type { CanvasBlockProps, CanvasBuilderProps, CanvasInterfaceProps, CanvasPaletteProps, CanvasPresence, CanvasShareProps, StepSchemaRead, Track } from './slots';
+import { withoutSecrets } from './stepSecrets';
 
 /** NoClick's own site, as the console the canvas is drawn in names it (a canvas outside one links to noclick.com). */
 function useSite(): string {
@@ -329,4 +332,27 @@ export function noclickStepLink(workflowId: string, nodeId: string, fieldKey?: s
     url.searchParams.set('node', nodeId);
     if (fieldKey) url.searchParams.set('field', fieldKey);
     return url.toString();
+}
+
+// ── adding a step ───────────────────────────────────────────────────────────
+
+// Loaded when the palette first opens: it lists the platform's step types with the client.
+const StepPalette = lazy(() => import('./surface/StepPalette'));
+
+/** Every kind of step the platform lists, searched by name or by what it does (surface/StepPalette.tsx). */
+export function PaletteOfStepTypes(props: CanvasPaletteProps) {
+    return (
+        <Suspense fallback={null}>
+            <StepPalette {...props} />
+        </Suspense>
+    );
+}
+
+// ── the clipboard ───────────────────────────────────────────────────────────
+
+/** A step's settings as a copy carries them: what it holds, without its secrets. Its type's schema, where this
+ *  session has read it, says which settings are secrets beyond what their names say. */
+export function useSettingsWithoutSecrets(): (node: Node) => Record<string, unknown> {
+    const client = useClient();
+    return useMemo(() => (node: Node) => withoutSecrets(buildSaveConfig(node), node.type ? knownStepType(client, node.type)?.schema : undefined), [client]);
 }

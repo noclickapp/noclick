@@ -3,7 +3,8 @@
 // graph: the store that saves it, graph/liveGraphStore.ts; its drawing: the steps and connections, nodes/ and edges/;
 // and its editing surface with the palette, surface/ and WorkflowCanvas.tsx) opens a workflow, edits it in each way a
 // canvas does, meets another writer's change, closes, and draws what it holds, and the canvas on its own adds a step
-// from the palette, connects, moves, deletes and brings back steps and follows another writer's commit, over fixtures
+// from the palette, connects, moves, copies and pastes, deletes and brings back steps and follows another writer's
+// commit, over fixtures
 // that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
 // exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
@@ -49,10 +50,19 @@ interface Call {
 /** Requests that left the app's client: a `fetch` of its own, an XHR, a socket. */
 const offClient: string[] = [];
 
-// The plain drawing loads with the first step a canvas draws (drawingStandards.tsx), and the SDK with the standards'
-// first read: loaded once here, with real timers, so each canvas below draws its steps rather than their outlines.
+/** What the canvas last put on the clipboard. */
+const clipboard = { text: '' };
+
+// The plain drawing loads with the first step a canvas draws (drawingStandards.tsx), the SDK with the standards' first
+// read and the palette when it first opens: loaded once here, with real timers, so each canvas below draws its steps
+// rather than their outlines.
 beforeAll(async () => {
     await import('./standardsSdk');
+    await import('./surface/StepPalette');
+    Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText: async (text: string) => void (clipboard.text = text), readText: async () => clipboard.text },
+    });
     const { result, unmount } = renderHook(() => standing(STEP_DRAWING).useLoaded([]));
     await waitFor(() => expect(result.current).toBe(true));
     unmount();
@@ -217,8 +227,9 @@ async function press(target: Document | Window, init: KeyboardEventInit) {
     });
 }
 
-/** The canvas on its own (WorkflowCanvas.tsx): opened, a step added from the palette, two connected, one moved, one
- *  deleted from the keyboard, brought back and deleted again, another writer's commit followed, then closed. */
+/** The canvas on its own (WorkflowCanvas.tsx): opened, a step added from the palette, two connected, one moved, two
+ *  copied and pasted, one deleted from the keyboard, brought back and deleted again, another writer's commit followed,
+ *  then closed. */
 async function editing(actsAs: 'owner' | 'key'): Promise<Call[]> {
     const calls: Call[] = [];
     let server = stored();
@@ -266,12 +277,30 @@ async function editing(actsAs: 'owner' | 'key'): Promise<Call[]> {
     await act(() => (surface().onNodesChange as (c: object[]) => void)([{ type: 'position', id: 'victim', position: { x: 980, y: 60 }, dragging: true }]));
     await act(() => (surface().onNodesChange as (c: object[]) => void)([{ type: 'position', id: 'victim', position: { x: 1000, y: 80 }, dragging: false }]));
     await act(() => settle(2500));
-    await act(() =>
-        (surface().onNodesChange as (c: object[]) => void)([
-            { type: 'select', id: added!.id, selected: false },
-            { type: 'select', id: 'victim', selected: true },
-        ])
-    );
+
+    // The agent and the step after it copied and pasted: the copy holds none of their secrets, and the pasted steps
+    // keep their accounts by id.
+    const choose = (chosen: string[]) =>
+        act(() => (surface().onNodesChange as (c: object[]) => void)(graphRecords[WORKFLOW].nodes.map((n) => ({ type: 'select', id: n.id, selected: chosen.includes(n.id) }))));
+    await choose(['agent', 'slack']);
+    await act(async () => {
+        window.dispatchEvent(new Event('copy', { bubbles: true, cancelable: true }));
+        await Promise.resolve();
+    });
+    const copied = JSON.parse(clipboard.text) as { nodes: Array<{ id: string; config: Json }>; edges: Json[] };
+    expect(copied.nodes.map((n) => n.id)).toEqual(['agent', 'slack']);
+    expect(copied.nodes[0].config.credentialIds).toEqual({ agent_openai: 'cred_openai' });
+    for (const secret of Object.values(SECRETS)) expect(clipboard.text).not.toContain(secret);
+    for (const key of ['api_key', 'signing_secret', 'token']) expect(keysIn(copied)).not.toContain(key);
+    await act(() => {
+        const event = new Event('paste', { bubbles: true, cancelable: true });
+        Object.assign(event, { clipboardData: { getData: () => clipboard.text } });
+        window.dispatchEvent(event);
+    });
+    await act(() => settle(2500));
+    expect(graphRecords[WORKFLOW].nodes.filter((n) => n.type === 'agent')).toHaveLength(2);
+
+    await choose(['victim']);
     // Each lands in the undo history a task later.
     await press(document, { key: 'Backspace' });
     await act(() => settle(0));
@@ -359,16 +388,24 @@ describe('the canvas acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('edits on its own, adding from the palette, without asking for an owner’s call or sending a value', async () => {
+    it('edits on its own, adding from the palette and pasting a copy, without asking for an owner’s call or sending a value', async () => {
         const calls = await editing('key');
         const edits = calls.filter((c) => asLine(c) === `POST /v1/workflows/${WORKFLOW}/edits`);
         expect(edits.map((e) => (e.body.ops as Json[]).map((op) => op.op).sort())).toEqual([
             ['add_step', 'connect', 'move'],
+            ['add_step', 'add_step', 'connect', 'set_connection', 'set_connection'],
             ['remove_step'],
             ['move'],
         ]);
         // Each on the version the last left; closing sends the last change at once, on the version after the commit.
-        expect(edits.map((e) => e.body.if_version ?? null)).toEqual([4, 5, 7]);
+        expect(edits.map((e) => e.body.if_version ?? null)).toEqual([4, 5, 6, 8]);
+        // The pasted steps: new ids, their settings as copied, each account by its id.
+        const pasted = edits[1].body.ops as Json[];
+        expect(pasted.filter((op) => op.op === 'add_step').map((op) => op.type)).toEqual(['agent', 'automation-slack']);
+        expect(pasted.filter((op) => op.op === 'set_connection').map((op) => [op.slot, op.connection])).toEqual([
+            ['agent_openai', 'cred_openai'],
+            ['slack_oauth', 'cred_slack'],
+        ]);
         expect(calls.filter((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/graph`)).toHaveLength(2);
         expect(calls.some((c) => asLine(c) === 'GET /v1/step_types')).toBe(true);
         for (const call of calls) expect(isOwnerOnly(call.method, call.path), asLine(call)).toBe(false);

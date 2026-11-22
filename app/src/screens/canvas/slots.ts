@@ -3,10 +3,12 @@
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
 // people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; what a step's
 // settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
-// what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); and how the
-// graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts). A host fills them before the canvas
-// first draws (some hold hooks the canvas and the form call).
+// what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); how the
+// graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts); the palette steps are added from;
+// and what a copy carries and a paste reads (`surface/`). A host fills them before the canvas first draws (some hold
+// hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
+import type { Node } from '@xyflow/react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
 import type { AccountCredential } from '@/screens/connections/model';
 import { slot } from '@/slots';
@@ -18,6 +20,8 @@ import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
 import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
 import type { NodeDefinition, NodeDimensions } from './nodes/types';
 import type { AiEditInfo, Collaborator, Presence, PresenceOptions } from './presence';
+import type { ClipboardParser } from './surface/clipboard/types';
+import type { AddStepRequest } from './surface/useClickToAddNode';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
 import { catalogOutline, NoteAsReadme, plainDrawingOf, usePlainDrawingLoaded, useV1StepRoles } from './drawingStandards';
 import {
@@ -26,9 +30,11 @@ import {
     InterfaceOnNoClick,
     NOBODY_ELSE,
     noclickStepLink,
+    PaletteOfStepTypes,
     ShareOnNoClick,
     standardDisplayStrategy,
     useNoTrack,
+    useSettingsWithoutSecrets,
     useV1ConnectionMissing,
     useV1StepReads,
     useV1StepSchema,
@@ -474,3 +480,39 @@ export const NOTE_MARKDOWN = slot<ComponentType<{ content: string; className?: s
  *  for another writer. The standard saves every record as the edits that changed it (`POST
  *  /v1/workflows/{id}/edits`), reads `GET /v1/workflows/{id}/graph` and never waits. */
 export const GRAPH_SAVES = slot<GraphSaves>('canvas.graph.saves', V1_GRAPH_SAVES);
+
+// ── adding a step ───────────────────────────────────────────────────────────
+
+export interface CanvasPaletteProps {
+    /** What's searched for, where the canvas around the palette holds the search box; undefined where the palette
+     *  holds its own. */
+    query?: string;
+    /** Empties the canvas's search box: offered where a search finds nothing, and done after a pick from the keyboard. */
+    onClearQuery?: () => void;
+    /** Adds the step picked, with what the search seeded (surface/useClickToAddNode.ts places and connects it). */
+    onAdd: (step: AddStepRequest) => void;
+    /** Closes the palette, where the canvas draws it over itself. */
+    onClose?: () => void;
+}
+
+/** The palette steps are added from: every kind of step a workflow can hold, searched by name and by what it does. The
+ *  standard lists what the platform does (`GET /v1/step_types`, with a search its best matches: surface/StepPalette.tsx,
+ *  loaded when first opened); NoClick's app draws its own tiles from the catalog it was built with, searched as it's
+ *  typed in, a model or a coding agent by name too. */
+export const PALETTE = slot<ComponentType<CanvasPaletteProps>>('canvas.palette', PaletteOfStepTypes);
+
+// ── the clipboard ───────────────────────────────────────────────────────────
+
+export interface CanvasClipboard {
+    /** Other things a paste (and a file read) turns into steps, beyond the canvas's own format: each tried in the
+     *  order of its priority (surface/clipboard/parse.ts). */
+    formats: readonly ClipboardParser[];
+    /** A step's settings as a copy and a saved file carry them. */
+    useSettingsOf: () => (node: Node) => Record<string, unknown>;
+}
+
+/** What leaves the canvas as text and what comes back: a copied step's settings, and the formats a paste is read in.
+ *  The standard writes a step without its secrets (stepSecrets.ts: what a read of the workflow would show of it) and
+ *  reads the canvas's own format alone; NoClick's app also reads a spreadsheet's link, a curl command and other tools'
+ *  exports. */
+export const CLIPBOARD = slot<CanvasClipboard>('canvas.clipboard', { formats: [], useSettingsOf: useSettingsWithoutSecrets });
