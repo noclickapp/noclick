@@ -38,6 +38,14 @@ describe('a step as the canvas holds it', () => {
         expect(rawConfigToPayload(saved)).toMatchObject({ label: 'Tell the team', operation: 'send', config: { channel: 'C1' } });
     });
 
+    it('holds what a read held back of its settings, never saving it or lifting it from a save', () => {
+        const node = createWorkflowNode('h', 'http-request', { x: 0, y: 0 }, { url: 'https://x.test' }, { withheld: ['headers[0].value'] });
+        expect(node.data.withheld).toEqual(['headers[0].value']);
+        expect(buildSaveConfig(node)).toEqual({ url: 'https://x.test' });
+        expect(applyNodeUpdate(node, { config: { url: 'https://y.test' } }).data.withheld).toEqual(['headers[0].value']);
+        expect(rawConfigToPayload({ url: 'https://x.test', withheld: ['a'] })).not.toHaveProperty('withheld');
+    });
+
     it('reads a loose update, unknown keys as extras', () => {
         expect(normalizeNodeUpdatePayload({ config: { a: 1 }, label: 'L', output: { ok: true } })).toEqual({ config: { a: 1 }, label: 'L', extras: { output: { ok: true } } });
     });
