@@ -147,7 +147,7 @@ describe('the run log on the API', () => {
         expect(chips()).toEqual(['All', 'Success', 'Error', 'Running']);
         expect(narrowed.container.querySelector('input')).toBeNull();
         expect(screen.getByTestId('run-log-not-offered').textContent).toBe(
-            'Runs list here by how they ended. Searching their errors, narrowing them by how they started and telling a run that waits (on an approval or a delay) from one that runs aren’t on the API yet: NoClick’s app does them.'
+            'The list narrows by how runs ended. Searching their errors, narrowing them by how they started and telling a run that waits (on an approval or a delay) from one that runs aren’t on the API yet: NoClick’s app does them.'
         );
         // A run an event started wears its own mark, never a webhook's.
         expect(narrowed.container.textContent).toContain('Event');
@@ -165,7 +165,7 @@ describe('the run log on the API', () => {
         whole.unmount();
 
         const noSearch = draw({ waiting: true, source: true, search: false });
-        expect(screen.getByTestId('run-log-not-offered').textContent).toBe('Runs list here by how they ended. Searching their errors isn’t on the API yet: NoClick’s app does it.');
+        expect(screen.getByTestId('run-log-not-offered').textContent).toBe('The list narrows by how runs ended. Searching their errors isn’t on the API yet: NoClick’s app does it.');
         noSearch.unmount();
     });
 });
@@ -212,6 +212,8 @@ describe('a step’s output on the API', () => {
         again.unmount();
         const none = render(<OutputPanel selectedNode={step('log', 'log')} workflowId="wf_none" />, { wrapper: within(client) });
         await waitFor(() => expect(none.container.textContent).toContain('No output yet'));
+        // Nothing is saved under a name here, so the hint offers no saved output to load.
+        expect(none.container.textContent).toContain('Run the step to see what it outputs');
     });
 
     it('pins the output shown as the step’s mock, and saves nothing under a name', async () => {

@@ -192,7 +192,7 @@ export const OutputPanel = ({
         return (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground dark:text-zinc-500 text-sm gap-2">
                 <span>No output yet</span>
-                <span className="text-[10px] text-muted-foreground/70 dark:text-zinc-600">Run the node or load saved mock data</span>
+                <span className="text-[10px] text-muted-foreground/70 dark:text-zinc-600">{save ? 'Run the node or load saved mock data' : 'Run the step to see what it outputs'}</span>
             </div>
         );
     }

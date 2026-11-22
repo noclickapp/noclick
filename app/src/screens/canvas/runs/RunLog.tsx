@@ -425,7 +425,7 @@ function notOffered(narrows: RunLogNarrows): string | null {
     ].filter((part): part is string => Boolean(part));
     if (!missing.length) return null;
     const list = missing.length === 1 ? missing[0] : `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}`;
-    return `Runs list here by how they ended. ${list[0].toUpperCase()}${list.slice(1)} ${missing.length === 1 ? 'isn’t' : 'aren’t'} on the API yet: NoClick’s app ${missing.length === 1 ? 'does it' : 'does them'}.`;
+    return `The list narrows by how runs ended. ${list[0].toUpperCase()}${list.slice(1)} ${missing.length === 1 ? 'isn’t' : 'aren’t'} on the API yet: NoClick’s app ${missing.length === 1 ? 'does it' : 'does them'}.`;
 }
 
 export const WorkflowExecutionLogs: React.FC<WorkflowExecutionLogsProps> = ({
