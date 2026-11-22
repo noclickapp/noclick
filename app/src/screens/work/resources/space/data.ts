@@ -19,6 +19,7 @@ import { AGENTS_KEY, factsOf, keptByNoClick, readAgents, statesKey, useAgents, u
 import { HOME_SPACE } from '../../place';
 import { MEMORIES_KEY, SKILLS_KEY, useKnowledge, type KnowledgeState } from '../knowledge/store';
 import { fixWordCasing } from '@/lib/credentialLabels';
+import { refFor } from '@/lib/agentTools';
 import { COMPUTE_KEY, OWN_KEY, placeName, placeUp, type Place } from '../machines';
 
 export type SpaceKind = 'agents' | 'machines' | 'skills' | 'memories' | 'connections' | 'secrets' | 'channels' | 'code' | 'websites' | 'databases' | 'files' | 'numbers' | 'email';
@@ -374,8 +375,9 @@ function homeSummary({ agents, states, compute, knowledge, connections }: { agen
             ...none,
             skills: knowledge.skills.map(known),
             memories: knowledge.memories.map(known),
-            // A space names a connection by its name, as an agent's tools do.
-            connections: connections.map((c) => item(c.name, c.name, c.usedBy.filter((h) => h.kind === 'agent').map((h) => h.id))),
+            // A space names a connection by the ref an agent's tools name it by: a named one by its name, an account
+            // connected in the app by `credential:<id>` (its name names no connection, or another one).
+            connections: connections.map((c) => item(refFor(c), c.name, c.usedBy.filter((h) => h.kind === 'agent').map((h) => h.id))),
         },
     };
 }
@@ -482,7 +484,7 @@ export function useSpaceShare(spaceId: string): SpaceShare {
         // An agent here that runs on a key of its own uses that connection too (a move's model key is one).
         const here = new Set(agents.map((a) => a.id));
         const conns = connections.data ?? [];
-        const connOf = (ref: string) => conns.find((c) => c.id === ref || c.name === ref);
+        const connOf = (ref: string) => conns.find((c) => c.id === ref || refFor(c) === ref);
         for (const a of agentsRead.data ?? []) {
             const name = a.modelConnection;
             if (!here.has(a.id) || !name || name === NOCLICK_KEY) continue;

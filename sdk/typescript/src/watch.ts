@@ -31,7 +31,8 @@ export type WatchedObject =
   | "domain" | "deployment" | "repo" | "mcp_server" | "live_session" | "phone_call" | "workflow" | "workflow_run"
   | "durable_object_class" | "skill" | "memory" | "machine" | "sandbox" | "agent_move" | "connection" | "plan_usage"
   | "agent_trigger" | "approval" | "browser" | "agent" | "coding_agent" | "channel" | "workspace"
-  | "workspace_resource" | "channel_sections" | "space_question" | "usage" | "spend_cap" | "notifications";
+  | "workspace_resource" | "channel_sections" | "space_question" | "usage" | "spend_cap" | "notifications"
+  | "workstream" | "popups" | "phones";
 
 /** The socket is open: `resumed` when it carried on from the last change you got, so nothing was missed. */
 export interface WatchReady {
@@ -88,6 +89,10 @@ export type WatchStatus = "connecting" | "live" | "reconnecting" | "stopped";
 
 /** A single-use token for the socket at `url`, good until `expiresAt`. */
 export interface WatchToken {
+  /**
+   * The socket's address, carrying its ticket (which lets the socket wait for this token and nothing more): open it
+   * as it is, and send `token` as its first frame.
+   */
   url: string;
   token: string;
   expiresAt: Date | null;
@@ -114,7 +119,10 @@ export interface WatchTokenOptions {
 export interface WatchOptions extends WatchTokenOptions {
   /** Stops watching (the generator returns). */
   signal?: AbortSignal;
-  /** Where a token comes from, when not this client: your own server's endpoint that calls `watchToken`. */
+  /**
+   * Where a token comes from, when not this client: your own server's endpoint that calls `watchToken` and passes its
+   * `url` and `token` on as they are.
+   */
   token?: () => Promise<{ url: string; token: string }>;
   /** Where the socket stands, as it moves. */
   onStatus?: (status: WatchStatus) => void;
@@ -122,9 +130,12 @@ export interface WatchOptions extends WatchTokenOptions {
   WebSocket?: typeof WebSocket;
 }
 
-/** The close codes the room sends: renew (lifetime reached), refused (token or access), too many connections. */
+/**
+ * The close codes the room sends: renew (lifetime reached), refused (token or access), too many connections. Its
+ * others (4400, the first frame wasn't the token; 4408, no token in time) are retried as any drop is.
+ */
 const WATCH_CLOSE = { renew: 4000, refused: 4401, tooMany: 4429 } as const;
-/** The socket's subprotocol; the token rides beside it, never in the URL. */
+/** The socket's subprotocol, offered alone: the token is the socket's first frame, never a header or the URL. */
 const WATCH_PROTOCOL = "noclick.watch";
 
 const PING_MS = 30_000;
@@ -260,11 +271,13 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
         await sleep(spread(BACKOFF_MS[Math.min(failures++, BACKOFF_MS.length - 1)]));
         continue;
       }
-      // The token is offered as the socket's subprotocol: the edge checks it before the room ever sees the socket.
-      const ws = new Socket(withCursor(socketUrl(token.url), after), [WATCH_PROTOCOL, token.token]);
+      const ws = new Socket(withCursor(socketUrl(token.url), after), [WATCH_PROTOCOL]);
       socket = ws;
       let lastHeard = Date.now();
+      const secret = token.token;
       ws.onopen = () => {
+        // The token is the first frame (headers and URLs reach logs); the room answers `ready` once it checks out.
+        ws.send(JSON.stringify({ type: "auth", token: secret }));
         pinger = setInterval(() => {
           if (Date.now() - lastHeard > 2 * PING_MS) ws.close(4000, "no answer");
           else ws.send("ping");

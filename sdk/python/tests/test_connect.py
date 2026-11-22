@@ -667,6 +667,31 @@ def test_require_approval_sends_the_operations_and_keeps_the_answer(api, client)
     assert gmail.approval_operations == ["delete_message", "send_email_message"]
 
 
+LIFT = {"object": "approval_policy_change", "id": "chg_1", "batch_id": "chg_1", "scope": "credential",
+        "scope_id": "c1", "kind": "credential_rule", "target": "operations",
+        "before": {"operations": ["automation-gmail.send_email_message"]}, "after": {"operations": []},
+        "loosens": True, "changed_by": "key", "key_id": "key_1", "effective_at": "2026-11-22T09:10:00+00:00",
+        "until": None, "pending": True, "undone_at": None, "undone_by": None, "created_at": "2026-11-22T09:00:00+00:00"}
+
+
+def test_lift_approval_names_what_it_lifts_and_returns_the_change(api, client):
+    route = api.delete("/v1/connections/gmail/require_approval").respond(
+        json={**CONN, "approval_operations": ["send_email_message"], "approval_changes": [LIFT]})
+    gmail = nc.Connection.from_name("gmail")
+    [change] = gmail.lift_approval("send_email_message", "delete_message")
+    assert route.calls.last.request.url.params["operations"] == "send_email_message,delete_message"
+    assert (change.id, change.scope, change.kind, change.target, change.pending) == (
+        "chg_1", "credential", "credential_rule", "operations", True)
+    assert change.effective_at.isoformat() == "2026-11-22T09:10:00+00:00"
+    # Waiting out its undo window, the rule still holds what was lifted.
+    assert gmail.approval_operations == ["send_email_message"]
+    # Naming none lifts every one (by its id, now it's read).
+    by_id = api.delete(f"/v1/connections/{CONN['id']}/require_approval").respond(
+        json={**CONN, "approval_changes": [LIFT]})
+    gmail.lift_approval()
+    assert "operations" not in by_id.calls.last.request.url.params
+
+
 PLAN_USAGE = {
     "object": "plan_usage", "connection": "credential:c1", "integration": "anthropic", "state": "near",
     "plan": {"tier": "max_20x", "label": "Ultra", "runs": ["claude_code"], "refusal": None},
