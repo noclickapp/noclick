@@ -153,12 +153,11 @@ def test_a_users_domain_is_registered_to_them_and_charged_to_the_account(api, cl
     start = api.post("/v1/domains").respond(json=operation(
         op_id="op_u", kind="domain.buy", status="running", domain_id=DOMAIN_ID, price_usd=14))
     with nc.as_user("user_42"):
-        with pytest.raises(nc.InvalidRequest) as err:
-            nc.Domain.buy("anasilva.dev", max_price_usd=20)
-        assert err.value.field == "registrant" and "DomainContact" in err.value.next_step
-        with pytest.raises(nc.InvalidRequest):
-            nc.Domain.from_name("anasilva.dev", create_if_missing=True, max_price_usd=20)
-        assert start.call_count == 0  # refused before anything is sent
+        # Naming none, the user's registrant profile on file is what it's registered to: NoClick reads it (and
+        # refuses, naming registrant, where there's none).
+        nc.Domain.buy("anasilva.dev", max_price_usd=20)
+        assert "registrant" not in body(start.calls.last.request)
+        assert start.calls.last.request.headers["NoClick-User"] == "user_42"
 
         purchase = nc.Domain.buy("anasilva.dev", max_price_usd=20, registrant=ANA)
     request = start.calls.last.request
@@ -422,9 +421,8 @@ def test_a_connected_domain_transfers_in_its_own_scope(api, client):
     start = api.post("/v1/domains/transfer_in").respond(json=operation(
         op_id="op_c", kind="domain.transfer_in", status="awaiting_human", domain_id="dom_2", price_usd=11.25))
     acme = nc.Domain.from_id("dom_2")
-    with pytest.raises(nc.InvalidRequest):  # it's user_42's, so it needs their registrant
-        nc.Domain.transfer_in(acme, auth_code="Xy7#pQ2!", max_price_usd=15)
-    assert start.call_count == 0
+    nc.Domain.transfer_in(acme, auth_code="Xy7#pQ2!", max_price_usd=15)  # user_42's: their registrant profile
+    assert "registrant" not in body(start.calls.last.request) and start.call_count == 1
     with nc.as_user("someone_else"):
         held = nc.Domain.transfer_in(acme, auth_code="Xy7#pQ2!", max_price_usd=15, registrant=ANA)
     request = start.calls.last.request
@@ -441,15 +439,15 @@ def test_a_connected_domain_transfers_in_its_own_scope(api, client):
         nc.Domain.transfer_in(acme, auth_code="Xy7#pQ2!", max_price_usd=15, registrant=ANA, user="user_7")
 
 
-def test_a_users_transfer_needs_their_registrant(api, client):
+def test_a_users_transfer_is_registered_to_them(api, client):
     start = api.post("/v1/domains/transfer_in").respond(json=operation(
         op_id="op_u", kind="domain.transfer_in", status="running", domain_id=DOMAIN_ID, price_usd=14))
     with nc.as_user("user_42"):
-        with pytest.raises(nc.InvalidRequest) as err:
-            nc.Domain.transfer_in("anasilva.dev", auth_code="Kq9!mT4z", max_price_usd=20)
-        assert err.value.field == "registrant" and start.call_count == 0
+        nc.Domain.transfer_in("anasilva.dev", auth_code="Kq9!mT4z", max_price_usd=20)  # their registrant profile
+        assert "registrant" not in body(start.calls.last.request)
         nc.Domain.transfer_in("anasilva.dev", auth_code="Kq9!mT4z", max_price_usd=20, registrant=ANA)
     assert start.calls.last.request.headers["NoClick-User"] == "user_42"
+    assert body(start.calls.last.request)["registrant"]["email"] == "ana@example.com"
 
 
 def test_transfer_in_refusals(api, client):
