@@ -412,8 +412,8 @@ export class Agents {
 
 // ── NoClick itself ─────────────────────────────────────────────────────────
 
-/** NoClick's capability groups, as a connected app's grant names them. */
-export type PlatformGroup = "read" | "build" | "deploy" | "spend" | "delete";
+/** NoClick's capability groups, as a connected app's grant names them; `admin` only where it's named. */
+export type PlatformGroup = "read" | "build" | "deploy" | "spend" | "delete" | "admin";
 
 /**
  * NoClick itself for an agent's `tools`: `new Platform()` (the same as `"noclick"`) gives it what a
@@ -427,7 +427,10 @@ export type PlatformGroup = "read" | "build" | "deploy" | "spend" | "delete";
  * which `wake_me` waits on, and watchers see `approval` and `operation` events. `Platform.only(...)`
  * narrows it by capability group (without `spend` it has no `quote` or `buy`, without `delete` no
  * `delete`) and by API area (a key's scopes: `"domains"`, `"phone"`, `"agents"`...), each narrowing only
- * its own kind. Policy names its tools `noclick.search` ... `noclick.delete`.
+ * its own kind. `"admin"` (`Platform.only("admin")`, or the string `"noclick.admin"` beside `"noclick"`) adds the
+ * admin group, which nothing holds unnamed: a few administrative calls and loosening what agents may do, each off
+ * until your approval settings switch `admin` or `elevate`; it narrows nothing. Policy names its tools
+ * `noclick.search` ... `noclick.delete`.
  */
 export class Platform {
   static readonly GROUPS: readonly PlatformGroup[] = ["read", "build", "deploy", "spend", "delete"];

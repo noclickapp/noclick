@@ -106,9 +106,9 @@ const CHANNEL_CHANGES = new Set<PlatformChannelEvent['kind']>(['message', 'threa
 const AGENT_CHANGES = new Set<PlatformAgentEvent['change']>(['turn', 'step', 'tool_servers', 'wakeups', 'definition', 'session']);
 const CODING_CHANGES = new Set<PlatformCodingAgentEvent['change']>(['turn', 'place', 'pause', 'definition']);
 const RESOURCE_KINDS = new Set<PlatformResourceEvent['kind']>([
-    'domain', 'deployment', 'repo', 'mcp_server', 'live_session', 'phone_call', 'workflow', 'durable_object_class', 'skill',
+    'domain', 'deployment', 'repo', 'mcp_server', 'live_session', 'phone_call', 'workflow', 'workflow_run', 'durable_object_class', 'skill',
     'memory', 'machine', 'sandbox', 'agent_move', 'connection', 'plan_usage', 'workspace_resource', 'space_question',
-    'trigger', 'approval', 'browser', 'spend_cap', 'notifications', 'workstream',
+    'trigger', 'approval', 'browser', 'spend_cap', 'notifications', 'workstream', 'popups', 'phones',
 ]);
 
 const one = <T extends string>(set: ReadonlySet<T>, value: string | null): value is T => value !== null && set.has(value as T);
