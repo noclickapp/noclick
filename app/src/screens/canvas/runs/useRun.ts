@@ -55,10 +55,12 @@ export function applyRunSteps(setNodes: SetNodes, run: WorkflowRun): void {
     );
 }
 
-/** A run ended: its steps rest (their last-run marks stay), and those it ran take their latest outputs, whole. */
-async function settleRun(client: NoClick, workflowId: string, setNodes: SetNodes, run: WorkflowRun): Promise<void> {
+/** A run ended: its steps rest (their last-run marks stay), and those it ran take their latest outputs, whole; nothing
+ *  once the canvas no longer shows the workflow (`shown`). */
+async function settleRun(client: NoClick, workflowId: string, setNodes: SetNodes, run: WorkflowRun, shown: () => boolean): Promise<void> {
     const ran = run.steps.filter((step) => step.status === 'succeeded' || step.status === 'failed').map((step) => step.id);
     const latest = ran.length ? await Workflow.fromId(workflowId, { client }).latestOutputs({ steps: ran, full: true }) : null;
+    if (!shown()) return;
     const at = Date.now();
     setNodes((nodes) =>
         nodes.map((node) => {
@@ -154,7 +156,7 @@ export function useWorkflowRuns({
             ended.current.add(runId);
             applyRunSteps(setNodes, run);
             setRunning((ids) => ids.filter((id) => id !== runId));
-            await settleRun(client, workflowId, setNodes, run);
+            await settleRun(client, workflowId, setNodes, run, () => shown.current === workflowId);
             moved.current?.(run);
         },
         [client, workflowId, setNodes]
