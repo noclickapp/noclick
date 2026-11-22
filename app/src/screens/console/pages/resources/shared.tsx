@@ -4,7 +4,6 @@
 import { useState, type ReactNode } from 'react';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { NoClickError } from 'noclick';
 import { userLabel, type UserFilterValue } from '@/screens/console/lib/userFilter';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
@@ -12,6 +11,8 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PageActions } from '../../ui/PageHeader';
 import { UserFacet } from '../../ui/UserFacet';
 import { useUsers } from '../lookups';
+
+export { errorText } from '@/screens/console/lib/errorText';
 
 export interface PanelProps {
     user: UserFilterValue;
@@ -47,12 +48,6 @@ export function Section({ title, children, className }: { title: ReactNode; chil
             {children}
         </section>
     );
-}
-
-/** The API's message and next step as one line (for inline and toast errors). */
-export function errorText(error: unknown): string {
-    if (error instanceof NoClickError) return error.nextStep ? `${error.message} ${error.nextStep}` : error.message;
-    return error instanceof Error ? error.message : String(error);
 }
 
 /**
