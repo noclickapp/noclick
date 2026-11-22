@@ -1378,6 +1378,7 @@ iterable
 itm-platform
 jackrabbit-class
 jev
+jibble
 jigsawstack
 jinko
 jira
