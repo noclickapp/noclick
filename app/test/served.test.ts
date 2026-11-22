@@ -259,7 +259,7 @@ describe('the developer console, under the production server', () => {
 
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
-        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key', '/settings-lab', '/settings-lab?scene=billing&as=key']) {
+        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key', '/settings-lab', '/settings-lab?scene=billing&as=key', '/step-form-lab', '/step-form-lab?scene=mail-send&as=key']) {
             expect((await get(configured, path, { headers: { cookie } })).status, path).toBe(404);
         }
         const files = builtFiles();

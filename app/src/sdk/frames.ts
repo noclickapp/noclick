@@ -72,6 +72,9 @@ export interface PlatformResourceEvent {
         | 'live_session'
         | 'phone_call'
         | 'workflow'
+        /** A run of a workflow moved: it started or ended, or one of its steps did (`id` the run's, `parent_id` its
+         *  workflow's; GET /v1/workflows/{id}/runs/{run}). */
+        | 'workflow_run'
         | 'durable_object_class'
         | 'skill'
         | 'memory'
@@ -88,7 +91,14 @@ export interface PlatformResourceEvent {
         /** The account's monthly spending cap was set or removed (`id` the account's). */
         | 'spend_cap'
         /** The email alerts NoClick sends the account's owner were switched (`id` the account's). */
-        | 'notifications';
+        | 'notifications'
+        /** One of the account's workstreams was renamed, merged, archived or brought back (`status`: `archived` or
+         *  `active`). */
+        | 'workstream'
+        /** Which of the app's popups the account's owner sees was switched (`id` the account's). */
+        | 'popups'
+        /** A number was linked to the account or unlinked (`id` the account's). */
+        | 'phones';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;
