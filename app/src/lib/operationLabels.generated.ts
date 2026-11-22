@@ -1021,6 +1021,7 @@ debounce
 deel
 deepgram
 deepimage
+deepl
 deployhq
 deputy
 dev-cycle
