@@ -1369,7 +1369,10 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 }
 
                 if (isNestedObject) {
-                    const nestedValue = (localConfig[key] as Record<string, any>) || {};
+                    // A field that also takes a plain value (an Approval step's approver, "owner") edits as empty.
+                    const stored = localConfig[key];
+                    const nestedValue: Record<string, any> =
+                        stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
                     const handleNestedChange = (passedKey: string, newValue: any) => {
                         // Handle label storage separately (DynamicOptionsField stores labels with __label suffix)
                         if (passedKey.endsWith('__label')) {
