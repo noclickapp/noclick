@@ -71,8 +71,14 @@ const APP_SHORTCUTS: ShortcutGroup[] = [
     },
 ];
 
+/** The pages whose route isn't their id. */
+const ROUTES: Readonly<Record<string, string>> = { flow: '/workflows' };
+
 /** A page's route in this app. */
-export const pageRoute = (id: string) => `/${id}`;
+export const pageRoute = (id: string) => ROUTES[id] ?? `/${id}`;
+
+/** The page a route's first segment is the address of (`workflows` is Automations'); the segment itself otherwise. */
+export const pageOfRoute = (segment: string) => Object.keys(ROUTES).find((id) => ROUTES[id] === `/${segment}`) ?? segment;
 
 /** Resources' route at one of its addresses (resourceAddress: a kind's list, an item). */
 export function resourcesRoute(address: Record<string, string | null>): string {
