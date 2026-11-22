@@ -74,8 +74,8 @@ test("the default policy reads kind by kind and caller by caller", async () => {
   assert.equal(policy.default("purchase", "code"), null);
   assert.deepEqual(policy.kinds[1], {
     kind: "outside_other_connection", description: "A stranger's turn beyond what it answers on.",
-    approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" }, settable: false, setting: null,
-    ceiling: null, effective: { agent: "ask" }, own: null,
+    approver: "connection_owner", outsideOnly: true, defaults: { agent: "ask" }, settable: false, dispositions: [],
+    setting: null, ceiling: null, effective: { agent: "ask" }, own: null,
   });
   assert.match(policy.callers.agent, /^A platform agent's/);
   assert.throws(() => policy.default("refund", "agent"), /no kind 'refund'/);

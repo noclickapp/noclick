@@ -840,14 +840,8 @@ def cmd_domains_search(args: argparse.Namespace) -> int:
 
 
 def cmd_domains_buy(args: argparse.Namespace) -> int:
+    # Left out, the registrant on file is used: the account's default, or with --user that user's registrant profile.
     registrant = DomainContact._from(json.loads(Path(args.registrant).read_text())) if args.registrant else None
-    if args.user and registrant is None:
-        raise InvalidRequest(
-            f"A domain for {args.user} is registered to that person, so buying it needs their details.",
-            next_step="Pass --registrant with a JSON file of their name, email, phone, address, city, region, "
-                      "postal_code, country and agreement_accepted_at (organization is optional).",
-            details={"field": "registrant"},
-        )
     purchase = Domain.buy(args.name, max_price_usd=args.max_price, years=args.years, registrant=registrant)
     if args.no_wait:
         print(purchase.id)
@@ -1513,8 +1507,8 @@ def build_parser() -> argparse.ArgumentParser:
     buy.add_argument("--registrant", metavar="FILE",
                      help="A JSON file of the person it's registered to: name, email, phone, address, city, "
                           "region, postal_code, country, agreement_accepted_at (when they accepted the "
-                          "registration agreement), and optionally organization. Required with --user; "
-                          "without it your account's default registrant is used.")
+                          "registration agreement), and optionally organization. Without it the registrant on "
+                          "file is used: your account's default, or with --user that user's registrant profile.")
     buy.add_argument("--no-wait", action="store_true", help="Print the operation id instead of waiting.")
 
     priced = command(commands, "estimate", cmd_estimate,

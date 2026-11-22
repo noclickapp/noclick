@@ -58,3 +58,17 @@ test("a key without the scope, a second answer and a late one are refused", asyn
   api.on("POST", "/v1/workflows/wf_1/approvals/wa_3/answer", apiError(410, "expired", "This approval expired."));
   await assert.rejects(nc.WorkflowApproval.fromId("wf_1", "wa_3").approve(), (error: unknown) => error instanceof nc.Expired);
 });
+
+test("a step names who answers it, and says which agent decided", async () => {
+  const { api } = setup();
+  const agent = { object: "approver", kind: "agent", agent_id: "ag_1" };
+  api.on("GET", "/v1/workflows/wf_1/approvals/wa_1", json({ ...APPROVAL, approver: agent, on_timeout: "escalate", sent_to: [] }));
+  const routed = await nc.WorkflowApproval.fromId("wf_1", "wa_1").hydrate();
+  assert.deepEqual([routed.approver.kind, routed.approver.agent_id, routed.onTimeout, routed.sentTo], ["agent", "ag_1", "escalate", []]);
+  api.on("POST", "/v1/workflows/wf_1/approvals/wa_1/answer", json({
+    ...APPROVAL, status: "approved", decided_by: "agent", approver: agent, on_timeout: "decline",
+    decided_by_agent: { agent_id: "ag_1", name: "Finance lead" },
+  }));
+  const decided = await routed.approve();
+  assert.deepEqual([decided.decidedBy, decided.decidedByAgent?.name, decided.decidedByKey], ["agent", "Finance lead", null]);
+});

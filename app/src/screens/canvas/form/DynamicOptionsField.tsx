@@ -54,6 +54,8 @@ export interface DynamicOptionsFieldProps {
     config: Record<string, any>;
     hasError?: boolean; // Whether this field has execution errors (shows red border)
     onOpenCredentials?: () => void; // Switch to the Credentials tab (shown when no credential is connected)
+    /** The step's setting these options are for, when it isn't fieldKey (a list's row picks for its list). */
+    setting?: string;
 }
 
 // Detect partial {{reference}} for autocomplete (shared with SearchableEnumField)
@@ -83,6 +85,7 @@ function getValueTypeColor(type: ReferenceSuggestion['valueType']): string {
 // Supports infinite scroll pagination - loads more options when scrolling near bottom
 export function DynamicOptionsField({
     fieldKey,
+    setting = fieldKey,
     prop,
     value,
     onChange,
@@ -326,7 +329,7 @@ export function DynamicOptionsField({
             const response = await reads.options({
                 request_id: `load-options-${fieldKey}-${Date.now()}`,
                 node_type: nodeType,
-                field_key: fieldKey,
+                field_key: setting,
                 field_name: dynamicOptions.field_name,
                 credential_id: credentialId,
                 context: contextToSend,
@@ -365,7 +368,7 @@ export function DynamicOptionsField({
             setLoadingMore(false);
             setHasAttemptedLoad(true); // Mark that we've tried loading
         }
-    }, [fieldKey, nodeType, dynamicOptions.field_name, getCredentialId, config, workflowId, reads]);
+    }, [fieldKey, setting, nodeType, dynamicOptions.field_name, getCredentialId, config, workflowId, reads]);
 
     // Reset options and value when dependent field changes
     useEffect(() => {

@@ -621,6 +621,12 @@ def test_default_registrant_and_a_wildcard_connect(api, client):
     assert body(put.calls.last.request)["postal_code"] == "94111" and saved.email == "dana@acmebooking.test"
     assert nc.Domain.set_default_registrant(None) is None and delete.call_count == 1
     assert nc.Domain.default_registrant() is None
+    assert "NoClick-User" not in put.calls.last.request.headers
+    # A user's registrant profile: set, read and cleared for that user.
+    nc.Domain.set_default_registrant(CONTACT, user="user_42")
+    assert put.calls.last.request.headers["NoClick-User"] == "user_42"
+    nc.Domain.set_default_registrant(None, user="user_42")
+    assert delete.calls.last.request.headers["NoClick-User"] == "user_42"
 
     connect = api.post("/v1/domains/connect").respond(json={**DOMAIN, "source": "connected", "wildcard": True})
     assert nc.Domain.connect("apps.acme.test", wildcard=True).wildcard is True
