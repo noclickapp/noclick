@@ -663,7 +663,7 @@ export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
     `123formbuilder 2chat 46elks 7shifts abcgymsales ably abyssale abysshub accredible-certificates acculynx act-crm
 actionstep active-merge activecampaign acuity-scheduling adafruit-io adapty addevent addressfinder addresszen
 adobe-analytics adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha
-ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex airweave akeneo akta alchemy alegra algolia alpaca
+ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex airweave akeneo akismet akta alchemy alegra algolia alpaca
 altoviz alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache
 api-bible api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter
 appcircle apphud appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online
