@@ -1148,6 +1148,7 @@ fiber
 fidel-api
 figma
 figshare
+filescan
 filevine
 fillout
 financial-datasets-ai
