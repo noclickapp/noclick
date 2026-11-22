@@ -4,7 +4,7 @@
 // where no host fills the connect slots, is a named connection the standard makes (its connect page on NoClick), so an
 // agent given it with `credential:` in front of its id pointed at no account (an app's tools refused, a model's account
 // never picked); and an app event heard through an account connected in the app goes by its `credential:` ref, never
-// its name.
+// its name, while one heard through a named connection reads as that connection's app, never an app account of its name.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Agent, Connection } from 'noclick';
 import { Toaster } from 'sonner';
@@ -104,6 +104,29 @@ it('runs an agent on the AI account it connects by the connection’s name, the 
     expect(namedOnThePlatform(String(patches(fake)[0].model_connection), fake.connections)).toBe(connection);
     expect(await screen.findByText('WhatsApp runs on Claude Code now')).toBeTruthy();
 });
+
+it('reads an app event heard through a named connection as that connection’s app, never an app account of its name', async () => {
+    const fake = fakeWork();
+    // Listed first, a Slack account connected in the app goes by the name the account's Stripe connection has.
+    fake.addAppAccount('c-alerts', 'alerts', 'slack', 'slack_oauth', 'ops@wirefern.test');
+    const stripe = { object: 'connection', id: 'conn-alerts', name: 'alerts', integration: 'stripe', credential_type: 'stripe_api_key', status: 'connected', user_id: null, origin: 'api', account: null, connect_link: null, created_at: '2026-11-10T09:00:00.000Z' };
+    fake.created.connections.push(stripe);
+    const trigger = { id: 't-alerts', kind: 'event', spec: { kind: 'event', connection: 'alerts', event: 'payment_failed', filters: {} }, status: 'active', url: null, next_run: null, last_fired_at: null, error: null, created_at: '2026-11-10T09:00:00.000Z' };
+    fake.triggers.set(id(3), [trigger]);
+    const listed = (await Connection.list({ client: fake.client })).map((c) => c.raw as Json);
+    expect(namedOnThePlatform('alerts', listed)).toEqual(stripe);
+
+    const agent = await Agent.get(id(3), { client: fake.client });
+    render(
+        <WorkProviders client={fake.client}>
+            <TriggersTab agent={agent} name={agent.name} phone={false} openId={null} onOpen={() => undefined} adding={null} onAdding={() => undefined} />
+            <Toaster />
+        </WorkProviders>
+    );
+    // Read once the account's connections are, which a full parallel run can take over a second to load.
+    expect(await screen.findByText(/^When Stripe says “Payment failed”/, undefined, { timeout: 10_000 })).toBeTruthy();
+    expect(screen.queryByText(/When Slack says/)).toBeNull();
+}, 30_000);
 
 it('hears an app event through an account connected in the app by its `credential:` ref, never its name', async () => {
     const fake = fakeWork();
