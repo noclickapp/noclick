@@ -90,6 +90,9 @@ export interface ClearStateAnswer {
 
 export interface StepReads {
     options(request: StepOptionsRequest): Promise<StepOptionsAnswer>;
+    /** A loader's choices that are no setting of the stored step (the workflows a picker offers, another workflow's
+     *  form fields): a host may read them another way than a setting's. */
+    lookup(request: StepOptionsRequest): Promise<StepOptionsAnswer>;
     value(request: StepValueRequest): Promise<StepValueAnswer>;
     /** The server's verdict on a step's settings, or null where the host judges them only when they're saved. */
     validate: ((request: StepValidateRequest) => Promise<StepValidateAnswer>) | null;

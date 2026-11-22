@@ -72,7 +72,8 @@
     "shiki": "^3.12.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "valtio": "~2.1.7"
   },
   "devDependencies": {
     "@react-router/dev": "7.18.2",
@@ -90,6 +91,11 @@
     "typescript-7": "npm:typescript@7.0.2",
     "vite": "8.3.8",
     "vitest": "^5.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "prismjs@<1.30.0": "1.30.0"
+    }
   },
   "packageManager": "pnpm@10.34.4"
 }
