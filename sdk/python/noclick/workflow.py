@@ -5,13 +5,14 @@
     run = brief.run().wait()
 
 Your keys read every workflow your account can open in the app, its own and
-those shared with it (``access``), and change, build and run the ones it owns
-and pays for. NoClick's builder (the one in the app) builds and changes one
-from what you describe: a ``WorkflowBuild`` you wait on, which may stop to ask
-something first, and which can publish the workflow's app too. A run starts
-where its trigger does, with the inputs as the trigger's payload. A run started
-inside ``as_user`` (or with ``user=``) is recorded for that user and counts
-toward their spend cap; its steps still use the app's connections.
+those shared with it (``access``), and change, build and run the ones they can
+edit (one a team workspace's owner pays for is billed to them). NoClick's
+builder (the one in the app) builds and changes one from what you describe: a
+``WorkflowBuild`` you wait on, which may stop to ask something first, and which
+can publish the workflow's app too. A run starts where its trigger does, with
+the inputs as the trigger's payload. A run started inside ``as_user`` (or with
+``user=``) is recorded for that user and counts toward their spend cap; its
+steps still use the app's connections.
 
 A workflow's graph is also a handle you change directly: ``graph()`` reads its
 steps, each ``Step`` changes with one call (``update``, ``connect``, ...), and
@@ -107,22 +108,38 @@ class StepOutput:
 @dataclass(frozen=True)
 class WorkflowRunCounts:
     """How many runs ``Workflow.runs`` lists (``Workflow.run_counts``): the ``total``,
-    ``by_status`` (``running``, ``succeeded``, ``failed``, each there even at 0) and
+    ``by_status`` (``running``, ``succeeded``, ``failed``, each there even at 0), ``waiting``
+    (how many of the running ones wait on an approval, a delay or an agent's turn),
     ``by_source`` (``api``, ``endpoint``, ``schedule``, ``trigger``, ``app``: only those with
-    runs). A run from code counts once, however many executions it spans."""
+    runs) and ``by_trigger`` (the kinds of event that started the runs a trigger did:
+    ``webhook``, ``email``, …, only those with runs). A run from code counts once, however
+    many executions it spans."""
 
     workflow_id: str
     total: int
     by_status: Dict[str, int]
     by_source: Dict[str, int]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    waiting: int = 0
+    by_trigger: Dict[str, int] = dc_field(default_factory=dict)
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowRunCounts":
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("workflow_id") or "", int(raw.get("total") or 0),
                    {"running": 0, "succeeded": 0, "failed": 0, **(raw.get("by_status") or {})},
-                   dict(raw.get("by_source") or {}), raw)
+                   dict(raw.get("by_source") or {}), raw, waiting=int(raw.get("waiting") or 0),
+                   by_trigger=dict(raw.get("by_trigger") or {}))
+
+
+@dataclass(frozen=True)
+class StepLastRun:
+    """How a step's latest run ended (``LatestOutputs.last_runs``): its ``status``
+    (``succeeded``, ``failed``, ``skipped``), when it ``finished_at``, its ``error``."""
+
+    status: str
+    finished_at: Any
+    error: Optional[str]
 
 
 @dataclass(frozen=True)
@@ -130,7 +147,9 @@ class LatestOutputs:
     """Each step's latest output, whatever run it's from (``Workflow.latest_outputs``):
     ``outputs`` by step id, each cut short as a run's steps are unless read ``full``
     (``truncated`` names the steps cut), never a secret (``withheld``: each step's paths left
-    out). A step that never stored one isn't in ``outputs``."""
+    out). A step that never stored one isn't in ``outputs``. ``last_runs``: how each step's
+    latest run ended, as the app's canvas marks it beside the step; a step never run isn't in
+    it."""
 
     workflow_id: str
     outputs: Dict[str, Any]
@@ -138,13 +157,17 @@ class LatestOutputs:
     full: bool
     truncated: List[str]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    last_runs: Dict[str, StepLastRun] = dc_field(default_factory=dict)
 
     @classmethod
     def _from(cls, raw: Any) -> "LatestOutputs":
         raw = raw if isinstance(raw, dict) else {}
+        last_runs = {str(step): StepLastRun(str(run.get("status") or ""), parse_time(run.get("finished_at")),
+                                            run.get("error"))
+                     for step, run in (raw.get("last_runs") or {}).items() if isinstance(run, dict)}
         return cls(raw.get("workflow_id") or "", dict(raw.get("outputs") or {}),
                    {step: list(paths) for step, paths in (raw.get("withheld") or {}).items()},
-                   bool(raw.get("full")), list(raw.get("truncated") or []), raw)
+                   bool(raw.get("full")), list(raw.get("truncated") or []), raw, last_runs)
 
 
 @dataclass(frozen=True)
@@ -188,13 +211,18 @@ class ClearedStepState:
 @dataclass(frozen=True)
 class WorkflowRun:
     """One run of a workflow. ``status`` is ``running`` (a run waiting on an
-    approval or a delay too), ``succeeded`` or ``failed`` (``error`` says why).
-    ``outputs`` holds what its final steps produced (each step that finished
-    with nothing after it running), by step name. ``source`` is how it started:
-    ``api``, ``endpoint``, ``schedule``, ``trigger`` (an event, like a webhook
-    or an email) or ``app``; ``inputs`` and ``operation_id`` are set for a run
-    started from code. ``steps`` says what each step did, read with one run
-    (``Workflow.get_run``); empty in a list."""
+    approval or a delay too: ``waiting_on`` says on what, ``approval``,
+    ``delay`` or for a run from code ``agent_turn``; ``None`` while it runs
+    on), ``succeeded`` or ``failed`` (``error`` says why). ``outputs`` holds
+    what its final steps produced (each step that finished with nothing after
+    it running), by step name. ``source`` is how it started: ``api``,
+    ``endpoint``, ``schedule``, ``trigger`` (an event) or ``app``; for a
+    ``trigger`` run, ``trigger`` names the kind of event: ``webhook`` (a
+    delivery to one of its trigger steps, a webhook's or an app's event),
+    ``email``, ``call``, ``agent`` (an agent's turn), ``shared_link`` or
+    ``error`` (it handled another run's failure). ``inputs`` and
+    ``operation_id`` are set for a run started from code. ``steps`` says what
+    each step did, read with one run (``Workflow.get_run``); empty in a list."""
 
     id: str
     workflow_id: Optional[str]
@@ -209,6 +237,8 @@ class WorkflowRun:
     finished_at: Any
     steps: List[RunStep] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    trigger: Optional[str] = None
+    waiting_on: Optional[str] = None
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowRun":
@@ -221,6 +251,7 @@ class WorkflowRun:
             user_id=raw.get("user_id"), operation_id=raw.get("operation_id"),
             started_at=parse_time(raw.get("started_at")), finished_at=parse_time(raw.get("finished_at")),
             steps=[RunStep._from(s) for s in raw.get("steps") or []], raw=raw,
+            trigger=raw.get("trigger"), waiting_on=raw.get("waiting_on"),
         )
 
 
@@ -276,10 +307,15 @@ class WorkflowStep:
 @dataclass(frozen=True)
 class BuildQuestion:
     """What a build waits on. Each of ``inputs`` is ``{id, label, type,
-    description, options?}``; answer them with ``build.answer({id: value})``
-    where ``answerable_from_code``. An input of type ``credential`` (an account
-    to connect) or ``env`` (secret values) needs a person: send them to
-    ``answer_url``, and the build goes on once they answer."""
+    description, options?, request_id?}``: ``request_id`` is the human request
+    that asks it, which NoClick sent the person whose build it is (``sent_to``)
+    and any client answers (its page, a chat's card, their texts,
+    ``POST /v1/humans/requests/{id}/answer``); the build goes on once each is
+    answered. Or answer them all at once with
+    ``build.answer({id: value})``, which goes on now: an input of type
+    ``credential`` takes a connection's ref or name, one of type ``env`` its
+    values in ``secret_values`` (both with a key acting for the whole
+    account). ``answer_url`` is a page anyone holding it answers on."""
 
     id: Optional[str]
     title: Optional[str]
@@ -287,12 +323,13 @@ class BuildQuestion:
     answer_url: Optional[str]
     answerable_from_code: bool
     raw: Dict[str, Any] = dc_field(repr=False)
+    sent_to: List[str] = dc_field(default_factory=list)
 
     @classmethod
     def _from(cls, raw: Any) -> "BuildQuestion":
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("id"), raw.get("title"), list(raw.get("inputs") or []), raw.get("answer_url"),
-                   bool(raw.get("answerable_from_code")), raw)
+                   bool(raw.get("answerable_from_code")), raw, list(raw.get("sent_to") or []))
 
 
 @dataclass(frozen=True)
@@ -309,7 +346,7 @@ class WorkflowBuildResult:
     its ``readiness`` as ``Workflow.readiness`` reads it (``status``,
     ``meaning``, ``issues``, ``warnings``, ``unverified``), and each step's
     verdict by step id (``verdicts``: ``config_valid``, ``validation_error``,
-    ``missing_required``, as an edit answers them). ``sent_back`` counts the
+    ``missing_required``, ``left_for_user``, as an edit answers them). ``sent_back`` counts the
     times the build went back to the builder for settings the run engine
     rejects (at most 2) before it finished. A fact NoClick couldn't read is
     ``None`` and named in ``unread``: then nothing says the workflow is
@@ -345,10 +382,11 @@ class WorkflowRehearsal:
     (``trigger``: ``{step_id, type, name}``) and the agents it reached took a real turn while a simulated world
     answered every tool call, so nothing was sent and no account was touched. ``test_run`` is the run it played
     (``{key, name, custom}``; ``None`` for a message you typed). ``reply`` is the agent's closing words;
-    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered;
-    ``transcript`` the run step by step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding
-    harness's own shell and file steps carry ``source`` ``harness``). ``scenario`` is the world it ran in,
-    ``note`` says when it wrote nothing or what it did to act was simulated, and ``cost_usd`` is what it cost you."""
+    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered
+    (and ``outbound``, the message it would have sent, for a call that carries one); ``transcript`` the run step by
+    step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding harness's own shell and file steps
+    carry ``source`` ``harness``). ``scenario`` is the world it ran in, ``note`` says when it wrote nothing or what
+    it did to act was simulated, and ``cost_usd`` is what it cost you."""
 
     workflow_id: Optional[str]
     test_run: Optional[Dict[str, Any]]
@@ -361,6 +399,29 @@ class WorkflowRehearsal:
     cost_usd: Optional[float]
     operation_id: Optional[str]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+@dataclass(frozen=True)
+class WorkflowTestRun:
+    """A test run a workflow offers (``Workflow.test_runs``), as its Test Run screen lists it: a staged situation for
+    one of its triggers, or one the workflow authored (``custom``; ``edit().add_test_run``). ``key`` and ``name``
+    each name it to ``rehearse``. ``trigger`` is what it stages on (``{type, label, operation}``: the trigger step's
+    type, the type's name in the app and the step's operation), and ``message`` the staged message as the run would
+    stage it (``title``, ``body``, and where it has them ``author``, ``handle``, ``meta`` and ``time``): an offered
+    situation's with the workflow's edits, an authored run's own."""
+
+    key: str
+    name: str
+    custom: bool
+    trigger: Dict[str, Any]
+    message: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowTestRun":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(key=str(raw.get("key") or ""), name=str(raw.get("name") or ""), custom=raw.get("custom") is True,
+                   trigger=dict(raw.get("trigger") or {}), message=dict(raw.get("message") or {}), raw=raw)
 
 
 def _read_rehearsal(result: Any, op: Operation) -> WorkflowRehearsal:
@@ -378,9 +439,10 @@ class WorkflowDraftResult:
     """A finished draft: the workflow's ``version`` once the drafted steps were written (one version of its
     history, ``history_version``; ``changed`` false when the drafter changed nothing), a ``summary`` of what
     changed, and for each step it drafted (``steps``, by id) the verdict an edit answers (``config_valid``,
-    ``validation_error``, ``missing_required``, ``references``) beside ``drafted``, its ``operation``, the
-    ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the connected account, a
-    value only they know) and, for a step it couldn't draft (left as it was), its ``error``."""
+    ``validation_error``, ``missing_required``, ``left_for_user``, ``references``) beside ``drafted``, its
+    ``operation``, the ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the
+    connected account, a value only they know; a required one reads as ``left_for_user`` until it's filled in) and,
+    for a step it couldn't draft (left as it was), its ``error``."""
 
     workflow_id: str
     mode: str
@@ -428,8 +490,9 @@ class WorkflowBuild(Operation):
     why the build failed.
 
     While it builds, ``step`` is ``building``. When the builder needs something
-    it's ``awaiting_human`` (step ``asking``) and ``question`` says what:
-    answer it with ``answer()``, or send a person to its ``answer_url``.
+    it's ``awaiting_human`` (step ``asking``) and ``question`` says what: each
+    input is a human request NoClick sent the person whose build it is, and the
+    build goes on once they answer; or answer it all now with ``answer()``.
     ``wait()`` stops at a question it hasn't shown you, raising
     ``noclick.AnswerRequired`` with it; called again, it waits through that
     question for its answer. ``next_question()`` returns as soon as there is one."""
@@ -453,8 +516,8 @@ class WorkflowBuild(Operation):
                 asks = question.title or next((i.get("label") for i in question.inputs if i.get("label")), None)
                 err = AnswerRequired(
                     f"The build is waiting on an answer: {asks or 'the builder has a question'}",
-                    next_step=("Answer it with build.answer({input id: value}) where question.answerable_from_code, "
-                               "else send a person to question.answer_url; then call wait() again."),
+                    next_step=("Answer it with build.answer({input id: value}), or let the person NoClick sent each "
+                               "input's request (question.sent_to) answer it; then call wait() again."),
                     details={"operation_id": self._id(), "question": raw["question"]},
                 )
                 err.question = question
@@ -478,9 +541,6 @@ class WorkflowBuild(Operation):
 
             build = noclick.Workflow.from_name("Morning brief").build("Also post it to #team on Slack")
             while (question := build.next_question(timeout=600)) is not None:
-                if not question.answerable_from_code:
-                    print("A person answers this:", question.answer_url)
-                    break
                 build.answer({question.inputs[0]["id"]: "#team"})
             print(build.wait().summary)
         """
@@ -506,11 +566,16 @@ class WorkflowBuild(Operation):
     @synced
     async def answer(
         self, values: Optional[Dict[str, Any]] = None, *, message: Optional[str] = None, skip: bool = False,
+        secret_values: Optional[Dict[str, Dict[str, str]]] = None,
     ) -> "WorkflowBuild":
-        """Answer the question the build waits on, by input id; ``message`` tells
-        the builder anything else, ``skip=True`` goes on without answering. An
-        input only a person can answer (an account to connect, secret values)
-        raises ``noclick.InvalidRequest`` naming ``answer_url``.
+        """Answer the question the build waits on, all at once, by input id: the
+        build goes on now. Each value answers its input's human request as your
+        key; those you leave unanswered are withdrawn. A choice, words, or for a
+        ``credential`` input a connection's ref or name; an ``env`` input's values
+        go in ``secret_values`` (``{input id: {KEY: value}}``), kept as the
+        account's secret and never shown to a model. An account or a secret
+        takes a key acting for the whole account. ``message`` tells the builder
+        anything else, ``skip=True`` goes on without answering.
 
         Returns:
             This build, ``running`` again.
@@ -519,13 +584,14 @@ class WorkflowBuild(Operation):
 
             build = noclick.Workflow.from_name("Morning brief").build("Send it on Slack too")
             question = build.next_question()
-            if question and question.answerable_from_code:
+            if question:
                 build.answer({"channel": "#team"}, message="Keep it under five lines")
             print(build.wait().steps)
         """
         workflow_id = self.workflow_id or (self._sync_raw().get("input") or {}).get("workflow_id")
         raw = await self._request("POST", f"/v1/workflows/{workflow_id}/builds/{self._id()}/answer",
-                                  json=compact(values=values or {}, message=message, skip=skip or None))
+                                  json=compact(values=values or {}, secret_values=secret_values, message=message,
+                                               skip=skip or None))
         self._absorb(raw)
         return self
 
@@ -834,7 +900,8 @@ class Step(_Object):
     @property
     def connections(self) -> Dict[str, str]:
         """The accounts connected to it: each slot (a connection type, like ``gmail_oauth``) to the id of the
-        account connected there. ``set_connection`` changes them."""
+        account connected there, which the connection holding it names as its ``credential_id``.
+        ``set_connection`` changes them."""
         found = self._config().get("credentialIds")
         return dict(found) if isinstance(found, dict) else {}
 
@@ -860,9 +927,10 @@ class Step(_Object):
     @property
     def verdict(self) -> Optional[Dict[str, Any]]:
         """Whether it's ready to run, as the last edit through this handle that touched it judged:
-        ``config_valid``, and when it isn't, ``validation_error`` and ``missing_required``; an agent's
-        ``agent_credential_hint``; and ``references`` (see ``references``). ``None`` until an edit judged it (a
-        read doesn't)."""
+        ``config_valid``, and when it isn't, ``validation_error``, ``missing_required`` and ``left_for_user``
+        (the required settings it leaves for its person to fill in, a value only they know: they wait on that
+        person and are never part of the error); an agent's ``agent_credential_hint``; and ``references`` (see
+        ``references``). ``None`` until an edit judged it (a read doesn't)."""
         return self._verdict
 
     @property
@@ -907,7 +975,7 @@ class Step(_Object):
     @synced
     async def options(
         self, field: str, *, settings: Optional[Dict[str, Any]] = None, search: Optional[str] = None,
-        page_token: Optional[str] = None,
+        page_token: Optional[str] = None, type: Optional[str] = None, connection: Optional[str] = None,
     ) -> StepOptions:
         """The choices ``field`` takes, as the app's dropdown lists them: read from the account the
         step connects to (a Google account's spreadsheets, a Slack workspace's channels) by the
@@ -915,7 +983,12 @@ class Step(_Object):
         that depends on another reads, like the tabs of a spreadsheet you haven't saved yet).
         ``search`` narrows them where the service can search. A page at a time: pass
         ``page_token=`` its ``next_page_token``. A connection whose owner reviews its calls holds
-        the lookup for them (``noclick.ApprovalRequired``). Takes edit access to the workflow.
+        the lookup for them (``noclick.ApprovalRequired``). A step the workflow doesn't hold yet
+        (one a canvas added and hasn't saved) lists its choices by its ``type``
+        (``automation-slack``), and ``connection`` (a connection's ref or id) names the account to
+        read from in place of the one the step holds. Takes read access to the workflow: whoever
+        can change it reads through the step's account as a run does, anyone else only through
+        an account that's theirs to use.
 
         Returns:
             The ``StepOptions``: ``options`` (each a ``StepOption``), ``next_page_token`` and
@@ -929,7 +1002,7 @@ class Step(_Object):
             tabs = sheet.options("sheet_name", settings={"spreadsheet_id": "1AbCdEf"})
         """
         raw = await self._form("options", {"field": field, "settings": settings, "search": search,
-                                           "page_token": page_token})
+                                           "page_token": page_token, "type": type, "connection": connection})
         return StepOptions._from(raw)
 
     @synced
@@ -939,8 +1012,9 @@ class Step(_Object):
         app's event subscription (``subscription_status``), the files in a filesystem step's
         volume (``file_browser``), an alarm's schedules (``active_alarms``), an MCP step's hosted
         link (``hosted_url``). ``settings`` are laid over the step's saved ones. One that mints or
-        registers something changes the account; a hosted MCP link's URL is its capability, so no
-        MCP connection loads it. Takes edit access to the workflow.
+        registers something changes the account, and takes what changing the workflow takes; one
+        that only reads (a list, an id from the step's account) takes read access. A hosted MCP
+        link's URL is its capability, so no MCP connection loads it.
 
         Returns:
             The ``StepValue``: ``value``, or ``values`` where it fills several settings at once,
@@ -1307,7 +1381,10 @@ class WorkflowGraph:
 
     An edge into a step with several inputs names which in ``target_handle`` (a code step's
     ``state``). ``display_metadata`` is what the app shows of the workflow (its canvas's
-    viewport, the step open in its panel), read with ``graph()``: never part of a version."""
+    viewport, the step open in its panel), read with ``graph()``: never part of a version.
+    ``access`` is what you may do with it (``owner``, ``editor`` or ``viewer``) and ``agent``
+    the agent whose own flow it is (``{id, name, yours}``, ``yours`` when it's your account's
+    own), both read with ``graph()``."""
 
     workflow_id: str
     version: int
@@ -1322,6 +1399,8 @@ class WorkflowGraph:
     variables_withheld: List[str]
     raw: Dict[str, Any] = dc_field(repr=False)
     display_metadata: Optional[Dict[str, Any]] = None
+    access: Optional[str] = None
+    agent: Optional[Dict[str, Any]] = None
 
     @classmethod
     def _from(cls, raw: Any, *, workflow: "Workflow", workflow_id: str, version: int,
@@ -1342,6 +1421,7 @@ class WorkflowGraph:
             edges=[_edge(e) for e in raw.get("edges") or [] if isinstance(e, dict)],
             withheld=withheld, variables_withheld=list(raw.get("variables_withheld") or []), raw=raw,
             display_metadata=dict(own["display_metadata"]) if isinstance(own.get("display_metadata"), dict) else None,
+            access=own.get("access"), agent=dict(own["agent"]) if isinstance(own.get("agent"), dict) else None,
         )
 
     def _node(self, step_id: str) -> Optional[Dict[str, Any]]:
@@ -1398,10 +1478,14 @@ class WorkflowEdit:
     ``harness_switch``, ``coerced_values``, ``stripped_trigger_refs``,
     ``http_auth_credential_hint``); and, for each step an op touched, whether it's ready
     to run (``steps``: ``config_valid``, ``validation_error``, ``missing_required``,
-    ``agent_credential_hint``, and ``references``: each read of another step's output that
+    ``left_for_user``, ``agent_credential_hint``, and ``references``: each read of another step's output that
     won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
-    the version of its history a restore put back."""
+    the version of its history a restore put back. ``warnings`` say what an edit did that
+    won't work as it may look (a workspace member's own connection given to a team
+    workflow's step, which its owner's automatic runs can't use). An edit sent with
+    ``settle`` also says whether what it set going finished in time (``settled``) and, by
+    step, why each trigger it left unregistered can't be registered yet (``unregistered``)."""
 
     workflow_id: str
     version: int
@@ -1412,6 +1496,9 @@ class WorkflowEdit:
     steps: Dict[str, Dict[str, Any]]
     graph: Optional[WorkflowGraph]
     restored_from: Optional[int] = None
+    warnings: List[str] = dc_field(default_factory=list)
+    settled: Optional[bool] = None
+    unregistered: Dict[str, str] = dc_field(default_factory=dict)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -1422,7 +1509,9 @@ class WorkflowEdit:
             history_version=raw.get("history_version"), changed=bool(raw.get("changed")), summary=raw.get("summary"),
             results=[dict(r) for r in raw.get("results") or []],
             steps={str(k): dict(v) for k, v in (raw.get("steps") or {}).items()},
-            graph=_definition(raw, workflow), restored_from=raw.get("restored_from"), raw=raw,
+            graph=_definition(raw, workflow), restored_from=raw.get("restored_from"),
+            warnings=[str(w) for w in raw.get("warnings") or []], settled=raw.get("settled"),
+            unregistered={str(k): str(v) for k, v in (raw.get("unregistered") or {}).items()}, raw=raw,
         )
 
 
@@ -1528,13 +1617,14 @@ class EditBatch:
 
     @classmethod
     def _of(cls, workflow: "Workflow", if_version: Optional[int], include_graph: bool,
-            source: Optional[str] = None, origin: Optional[str] = None) -> "EditBatch":
+            source: Optional[str] = None, origin: Optional[str] = None, settle: bool = False) -> "EditBatch":
         batch = cls.__new__(cls)
         batch._workflow = workflow
         batch._if_version = if_version
         batch._include_graph = include_graph
         batch._source = source
         batch._origin = origin
+        batch._settle = settle
         batch._ops = []
         batch._added = []
         batch._result = None
@@ -1562,7 +1652,7 @@ class EditBatch:
         if not self._ops:
             return None
         edit = await self._workflow._send(self._ops, if_version=self._if_version, include_graph=self._include_graph,
-                                          source=self._source, origin=self._origin)
+                                          source=self._source, origin=self._origin, settle=self._settle)
         for index, step in self._added:
             step._absorb(edit, edit.results[index] if index < len(edit.results) else None)
         self._result = edit
@@ -1806,7 +1896,9 @@ class Workflow(_Object):
     """A workflow built in the NoClick app: its trigger, steps and outputs. Run it
     with ``run(inputs)``; ``inputs`` names what its trigger takes. ``access`` is
     your account's: ``owner``, ``editor`` or ``viewer`` (one shared with it);
-    changing, building and running take owning it and paying for it.
+    building, running, testing and publishing it take edit access, billed to
+    whoever pays for it (a team workspace's owner; its app stays its owner's);
+    pausing and deleting it take owning it and paying for it.
 
     It's also a handle to its graph: ``graph()`` reads its steps whole, each
     ``Step`` changes with one call, and ``edit()`` sends several changes as one
@@ -1851,7 +1943,9 @@ class Workflow(_Object):
         "``configured``, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
         "whose last run failed among them), the ``warnings`` that don't stop it running (an agent's tool with "
         "no account connected), and ``unverified``, the steps no run has completed yet, each "
-        "``{step, code, message}``."))
+        "``{step, code, message}``. An issue's ``code`` says whose move it is: ``missing_credentials`` waits on "
+        "an account, ``left_for_user`` on a required setting the step leaves for its person to fill in, and "
+        "``invalid_config`` is a setting a run would refuse."))
     urls: List[Dict[str, Any]] = field("urls", lambda raw: list(raw or []), doc=(
         "The URLs it answers at: ``{kind, url, step, public}``, ``kind`` ``endpoint``, ``app`` (its published "
         "app) or ``mcp`` (a hosted MCP server)."))
@@ -1864,12 +1958,13 @@ class Workflow(_Object):
     @classmethod
     async def create(
         cls, name: str, *, instructions: Optional[str] = None, description: Optional[str] = None,
-        client: Optional[Client] = None,
+        questions: Optional[str] = None, client: Optional[Client] = None,
     ) -> "Workflow":
         """A new workflow in your account. With ``instructions`` NoClick's
         builder starts building it: wait on ``latest_build``. A name your
         account already has raises ``noclick.Conflict`` (change that one with
-        ``build``).
+        ``build``). ``questions="assume"``: the builder asks nothing, as
+        ``build()`` takes it.
 
         Returns:
             The new workflow; ``latest_build`` is its build when ``instructions`` describe it.
@@ -1883,8 +1978,8 @@ class Workflow(_Object):
             print(result.summary, [step.name for step in result.steps])
         """
         api = resolve_client(client)
-        raw = await api.request("POST", "/v1/workflows",
-                                json=compact(name=name, instructions=instructions, description=description))
+        raw = await api.request("POST", "/v1/workflows", json=compact(
+            name=name, instructions=instructions, description=description, questions=questions))
         return cls._new(raw=raw, client=client, user=None)
 
     @property
@@ -1963,10 +2058,12 @@ class Workflow(_Object):
     @synced
     @classmethod
     async def list(
-        cls, *, q: Optional[str] = None, limit: Optional[int] = None, client: Optional[Client] = None,
+        cls, *, q: Optional[str] = None, search: Optional[str] = None, limit: Optional[int] = None,
+        client: Optional[Client] = None,
     ) -> List["Workflow"]:
         """Your account's workflows, most recently changed first. ``q`` is a
-        case-insensitive prefix of the name.
+        case-insensitive prefix of the name; ``search``, text its name or
+        description holds, in any case.
 
         Returns:
             Every matching workflow, fetched page by page (or the first ``limit``).
@@ -1978,14 +2075,14 @@ class Workflow(_Object):
         """
         return await list_all(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q}, user=None, limit=limit, client=client,
+            params={"q": q, "search": search}, user=None, limit=limit, client=client,
         )
 
     @synced
     @classmethod
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, q: Optional[str] = None,
-        client: Optional[Client] = None,
+        search: Optional[str] = None, client: Optional[Client] = None,
     ) -> Page:
         """One page of workflows; pass ``next_cursor`` back as ``cursor``.
 
@@ -2000,7 +2097,7 @@ class Workflow(_Object):
         """
         return await list_page(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q}, user=None, cursor=cursor, limit=limit, client=client,
+            params={"q": q, "search": search}, user=None, cursor=cursor, limit=limit, client=client,
         )
 
     @synced
@@ -2044,6 +2141,26 @@ class Workflow(_Object):
         raw = await resolve_client(client).request(
             "POST", "/v1/workflows/folders",
             json=compact(name=name, description=description, parent_id=_folder_id(parent)), user=None)
+        return WorkflowFolder._from(raw)
+
+    @synced
+    @classmethod
+    async def delete_folder(cls, folder: Union[WorkflowFolder, str], *, client: Optional[Client] = None) -> WorkflowFolder:
+        """Delete one of your account's folders (a ``WorkflowFolder`` or its
+        id), as the app does: the workflows in it move to its parent (the top,
+        for one at the top) and the folders in it go with it, their workflows
+        moving to the top. No workflow is deleted.
+
+        Returns:
+            The folder as it was.
+
+        Usage::
+
+            for folder in noclick.Workflow.folders():
+                if folder.workflow_count == 0:
+                    noclick.Workflow.delete_folder(folder)
+        """
+        raw = await resolve_client(client).request("DELETE", f"/v1/workflows/folders/{_folder_id(folder)}", user=None)
         return WorkflowFolder._from(raw)
 
     @synced
@@ -2172,14 +2289,15 @@ class Workflow(_Object):
 
     async def _send(self, ops: Sequence[Dict[str, Any]], *, if_version: Optional[int] = None,
                     include_graph: bool = False, source: Optional[str] = None,
-                    origin: Optional[str] = None) -> WorkflowEdit:
+                    origin: Optional[str] = None, settle: bool = False) -> WorkflowEdit:
         """One batch of ``ops``; what it did is this handle's now, and a refusal for a stale version carries the
         workflow as it stands (``Conflict.graph``)."""
         path = await self._path()
         sent = [await _sent(op) for op in ops]
         try:
             raw = await self._request("POST", f"{path}/edits", json=compact(
-                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin))
+                ops=sent, if_version=if_version, include_graph=include_graph or None, source=source, origin=origin,
+                settle=settle or None))
         except Conflict as err:
             self._stale(err)
             raise
@@ -2306,7 +2424,7 @@ class Workflow(_Object):
         return await self._edit_step(handle, {"op": "move", "id": handle.id, "position": _position(position)})
 
     def edit(self, *, if_version: Optional[int] = None, include_graph: bool = False,
-             source: Optional[str] = None, origin: Optional[str] = None) -> EditBatch:
+             source: Optional[str] = None, origin: Optional[str] = None, settle: bool = False) -> EditBatch:
         """Collect several edits and send them as one batch when the ``with`` block ends:
         they're applied in order and land as one version, or none of them do. With
         ``if_version`` (a version you read: ``version``, ``graph().version``, or the last
@@ -2332,6 +2450,12 @@ class Workflow(_Object):
         first, whoever made them). ``origin`` is a name the sender gives itself (letters, digits,
         ``-`` and ``_``, up to 64; a canvas tab's own id): what the workflow's open canvases hear
         of the write names it, so the canvas that sent it knows the change is its own.
+
+        ``settle=True`` waits, up to 30 seconds, for what the batch sets going (a trigger's
+        registration: its webhook, its schedule, its inbox; a removed step's teardown) before the
+        answer: ``result.settled`` says whether it finished in time, the graph (with
+        ``include_graph``) carries what it wrote on the steps (a trigger's ``webhook_url``), and
+        ``result.unregistered`` names, by step, why each trigger it left unregistered can't be yet.
 
         Returns:
             An ``EditBatch`` to use as a context manager (``async with`` in async code);
@@ -2360,7 +2484,26 @@ class Workflow(_Object):
                     except noclick.Conflict as changed:
                         graph = changed.graph   # the workflow as it stands; decide again from it
         """
-        return EditBatch._of(self, if_version, include_graph, source, origin)
+        return EditBatch._of(self, if_version, include_graph, source, origin, settle)
+
+    @synced
+    async def settle(self, *, include_graph: bool = False) -> WorkflowEdit:
+        """Wait, up to 30 seconds, for what earlier edits set going (their triggers' registrations,
+        removed steps' teardowns), changing nothing, as an edit with ``settle=True`` waits for its own.
+
+        Returns:
+            A ``WorkflowEdit``: ``settled`` (whether it finished in time), ``unregistered`` (by step,
+            why each trigger left unregistered can't be yet) and, with ``include_graph``, the workflow
+            as that left it.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            with brief.edit() as e:
+                e.add_step("trigger-webhook", id="hook", name="Order placed")
+            print(brief.settle(include_graph=True).graph.step("hook").settings["webhook_url"])
+        """
+        return await self._send([], include_graph=include_graph, settle=True)
 
     @synced
     async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
@@ -2478,13 +2621,20 @@ class Workflow(_Object):
 
     @synced
     async def build(self, instructions: Optional[str] = None, *,
-                    publish: Union[None, bool, Dict[str, Any]] = None) -> WorkflowBuild:
+                    publish: Union[None, bool, Dict[str, Any]] = None,
+                    questions: Optional[str] = None) -> WorkflowBuild:
         """Change the workflow by describing the change; NoClick's builder makes
         it, reading the workflow as it stands. ``publish=True`` then puts its
         app live (or pass ``{"subdomain": "morrow", "title": ...}``; ``publish()``
         and ``unpublish()`` publish without a change). One build at a time:
         another in progress raises ``noclick.Conflict``. A change costs AI
         usage, as building in the app does.
+
+        What the builder can't decide it asks the person whose build it is (you
+        as the account's owner, or the user your key acts for): each input of its
+        question is a human request NoClick sends them, which any client answers.
+        ``questions="assume"`` asks nothing: the builder decides, and its summary
+        and the workflow's readiness say what it assumed and what's missing.
 
         Returns:
             A ``WorkflowBuild``: ``wait()`` gives the ``WorkflowBuildResult`` (its ``steps``, and what was
@@ -2498,7 +2648,7 @@ class Workflow(_Object):
         """
         options = {} if publish is True else publish or None
         payload = await self._request("POST", f"{await self._path()}/builds",
-                                      json=compact(instructions=instructions, publish=options))
+                                      json=compact(instructions=instructions, publish=options, questions=questions))
         build = WorkflowBuild._from_payload(payload, client=self._client, user=None)
         self._started_build = build
         return build
@@ -2726,6 +2876,27 @@ class Workflow(_Object):
         return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.run", reader=_read_run)
 
     @synced
+    async def test_runs(self) -> List[WorkflowTestRun]:
+        """The test runs the workflow offers, as its Test Run screen lists them: for each trigger an agent comes
+        after, the staged situations NoClick offers for it (under the names the workflow gave them, with its edits
+        to their messages, less the ones it removed) and the runs it authored (``edit().add_test_run``). Empty for
+        a workflow with no trigger a test can stage. Reading them costs nothing.
+
+        Returns:
+            Each ``WorkflowTestRun``, in the order ``rehearse`` finds them: its ``key`` and ``name`` (either names
+            it to ``rehearse``), the ``trigger`` it stages on and its staged ``message``.
+
+        Usage::
+
+            inbox = noclick.Workflow.from_name("Support inbox")
+            for run in inbox.test_runs():
+                print(run.name, run.trigger["label"], run.message.get("title"))
+            test = inbox.rehearse(inbox.test_runs()[0].key).wait()
+        """
+        raw = await self._request("GET", f"{await self._path()}/test_runs") or {}
+        return [WorkflowTestRun._from(run) for run in (raw.get("data") or [])]
+
+    @synced
     async def rehearse(
         self,
         test_run: Optional[str] = None,
@@ -2746,7 +2917,7 @@ class Workflow(_Object):
         must be). The steps after an agent that would reach an account never run.
 
         ``test_run`` plays one the workflow offers, by its name or key, as its
-        Test Run screen lists them: a staged situation for one of its triggers,
+        Test Run screen lists them (``test_runs()`` reads them): a staged situation for one of its triggers,
         or one authored for it (``edit().add_test_run``). Or stage a message you
         type on ``trigger`` (a trigger ``Step``, its id or its type): ``body``,
         with ``title``, ``author`` and ``handle``. ``scenario`` says what the
@@ -2788,10 +2959,20 @@ class Workflow(_Object):
         limit: Optional[int] = 20,
         user_filter: Any = None,
         user: Any = AMBIENT,
+        source: Union[None, str, Sequence[str]] = None,
+        trigger: Union[None, str, Sequence[str]] = None,
+        waiting: Optional[bool] = None,
+        search: Optional[str] = None,
     ) -> List[WorkflowRun]:
         """Recent runs, newest first, however they started (your code, its
         endpoint, a schedule, the app). Outside ``as_user`` you read runs recorded
-        for your account; ``user_filter`` reads your users'.
+        for your account; ``user_filter`` reads your users'. Narrow them by
+        ``status``, by how they started (``source``: ``api``, ``endpoint``,
+        ``app``, ``schedule``, ``trigger``), by the kind of event that started
+        them (``trigger``: ``webhook``, ``email``, ``call``, ``agent``,
+        ``shared_link``, ``error``), to those that wait (``waiting=True``) or
+        that don't (``False``), and by text in their error (``search``, any
+        case).
 
         Returns:
             The first ``limit`` matching runs (20 by default; ``None`` for all of them).
@@ -2801,10 +2982,15 @@ class Workflow(_Object):
             intake = noclick.Workflow.from_name("order-intake")
             for run in intake.runs(status="failed", user_filter=noclick.ALL_USERS):
                 print(run.started_at, run.source, run.error)
+            for run in intake.runs(trigger="email", waiting=True):
+                print(run.id, "waits on", run.waiting_on)
         """
         return await list_all(
             f"{await self._path()}/runs", lambda raw, _scope: WorkflowRun._from(raw),
-            params={"status": csv(status)}, user=user, user_filter=user_filter, limit=limit, client=self._client,
+            params={"status": csv(status), "source": csv(source), "trigger": csv(trigger),
+                    "waiting": None if waiting is None else ("true" if waiting else "false"),
+                    "search": search or None},
+            user=user, user_filter=user_filter, limit=limit, client=self._client,
         )
 
     @synced
@@ -2849,9 +3035,9 @@ class Workflow(_Object):
 
     @synced
     async def run_counts(self, *, user_filter: Any = None, user: Any = AMBIENT) -> WorkflowRunCounts:
-        """How many runs ``runs()`` lists: in all, ``by_status`` and ``by_source``. Outside
-        ``as_user`` you count the runs recorded for your account; ``user_filter`` counts your
-        users'.
+        """How many runs ``runs()`` lists: in all, ``by_status`` (and how many of the running
+        ones are ``waiting``), ``by_source`` and ``by_trigger``. Outside ``as_user`` you count
+        the runs recorded for your account; ``user_filter`` counts your users'.
 
         Returns:
             The ``WorkflowRunCounts``.

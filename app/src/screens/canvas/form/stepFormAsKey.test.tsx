@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
-// The step form acting as one of the account's keys, as this app serves it: every scene of its lab (lab/scenes.ts)
-// opened over fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts) exactly
-// as the API refuses a key, and none of them asks for one. What every scene calls, as the owner and as a key, is kept in
-// stepFormCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
-// hold to the table. And what the form does with what it reads: every request goes through the app's client (none off
-// its origin), and no secret the account holds is in anything it reads or sends.
+// The step form acting as one of the account's keys, as this app serves it: every scene of its lab (lab/scenes.ts), its
+// settings and its accounts, opened over fixtures that refuse what only the account's signed-in owner may do
+// (screens/console/ownerOnly.ts) exactly as the API refuses a key, and none of them asks for one. What every scene
+// calls, as the owner and as a key, is kept in stepFormCalls.txt (`npx vitest run -u` writes it again), which NoClick's
+// own tests call on its real API as a key and hold to the table. And what the form does with what it reads: every
+// request goes through the app's client (none off its origin), no secret the account holds is in anything it reads or
+// sends, and an account is chosen by its id and connected at NoClick's connect page, never by sending its values.
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -112,7 +113,14 @@ async function open(scene: StepFormScene, actsAs: 'owner' | 'key') {
     return record.calls;
 }
 
-/** Holds that nothing the form read or sent carries a secret the account holds, nor a credential's data. */
+/** Every key anywhere in `value`. */
+function keysIn(value: unknown): string[] {
+    if (Array.isArray(value)) return value.flatMap(keysIn);
+    if (!value || typeof value !== 'object') return [];
+    return Object.entries(value).flatMap(([key, inner]) => [key, ...keysIn(inner)]);
+}
+
+/** Holds that nothing the form read or sent carries a secret the account holds, nor a credential's data, at any depth. */
 async function holdsNoSecret(calls: Call[]) {
     for (const call of calls) {
         const sent = JSON.stringify(call.body);
@@ -121,10 +129,22 @@ async function holdsNoSecret(calls: Call[]) {
             expect(sent, `${asLine(call)} sent a secret`).not.toContain(secret);
             expect(read, `${asLine(call)} read a secret`).not.toContain(secret);
         }
-        for (const key of ['credential_id', 'credentialIds', 'credential_ids', 'data']) {
-            expect(call.body, `${asLine(call)} sent ${key}`).not.toHaveProperty(key);
+        const keys = keysIn(call.body);
+        for (const key of ['credential_id', 'credentialIds', 'credential_ids', 'credential_data', 'data', 'token', 'api_key']) {
+            expect(keys, `${asLine(call)} sent ${key}`).not.toContain(key);
         }
     }
+}
+
+/** A tab a click opened, where the form sends it. */
+function stubTabs() {
+    const tabs: { location: { href: string }; closed: boolean; opener: unknown; close: () => void }[] = [];
+    vi.stubGlobal('open', () => {
+        const tab = { location: { href: 'about:blank' }, closed: false, opener: null as unknown, close: () => undefined };
+        tabs.push(tab);
+        return tab;
+    });
+    return tabs;
 }
 
 const scene = (id: string) => SCENES.find((s) => s.id === id)!;
@@ -167,7 +187,8 @@ describe('the step form acting as a key', () => {
         await settled(record);
         const options = record.calls.filter((c) => c.path === '/v1/workflows/wf_orders/steps/mail/options');
         expect(options.length).toBeGreaterThan(0);
-        for (const call of options) expect(call.body.field).toBe('channel');
+        // The step as the form holds it: its type, so one not saved yet lists its choices too.
+        for (const call of options) expect([call.body.field, call.body.type]).toEqual(['channel', 'example-mail']);
         await holdsNoSecret(record.calls);
         expect(offClient).toEqual([]);
     });
@@ -198,6 +219,93 @@ describe('the step form acting as a key', () => {
         const clear = await screen.findByRole('button', { name: /Clear State/ }, { timeout: 8000 });
         await act(async () => fireEvent.click(clear));
         await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/steps/state/clear_state'));
+        await settled(record);
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('lists the account’s connections for a step and saves a choice as the step’s set_connection edit', { timeout: 30_000 }, async () => {
+        const record = recorder();
+        draw(scene('accounts-picked'), 'key', record.observe);
+        const picker = await screen.findByRole('button', { name: 'Orders mailbox' }, { timeout: 8000 });
+        // Its check said who it reaches; the revoked one is listed after the working ones.
+        expect(screen.getByText('Verified as orders@example.test')).toBeTruthy();
+        await settled(record);
+        expect(record.calls.map(asLine)).toEqual(expect.arrayContaining(['GET /v1/step_types/example-mail', 'GET /v1/connections']));
+        await act(async () => fireEvent.click(picker));
+        await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Support mailbox' })));
+        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'));
+        const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
+        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'mail', connection: 'cred_mail_2', slot: 'example_mail_token' }], include_graph: true });
+        expect(await screen.findByRole('button', { name: 'Support mailbox' })).toBeTruthy();
+        // A key's view offers no Share (the API doesn't share accounts) and no Delete (Connections deletes them).
+        expect(screen.queryByRole('button', { name: /^Share / })).toBeNull();
+        expect(screen.queryByRole('button', { name: /^Delete / })).toBeNull();
+        await settled(record);
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('connects a step’s first account at NoClick’s connect page in a new tab, sending no secret, then saves it', { timeout: 30_000 }, async () => {
+        const tabs = stubTabs();
+        const record = recorder();
+        draw(scene('accounts-optional'), 'key', record.observe);
+        expect(await screen.findByText('Optional. With no account here, NoClick’s own key runs it and bills the usage.', undefined, { timeout: 8000 })).toBeTruthy();
+        await settled(record);
+        await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect on NoClick' })));
+        // A named connection of the step's app, on its own first way in, with nothing of the account's in it.
+        await waitFor(() => expect(record.calls.filter((c) => c.method === 'POST' && c.path === '/v1/connections').map((c) => c.body)).toEqual([
+            { name: expect.stringMatching(/^example_search-/), integration: 'example_search' },
+        ]));
+        await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/example_search-/));
+        // Once the account lands there, the step takes it by the id of the account its connection holds.
+        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
+        const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
+        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'search', connection: expect.stringMatching(/^cred_conn_examplesearch/), slot: 'example_search_api_key' }], include_graph: true });
+        await settled(record);
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('connects an agent’s AI account through connect.model, as the key of the provider its model names', { timeout: 30_000 }, async () => {
+        const tabs = stubTabs();
+        const record = recorder();
+        draw(scene('accounts-agent'), 'key', record.observe);
+        expect(await screen.findByRole('button', { name: 'Team key' }, { timeout: 8000 })).toBeTruthy();
+        await settled(record);
+        await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect another account' })));
+        await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect an AI account' })));
+        await act(async () => fireEvent.click(await screen.findByRole('button', { name: 'Connect on NoClick' })));
+        await waitFor(() => expect(record.calls.filter((c) => c.method === 'POST' && c.path === '/v1/connections').map((c) => c.body)).toEqual([
+            { name: expect.stringMatching(/^openai-/), integration: 'openai', credential_type: 'agent_openai' },
+        ]));
+        await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/openai-/));
+        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
+        const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
+        expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'agent', connection: expect.stringMatching(/^cred_conn_openai/), slot: 'agent_openai' }], include_graph: true });
+        await settled(record);
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('names the account a step keeps through a named connection, as the step reads after a reload', { timeout: 30_000 }, async () => {
+        const record = recorder();
+        draw(scene('accounts-named'), 'key', record.observe);
+        // The step keeps the account's id; the connection holding it names it, so its picker shows its name.
+        expect(await screen.findByRole('button', { name: 'shipping-mail' }, { timeout: 8000 })).toBeTruthy();
+        expect(screen.queryByText(/isn’t one you can use|no longer exists/)).toBeNull();
+        await settled(record);
+        expect(record.calls.map(asLine)).toEqual(expect.arrayContaining(['GET /v1/connections']));
+        await holdsNoSecret(record.calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('says why an account the step points at can’t be used, and offers to connect another', { timeout: 30_000 }, async () => {
+        const record = recorder();
+        draw(scene('accounts-revoked'), 'key', record.observe);
+        expect(await screen.findByText('This account was disconnected or revoked, so runs can’t use it. Connect it again below, or choose another.', undefined, { timeout: 8000 })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Old mailbox (revoked)' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Connect on NoClick' })).toBeTruthy();
         await settled(record);
         await holdsNoSecret(record.calls);
         expect(offClient).toEqual([]);
