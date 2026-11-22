@@ -1235,6 +1235,201 @@ class ProjectSecrets(_Service):
         await self._request("POST", name, "versions", version_id(version), "restore")
 
 
+@dataclass(frozen=True)
+class AccountKeyScope:
+    """One scope an app's key to the account holds or asks for, with what it lets the app do in plain words."""
+
+    scope: str
+    #: What a key holding it can do, as the account's owner reads it before they agree.
+    can: str
+    #: Whether it reads a secret (a raw token, a sandbox's keys): said apart when the owner is asked.
+    reads_secrets: bool
+
+
+@dataclass(frozen=True)
+class AccountKeyRequest:
+    """The request to the account's owner an app's key waits on, or waited on last."""
+
+    #: ``waiting``, ``approved`` (its key is being made), ``declined``, ``expired`` (nobody answered: the next
+    #: deploy asks again), ``canceled``, ``revoked``, ``denied`` (the account's approval settings give no app a
+    #: key) or ``unsent`` (it reached nobody).
+    status: str
+    scopes: List[str]
+    asked_at: Any
+    #: The held call the owner answers (``noclick.Approval.get``), and the operation to wait on; None where the
+    #: account's settings decided with no request.
+    approval_id: Optional[str]
+    operation_id: Optional[str]
+
+
+@dataclass(frozen=True)
+class AccountKey:
+    """An app's key to the account it's deployed in (``app.account_key.get()``).
+
+    An app whose repository asks for one, in ``noclick.json`` at its root
+    (``{"account_key": {"scopes": ["agents", "channels"]}}``), reads it as
+    ``NOCLICK_API_KEY``: NoClick gives each production release a bearer of its
+    own, which works while that release serves and the app holds its key. No
+    key is ever shown, pasted or answered by the API. A preview gets none.
+    """
+
+    #: ``granted``; ``waiting`` (the owner was asked); ``declined``; ``expired``; ``revoked``; ``denied``;
+    #: ``unsent``; ``not_asked`` (its repository asks for one and nobody was asked yet: before its first
+    #: production deploy); or ``none`` (its repository asks for none).
+    status: str
+    #: The name its code reads the key from: ``NOCLICK_API_KEY``.
+    variable: str
+    #: The scopes its repository asks for, each in plain words; empty when it asks for none.
+    asks: List[AccountKeyScope]
+    #: The commit that asks for them (its production branch's head, else the release production serves).
+    commit: Optional[str]
+    #: The key it holds, one of the account's keys (``noclick.Key``), and what it may do; None, and empty,
+    #: while it holds none.
+    key_id: Optional[str]
+    scopes: List[str]
+    spend_cap_usd_per_month: Optional[float]
+    granted_at: Any
+    last_used_at: Any
+    #: Scopes its repository asks for that its key doesn't hold yet: its code acts without them meanwhile.
+    missing_scopes: List[str]
+    request: Optional[AccountKeyRequest]
+    #: What the key can never do, whatever it holds.
+    cannot: List[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @property
+    def granted(self) -> bool:
+        return self.status == "granted"
+
+    @classmethod
+    def _from(cls, raw: Any) -> "AccountKey":
+        raw = raw if isinstance(raw, dict) else {}
+        asks, key, request = raw.get("asks") or {}, raw.get("key") or {}, raw.get("request")
+        return cls(
+            status=raw.get("status") or "none", variable=raw.get("variable") or "NOCLICK_API_KEY",
+            asks=[AccountKeyScope(line.get("scope") or "", line.get("can") or "", bool(line.get("reads_secrets")))
+                  for line in asks.get("can") or []],
+            commit=asks.get("commit"), key_id=key.get("id"), scopes=list(key.get("scopes") or []),
+            spend_cap_usd_per_month=key.get("spend_cap_usd_per_month"),
+            granted_at=parse_time(key.get("granted_at")), last_used_at=parse_time(key.get("last_used_at")),
+            missing_scopes=list(raw.get("missing_scopes") or []),
+            request=AccountKeyRequest(request.get("status") or "", list(request.get("scopes") or []),
+                                      parse_time(request.get("asked_at")), request.get("approval_id"),
+                                      request.get("operation_id")) if isinstance(request, dict) else None,
+            cannot=list(raw.get("cannot") or []), raw=raw)
+
+
+class ProjectAccountKey(_Service):
+    """``app.account_key``: the key to the account an app's own code acts with, given by NoClick.
+
+    The app's repository says which scopes its code needs, in ``noclick.json``
+    at its root::
+
+        {"account_key": {"scopes": ["agents", "channels"]}}
+
+    Its first production deploy then asks the account's owner once, from a
+    link NoClick sends them, saying what the key can do. Once they agree the
+    app's code reads the key as ``NOCLICK_API_KEY`` (the name the SDK reads by
+    itself), with no deploy between. Nobody creates, copies or pastes a key,
+    and none is ever shown: each production release holds a bearer of its own
+    that works only while that release serves, and the key is revoked when the
+    app is deleted. Whoever can change the app's code acts with the key, so an
+    app asks only for the scopes it uses.
+    """
+
+    _name = "account_key"
+
+    @synced
+    async def get(self) -> AccountKey:
+        """Where the app's key to the account stands: what its repository asks for in plain words, the key it
+        holds, and the request to the owner it waits on.
+
+        Returns:
+            The key as it stands now (``status``, ``asks``, ``scopes``, ``request``); never a key's value.
+
+        Usage::
+
+            app = noclick.Project.from_name("console")
+            key = app.account_key.get()
+            print(key.status)                       # granted, waiting, declined, ...
+            for line in key.asks:
+                print(line.scope, "-", line.can)    # what the owner is shown
+        """
+        return AccountKey._from(await self._request("GET"))
+
+    @synced
+    async def give(self, scopes: Optional[Sequence[str]] = None, *,
+                   spend_cap_usd_per_month: Any = UNSET) -> AccountKey:
+        """Give the app its key, or change what the one it holds may do, without waiting for a deploy to ask.
+
+        ``scopes`` are exactly what the app's repository asks for now (left
+        out, they're read from ``get()``); anything else raises
+        ``noclick.Conflict`` naming what it asks for. It works at once: the
+        release production serves already holds its bearer.
+
+        Who may: the account's owner, signed in; one of the account's own
+        keys that holds ``keys:create``, for scopes it holds itself; an agent
+        or a connected app, whose call waits for the owner
+        (``noclick.ApprovalRequired``) unless the account's ``app_key``
+        approval setting allows it. Any other key raises
+        ``noclick.PermissionDenied``: deploy the app, and NoClick asks its
+        owner.
+
+        ``spend_cap_usd_per_month``: the most the key may spend in a calendar
+        month (None: no cap of its own). Left out, a key it holds keeps its cap.
+
+        Returns:
+            The key as it stands after: ``granted``, with the scopes it holds.
+
+        Usage::
+
+            app = noclick.Project.from_name("console")
+            shown = app.account_key.get()
+            print([line.can for line in shown.asks])    # show the owner this first
+            app.account_key.give([line.scope for line in shown.asks], spend_cap_usd_per_month=50)
+        """
+        if scopes is None:
+            scopes = [line.scope for line in (await self.get.aio()).asks]
+        body: Dict[str, Any] = {"scopes": list(scopes)}
+        if spend_cap_usd_per_month is not UNSET:
+            body["spend_cap_usd_per_month"] = spend_cap_usd_per_month
+        return AccountKey._from(await self._request("PUT", json=body))
+
+    @synced
+    async def revoke(self) -> AccountKey:
+        """Take the app's key away: its code is refused from now on, and a request it waited on is called off.
+        The owner isn't asked again for the same scopes at the app's next deploy.
+
+        Returns:
+            The key as it stands after: ``revoked``, holding nothing.
+
+        Usage::
+
+            noclick.Project.from_name("console").account_key.revoke()
+        """
+        return AccountKey._from(await self._request("POST", "revoke"))
+
+    @synced
+    async def rotate(self) -> Operation:
+        """Replace the bearer the app's code holds: every one NoClick gave it before stops at once, and the
+        release production serves is released again with a new one. The key, its scopes and its cap stay.
+        Every deploy does the same by itself.
+
+        Returns:
+            The promote that releases production again; ``.wait()`` gives the deployment. The app's key
+            is refused until it settles.
+
+        Usage::
+
+            noclick.Project.from_name("console").account_key.rotate().wait()
+        """
+        payload = await self._request("POST", "rotate")
+        return Operation._from_payload(
+            payload, client=self._project._client, user=self._project._call_scope(), kind="deployment.promote",
+            reader=_read_deployment,
+        )
+
+
 class ProjectSettings(_Service):
     """``app.settings``: plain values the running app reads from its environment by
     name, such as a feature flag or a public URL. Unlike ``app.secrets`` they read back,
@@ -1625,6 +1820,11 @@ class Project(_Object):
     def settings(self) -> ProjectSettings:
         """Its plain settings: ``app.settings.set("PUBLIC_BASE_URL", "...")``."""
         return ProjectSettings(self)
+
+    @property
+    def account_key(self) -> ProjectAccountKey:
+        """The key to the account its own code acts with, which NoClick gives it: ``app.account_key.get()``."""
+        return ProjectAccountKey(self)
 
     @property
     def email(self) -> ProjectEmail:
