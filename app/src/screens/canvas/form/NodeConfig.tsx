@@ -102,6 +102,8 @@ export interface NodeConfigProps {
     credentialIds?: Record<string, string>;  // Maps credential_type -> credential_id for dynamic options
     workflowId?: string;  // Required for loading dynamic values (e.g., webhook URL)
     nodeId?: string;  // Required for loading dynamic values
+    /** The paths of the settings the workflow's read held back (a secret, which no /v1 read sends): shown as saved. */
+    withheld?: readonly string[];
     fieldErrors?: Record<string, string[]>;  // Maps field paths to error messages (from execution errors)
     // Lifted state — when provided, the parent controls the Configuration/Settings toggle
     activeView?: 'configuration' | 'settings';
@@ -196,6 +198,9 @@ function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): 
     return result;
 }
 
+/** What a field whose secret the workflow's read held back shows in its place. */
+const WITHHELD_PLACEHOLDER = 'Saved, hidden. Type to replace it.';
+
 /** The node's config form, drawn once its schema has loaded (the form, its defaults and its checks come from it:
  *  `canvas.step.schemas`). */
 export function NodeConfig(props: NodeConfigProps) {
@@ -210,7 +215,7 @@ export function NodeConfig(props: NodeConfigProps) {
     );
 }
 
-function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIteration, fieldHoldsArrayRef, operation: operationProp, onOperationChange, onValidationChange, onSwitchToCredentials, credentialIds = {}, workflowId, nodeId, fieldErrors = {}, activeView: propActiveView, onActiveViewChange, onValidationStateChange, onAutofillField, onAutofillOperation, isAutofilling, autofillingFieldKey, isAutofillingOperation, autoFocusOperationPicker = true, showInputPrompt = false, onShowInputPrompt, showOutputPrompt = false, onShowOutputPrompt, fieldAddons, hideOperationPicker = false, focusFields, workflowVariables, onVariableValueChange }: NodeConfigProps & { rootSchema: Record<string, any> | null }) {
+function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIteration, fieldHoldsArrayRef, operation: operationProp, onOperationChange, onValidationChange, onSwitchToCredentials, credentialIds = {}, workflowId, nodeId, withheld, fieldErrors = {}, activeView: propActiveView, onActiveViewChange, onValidationStateChange, onAutofillField, onAutofillOperation, isAutofilling, autofillingFieldKey, isAutofillingOperation, autoFocusOperationPicker = true, showInputPrompt = false, onShowInputPrompt, showOutputPrompt = false, onShowOutputPrompt, fieldAddons, hideOperationPicker = false, focusFields, workflowVariables, onVariableValueChange }: NodeConfigProps & { rootSchema: Record<string, any> | null }) {
     const logActivity = useSlot(STEP_TRACK)();
     const reads = useSlot(STEP_READS).useStepReads();
     const stepLink = useSlot(STEP_LINK);
@@ -1369,7 +1374,10 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 }
 
                 if (isNestedObject) {
-                    const nestedValue = (localConfig[key] as Record<string, any>) || {};
+                    // A field that also takes a plain value (an Approval step's approver, "owner") edits as empty.
+                    const stored = localConfig[key];
+                    const nestedValue: Record<string, any> =
+                        stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
                     const handleNestedChange = (passedKey: string, newValue: any) => {
                         // Handle label storage separately (DynamicOptionsField stores labels with __label suffix)
                         if (passedKey.endsWith('__label')) {
@@ -1515,6 +1523,9 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
 
                 // Check if this field has execution errors
                 const fieldHasError = fieldErrors[key] && fieldErrors[key].length > 0;
+                // A secret the read held back: set, unread, kept unless something is typed in its place.
+                const held = !!withheld?.includes(key) && !isFieldFilled(localConfig[key]);
+                const shownProp = held ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER } : prop;
 
                 // A field bound to a workflow variable ({{vars.x}} as its WHOLE
                 // value) shows the RESOLVED value and its editor writes through
@@ -1546,7 +1557,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                         <div className={`flex flex-wrap items-center gap-x-1 gap-y-0.5${prop.description ? '' : ' mb-1.5'}`}>
                             <label className={`text-xs uppercase tracking-wider flex items-center gap-2 min-w-0 break-words ${fieldHasError ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
                                 {prop.title || key}
-                                <FieldRequirementBadge isRequired={isRequired || requireOneOfAttention.has(key)} isFilled={isFieldFilled(localConfig[key])} />
+                                <FieldRequirementBadge isRequired={isRequired || requireOneOfAttention.has(key)} isFilled={held || isFieldFilled(localConfig[key])} />
                             </label>
                             {workflowId && nodeId && stepLink && (
                                 <CopyLinkButton
@@ -1582,7 +1593,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                         <div data-field-control onFocusCapture={() => setFocusedFieldKey(key)}>
                             <NodeConfigFieldControl
                                 fieldKey={key}
-                                prop={prop}
+                                prop={shownProp}
                                 value={fieldValue}
                                 onChange={fieldOnChange}
                                 nodeType={nodeType}
