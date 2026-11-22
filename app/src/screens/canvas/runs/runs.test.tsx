@@ -97,7 +97,8 @@ describe('the run log on the API', () => {
             ['run_5', 'success', 'manual', 'Completed.', 4250],
             ['run_4', 'error', 'event', "Step 'Slack' failed: channel_not_found", 72_000],
         ]);
-        // A run from code and one from the workflow's endpoint are both the API's; a run that waits counts as running.
+        // A run from code and one from the workflow's endpoint are both the API's; an event the log has no name of its
+        // own for (a phone call) is an event.
         expect(result.current.log.counts).toEqual({ total: 5, byStatus: { success: 3, error: 1, running: 1, waiting: 0 }, byTrigger: { manual: 1, event: 1, cron: 1, run: 2 } });
         expect(result.current.log.hasMore).toBe(true);
 
@@ -116,23 +117,49 @@ describe('the run log on the API', () => {
         expect(lines()).toHaveLength(before);
     });
 
-    it('refuses out loud a narrowing the API hasn’t, and reads nothing for it', async () => {
-        const { client, lines } = world();
-        const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    it('narrows by everything the log offers: a search, how a run started, and the runs that wait apart from those that run', async () => {
+        const run = (id: string, more: Json): Json => ({ ...RUNS[2], id, ...more });
+        const runs = [
+            run('run_9', { source: 'trigger', trigger: 'email', waiting_on: 'approval' }),
+            run('run_8', { source: 'trigger', trigger: 'webhook', waiting_on: 'delay' }),
+            run('run_7', { source: 'api', waiting_on: 'agent_turn' }),
+            run('run_6', { source: 'trigger', trigger: 'webhook' }),
+            ...RUNS,
+        ];
+        const { client, lines } = world({ runs: () => runs, pageSize: 50 });
         const { result } = renderHook(useLog, { wrapper: within(client) });
-        await waitFor(() => expect(result.current.logs).toHaveLength(2));
-        expect(result.current.reads.narrows).toEqual({ waiting: false, source: false, search: false });
-        const before = lines().length;
-        for (const [filters, why] of [
-            [{ status: 'all', trigger: 'all', query: 'channel' }, 'Searching runs isn’t on the API yet.'],
-            [{ status: 'all', trigger: 'webhook', query: '' }, 'Narrowing runs by how they started isn’t on the API yet.'],
-            [{ status: 'waiting', trigger: 'all', query: '' }, 'The API lists a run that waits as running.'],
-        ] as [LogsFilters, string][]) {
+        await waitFor(() => expect(result.current.logs).toHaveLength(9));
+        expect(result.current.reads.narrows).toEqual({ waiting: true, source: true, search: true });
+        // A run that waits is the log's waiting, whatever it waits on; an email's and a webhook's wear their own marks.
+        expect(result.current.logs.slice(0, 4).map((log) => [log.id, log.status, log.trigger])).toEqual([
+            ['run_9', 'waiting', 'email'], ['run_8', 'waiting', 'webhook'], ['run_7', 'waiting', 'run'], ['run_6', 'running', 'webhook'],
+        ]);
+        await waitFor(() => expect(result.current.log.counts.total).toBe(9));
+        expect(result.current.log.counts).toEqual({
+            total: 9,
+            byStatus: { success: 3, error: 1, running: 2, waiting: 3 },
+            byTrigger: { manual: 1, cron: 1, run: 3, email: 1, webhook: 2, event: 1 },
+        });
+        const read = `GET /v1/workflows/${WORKFLOW}/runs?limit=50`;
+        for (const [filters, query, ids] of [
+            [{ status: 'all', trigger: 'all', query: 'CHANNEL_not' }, '&search=CHANNEL_not', ['run_4']],
+            [{ status: 'all', trigger: 'webhook', query: '' }, '&trigger=webhook', ['run_8', 'run_6']],
+            [{ status: 'all', trigger: 'email', query: '' }, '&trigger=email', ['run_9']],
+            [{ status: 'all', trigger: 'manual', query: '' }, '&source=app', ['run_5']],
+            [{ status: 'all', trigger: 'cron', query: '' }, '&source=schedule', ['run_3']],
+            [{ status: 'all', trigger: 'run', query: '' }, '&source=api%2Cendpoint', ['run_7', 'run_2', 'run_1']],
+            [{ status: 'waiting', trigger: 'all', query: '' }, '&status=running&waiting=true', ['run_9', 'run_8', 'run_7']],
+            [{ status: 'running', trigger: 'all', query: '' }, '&status=running&waiting=false', ['run_6', 'run_3']],
+        ] as [LogsFilters, string, string[]][]) {
             act(() => result.current.log.onFiltersChange(filters));
-            await waitFor(() => expect(result.current.log.error).toBe(why));
+            await waitFor(() => expect(lines().at(-1)).toBe(read + query));
+            await waitFor(() => expect(result.current.logs.map((log) => log.id)).toEqual(ids));
         }
-        expect(lines()).toHaveLength(before);
-        error.mockRestore();
+        // A way of starting the API has no word for (a form's) lists nothing, and reads nothing.
+        const before = lines().length;
+        act(() => result.current.log.onFiltersChange({ status: 'all', trigger: 'form', query: '' }));
+        await waitFor(() => expect(result.current.logs).toEqual([]));
+        expect([lines().length, result.current.log.error]).toEqual([before, null]);
     });
 
     it('offers only what its reads narrow by, and says what it doesn’t', async () => {

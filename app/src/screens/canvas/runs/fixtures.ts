@@ -13,15 +13,16 @@ export const OUTPUT_SECRET = 'the bearer value an output held';
 
 const AT = '2026-10-16T15:00:00.000Z';
 const run = (id: string, status: string, source: string, started: string, finished: string | null, more: Json = {}): Json => ({
-    object: 'workflow_run', id, workflow_id: WORKFLOW, status, inputs: {}, outputs: {}, error: null, source, user_id: null, operation_id: null,
-    started_at: started, finished_at: finished, ...more,
+    object: 'workflow_run', id, workflow_id: WORKFLOW, status, waiting_on: null, inputs: {}, outputs: {}, error: null, source, trigger: null,
+    user_id: null, operation_id: null, started_at: started, finished_at: finished, ...more,
 });
 
-/** The workflow's runs, newest first: one from the app that succeeded, a webhook's that failed, a schedule's still
+/** The workflow's runs, newest first: one from the app that succeeded, a phone call's that failed, a schedule's still
  *  running, one from code, one from its endpoint. */
 export const RUNS: Json[] = [
     run('run_5', 'succeeded', 'app', AT, '2026-10-16T15:00:04.250Z'),
     run('run_4', 'failed', 'trigger', '2026-10-16T09:20:00.000Z', '2026-10-16T09:21:12.000Z', {
+        trigger: 'call',
         error: { type: 'run_failed', message: "Step 'Slack' failed: channel_not_found", run_id: 'run_4', step: 'Slack' },
     }),
     run('run_3', 'running', 'schedule', '2026-10-15T08:00:00.000Z', null),
@@ -104,8 +105,19 @@ export function runsFetch(options: RunsFetchOptions = {}): typeof fetch {
         }
         const workflow = `/v1/workflows/${WORKFLOW}`;
         if (method === 'GET' && path === `${workflow}/runs`) {
-            const wanted = url.searchParams.get('status')?.split(',');
-            const rows = runs().filter((r) => !wanted || wanted.includes(String(r.status)));
+            // Narrowed as the API narrows them: by status, how each started, the kind of event that started it, whether
+            // it waits, and text in its error.
+            const listed = (name: string) => url.searchParams.get(name)?.split(',');
+            const waits = url.searchParams.get('waiting');
+            const search = url.searchParams.get('search')?.toLowerCase();
+            const rows = runs().filter(
+                (r) =>
+                    (!listed('status') || listed('status')!.includes(String(r.status))) &&
+                    (!listed('source') || listed('source')!.includes(String(r.source))) &&
+                    (!listed('trigger') || listed('trigger')!.includes(String(r.trigger))) &&
+                    (waits === null || String(Boolean(r.waiting_on)) === waits) &&
+                    (!search || String((r.error as Json | null)?.message ?? '').toLowerCase().includes(search))
+            );
             const from = url.searchParams.get('cursor') ? rows.findIndex((r) => r.id === url.searchParams.get('cursor')) + 1 : 0;
             const size = Math.min(pageSize, Number(url.searchParams.get('limit') ?? pageSize));
             const page = rows.slice(from, from + size);
@@ -113,7 +125,11 @@ export function runsFetch(options: RunsFetchOptions = {}): typeof fetch {
         }
         if (method === 'GET' && path === `${workflow}/runs/counts`) {
             const by = (key: string) => runs().reduce<Record<string, number>>((n, r) => ({ ...n, [String(r[key])]: (n[String(r[key])] ?? 0) + 1 }), {});
-            return Response.json({ object: 'run_counts', workflow_id: WORKFLOW, total: runs().length, by_status: { running: 0, succeeded: 0, failed: 0, ...by('status') }, by_source: by('source') });
+            const { null: _noTrigger, ...byTrigger } = by('trigger');
+            return Response.json({
+                object: 'run_counts', workflow_id: WORKFLOW, total: runs().length, by_status: { running: 0, succeeded: 0, failed: 0, ...by('status') },
+                waiting: runs().filter((r) => r.waiting_on).length, by_source: by('source'), by_trigger: byTrigger,
+            });
         }
         if (method === 'POST' && path === `${workflow}/runs`) return Response.json(operation('running'), { status: 202 });
         if (method === 'GET' && path === '/v1/operations/op_new/wait') return Response.json(operation('settled'));

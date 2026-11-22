@@ -252,6 +252,10 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
             settings: request.context ?? undefined,
             search: request.search,
             pageToken: request.page_token,
+            // The step as the form holds it: one not saved yet lists its choices by its type, through the account its
+            // form holds.
+            type: request.node_type,
+            connection: request.credential_id || undefined,
         });
         // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
         return {

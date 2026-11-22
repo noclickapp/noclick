@@ -529,8 +529,8 @@ export const CLIPBOARD = slot<CanvasClipboard>('canvas.clipboard', { formats: []
 /** What the run log, a step's output history and its expected shape read (runs/reads.ts). The standard reads the
  *  platform API: a page of runs (`GET /v1/workflows/{id}/runs`) and their counts (`.../runs/counts`), a step's stored
  *  outputs (`.../steps/{step}/outputs`, each whole from `.../outputs/{run}`) and what a step type outputs (`GET
- *  /v1/step_types/{type}/output_shape`). The API lists runs by how they ended and nothing more yet, so the standard's
- *  log is narrowed by that alone and says so; NoClick's app also searches them and narrows by how they started. */
+ *  /v1/step_types/{type}/output_shape`). The log is narrowed as the API narrows runs: by how they ended, the runs
+ *  that wait apart from those that run, how they started and text in their errors. */
 export const RUN_READS = slot<RunReadsHost>('canvas.runs.reads', { useRunReads: useV1RunReads });
 
 /** Outputs saved under a name, to pin on a step of the same type later (and to share with other people). The API has
