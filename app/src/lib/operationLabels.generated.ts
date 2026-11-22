@@ -794,7 +794,7 @@ wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram
 wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme
 yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno zenoti zenrows zenzap zep
 zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory zoho-projects
-zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
+zoho-work-drive zoho-writer zonnagps zoom zoominfo zsign zulip zuora zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
