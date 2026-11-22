@@ -1,0 +1,1236 @@
+/* The run-results derivation: turns what the popup receives (NodeRunResult
+   rows + the agent's recorded tool calls) into the rehearsal screen's
+   vocabulary — an inbound Scenario for InboundMessage, trace rows with salient
+   argument details, and the sends that actually went out for OutboundMessage.
+   Consumed by RunResultsDialog; the Story view in StoryViews.tsx is a
+   rendering of this. */
+
+import type { MediaRef, Scenario } from '../../testRun/scenarios';
+import type { ReplayRow } from '../../testRun/useReplay';
+import { toReplayRows, type LiveRow } from '../../testRun/liveRows';
+import type { ReplayToolCall } from './toolCalls';
+import type { ErrorAction } from '../ErrorActionButton';
+import { formatDuration } from '../RunLog';
+import { isTriggerSourceLite } from '@/lib/nodeIconRegistry';
+
+/** One node's result, as the popup receives it (NodeRunResult minus the icon
+    fields, which the views resolve themselves) plus `operation` — read off the
+    graph node, so the trigger can be recognised the way the canvas does. */
+export interface StoryNodeResult {
+    nodeId: string;
+    nodeType: string;
+    label: string;
+    operation?: string;
+    status: 'completed' | 'error' | 'skipped';
+    output: unknown;
+    error?: string;
+    errorAction?: ErrorAction;
+    isAgent: boolean;
+    toolCalls: ReplayToolCall[];
+}
+
+/** One delivery run's result for a node the agent consumed. */
+export interface AgentInputRun {
+    executionId: string;
+    status: string | null;
+    output: unknown;
+}
+
+/** One node across the deliveries an agent response consumed (`runs` > 1
+    when it fired in several). */
+export interface AgentInputGroup {
+    nodeId: string;
+    label: string;
+    iconHtml?: string;
+    iconColor?: string;
+    nodeType: string;
+    /** The node's CURRENT operation (off the graph), so a provider-type node
+        is recognised as the fired trigger the way the canvas does. */
+    operation?: string;
+    runs: AgentInputRun[];
+}
+
+export interface StoryInput {
+    results: StoryNodeResult[];
+    /** For a RESPONSE run (a warm agent's finished turn, fired as its own
+        run): the deliveries the turn consumed, resolved from the agent
+        output's `input_execution_ids`. The inbound event comes from here —
+        the run's own trigger node never fired in it. */
+    agentInputs?: AgentInputGroup[];
+    workflowName: string;
+    /** Overrides the agent node's label in the outbound frames' byline. */
+    agentName?: string;
+    /** The run's start (ISO) — from the execution log; absent for runs whose
+        log row isn't loaded. */
+    startedAt?: string;
+    durationMs?: number;
+}
+
+/** `automation-google-sheets` → `google_sheets` — the slug appThemes, tool
+    names and the icon map all key on. */
+export function slugOfType(type: string): string {
+    return type.replace(/^automation-/, '').replace(/-/g, '_');
+}
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/** Local wall clock HH:MM — undefined for unparseable input. */
+export function clockOf(iso: string | null | undefined): string | undefined {
+    if (!iso) return undefined;
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return undefined;
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+/** HH:MM:SS — trace rows land seconds apart, so their stamps need them. */
+export function clockSecOf(iso: string | null | undefined): string | undefined {
+    if (!iso) return undefined;
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return undefined;
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+}
+
+type Lead = Scenario['lead'];
+type Dict = Record<string, unknown>;
+
+/** What the inbound frame needs to know about the node that fired. */
+type StoryNodeIdentity = Pick<StoryNodeResult, 'nodeId' | 'nodeType' | 'label' | 'operation'>;
+
+/** `no_event_output` (backend): a push trigger executed with no delivery. */
+export const isNoEventOutput = (output: unknown): boolean =>
+    asDict(output).status === 'no_event';
+
+/** A response run's agent output — the callback-built package carrying the
+    delivery runs the turn consumed. */
+export const isResponsePackage = (output: unknown): boolean =>
+    Array.isArray(asDict(output).input_execution_ids);
+
+const asDict = (v: unknown): Dict => (v && typeof v === 'object' ? (v as Dict) : {});
+
+function str(d: Dict, ...keys: string[]): string | undefined {
+    for (const k of keys) {
+        let v = d[k];
+        // Some senders take lists (to_addresses, media_urls) — the first
+        // entry is the one worth showing.
+        if (Array.isArray(v)) v = v[0];
+        if (typeof v === 'string' && v.trim()) return v.trim();
+        if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+    }
+    return undefined;
+}
+
+/** Discord's `<@id>` / `<@!id>` markup → `@name` from the message's own
+    mentions list; role and channel mentions get a generic label. */
+export function humanizeDiscordMentions(text: string, mentions: unknown): string {
+    const names = new Map<string, string>();
+    if (Array.isArray(mentions)) {
+        for (const m of mentions) {
+            const entry = asDict(m);
+            if (entry.id !== undefined) names.set(String(entry.id), str(entry, 'display_name', 'username') ?? 'user');
+        }
+    }
+    return text
+        .replace(/<@!?([\w-]+)>/g, (_, id: string) => `@${names.get(id) ?? 'user'}`)
+        .replace(/<@&[\w-]+>/g, '@role')
+        .replace(/<#[\w-]+>/g, '#channel');
+}
+
+/** The Discord trigger's resolved output (a Gateway message, or a slash
+    command): ids for the channel and server, plus their names when the
+    listener knew them — a lead reads "#general · NoClick Sandbox", never a
+    snowflake when a name exists. */
+function deriveDiscordLead(d: Dict): Lead | null {
+    const channelName = str(d, 'channel_name');
+    const channelId = str(d, 'channel_id');
+    const title = channelName ? `#${channelName}` : channelId ? `#${channelId}` : 'Message';
+    const meta = str(d, 'guild_name') ?? '';
+    if (d.event_type === 'on_slash_command') {
+        const command = str(d, 'command_name');
+        if (!command) return null;
+        const options = asDict(d.options);
+        const args = Object.entries(options)
+            .map(([k, v]) => `${k}: ${String(v)}`)
+            .join(' · ');
+        return { title, meta, body: `/${command}${args ? ` ${args}` : ''}`, author: str(d, 'username', 'user_id') };
+    }
+    const attachments = Array.isArray(d.attachments) ? (d.attachments as unknown[]) : [];
+    const files = attachments.map((a) => str(asDict(a), 'filename', 'url')).filter((f): f is string => !!f);
+    const body = [humanizeDiscordMentions(str(d, 'content') ?? '', d.mentions), ...files.map((f) => `📎 ${f}`)]
+        .filter(Boolean)
+        .join('\n');
+    if (!body) return null;
+    const username = str(d, 'author_username');
+    return {
+        title,
+        meta,
+        body,
+        author: str(d, 'author_display_name') ?? username,
+        handle: username ? `@${username}` : undefined,
+        time: clockOf(str(d, 'sent_at')),
+    };
+}
+
+/** Slack's message markup → what a person reads: `<@U1|dana>` → @dana,
+    `<@U1>` → @U1, `<#C1|general>` → #general, `<!here>` → @here,
+    `<https://x|label>` → label, entities unescaped. */
+export function humanizeSlackMarkup(text: string, dropUserId?: string): string {
+    if (dropUserId) text = text.replace(new RegExp(`<@${dropUserId}(?:\\|[^>]*)?>\\s*`, 'g'), '');
+    return text
+        .replace(/<@([\w-]+)\|([^>]+)>/g, '@$2')
+        .replace(/<@([\w-]+)>/g, '@$1')
+        .replace(/<#([\w-]+)\|([^>]+)>/g, '#$2')
+        .replace(/<#([\w-]+)>/g, '#$1')
+        .replace(/<!subteam\^[\w-]+\|@?([^>]+)>/g, '@$1')
+        .replace(/<!(here|channel|everyone)(?:\|[^>]*)?>/g, '@$1')
+        .replace(/<([^|>]+)\|([^>]+)>/g, '$2')
+        .replace(/<((?:https?|mailto):[^>]+)>/g, '$1')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        // mrkdwn emphasis markers: *bold* / _italic_ around a phrase.
+        .replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s.,;:!?)])/g, '$1$2')
+        .replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s.,;:!?)])/g, '$1$2');
+}
+
+/** Slack message subtypes that are notices about the channel, not a
+    person talking — the frame names the event instead of quoting it as
+    someone's words. */
+const SLACK_SUBTYPE_NOTES: Record<string, string> = {
+    channel_join: 'joined the channel',
+    channel_leave: 'left the channel',
+    channel_topic: 'set the channel topic',
+    channel_purpose: 'set the channel purpose',
+    channel_name: 'renamed the channel',
+    channel_archive: 'archived the channel',
+    channel_unarchive: 'unarchived the channel',
+    pinned_item: 'pinned a message',
+    unpinned_item: 'unpinned a message',
+    file_share: 'shared a file',
+    thread_broadcast: 'replied in a thread',
+    message_changed: 'edited a message',
+    message_deleted: 'deleted a message',
+};
+
+/** Slack's epoch-seconds `ts` ("1789060263.695389") → an ISO string
+    clockOf can read. */
+function slackTsToIso(ts?: string): string | undefined {
+    const seconds = ts ? Number(ts) : NaN;
+    return Number.isFinite(seconds) ? new Date(seconds * 1000).toISOString() : undefined;
+}
+
+/** A Slack trigger's output: the Events API envelope (nested under `data`,
+    unwrapped by the caller) whose message sits under `event`. The text
+    keeps Slack's markup readable, a bot post's attachments are part of
+    what came in (a support hand-off is mostly attachment text), a system
+    subtype reads as the notice it is, and the channel shows by the label
+    the trigger was configured with when the backend carried it. */
+function deriveSlackLead(d: Dict): Lead | null {
+    // The trigger's own output ({type: 'slack', data: envelope, channel_label})
+    // and the unwrapped envelope both land here.
+    const envelope = typeof asDict(d.data).event === 'object' ? asDict(d.data) : d;
+    const event = asDict(envelope.event);
+    const container = typeof event.type === 'string' ? event : envelope;
+    // An edit carries the current message nested (previous_message is
+    // history); the channel and ts stay on the outer event.
+    const m =
+        container.subtype === 'message_changed' && typeof container.message === 'object'
+            ? { ...asDict(container.message), channel: container.channel, subtype: container.subtype }
+            : container;
+    const attachments = Array.isArray(m.attachments) ? (m.attachments as unknown[]).map(asDict) : [];
+    const files = Array.isArray(m.files) ? (m.files as unknown[]).map(asDict) : [];
+    // The receiving bot's own @mention is what woke the agent, not content.
+    const botUserId = (Array.isArray(envelope.authorizations) ? (envelope.authorizations as unknown[]).map(asDict) : [])
+        .find((a) => a.is_bot === true && typeof a.user_id === 'string')?.user_id as string | undefined;
+    // A card's fields ARE its content (a support hand-off is location, email,
+    // links); its fallback is only worth showing when there are no fields.
+    const attachmentLines = attachments.flatMap((a) => {
+        const fields = Array.isArray(a.fields) ? (a.fields as unknown[]).map(asDict) : [];
+        return [
+            str(a, 'title', 'pretext') ?? '',
+            str(a, 'text') ?? (fields.length ? '' : (str(a, 'fallback') ?? '')),
+            ...fields.map((f) => (str(f, 'value') ? `${str(f, 'title') ?? 'field'}: ${str(f, 'value')}` : '')),
+        ];
+    });
+    const lines = [
+        str(m, 'text', 'message', 'body') ?? '',
+        ...attachmentLines,
+        ...files.map((f) => (str(f, 'title', 'name') ? `📎 ${str(f, 'title', 'name')}` : '')),
+    ]
+        .map((line) => humanizeSlackMarkup(line, botUserId).trim())
+        .filter(Boolean);
+    const body = lines.join('\n');
+    if (!body) return null;
+    const channelLabel = str(d, 'channel_label') ?? str(m, 'channel_name');
+    const channelId = str(m, 'channel');
+    const channel = channelLabel ?? channelId;
+    const title = channel ? (channel.startsWith('#') ? channel : `#${channel}`) : 'Message';
+    const subtype = str(m, 'subtype');
+    const note = subtype ? SLACK_SUBTYPE_NOTES[subtype] : undefined;
+    const thread = str(m, 'thread_ts');
+    const meta = [title, note, thread && thread !== str(m, 'ts') ? 'in a thread' : undefined]
+        .filter(Boolean)
+        .join(' · ');
+    const botName = str(asDict(m.bot_profile), 'name') ?? str(m, 'username');
+    const user = str(m, 'user');
+    // A shared file rehosted at delivery carries the same `media` slot a
+    // WhatsApp message does — playable, and annotated by the agent's digest.
+    const rehosted = files.map((f) => asDict(f.media)).find((r) => r.rehosted === true);
+    const media = rehosted ? deriveInboundMedia({ media: rehosted }) : undefined;
+    return {
+        title,
+        meta,
+        body,
+        author: botName ?? undefined,
+        handle: user ? `@${user}` : botName ? undefined : str(m, 'bot_id'),
+        time: clockOf(slackTsToIso(str(m, 'ts', 'event_ts'))),
+        media,
+    };
+}
+
+/** "Priya Raman <priya@northwind.io>" → the two halves. */
+function splitAddress(from?: string): { author?: string; handle?: string } {
+    if (!from) return {};
+    const m = from.match(/^(.*?)\s*<([^>]+)>$/);
+    if (m) return { author: m[1].trim() || undefined, handle: m[2].trim() };
+    return from.includes('@') ? { handle: from } : { author: from };
+}
+
+function mediaKindFromMime(mime: string | undefined): MediaRef['kind'] {
+    const m = (mime ?? '').toLowerCase();
+    if (m.startsWith('image/')) return 'image';
+    if (m.startsWith('video/')) return 'video';
+    if (m.startsWith('audio/')) return 'audio';
+    return 'file';
+}
+
+/** Telegram's message keys for each attachment kind (BARE file ids — no URL
+    a browser could load, so the frame shows a chip, never a broken player). */
+const TELEGRAM_MEDIA_KEYS: Array<[string, MediaRef['kind']]> = [
+    ['photo', 'image'],
+    ['sticker', 'image'],
+    ['video', 'video'],
+    ['video_note', 'video'],
+    ['animation', 'video'],
+    ['voice', 'audio'],
+    ['audio', 'audio'],
+    ['document', 'file'],
+];
+
+/** What a chat message carried besides text. WhatsApp deliveries carry a
+    `media` object whose URL is browser-loadable ONLY once rehosted (the
+    provider's own URL is platform-authed and useless here — 2026-09-09: a
+    voice note rendered as a raw JSON tree because the lead had no media
+    slot); Telegram updates carry the attachment under its kind's key. */
+function deriveInboundMedia(d: Dict): MediaRef | undefined {
+    const media = asDict(d.media);
+    if (Object.keys(media).length > 0 || d.hasMedia === true) {
+        const url = media.rehosted === true ? str(media, 'url') : undefined;
+        return {
+            kind: mediaKindFromMime(str(media, 'mimetype', 'mime_type')),
+            url: url && /^https?:\/\//.test(url) ? url : undefined,
+            name: str(media, 'filename'),
+            // The agent's digest annotates the record it transcribed.
+            transcript: str(media, 'transcript'),
+        };
+    }
+    for (const [key, kind] of TELEGRAM_MEDIA_KEYS) {
+        const v = d[key];
+        if (v && typeof v === 'object') return { kind, name: str(asDict(v), 'file_name') };
+    }
+    return undefined;
+}
+
+/** A shared location or contact card as a line of text — the bubble has no
+    map or vCard frame, but "📍 …" beats a null body. */
+function describeNonTextMessage(d: Dict): string | undefined {
+    const loc = asDict(d.location);
+    const lat = str(loc, 'latitude');
+    const lng = str(loc, 'longitude');
+    if (lat && lng) {
+        const label = str(loc, 'description', 'name', 'address') ?? 'Shared a location';
+        return `📍 ${label} (${lat}, ${lng})`;
+    }
+    const contact = asDict(d.contact);
+    const contactName = [str(contact, 'first_name'), str(contact, 'last_name')].filter(Boolean).join(' ');
+    if (contactName) {
+        const phone = str(contact, 'phone_number');
+        return `👤 Shared contact: ${contactName}${phone ? ` (${phone})` : ''}`;
+    }
+    if (Array.isArray(d.vCards) && d.vCards.length > 0) {
+        const names = d.vCards
+            .map((v) => (typeof v === 'string' ? v.match(/^FN:(.+)$/m)?.[1]?.trim() : undefined))
+            .filter((n): n is string => Boolean(n));
+        return names.length
+            ? `👤 Shared contact${names.length > 1 ? 's' : ''}: ${names.join(', ')}`
+            : `👤 Shared ${d.vCards.length} contact${d.vCards.length > 1 ? 's' : ''}`;
+    }
+    return undefined;
+}
+
+function epochToIso(v: unknown): string | undefined {
+    const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v) : NaN;
+    if (!Number.isFinite(n)) return undefined;
+    return new Date(n < 1e12 ? n * 1000 : n).toISOString();
+}
+
+const clip = (text: string | undefined, max = 600): string =>
+    text && text.length > max ? `${text.slice(0, max).trimEnd()}…` : (text ?? '');
+
+/** GitHub's webhook: the record the event is about (issue, PR, comment,
+    push, release), never the repository/sender objects around it. */
+function deriveGitHubLead(d: Dict): Lead | null {
+    const repo = str(asDict(d.repository), 'full_name');
+    if (!repo) return null;
+    const who = str(asDict(d.sender), 'login');
+    const base = { meta: repo, author: who, handle: who ? `@${who}` : undefined };
+    const record = asDict(d.pull_request ?? d.issue);
+    const number = record.number;
+    if (typeof number === 'number') {
+        const comment = asDict(d.comment);
+        const title = `#${number} ${str(record, 'title') ?? ''}`.trim();
+        const body = str(comment, 'body') ?? str(record, 'body') ?? '';
+        return { ...base, title, body: clip(body), time: clockOf(str(comment, 'created_at') ?? str(record, 'updated_at', 'created_at')) };
+    }
+    if (Array.isArray(d.commits)) {
+        const branch = (str(d, 'ref') ?? '').replace(/^refs\/heads\//, '');
+        const commits = (d.commits as unknown[]).map(asDict);
+        const body = commits
+            .slice(0, 6)
+            .map((c) => `${String(c.id ?? '').slice(0, 7)} ${(str(c, 'message') ?? '').split('\n')[0]}`)
+            .join('\n');
+        return { ...base, title: `Push to ${branch || 'branch'} (${commits.length} commit${commits.length === 1 ? '' : 's'})`, body, author: str(asDict(d.pusher), 'name') ?? who };
+    }
+    const release = asDict(d.release);
+    if (str(release, 'tag_name')) {
+        return { ...base, title: `${str(release, 'tag_name')}${str(release, 'name') ? ` ${str(release, 'name')}` : ''}`, body: clip(str(release, 'body')), time: clockOf(str(release, 'published_at', 'created_at')) };
+    }
+    if ('starred_at' in d) return { ...base, title: repo, body: `${who ?? 'Someone'} starred the repository.`, time: clockOf(str(d, 'starred_at')) };
+    return null;
+}
+
+/** Linear's webhook: {type, action, data} — the entity is `data`. */
+function deriveLinearLead(d: Dict): Lead | null {
+    const data = asDict(d.data);
+    const kind = str(d, 'type');
+    if (!kind || !Object.keys(data).length) return null;
+    const who = str(asDict(d.actor), 'name') ?? str(asDict(data.user), 'name');
+    if (kind === 'Comment') {
+        const issue = asDict(data.issue);
+        return { title: `${str(issue, 'identifier') ?? 'Comment'} ${str(issue, 'title') ?? ''}`.trim(), meta: str(issue, 'identifier') ?? '', body: clip(str(data, 'body')), author: who, time: clockOf(str(d, 'createdAt')) };
+    }
+    const id = str(data, 'identifier');
+    const title = `${id ? `${id} ` : ''}${str(data, 'title', 'name') ?? ''}`.trim();
+    if (!title) return null;
+    const state = str(asDict(data.state), 'name');
+    return { title, meta: [str(asDict(data.team), 'key'), state].filter(Boolean).join(' · '), body: clip(str(data, 'description')), author: who, time: clockOf(str(d, 'createdAt')) };
+}
+
+/** Jira cloud's webhook: the issue under `issue.fields`. */
+function deriveJiraLead(d: Dict): Lead | null {
+    const issue = asDict(d.issue);
+    const key = str(issue, 'key');
+    if (!key) return null;
+    const fields = asDict(issue.fields);
+    const comment = asDict(d.comment);
+    const who = str(asDict(d.user), 'displayName') ?? str(asDict(comment.author), 'displayName');
+    const description = typeof fields.description === 'string' ? fields.description : undefined;
+    return {
+        title: `${key} ${str(fields, 'summary') ?? ''}`.trim(),
+        meta: [str(asDict(fields.project), 'key'), str(asDict(fields.status), 'name')].filter(Boolean).join(' · '),
+        body: clip(str(comment, 'body') ?? description),
+        author: who,
+        time: clockOf(str(comment, 'created') ?? str(fields, 'updated', 'created')),
+    };
+}
+
+/** Notion's poll batch: the first item (page, database or comment). */
+function deriveNotionLead(d: Dict): Lead | null {
+    const item = Array.isArray(d.items) && d.items.length ? asDict(d.items[0]) : d;
+    if (!str(item, 'id')) return null;
+    const props = asDict(item.properties);
+    const titleProp = Object.values(props).map(asDict).find((p) => Array.isArray(p.title));
+    const plain = (parts: unknown) => (Array.isArray(parts) ? parts.map((t) => str(asDict(t), 'plain_text') ?? '').join('') : '');
+    const title = plain(titleProp?.title) || plain(item.title) || (item.object === 'comment' ? 'Comment' : 'Untitled');
+    const body = item.object === 'comment' ? plain(item.rich_text) : (str(item, 'url') ?? '');
+    const count = typeof d.new_item_count === 'number' ? d.new_item_count : undefined;
+    return { title, meta: count && count > 1 ? `1 of ${count}` : (str(item, 'object') ?? ''), body, time: clockOf(str(item, 'last_edited_time', 'created_time')) };
+}
+
+/** PagerDuty V3: the incident under event.data. */
+function derivePagerDutyLead(d: Dict): Lead | null {
+    const event = asDict(d.event);
+    const data = asDict(event.data);
+    const title = str(data, 'title');
+    if (!title) return null;
+    const number = data.number;
+    const body = [
+        str(data, 'status') && `${str(data, 'status')}${str(data, 'urgency') ? `, ${str(data, 'urgency')} urgency` : ''}`,
+        str(asDict(data.service), 'summary') && `service ${str(asDict(data.service), 'summary')}`,
+        str(data, 'html_url'),
+    ]
+        .filter(Boolean)
+        .join(' · ');
+    return { title: `${typeof number === 'number' ? `#${number} ` : ''}${title}`, meta: str(event, 'event_type') ?? '', body, author: str(asDict(event.agent), 'summary'), time: clockOf(str(event, 'occurred_at')) };
+}
+
+/** Typeform's webhook: answers zipped with the form definition's titles. */
+function deriveTypeformLead(d: Dict): Lead | null {
+    const fr = asDict(d.form_response);
+    const fields = new Map(
+        (Array.isArray(asDict(fr.definition).fields) ? (asDict(fr.definition).fields as unknown[]).map(asDict) : []).map((f) => [str(f, 'id'), str(f, 'title')])
+    );
+    const answers = Array.isArray(fr.answers) ? (fr.answers as unknown[]).map(asDict) : [];
+    let email: string | undefined;
+    let name: string | undefined;
+    const lines = answers.map((a) => {
+        const kind = str(a, 'type') ?? 'text';
+        const raw = a[kind];
+        const value = typeof raw === 'object' && raw ? (str(asDict(raw), 'label') ?? ((asDict(raw).labels as string[] | undefined) ?? []).join(', ')) : String(raw ?? '');
+        if (kind === 'email' && !email) email = value;
+        const q = fields.get(str(asDict(a.field), 'id')) ?? str(asDict(a.field), 'ref') ?? 'Answer';
+        if (/name/i.test(q) && !name) name = value;
+        return `${q}: ${value}`;
+    });
+    if (!lines.length) return null;
+    return { title: str(asDict(fr.definition), 'title') ?? 'Form response', meta: email ?? '', body: lines.join('\n'), author: name, handle: email, time: clockOf(str(fr, 'submitted_at')) };
+}
+
+/** The fired event as a lead the native frames can wear. Null when the payload
+    has no recognisable message shape — the views then show the raw event
+    instead of dressing noise up as a message. */
+/** A finished phone call (the phone node's event): the other party as the
+    contact, the duration as the pill, and the transcript as "Caller:"/"You:"
+    lines the call frame lays out as an exchange. On an inbound call the
+    other party is the caller; on one the agent placed, the number it called. */
+function derivePhoneCallLead(d: Dict): Lead | null {
+    const outbound = d.direction === 'outbound';
+    const other = str(d, outbound ? 'to' : 'caller');
+    const ours = str(d, outbound ? 'caller' : 'to');
+    const turns = (d.transcript as unknown[])
+        .map(asDict)
+        .filter((t) => typeof t.text === 'string' && (t.text as string).trim())
+        .map((t) => `${t.role === 'user' ? (outbound ? 'Them' : 'Caller') : 'You'}: ${(t.text as string).trim()}`);
+    if (!other && !turns.length) return null;
+    const seconds = typeof d.seconds === 'number' ? d.seconds : Number(d.seconds);
+    const duration = Number.isFinite(seconds) && seconds > 0
+        ? `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}`
+        : '';
+    return {
+        title: outbound ? 'Outbound call' : 'Incoming call',
+        meta: duration,
+        body: turns.join('\n'),
+        author: other,
+        handle: other && ours ? `${outbound ? 'to' : 'from'} ${other} · ${outbound ? 'from' : 'on'} ${ours}` : other,
+        time: clockOf(str(d, 'timestamp', 'ended_at')),
+    };
+}
+
+export function deriveLead(slug: string, output: unknown): Lead | null {
+    const d = asDict(output);
+    // A push trigger run WITHOUT a live delivery (manual/test run) reports an
+    // explanation, not an event — its `message` is prose about the run, and
+    // reading it as the inbound text showed "No live event: …" as a guest's
+    // words (2026-09-02).
+    if (isNoEventOutput(d)) return null;
+
+    if (slug === 'whatsapp' || slug === 'telegram') {
+        // A media message's body is its caption (often empty); a location or
+        // contact card has no body at all — describe it instead.
+        const media = deriveInboundMedia(d);
+        const body = str(d, 'body', 'text', 'message', 'caption') ?? describeNonTextMessage(d);
+        if (!body && !media) return null;
+        // No author fallback to the address — author AND handle both reading
+        // "1415…@c.us" printed the id twice in the bubble header. WhatsApp's
+        // senderPhone beats `from`, which may be an opaque @lid identity.
+        const author = str(d, 'sender_name', 'from_name', 'pushName', 'author');
+        const handle = str(d, 'senderPhone', 'from', 'phone', 'chat_id');
+        return {
+            title: author ?? handle ?? 'Message',
+            meta: handle ?? '',
+            body: body ?? '',
+            author,
+            handle,
+            time: clockOf(str(d, 'timestamp', 'date')),
+            media,
+        };
+    }
+
+    if (slug === 'gmail' || slug === 'microsoft_outlook' || slug === 'email') {
+        // The Gmail poll delivers a batch ({emails: [...]}); the newest-first
+        // frame is the first one. A flat email (rehearsal, inbound trigger)
+        // is itself the lead.
+        const e = Array.isArray(d.emails) && d.emails.length ? asDict(d.emails[0]) : d;
+        const body = str(e, 'reply_text', 'body', 'snippet', 'text');
+        const title = str(e, 'subject');
+        if (!body && !title) return null;
+        const from = splitAddress(str(e, 'from', 'sender'));
+        return {
+            title: title ?? '(no subject)',
+            meta: str(e, 'from') ?? '',
+            body: body ?? '',
+            ...from,
+            time: clockOf(str(e, 'date', 'timestamp')),
+        };
+    }
+
+    // A finished call: from a number bought here (phone) or brought (twilio).
+    if ((slug === 'phone' || slug === 'twilio') && Array.isArray(d.transcript)) {
+        return derivePhoneCallLead(d);
+    }
+
+    if (slug === 'discord' && (typeof d.content === 'string' || d.event_type === 'on_slash_command')) {
+        return deriveDiscordLead(d);
+    }
+
+    if (slug === 'slack') {
+        return deriveSlackLead(d);
+    }
+
+    if (slug === 'discord' || slug === 'teams') {
+        const body = str(d, 'text', 'message', 'body');
+        if (!body) return null;
+        const channel = str(d, 'channel', 'channel_name');
+        return {
+            title: channel ? (channel.startsWith('#') ? channel : `#${channel}`) : 'Message',
+            meta: channel ?? '',
+            body,
+            author: str(d, 'user_name', 'username', 'user', 'author'),
+            time: clockOf(str(d, 'timestamp', 'date')),
+        };
+    }
+
+    if (slug === 'github' || slug === 'github_rest' || slug === 'github_graphql') {
+        return deriveGitHubLead(d);
+    }
+    if (slug === 'linear') return deriveLinearLead(d);
+    if (slug === 'jira') return deriveJiraLead(d);
+    if (slug === 'notion') return deriveNotionLead(d);
+    if (slug === 'pagerduty') return derivePagerDutyLead(d);
+    if (slug === 'typeform' && typeof d.form_response === 'object') return deriveTypeformLead(d);
+
+    if (slug === 'stripe') {
+        // A Stripe Event nests the object under data.object; a flat object
+        // (rehearsal fixtures) is itself the lead.
+        const nested = asDict(asDict(d.data).object);
+        if (Object.keys(nested).length) return deriveLead(slug, { ...nested, event_type: d.type });
+        const cents = d.amount_due ?? d.amount ?? d.amount_paid;
+        const currency = (str(d, 'currency') ?? 'usd').toUpperCase();
+        const title =
+            typeof cents === 'number'
+                ? `${currency === 'USD' ? '$' : `${currency} `}${(cents / 100).toFixed(2)}`
+                : (str(d, 'number', 'invoice') ?? 'Payment');
+        const number = str(d, 'number', 'invoice');
+        const attempt = typeof d.attempt_count === 'number' ? d.attempt_count : undefined;
+        const retry = str(d, 'next_payment_attempt');
+        const failure = str(d, 'failure_message', 'description');
+        const lineItem = str(asDict((asDict(d.lines).data as unknown[] | undefined)?.[0]), 'description');
+        const status = str(d, 'status', 'payment_status');
+        const body = [
+            failure,
+            lineItem,
+            number && attempt ? `Attempt ${attempt} for ${number}.` : undefined,
+            retry ? `Next retry ${retry}.` : undefined,
+            !failure && !lineItem && status ? `${str(d, 'object') ?? 'Payment'} ${status}.` : undefined,
+        ]
+            .filter(Boolean)
+            .join(' ');
+        if (!body) return null;
+        const details = asDict(d.customer_details);
+        return {
+            title,
+            meta: number ?? '',
+            body,
+            author: str(d, 'customer_name') ?? str(details, 'name') ?? str(asDict(d.billing_details), 'name'),
+            handle: str(d, 'customer_email', 'receipt_email') ?? str(details, 'email') ?? str(asDict(d.billing_details), 'email'),
+            time: clockOf(epochToIso(d.created)),
+        };
+    }
+
+    if (slug === 'typeform' || slug === 'google_forms') {
+        const body = str(d, 'message', 'answer', 'text', 'body');
+        if (!body) return null;
+        return {
+            title: str(d, 'form', 'form_name', 'title') ?? 'Form response',
+            meta: str(d, 'email') ?? '',
+            body,
+            author: str(d, 'name', 'respondent'),
+            handle: str(d, 'email'),
+            time: clockOf(str(d, 'submitted_at', 'timestamp')),
+        };
+    }
+
+    // Generic probe — enough shape to frame, or nothing at all.
+    const body = str(d, 'body', 'text', 'message', 'snippet', 'description');
+    const title = str(d, 'subject', 'title', 'name');
+    if (!body || !title) return null;
+    const from = splitAddress(str(d, 'from', 'sender', 'author'));
+    return { title, meta: str(d, 'from') ?? '', body, ...from, time: clockOf(str(d, 'timestamp', 'date')) };
+}
+
+/** Minimal Scenario for InboundMessage: provider 'generic' + iconSlug routes
+    the themed frame by the node's real slug; the rehearsal-only fields are
+    inert here. */
+export function toScenario(node: StoryNodeIdentity, lead: Lead): Scenario {
+    const slug = slugOfType(node.nodeType);
+    return {
+        slug,
+        name: node.label,
+        nodeName: node.label,
+        triggerLabel: node.label,
+        provider: 'generic',
+        iconSlug: slug,
+        operation: node.operation,
+        key: `run:${node.nodeId}`,
+        lead,
+        events: [],
+        doneAt: 0,
+        artifacts: null,
+    };
+}
+
+/* ---------------------------------------------------------------- sends */
+
+/** Public URL when the call carried one — renders a real preview. An
+    opaque media_id keeps the kind but shows an attachment chip. */
+export type StoryMedia = MediaRef;
+
+export interface StorySend {
+    provider: string;
+    to: string;
+    /** The message text/caption, when the call carried one. A media send
+        without a caption is still a send. */
+    text?: string;
+    media?: StoryMedia;
+    subject?: string;
+    toolName: string;
+    /** Index of the tool call that made this send — anchors the send to its
+        trace row. */
+    callIndex: number;
+    ms?: number;
+    /** Wall clock of the send, for the "Sent · 09:41" stamp. */
+    clock?: string;
+}
+
+/** Verb-anchored: an op SENDS when it starts with a sending verb. Segment
+    matching alone counted get_post, on_post_sent and send_http_get_request
+    as sends (2026-08-24 catalog sweep: 264 send-shaped ops, dozens of them
+    CRUD/telemetry/typing-indicators). */
+const SEND_OP_RE = /^(send|reply|post|publish|submit)(_|$)/;
+
+/** Text argument keys across the sender catalog, preferred-first: plain text
+    beats caption beats html beats an embed's description. Includes twitter/
+    salesforce message_text, linkedin commentary, mailgun/resend html. */
+const TEXT_ARG_KEYS = [
+    'text',
+    'body',
+    'message',
+    'message_text',
+    'content',
+    'commentary',
+    'caption',
+    'text_content',
+    'html_content',
+    'html',
+    'description',
+];
+
+/** Destination keys across the catalog — telegram's camelCase chatId, twilio
+    to_number, salesforce to_addresses (array), twitter participant_id, … */
+const DEST_ARG_KEYS = [
+    'to',
+    'recipient',
+    'recipient_id',
+    'channel',
+    'channel_id',
+    'chat_id',
+    'chatId',
+    'to_number',
+    'to_email',
+    'to_emails',
+    'to_addresses',
+    'participant_id',
+    'to_channel',
+    'to_contact',
+    'username',
+    'email',
+    'conversation_id',
+    'convo_id',
+    'thread_id',
+];
+
+/** Media argument keys, by the vocabulary the sender nodes actually use —
+    whatsapp's image_url/video_url/…, telegram's BARE photo/video/voice/
+    document/animation/sticker (URL or file id), instagram's attachment_url. */
+const MEDIA_URL_KEYS: Array<[string, StoryMedia['kind']]> = [
+    ['image_url', 'image'],
+    ['photo_url', 'image'],
+    ['photo', 'image'],
+    ['sticker_url', 'image'],
+    ['sticker', 'image'],
+    ['video_url', 'video'],
+    ['video', 'video'],
+    ['video_note', 'video'],
+    ['gif_url', 'video'],
+    ['animation', 'video'],
+    ['audio_url', 'audio'],
+    ['audio', 'audio'],
+    ['voice_url', 'audio'],
+    ['voice', 'audio'],
+    ['document_url', 'file'],
+    ['document', 'file'],
+    ['file_url', 'file'],
+    ['media_url', 'file'],
+    ['media_urls', 'file'],
+    ['attachment_url', 'file'],
+];
+
+function mediaKindFromOp(op: string): StoryMedia['kind'] | undefined {
+    // Segment-anchored, not substring: send_inVOICE is not a voice note.
+    if (/(^|_)(image|photo|picture|sticker)(_|$)/.test(op)) return 'image';
+    if (/(^|_)(video|gif|animation|animated)(_|$)/.test(op)) return 'video';
+    if (/(^|_)(audio|voice)(_|$)/.test(op)) return 'audio';
+    if (/(^|_)(document|file|attachment)(_|$)/.test(op)) return 'file';
+    return undefined;
+}
+
+function deriveMedia(op: string, args: Dict): StoryMedia | undefined {
+    const opKind = mediaKindFromOp(op);
+    for (const [key, kind] of MEDIA_URL_KEYS) {
+        const v = str(args, key);
+        // The op's own kind beats the key's default (media_urls on a photo
+        // op is an image, not a generic file).
+        if (v) return { kind: opKind ?? kind, url: /^https?:\/\//.test(v) ? v : undefined };
+    }
+    if (!opKind) return undefined;
+    // A media op with only a generic url argument (facebook send_attachment).
+    const generic = str(args, 'url');
+    if (generic && /^https?:\/\//.test(generic)) return { kind: opKind, url: generic };
+    // No URL at all (media_id uploads) — the frame shows an attachment chip.
+    return { kind: opKind };
+}
+
+/** A send needs BOTH halves: intent from the op name (a sending verb, never
+    a text-argument gate — a captionless image send that vanished from the
+    outcome taught us that) AND a renderable payload (text, media or a
+    subject — which is what keeps send_http_get_request, typing indicators
+    and campaign-id-only sends out of the outcome). */
+export function deriveSends(toolCalls: ReplayToolCall[]): StorySend[] {
+    const sends: StorySend[] = [];
+    toolCalls.forEach((tc, i) => {
+        if (tc.result_status === 'error') return; // it did NOT go out
+        const op = tc.operation ?? tc.tool_name.split('__').slice(1).join('__');
+        if (!SEND_OP_RE.test(op)) return;
+        const args = asDict(tc.arguments);
+        const text = str(args, ...TEXT_ARG_KEYS);
+        const media = deriveMedia(op, args);
+        const subject = str(args, 'subject', 'subject_line');
+        if (!text && !media && !subject) return;
+        sends.push({
+            provider: tc.tool_name.split('__')[0],
+            to: str(args, ...DEST_ARG_KEYS) ?? '',
+            subject,
+            text,
+            media,
+            toolName: tc.tool_name,
+            callIndex: i,
+            ms: tc.duration_ms ?? undefined,
+            clock: clockOf(tc.timestamp),
+        });
+    });
+    return sends;
+}
+
+/* ---------------------------------------------------------------- trace */
+
+/** ReplayRow plus what real runs know that rehearsals don't: the provider's
+    error text, the wall clock, and the call's salient argument. */
+export type StoryRow = ReplayRow & { error?: string; clock?: string; detail?: string };
+
+/** The one argument worth putting on the row itself — where the call was
+    aimed (channel, recipient, url, sheet, query). Rows that say only "Send
+    message" report that a tool ran; "Send message · #orders" reports what
+    happened. Priority order: destinations first, then subjects of reads. */
+const DETAIL_KEYS = [
+    'channel',
+    'channel_id',
+    'to',
+    'recipient',
+    'email',
+    'chat_id',
+    'url',
+    'spreadsheet',
+    'sheet',
+    'query',
+    'form',
+    'subject',
+    // Output-shaped keys (deriveNodeDetail probes results, not arguments).
+    'updated_range',
+    'domain',
+];
+
+function deriveCallDetail(
+    args: Dict,
+    pretty?: (v: string) => string
+): string | undefined {
+    for (const key of DETAIL_KEYS) {
+        const v = str(args, key);
+        if (!v) continue;
+        if (key === 'url') return v.replace(/^https?:\/\//, '');
+        return pretty ? pretty(v) : v;
+    }
+    return undefined;
+}
+
+/** Same probe over a plain node's OUTPUT — what it produced ("Leads!A213",
+    "#sales") — so supporting rows carry the same one-glance detail as the
+    agent's trace rows. */
+export function deriveNodeDetail(output: unknown): string | undefined {
+    return deriveCallDetail(asDict(output));
+}
+
+export function toolCallsToRows(
+    toolCalls: ReplayToolCall[],
+    /** Maps opaque destination ids back to the person the fired event names
+        (chat ids → sender) — shared with deriveSends via buildRunStory. */
+    pretty?: (v: string) => string
+): StoryRow[] {
+    const live: LiveRow[] = toolCalls.map((tc, i) => {
+        let result: Record<string, unknown> | undefined;
+        if (tc.result_preview) {
+            try {
+                const parsed = JSON.parse(tc.result_preview);
+                result =
+                    parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+                        ? (parsed as Record<string, unknown>)
+                        : { result: parsed };
+            } catch {
+                result = { preview: tc.result_preview };
+            }
+        }
+        return {
+            id: `${tc.tool_name}-${i}`,
+            tool: tc.tool_name,
+            status: tc.result_status === 'error' ? 'error' : 'completed',
+            startedAt: tc.timestamp ? Date.parse(tc.timestamp) : 0,
+            ms: tc.duration_ms ?? undefined,
+            args: tc.arguments ?? undefined,
+            result,
+        };
+    });
+    return toReplayRows(live, 0).map((row, i) => ({
+        ...row,
+        error: toolCalls[i].error ?? undefined,
+        clock: clockSecOf(toolCalls[i].timestamp),
+        detail: deriveCallDetail(asDict(toolCalls[i].arguments), pretty),
+    }));
+}
+
+/* -------------------------------------------------------------- inbound */
+
+/** Envelope keys the delivery plumbing adds around a fired event — internal
+    ids and routing that mean nothing to the person reading the run. */
+const ENVELOPE_KEYS = new Set([
+    'schedule_id',
+    'workflow_id',
+    'user_id',
+    'node_id',
+    'execution_id',
+    'webhook_id',
+    'event_id',
+    'triggered_at',
+    'source',
+]);
+
+const stripEnvelope = (d: Dict): Dict =>
+    Object.fromEntries(
+        Object.entries(d).filter(([k]) => !k.startsWith('_') && !ENVELOPE_KEYS.has(k))
+    );
+
+/** The fired event with the delivery envelope removed — what a person would
+    call "the event". An object-valued payload/data/body wrapper is unwrapped
+    (WhatsApp delivers {event: 'message', payload: {...}}; webhooks deliver
+    {…ids…, payload: {...}}); scalar siblings like event: "message" are
+    envelope, not content. Empty result means the event has no
+    user-meaningful content (a schedule tick). */
+export function sanitizeEventPayload(raw: unknown): Dict {
+    let d = stripEnvelope(asDict(raw));
+    for (const key of ['payload', 'data', 'body', 'event', 'message']) {
+        const inner = d[key];
+        if (inner && typeof inner === 'object' && !Array.isArray(inner)) {
+            d = stripEnvelope(asDict(inner));
+            break;
+        }
+    }
+    return d;
+}
+
+/* -------------------------------------------------------- tool providers */
+
+export interface StoryToolProvider {
+    nodeId: string;
+    nodeType: string;
+    label: string;
+    /** Allowlisted operation names, as stored (snake_case). */
+    operations: string[];
+    credentialLabel?: string;
+    /** Hosted-MCP node aggregating other providers (bundle). */
+    isBundle: boolean;
+}
+
+/** Sentence-cased operation name — "send_message_to_channel" reads as
+    "Send message to channel" (same treatment as trace-row labels). */
+export function humanizeOp(op: string): string {
+    const s = op.replace(/_/g, ' ').trim();
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const PROVIDER_OUTPUT_TYPES = new Set([
+    'node_op_tool_provider',
+    'node_op_tool_provider_bundle',
+]);
+
+function toToolProvider(node: StoryNodeResult): StoryToolProvider | null {
+    const out = asDict(node.output);
+    const type = typeof out.type === 'string' ? out.type : '';
+    if (!PROVIDER_OUTPUT_TYPES.has(type)) return null;
+    const isBundle = type === 'node_op_tool_provider_bundle';
+    const operations = isBundle
+        ? (Array.isArray(out.providers) ? out.providers : []).flatMap((p) => {
+              const ops = asDict(p).allowed_operations;
+              return Array.isArray(ops) ? ops.map(String) : [];
+          })
+        : Array.isArray(out.allowed_operations)
+          ? out.allowed_operations.map(String)
+          : [];
+    return {
+        nodeId: node.nodeId,
+        nodeType: node.nodeType,
+        label: node.label,
+        operations,
+        credentialLabel:
+            typeof out.credential_label === 'string' ? out.credential_label : undefined,
+        isBundle,
+    };
+}
+
+/* ---------------------------------------------------------------- story */
+
+export interface RunStory {
+    workflowName: string;
+    agentName?: string;
+    startedAt?: string;
+    trigger?: {
+        nodeId: string;
+        label: string;
+        slug: string;
+        operation?: string;
+        /** Set when the payload derived a real lead — InboundMessage renders
+            it in the app's native frame. */
+        scenario?: Scenario;
+        /** The event has no user-meaningful content (a schedule tick) — the
+            view renders the minimal "fired on schedule" card. */
+        bare?: { time?: string };
+        /** Neither lead nor bare: the SANITIZED event (delivery envelope
+            stripped) for the raw fallback. */
+        event?: Dict;
+        /** The trigger ran with NO delivery (a manual/test run) — its own
+            explanation of why nothing came in. Rendered instead of `bare`. */
+        notice?: string;
+        /** Response runs: how many deliveries fed the turn (the package's
+            true total). The framed event is the latest; the resolved rest
+            sit in the inputs rail. */
+        deliveries?: number;
+    };
+    agent?: {
+        nodeId: string;
+        label: string;
+        status: StoryNodeResult['status'];
+        error?: string;
+        errorAction?: ErrorAction;
+        response?: string;
+        rows: StoryRow[];
+        sends: StorySend[];
+    };
+    /** Nodes wired as the agent's tool providers — they equipped the agent,
+        they didn't "run" in the user sense. */
+    providers: StoryToolProvider[];
+    /** Every other node that ran, in given order. */
+    supporting: StoryNodeResult[];
+    /** The consumed-deliveries rail: every input group except a lone
+        trigger delivery, which IS "What came in". */
+    inputs: AgentInputGroup[];
+    stats: {
+        ran: number;
+        toolCalls: number;
+        sends: number;
+        failed: boolean;
+        durationLabel?: string;
+    };
+}
+
+/** The inbound frame for one fired event. */
+function triggerFrom(
+    node: StoryNodeIdentity,
+    output: unknown,
+    deliveries?: number
+): NonNullable<RunStory['trigger']> {
+    const slug = slugOfType(node.nodeType);
+    const d = asDict(output);
+    if (isNoEventOutput(d)) {
+        return {
+            nodeId: node.nodeId,
+            label: node.label,
+            slug,
+            operation: node.operation,
+            bare: {},
+            notice: typeof d.message === 'string' ? d.message : 'No event was delivered.',
+        };
+    }
+    // The message often rides inside a payload wrapper — probe the raw
+    // output first (top-level shapes), then the unwrapped event.
+    const lead = deriveLead(slug, output) ?? deriveLead(slug, sanitizeEventPayload(output));
+    const scenario = lead ? toScenario(node, lead) : undefined;
+    let bare: { time?: string } | undefined;
+    let event: Dict | undefined;
+    if (!scenario) {
+        const sanitized = sanitizeEventPayload(output);
+        const time = clockOf(str(d, 'triggered_at', 'timestamp', 'date'));
+        if (Object.keys(sanitized).length === 0) bare = { time };
+        else event = sanitized;
+    }
+    return { nodeId: node.nodeId, label: node.label, slug, operation: node.operation, scenario, bare, event, deliveries };
+}
+
+export function buildRunStory(input: StoryInput): RunStory {
+    const { results } = input;
+    // The packaged agent (a warm turn's response) is THE agent of the run even
+    // when a downstream SDK agent's row lands first in the detail.
+    const agentNode =
+        results.find((r) => r.isAgent && isResponsePackage(r.output)) ??
+        results.find((r) => r.isAgent);
+    const agentInputs = input.agentInputs ?? [];
+    const pkg = asDict(agentNode?.output);
+
+    // A response run's trigger node did not fire in it (whatever it holds
+    // is the node's last output, restored as context — stale by
+    // construction). The event that fed the turn is the LATEST consumed
+    // delivery; none retained means no inbound section, never a guess.
+    const isResponseRun = !!agentNode && isResponsePackage(pkg);
+    // Delivery order rides the package (oldest → newest): the framed event is
+    // the trigger group holding the newest delivery, not the first group seen.
+    const orderOf = new Map<string, number>(
+        (isResponseRun ? (pkg.input_execution_ids as unknown[]) : []).map((id, i) => [String(id), i])
+    );
+    const newest = (g: AgentInputGroup) =>
+        Math.max(-1, ...g.runs.map((r) => orderOf.get(r.executionId) ?? -1));
+    // The same predicate the canvas uses — a node is the fired event's source
+    // only if its CURRENT operation is a trigger op.
+    const triggerGroup = isResponseRun
+        ? agentInputs
+              .filter((g) => g.runs.length > 0 && isTriggerSourceLite(g.nodeType, g.operation))
+              .sort((a, b) => newest(b) - newest(a))[0]
+        : undefined;
+    const triggerNode = isResponseRun
+        ? undefined
+        : results.find((r) => !r.isAgent && isTriggerSourceLite(r.nodeType, r.operation));
+
+    let trigger: RunStory['trigger'];
+    let triggerOutput: unknown;
+    if (triggerGroup) {
+        triggerOutput = triggerGroup.runs[triggerGroup.runs.length - 1].output;
+        // The turn's true delivery count: the resolved runs are capped and
+        // per node, the package's total is neither.
+        const inputsTotal = typeof pkg.inputs_total === 'number' ? pkg.inputs_total : 0;
+        trigger = triggerFrom(
+            triggerGroup,
+            triggerOutput,
+            Math.max(inputsTotal, orderOf.size, triggerGroup.runs.length)
+        );
+    } else if (triggerNode) {
+        triggerOutput = triggerNode.output;
+        trigger = triggerFrom(triggerNode, triggerOutput);
+    }
+    // A lone trigger delivery IS "What came in"; several keep the rail so
+    // the earlier ones stay reachable.
+    const inputs = agentInputs.filter((g) => g !== triggerGroup || g.runs.length > 1);
+
+    let agent: RunStory['agent'];
+    if (agentNode) {
+        const out = asDict(agentNode.output);
+        const response = typeof out.response === 'string' && out.response.trim() ? out.response : undefined;
+        // A destination often arrives as an opaque channel id (919…@c.us).
+        // When it matches a value on the fired event, the person it names is
+        // the readable truth — show them, not the id. Shared by the sent
+        // frames and the trace rows' detail suffix.
+        const author = trigger?.scenario?.lead.author;
+        const rawValues = new Set(
+            Object.values(asDict(triggerOutput)).filter((v): v is string => typeof v === 'string')
+        );
+        const pretty = (v: string) => (author && rawValues.has(v) ? author : v);
+        const sends = deriveSends(agentNode.toolCalls);
+        for (const s of sends) {
+            if (s.to) s.to = pretty(s.to);
+        }
+        agent = {
+            nodeId: agentNode.nodeId,
+            label: agentNode.label,
+            status: agentNode.status,
+            error: agentNode.error,
+            errorAction: agentNode.errorAction,
+            response,
+            rows: toolCallsToRows(agentNode.toolCalls, pretty),
+            sends,
+        };
+    }
+
+    const providers: StoryToolProvider[] = [];
+    const supporting: StoryNodeResult[] = [];
+    for (const r of results) {
+        if (r.nodeId === triggerNode?.nodeId || r.nodeId === agentNode?.nodeId) continue;
+        // A response run fires no trigger: a trigger node among its results is
+        // restored context (rows written before context stopped persisting),
+        // never a step that ran.
+        if (isResponseRun && !r.isAgent && isTriggerSourceLite(r.nodeType, r.operation)) continue;
+        const provider = toToolProvider(r);
+        if (provider) providers.push(provider);
+        else supporting.push(r);
+    }
+
+    const failed = results.some((r) => r.status === 'error');
+    return {
+        workflowName: input.workflowName,
+        agentName: input.agentName ?? agentNode?.label,
+        startedAt: input.startedAt,
+        trigger,
+        agent,
+        providers,
+        supporting,
+        inputs,
+        stats: {
+            ran: results.length,
+            toolCalls: agentNode?.toolCalls.length ?? 0,
+            sends: agent?.sends.length ?? 0,
+            failed,
+            durationLabel:
+                input.durationMs !== undefined ? formatDuration(input.durationMs) : undefined,
+        },
+    };
+}
+
+/* -------------------------------------------------------------- outcome */
+
+export type OutcomeMode = 'sends' | 'reply' | 'restraint' | 'error' | 'none';
+
+/** Which framing the outcome section earns. "Nothing went out" is a verdict
+    about restraint — it only makes sense when the agent actually worked (an
+    event arrived or tools were called) and chose not to send. A bare chat
+    turn's reply IS the outcome and must not be buried under it. */
+export function outcomeModeFor(story: RunStory): OutcomeMode {
+    const a = story.agent;
+    if (!a) return 'none';
+    if (a.status === 'error') return 'error';
+    if (a.sends.length > 0) return 'sends';
+    const toolCalls = a.rows.filter((r) => r.kind === 'tool').length;
+    if (a.response && toolCalls === 0 && !story.trigger) return 'reply';
+    return 'restraint';
+}
