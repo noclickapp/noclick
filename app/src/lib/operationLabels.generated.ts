@@ -880,6 +880,7 @@ canada-holidays
 canopy
 canopy-connect
 canva
+capgo
 captivated
 carbone
 cardclan
