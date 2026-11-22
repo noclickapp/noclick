@@ -28,6 +28,7 @@ import { useWorkNav } from '../nav';
 import { useWorkClient } from '../client';
 import { doing, Elapsed, TOOL_CALL_MODES, type ToolCalls } from './Activity';
 import { ConnectSend } from '../newAgent/ConnectSend';
+import { PickerSheetHost, usePickerSheets } from '../newAgent/ModelPicker';
 import { useConversationAccount } from './account';
 import { accountFiles, Composer } from './Composer';
 import { CONTROL_NAMES, type Control, type Mentionable } from './menus';
@@ -127,6 +128,8 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
     const nav = useWorkNav();
     const workClient = useWorkClient();
     const inPhone = useInPhoneShell();
+    // A phone opens the model and account pickers as sheets over the page.
+    const sheets = usePickerSheets(inPhone);
     const mine = (e: UserEntry) => wroteIt(e.author, viewer);
     const faces = useAgentFaces();
     const { data: agents } = useAgents();
@@ -385,6 +388,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
 
     return (
         <ConversationBrowserProvider value={browser}>
+        <PickerSheetHost.Provider value={sheets.host}>
         <div ref={pane.ref} className="relative flex min-h-0 min-w-0 flex-1 bg-background" data-testid="agent-conversation">
             <WorkMotion />
             <BrowserMotion />
@@ -614,7 +618,9 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
             )}
             {controls.dialogs}
             {c.fundsDialog}
+            {sheets.layer}
         </div>
+        </PickerSheetHost.Provider>
         </ConversationBrowserProvider>
     );
 }

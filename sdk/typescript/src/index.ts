@@ -222,7 +222,7 @@ export type {
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
   WorkflowTestRun,
   WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";
