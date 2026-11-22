@@ -340,6 +340,31 @@ export interface WorkflowRunCounts {
   raw: JsonObject;
 }
 
+/** One of a workflow's variables as its settings hold it (`WorkflowVariables.definitions`). */
+export interface WorkflowVariableDefinition {
+  name: string;
+  value?: unknown;
+  description?: string;
+  /** Asked of each new owner when the workflow is copied: a copy starts without its value. Read here like any other. */
+  per_user?: boolean;
+  [key: string]: unknown;
+}
+
+/**
+ * A workflow's variables with their values (`Workflow.variables`), which no other read of it carries, as they were at
+ * `version`: `definitions` are its variables as its settings hold them, in their order, and `variables` the graph's
+ * own by name, as its Set variable steps last wrote them. `values` is what `{{vars.name}}` reads: the two together,
+ * the graph's own winning.
+ */
+export interface WorkflowVariables {
+  workflowId: string;
+  version: number | null;
+  definitions: WorkflowVariableDefinition[];
+  variables: JsonObject;
+  values: JsonObject;
+  raw: JsonObject;
+}
+
 /** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
 export interface StepLastRun {
   status: string;
@@ -393,6 +418,26 @@ function toRunCounts(value: unknown): WorkflowRunCounts {
     waiting: Number(raw.waiting ?? 0),
     bySource: { ...(asObject(raw.by_source) as Record<string, number>) },
     byTrigger: { ...(asObject(raw.by_trigger) as Record<string, number>) },
+    raw,
+  };
+}
+
+function toWorkflowVariables(value: unknown): WorkflowVariables {
+  const raw = asObject(value);
+  const definitions = asList(raw.definitions)
+    .filter((d): d is JsonObject => !!d && typeof d === "object" && !Array.isArray(d))
+    .map((d) => ({ ...d }) as WorkflowVariableDefinition);
+  const variables = { ...asObject(raw.variables) };
+  const values: JsonObject = {};
+  for (const d of definitions) {
+    if (d.name && d.value !== undefined && d.value !== null && d.value !== "") values[d.name] = d.value;
+  }
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    version: typeof raw.version === "number" ? raw.version : null,
+    definitions,
+    variables,
+    values: { ...values, ...variables },
     raw,
   };
 }
@@ -2230,6 +2275,20 @@ export class Workflow extends ApiObject {
    */
   async graph(): Promise<WorkflowGraph> {
     return await this._readGraph();
+  }
+
+  /**
+   * Read its variables with their values, which `graph()` and every other read hold back (`settingsWithheld`,
+   * `variablesWithheld`): its `definitions` whole, the graph's own `variables`, and `values` by name.
+   *
+   * For the workflow's owner and the teammates who can edit it: signed in, or with one of their account's own secret
+   * keys that names the `workflows:variables` scope (a key with every scope, `*`, holds it only when it's named too)
+   * and acts for no user. Anyone else throws `PermissionDenied`: someone who only views the workflow, a user's
+   * session, an app's code, an agent or an MCP connection. Writing a variable stays its owner's. A step reads a
+   * variable as `{{vars.name}}` without this call.
+   */
+  async variables(): Promise<WorkflowVariables> {
+    return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
   }
 
   /**

@@ -36,6 +36,12 @@ export interface WorkflowPageProps {
     /** The builder beside the page, which the frame draws: whether it's open, and opening or closing it. Left out where
      *  the frame draws none. */
     builder?: { open: boolean; onOpenChange: (open: boolean) => void };
+    /** Whether the page's client is a person's own: signed in to NoClick, or a key that names the
+     *  `workflows:variables` scope. The page then reads the values of the workflow's variables, where that person owns
+     *  the workflow or can edit it, and shows them in Setup and in a field bound to one. Left out (a page acting as one
+     *  of the account's keys, as this app's own does: its key carries no such scope), it never asks, and a variable
+     *  that has a value shows as saved and hidden. */
+    asOwner?: boolean;
 }
 
 /** What draws over the canvas, with the canvas's own hold on the workflow. */
@@ -50,11 +56,11 @@ function OverCanvas({
     workflowId: string;
     tab: WorkflowTab;
     onTab: (tab: WorkflowTab) => void;
-    variables: { definitions: WorkflowVariableDefinition[]; change: (definitions: WorkflowVariableDefinition[]) => void };
+    variables: { definitions: WorkflowVariableDefinition[]; persisted: Record<string, unknown>; change: (definitions: WorkflowVariableDefinition[]) => void };
 }) {
     const icons = useSlot(SETUP).useIcons();
     const Cover = useSlot(SETUP_COVER);
-    const resolved = useWorkflowVariables(canvas.nodes, undefined, variables.definitions).resolved;
+    const resolved = useWorkflowVariables(canvas.nodes, variables.persisted, variables.definitions).resolved;
     const setVariable = useCallback(
         (name: string, value: string) => {
             const held = variables.definitions;
@@ -111,8 +117,8 @@ function OverCanvas({
     );
 }
 
-export function WorkflowPage({ workflowId, name, tab = 'canvas', onTab, onBack, builder }: WorkflowPageProps) {
-    const variables = useSavedVariables(workflowId);
+export function WorkflowPage({ workflowId, name, tab = 'canvas', onTab, onBack, builder, asOwner = false }: WorkflowPageProps) {
+    const variables = useSavedVariables(workflowId, { asOwner });
     const [readOnly, setReadOnly] = useState(false);
     // Another workflow starts as its own read says.
     useEffect(() => setReadOnly(false), [workflowId]);
