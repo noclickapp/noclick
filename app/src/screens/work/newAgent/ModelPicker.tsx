@@ -74,6 +74,13 @@ export { PERMISSION_ICON } from './catalog';
 /** Where the picker opens as a bottom sheet instead of a popover: a phone's screen provides it. */
 export const PickerSheetHost = createContext<HTMLElement | null>(null);
 
+/** A phone's layer for the model and account sheets: over the whole page, empty until one opens. `host` goes to
+ *  `PickerSheetHost`, `layer` anywhere on the page; neither on a laptop. */
+export function usePickerSheets(phone: boolean): { host: HTMLElement | null; layer: ReactNode } {
+    const [layer, setLayer] = useState<HTMLElement | null>(null);
+    return { host: phone ? layer : null, layer: phone ? <div ref={setLayer} className="pointer-events-none fixed inset-0 z-50 [&>*]:pointer-events-auto" /> : null };
+}
+
 /** A harness's defaults: its default model, its usual effort and first speed, and the permissions carried over when it
  *  can enforce them (Full access otherwise, else Supervised). One that takes no mode (NoClick's own runtime, whose
  *  calls the account's policy holds) is Full access, which sends none. */
@@ -113,9 +120,9 @@ export interface ConnectOptions {
 }
 
 /** Connecting the AI account a pick needs, in the app's own AI dialog (Connections'), on one way that runs it at a time
- *  (the plan signed out, else the best), the others as "Or run it on" pills. What lands is picked (`credential:<id>`,
- *  the ref an agent takes it by) as soon as the account list reads it connected. The state lives in the host, which
- *  outlives the dialog. */
+ *  (the plan signed out, else the best), the others as "Or run it on" pills. What lands is picked (by the ref the dialog
+ *  hands back, the one an agent takes it by: `credential:<id>`, or a named connection's name) as soon as the account
+ *  list reads it connected. The state lives in the host, which outlives the dialog. */
 export function useConnectAi(onPicked: (account: string) => void): { connect: (harness: HarnessInfo, model: string, options?: ConnectOptions) => void; dialog: ReactNode } {
     const Connect = useSlot(CONNECT_MODEL);
     const client = useWorkClient();
@@ -147,8 +154,8 @@ export function useConnectAi(onPicked: (account: string) => void): { connect: (h
             others={ways.filter((w) => w.id !== way?.id).map((w) => ({ key: w.id, label: wayLabel(w), credentialType: wayType(w), onPick: () => setFocus(w.id) }))}
             client={client}
             onOpenChange={(o) => !o && setOpen(null)}
-            onConnected={(id) => {
-                setLanded(`credential:${id}`);
+            onConnected={({ ref }) => {
+                setLanded(ref);
                 rereadAccounts();
             }}
         />
@@ -386,8 +393,10 @@ function PickerBody({
         onChange(next);
     };
     useEffect(() => setActive(0), [query, rail]);
+    // A laptop opens in the search. A sheet, or a touch screen, opens on its models: the search there would raise the
+    // keyboard over them.
     useEffect(() => {
-        search.current?.focus();
+        if (!sheet && !window.matchMedia('(pointer: coarse)').matches) search.current?.focus();
     }, []);
 
     // ⌘1–⌘9 pick the models listed, while the picker is open.
@@ -590,7 +599,8 @@ function PickerBody({
         </div>
     );
 
-    const footerEl = (
+    // The foot holds the account, the speed and the permissions; a harness with none of them has no foot.
+    const footerEl = ((accounts && current) || traits.speeds.length > 1 || modes.length > 0) && (
         <div className={cn('flex shrink-0 flex-wrap items-center gap-x-2 gap-y-1.5 border-t border-border bg-foreground/[0.02] px-3 py-2 dark:border-foreground/[0.08]', sheet && 'pb-5')}>
             {accounts && current && <AccountMenu value={value} harness={current} accounts={accounts} onChange={onChange} onConnect={onConnect} funds={funds} onNeedsFunds={onNeedsFunds} />}
             {traits.speeds.length > 1 && (
@@ -694,7 +704,7 @@ function PickerBody({
     );
 
     return (
-        <div className="relative flex flex-col" data-model-picker>
+        <div className={cn('relative flex flex-col', sheet && !footerEl && 'pb-3')} data-model-picker>
             {sheet ? panes : <div className="flex h-[300px]">{panes}</div>}
             {!choiceEl && footerEl}
             <RailTip tip={tips.tip} />
