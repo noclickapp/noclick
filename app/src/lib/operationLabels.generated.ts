@@ -752,6 +752,7 @@ apollo
 appcenter
 appcircle
 apphud
+apple
 appointedd
 appsheet
 apptivegrid
