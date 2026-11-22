@@ -15,6 +15,8 @@ from platform_helpers import body, listing
 WF = "wf_1"
 EDITS = f"/v1/workflows/{WF}/edits"
 CREDENTIAL = "9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e"
+# An account connected in the app: its connection's id is credential:<this>.
+IN_APP = "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f"
 
 HOOK = {"id": "hook", "type": "trigger-webhook", "position": {"x": 0, "y": 0},
         "config": {"label": "New order", "http_method": "POST", "webhook_url": "https://wf-1.noclick.run"}}
@@ -128,6 +130,22 @@ def test_a_graph_reads_the_whole_definition_into_typed_steps_notes_and_edges(api
     assert graph.step("writer") is writer and graph.step("Post it") is post
     with pytest.raises(nc.NotFound):
         graph.step("Nope")
+
+
+def test_a_steps_account_is_the_connection_naming_its_credential_id(api, client):
+    api.get(f"/v1/workflows/{WF}/graph").respond(json=read())
+    named = {"object": "connection", "id": "6f3c2d1e-0a9b-4c8d-9e7f-5a4b3c2d1e0f", "name": "openrouter",
+             "integration": "openrouter", "credential_type": "agent_openrouter", "origin": "api",
+             "status": "connected", "credential_id": CREDENTIAL}
+    in_app = {**named, "id": f"credential:{IN_APP}", "name": "OpenRouter key", "origin": "app",
+              "credential_id": IN_APP}
+    pending = {**named, "id": "0e1d2c3b-4a59-4687-9a8b-7c6d5e4f3a2b", "name": "later", "status": "pending",
+               "credential_id": None}
+    api.get("/v1/connections").respond(json=listing(named, in_app, pending))
+    writer = nc.Workflow.from_id(WF).graph().step("writer")
+    by_credential = {c.credential_id: c for c in nc.Connection.list() if c.credential_id}
+    assert by_credential[writer.connections["agent_openrouter"]].name == "openrouter"
+    assert [c.credential_id for c in nc.Connection.list()] == [CREDENTIAL, IN_APP, None]
 
 
 def test_the_workflows_version_comes_with_its_read_and_moves_with_each_answer(api, client):
@@ -530,6 +548,14 @@ def test_a_graph_reads_what_the_app_shows_and_an_edges_input(api, client):
     assert graph.display_metadata == {"viewport": {"zoom": 2}}
     assert graph.edges == [{"id": "s-c", "from": "state", "to": "code", "kind": "data", "handle": None,
                             "target_handle": "state"}]
+    assert (graph.access, graph.agent) == (None, None)
+
+
+def test_a_graph_reads_what_its_reader_may_do_and_whose_agent_it_is(api, client):
+    agent = {"id": "agt_1", "name": "Support", "yours": True}
+    api.get(f"/v1/workflows/{WF}/graph").respond(json={**read(graph=bare(HOOK)), "access": "editor", "agent": agent})
+    graph = nc.Workflow.from_id(WF).graph()
+    assert (graph.access, graph.agent) == ("editor", agent)
 
 
 def test_a_batch_held_for_the_owner_surfaces_as_its_approval_and_lands_nothing(api, client):
@@ -692,3 +718,32 @@ def test_a_step_by_name_through_from_name_loads_the_workflow_once(api, client):
     workflow.step("writer").connect("post")
     assert lookup.call_count == 1 and route.call_count == 2
     assert lookup.calls.last.request.url.params["name"] == "Order intake"
+
+
+def test_an_edit_that_settles_waits_and_says_what_its_writes_left(api, client):
+    hook = {**HOOK, "config": {"label": "Hook", "webhook_url": "https://wf.noclick.run/hook"}}
+    route = api.post(EDITS).respond(json={
+        **edited(5, [{"op": "add_step", "id": "hook"}], graph=bare(hook, edges=[])), "settled": True,
+        "unregistered": {"stripe": "Finish setup before activation: connect a Stripe account."},
+        "warnings": ["Your Gmail account won't work in this workflow's automatic runs."]})
+    workflow = nc.Workflow.from_id(WF)
+    with workflow.edit(settle=True, include_graph=True) as e:
+        e.add_step("trigger-webhook", id="hook", name="Hook")
+    assert body(route.calls.last.request)["settle"] is True
+    assert e.result.settled is True and e.result.unregistered == {
+        "stripe": "Finish setup before activation: connect a Stripe account."}
+    assert e.result.warnings == ["Your Gmail account won't work in this workflow's automatic runs."]
+    assert e.result.graph.step("hook").settings["webhook_url"] == "https://wf.noclick.run/hook"
+    # Without settle the field isn't sent, and an answer without them reads as none.
+    route = api.post(EDITS).respond(json=edited(6, [{"op": "update_step", "id": "hook"}]))
+    with workflow.edit() as e:
+        e.update_step("hook", name="Order placed")
+    assert "settle" not in body(route.calls.last.request)
+    assert (e.result.settled, e.result.unregistered, e.result.warnings) == (None, {}, [])
+
+
+def test_settle_waits_for_what_earlier_edits_set_going_and_changes_nothing(api, client):
+    route = api.post(EDITS).respond(json={**edited(5, [], changed=False), "settled": False, "unregistered": {}})
+    settled = nc.Workflow.from_id(WF).settle()
+    assert body(route.calls.last.request) == {"ops": [], "settle": True}
+    assert settled.settled is False and settled.changed is False

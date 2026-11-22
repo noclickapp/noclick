@@ -14,6 +14,7 @@ import { HAIRLINE, SURFACE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Agent, ALL_USERS, Connection, HumanRequest, Policy, Rule, type JsonObject, type PolicyVerdict } from 'noclick';
 import { BUCKET_TOOLS } from '@/sdk/source';
+import { refFor } from '@/lib/agentTools';
 import { snippetTabs, POLICY_EMPTY, POLICY_RULE } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -288,14 +289,15 @@ function Preview({ user, draft }: { user: string | null; draft: Rules }) {
 
 /**
  * Every tool the account's agents can reach: capabilities, the operations of each connection they
- * name (by name in the agent's own scope, or `connection:<id>` from another), and, for a name with
- * no connection, its integration's operations that need no account, each under its integration.
+ * name (by name in the agent's own scope, `credential:<id>` for an account connected in the app, or
+ * `connection:<id>` from another), and, for a name with no connection, its integration's operations
+ * that need no account, each under its integration.
  */
 function useAgentTools() {
     const { client } = useConsole();
     return useV1('policy/agent-tools', async () => {
         const [agents, connections] = await Promise.all([Agent.list({ client, userFilter: ALL_USERS, limit: 200 }), Connection.list({ client, userFilter: ALL_USERS })]);
-        const named = new Map(connections.map((c) => [`${c.userId ?? ''}/${c.name}`, c]));
+        const byRef = new Map(connections.map((c) => [`${c.userId ?? ''}/${refFor(c)}`, c]));
         const byId = new Map(connections.map((c) => [c.id, c]));
         const capabilities = new Set<string>();
         // Integrations reached through a connection, whole; and refs that name no connection.
@@ -328,7 +330,7 @@ function useAgentTools() {
                 if (databaseRefOf(ref)) continue;
                 const shared = sharedConnectionOf(ref);
                 const [name, op] = ref.split('.');
-                const connection = shared ? byId.get(shared.id) : named.get(`${agent.userId ?? ''}/${name}`);
+                const connection = shared ? byId.get(shared.id) : byRef.get(`${agent.userId ?? ''}/${name}`);
                 if (connection) whole.add(connection.integration);
                 else if (!shared) unnamed.push({ name, op: op ?? null });
             }

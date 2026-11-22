@@ -10,6 +10,9 @@ export default [
         route('chat', 'routes/chat.tsx'),
         // The account's spaces, channels, agents and people, acting as the app's key.
         route('work', 'routes/work.tsx'),
+        // The account's workflows, and one workflow's page (its canvas, its Setup, its Test Run), acting as the app's key.
+        route('workflows', 'routes/workflows.tsx'),
+        route('workflows/:id', 'routes/workflow.tsx'),
         // The apps and accounts its agents and automations act through, acting as the app's key.
         route('connections', 'routes/connections.tsx'),
         // What the account owns and what it costs, acting as the app's key.
@@ -39,6 +42,10 @@ export default [
     route('usage-lab', 'routes/usage-lab.tsx'),
     // Settings over made-up data: development only, as the console's lab.
     route('settings-lab', 'routes/settings-lab.tsx'),
+    // A workflow step's settings over made-up data: development only, as the console's lab.
+    route('step-form-lab', 'routes/step-form-lab.tsx'),
+    // The workflows pages over made-up data: development only, as the console's lab.
+    route('workflows-lab', 'routes/workflows-lab.tsx'),
     // Last, so every other path has a route too: middleware runs only for a path that matches one, and the gate (the
     // root route's middleware) must see every request.
     route('*', 'routes/notFound.tsx'),

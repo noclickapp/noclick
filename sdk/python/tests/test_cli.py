@@ -763,12 +763,12 @@ def test_domains_buy_for_a_user_registers_it_to_them_and_waits_through_approval(
     assert "anasilva.dev is yours (active)" in out.err
 
 
-def test_domains_buy_for_a_user_needs_their_details(home, api, capsys):
+def test_domains_buy_for_a_user_without_details_uses_their_registrant_profile(home, api, capsys):
     buy = api.post("/v1/domains").respond(202, json=operation("op_dom", kind="domain.buy", status="running"))
-    assert run("domains", "buy", "anasilva.dev", "--max-price", "15", "--user", "user_42") == 1
-    err = capsys.readouterr().err
-    assert "registered to that person" in err and "next step: Pass --registrant with a JSON file" in err
-    assert buy.call_count == 0
+    assert run("domains", "buy", "anasilva.dev", "--max-price", "15", "--user", "user_42", "--no-wait") == 0
+    request = buy.calls.last.request
+    assert body(request) == {"name": "anasilva.dev", "max_price_usd": 15.0, "auto_renew": True}
+    assert request.headers["NoClick-User"] == "user_42"
 
 
 def test_domains_buy_for_the_account_uses_its_default_registrant(home, api, capsys):

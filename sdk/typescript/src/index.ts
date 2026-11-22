@@ -74,6 +74,14 @@ export type { PolicyDraft, PolicyOptions, PolicyRules, PolicyVerdict, RuleInput 
 export { Brand } from "./brand.ts";
 export type { BrandFields } from "./brand.ts";
 export { Notifications } from "./notifications.ts";
+export { Key } from "./key.ts";
+export type { KeyOptions } from "./key.ts";
+export { ConnectedApp } from "./connectedApp.ts";
+export { Popups } from "./popups.ts";
+export { AccountPhones } from "./accountPhones.ts";
+export { BuilderSkill } from "./builderSkill.ts";
+export type { BuilderSkillFields } from "./builderSkill.ts";
+export type { LinkedPhone, PhoneChallenge } from "./accountPhones.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {
   AccountCap, AgentBudget, CapChange, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,
@@ -97,7 +105,8 @@ export { Inbox, InboxMessage } from "./inbox.ts";
 export type { InboxCreateOptions, InboxReply, InboxSenders, InboxSendOptions, InboxThread } from "./inbox.ts";
 export { PhoneNumber, PhoneNumberOrder, PortRequest, TextingRegistration, TransferOut } from "./phoneNumber.ts";
 export type {
-  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberPlace,
+  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder,
+  NumberHolderProfile, NumberPlace,
   NumberRequirement, NumberRequirements, PhoneNumberBuyOptions,
   PhoneCall, PhoneCallers, PhoneNumberSource, PhoneNumberType, PhoneText, PortDetails, PortInOptions,
   PortRequestNumber, StreetAddress, TextingContact, TextingRegistrationDetails, TranscriptTurn,
@@ -206,13 +215,14 @@ export type {
 } from "./webhook.ts";
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
-  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, DraftOptions, DraftStep, EditOptions,
+  AddNoteOptions, AddStepOptions, BuildQuestion, BuildQuestions, ClearedStepState, DraftOptions, DraftStep, EditOptions,
   ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
-  StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
+  StepConnection, StepLastRun, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
   StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
-  WorkflowRunOptions, WorkflowRunStatus,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
+  WorkflowTestRun,
+  WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";

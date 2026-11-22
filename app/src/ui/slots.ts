@@ -5,7 +5,8 @@ import type { NoClick } from 'noclick';
 import { slot } from '@/slots';
 import type { BrandIconComponent } from './BrandIcon';
 import type { MarkSize } from './primitives';
-import { AppConnectLink, ModelConnectLink, reconnectByLink } from './connectStandards';
+import type { ConnectionCheck } from '@/lib/connectionCheck';
+import { AppConnectInPlace, AppConnectLink, ModelConnectLink, reconnectByLink } from './connectStandards';
 import { plainGlyph, standardAccountNames, StandardCredentialMark, standardCredentialLabel } from './connectionMarkStandards';
 
 /** A service's glyph and its colour, as `BrandIcon` draws it (a Tailwind `text-*` class, a CSS colour, or '' for a mark
@@ -87,11 +88,73 @@ export interface ConnectableApp {
     iconColor?: string;
 }
 
+/** A connection that just landed through a connect dialog (`connect.app`'s `Connect`, `connect.model`), by both of
+ *  the names it goes by. */
+export interface LandedConnection {
+    /** The ref an agent names it by, in its tools or as its model connection: `credential:<id>` for an account connected
+     *  in the app, else its named connection's name (`refFor`; `credential:` never names a named connection). */
+    ref: string;
+    /** The id of the account it holds, which a workflow step keeps in its `credentialIds`. */
+    credentialId: string;
+}
+
+/** An account that just landed, as a list of accounts names it (its credential's id, name and type). */
+export interface LandedAccount {
+    id: string;
+    name: string;
+    credential_type: string;
+}
+
+/** What connecting one of a step's accounts in place is handed, under the step's account pickers. */
+export interface InPlaceConnectProps {
+    /** The step type whose ways in these are (`automation-notion`). */
+    nodeType: string;
+    /** Its app, as people name it ("Notion"). */
+    app: string;
+    /** Its name among the integrations the API lists (`notion`), where an account of it connects there; null where
+     *  none does (an agent's model account). */
+    integration: string | null;
+    /** The way in to open on: a credential type the step takes; when absent, the step's first (where a connect page
+     *  takes the way in, the app's own first). */
+    credentialType?: string;
+    /** An account the step points at whose connection dropped: connected again in place, never a new one beside it. */
+    repairs?: string;
+    /** Start unasked where starting shows something to act on at once (a QR code to scan); a repair waits for a click. */
+    autoStart: boolean;
+    /** Offer asking someone else to connect it (off where the screen already belongs to someone asking). */
+    ask: boolean;
+    /** The account that landed, with what connecting it proved (null: nothing could be judged). */
+    onConnected: (account: LandedAccount, check: ConnectionCheck | null) => void;
+}
+
+/** What entering an account's values again in place is handed, in place of its picker. */
+export interface RekeyProps {
+    credentialId: string;
+    credentialType: string;
+    /** Its name, kept unless changed. */
+    name: string;
+    /** Its way in, as people name it ("Notion OAuth"). */
+    label: string;
+    /** The schema of its credential class: the values it asks for. */
+    schema?: Record<string, unknown>;
+    /** Its app, as people name it. */
+    app: string;
+    /** It's saved, with what saving it proved (null: nothing could be judged); done once the list holds it. */
+    onSaved: (check: ConnectionCheck | null) => void | Promise<void>;
+    onCancel: () => void;
+}
+
 export interface AppConnecting {
     /** The dialog that connects one of an app's accounts for `name` (an agent, say), with the platform client the screen
-     *  drawing it reads with, handing back the account that lands (`credential:<id>`'s id) and closing itself as
-     *  `onClose` says. */
-    Connect: ComponentType<{ app: ConnectableApp; name: string; client: NoClick; onConnected: (credentialId: string) => void; onClose: () => void }>;
+     *  drawing it reads with, handing back the connection that lands (`LandedConnection`: Work's tools panel names it
+     *  by its ref) and closing itself as `onClose` says. */
+    Connect: ComponentType<{ app: ConnectableApp; name: string; client: NoClick; onConnected: (landed: LandedConnection) => void; onClose: () => void }>;
+    /** Connecting one of a step's accounts in its form, drawn in place under its pickers, with the platform client a
+     *  `ClientProvider` above gives where it reads one. */
+    InPlace: ComponentType<InPlaceConnectProps>;
+    /** Entering an account's values again in a step's form, in place of its picker, where the host keeps those values;
+     *  null where it doesn't, and the account is connected again (`reconnect`) instead. */
+    Rekey: ComponentType<RekeyProps> | null;
     /** Connects again an account connected in the app (its origin `app`, its ref `credential:<id>`) that stopped
      *  working; `title` names it in what's said if it can't. */
     reconnect: (account: { credentialType?: string; credentialId: string }, client: NoClick, title: string) => void;
@@ -99,10 +162,13 @@ export interface AppConnecting {
     subscribe?: (changed: () => void) => () => void;
 }
 
-/** Connecting an app's account where it's needed (an agent's tools, a trigger's account). The standard makes the
- *  connection and opens its connect page on NoClick in a new tab, then waits for the account to land. */
+/** Connecting an app's account where it's needed (an agent's tools, a trigger's account, a step's form). The standard
+ *  makes the connection and opens its connect page on NoClick in a new tab, then waits for the account to land; a
+ *  step's form does the same in place, and enters no values itself: an account is connected again at its connect page. */
 export const CONNECT_APP = slot<AppConnecting>('connect.app', {
     Connect: AppConnectLink,
+    InPlace: AppConnectInPlace,
+    Rekey: null,
     reconnect: (account, client, title) => void reconnectByLink(client, `credential:${account.credentialId}`, title),
 });
 
@@ -126,10 +192,10 @@ export interface ModelConnectProps {
     /** The platform client the screen drawing it reads with. */
     client: NoClick;
     onOpenChange: (open: boolean) => void;
-    /** The account that landed: its credential's id. */
-    onConnected: (credentialId: string) => void;
+    /** The connection that landed: the model picker names it by its ref, an agent step keeps the account it holds. */
+    onConnected: (landed: LandedConnection) => void;
 }
 
-/** Connecting the AI account a model needs (the model picker's). The standard makes the connection and opens its
+/** Connecting the AI account a model needs (the model picker's, an agent step's). The standard makes the connection and opens its
  *  connect page on NoClick (a key, or signing in with a plan) in a new tab, then waits for it to land. */
 export const CONNECT_MODEL = slot<ComponentType<ModelConnectProps>>('connect.model', ModelConnectLink);
