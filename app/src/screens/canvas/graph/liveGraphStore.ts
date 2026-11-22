@@ -15,7 +15,7 @@
 // `canvas.graph.saves` slot's (saves.ts); a host following a workflow's
 // room hands the store what it hears (adoptServerVersion, applyToBase).
 
-import { proxy, useSnapshot } from 'valtio';
+import { proxy, subscribe, useSnapshot } from 'valtio';
 import type { Node, Edge, Node as XYFlowNode, Edge as XYFlowEdge } from '@xyflow/react';
 import { Conflict, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
 import { valtioCache } from '@/lib/indexeddb';
@@ -49,6 +49,9 @@ interface GraphRecord {
     edges: Edge[];
     interfaceGridState: InterfaceGridState | null;
     variables: Record<string, unknown>;
+    // Its read withheld the graph's variables' values (/v1 never sends one): it holds no copy of them to save, and the
+    // runtime keeps them.
+    variablesWithheld: boolean;
     displayMetadata: DisplayMetadata | null;
     deletedNodeIds: Set<string>;
     // Deletes another writer streamed to us (a collaborator over the collab
@@ -138,6 +141,7 @@ export function createGraphRecord(
         edges: initialEdges,
         interfaceGridState: null,
         variables: {},
+        variablesWithheld: false,
         displayMetadata: null,
         deletedNodeIds: new Set(),
         remoteDeletedNodeIds: new Set(),
@@ -202,7 +206,7 @@ function buildPayload(rec: GraphRecord): {
         edges: safeEdges.map(serializeEdgeForSave),
         interface: rec.interfaceGridState ?? undefined,
     };
-    if (Object.keys(rec.variables).length > 0) {
+    if (Object.keys(rec.variables).length > 0 && !rec.variablesWithheld) {
         savePayload.variables = rec.variables;
     }
     return { deletedNodeIds, partialNodeIds: Object.keys(rec.partialNodeIds), savePayload };
@@ -313,11 +317,14 @@ function canSave(rec: GraphRecord): boolean {
  *  canvas Node. Used by the CAS-conflict rebase for server-only nodes;
  *  width/height ride top-level like serializeNodeForSave writes them. */
 function rawNodeToCanvasNode(raw: Record<string, unknown>): Node {
+    // What a /v1 read held back of its settings, which the form shows as saved.
+    const withheld = Array.isArray(raw.withheld) && raw.withheld.length ? { withheld: raw.withheld } : {};
     const node = createWorkflowNode(
         raw.id as string,
         raw.type as string,
         (raw.position as { x: number; y: number }) ?? { x: 0, y: 0 },
         (raw.config as Record<string, unknown>) ?? {},
+        withheld,
     );
     if (raw.width) (node as { width?: unknown }).width = raw.width;
     if (raw.height) (node as { height?: unknown }).height = raw.height;
@@ -339,10 +346,12 @@ function rebaseFromServer(
     serverVersion: number | null | undefined,
 ): void {
     if (typeof serverVersion === 'number') rec.graphVersion = serverVersion;
+    // A /v1 answer withholds each secret (`withheld`: its paths by step).
+    const withheld = withheldPaths(serverData?.withheld);
     const serverNodes = new Map(
         ((serverData?.nodes ?? []) as Record<string, unknown>[])
             .filter((raw) => typeof raw?.id === 'string' && raw.type)
-            .map((raw) => [raw.id as string, rawNodeToCanvasNode(raw)] as const),
+            .map((raw) => [raw.id as string, rawNodeToCanvasNode({ withheld: withheld[raw.id as string], ...raw })] as const),
     );
     const serverEdges = ((serverData?.edges ?? []) as Record<string, unknown>[])
         .filter((raw) => raw?.id && raw.source && raw.target)
@@ -354,9 +363,8 @@ function rebaseFromServer(
             ...(raw.targetHandle ? { targetHandle: raw.targetHandle as string } : {}),
         }) as Edge);
     const dropped = (id: string) => rec.deletedNodeIds.has(id) || rec.remoteDeletedNodeIds.has(id);
-    // A /v1 answer withholds each secret (`withheld`: its paths by step). A step the server holds as the canvas does
-    // but for those is the canvas's copy, secrets and all: it stays, and stays the base, so no save sends one back.
-    const withheld = withheldPaths(serverData?.withheld);
+    // A step the server holds as the canvas does but for what it withheld is the canvas's copy, secrets and all: it
+    // stays, and stays the base, so no save sends one back.
     const asHeld = new Set<string>();
 
     const nodes: Node[] = [];
@@ -1410,6 +1418,35 @@ export function flushGraphNow(workflowId: string): void {
         rec.saveTimer = null;
     }
     fireSave(rec);
+}
+
+/** Saves what's pending now and resolves once it has landed (or can't: the canvas may not save, or its saves keep
+ *  failing), so a read of the stored workflow sees what the canvas holds. /v1's reads of a step's choices and values
+ *  read the stored step. */
+export function whenGraphSaved(workflowId: string): Promise<void> {
+    const rec = graphRecords[workflowId];
+    if (!rec) return Promise.resolve();
+    const settled = () =>
+        !rec.saveInFlight &&
+        rec.saveTimer == null &&
+        (!rec.dirty || !canSave(rec) || rec.saveFailures > MAX_CONSECUTIVE_SAVE_FAILURES);
+    flushGraphNow(workflowId);
+    if (settled()) return Promise.resolve();
+    return new Promise((resolve) => {
+        const stop = subscribe(rec, () => {
+            // Edits that landed while a save was on its way go now, not after the debounce.
+            if (!rec.saveInFlight && rec.saveTimer != null) flushGraphNow(workflowId);
+            if (!settled()) return;
+            stop();
+            resolve();
+        });
+    });
+}
+
+/** Whether the workflow's read withheld its graph's variables' values, so its saves leave them as stored. */
+export function setGraphVariablesWithheld(workflowId: string, withheld: boolean): void {
+    const rec = graphRecords[workflowId];
+    if (rec) rec.variablesWithheld = withheld;
 }
 
 /** Pagehide/beforeunload flush: fire-and-forget, no CAS (see fireSave). */

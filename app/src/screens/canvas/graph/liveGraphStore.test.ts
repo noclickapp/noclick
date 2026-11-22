@@ -25,7 +25,9 @@ import {
     setCanvasMounted,
     setGraphLoaded,
     setGraphReadOnly,
+    setGraphVariablesWithheld,
     setGraphVersion,
+    whenGraphSaved,
 } from './liveGraphStore';
 import { V1_GRAPH_SAVES, type WholeGraphAnswer, type WholeGraphSave } from './saves';
 
@@ -271,6 +273,41 @@ describe('the graph store on /v1', () => {
 // The canvas takes edits as soon as it mounts, and a load's merge keeps a step added while the load was out and leaves
 // out one removed meanwhile. The baseline and the base are what the load read, so that work is the canvas's own and is
 // saved: taken for the server's, the added step was never written and the removed one stayed on the server.
+describe('what a read held back', () => {
+    it('names, on a step taken from the server, the settings the read held back', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c);
+        // Another writer renamed the trigger: the canvas takes the server's copy, which holds no secret.
+        const theirs = stored();
+        (theirs.nodes[0].config as Json).label = 'Orders';
+        answers = [() => ({ conflict: { version: 7, graph: theirs } })];
+        change('agent', { label: 'Mine' });
+        await settle();
+        const hook = rec().nodes.find((n) => n.id === 'hook')!;
+        expect(hook.data.label).toBe('Orders');
+        expect(hook.data.withheld).toEqual(['signing_secret']);
+    });
+
+    it('says when what it holds has landed, saving it at once rather than after the debounce', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c);
+        await whenGraphSaved(WORKFLOW);
+        expect(edits()).toEqual([]);
+        change('agent', { label: 'Mine' });
+        let landed = false;
+        void whenGraphSaved(WORKFLOW).then(() => {
+            landed = true;
+        });
+        expect(landed).toBe(false);
+        await settle(0);
+        expect(landed).toBe(true);
+        expect(edits().map((e) => e.body.ops)).toEqual([[{ op: 'update_step', id: 'agent', settings: { label: 'Mine' } }]]);
+        expect(rec().dirty).toBe(false);
+    });
+});
+
 describe('changes made before the load answered', () => {
     const late = () => createWorkflowNode('late', 'log', { x: 0, y: 400 }, { label: 'Late' });
     const lateEdge = { id: 'agent-late', source: 'agent', target: 'late' } as Edge;
@@ -408,6 +445,23 @@ describe('a host’s own whole-graph save', () => {
         flushAllGraphsNow();
         expect(wire.closed).toHaveLength(1);
         expect(wire.closed[0]).toMatchObject({ ifVersion: 4, changes: { steps: ['agent'], edges_added: [], edges_removed: ['agent-slack'] } });
+    });
+
+    it('leaves the graph’s variables out of a save once a read held their values back', async () => {
+        const wire = host();
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c);
+        rec().variables = { region: 'eu' };
+        change('agent', { label: 'Mine' });
+        await settle();
+        expect(wire.sent[0].graph.variables).toEqual({ region: 'eu' });
+        wire.replies[0]({ landed: true, version: 5 });
+        setGraphVariablesWithheld(WORKFLOW, true);
+        change('agent', { label: 'Mine again' });
+        await settle();
+        expect(wire.sent).toHaveLength(2);
+        expect(wire.sent[1].graph).not.toHaveProperty('variables');
     });
 
     it('fails loudly for a record that saves whole where no host has a save of its own', async () => {
