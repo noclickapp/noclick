@@ -65,6 +65,7 @@ export function DynamicOptionsListField({
                             <DynamicOptionsField
                                 {...picker}
                                 fieldKey={rowKey}
+                                setting={fieldKey}
                                 value={item}
                                 onChange={onRowChange}
                                 config={{
