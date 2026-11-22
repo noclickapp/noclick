@@ -58,6 +58,13 @@ https only (`Strict-Transport-Security`, for a year). A proxy you put in front o
 `Host` header on (with nginx, `proxy_set_header Host $host;`), since signing in checks that the form came from the
 app's own address, and should say which scheme it took the request over (`X-Forwarded-Proto`).
 
+It also runs as a Worker, on Cloudflare Workers or any host of the same runtime: [`worker.js`](worker.js) answers
+with the same server build, and [`wrangler.jsonc`](../wrangler.jsonc) at the repository's root is its config (at the
+root because the app compiles the SDK's source beside it). From the root, `npx wrangler deploy` installs, builds and
+deploys it; its three settings are the Worker's secrets (`npx wrangler secret put NOCLICK_API_KEY`, then the other
+two), which [`.dev.vars.example`](../.dev.vars.example) names for a host that asks for them. Neither file is read by
+`pnpm dev`, `pnpm build` or `pnpm start`.
+
 ## The developer console
 
 `/developers` is NoClick's developer console (`src/screens/console`): the account's agents, users and resources
