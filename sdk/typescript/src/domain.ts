@@ -20,7 +20,7 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { Conflict, InvalidRequest, NotFound } from "./errors.ts";
+import { Conflict, NotFound } from "./errors.ts";
 import { ApiObject, asList, asObject, compact, csv, listAll, listPage, num, parseTime, str } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
@@ -147,11 +147,13 @@ export interface DomainBuyOptions extends CallOptions {
    */
   years?: number;
   /**
-   * The person it's registered to. Required for a user's domain (inside `asUser`, or with
-   * `user`): without it `InvalidRequest` names `registrant` and nothing is sent. A domain your
-   * account buys for itself uses the account's default registrant instead
-   * (`Domain.setDefaultRegistrant`), and with none set throws `ActionRequired` whose `nextStep`
-   * links to the console page where it's set.
+   * The person it's registered to. A user's domain (inside `asUser`, or with `user`) naming none
+   * uses the user's registrant profile (`Domain.setDefaultRegistrant(contact, { user })`), and with
+   * none on file throws `InvalidRequest` naming `registrant`. A domain your account buys for itself
+   * uses the account's default registrant instead (`Domain.setDefaultRegistrant`), and with none set
+   * throws `ActionRequired` whose `nextStep` links to the console page where it's set. A registrant
+   * that is the one on file, without `agreementAcceptedAt`, takes its acceptance from there once it
+   * accepted the agreement as it stands.
    */
   registrant?: DomainContact;
   /** Renew 30 days before expiry (true by default). */
@@ -236,16 +238,6 @@ function toContact(value: unknown): DomainContact | null {
     ...(typeof raw.organization === "string" ? { organization: raw.organization } : {}),
     ...(acceptedAt ? { agreementAcceptedAt: acceptedAt } : {}),
   };
-}
-
-/** A user's domain is registered to that person, so buying one needs their details. */
-function checkRegistrant(scope: UserRef | null | undefined, registrant: DomainContact | undefined): void {
-  if (scope != null && !registrant) {
-    throw new InvalidRequest("A user's domain is registered to that person, so buying one needs their details.", {
-      nextStep: "Pass registrant: { name, email, phone, address, city, region, postalCode, country, agreementAcceptedAt } with the person's details.",
-      details: { field: "registrant" },
-    });
-  }
 }
 
 function buyWire(name: string, options: DomainBuyOptions): JsonObject {
@@ -435,7 +427,6 @@ export class Domain extends ApiObject {
    */
   static async buy(offer: string | DomainOffer, options: DomainBuyOptions): Promise<DomainPurchase> {
     const scope = resolveScope(options.user);
-    checkRegistrant(scope, options.registrant);
     const payload = await resolveClient(options.client).request("POST", "/v1/domains", {
       json: buyWire(typeof offer === "string" ? offer : offer.name, options),
       user: scope,
@@ -491,7 +482,6 @@ export class Domain extends ApiObject {
       domain = typeof name === "string" ? name : name.name;
       scope = resolveScope(options.user);
     }
-    checkRegistrant(scope, options.registrant);
     const payload = await resolveClient(options.client).request("POST", "/v1/domains/transfer_in", {
       json: compact({
         name: domain,
@@ -504,25 +494,35 @@ export class Domain extends ApiObject {
     return DomainTransfer._fromResponse(payload, { client: options.client, user: scope });
   }
 
-  /** The registrant your account's own domains are registered to when a purchase names none (null until set). */
-  static async defaultRegistrant(options: { client?: NoClick } = {}): Promise<DomainContact | null> {
-    return toContact(await resolveClient(options.client).request("GET", "/v1/domains/registrant", { user: null }));
+  /**
+   * The registrant your account's own domains are registered to when a purchase names none (null until set); with
+   * `user` (a `User` or your id for one), that user's registrant profile, which their domains use.
+   */
+  static async defaultRegistrant(options: { client?: NoClick; user?: UserRef | null } = {}): Promise<DomainContact | null> {
+    return toContact(await resolveClient(options.client).request("GET", "/v1/domains/registrant", { user: options.user ?? null }));
   }
 
   /**
    * Set (or with `null` clear) the registrant your account's own domains use when a purchase names
    * none, so `Domain.buy` or `Domain.fromName(..., { createIfMissing })` outside `asUser` needs no
-   * contact in code; until one is set, such a purchase throws `ActionRequired`. A user's domain is
-   * still registered to that user: pass their details as `registrant`. Like any registrant, it needs
-   * `agreementAcceptedAt`.
+   * contact in code; until one is set, such a purchase throws `ActionRequired`. With `user` (a `User` or
+   * your id for one) it's that user's registrant profile, with their own acceptance: their domains (`asUser`,
+   * or an app of theirs) are registered to it when a purchase names none. Like any registrant, it needs
+   * `agreementAcceptedAt`. It's a standing acceptance too: where your approval settings make `terms` and
+   * `person_filing` standing (`ApprovalPolicy.set`), a purchase it covers, an app's code's included, runs with
+   * no one asked.
    */
-  static async setDefaultRegistrant(contact: DomainContact | null, options: { client?: NoClick } = {}): Promise<DomainContact | null> {
+  static async setDefaultRegistrant(
+    contact: DomainContact | null,
+    options: { client?: NoClick; user?: UserRef | null } = {},
+  ): Promise<DomainContact | null> {
     const api = resolveClient(options.client);
+    const user = options.user ?? null;
     if (contact === null) {
-      await api.request("DELETE", "/v1/domains/registrant", { user: null });
+      await api.request("DELETE", "/v1/domains/registrant", { user });
       return null;
     }
-    return toContact(await api.request("PUT", "/v1/domains/registrant", { json: contactWire(contact), user: null }));
+    return toContact(await api.request("PUT", "/v1/domains/registrant", { json: contactWire(contact), user }));
   }
 
   /**
@@ -552,7 +552,6 @@ export class Domain extends ApiObject {
     domain._creates = Boolean(options.createIfMissing);
     if (options.createIfMissing) {
       if (options.maxPriceUsd === undefined) throw new TypeError("Domain.fromName(..., { createIfMissing: true }) needs maxPriceUsd");
-      checkRegistrant(domain._scope, options.registrant);
       domain._createWith = compact({
         ...buyWire(name, { ...options, maxPriceUsd: options.maxPriceUsd }),
         auto_renew: options.autoRenew,

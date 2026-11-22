@@ -23,7 +23,7 @@ import { NOCLICK_KEY, planHarness } from '@/screens/work/newAgent/accounts';
 import { useHarnesses, useModelAccounts } from '@/screens/work/newAgent/catalog';
 import { ConnectSend } from '@/screens/work/newAgent/ConnectSend';
 import { costlyModelOf, refusedForFunds, useFundsThenSwitch } from '@/screens/work/newAgent/funds';
-import { HarnessModelPicker, PickerSheetHost, type PickerValue } from '@/screens/work/newAgent/ModelPicker';
+import { HarnessModelPicker, PickerSheetHost, usePickerSheets, type PickerValue } from '@/screens/work/newAgent/ModelPicker';
 import { rereadAgent, useAgent } from '@/screens/work/profile/reads';
 
 /** What no budget of its own comes to: the cap on the grant its turns act as. */
@@ -78,10 +78,8 @@ export function useCoordinatorComposerControls(client: NoClick, found: boolean):
     };
     // A move refused for want of funds opens Add funds, and is made by itself once they land.
     const adding = useFundsThenSwitch<Changes>(id ? `agent:${id}` : null, apply);
-    // A phone opens the model and account pickers as sheets over the page, in a layer that's empty until one opens.
-    const inPhone = useInPhoneShell();
-    const [sheets, setSheets] = useState<HTMLElement | null>(null);
-    const host = inPhone ? sheets : null;
+    // A phone opens the model and account pickers as sheets over the page.
+    const sheets = usePickerSheets(useInPhoneShell());
 
     const harness = pending?.harness ?? agent?.harness ?? 'sdk';
     const info = harnesses.data?.find((h) => h.name === harness);
@@ -154,12 +152,12 @@ export function useCoordinatorComposerControls(client: NoClick, found: boolean):
     if (!agent || !value) return undefined;
     return {
         model: (
-            <PickerSheetHost.Provider value={host}>
+            <PickerSheetHost.Provider value={sheets.host}>
                 <HarnessModelPicker value={value} onChange={pick} accounts={accounts} open={picker} onOpenChange={setPicker} accountInPill={false} fundsOwner={id ? `agent:${id}` : undefined} />
             </PickerSheetHost.Provider>
         ),
         footer: (
-            <PickerSheetHost.Provider value={host}>
+            <PickerSheetHost.Provider value={sheets.host}>
                 <div className="mt-1.5 px-1.5" data-testid="coordinator-composer-footer">
                     <ConversationFooter agent={agent} chip={account.chip} place={harness === 'sdk' ? RUNS_ON_NOCLICK : undefined} triggers={false} budgetUnset={GRANT_CAP_USD} />
                     {notes.map((note) => (
@@ -170,7 +168,7 @@ export function useCoordinatorComposerControls(client: NoClick, found: boolean):
                     {account.dialog}
                     {adding.dialog}
                 </div>
-                {inPhone && <div ref={setSheets} className="pointer-events-none fixed inset-0 z-50 [&>*]:pointer-events-auto" />}
+                {sheets.layer}
             </PickerSheetHost.Provider>
         ),
         ask: ask ? { button: <ConnectSend ask={ask} onClick={() => account.reconnect()} />, open: () => account.reconnect() } : null,

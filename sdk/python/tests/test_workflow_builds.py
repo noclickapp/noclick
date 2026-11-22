@@ -132,6 +132,34 @@ def test_facts_that_werent_read_are_none_and_named(api, client):
     assert result.readiness is None and result.unread == ["built", "version", "readiness", "verdicts"]
 
 
+def test_a_build_asks_through_human_requests_and_code_answers_accounts_and_secrets(api, client):
+    asked = {**QUESTION, "sent_to": ["email", "web"], "inputs": [
+        {"id": "slack", "label": "Connect Slack", "type": "credential", "credential_type": "slack_oauth",
+         "request_id": "hr_1"},
+        {"id": "env", "label": "Its token", "type": "env", "env_keys": [{"name": "WAREHOUSE_TOKEN"}],
+         "request_id": "hr_2"}]}
+    started = api.post("/v1/workflows/wf_1/builds").respond(
+        status_code=202, json=building("awaiting_human", step="asking", question=asked))
+    answered = api.post("/v1/workflows/wf_1/builds/op_b/answer").respond(json=building())
+    build = nc.Workflow.from_id("wf_1").build("Post it to Slack")
+    assert body(started.calls.last.request) == {"instructions": "Post it to Slack"}
+    question = build.question
+    assert question.sent_to == ["email", "web"] and [i["request_id"] for i in question.inputs] == ["hr_1", "hr_2"]
+    build.answer({"slack": "credential:c1"}, secret_values={"env": {"WAREHOUSE_TOKEN": "t0k"}})
+    assert body(answered.calls.last.request) == {"values": {"slack": "credential:c1"},
+                                                 "secret_values": {"env": {"WAREHOUSE_TOKEN": "t0k"}}}
+
+
+def test_a_build_or_a_new_workflow_can_ask_nothing(api, client):
+    made = api.post("/v1/workflows").respond(status_code=201, json={**WORKFLOW, "build": building()})
+    started = api.post("/v1/workflows/wf_1/builds").respond(status_code=202, json=building())
+    nc.Workflow.create("Morning brief", instructions="Email me at 8", questions="assume")
+    nc.Workflow.from_id("wf_1").build("Text me too", questions="assume")
+    assert body(made.calls.last.request) == {"name": "Morning brief", "instructions": "Email me at 8",
+                                             "questions": "assume"}
+    assert body(started.calls.last.request) == {"instructions": "Text me too", "questions": "assume"}
+
+
 def test_skip_goes_on_without_an_answer(api, client):
     api.post("/v1/workflows/wf_1/builds").respond(status_code=202, json=building())
     answered = api.post("/v1/workflows/wf_1/builds/op_b/answer").respond(json=building())
