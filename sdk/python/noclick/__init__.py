@@ -175,7 +175,7 @@ from .workflow import (
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
     WorkflowTestRun,
-    WorkflowStep, WorkflowVersion,
+    WorkflowStep, WorkflowVariables, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_example import WorkflowExample, workflow_example, workflow_examples
@@ -245,7 +245,7 @@ __all__ = [
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
     "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
-    "WorkflowVersion",
+    "WorkflowVersion", "WorkflowVariables",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
     "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "workflow_examples", "workflow_example",
     "WorkflowExample",

@@ -140,6 +140,14 @@ export const OWNER_ONLY = {
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
         ],
     },
+    /** The values of a workflow's variables, which its page shows its owner and the teammates who can edit it, in
+     *  Setup and in a field bound to one. A page acting as a key never asks for them: a variable that has one shows as
+     *  saved and hidden. */
+    workflowVariables: {
+        what: 'A workflow’s variable values',
+        why: 'A key reads the values of a workflow’s variables only with the workflows:variables scope, which an account’s key with every scope (*) doesn’t hold and this app’s key doesn’t carry.',
+        operations: ['GET /v1/workflows/{workflow_id}/variables'],
+    },
     /** Approving or declining a purchase or a deletion NoClick holds for the owner's yes: on its card in the chat, and in
      *  the chat's Beside. */
     approvals: {
