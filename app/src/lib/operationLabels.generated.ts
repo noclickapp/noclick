@@ -932,6 +932,7 @@ clio
 clockify
 cloro
 cloudbeds
+cloudbees
 cloudflare
 cloudsmith
 cloudtalk
