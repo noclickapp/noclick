@@ -28,7 +28,7 @@ from ._client import Client, resolve_client
 from ._object import UNSET, Page, _Object, compact, csv, field, list_all, list_page, parse_time
 from ._sync import synced
 from ._scope import AMBIENT, resolve_scope
-from .exceptions import Conflict, InvalidRequest, NotFound
+from .exceptions import Conflict, NotFound
 from .operation import Operation, register_result
 
 
@@ -302,17 +302,6 @@ class DomainDns:
         )
 
 
-def _check_registrant(scope: Any, registrant: Optional[DomainContact]) -> None:
-    """A user's domain is registered to that person, so buying one needs their details."""
-    if scope is not None and registrant is None:
-        raise InvalidRequest(
-            "A user's domain is registered to that person, so buying one needs their details.",
-            next_step="Pass registrant=noclick.DomainContact(...) with the person's name, email, phone and address, "
-                      "and when they accepted noclick.Domain.agreement().",
-            details={"field": "registrant"},
-        )
-
-
 def _read_domain(result: Any, op: Operation) -> "Domain":
     """A buy, renewal or transfer in settles with ``{"domain": <the domain view>}``."""
     return Domain._new(raw=(result or {}).get("domain") or {}, client=op._client, user=op._scope)
@@ -495,11 +484,14 @@ class Domain(_Object):
 
         ``registrant`` is the person it's registered to, with the ``agreement_accepted_at`` that
         says when they accepted ``Domain.agreement()``. A user's domain is registered to that
-        user, so inside ``as_user`` it's required: without it, ``noclick.InvalidRequest`` names
-        ``registrant`` and nothing is sent. A domain your account buys for itself, outside
+        user: inside ``as_user`` a purchase naming none uses the user's registrant profile
+        (``Domain.set_default_registrant(..., user=...)``), and with none on file it raises
+        ``noclick.InvalidRequest`` naming ``registrant``. A domain your account buys for itself, outside
         ``as_user``, uses the account's default registrant when you pass none
         (``Domain.set_default_registrant``); with none set, it raises ``noclick.ActionRequired``
-        whose ``next_step`` links to the console page where it's set, and nothing is bought.
+        whose ``next_step`` links to the console page where it's set, and nothing is bought. A
+        ``registrant`` that is the one on file, without ``agreement_accepted_at``, takes its acceptance
+        from there once it accepted the agreement as it stands.
 
         ``accept_claims=True`` says the registrant has been shown the offer's ``claims_notice``
         and still wants the name. A name with a notice is refused without it
@@ -545,7 +537,6 @@ class Domain(_Object):
                 domain = noclick.Domain.buy(offer, max_price_usd=200, registrant=owner, accept_claims=True).wait()
         """
         scope = resolve_scope(user)
-        _check_registrant(scope, registrant)
         payload = await resolve_client(client).request(
             "POST", "/v1/domains",
             json=compact(
@@ -579,8 +570,10 @@ class Domain(_Object):
 
     @synced
     @classmethod
-    async def default_registrant(cls, *, client: Optional[Client] = None) -> Optional[DomainContact]:
-        """The registrant your account's own domains are registered to when a purchase names none.
+    async def default_registrant(cls, *, user: Any = None,
+                                 client: Optional[Client] = None) -> Optional[DomainContact]:
+        """The registrant your account's own domains are registered to when a purchase names none; with
+        ``user=`` (a ``User`` or your id for one), that user's registrant profile, which their domains use.
 
         Returns:
             The contact, or ``None`` until you set one.
@@ -589,21 +582,25 @@ class Domain(_Object):
 
             contact = noclick.Domain.default_registrant()
             print(contact.email if contact else "No default registrant yet")
+            ana = noclick.Domain.default_registrant(user="user_42")
         """
-        return DomainContact._from(await resolve_client(client).request("GET", "/v1/domains/registrant", user=None))
+        return DomainContact._from(await resolve_client(client).request("GET", "/v1/domains/registrant", user=user))
 
     @synced
     @classmethod
     async def set_default_registrant(
-        cls, contact: Optional[DomainContact], *, client: Optional[Client] = None,
+        cls, contact: Optional[DomainContact], *, user: Any = None, client: Optional[Client] = None,
     ) -> Optional[DomainContact]:
         """Set (or with ``None`` clear) the registrant your account's own domains use when a
         purchase names none: set it once, and ``Domain.buy`` or ``Domain.from_name(...,
         create_if_missing=True)`` outside ``as_user`` needs no contact in code. Until one is set, such
         a purchase raises ``noclick.ActionRequired`` whose ``next_step`` links to the console page
-        that sets it. A user's domain is still registered to that user: pass their details as ``registrant``.
-        Like any registrant, it needs ``agreement_accepted_at``: when the person accepted
-        ``Domain.agreement()`` for your account.
+        that sets it. With ``user=`` (a ``User`` or your id for one) it's that user's registrant profile,
+        with their own acceptance: their domains (``as_user``, or an app of theirs) are registered to it
+        when a purchase names none. Like any registrant, it needs ``agreement_accepted_at``: when the
+        person accepted ``Domain.agreement()``. It's a standing acceptance too: where your approval
+        settings make ``terms`` and ``person_filing`` standing (``noclick.ApprovalPolicy.set``), a
+        purchase it covers, an app's code's included, runs with no one asked.
 
         Returns:
             The contact now on file (``None`` once cleared).
@@ -618,9 +615,9 @@ class Domain(_Object):
         """
         api = resolve_client(client)
         if contact is None:
-            await api.request("DELETE", "/v1/domains/registrant", user=None)
+            await api.request("DELETE", "/v1/domains/registrant", user=user)
             return None
-        return DomainContact._from(await api.request("PUT", "/v1/domains/registrant", json=contact._wire(), user=None))
+        return DomainContact._from(await api.request("PUT", "/v1/domains/registrant", json=contact._wire(), user=user))
 
     @synced
     @classmethod
@@ -710,8 +707,8 @@ class Domain(_Object):
         registration, charged once the transfer completes; refused (``noclick.PriceExceeded``)
         above ``max_price_usd``; held in ``awaiting_human`` while your policy holds purchases. It's
         registered to ``registrant`` on the same rule as ``Domain.buy``, ``agreement_accepted_at``
-        included: required for a user's domain (``noclick.InvalidRequest`` naming ``registrant``
-        without it, and nothing is sent), else your account's default registrant. A name the
+        included: a user's own, or their registrant profile on file (``noclick.InvalidRequest`` naming
+        ``registrant`` with neither), else your account's default registrant. A name the
         registry won't move now raises ``noclick.NotAvailable`` with the reason
         (``transfer_quote`` says so first).
 
@@ -757,7 +754,6 @@ class Domain(_Object):
         else:
             wire_name = name.name if isinstance(name, TransferQuote) else name
             scope = resolve_scope(user)
-        _check_registrant(scope, registrant)
         payload = await resolve_client(client).request(
             "POST", "/v1/domains/transfer_in",
             json=compact(
@@ -789,8 +785,8 @@ class Domain(_Object):
         you pass is set on it every run. With ``create_if_missing=True`` your code owns it
         idempotently: the first time it's used with no such domain, it's bought as ``Domain.buy``
         would (``max_price_usd`` is required and ``years`` is the TLD's minimum when left out;
-        inside ``as_user`` the user's ``registrant`` is required too, and outside it defaults to
-        your account's own default registrant: with none set, the first use raises
+        inside ``as_user`` the user's ``registrant`` or registrant profile on file is required too, and
+        outside it defaults to your account's own default registrant: with none set, the first use raises
         ``noclick.ActionRequired`` whose ``next_step`` links to where it's set). ``max_price_usd``,
         ``years`` and ``registrant`` say how to buy it, so they matter only then. A name someone
         else holds raises ``noclick.NotAvailable``.
@@ -815,7 +811,6 @@ class Domain(_Object):
         if create_if_missing:
             if max_price_usd is None:
                 raise ValueError("Domain.from_name(create_if_missing=True) needs max_price_usd=")
-            _check_registrant(domain._scope, registrant)
         domain._define(compact(
             name=name, max_price_usd=max_price_usd, years=years,
             registrant=registrant._wire() if registrant is not None else None,
