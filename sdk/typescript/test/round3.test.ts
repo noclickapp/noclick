@@ -331,6 +331,29 @@ test("phone numbers: search, buy, list, release", async () => {
   assert.equal(number.number, "+14155550123");
 });
 
+test("a holder profile is filed once and a purchase files it", async () => {
+  const { api } = setup();
+  const holder = { name: "Dana Ruiz", street: "Keizersgracht 1", city: "Amsterdam", postal_code: "1015 CJ", country: "NL", phone: "+31612345670" };
+  const profile = { object: "phone_number_holder", user_id: "user_42", holder, requirements: { req_type: "Passport" },
+    accepted_at: "2026-11-20T09:30:00+00:00", updated_at: "2026-11-20T09:31:00+00:00" };
+  const put = api.on("PUT", "/v1/phone_numbers/holder", json(profile));
+  const get = api.on("GET", "/v1/phone_numbers/holder", json(profile));
+  const del = api.on("DELETE", "/v1/phone_numbers/holder", json(undefined, { status: 204 }));
+  const buy = api.on("POST", "/v1/phone_numbers", json(NUMBER));
+  const dana = { name: "Dana Ruiz", street: "Keizersgracht 1", city: "Amsterdam", postalCode: "1015 CJ", country: "NL", phone: "+31612345670" };
+  const filed = await nc.PhoneNumber.setHolderProfile(dana, { acceptedAt: "2026-11-20T09:30:00Z", requirements: { req_type: "Passport" }, user: "user_42" });
+  assert.deepEqual(put.last.body, { holder, requirements: { req_type: "Passport" }, accepted_at: "2026-11-20T09:30:00Z" });
+  assert.equal(put.last.headers.get("NoClick-User"), "user_42");
+  assert.deepEqual([filed?.holder.postalCode, filed?.userId], ["1015 CJ", "user_42"]);
+  assert.equal((await nc.PhoneNumber.holderProfile({ user: "user_42" }))?.acceptedAt?.getUTCFullYear(), 2026);
+  assert.equal(get.last.headers.get("NoClick-User"), "user_42");
+  await assert.rejects(nc.PhoneNumber.setHolderProfile(dana), /acceptedAt/);
+  await nc.PhoneNumber.buy("+31612345678", { country: "NL", type: "mobile", maxMonthlyUsd: 3, holderOnFile: true });
+  assert.deepEqual(buy.last.body, { number: "+31612345678", country: "NL", type: "mobile", max_monthly_usd: 3, holder_on_file: true });
+  assert.equal(await nc.PhoneNumber.setHolderProfile(null), null);
+  assert.equal(del.count, 1);
+});
+
 test("phone numbers abroad: filters, coverage, places, and an address where the country asks", async () => {
   const { api } = setup();
   const search = api.on("GET", "/v1/phone_numbers/available", json(listing([{
