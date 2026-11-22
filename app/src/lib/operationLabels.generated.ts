@@ -1715,6 +1715,7 @@ paypro
 paystack
 pdfco
 pdfless
+pdq-connect
 peaka
 peekalink
 peerdom
