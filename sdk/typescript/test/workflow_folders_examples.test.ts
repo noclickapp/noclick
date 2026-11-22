@@ -107,3 +107,28 @@ test("workflowExample() reads one whole, and an unknown one throws NotFound", as
   assert.equal(example.updatedAt?.getUTCDate(), 20);
   await assert.rejects(nc.workflowExample("nope"), nc.NotFound);
 });
+
+
+test("deleteFolder deletes one and answers it as it was", async () => {
+  const { api } = setup();
+  const route = api.on("DELETE", "/v1/workflows/folders/f2", json({ ...WEEKLY, deleted: true }));
+  api.on("DELETE", "/v1/workflows/folders/f1", json({ ...REPORTS, deleted: true }));
+  const weekly: nc.WorkflowFolder = {
+    id: "f2", name: "Weekly", description: null, parentId: "f1", depth: 1, workflowCount: 0, createdAt: null,
+    updatedAt: null, raw: WEEKLY,
+  };
+  const deleted = await nc.asUser("user_42", () => nc.Workflow.deleteFolder(weekly));
+  assert.equal(route.last.headers.get("NoClick-User"), null);
+  assert.deepEqual([deleted.id, deleted.name, deleted.raw.deleted], ["f2", "Weekly", true]);
+  assert.equal((await nc.Workflow.deleteFolder("f1")).id, "f1");
+});
+
+test("list sends the text to search names and descriptions for", async () => {
+  const { api } = setup();
+  const route = api.on("GET", "/v1/workflows", json(listing([workflow(null)])), json(listing([workflow(null)])));
+  const found = await nc.Workflow.list({ search: "digest" });
+  assert.equal(route.last.query.get("search"), "digest");
+  assert.equal(found[0].id, WF);
+  await nc.Workflow.listPage({ search: "brief", limit: 5 });
+  assert.equal(route.last.query.get("search"), "brief");
+});
