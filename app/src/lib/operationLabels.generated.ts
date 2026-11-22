@@ -1112,6 +1112,7 @@ event-tickets
 eventify
 everflow
 everhour
+evertransit
 everyaction
 evetech
 evoliz
