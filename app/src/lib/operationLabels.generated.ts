@@ -1083,6 +1083,7 @@ doppler
 doqs
 dots
 dovetail
+dpd-connect
 dpd2
 dragn-survey
 dreamstudio
