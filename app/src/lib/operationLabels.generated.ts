@@ -944,6 +944,7 @@ cliniko
 clio
 clockify
 cloro
+closum
 cloudbeds
 cloudflare
 cloudsmith
