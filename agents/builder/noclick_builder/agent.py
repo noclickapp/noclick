@@ -1,8 +1,8 @@
 """The workflow builder, made and run with the NoClick SDK: nothing here that your own code couldn't do with a key.
 
 ``ensure`` makes the account's builder (or returns the one it has); ``build`` hands it one workflow and what to do,
-waits for its reply, then reads the workflow's own facts and sends the builder back once or twice when what it left
-would fail at run time. NoClick's hosted platform runs the same loop from the same definition.
+waits for its reply, then reads the workflow's own facts and sends the builder back when they say the build isn't
+done: a step it left would fail at run time, or nothing was built (``definition.send_back``). NoClick's hosted platform runs the same loop from the same definition.
 
     import noclick
     from noclick_builder import agent as builder
@@ -22,12 +22,6 @@ import noclick
 
 from . import definition
 
-#: How many times a finished build is sent back for settings a run would refuse.
-SEND_BACKS = 2
-#: The readiness issue a run refuses outright: a step's settings the run engine rejects.
-REJECTED = "invalid_config"
-
-
 @dataclass
 class Built:
     """What a build came to: the builder's own words, and beside them the workflow's facts, which no model wrote."""
@@ -41,8 +35,8 @@ class Built:
     version: Optional[int]
     #: Whether it can run, and what's in the way: ``status``, ``issues``, ``warnings``, ``unverified``.
     readiness: Dict[str, Any]
-    #: How many times it was sent back for settings a run would refuse.
-    sent_back: int = 0
+    #: What it was sent back for, in order: ``rejected`` (settings a run would refuse) or ``nothing`` (nothing built).
+    sent_back: List[str] = field(default_factory=list)
     #: Each reply the builder gave, the last one last.
     replies: List[Any] = field(default_factory=list, repr=False)
 
@@ -72,7 +66,7 @@ def ensure(*, instructions: Optional[str] = None, client: Optional[noclick.Clien
 
 
 def _rejected(readiness: Dict[str, Any]) -> List[Dict[str, Any]]:
-    return [issue for issue in readiness.get("issues") or [] if issue.get("code") == REJECTED]
+    return [issue for issue in readiness.get("issues") or [] if issue.get("code") == definition.REJECTED_ISSUE]
 
 
 def build(workflow: Union[noclick.Workflow, str], instructions: str, *, questions: str = definition.ASK,
@@ -93,15 +87,19 @@ def build(workflow: Union[noclick.Workflow, str], instructions: str, *, question
 
     text = definition.request(workflow.id, instructions, name=workflow.name, questions=questions, publish=publish)
     replies = [builder.message(text, conversation=conversation, timeout=timeout)]
-    sent_back = 0
+    sent_back: List[str] = []
     while True:
-        readiness = noclick.Workflow.get(workflow.id, client=client).readiness
-        issues = _rejected(readiness)
-        if not issues or sent_back >= SEND_BACKS:
+        # The facts, read from the workflow itself.
+        now = noclick.Workflow.get(workflow.id, client=client)
+        version = workflow.graph().version
+        issues = _rejected(now.readiness)
+        why = definition.send_back(built=version != began, empty=not now.steps, rejected=issues, sent=sent_back)
+        if why is None:
             break
-        # What it left would fail at run time: it hears exactly what, in the same conversation, and fixes it.
-        sent_back += 1
-        replies.append(builder.message(definition.sent_back(issues), conversation=conversation, timeout=timeout))
-    version = workflow.graph().version
+        # It hears exactly what's wrong, in the same conversation, and fixes it.
+        sent_back.append(why)
+        again = definition.sent_back(issues) if why == definition.REJECTED else (
+            definition.NOTHING_BUILT if not now.steps else definition.NOTHING_CHANGED)
+        replies.append(builder.message(again, conversation=conversation, timeout=timeout))
     return Built(workflow_id=workflow.id, summary=replies[-1].text, built=version != began, version=version,
-                 readiness=readiness, sent_back=sent_back, replies=replies)
+                 readiness=now.readiness, sent_back=sent_back, replies=replies)

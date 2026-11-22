@@ -54,7 +54,8 @@ can't buy anything, and each call it makes is judged as any connected app's is.
    account a step uses attaches the account they pick.
 5. Read the workflow's own facts: its version and its readiness. They're read from the workflow, never from the
    builder's reply, so a build can't claim more than is true.
-6. If a step it left would fail at run time, send it back with exactly what fails, at most twice.
+6. If the facts say it isn't done, send it back with exactly why (`definition.send_back`): a step it left would fail
+   at run time (at most twice), or nothing was built (once).
 
 ```python
 import noclick

@@ -80,6 +80,40 @@ def request(workflow_id: str, instructions: str, *, name: Optional[str] = None, 
     return "\n".join(lines)
 
 
+# ── a finished build that goes back to the builder ──────────────────────────
+# A reply is the builder's own words. What the workflow is, is read from the workflow: when that says the build
+# isn't done, the builder hears exactly what, in the same conversation, before anyone is told it's finished.
+
+#: Why a build goes back: settings a run would refuse (the readiness issue ``invalid_config``), or nothing built.
+REJECTED, NOTHING = "rejected", "nothing"
+#: The readiness issue a run refuses outright: a step's settings the run engine rejects.
+REJECTED_ISSUE = "invalid_config"
+#: How many times a build goes back for settings a run would refuse. Nothing built sends it back once.
+SEND_BACKS = 2
+
+NOTHING_BUILT = (
+    "The workflow has no steps, so nothing your reply describes exists yet. Add the steps, then reply again. What "
+    "the person left out is no reason to build nothing: use a sensible default and say which. If the request "
+    "genuinely needs no steps, say so, and never say something was built, tested or sent.")
+NOTHING_CHANGED = (
+    "The workflow is exactly as it was when this request was made, so nothing your reply says you changed has "
+    "changed. Make the change now, then reply again. If the request genuinely needs no change (it asked a question, "
+    "or the workflow already does it), say which, and never say something was changed, tested or sent.")
+
+
+def send_back(*, built: Optional[bool], empty: bool, rejected: List[Dict[str, Any]],
+              sent: List[str]) -> Optional[str]:
+    """Whether a build whose builder just replied goes back to it, and why (``REJECTED`` or ``NOTHING``), from the
+    workflow's facts: ``built`` (whether its definition moved since the build began; None when that couldn't be
+    read), ``empty`` (it has no steps), ``rejected`` (its readiness issues a run refuses) and ``sent`` (what this
+    build already went back for). None: the build is done, and its facts say how it stands."""
+    if rejected and sent.count(REJECTED) < SEND_BACKS:
+        return REJECTED
+    if built is False and NOTHING not in sent:
+        return NOTHING
+    return None
+
+
 def sent_back(issues: List[Dict[str, Any]]) -> str:
     """The message a finished build is sent back with when its workflow holds settings a run would refuse: each
     issue is ``{step, message}``, as the workflow's readiness names them."""

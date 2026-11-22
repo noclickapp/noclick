@@ -63,3 +63,15 @@ def test_the_instructions_name_only_calls_the_builder_can_make():
     }
     for tool in ("noclick__api_call", "noclick__api_describe", "noclick__search", "noclick__fetch", "human__ask"):
         assert tool in text
+
+
+def test_a_build_goes_back_for_what_a_run_would_refuse_twice_and_for_nothing_built_once():
+    issue = [{"step": "send", "message": "to: field required"}]
+    assert definition.send_back(built=True, empty=False, rejected=issue, sent=[]) == definition.REJECTED
+    assert definition.send_back(built=True, empty=False, rejected=issue, sent=["rejected"]) == definition.REJECTED
+    assert definition.send_back(built=True, empty=False, rejected=issue, sent=["rejected", "rejected"]) is None
+    assert definition.send_back(built=False, empty=True, rejected=[], sent=[]) == definition.NOTHING
+    assert definition.send_back(built=False, empty=True, rejected=[], sent=["nothing"]) is None
+    # What couldn't be read is never taken for nothing built.
+    assert definition.send_back(built=None, empty=True, rejected=[], sent=[]) is None
+    assert definition.send_back(built=True, empty=False, rejected=[], sent=[]) is None
