@@ -158,6 +158,7 @@ describe('the app', () => {
             'chat.outOfFunds',
             'chat.places',
             'chat.question.pick',
+            'chat.question.step',
             'chat.working',
             'connect.app',
             'connect.model',
