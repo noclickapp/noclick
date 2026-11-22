@@ -65,6 +65,34 @@ test("a build that asks is answered from code", async () => {
   assert.equal(reads.count, 3);
 });
 
+test("a build asks through human requests, and code answers accounts and secrets", async () => {
+  const { api } = setup();
+  const asked = {
+    ...QUESTION, sent_to: ["email", "web"],
+    inputs: [
+      { id: "slack", label: "Connect Slack", type: "credential", credential_type: "slack_oauth", request_id: "hr_1" },
+      { id: "env", label: "Its token", type: "env", env_keys: [{ name: "WAREHOUSE_TOKEN" }], request_id: "hr_2" },
+    ],
+  };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building({ status: "awaiting_human", step: "asking", question: asked }), { status: 202 }));
+  const answered = api.on("POST", "/v1/workflows/wf_1/builds/op_b/answer", json(building()));
+  const build = await nc.Workflow.fromId("wf_1").build("Post it to Slack");
+  assert.deepEqual(build.question?.sentTo, ["email", "web"]);
+  assert.deepEqual(build.question?.inputs.map((i) => i.request_id), ["hr_1", "hr_2"]);
+  await build.answer({ slack: "credential:c1" }, { secretValues: { env: { WAREHOUSE_TOKEN: "t0k" } } });
+  assert.deepEqual(answered.last.body, { values: { slack: "credential:c1" }, secret_values: { env: { WAREHOUSE_TOKEN: "t0k" } } });
+});
+
+test("a build or a new workflow can ask nothing", async () => {
+  const { api } = setup();
+  const made = api.on("POST", "/v1/workflows", json({ ...WORKFLOW, build: building() }, { status: 201 }));
+  const started = api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  await nc.Workflow.create("Morning brief", { instructions: "Email me at 8", questions: "assume" });
+  await nc.Workflow.fromId("wf_1").build("Text me too", { questions: "assume" });
+  assert.deepEqual(made.last.body, { name: "Morning brief", instructions: "Email me at 8", questions: "assume" });
+  assert.deepEqual(started.last.body, { instructions: "Text me too", questions: "assume" });
+});
+
 test("wait stops at a question, then waits through it for its answer", async () => {
   // The guide's first example, wait() straight after create(), blocked its whole timeout on a question
   // nobody was shown (2026-10-28): wait() throws the question, and once it has, waits for the answer.
@@ -104,6 +132,40 @@ test("a new question throws, and one nextQuestion already returned does not", as
   assert.equal(asked.question.id, "ask-2");
   assert.match(asked.message, /waiting on an answer: What time\?/);
   assert.equal((await build.wait()).steps[0]?.id, "daily");
+});
+
+test("a finished build carries facts beside the builder's words", async () => {
+  const { api } = setup();
+  const readiness = {
+    status: "needs_setup", meaning: "Something is in the way.", warnings: [], unverified: [],
+    issues: [{ step: "mail", code: "invalid_config", message: "Email the brief: to is required" }],
+  };
+  const facts = {
+    ...RESULT, built: true, version: 7, readiness, sent_back: 2, unread: [],
+    verdicts: { daily: { config_valid: true }, mail: { config_valid: false, missing_required: ["to"] } },
+  };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  api.on("GET", "/v1/operations/op_b/wait", json(building({ status: "succeeded", result: facts })),
+    json(building({ status: "succeeded", result: RESULT })));
+  const result = await (await nc.Workflow.fromId("wf_1").build("Email it to the team too")).wait();
+  assert.deepEqual([result.built, result.version, result.sentBack, result.unread], [true, 7, 2, []]);
+  assert.equal(result.readiness?.status, "needs_setup");
+  assert.equal(result.readiness?.issues[0]?.step, "mail");
+  assert.deepEqual(result.verdicts?.mail, { config_valid: false, missing_required: ["to"] });
+  // A result from before facts were carried says none of them.
+  const older = await (await nc.Workflow.fromId("wf_1").build("Again")).wait();
+  assert.deepEqual([older.built, older.version, older.readiness, older.verdicts, older.sentBack, older.unread],
+    [null, null, null, null, 0, []]);
+});
+
+test("facts that weren't read are null and named", async () => {
+  const { api } = setup();
+  const unread = { ...RESULT, built: null, version: null, readiness: null, verdicts: null, sent_back: 0, unread: ["built", "version", "readiness", "verdicts"] };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  api.on("GET", "/v1/operations/op_b/wait", json(building({ status: "succeeded", result: unread })));
+  const result = await (await nc.Workflow.fromId("wf_1").build("Email it to the team too")).wait();
+  assert.equal(result.readiness, null);
+  assert.deepEqual(result.unread, ["built", "version", "readiness", "verdicts"]);
 });
 
 test("steps come with one workflow, and delete trashes it", async () => {

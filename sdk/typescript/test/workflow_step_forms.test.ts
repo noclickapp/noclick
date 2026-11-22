@@ -27,6 +27,21 @@ test("a step's choices page through with its unsaved settings, for no user", asy
   assert.deepEqual([tabs.nextPageToken, tabs.withheld, tabs.options[0].metadata], [null, ["options[1]"], null]);
 });
 
+test("a step not saved yet lists its choices by its type, through the account its form holds", async () => {
+  const { api } = setup();
+  const route = api.on("POST", `/v1/workflows/${WF}/steps/new_sheet/options`,
+    json({ object: "step_options", workflow_id: WF, step_id: "new_sheet", field: "spreadsheet_id", next_page_token: null,
+           withheld: [], options: [{ value: "sp_1", label: "Budget", metadata: null }] }));
+  const found = await nc.Workflow.fromId(WF).step("new_sheet").options("spreadsheet_id", {
+    type: "automation-google-sheets", connection: "credential:cred_1", settings: { operation: "read_sheet_data" },
+  });
+  assert.deepEqual(route.last.body, {
+    field: "spreadsheet_id", settings: { operation: "read_sheet_data" }, type: "automation-google-sheets",
+    connection: "credential:cred_1",
+  });
+  assert.deepEqual(found.options.map((o) => o.value), ["sp_1"]);
+});
+
 test("a widget's value reads one value or several, and what was withheld", async () => {
   const { api } = setup();
   const hook = api.on("POST", `/v1/workflows/${WF}/steps/hook/values`, json({

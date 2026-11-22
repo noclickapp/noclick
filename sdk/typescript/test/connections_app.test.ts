@@ -61,6 +61,31 @@ test("requireApproval sends the operations and keeps the answer", async () => {
   assert.deepEqual(gmail.approvalOperations, ["delete_message", "send_email_message"]);
 });
 
+test("liftApproval names what it lifts and returns the change", async () => {
+  const { api } = setup();
+  const lift = {
+    object: "approval_policy_change", id: "chg_1", batch_id: "chg_1", scope: "credential", scope_id: "c1",
+    kind: "credential_rule", target: "operations", before: { operations: ["automation-gmail.send_email_message"] },
+    after: { operations: [] }, loosens: true, changed_by: "key", key_id: "key_1",
+    effective_at: "2026-11-22T09:10:00+00:00", until: null, pending: true, undone_at: null, undone_by: null,
+    created_at: "2026-11-22T09:00:00+00:00",
+  };
+  const byName = api.on("DELETE", "/v1/connections/gmail/require_approval",
+    json({ ...NAMED, approval_operations: ["send_email_message"], approval_changes: [lift] }));
+  const gmail = nc.Connection.fromName("gmail");
+  const [change] = await gmail.liftApproval("send_email_message", "delete_message");
+  assert.equal(byName.last.query.get("operations"), "send_email_message,delete_message");
+  assert.deepEqual([change.id, change.scope, change.kind, change.target, change.pending],
+    ["chg_1", "credential", "credential_rule", "operations", true]);
+  assert.equal(change.effectiveAt?.toISOString(), "2026-11-22T09:10:00.000Z");
+  // Waiting out its undo window, the rule still holds what was lifted.
+  assert.deepEqual(gmail.approvalOperations, ["send_email_message"]);
+  // Naming none lifts every one (by its id, now it's read).
+  const byId = api.on("DELETE", "/v1/connections/con_1/require_approval", json({ ...NAMED, approval_changes: [lift] }));
+  await gmail.liftApproval();
+  assert.equal(byId.last.query.get("operations"), null);
+});
+
 test("an account shared with a team is read and run in that team's workspace", async () => {
   const { api } = setup();
   const TEAM = "5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70";

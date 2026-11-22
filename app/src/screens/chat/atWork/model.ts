@@ -276,6 +276,8 @@ export interface Part {
     /** The turn or task to stop. */
     stop?: string;
     change?: { sha: string; href: string };
+    /** The workstream its task belongs to, by name, where one was named. */
+    workstream?: string | null;
 }
 
 /** Why an agent is paused, and the one thing that starts it again. */
@@ -343,6 +345,7 @@ function codingPart(agent: CodingAgent, sources: AtWorkSources, name: string): P
         spent: agent.spent_usd_this_month,
         stop: state === 'working' || state === 'waiting' ? agent.job?.operation_id : undefined,
         change: head && repo && editing ? { sha: head.slice(0, 7), href: sources.links.commit(repo, head) } : undefined,
+        workstream: (agent.job ?? handed)?.workstream?.name ?? null,
     };
 }
 
@@ -375,6 +378,7 @@ function childPart(op: FollowedOperation, sources: AtWorkSources): Part {
         ask: hold?.url ? { label: `Connect ${account ?? 'it'}`, href: hold.url } : undefined,
         spent: coding?.spent_usd_this_month ?? 0,
         stop: state === 'working' || state === 'waiting' ? op.id : undefined,
+        workstream: op.workstream?.name ?? null,
     };
 }
 
