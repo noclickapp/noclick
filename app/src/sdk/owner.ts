@@ -225,9 +225,20 @@ export async function listKeys(
 export const TOKEN_SCOPE = 'credentials:token';
 
 /** Scopes a key holds only when they're named, never part of full access: those that read a secret (a provider's raw
- *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows), and answering a call NoClick
- *  holds for the owner's yes. */
-export const EXPLICIT_SCOPES: readonly string[] = [TOKEN_SCOPE, 'cards:reveal', 'webhooks:reveal', 'agents:terminal', 'approvals:answer', 'approvals:policy'];
+ *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows), answering a call NoClick
+ *  holds for the owner's yes, switching what it holds, accepting the machines usage policy for the company, making
+ *  keys, and linking a phone number (which signs in to the account). */
+export const EXPLICIT_SCOPES: readonly string[] = [
+    TOKEN_SCOPE,
+    'cards:reveal',
+    'webhooks:reveal',
+    'agents:terminal',
+    'approvals:answer',
+    'approvals:policy',
+    'machines:vetting',
+    'keys:create',
+    'account:phones',
+];
 
 /** Every scope but those a key holds only by name: the default for a new key. */
 export function fullAccessScopes(all: readonly string[]): string[] {
@@ -265,14 +276,15 @@ export function revokeKey(client: NoClick, keyId: string): Promise<KeyView> {
 }
 
 /** What an MCP connection may do, one OAuth scope each, in the order people read them. */
-export const CAPABILITY_GROUPS = ['read', 'build', 'deploy', 'spend', 'delete'] as const;
+/** The groups a connected app holds, in consent's order; `admin` only where its client asked for it by name. */
+export const CAPABILITY_GROUPS = ['read', 'build', 'deploy', 'spend', 'delete', 'admin'] as const;
 export type CapabilityGroup = (typeof CAPABILITY_GROUPS)[number];
 
 /** An MCP client a person allowed on the consent page (an OAuth grant, a principal of its own). */
 export interface ConnectedAppView {
     object: 'connected_app';
     id: string;
-    client: { name: string; uri: string | null };
+    client: { name: string; uri: string | null; id: string };
     capabilities: string[];
     spend_cap_usd_per_month: number | null;
     /** Purchases under this go through without asking; null always asks. */
@@ -285,6 +297,9 @@ export interface ConnectedAppView {
     created_at: string;
     last_used_at: string | null;
     revoked_at: string | null;
+    /** Once revoked, its owner may turn it back on as it was (`restoreConnectedApp`): a connection NoClick itself makes
+     *  (its assistant's). A client a person connected connects again instead. */
+    restorable: boolean;
 }
 
 export async function listConnectedApps(client: NoClick, options: { cursor?: string | null } = {}): Promise<Page<ConnectedAppView>> {
@@ -298,6 +313,11 @@ export async function listConnectedApps(client: NoClick, options: { cursor?: str
 /** Returns the revoked view (`revoked_at` set). */
 export function revokeConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
     return client.request<ConnectedAppView>('DELETE', `/v1/connected_apps/${encodeURIComponent(appId)}`, account);
+}
+
+/** Turns a revoked connection NoClick makes back on, as it was; returns it live (`revoked_at` null). */
+export function restoreConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
+    return client.request<ConnectedAppView>('POST', `/v1/connected_apps/${encodeURIComponent(appId)}/restore`, account);
 }
 
 export function resolveObject(client: NoClick, ref: string, signal?: AbortSignal): Promise<ObjectRef> {
