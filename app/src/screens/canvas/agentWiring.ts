@@ -1,6 +1,10 @@
 // What is wired to an agent step, as the canvas works it out from its steps and connections: the triggers that wake it
 // and the steps that give it tools. The agent's chat on the Interface tab lists both (its Triggers and Tools).
 
+/** NoClick's own steps an agent uses as its tools, wired from their top into the agent's bottom as an integration that
+ *  offers its operations is: each makes its own tools, so it takes no allowlist. */
+export const STRUCTURAL_TOOL_TYPES: ReadonlySet<string> = new Set(['tool', 'mcp-server', 'alarm', 'filesystem', 'noclick']);
+
 /** A trigger wired into an agent's input: when it fires, the agent runs with the event as part of its turn. */
 export interface AgentTriggerSource {
     edgeId: string;
