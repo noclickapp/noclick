@@ -72,6 +72,9 @@ export interface PlatformResourceEvent {
         | 'live_session'
         | 'phone_call'
         | 'workflow'
+        /** A run of a workflow moved: it started or ended, or one of its steps did (`id` the run's, `parent_id` its
+         *  workflow's; GET /v1/workflows/{id}/runs/{run}). */
+        | 'workflow_run'
         | 'durable_object_class'
         | 'skill'
         | 'memory'

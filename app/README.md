@@ -193,7 +193,10 @@ so it renders inside the app's live frames. A copy and a saved file carry a step
 (`stepSecrets.ts`: what a read of the workflow would show of the step); its accounts go along by their ids. Connecting
 the account a step or an agent needs is the shared `connect.app` and `connect.model`. What's heavy in a default (the
 SDK, the plain step's drawing, the palette's listing) loads the first time it's used, so a host that fills a slot never
-downloads it: whatever reads one of these imports them all.
+downloads it: whatever reads one of these imports them all. Running a workflow (the whole of it, from one step, or one
+step alone) and stopping a run are no slot: `runs/useRun.ts` does both on the platform API
+(`POST /v1/workflows/{id}/runs`, `.../runs/{run}/stop`), after the canvas's pending save lands, and puts each step's
+state on the canvas as the account's change stream says a run's steps moved.
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -209,6 +212,10 @@ downloads it: whatever reads one of these imports them all.
 | `canvas.note.markdown` | A sticky note's text, drawn from its Markdown | Drawn as a code repository's README is |
 | `canvas.palette` | The palette a step is added from, wherever the canvas frames it (with the canvas's own search box, or its own) | Every kind of step the platform lists (`GET /v1/step_types`; with a search, its best matches by name or by what they do), loaded when it first opens |
 | `canvas.clipboard` | What a copied step's settings carry onto the clipboard and into a saved file, and what else a paste and a file are read as beyond the canvas's own format | A step's settings without their secrets; the canvas's own format alone |
+| `canvas.runs.reads` | What the run log, a step's output history and its expected shape read (`runs/reads.ts`), and what the log narrows by | The API: `GET /v1/workflows/{id}/runs` and `.../runs/counts`, a step's `.../steps/{step}/outputs` (each whole from `.../outputs/{run}`), `GET /v1/step_types/{type}/output_shape`. The API lists runs by how they ended and nothing more yet, so the log is narrowed by that alone and says so |
+| `canvas.runs.saved` | Outputs saved under a name, to pin on a step later and share | None: the API has none, so the output shown is only pinned as the step's mock (an edit of the workflow) |
+| `canvas.runs.fixes` | What can be done about a failed step: asking the builder about it, and the fix the API names | No builder asked; adding funds and the spending cap open in NoClick's app; a link stays a link |
+| `canvas.runs.results` | One run's results, opened from the run log | What each step did (`GET /v1/workflows/{id}/runs/{run}`), read again as its steps move, with a note that a run replayed on the canvas and its agents' calls are in NoClick's app |
 
 Work's are listed under [Work](#work).
 

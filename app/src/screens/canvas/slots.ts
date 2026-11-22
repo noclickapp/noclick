@@ -5,8 +5,9 @@
 // settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
 // what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); how the
 // graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts); the palette steps are added from;
-// and what a copy carries and a paste reads (`surface/`). A host fills them before the canvas first draws (some hold
-// hooks the canvas and the form call).
+// what a copy carries and a paste reads (`surface/`); and what showing a workflow's runs and each step's results reads
+// (`runs/`, standards in runs/standards.tsx). A host fills them before the canvas first draws (some hold hooks the
+// canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import type { Node } from '@xyflow/react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
@@ -20,6 +21,8 @@ import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
 import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
 import type { NodeDefinition, NodeDimensions } from './nodes/types';
 import type { AiEditInfo, Collaborator, Presence, PresenceOptions } from './presence';
+import type { RunFixes, RunReadsHost, RunResults, SavedOutputsHost } from './runs/reads';
+import { RunStepsOnV1, useNothingSaved, useV1Fix, useV1RunReads } from './runs/standards';
 import type { ClipboardParser } from './surface/clipboard/types';
 import type { AddStepRequest } from './surface/useClickToAddNode';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
@@ -516,3 +519,28 @@ export interface CanvasClipboard {
  *  reads the canvas's own format alone; NoClick's app also reads a spreadsheet's link, a curl command and other tools'
  *  exports. */
 export const CLIPBOARD = slot<CanvasClipboard>('canvas.clipboard', { formats: [], useSettingsOf: useSettingsWithoutSecrets });
+
+// ── a workflow's runs and each step's results ───────────────────────────────
+
+/** What the run log, a step's output history and its expected shape read (runs/reads.ts). The standard reads the
+ *  platform API: a page of runs (`GET /v1/workflows/{id}/runs`) and their counts (`.../runs/counts`), a step's stored
+ *  outputs (`.../steps/{step}/outputs`, each whole from `.../outputs/{run}`) and what a step type outputs (`GET
+ *  /v1/step_types/{type}/output_shape`). The API lists runs by how they ended and nothing more yet, so the standard's
+ *  log is narrowed by that alone and says so; NoClick's app also searches them and narrows by how they started. */
+export const RUN_READS = slot<RunReadsHost>('canvas.runs.reads', { useRunReads: useV1RunReads });
+
+/** Outputs saved under a name, to pin on a step of the same type later (and to share with other people). The API has
+ *  none: the standard saves nothing under a name, so the output panel offers only pinning the output shown as the
+ *  step's mock, which is an edit of the workflow. NoClick's app keeps them. */
+export const SAVED_OUTPUTS = slot<SavedOutputsHost>('canvas.runs.saved', { useSaved: useNothingSaved });
+
+/** What can be done about a failed step: asking the builder beside the canvas about its error, and the fix the API
+ *  names for it. The standard asks no builder, opens adding funds and the spending cap in NoClick's app, and offers no
+ *  jump to the step's accounts (they're on the step, in its settings). */
+export const RUN_FIXES = slot<RunFixes>('canvas.runs.fixes', { ask: null, useFix: useV1Fix });
+
+/** One run's results, opened from the run log or the pill. The standard lists what each step did (`GET
+ *  /v1/workflows/{id}/runs/{run}`: its status, error and output), read again as its steps move, and says that a run
+ *  replayed on the canvas and the calls its agents made are in NoClick's app (the API has neither a run's graph as it
+ *  ran nor its tool calls). NoClick's app draws the run as a story: what came in, what its agents did, what went out. */
+export const RUN_RESULTS = slot<RunResults>('canvas.runs.results', RunStepsOnV1);

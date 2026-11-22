@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 // The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
 // graph: the store that saves it, graph/liveGraphStore.ts; its drawing: the steps and connections, nodes/ and edges/;
-// and its editing surface with the palette, surface/ and WorkflowCanvas.tsx) opens a workflow, edits it in each way a
-// canvas does, meets another writer's change, closes, and draws what it holds, and the canvas on its own adds a step
-// from the palette, connects, moves, copies and pastes, deletes and brings back steps and follows another writer's
-// commit, over fixtures
+// its editing surface with the palette, surface/ and WorkflowCanvas.tsx; and its runs and results, runs/) opens a
+// workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws what it holds; the
+// canvas on its own adds a step from the palette, connects, moves, copies and pastes, deletes and brings back steps
+// and follows another writer's commit; and it reads its run log, a step's outputs and one run's results, runs it
+// (whole, and one step alone) and stops a run, over fixtures
 // that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
 // exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
@@ -13,6 +14,7 @@
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { Position, ReactFlow, ReactFlowProvider, type Edge, type Node } from '@xyflow/react';
 import { NoClick } from 'noclick';
+import { useState, type ReactNode } from 'react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
 import { createWorkLive, WorkLiveContext } from '@/sdk/live';
@@ -35,7 +37,12 @@ import {
     setGraphLoaded,
 } from './graph/liveGraphStore';
 import { V1_GRAPH_SAVES } from './graph/saves';
-import { GRAPH_SAVES, STEP_DRAWING } from './slots';
+import { OUTPUT_SECRET, RUNS, runsFetch, stepsOf } from './runs/fixtures';
+import { OutputPanel } from './runs/OutputPanel';
+import type { WorkflowExecutionLog } from './runs/RunLog';
+import { useRunLog } from './runs/useRunLog';
+import { useWorkflowRuns } from './runs/useRun';
+import { GRAPH_SAVES, RUN_READS, RUN_RESULTS, STEP_DRAWING } from './slots';
 import { WorkflowCanvas } from './WorkflowCanvas';
 
 type Json = Record<string, unknown>;
@@ -66,6 +73,8 @@ beforeAll(async () => {
     const { result, unmount } = renderHook(() => standing(STEP_DRAWING).useLoaded([]));
     await waitFor(() => expect(result.current).toBe(true));
     unmount();
+    // The standards' SDK and the standard's results view load with their first use: once here, too.
+    await Promise.all([import('./standardsSdk'), import('./runs/RunSteps')]);
 });
 
 beforeEach(() => {
@@ -324,6 +333,84 @@ async function editing(actsAs: 'owner' | 'key'): Promise<Call[]> {
     return calls;
 }
 
+/** The workflow's runs and results as the canvas shows them, and running it: the run log (a page, the next, the failed
+ *  ones, the counts), a step's stored outputs and the shape a step type outputs, a run of the whole workflow and of one
+ *  step alone, a run someone else started followed and stopped, and one run's results. On real timers: each read is
+ *  waited for. */
+async function runsAndResults(actsAs: 'owner' | 'key'): Promise<Call[]> {
+    const calls: Call[] = [];
+    const client = new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: runsFetch({
+            actsAs,
+            oneRun: (id) => {
+                const found = RUNS.find((r) => r.id === id) ?? { ...RUNS[0], id };
+                return { ...found, steps: stepsOf(id) };
+            },
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    });
+    const live = createWorkLive();
+    const wrapper = ({ children }: { children: ReactNode }) => (
+        <ClientProvider client={client}>
+            <WorkLiveContext.Provider value={live}>{children}</WorkLiveContext.Provider>
+        </ClientProvider>
+    );
+
+    // The run log.
+    const log = renderHook(
+        () => {
+            const reads = standing(RUN_READS).useRunReads();
+            const [logs, setLogs] = useState<WorkflowExecutionLog[]>([]);
+            return { logs, log: useRunLog({ workflowId: WORKFLOW, reads, setLogs }) };
+        },
+        { wrapper }
+    );
+    await waitFor(() => expect(log.result.current.logs).toHaveLength(2));
+    await waitFor(() => expect(log.result.current.log.counts.total).toBe(5));
+    act(() => log.result.current.log.onLoadMore());
+    await waitFor(() => expect(log.result.current.logs).toHaveLength(4));
+    act(() => log.result.current.log.onFiltersChange({ status: 'error', trigger: 'all', query: '' }));
+    await waitFor(() => expect(log.result.current.logs.map((l) => l.id)).toEqual(['run_4']));
+    log.unmount();
+
+    // A step's outputs across runs, and what a step type outputs before it ran.
+    const node = (id: string, type: string, data: Json = {}): Node => ({ id, type, position: { x: 0, y: 0 }, data: { label: id, ...data } });
+    const panel = render(<OutputPanel selectedNode={node('hook', 'trigger-webhook')} workflowId={WORKFLOW} />, { wrapper });
+    await waitFor(() => expect(panel.container.textContent).toContain('2 of 2'));
+    panel.unmount();
+    const expected = render(<OutputPanel selectedNode={node('unrun', 'automation-slack', { operation: `send_message_as_${actsAs}` })} workflowId={WORKFLOW} />, { wrapper });
+    await waitFor(() => expect(expected.container.textContent).toContain('Expected Output'));
+    expected.unmount();
+
+    // Running: the whole workflow, one step alone, and a run someone else started, followed then stopped.
+    const runs = renderHook(
+        () => {
+            const [, setNodes] = useState<Node[]>([node('hook', 'trigger-webhook'), node('agent', 'agent'), node('slack', 'automation-slack')]);
+            return useWorkflowRuns({ client, workflowId: WORKFLOW, setNodes });
+        },
+        { wrapper }
+    );
+    await act(() => runs.result.current.run());
+    await act(() => runs.result.current.run({ fromStep: 'slack', only: true }));
+    expect(runs.result.current.error).toBeNull();
+    act(() => live.deliver('platform:resource', { kind: 'workflow_run', id: 'run_3', parent_id: WORKFLOW }));
+    await waitFor(() => expect(runs.result.current.running).toEqual(['run_3']));
+    await act(() => runs.result.current.stop());
+    runs.unmount();
+
+    // One run's results.
+    const Results = standing(RUN_RESULTS);
+    const results = render(<Results workflowId={WORKFLOW} runId="run_4" onClose={() => undefined} />, { wrapper });
+    await screen.findByTestId('run-step-slack');
+    results.unmount();
+    return calls;
+}
+
 /** Every key anywhere in `value`. */
 function keysIn(value: unknown): string[] {
     if (Array.isArray(value)) return value.flatMap(keysIn);
@@ -336,7 +423,7 @@ async function holdsNoSecret(calls: Call[]) {
     for (const call of calls) {
         const sent = JSON.stringify(call.body);
         const read = await call.answer;
-        for (const secret of Object.values(SECRETS)) {
+        for (const secret of [...Object.values(SECRETS), OUTPUT_SECRET]) {
             expect(sent, `${asLine(call)} sent a secret`).not.toContain(secret);
             expect(read, `${asLine(call)} read a secret`).not.toContain(secret);
         }
@@ -348,7 +435,7 @@ async function holdsNoSecret(calls: Call[]) {
 }
 
 describe('the canvas acting as a key', () => {
-    it('opens, edits, merges and closes a workflow without asking for what only the account’s owner may do', async () => {
+    it('opens, edits, merges, closes, draws and runs a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
         const called = new Set<string>();
         const refused: string[] = [];
         for (const actsAs of ['owner', 'key'] as const) {
@@ -360,6 +447,10 @@ describe('the canvas acting as a key', () => {
             for (const id of Object.keys(graphRecords)) delete graphRecords[id];
             calls.push(...(await editing(actsAs)));
             cleanup();
+            vi.useRealTimers();
+            calls.push(...(await runsAndResults(actsAs)));
+            cleanup();
+            vi.useFakeTimers();
             await holdsNoSecret(calls);
             for (const call of calls) {
                 called.add(asLine(call));

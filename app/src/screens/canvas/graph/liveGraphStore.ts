@@ -1420,25 +1420,23 @@ export function flushGraphNow(workflowId: string): void {
     fireSave(rec);
 }
 
-/** Saves what's pending now and resolves once it has landed (or can't: the canvas may not save, or its saves keep
- *  failing), so a read of the stored workflow sees what the canvas holds. /v1's reads of a step's choices and values
- *  read the stored step. */
-export function whenGraphSaved(workflowId: string): Promise<void> {
+/** Saves what's pending now and resolves once nothing is: true when the stored workflow holds what the canvas does,
+ *  false when what's pending can't be saved (the canvas may not save, or its saves keep failing). What reads or runs
+ *  the stored workflow waits on this, so it never acts on a graph older than the one shown. */
+export function whenGraphSaved(workflowId: string): Promise<boolean> {
     const rec = graphRecords[workflowId];
-    if (!rec) return Promise.resolve();
-    const settled = () =>
-        !rec.saveInFlight &&
-        rec.saveTimer == null &&
-        (!rec.dirty || !canSave(rec) || rec.saveFailures > MAX_CONSECUTIVE_SAVE_FAILURES);
+    if (!rec) return Promise.resolve(true);
+    const stuck = () => rec.dirty && (!canSave(rec) || rec.saveFailures > MAX_CONSECUTIVE_SAVE_FAILURES);
+    const settled = () => !rec.saveInFlight && rec.saveTimer == null && (!rec.dirty || stuck());
     flushGraphNow(workflowId);
-    if (settled()) return Promise.resolve();
+    if (settled()) return Promise.resolve(!rec.dirty);
     return new Promise((resolve) => {
         const stop = subscribe(rec, () => {
             // Edits that landed while a save was on its way go now, not after the debounce.
             if (!rec.saveInFlight && rec.saveTimer != null) flushGraphNow(workflowId);
             if (!settled()) return;
             stop();
-            resolve();
+            resolve(!rec.dirty);
         });
     });
 }
