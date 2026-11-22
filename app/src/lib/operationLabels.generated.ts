@@ -667,7 +667,7 @@ ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex airweave akeneo a
 altoviz alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache
 api-bible api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter
 appcircle apphud appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online
-artificial-analysis aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine
+artificial-analysis aryeo asana ashby askell assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine
 attentive attio audienceful audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut
 bambooci bamboohr bandsintown bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api
 beaconchain beatapi beehiiv benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer
