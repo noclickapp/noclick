@@ -1,19 +1,23 @@
 // What stands in the canvas's slots (slots.ts) when no host fills them: each works over the platform API alone, with
 // the client a `ClientProvider` above gives, or says where on NoClick the thing is done and opens it there, never a gap.
+// The SDK loads with the first call (standardsSdk.ts).
 import { lazy, Suspense, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
 import { ArrowUpRight, LayoutGrid, MessageCircle, Share2 } from 'lucide-react';
-import { stepType, Workflow, type NoClick, type StepType } from 'noclick';
+import type { Node } from '@xyflow/react';
+import type { NoClick, StepType } from 'noclick';
 import { useClient } from '@/sdk/client';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
 import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { DIALOG_MARK, ShellDialog } from '@/ui/ShellDialog';
 import { cn } from '@/ui/utils';
+import { buildSaveConfig } from './applyNodeUpdate';
 import { useStepScope, type StepReads, type StepScope } from './form/reads';
 import { displayStrategyOf } from './form/strategyDefaults';
 import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { Presence } from './presence';
-import type { CanvasBlockProps, CanvasBuilderProps, CanvasInterfaceProps, CanvasPresence, CanvasShareProps, StepSchemaRead, Track } from './slots';
+import type { CanvasBlockProps, CanvasBuilderProps, CanvasInterfaceProps, CanvasPaletteProps, CanvasPresence, CanvasShareProps, StepSchemaRead, Track } from './slots';
+import { withoutSecrets } from './stepSecrets';
 
 /** NoClick's own site, as the console the canvas is drawn in names it (a canvas outside one links to noclick.com). */
 function useSite(): string {
@@ -163,6 +167,16 @@ interface Known {
 // change only with a release.
 const sessions = new WeakMap<NoClick, Map<string, Known>>();
 
+/** Per client: how many of its types have settled, and who hears each one settle (the canvas's drawing, which reads
+ *  many types at once). */
+const settled = new WeakMap<NoClick, { count: number; listeners: Set<() => void> }>();
+
+function settledOf(client: NoClick) {
+    let found = settled.get(client);
+    if (!found) settled.set(client, (found = { count: 0, listeners: new Set() }));
+    return found;
+}
+
 function knownOf(client: NoClick, name: string): Known {
     let types = sessions.get(client);
     if (!types) sessions.set(client, (types = new Map()));
@@ -174,11 +188,16 @@ function knownOf(client: NoClick, name: string): Known {
             made.read = read;
             made.type = type;
             made.listeners.forEach((listener) => listener());
+            const every = settledOf(client);
+            every.count += 1;
+            every.listeners.forEach((listener) => listener());
         };
-        stepType(name, { client }).then(
-            (type) => settle({ status: 'ready', schema: type.schema }, type),
-            (error: unknown) => settle({ status: 'failed', message: `This step’s settings couldn’t be read: ${error instanceof Error ? error.message : String(error)}` })
-        );
+        import('./standardsSdk')
+            .then(({ stepType }) => stepType(name, { client }))
+            .then(
+                (type) => settle({ status: 'ready', schema: type.schema }, type),
+                (error: unknown) => settle({ status: 'failed', message: `This step’s settings couldn’t be read: ${error instanceof Error ? error.message : String(error)}` })
+            );
     }
     return known;
 }
@@ -186,6 +205,25 @@ function knownOf(client: NoClick, name: string): Known {
 /** The type as `GET /v1/step_types/{type}` described it, once read this session. */
 export function knownStepType(client: NoClick, name: string): StepType | undefined {
     return sessions.get(client)?.get(name)?.type;
+}
+
+/** The type as `GET /v1/step_types/{type}` described it, starting that read this session if it hasn't begun; undefined
+ *  until it lands (and for a type the API doesn't describe). `useStepTypesSettled` draws again as each lands. */
+export function readStepType(client: NoClick, name: string): StepType | undefined {
+    return knownOf(client, name).type;
+}
+
+/** How many step types have settled for this client so far, drawing again each time another does. */
+export function useStepTypesSettled(client: NoClick): number {
+    const every = settledOf(client);
+    return useSyncExternalStore(
+        (listener) => {
+            every.listeners.add(listener);
+            return () => void every.listeners.delete(listener);
+        },
+        () => every.count,
+        () => every.count
+    );
 }
 
 export function useV1StepSchema(type: string): StepSchemaRead {
@@ -204,31 +242,39 @@ export function useV1StepSchema(type: string): StepSchemaRead {
 // ── a step's reads, on /v1 ─────────────────────────────────────────────────
 
 function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
-    const step = () => {
+    const step = async () => {
         if (!scope?.workflowId || !scope.nodeId) throw new Error('A step’s fields read through its workflow and step: draw them inside its form.');
+        const { Workflow } = await import('./standardsSdk');
         return Workflow.fromId(scope.workflowId, { client }).step(scope.nodeId);
     };
+    const options: StepReads['options'] = async (request) => {
+        const page = await (await step()).options(request.field_key ?? request.field_name, {
+            settings: request.context ?? undefined,
+            search: request.search,
+            pageToken: request.page_token,
+            // The step as the form holds it: one not saved yet lists its choices by its type, through the account its
+            // form holds.
+            type: request.node_type,
+            connection: request.credential_id || undefined,
+        });
+        // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
+        return {
+            success: true,
+            options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
+            next_page_token: page.nextPageToken,
+        };
+    };
     return {
-        options: async (request) => {
-            const page = await step().options(request.field_key ?? request.field_name, {
-                settings: request.context ?? undefined,
-                search: request.search,
-                pageToken: request.page_token,
-            });
-            // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
-            return {
-                success: true,
-                options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
-                next_page_token: page.nextPageToken,
-            };
-        },
+        options,
+        // The API lists these as the step's own choices too, by the loader's field.
+        lookup: options,
         value: async (request) => {
-            const loaded = await step().value(request.field_name, { settings: request.context });
+            const loaded = await (await step()).value(request.field_name, { settings: request.context });
             return { success: true, value: loaded.value ?? undefined, values: loaded.values ?? undefined };
         },
         validate: null,
         previewExpression: async (request) => {
-            const preview = await step().previewExpression(request.expression, { samples: request.sample_outputs as Record<string, never> });
+            const preview = await (await step()).previewExpression(request.expression, { samples: request.sample_outputs as Record<string, never> });
             const tokens = preview.raw.preview_tokens;
             return {
                 ok: preview.ok,
@@ -240,7 +286,7 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
             };
         },
         clearState: async () => {
-            await step().clearState();
+            await (await step()).clearState();
             return { success: true };
         },
         reconnectWebhookRelay: null,
@@ -290,4 +336,27 @@ export function noclickStepLink(workflowId: string, nodeId: string, fieldKey?: s
     url.searchParams.set('node', nodeId);
     if (fieldKey) url.searchParams.set('field', fieldKey);
     return url.toString();
+}
+
+// ── adding a step ───────────────────────────────────────────────────────────
+
+// Loaded when the palette first opens: it lists the platform's step types with the client.
+const StepPalette = lazy(() => import('./surface/StepPalette'));
+
+/** Every kind of step the platform lists, searched by name or by what it does (surface/StepPalette.tsx). */
+export function PaletteOfStepTypes(props: CanvasPaletteProps) {
+    return (
+        <Suspense fallback={null}>
+            <StepPalette {...props} />
+        </Suspense>
+    );
+}
+
+// ── the clipboard ───────────────────────────────────────────────────────────
+
+/** A step's settings as a copy carries them: what it holds, without its secrets. Its type's schema, where this
+ *  session has read it, says which settings are secrets beyond what their names say. */
+export function useSettingsWithoutSecrets(): (node: Node) => Record<string, unknown> {
+    const client = useClient();
+    return useMemo(() => (node: Node) => withoutSecrets(buildSaveConfig(node), node.type ? knownStepType(client, node.type)?.schema : undefined), [client]);
 }
