@@ -1081,6 +1081,7 @@ domo
 doorloop
 doppler
 doqs
+dots
 dovetail
 dpd2
 dragn-survey
