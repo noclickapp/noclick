@@ -1991,6 +1991,7 @@ snyk
 socialkit
 softr
 solcast
+sonderplan
 soundcloud
 soundee
 spacebring
