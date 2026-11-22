@@ -813,6 +813,7 @@ bill
 billetweb
 binsr-inspect
 birdeye
+bitbadges
 bitly
 bitrise
 bitsnap
