@@ -1234,6 +1234,7 @@ gocardless
 gofundme-pro
 gohighlevel
 gong
+good-grants
 goodapi-plant-trees
 goodbarber
 goody
