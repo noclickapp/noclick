@@ -11,6 +11,8 @@ import { apiError, json, listing, setup } from "./helpers.ts";
 const WF = "wf_1";
 const EDITS = `/v1/workflows/${WF}/edits`;
 const CREDENTIAL = "9b2a1c5e-7d9f-4a31-8f6d-3f1d2c4b8a7e";
+// An account connected in the app: its connection's id is credential:<this>.
+const IN_APP = "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f";
 
 const HOOK = {
   id: "hook", type: "trigger-webhook", position: { x: 0, y: 0 },
@@ -137,6 +139,23 @@ test("a graph reads the whole definition into typed steps, notes and edges", asy
   assert.equal(graph.step("writer"), writer);
   assert.equal(graph.step("Post it"), post);
   assert.throws(() => graph.step("Nope"), nc.NotFound);
+});
+
+test("a step's account is the connection naming its credential id", async () => {
+  const { api } = setup();
+  api.on("GET", `/v1/workflows/${WF}/graph`, json(read()));
+  const named = {
+    object: "connection", id: "6f3c2d1e-0a9b-4c8d-9e7f-5a4b3c2d1e0f", name: "openrouter", integration: "openrouter",
+    credential_type: "agent_openrouter", origin: "api", status: "connected", credential_id: CREDENTIAL,
+  };
+  const inApp = { ...named, id: `credential:${IN_APP}`, name: "OpenRouter key", origin: "app", credential_id: IN_APP };
+  const pending = { ...named, id: "0e1d2c3b-4a59-4687-9a8b-7c6d5e4f3a2b", name: "later", status: "pending", credential_id: null };
+  api.on("GET", "/v1/connections", json(listing([named, inApp, pending])));
+  const writer = (await nc.Workflow.fromId(WF).graph()).step("writer");
+  const connections = await nc.Connection.list();
+  const byCredential = new Map(connections.filter((c) => c.credentialId).map((c) => [c.credentialId, c]));
+  assert.equal(byCredential.get(writer.connections.agent_openrouter)?.name, "openrouter");
+  assert.deepEqual(connections.map((c) => c.credentialId), [CREDENTIAL, IN_APP, null]);
 });
 
 test("the workflow's version comes with its read and moves with each answer", async () => {
@@ -555,6 +574,16 @@ test("a graph reads what the app shows and an edge's input", async () => {
   const graph = await nc.Workflow.fromId(WF).graph();
   assert.deepEqual(graph.displayMetadata, { viewport: { zoom: 2 } });
   assert.deepEqual(graph.edges, [{ id: "s-c", from: "state", to: "code", kind: "data", handle: null, targetHandle: "state" }]);
+  assert.deepEqual([graph.access, graph.agent], [null, null]);
+});
+
+test("a graph reads what its reader may do with it and whose agent it is", async () => {
+  const { api } = setup();
+  api.on("GET", `/v1/workflows/${WF}/graph`, json({
+    ...read(4, bare([HOOK])), access: "editor", agent: { id: "agt_1", name: "Support", yours: true },
+  }));
+  const graph = await nc.Workflow.fromId(WF).graph();
+  assert.deepEqual([graph.access, graph.agent], ["editor", { id: "agt_1", name: "Support", yours: true }]);
 });
 
 test("a batch held for the owner surfaces as its approval and lands nothing", async () => {
@@ -708,4 +737,35 @@ test("steps of a workflow reached by name load it once", async () => {
   await workflow.step("hook").connect("writer");
   await workflow.step("writer").connect("post");
   assert.deepEqual([lookup.count, route.count, lookup.last.query.get("name")], [1, 2, "Order intake"]);
+});
+
+
+test("an edit that settles waits and says what its writes left", async () => {
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json({
+    ...edited(5, [{ op: "add_step", id: "hook" }], { graph: bare([HOOK], []) }), settled: true,
+    unregistered: { stripe: "Finish setup before activation: connect a Stripe account." },
+    warnings: ["Your Gmail account won't work in this workflow's automatic runs."],
+  }), json(edited(6, [{ op: "update_step", id: "hook" }])));
+  const workflow = nc.Workflow.fromId(WF);
+  const settled = await workflow.edit({ settle: true, includeGraph: true }, (e) => {
+    e.addStep("trigger-webhook", { id: "hook", name: "Hook" });
+  });
+  assert.equal((route.last.body as { settle: boolean }).settle, true);
+  assert.equal(settled?.settled, true);
+  assert.deepEqual(settled?.unregistered, { stripe: "Finish setup before activation: connect a Stripe account." });
+  assert.deepEqual(settled?.warnings, ["Your Gmail account won't work in this workflow's automatic runs."]);
+  assert.equal(settled?.graph?.step("hook").settings.webhook_url, "https://wf-1.noclick.run");
+  // Without settle the field isn't sent, and an answer without them reads as none.
+  const plain = await workflow.edit({}, (e) => { e.updateStep("hook", { name: "Order placed" }); });
+  assert.equal("settle" in (route.last.body as object), false);
+  assert.deepEqual([plain?.settled, plain?.unregistered, plain?.warnings], [null, {}, []]);
+});
+
+test("settle waits for what earlier edits set going and changes nothing", async () => {
+  const { api } = setup();
+  const route = api.on("POST", EDITS, json({ ...edited(5, [], { changed: false }), settled: false, unregistered: {} }));
+  const settled = await nc.Workflow.fromId(WF).settle();
+  assert.deepEqual(route.last.body, { ops: [], settle: true });
+  assert.deepEqual([settled.settled, settled.changed], [false, false]);
 });
