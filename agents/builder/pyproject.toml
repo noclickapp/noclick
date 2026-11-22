@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noclick-builder"
+version = "0.1.0"
+description = "NoClick's workflow builder: an agent that builds workflows with NoClick's own API"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = ["noclick>=0.2.2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-asyncio>=0.21", "respx>=0.20"]
+
+[tool.setuptools.packages.find]
+include = ["noclick_builder*"]
+
+[tool.setuptools.package-data]
+noclick_builder = ["INSTRUCTIONS.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The SDK as it is in this repository, beside the package itself.
+pythonpath = [".", "../../sdk/python"]
+asyncio_mode = "auto"
