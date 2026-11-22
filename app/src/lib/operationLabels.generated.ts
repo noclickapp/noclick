@@ -1313,6 +1313,7 @@ hostfully
 housecall-pro
 houzz-pro
 http-request
+httpsms
 hubfit
 hubflo
 hubhopper
