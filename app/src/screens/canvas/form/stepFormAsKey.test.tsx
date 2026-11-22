@@ -187,7 +187,8 @@ describe('the step form acting as a key', () => {
         await settled(record);
         const options = record.calls.filter((c) => c.path === '/v1/workflows/wf_orders/steps/mail/options');
         expect(options.length).toBeGreaterThan(0);
-        for (const call of options) expect(call.body.field).toBe('channel');
+        // The step as the form holds it: its type, so one not saved yet lists its choices too.
+        for (const call of options) expect([call.body.field, call.body.type]).toEqual(['channel', 'example-mail']);
         await holdsNoSecret(record.calls);
         expect(offClient).toEqual([]);
     });
