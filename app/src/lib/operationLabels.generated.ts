@@ -1742,6 +1742,7 @@ pennylane
 penpot
 people-data-labs
 perfect-venue
+perfex-crm
 perigon
 perplexity
 persona
