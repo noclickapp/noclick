@@ -208,20 +208,23 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
         if (!scope?.workflowId || !scope.nodeId) throw new Error('A step’s fields read through its workflow and step: draw them inside its form.');
         return Workflow.fromId(scope.workflowId, { client }).step(scope.nodeId);
     };
+    const options: StepReads['options'] = async (request) => {
+        const page = await step().options(request.field_key ?? request.field_name, {
+            settings: request.context ?? undefined,
+            search: request.search,
+            pageToken: request.page_token,
+        });
+        // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
+        return {
+            success: true,
+            options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
+            next_page_token: page.nextPageToken,
+        };
+    };
     return {
-        options: async (request) => {
-            const page = await step().options(request.field_key ?? request.field_name, {
-                settings: request.context ?? undefined,
-                search: request.search,
-                pageToken: request.page_token,
-            });
-            // A dropdown stores and shows text: the API's choices are the loader's own, values and labels as it gave them.
-            return {
-                success: true,
-                options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
-                next_page_token: page.nextPageToken,
-            };
-        },
+        options,
+        // The API lists these as the step's own choices too, by the loader's field.
+        lookup: options,
         value: async (request) => {
             const loaded = await step().value(request.field_name, { settings: request.context });
             return { success: true, value: loaded.value ?? undefined, values: loaded.values ?? undefined };
