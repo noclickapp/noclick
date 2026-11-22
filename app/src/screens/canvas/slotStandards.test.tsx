@@ -1,14 +1,21 @@
 // @vitest-environment happy-dom
 // What the canvas's slots hold where no host fills them: a builder that builds the workflow over the platform API
 // (its question answered on NoClick, its words when it's done), nobody else on the canvas, and the Interface tab, an
-// agent's chat and sharing each saying where on NoClick they're done, with the way there.
+// agent's chat and sharing each saying where on NoClick they're done, with the way there; and the step form's: each
+// step type's schema read from `GET /v1/step_types/{type}` once a session, whether a step still needs an account from
+// what that read says of its type, a link to a field on NoClick's canvas, no glyph and no analytics.
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { NoClick } from 'noclick';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
 import { ClientProvider } from '@/sdk/client';
 import { standing } from '@/slots';
-import { AGENT_CHAT, BUILDER, INTERFACE, PRESENCE, SHARE, type CanvasBuilderProps } from './slots';
+import { workFixtureClient } from '@/screens/work/fixtures/client';
+import { formFetch, WORKFLOW as FORM_WORKFLOW } from './form/fixtures/world';
+import { NodeConfig } from './form/NodeConfig';
+import { AGENT_CHAT, BUILDER, INTERFACE, PRESENCE, SHARE, STEP_LINK, STEP_MARKS, STEP_TRACK, type CanvasBuilderProps } from './slots';
+import { knownStepType, useV1ConnectionMissing } from './slotStandards';
 
 afterEach(cleanup);
 
@@ -165,5 +172,53 @@ describe('what’s done on NoClick', () => {
         expect(screen.getByRole('link', { name: /Share on NoClick/ }).getAttribute('href')).toBe(workflowUrl(NOCLICK_SITE, WORKFLOW));
         fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
         expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+});
+
+function fixtureClient() {
+    const calls: string[] = [];
+    const client = workFixtureClient(formFetch({ observe: (method, path) => calls.push(`${method} ${path}`) }), { maxRetries: 0 });
+    return { client, calls };
+}
+
+describe('the step form’s standards', () => {
+    it('reads a step type’s schema once a session for every form of it', async () => {
+        const { client, calls } = fixtureClient();
+        render(
+            <ClientProvider client={client}>
+                <NodeConfig nodeType="state-manager" nodeId="a" workflowId={FORM_WORKFLOW} config={{}} onChange={() => undefined} />
+                <NodeConfig nodeType="state-manager" nodeId="b" workflowId={FORM_WORKFLOW} config={{ key: 'k' }} onChange={() => undefined} />
+            </ClientProvider>
+        );
+        await waitFor(() => expect(screen.getAllByText('Key')).toHaveLength(2));
+        expect(calls.filter((call) => call === 'GET /v1/step_types/state-manager')).toHaveLength(1);
+        expect(knownStepType(client, 'state-manager')?.label).toBe('State');
+    });
+
+    it('judges whether a step needs an account by its type’s connection and its operation', async () => {
+        const { client } = fixtureClient();
+        const wrapper = ({ children }: { children: ReactNode }) => <ClientProvider client={client}>{children}</ClientProvider>;
+        // The type must have been read: the form reads it before it draws.
+        render(
+            <ClientProvider client={client}>
+                <NodeConfig nodeType="example-mail" nodeId="mail" workflowId={FORM_WORKFLOW} operation="send_message" config={{}} onChange={() => undefined} />
+                <NodeConfig nodeType="example-hook" nodeId="hook" workflowId={FORM_WORKFLOW} config={{}} onChange={() => undefined} />
+            </ClientProvider>
+        );
+        await waitFor(() => expect(screen.getByText('Credentials are required')).toBeTruthy());
+        const missing = (type: string, ids: Record<string, string>, operation?: string) =>
+            renderHook(() => useV1ConnectionMissing(type, ids, { operation }), { wrapper }).result.current;
+        expect(missing('example-mail', {}, 'send_message')).toBe(true);
+        expect(missing('example-mail', { example_mail_token: 'cred_mail' }, 'send_message')).toBe(false);
+        // A type that connects to nothing never needs one.
+        expect(missing('example-hook', {})).toBe(false);
+    });
+
+    it('links a field to the step on NoClick’s canvas, draws no glyph and tells no one', () => {
+        const link = standing(STEP_LINK);
+        expect(link?.(FORM_WORKFLOW, 'mail', 'channel')).toBe('https://noclick.com/dashboard?tab=workflows&workflow=wf_orders&node=mail&field=channel');
+        expect(standing(STEP_MARKS).mark('example-mail')).toBeUndefined();
+        const { result } = renderHook(() => standing(STEP_TRACK)());
+        expect(result.current('node_config_error_shown', {})).toBeUndefined();
     });
 });

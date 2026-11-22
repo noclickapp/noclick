@@ -1,0 +1,11 @@
+# The app's settings as a Worker's secrets (wrangler.jsonc): a host that deploys this repository as a Worker asks
+# for these. app/README.md, "Configuration", says what each is; app/.env.example is the same list for Node.
+
+# The NoClick secret key the app acts with, in your account (create one in NoClick's developer console).
+NOCLICK_API_KEY=
+
+# The password you sign in to this app with: at least 12 characters, best random (openssl rand -base64 18).
+APP_PASSWORD=
+
+# Signs the sign-in cookie: at least 32 random characters (openssl rand -base64 48).
+SESSION_SECRET=
