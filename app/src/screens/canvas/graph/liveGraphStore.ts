@@ -1005,6 +1005,8 @@ export async function reloadFromServer(workflowId: string): Promise<boolean> {
     try {
         const read = await standing(GRAPH_SAVES).read(workflowId, editsClient);
         if (!read.graph) return false;
+        // A reader who may only look at the workflow never saves it.
+        if (read.access !== undefined && read.access !== null) rec.readOnly = read.access === 'viewer';
         rebaseFromServer(rec, read.graph, read.version);
         rec.dirty = true;
         scheduleSave(rec);
