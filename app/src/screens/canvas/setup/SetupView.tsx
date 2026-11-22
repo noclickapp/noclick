@@ -20,7 +20,7 @@ import { useSlot } from '@/slots';
 import { cn } from '@/ui/utils';
 import { DynamicOptionsField } from '../form/DynamicOptionsField';
 import type { NodeConfigProps } from '../form/NodeConfig';
-import { StepContext } from '../form/reads';
+import { StepContext, useStepScope } from '../form/reads';
 import { ReadinessCard, deriveUnmetConnections } from '../readiness';
 import { SETUP, SETUP_MCP, SETUP_RUNTIME } from '../slots';
 import { AccountStep } from './AccountStep';
@@ -154,6 +154,7 @@ function VariablePhase({
     onOpenCredentials?: () => void;
 }) {
     const [draft, setDraft] = useState(definition.value ?? '');
+    const outer = useStepScope();
     // Only what was typed is committed: leaving the field as it was writes nothing (an empty value would replace a
     // saved one that isn't held here).
     const commit = () => {
@@ -186,7 +187,7 @@ function VariablePhase({
             {dynamic && binding ? (
                 <div className="mt-5">
                     {/* The picker reads the bound step's own choices: it names that step. */}
-                    <StepContext.Provider value={{ workflowId, nodeId: binding.node.id }}>
+                    <StepContext.Provider value={{ ...outer, workflowId, nodeId: binding.node.id }}>
                     <DynamicOptionsField
                         fieldKey={binding.fieldKey}
                         prop={binding.prop}
@@ -288,6 +289,8 @@ function SetupSteps({
     lens,
 }: SetupViewProps & { lens: SetupLens }) {
     const host = useSlot(SETUP);
+    // What whoever draws the tab said of the steps' forms (a canvas that saves them itself): kept for each step's own.
+    const outer = useStepScope();
     const runtime = useSlot(SETUP_RUNTIME);
     const McpConnect = useSlot(SETUP_MCP);
     const agentNode = nodes.find((n) => n.type === 'agent');
@@ -820,7 +823,7 @@ function SetupSteps({
                         >
                             {active?.kind === 'credentials' && active.node && (
                                 // The pickers name the step whose account they choose.
-                                <StepContext.Provider value={{ workflowId, nodeId: active.node.id }}>
+                                <StepContext.Provider value={{ ...outer, workflowId, nodeId: active.node.id }}>
                                 <AccountStep
                                     key={active.node.id}
                                     step={toCredentialStep(active.node, lens, active.title)}
@@ -967,7 +970,7 @@ function SetupSteps({
                             )}
 
                             {active?.kind === 'agent' && active.node && (
-                                <StepContext.Provider value={{ workflowId, nodeId: active.node.id }}>
+                                <StepContext.Provider value={{ ...outer, workflowId, nodeId: active.node.id }}>
                                 <runtime.Phase
                                     key={active.node.id}
                                     node={active.node}

@@ -43,7 +43,7 @@ export const SETUP_STEP_TYPES: Record<string, Json> = {
                     title: 'SlackSendConfig',
                     type: 'object',
                     properties: {
-                        operation: { const: 'send_message', title: 'Operation', 'x-display-name': 'Send a message', 'ui:hidden': true },
+                        operation: { const: 'send_message', default: 'send_message', title: 'Operation', 'x-display-name': 'Send a message', 'ui:hidden': true },
                         channel: { type: 'string', title: 'Channel', 'x-dynamic-options': { field_name: 'channel', placeholder: 'Pick a channel' } },
                         text: { type: 'string', title: 'Text' },
                     },
@@ -53,7 +53,7 @@ export const SETUP_STEP_TYPES: Record<string, Json> = {
                     title: 'SlackHeardConfig',
                     type: 'object',
                     properties: {
-                        operation: { const: 'on_channel_message', title: 'Operation', 'x-display-name': 'When a message is posted', 'x-is-trigger': true, 'ui:hidden': true },
+                        operation: { const: 'on_channel_message', default: 'on_channel_message', title: 'Operation', 'x-display-name': 'When a message is posted', 'x-is-trigger': true, 'ui:hidden': true },
                         channel: { type: 'string', title: 'Channel' },
                     },
                     required: ['operation', 'channel'],

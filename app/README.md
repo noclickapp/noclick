@@ -48,8 +48,8 @@ neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
 `http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
-Chat, `/connections-lab` for Connections, `/usage-lab` for Usage, `/settings-lab` for Settings): the same pages over
-made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
+Chat, `/connections-lab` for Connections, `/usage-lab` for Usage, `/settings-lab` for Settings, `/workflows-lab` for
+Automations): the same pages over made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
 To deploy it, set the four variables in your host's settings and serve it over **https**: away from `localhost` the
@@ -268,6 +268,35 @@ What differs from NoClick's own Resources:
 - A workflow is named, not opened: this app has no canvas.
 - "Ask NoClick" drafts the message in this app's chat, and the ⌘K palette opens any item the page listed, from any
   page of the frame.
+
+## Automations
+
+`/workflows` lists your account's workflows (`src/screens/workflows`), the ones your key can open, under the folders
+your account keeps them in (`Workflow.list`, `Workflow.folders`), and makes a new one by name. Each opens at
+`/workflows/<id>`, one workflow's page:
+
+- **Its canvas** (`src/screens/canvas/WorkflowCanvas.tsx`): its steps and connections, drawn, moved, added from the
+  palette, connected, copied, removed and brought back, each change saved as the edit it is (`POST
+  /v1/workflows/{id}/edits`, on the version the page holds); the workflow run and stopped; its run log behind the pill
+  and one run's results a row away.
+- **A step's panel** (`StepPanel.tsx`), opened by selecting it: its settings form and its accounts (the canvas's step
+  form, with what `GET /v1/step_types/{type}` says of its type). What it changes is the canvas's own edit, saved once.
+- **Setup** (`?tab=setup`): the steps the workflow still needs before it runs for real (an account, a variable, a
+  setting, which agent runs it), then the message a test run stages. See the `canvas.setup` slots.
+- **Test Run** (`?tab=test`): the workflow played against a simulated world.
+- **Build**: NoClick's builder beside the page (`canvas.builder`; the frame draws it): say what to add or change.
+
+Another writer's change and a run's moves arrive through the account's change stream where the API serves it. A key
+that may only look at a workflow (its read says `viewer`) gets the page read-only: nothing moves, no step is added, it
+isn't run, and a step's panel takes no input. `src/screens/workflows/workflowsAsKey.test.tsx` opens the list and one
+workflow's page whole as a key and fails if one asks for what only the owner may have, reaches anything but the app's
+own client, or reads or sends a secret. `/workflows-lab` is the pages over a made-up account
+(`src/screens/workflows/fixtures.ts`, `lab/`) in development only: `?scene=` picks a view, and `?as=key` answers as
+the API answers a key.
+
+Not here yet: folders are only read (made, renamed and filed in NoClick's app or with the SDK), a workflow is renamed
+and deleted there too, and what only NoClick's app has on its canvas (other people editing live, the Interface tab,
+an agent's chat, sharing) stands as each slot's standard says.
 
 ## Usage
 
@@ -494,7 +523,7 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work`, `/connections`, `/resources`, `/settings` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+The home, `/chat`, `/work`, `/workflows`, `/connections`, `/resources`, `/settings` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
 own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
 (`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
 folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the
