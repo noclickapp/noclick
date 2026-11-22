@@ -52,17 +52,52 @@ def test_a_build_sent_back_hears_each_step_and_why():
     assert "- send: to: field required" in text and "- post: channel: field required" in text
 
 
+def test_a_build_sent_back_leaves_what_only_the_person_knows_for_them():
+    """A value only the person knows isn't the builder's to make up, nor a reason to ask again what was skipped:
+    it's left for them with the edit that says so, and that settles it."""
+    issue = [{"step": "check", "message": "url is required"}]
+    text = definition.sent_back(issue)
+    assert "left_for_user" in text and "isn't yours to fix or make up" in text
+    assert "asking only where" not in text
+    assert "don't ask for anything now" not in text
+    assert "don't ask for anything now" in definition.sent_back(issue, skipped=True)
+
+
 def test_the_instructions_name_only_calls_the_builder_can_make():
     text = definition.instructions()
     # The operations it's told to call, each one a /v1 operation in an area its tools reach.
-    named = set(re.findall(r"`((?:workflows|step_types|connections|workflow_examples)_[a-z_]+)", text))
+    named = set(re.findall(r"`((?:workflows|step_types|connections|workflow_examples|operations)_[a-z_]+)", text))
     assert named == {
         "workflows_graph", "workflows_edits_create", "workflows_drafts_create", "workflows_get",
-        "workflows_runs_create", "workflows_steps_outputs_get", "workflows_rehearsals_create",
-        "workflows_steps_publish", "step_types_list", "step_types_get", "connections_list",
+        "workflows_runs_create", "workflows_steps_outputs_get", "workflows_steps_outputs_list",
+        "workflows_rehearsals_create", "workflows_steps_publish", "step_types_list", "step_types_get",
+        "connections_list", "operations_wait",
     }
     for tool in ("noclick__api_call", "noclick__api_describe", "noclick__search", "noclick__fetch", "human__ask"):
         assert tool in text
+
+
+def test_the_instructions_give_each_routine_call_its_exact_arguments():
+    """The calls every build makes are written out with their arguments, so a build makes them without looking
+    them up: an edit is a list of objects each naming its ``op``, and a draft or a run is waited for in the turn."""
+    text = definition.instructions()
+    assert "## The calls, exactly" in text
+    for shape in ('{op: "add_step", type, id, name}', '{op: "connect", from, to}',
+                  'left_for_user: [names]', "`operations_wait {operation_id, timeout_s: 60}`",
+                  "`connections_list {integration}`",
+                  "`workflows_steps_outputs_get {workflow_id, step_id, run_id, full}`"):
+        assert shape in text, shape
+
+
+def test_a_value_only_the_person_knows_is_left_for_them_never_made_up():
+    text = definition.instructions()
+    assert '`update_step {id, left_for_user: ["url"]}`' in text
+    assert "never store a made-up value in its place" in text
+    # A conditional's edge names its branch, and an app's own event starts from the app.
+    assert "a `conditional` has `true` and `false`" in text
+    assert "An event in an app starts from that app" in text
+    assert "An app with no trigger for the event is watched on a schedule" in text
+    assert "comes first in your reply" in text
 
 
 def test_a_test_run_is_of_one_step_alone():
