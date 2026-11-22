@@ -2020,6 +2020,7 @@ sonderplan
 soundcloud
 soundee
 spacebring
+specstream
 speechmatics
 spiro
 splitwise
