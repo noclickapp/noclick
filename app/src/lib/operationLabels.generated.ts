@@ -705,11 +705,11 @@ firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flows
 followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry formspark formstack formstep fountain
 foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum fullenrich fullstory function-point
 fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis
-gainsight-customer-communities geekflare gender-api genderapi-io genesiscloud geoapify geocodio geodatasource
-get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab givebutter gladia glean gleap gleif
-glide-apps globalping glofox gmail go-table go-to-connect go-to-training goatcounter gocardless gofundme-pro
-gohighlevel gong goodapi-plant-trees goodbarber goody google-ads google-ai-studio google-analytics google-books
-google-business-profile google-calendar google-chat google-classroom google-cloud-natural-language
+gainsight-customer-communities ganttic geekflare gender-api genderapi-io genesiscloud geoapify geocodio
+geodatasource get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab givebutter gladia glean
+gleap gleif glide-apps globalping glofox gmail go-table go-to-connect go-to-training goatcounter gocardless
+gofundme-pro gohighlevel gong goodapi-plant-trees goodbarber goody google-ads google-ai-studio google-analytics
+google-books google-business-profile google-calendar google-chat google-classroom google-cloud-natural-language
 google-cloud-storage google-contacts google-docs google-drive google-forms google-maps google-meet
 google-search-console google-sheets google-slides google-tasks google-translate gorgias gorilladesk gotify
 gotowebinar gov grafana granola graphhopper greenhouse griptape grocy grok gsmtasks gtmetrix gusto hackernews hackmd
