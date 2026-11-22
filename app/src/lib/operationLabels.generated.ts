@@ -1171,6 +1171,7 @@ facebook
 facecheck
 factorial
 facturadirecta
+faktoora
 fal
 faraday
 fareharbor
