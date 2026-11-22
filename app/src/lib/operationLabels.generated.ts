@@ -2245,6 +2245,7 @@ wikimedia
 wild-apricot
 wildjar
 winston-ai
+wiremock
 wisboo
 wistia
 wiza
