@@ -1157,6 +1157,7 @@ exceptionless
 exercisecom
 exlibrisgroup
 exoscale
+expedy
 expensify
 explorium
 extend
