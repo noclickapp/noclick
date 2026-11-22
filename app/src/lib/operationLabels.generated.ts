@@ -784,6 +784,7 @@ bamboohr
 bandsintown
 bannerbear
 base44
+basecamp
 basedash
 baserow
 baseten
