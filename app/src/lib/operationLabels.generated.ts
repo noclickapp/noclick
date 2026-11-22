@@ -704,7 +704,7 @@ fellow felt fiber fidel-api figma figshare filevine fillout financial-datasets-a
 firecrawl firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk
 followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry formspark formstack formstep fountain
 foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum fullenrich fullstory function-point
-fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis
+fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis fynk
 gainsight-customer-communities geekflare gender-api genderapi-io genesiscloud geoapify geocodio geodatasource
 get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab givebutter gladia glean gleap gleif
 glide-apps globalping glofox gmail go-table go-to-connect go-to-training goatcounter gocardless gofundme-pro
