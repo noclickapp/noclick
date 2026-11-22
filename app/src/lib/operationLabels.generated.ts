@@ -1892,6 +1892,7 @@ sap-concur
 saucelabs
 savvycal
 scale-ai
+scalepad
 scalr
 scheduleonce
 schoolmaker
