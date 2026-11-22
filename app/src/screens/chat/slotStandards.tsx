@@ -12,7 +12,7 @@ import { CONNECTION_MARK } from '@/ui/slots';
 import { cn } from '@/ui/utils';
 import { connectLinkOf } from './cards/cardMatchers';
 import { connectAsksOf, useCoordinatorJob, type ConnectAsk } from './cards/toolCardRegistry';
-import type { BuildQuestionProps, ChatPlaces, ConnectAccountProps, QuestionPickProps } from './slots';
+import type { BuildQuestionProps, ChatPlaces, ConnectAccountProps, QuestionPickProps, QuestionStepProps } from './slots';
 import { useSite } from './site';
 
 export { emailOnNoClick, textOnNoClick } from './connect/onNoClick';
@@ -42,6 +42,30 @@ export function AnswerOnNoClick({ question }: BuildQuestionProps) {
                     )
                 }
             />
+        </div>
+    );
+}
+
+/** A question that fills in a workflow step: which connection it uses, each that fits a tap away (the signed-in
+ *  owner's read lists them), connecting another on its page on NoClick; a secret's values, typed on that page (the
+ *  owner's own link, which the signed-in owner's read names), never in the chat. */
+export function StepOnNoClick({ question, onAnswer, disabled }: QuestionStepProps) {
+    const choices = question.connect?.choices ?? [];
+    const page = question.url ? (
+        <a href={question.url} {...external} className={choices.length ? PILL_QUIET : PILL_PRIMARY}>
+            {question.connect ? (choices.length ? 'Connect another' : `Connect ${question.connect.label}`) : 'Enter the values'} on NoClick
+            <ArrowUpRight className="h-3.5 w-3.5" />
+        </a>
+    ) : null;
+    if (!question.connect) return page ?? <p className="text-[13px] text-muted-foreground">NoClick sent the link to answer it.</p>;
+    return (
+        <div className="flex flex-wrap items-center gap-2">
+            {choices.map((choice, i) => (
+                <button key={choice.ref} type="button" className={i === 0 ? PILL_PRIMARY : PILL_QUIET} disabled={disabled} onClick={() => onAnswer({ connection: choice.ref })}>
+                    {choice.account || choice.name}
+                </button>
+            ))}
+            {page}
         </div>
     );
 }

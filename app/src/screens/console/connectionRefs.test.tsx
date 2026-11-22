@@ -3,7 +3,8 @@
 // its name, an account connected in the NoClick app by `credential:<id>`. The account's own scope lists both, so an
 // account agent's event trigger, tools and model connection saved an app account by its name, which names no
 // connection (the API refuses it) or, where a connection has that name, another account. What an agent already holds
-// by `credential:<id>` reads as that account, never as a connection that was deleted.
+// by `credential:<id>` reads as that account, never as a connection that was deleted. An event trigger is offered only
+// the connections the API hears an app event through, never a model provider's, which it refuses.
 import { cleanup, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router';
@@ -145,8 +146,16 @@ function open(address: string, holding: Record<string, Json> = {}, lab = false) 
             </Routes>
         </MemoryRouter>
     );
-    return { sent: (method: string, path: string) => sent.filter((s) => s.method === method && s.path === path).map((s) => s.body), connections };
+    // The integrations catalog, as the API lists it.
+    const integrations = async (): Promise<Json[]> => (await asPlain({ method: 'GET', path: '/v1/integrations', query: new URLSearchParams(), headers: new Headers(), params: {}, body: null, set: 'populated' })).body.data as Json[];
+    return { sent: (method: string, path: string) => sent.filter((s) => s.method === method && s.path === path).map((s) => s.body), connections, integrations };
 }
+
+/** Whether an event trigger can hear through a connection, by the platform's rule (`triggers.service.compile_source`):
+ *  a model provider's connection (`connect.model_integration`) has no app events, so it's refused. */
+const hearsEvents = (connection: Json, integrations: readonly Json[]) => !integrations.some((i) => i.kind === 'model' && i.name === connection.integration);
+/** The ref a trigger names a connection by (`connect.connection_ref`): an account connected in the app by its id, else its name. */
+const refOf = (connection: Json) => String(connection.origin === 'app' ? connection.id : connection.name);
 
 /** A `<select>`'s option by what it shows, chosen as a person would. */
 function choose(select: HTMLSelectElement, text: string) {
@@ -190,6 +199,23 @@ it('hears an app event through an account connected in the app by its `credentia
     expect(within(listed).getByText(/ops@yourco\.test sends slack_message/)).toBeTruthy();
     expect(within(listed).getByText(/gmail sends gmail_message/)).toBeTruthy();
     expect(listed.textContent).not.toContain(APP_SLACK.id);
+});
+
+it('offers an app event only the connections the platform hears one through, never a model provider’s', async () => {
+    const console_ = open(`agents/${SUPPORT.id}`);
+    fireEvent.click(await screen.findByRole('button', { name: 'Add trigger' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Add a trigger' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'App event' }));
+    const select = fieldSelect(dialog, 'Connection');
+    await waitFor(() => expect(select.options.length).toBeGreaterThan(1));
+
+    const [connections, integrations] = await Promise.all([console_.connections(), console_.integrations()]);
+    const offered = [...select.options].filter((o) => o.value).map((o) => o.value);
+    expect(offered.sort()).toEqual(connections.filter((c) => hearsEvents(c, integrations)).map(refOf).sort());
+    // The scope's Anthropic keys (the named one and the one connected in the app) think for agents, and hear nothing.
+    expect(offered).not.toContain(APP_ANTHROPIC.id);
+    expect(offered).not.toContain('claude');
+    expect(offered).toContain(APP_SLACK.id);
 });
 
 it('gives an agent an account connected in the app by its `credential:` ref, and lists that tool as the account', async () => {
