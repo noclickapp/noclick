@@ -1276,6 +1276,7 @@ gtmetrix
 gusto
 hackernews
 hackmd
+hailey-hr
 haku
 halopsa
 handwrytten
