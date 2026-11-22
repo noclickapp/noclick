@@ -770,31 +770,31 @@ shipmondo shippo shlink shopify shopvox shortcut shorten-rest showmojo sidetrack
 signal8 signalwire signpath signrequest signupgenius signwell simla-com simple-localize simplero simplesat
 simplicate simplybook simplyrets simpro singlestore sirv skuvault skyvia slack slicktext sling slite
 small-improvements smartemailing smarthr smartlead smartproxy smartsheet smily smokeball smol-machines smoove smsapi
-smsglobal smtp2go smtping snapchat sncf snitcher snowflake snyk softr solcast soundcloud soundee spacebring
-speechmatics spiro splitwise spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange stackitdns
-staffbase starbridge starton statsig statuspage statuspal stibee stigg stora strale streak stream-chat streamtime
-stripe studio-by-ai21-labs sumoquote sumup supabase supadata super-dispatch supermemory supernormal superset
-superwall suprsend sure-send surecart surevoip surf svix swaggerhub swarmsyncai sympla synap syncro synthflow-ai
-systemeio table tableau taggun tailscale talenthr talentlms talkable talkjs talkroute tally tapfiliate taplio tave
-tavily teachable teamcamp teamup teamup-calendar teamwork teamwork-desk telegram telematicssdk telnyx teltel telzio
-templated templatefox temporal tentary text-request textcortex textline textmagic thanks-io the-events-calendar
-the-odds-api thecompaniesapi thehive thinkific thoughtspot threads thrivecart ticket-tailor tidb-cloud tidely tidio
-tidy tidycal tik-hub tiktok tiktok-ads timecamp timeero timelinesai timelink timely timerex tinyfish tinyurl todoist
-tomba tomtom toneden topdesk touchsms tovuti traccar track-pod trackdesk trackingmore trackvia trakt transloadit
-trekksoft trello tremendous trestle trigger-dev tripadvisor tripworks true-list truss tryfundable turbot-pipes turso
-twelve-data twilio twitter twittershots typebot typecast typeform typefully unifi unione unipile uniswap-api
-universe unleash uplisting upload-post uploadcare upstash-vector uptimecom uptimerobot urable urlscanio
-us-global-mail uscreen userback usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher vectara vendasta
-vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler vimeo viral-loops virtuous-crm
-virustotal visma-eaccounting visualping visualstudio vocal-video voiceflow volunteerhub voluum voucherify voyage
-vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit weaviate webcrawlerapi webcrm
-weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport weezevent-da56471 weeztix
-weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase when-i-work whoisfreaks whop
-wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api woop-social word wordnik
-wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads ynab yodeck youcanbookme
-yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno zenoti zenrows zenzap zep
-zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory zoho-projects
-zoho-work-drive zoho-writer zonnagps zoom zoominfo zsign zulip zuora zyte-api`.split(/\s+/)
+smsglobal smtp2go smtping snapchat sncf snitcher snowflake snyk socialkit softr solcast soundcloud soundee
+spacebring speechmatics spiro splitwise spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange
+stackitdns staffbase starbridge starton statsig statuspage statuspal stibee stigg stora strale streak stream-chat
+streamtime stripe studio-by-ai21-labs sumoquote sumup supabase supadata super-dispatch supermemory supernormal
+superset superwall suprsend sure-send surecart surevoip surf svix swaggerhub swarmsyncai sympla synap syncro
+synthflow-ai systemeio table tableau taggun tailscale talenthr talentlms talkable talkjs talkroute tally tapfiliate
+taplio tave tavily teachable teamcamp teamup teamup-calendar teamwork teamwork-desk telegram telematicssdk telnyx
+teltel telzio templated templatefox temporal tentary text-request textcortex textline textmagic thanks-io
+the-events-calendar the-odds-api thecompaniesapi thehive thinkific thoughtspot threads thrivecart ticket-tailor
+tidb-cloud tidely tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp timeero timelinesai timelink timely timerex
+tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti traccar track-pod trackdesk trackingmore
+trackvia trakt transloadit trekksoft trello tremendous trestle trigger-dev tripadvisor tripworks true-list truss
+tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot typecast typeform typefully unifi
+unione unipile uniswap-api universe unleash uplisting upload-post uploadcare upstash-vector uptimecom uptimerobot
+urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher
+vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler vimeo viral-loops
+virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video voiceflow volunteerhub voluum
+voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit weaviate
+webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport weezevent-da56471
+weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase when-i-work whoisfreaks
+whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api woop-social word
+wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads ynab yodeck
+youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno zenoti zenrows
+zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory
+zoho-projects zoho-work-drive zoho-writer zonnagps zoom zoominfo zsign zulip zuora zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
