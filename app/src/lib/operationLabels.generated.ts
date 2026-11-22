@@ -1030,6 +1030,7 @@ dadata-ru
 daily
 dante-ai
 dart
+data
 databox
 databricks
 datadog
