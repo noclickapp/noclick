@@ -146,6 +146,11 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "buckets_uploads_complete": ["Complete Upload", "POST", "write"],
     "buckets_uploads_create": ["Start Upload", "POST", "write"],
     "buckets_uploads_part_urls_create": ["Upload Part Urls", "POST", "write"],
+    "builder_skills_create": ["Create Builder Skill", "POST", "write"],
+    "builder_skills_delete": ["Delete Builder Skill", "DELETE", "destructive"],
+    "builder_skills_get": ["Get Builder Skill", "GET", "read"],
+    "builder_skills_list": ["List Builder Skills", "GET", "read"],
+    "builder_skills_update": ["Update Builder Skill", "PATCH", "write"],
     "cards_close": ["Close", "POST", "destructive"],
     "cards_create": ["Create Card", "POST", "spend"],
     "cards_freeze": ["Freeze", "POST", "write"],
@@ -157,6 +162,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "cards_transactions_dispute": ["Dispute", "POST", "outbound"],
     "cards_transactions_get": ["Get Transaction", "GET", "read"],
     "cards_transactions_list": ["Transactions", "GET", "read"],
+    "cards_unfreeze": ["Unfreeze", "POST", "sensitive"],
     "cards_update": ["Update Card", "PATCH", "write"],
     "channels_attachments_create": ["Upload Attachment", "POST", "write"],
     "channels_bookmarks_create": ["Add Bookmark", "POST", "write"],
@@ -391,7 +397,12 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "phone_numbers_update": ["Update Number", "PATCH", "write"],
     "policies_list": ["List Policies", "GET", "read"],
     "policy": ["Get Policy", "GET", "read"],
+    "policy_add": ["Add Rules", "POST", "sensitive"],
     "policy_evaluate": ["Evaluate", "POST", "read"],
+    "policy_remove": ["Remove Rules", "POST", "sensitive"],
+    "policy_replace": ["Put Policy", "PUT", "sensitive"],
+    "popups_list": ["Get Popups", "GET", "read"],
+    "popups_update": ["Update Popups", "PATCH", "write"],
     "projects_analytics_list": ["Project Analytics", "GET", "read"],
     "projects_analytics_summary": ["Projects Analytics Summary", "GET", "read"],
     "projects_bindings_create": ["Bind", "POST", "write"],
@@ -556,6 +567,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "users_phone_check": ["Check User Phone", "POST", "write"],
     "users_phone_verify": ["Verify User Phone", "POST", "outbound"],
     "users_spending_pause": ["Pause Spending", "POST", "write"],
+    "users_spending_resume": ["Resume Spending", "POST", "sensitive"],
     "users_suspend": ["Suspend User", "POST", "write"],
     "users_update": ["Update User", "PATCH", "write"],
     "volumes_copy": ["Copy Files", "POST", "write"],
@@ -591,6 +603,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_files_delete": ["Delete Workflow File", "DELETE", "destructive"],
     "workflows_files_list": ["List Workflow Files", "GET", "read"],
     "workflows_folders_create": ["Create Workflow Folder", "POST", "write"],
+    "workflows_folders_delete": ["Delete Workflow Folder", "DELETE", "write"],
     "workflows_folders_list": ["List Workflow Folders", "GET", "read"],
     "workflows_get": ["Get Workflow", "GET", "read"],
     "workflows_graph": ["Get Workflow Graph", "GET", "read"],
@@ -617,6 +630,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_tables_delete": ["Delete Workflow Table", "DELETE", "destructive"],
     "workflows_tables_list": ["List Workflow Tables", "GET", "read"],
     "workflows_tables_rows_list": ["List Workflow Table Rows", "GET", "read"],
+    "workflows_test_runs_list": ["List Test Runs", "GET", "read"],
     "workflows_versions_create": ["Name Workflow Version", "POST", "write"],
     "workflows_versions_get": ["Get Workflow Version", "GET", "read"],
     "workflows_versions_list": ["List Workflow Versions", "GET", "read"],
@@ -660,141 +674,1555 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
 /** The integrations an agent may call operations of, each by its node type without `automation-` (an agent's
  *  tool for one is named by it, `-` as `_`: `google_drive__…`). */
 export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
-    `123formbuilder 2chat 46elks 7shifts abcgymsales ably abyssale abysshub accredible-certificates acculynx act-crm
-actionstep active-merge activecampaign acuity-scheduling adafruit-io adapty addevent addressfinder addresszen
-adobe-analytics adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha
-ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex airweave akeneo akta alchemy alegra algolia alpaca
-altoviz alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache
-api-bible api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter
-appcircle apphud appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online
-artificial-analysis aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine
-attentive attio audienceful audiobookshelf auth0 autotask avaza aviato avoma award-force aweber awork axonaut
-bambooci bamboohr bandsintown bannerbear base44 basedash baserow baseten basin batchdialer bclaws beach-day-api
-beaconchain beatapi beehiiv benchmark-email benchmark-email-classic benzinga bettercontact bfl bigcommerce bigmailer
-bigoven bigquery bika bill billetweb binsr-inspect birdeye bitly bitrise bitsnap bitwarden bizzabo bkper blackboard
-blinq blitz-api blooio bloom-growth bloomerang bluebarry bluefox-email bluepillow bluesky bokun bold-commerce
-boldsign bolna bonsai bonzo bookeo bookingmood bookspot bookwhen botcake-1 botconversa botpress botsonic botstar
-bouncer bouncify box brandfetch brandfolder braze breezy-hr brex brightcove brightdata brilliant-directories
-browseai browserbase-tool browserless bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite
-builtwith bulkpublish bulksmscom bungie bunnycdn businessmap bytescale cabinpanda cakemail cal-com calendly
-callerapi callfire campaign-cleaner canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly
-carsxe casebook caspio cats centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot
-check-cherry checkfront chili-piper chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle
-circleback circleci claid-ai clay clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse
-clicksend clicksign clicktime clickup cliengo climate cling cliniko clio clockify cloro cloudbeds cloudflare
-cloudsmith cloudtalk cloudzero clover cloze club-os coassemble coda codacy codat codesearch cody coinapi coinbase
-coingecko coinmarketcal coinmarketcap college-football-data combell cometapi commerce-layer common-room commusoft
-companycam companyenrich composio condens conductor configcat confluence conjur connecteam constant-contact
-consumerfinance contabo content-snare content-studio context-dev control-d conversion-tools convertapi
-converted-da-56088 conveyor convolo-ai coolify corbit-sms corrently coveo cpy cradl-ai craftmypdf credas
-credlys-acclaim-platform creem crelate crew-ai crisp crowdin crunchbase csvbox currents-api cursor custify customgpt
-cvent cycat cyclr cypher-learning dacast dadata-ru daily dart databox databricks datadog dataforseo datagma
-datarobot daylite dbt-cloud dealmachine debitura debounce deel deepgram deepimage deployhq deputy dev-cycle devin
-devto dex dialpad digicert digistore24 digitalocean directiq directus discord discourse dixa dnsfilter dnsimple
-dnsmadeeasy docamatic dock-certs docker-hub docraptor docsautomator docsbot-ai docspell docugenerate documenso
-docupilot docuseal docusign dodo doit dokploy domainsdb doorloop doppler doqs dovetail dpd2 dragn-survey dreamstudio
-dromo drop-cowboy drop-to-cdn dropbox dropbox-sign dropcontact dropinblog dub dust dux-soup dv360 dynamic-mockups
-dynapictures dynatrace e-conomic e2b easy-email-verification easybizy easybroker-archive ebi echtpost eduzz egnyte
-elai elastic-email elasticsearch elevenlabs elmah eloqua emaillistverify emailoctopus emailvalidation emelia emnify
-encharge encircle enforcedflow enginemailer enrich-layer env0 eodhd-apis epos-now esputnik etermin etsy
-event-tickets eventify everflow everhour everyaction evetech evoliz evolution-go exa excel exceptionless exercisecom
-exlibrisgroup exoscale expensify explorium extend extole extrovert ez-texting ezeep-printing ezekia facebook
-facecheck factorial facturadirecta fal faraday fareharbor farmbrite fathom fatture-in-cloud feathr fec fellow felt
-fiber fidel-api figma figshare filevine fillout financial-datasets-ai findymail finmo finnhub fireberry firecrawl
-firestore firmable fixer fixer-io flashquotes flat flatfile fleetio flokzu flowsavvy flutterwave fly folk
-followupboss fomo force24 forcemanager forgejo formaloo formbricks formcarry formspark formstack formstep fountain
-foursquare fourthwall frame-io-v4 freee freshsales freshteam front fulcrum fullenrich fullstory function-point
-fundraise-up fungenerators funnelchat funnelcockpit funtranslations fuseai futureagi fxapis
-gainsight-customer-communities geekflare gender-api genderapi-io genesiscloud geoapify geocodio geodatasource
-get-the-referral getaccept getanyapi giftbit giphy gitea github-rest gitlab givebutter gladia glean gleap gleif
-glide-apps globalping glofox gmail go-table go-to-connect go-to-training goatcounter gocardless gofundme-pro
-gohighlevel gong goodapi-plant-trees goodbarber goody google-ads google-ai-studio google-analytics google-books
-google-business-profile google-calendar google-chat google-classroom google-cloud-natural-language
-google-cloud-storage google-contacts google-docs google-drive google-forms google-maps google-meet
-google-search-console google-sheets google-slides google-tasks google-translate gorgias gorilladesk gotify
-gotowebinar gov grafana granola graphhopper greenhouse griptape grocy grok gsmtasks gtmetrix gusto hackernews hackmd
-haku halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here hetrixtools
-hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni hlr-lookup holded
-homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request hubfit hubflo
-hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed icypeas id4i
-idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts imagekit-io imagerouter imap immich inblog
-incident-io increase infakt infinity infisical inforumobile infraspeak inmobalia-crm inmobile-sms-gateway insightly
-instagram instantly instapaper instatus intelliprint intercom investorbase investorlift invofox invoiceninja
-invoicexpress ionos-hosting-services ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate ironclad isn
-iterable itm-platform jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca
-jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller
-junglescout just-eat just-one-api justcall jvzoo jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
-kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp
-knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard
-lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper
-leadboxer leadfeeder leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch
-lemlist lenz lessonspace lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup
-linkwarden linode linq listclean listennotes liveagent lofty logo-dev lokalise lonescale looker loops loopy-loyalty
-loyverse luma lumapps lusha luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud
-mailerlite-classic mailersend mailgun mailjet mailmodo mailslurp mailsoftly maintainx manifestly manus manychat
-manyreach manyrequests mapbox marketsharp marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code
-mediasilo meetgeekai meilisearch melo mem mem0 membershipio memberspot memelord mentortools mercado-pago mercury
-merge-dev meshy messagebird meta method-crm metricool mews mezmo microsoft-bookings microsoft-entra-id
-microsoft-exchange microsoft-graph-security microsoft-onenote microsoft-power-bi microsoft-powerpoint
-microsoft-sharepoint microsoft-teams microsoft-teams-events microsoft-todo mighty-networks mightycall mihu-ai milvus
-mindbody minelead minerstat mineskin minimax mirakl miro mist mixmax mobile-message-ca21345 mobile-text-alerts moco
-modusign mollie-1 monday moneybird mongodb moonclerk moskit motaword moxo msg91 mural mx-technologies mycase
-mycashflow mycrm-leads namsor nango nanonets-ocr nationbuilder navigatr nebl neetocal neetoform neo4j neon neoncrm
-net2phone netbox nethunt-crm netlicensing netlify neutrino new-relic newie nextcloud nextdoor nfusionsolutions ngrok
-nifty-pm niftyimages nimbata ninety nmkr-studio nocodb northflank notion notra nozbe-teams numverify nusii-proposals
-nutrient-document-web-services-api nutshell nylas obono octen octorate office-365 okta ollama olostep omnisend
-onedesk onedrive onelake onepage-crm onesignal onlyoffice-docspace open-sea openalex opencage opendatasoft openfigi
-openlayer openpolicy openstates openstatus openwa opn-form opsgenie opusclip oracle-field-service oracle-hcm orgo
-orshot osv otasync outlook outreach outscraper-ca1391 outseta owler ownerrez paddle padlet-1 pagerduty pagespeed
-paperform paradym parallel parcellab parma parsera parseur partnerstack passkit-membership past-dev payaca payments
-paypal paypro paystack pdfco pdfless peaka peekalink peerdom pennylane penpot people-data-labs perfect-venue perigon
-perplexity persona personio phantombuster phone phone-harness picsart pidgeon pims pinata pinecone pingdom pinterest
-pipedrive pipeless pipeline-crm pitchbox placetel planable planday planetscale platerecognizer plaud plausible
-pledge ploid pneumatic pocketsmith podium polar polygon polymarket polymarket-us poma-grill porkbun portalio
-postal-data-api postgres posthog postiz postman postmark postwire powerdns practice-better precisefp predictleads
-printful printify prisma process-street procore productboard productlane productplan project-broadcast projul
-promptlayer propertyradar proposify proxiedmail pulsetic pulumi pushcut pylon-1 qdrant qomon qonto qonversion qovery
-quentn quickbase quickbooks quickchart quickfile quiltt quipuapp quo qwilr ragic raisely rally-corp ramp
-rawg-video-games-database razorpay rbaskets rebrandly recallai reclaim-ai recraft recruitcrm recruitee recruiterflow
-recurly reddit reddit-ads redirect-pizza redirection redis reducto refersion reflect regiondo rei-pebble
-relevance-ai reloadify remote remove-bg render rentcast rentec-direct rentman repairdesk repairshopr repliz reply
-reply-io resend resource-guru responder responsys reteno revolut-for-business rezdy rillet ringcentral ringover
-rippling ritekit rkvst roam rocket-reach rocketadmin rocketlane roezan-sms rollbar rootly rosette-text-analytics
-rossum route4me royalmail rss rudder rumble rundeck runn runpod runscope runsignup safetyculture sakari-sms
-salesforce salesforge salesloft salesmsg salesql salesrabbit salesrobot samanage samcart samdock samsara sanity
-sap-concur saucelabs savvycal scale-ai scalr scheduleonce schoolmaker scoro scrape-do scrapecreators scrapegraph-ai
-se-ranking seam search-api search1api sec securitytrails selectpdf sellercloud sellsy semanticscholar sematext
-semrush send-email send-pulse sendbird sendfox sendgrid sendlane sendspark sendx senta sentry seqera sequenzy serply
-serpstat sertifier serverless-function servicem8 servicetitan servicetrade setmore sevdesk seven-io shipengine
-shipmondo shippo shlink shopify shopvox shortcut shorten-rest showmojo sidetracker sierra-interactive sigma signable
-signal8 signalwire signpath signrequest signupgenius signwell simla-com simple-localize simplero simplesat
-simplicate simplybook simplyrets simpro singlestore sirv skuvault skyvia slack slicktext sling slite
-small-improvements smartemailing smarthr smartlead smartproxy smartsheet smily smokeball smol-machines smoove smsapi
-smsglobal smtp2go smtping snapchat sncf snitcher snowflake snyk socialkit softr solcast soundcloud soundee
-spacebring speechmatics spiro splitwise spotify spotio2 sprig spydra squadcast squarespace-commerce stack-exchange
-stackitdns staffbase starbridge starton statsig statuspage statuspal stibee stigg stora strale streak stream-chat
-streamtime stripe studio-by-ai21-labs sumoquote sumup supabase supadata super-dispatch supermemory supernormal
-superset superwall suprsend sure-send surecart surevoip surf svix swaggerhub swarmsyncai sympla synap syncro
-synthflow-ai systemeio table tableau taggun tailscale talenthr talentlms talkable talkjs talkroute tally tapfiliate
-taplio tave tavily teachable teamcamp teamup teamup-calendar teamwork teamwork-desk telegram telematicssdk telnyx
-teltel telzio templated templatefox temporal tentary text-request textcortex textline textmagic thanks-io
-the-events-calendar the-odds-api thecompaniesapi thehive thinkific thoughtspot threads thrivecart ticket-tailor
-tidb-cloud tidely tidio tidy tidycal tik-hub tiktok tiktok-ads timecamp timeero timelinesai timelink timely timerex
-tinyfish tinyurl todoist tomba tomtom toneden topdesk touchsms tovuti traccar track-pod trackdesk trackingmore
-trackvia trakt transloadit trekksoft trello tremendous trestle trigger-dev tripadvisor tripworks true-list truss
-tryfundable turbot-pipes turso twelve-data twilio twitter twittershots typebot typecast typeform typefully unifi
-unione unipile uniswap-api universe unleash uplisting upload-post uploadcare upstash-vector uptimecom uptimerobot
-urable urlscanio us-global-mail uscreen userback usersnap v0 vagaro valuecase vast-ai vaultre vcita vdocipher
-vectara vendasta vendschat vercel-ai-gateway vervoe veryfi vibe video video-db videoupscaler vimeo viral-loops
-virtuous-crm virustotal visma-eaccounting visualping visualstudio vocal-video voiceflow volunteerhub voluum
-voucherify voyage vtex vybit-notifications wachete waiverfile walcu-crm wati wayfront weatherbit weaviate
-webcrawlerapi webcrm weber-gesamtausgabe webex webflow webscraper-io webscraping-ai websupport weezevent-da56471
-weeztix weights-and-biases wellnessliving wetravel whatsable-ca185063 whatsapp wheelbase when-i-work whoisfreaks
-whop wikimedia wild-apricot wildjar winston-ai wisboo wistia wiza wodify-core wolfram-alpha-api woop-social word
-wordnik wordpress workable workiz workos workvivo wowza writer xama-hub xata xero yelp yelp-leads ynab yodeck
-youcanbookme yousearch youtrack youtrust youtube youtube-transcript zadarma zeeg zeffy zendesk zeno zenoti zenrows
-zenzap zep zeplin zigpoll zoho-books zoho-cliq zoho-cpaas-formerly-zeptomail zoho-creator zoho-crm zoho-inventory
-zoho-projects zoho-work-drive zoho-writer zonnagps zoom zoominfo zulip zuora zyte-api`.split(/\s+/)
+    `123formbuilder
+2chat
+46elks
+7shifts
+abcgymsales
+ably
+abyssale
+abysshub
+accredible-certificates
+acculynx
+act-crm
+actionstep
+active-merge
+activecampaign
+acuity-scheduling
+adafruit-io
+adapty
+addevent
+addressfinder
+addresszen
+adobe-analytics
+adobe-campaign
+adyen
+adyntel
+affinda
+affinity
+agencyzoom
+agent-mail
+agenty
+agiled
+agorapulse
+aha
+ahrefs
+ai-ml-api
+aimtell
+air
+airbyte
+airtable
+airtop
+airwallex
+airweave
+akeneo
+akismet
+akta
+alchemy
+alegra
+algolia
+alpaca
+altoviz
+alttext-ai
+amazing-marvin
+amplemarket
+amplience
+anakin-io
+anchor-browser
+android-texter
+any-db
+anymail-finder
+apache
+apacta
+api-bible
+api-ninjas
+api2cart
+api2convert
+apiframe
+apify
+apigee
+apilio
+apipie-ai
+apitemplateio
+apiverve
+apollo
+appcenter
+appcircle
+apphud
+appointedd
+appsheet
+apptivegrid
+apptoto
+appwrite
+aprimo
+arbox
+arcads
+arize-ax
+arthur-online
+artificial-analysis
+aryeo
+asana
+ashby
+askell
+assemblyai
+assemblycom
+asset-panda
+assignar
+atlas-admin
+atlas-ai-revenue-engine
+attentive
+attio
+audienceful
+audiobookshelf
+auth0
+autotask
+avaza
+aviato
+avoma
+award-force
+aweber
+awork
+axonaut
+bambooci
+bamboohr
+bandsintown
+bannerbear
+base44
+basedash
+baserow
+baseten
+basin
+batchdialer
+bclaws
+beach-day-api
+beaconchain
+beatapi
+beehiiv
+benchmark-email
+benchmark-email-classic
+benzinga
+bettercontact
+beyond-presence
+bfl
+bigcommerce
+bigmailer
+bigoven
+bigquery
+bika
+bill
+billetweb
+binsr-inspect
+birdeye
+bitly
+bitrise
+bitsnap
+bitwarden
+bizzabo
+bkper
+blackboard
+blinq
+blitz-api
+blooio
+bloom-growth
+bloomerang
+bluebarry
+bluefox-email
+bluepillow
+bluesky
+bokun
+bold-commerce
+boldsign
+bolna
+bonsai
+bonzo
+bookeo
+bookingmood
+bookspot
+bookwhen
+botcake-1
+botconversa
+botpress
+botsonic
+botstar
+bouncer
+bouncify
+box
+brandfetch
+brandfolder
+braze
+breezy-hr
+brex
+brightcove
+brightdata
+brilliant-directories
+browseai
+browserbase-tool
+browserless
+bsc-designer
+btcpay-server
+bubbles
+bugbug
+bugherd
+bugsnag
+buildium
+buildkite
+builtwith
+bulkpublish
+bulksmscom
+bungie
+bunnycdn
+burstyai
+businessmap
+bytescale
+cabinpanda
+cakemail
+cal-com
+calendly
+callerapi
+callfire
+campaign-cleaner
+canada-holidays
+canopy
+canopy-connect
+canva
+captivated
+carbone
+cardclan
+cardly
+carsxe
+casebook
+caspio
+cats
+centralstationcrm
+cert-seal
+certifier
+certs365
+charla
+chaser
+chatbase
+chatbotkit
+chatwoot
+check-cherry
+checkfront
+chili-piper
+chmeetings
+chorus-by-zoominfo
+chroma
+churchtools
+cin7-core
+cinc
+circl
+circle
+circleback
+circleci
+claid-ai
+clay
+clearblade
+clearout
+clerk-io
+cleverreach
+clevertap
+clickfunnels
+clickhouse
+clicksend
+clicksign
+clicktime
+clickup
+cliengo
+climate
+cling
+cliniko
+clio
+clockify
+cloro
+cloudbeds
+cloudflare
+cloudsmith
+cloudtalk
+cloudzero
+clover
+cloze
+club-os
+coassemble
+coda
+codacy
+codat
+codesearch
+cody
+coinapi
+coinbase
+coingecko
+coinmarketcal
+coinmarketcap
+college-football-data
+combell
+cometapi
+commerce-layer
+common-room
+commusoft
+companycam
+companyenrich
+composio
+condens
+conductor
+configcat
+confluence
+conjur
+connecteam
+constant-contact
+consumerfinance
+contabo
+content-snare
+content-studio
+context-dev
+control-d
+conversion-tools
+convertapi
+converted-da-56088
+conveyor
+convolo-ai
+coolify
+corbit-sms
+corrently
+coveo
+cpy
+cradl-ai
+craftmypdf
+credas
+credlys-acclaim-platform
+creem
+crelate
+crew-ai
+crisp
+crowdin
+crunchbase
+csvbox
+currents-api
+cursor
+custify
+customgpt
+cvent
+cycat
+cyclr
+cypher-learning
+dacast
+dadata-ru
+daily
+dart
+databox
+databricks
+datadog
+dataforseo
+datagma
+datarobot
+daylite
+dbt-cloud
+dealmachine
+debitura
+debounce
+deel
+deepgram
+deepimage
+deployhq
+deputy
+dev-cycle
+devin
+devto
+dex
+dialpad
+digicert
+digistore24
+digitalocean
+directiq
+directus
+discord
+discourse
+dixa
+dnsfilter
+dnsimple
+dnsmadeeasy
+docamatic
+dock-certs
+docker-hub
+docraptor
+docsautomator
+docsbot-ai
+docspell
+docugenerate
+documenso
+docupilot
+docuseal
+docusign
+dodo
+doit
+dokploy
+domainsdb
+doorloop
+doppler
+doqs
+dovetail
+dpd2
+dragn-survey
+dreamstudio
+dromo
+drop-cowboy
+drop-to-cdn
+dropbox
+dropbox-sign
+dropcontact
+dropinblog
+dub
+dust
+dux-soup
+dv360
+dynamic-mockups
+dynapictures
+dynatrace
+e-conomic
+e2b
+easy-email-verification
+easybizy
+easybroker-archive
+easypromos
+ebi
+echtpost
+eduzz
+egnyte
+elai
+elastic-email
+elasticsearch
+elevenlabs
+elmah
+eloqua
+emaillistverify
+emailoctopus
+emailvalidation
+emelia
+emnify
+encharge
+encircle
+enforcedflow
+enginemailer
+enrich-layer
+env0
+eodhd-apis
+epos-now
+esputnik
+etermin
+etsy
+event-tickets
+eventify
+everflow
+everhour
+everyaction
+evetech
+evoliz
+evolution-go
+exa
+excel
+exceptionless
+exercisecom
+exlibrisgroup
+exoscale
+expensify
+explorium
+extend
+extole
+extrovert
+ez-texting
+ezeep-printing
+ezekia
+facebook
+facecheck
+factorial
+facturadirecta
+fal
+faraday
+fareharbor
+farmbrite
+fathom
+fatture-in-cloud
+feathr
+fec
+fellow
+felt
+fiber
+fidel-api
+figma
+figshare
+filevine
+fillout
+financial-datasets-ai
+findymail
+finmo
+finnhub
+fireberry
+firecrawl
+firestore
+firmable
+fixer
+fixer-io
+flashquotes
+flat
+flatfile
+fleetio
+flokzu
+flowsavvy
+flutterwave
+fly
+folk
+followupboss
+fomo
+force24
+forcemanager
+forgejo
+formaloo
+formbricks
+formcarry
+formspark
+formstack
+formstep
+fountain
+foursquare
+fourthwall
+frame-io-v4
+freee
+freshsales
+freshteam
+front
+fulcrum
+fullenrich
+fullstory
+function-point
+fundraise-up
+fungenerators
+funnelchat
+funnelcockpit
+funtranslations
+fuseai
+futureagi
+fxapis
+fynk
+gainsight-customer-communities
+geekflare
+gender-api
+genderapi-io
+genesiscloud
+geoapify
+geocodio
+geodatasource
+get-the-referral
+getaccept
+getanyapi
+giftbit
+giphy
+gitea
+github-rest
+gitlab
+givebutter
+gladia
+glean
+gleap
+gleif
+glide-apps
+globalping
+glofox
+gmail
+go-table
+go-to-connect
+go-to-training
+goatcounter
+gocardless
+gofundme-pro
+gohighlevel
+gong
+goodapi-plant-trees
+goodbarber
+goody
+google-ads
+google-ai-studio
+google-analytics
+google-books
+google-business-profile
+google-calendar
+google-chat
+google-classroom
+google-cloud-natural-language
+google-cloud-storage
+google-contacts
+google-docs
+google-drive
+google-forms
+google-maps
+google-meet
+google-search-console
+google-sheets
+google-slides
+google-tasks
+google-translate
+gorgias
+gorilladesk
+gotify
+gotowebinar
+gov
+gptzero-detect-ai
+grafana
+granola
+graphhopper
+greenhouse
+griptape
+grocy
+grok
+gsmtasks
+gtmetrix
+gusto
+hackernews
+hackmd
+haku
+halopsa
+handwrytten
+harness
+harvey
+hasslefreebooks
+heartbeat
+hedy
+hello-tracks
+helloasso
+here
+hetrixtools
+hetzner
+hevo
+hex
+heygen
+heymarket
+higgsfield
+highergov
+hitl
+hitpay
+hive
+hivelocity
+hiver
+hjarni
+hlr-lookup
+holded
+homebase
+honeybadger
+honeycomb
+hookdeck
+hospitable
+hostfully
+housecall-pro
+houzz-pro
+http-request
+hubfit
+hubflo
+hubhopper
+hubspot
+hubstaff
+humanitec
+humanitix
+humanloop
+hunter
+hypeauditor
+hyperbrowser
+hyros
+iclosed
+icypeas
+id4i
+idealpostcodes
+idloom
+ignav-flights
+ignisign
+ignition
+ilert
+image-charts
+imagekit-io
+imagerouter
+imap
+immich
+inblog
+incident-io
+increase
+infakt
+infinity
+infisical
+inforumobile
+infraspeak
+inmobalia-crm
+inmobile-sms-gateway
+insightly
+instagram
+instantly
+instapaper
+instatus
+intelliprint
+intercom
+investorbase
+investorlift
+invofox
+invoiceninja
+invoicexpress
+ionoscloud
+ip2location-io
+ip2proxy
+ip2whois
+ipinfo-io
+iplocate
+ironclad
+isn
+iterable
+itm-platform
+jackrabbit-class
+jev
+jigsawstack
+jinko
+jira
+jira-service-management-alert-ca
+jira-software-server
+jiraservicemanagement
+jobadder
+jobber
+jogg-ai
+join-it
+jq
+json2video
+jumpcloud
+jumpseller
+junglescout
+just-eat
+just-one-api
+justcall
+jvzoo
+jwplayer
+kadoa
+kajabi
+kantataox
+kapso
+karbon
+katana-mrp
+keap
+keila
+kenect-text-messaging
+kernel
+keycloak
+kibana
+kick
+kieai
+kintone
+kisi
+kit
+kiwify
+kizeo-forms
+klaviyo
+klicktipp
+knowify
+kobotoolbox
+kommo
+kontent-ai
+koyeb
+krisp
+kubernetes
+kudosity
+kumpeapps
+kvcore
+lagrowthmachine
+lakera-guard
+lambdatest
+landbot
+langbase
+langflow
+langfuse
+languagetool
+laposta
+lassocrm
+launchdarkly
+lead-forensics
+lead-prosper
+leadboxer
+leadfeeder
+leadmagic
+leadsforge
+leadsimple
+leanix
+leap
+leap-crm
+learnifier
+learnworlds
+leexi
+legalmatch
+lemlist
+lenz
+lessonspace
+lettr
+levitate
+libretranslate
+lightspeed
+line
+linear
+linkace
+linkedin
+linkly
+linkup
+linkwarden
+linode
+linq
+listclean
+listennotes
+liveagent
+lofty
+logo-dev
+lokalise
+lonescale
+looker
+loops
+loopy-loyalty
+loyverse
+luma
+lumapps
+lusha
+luxury-presence
+lytho
+magento-v2
+magic-hour
+magicplan
+mailchimp
+maildroppa
+mailercloud
+mailerlite-classic
+mailersend
+mailgun
+mailjet
+mailmodo
+mailslurp
+mailsoftly
+maintainx
+manifestly
+manus
+manychat
+manyreach
+manyrequests
+mapbox
+marketsharp
+marketstack
+markup-ai
+mastodon
+mateo
+matillion
+mattermost
+me-qr-qr-code
+mediasilo
+meetgeekai
+meilisearch
+melo
+mem
+mem0
+membershipio
+memberspot
+memelord
+mentortools
+mercado-pago
+mercury
+merge-dev
+meshy
+messagebird
+meta
+method-crm
+metricool
+mews
+mezmo
+microsoft-bookings
+microsoft-entra-id
+microsoft-exchange
+microsoft-graph-security
+microsoft-onenote
+microsoft-power-bi
+microsoft-powerpoint
+microsoft-sharepoint
+microsoft-teams
+microsoft-teams-events
+microsoft-todo
+mighty-networks
+mightycall
+mihu-ai
+milvus
+mindbody
+minelead
+minerstat
+mineskin
+minimax
+mirakl
+miro
+mist
+mixmax
+mobile-message-ca21345
+mobile-text-alerts
+moco
+modusign
+mollie-1
+monday
+moneybird
+mongodb
+moonclerk
+moskit
+motaword
+moxo
+msg91
+mural
+mx-technologies
+mycase
+mycashflow
+mycrm-leads
+namsor
+nango
+nanonets-ocr
+nationbuilder
+navigatr
+nebl
+neetocal
+neetoform
+neo4j
+neon
+neoncrm
+net2phone
+netbox
+nethunt-crm
+netlicensing
+netlify
+neutrino
+new-relic
+newie
+nextcloud
+nextdoor
+nfusionsolutions
+ngrok
+nifty-pm
+niftyimages
+nimbata
+ninety
+nmkr-studio
+nocodb
+northflank
+notion
+notra
+nozbe-teams
+numverify
+nusii-proposals
+nutrient-document-web-services-api
+nutshell
+nylas
+obono
+octen
+octorate
+office-365
+okta
+ollama
+olostep
+omnisend
+onedesk
+onedrive
+onelake
+onepage-crm
+onesignal
+onlyoffice-docspace
+open-sea
+openalex
+opencage
+opendatasoft
+openfigi
+openlayer
+openpolicy
+openstates
+openstatus
+openwa
+opn-form
+opsgenie
+opusclip
+oracle-field-service
+oracle-hcm
+orgo
+orshot
+osv
+otasync
+outlook
+outreach
+outscraper-ca1391
+outseta
+owler
+ownerrez
+paddle
+padlet-1
+pagerduty
+pagespeed
+paperform
+paradym
+parallel
+parcellab
+parma
+parsera
+parseur
+partnerstack
+passkit-membership
+past-dev
+payaca
+payments
+paypal
+paypro
+paystack
+pdfco
+pdfless
+peaka
+peekalink
+peerdom
+pennylane
+penpot
+people-data-labs
+perfect-venue
+perigon
+perplexity
+persona
+personio
+phantombuster
+phone
+phone-harness
+picsart
+pidgeon
+pims
+pinata
+pinecone
+pingdom
+pinterest
+pipedrive
+pipeless
+pipeline-crm
+pitchbox
+placetel
+planable
+planday
+planetscale
+platerecognizer
+plaud
+plausible
+pledge
+ploid
+pneumatic
+pocketsmith
+podium
+polar
+polygon
+polymarket
+polymarket-us
+poma-grill
+porkbun
+portalio
+postal-data-api
+postgres
+posthog
+postiz
+postman
+postmark
+postwire
+powerdns
+practice-better
+precisefp
+predictleads
+printful
+printify
+prisma
+process-street
+procore
+productboard
+productlane
+productplan
+project-broadcast
+projul
+promptlayer
+propertyradar
+proposify
+proxiedmail
+pulsetic
+pulumi
+pushcut
+pylon-1
+qdrant
+qomon
+qonto
+qonversion
+qovery
+quentn
+quickbase
+quickbooks
+quickchart
+quickfile
+quiltt
+quipuapp
+quo
+qwilr
+ragic
+raisely
+rally-corp
+ramp
+rawg-video-games-database
+razorpay
+rbaskets
+rebrandly
+recallai
+reclaim-ai
+recraft
+recruitcrm
+recruitee
+recruiterflow
+recurly
+reddit
+reddit-ads
+redirect-pizza
+redirection
+redis
+reducto
+refersion
+reflect
+regiondo
+rei-pebble
+relevance-ai
+reloadify
+remote
+remove-bg
+render
+rentcast
+rentec-direct
+rentman
+repairdesk
+repairshopr
+repliz
+reply
+reply-io
+resend
+resource-guru
+responder
+responsys
+retell-ai
+reteno
+revolut-for-business
+rezdy
+rillet
+ringcentral
+ringover
+rippling
+ritekit
+rkvst
+roam
+rocket-reach
+rocketadmin
+rocketlane
+roezan-sms
+rollbar
+rootly
+rosette-text-analytics
+rossum
+route4me
+royalmail
+rss
+rudder
+rumble
+rundeck
+runn
+runpod
+runscope
+runsignup
+safetyculture
+sakari-sms
+salesforce
+salesforge
+salesloft
+salesmsg
+salesql
+salesrabbit
+salesrobot
+samanage
+samcart
+samdock
+samsara
+sanity
+sap-concur
+saucelabs
+savvycal
+scale-ai
+scalr
+scheduleonce
+schoolmaker
+scoro
+scrape-do
+scrapecreators
+scrapegraph-ai
+se-ranking
+seam
+search-api
+search1api
+sec
+securitytrails
+selectpdf
+sellercloud
+sellsy
+semanticscholar
+sematext
+semrush
+send-email
+send-pulse
+sendbird
+sendfox
+sendgrid
+sendlane
+sendspark
+sendx
+senta
+sentry
+seqera
+sequenzy
+serply
+serpstat
+sertifier
+serverless-function
+servicem8
+servicetitan
+servicetrade
+setmore
+sevdesk
+seven-io
+shipengine
+shipmondo
+shippo
+shlink
+shopify
+shopvox
+shortcut
+shorten-rest
+showmojo
+sidetracker
+sierra-interactive
+sigma
+signable
+signal8
+signalwire
+signpath
+signrequest
+signupgenius
+signwell
+simla-com
+simple-localize
+simplero
+simplesat
+simplicate
+simplybook
+simplyrets
+simpro
+singlestore
+sirv
+skuvault
+skyvia
+slack
+slicktext
+sling
+slite
+small-improvements
+smartemailing
+smarthr
+smartlead
+smartproxy
+smartsheet
+smily
+smokeball
+smol-machines
+smoove
+smsapi
+smsglobal
+smtp2go
+smtping
+snapchat
+sncf
+snitcher
+snowflake
+snyk
+socialkit
+softr
+solcast
+soundcloud
+soundee
+spacebring
+speechmatics
+spiro
+splitwise
+spotify
+spotio2
+sprig
+spydra
+squadcast
+squarespace-commerce
+stack-exchange
+stackitdns
+staffbase
+starbridge
+starton
+statsig
+statuspage
+statuspal
+stibee
+stigg
+stora
+strale
+streak
+stream-chat
+streamtime
+stripe
+studio-by-ai21-labs
+sumoquote
+sumup
+supabase
+supadata
+super-dispatch
+supermemory
+supernormal
+superset
+superwall
+suprsend
+sure-send
+surecart
+surevoip
+surf
+svix
+swaggerhub
+swarmsyncai
+sympla
+synap
+syncro
+synthflow-ai
+systemeio
+table
+tableau
+taggun
+tailscale
+talenthr
+talentlms
+talkable
+talkjs
+talkroute
+tally
+tapfiliate
+taplio
+tave
+tavily
+teachable
+teamcamp
+teamup
+teamup-calendar
+teamwork
+teamwork-desk
+telegram
+telematicssdk
+telnyx
+teltel
+telzio
+templated
+templatefox
+temporal
+tentary
+text-request
+textcortex
+textline
+textmagic
+thanks-io
+the-events-calendar
+the-odds-api
+thecompaniesapi
+thehive
+thinkific
+thoughtspot
+threads
+thrivecart
+ticket-tailor
+tidb-cloud
+tidely
+tidio
+tidy
+tidycal
+tik-hub
+tiktok
+tiktok-ads
+timecamp
+timeero
+timelinesai
+timelink
+timely
+timerex
+tinyfish
+tinyurl
+todoist
+tomba
+tomtom
+toneden
+topdesk
+touchsms
+tovuti
+traccar
+track-pod
+trackdesk
+trackingmore
+trackvia
+trakt
+transloadit
+trekksoft
+trello
+tremendous
+trestle
+trigger-dev
+tripadvisor
+tripworks
+true-list
+truss
+tryfundable
+turbot-pipes
+turso
+twelve-data
+twilio
+twitter
+twittershots
+typebot
+typecast
+typeform
+typefully
+unifi
+unione
+unipile
+uniswap-api
+universe
+unleash
+uplisting
+upload-post
+uploadcare
+upstash-vector
+uptimecom
+uptimerobot
+urable
+urlscanio
+us-global-mail
+uscreen
+userback
+usersnap
+v0
+vagaro
+valuecase
+vast-ai
+vaultre
+vcita
+vdocipher
+vectara
+vendasta
+vendschat
+vercel-ai-gateway
+vervoe
+veryfi
+vibe
+video
+video-db
+videoupscaler
+vimeo
+viral-loops
+virtuous-crm
+virustotal
+visma-eaccounting
+visualping
+visualstudio
+vocal-video
+voiceflow
+volunteerhub
+voluum
+voucherify
+voyage
+vtex
+vybit-notifications
+wachete
+waiverfile
+walcu-crm
+wati
+wayfront
+weatherbit
+weaviate
+webcrawlerapi
+webcrm
+weber-gesamtausgabe
+webex
+webflow
+webscraper-io
+webscraping-ai
+websupport
+weezevent-da56471
+weeztix
+weights-and-biases
+wellnessliving
+wetravel
+whatsable-ca185063
+whatsapp
+wheelbase
+when-i-work
+whoisfreaks
+whop
+wikimedia
+wild-apricot
+wildjar
+winston-ai
+wisboo
+wistia
+wiza
+wodify-core
+wolfram-alpha-api
+woop-social
+word
+wordnik
+wordpress
+workable
+workiz
+workos
+workvivo
+wowza
+writer
+xama-hub
+xata
+xero
+yelp
+yelp-leads
+ynab
+yodeck
+youcanbookme
+yousearch
+youtrack
+youtrust
+youtube
+youtube-transcript
+zadarma
+zeeg
+zeffy
+zendesk
+zeno
+zenoti
+zenrows
+zenzap
+zep
+zeplin
+zigpoll
+zoho-books
+zoho-cliq
+zoho-cpaas-formerly-zeptomail
+zoho-creator
+zoho-crm
+zoho-inventory
+zoho-projects
+zoho-work-drive
+zoho-writer
+zonnagps
+zoom
+zoominfo
+zsign
+zulip
+zuora
+zyte-api`.split(/\s+/)
 );
 
 /** Of those, the operations NoClick buys from the app's own service on its own key: a call to one says what it
