@@ -1212,6 +1212,7 @@ geodatasource
 get-the-referral
 getaccept
 getanyapi
+gettyimages
 giftbit
 giphy
 gitea
