@@ -1972,6 +1972,7 @@ sigma
 signable
 signal8
 signalwire
+signify
 signpath
 signrequest
 signupgenius
