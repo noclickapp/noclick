@@ -132,6 +132,7 @@ NoClick's screens are moving into it one at a time, the developer console first.
 | `sdk/python` | The Python SDK (Python 3.10+) |
 | `sdk/typescript` | The TypeScript SDK (Node 20+, Bun, Deno, Cloudflare Workers), and `noclick/embed`, the bridge custom interface components use |
 | `sdk/examples` | Complete programs on the Python SDK, each also a page at [noclick.com/docs/examples](https://noclick.com/docs/examples) |
+| `agents/builder` | NoClick's workflow builder, the agent that builds workflows from a description: its definition, its instructions and its build loop, made with the Python SDK from your own key ([agents/builder/README.md](agents/builder/README.md)) |
 | `app` | NoClick's app, built only on the TypeScript SDK: a React Router project that so far signs its owner in, keeps the NoClick key on its server and shows the account ([app/README.md](app/README.md)) |
 | `plugins/noclick` | The Claude Code plugin for NoClick's hosted MCP server (`/plugin marketplace add noclickapp/noclick`); `.claude-plugin/marketplace.json` lists it |
 | `glama.json` | This repository's listing in the Glama MCP directory |
