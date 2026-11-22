@@ -63,6 +63,19 @@ def test_a_step_id_is_one_path_segment_and_a_refusal_is_typed(api, client):
         nc.Workflow.from_id(WF).step("mcp").value("hosted_url")
 
 
+def test_a_step_not_saved_yet_lists_its_choices_by_its_type_through_the_account_its_form_holds(api, client):
+    route = api.post(f"/v1/workflows/{WF}/steps/new_sheet/options").respond(json={
+        "object": "step_options", "workflow_id": WF, "step_id": "new_sheet", "field": "spreadsheet_id",
+        "next_page_token": None, "withheld": [], "options": [{"value": "sp_1", "label": "Budget", "metadata": None}]})
+    found = nc.Workflow.from_id(WF).step("new_sheet").options(
+        "spreadsheet_id", type="automation-google-sheets", connection="credential:cred_1",
+        settings={"operation": "read_sheet_data"})
+    assert body(route.calls.last.request) == {
+        "field": "spreadsheet_id", "settings": {"operation": "read_sheet_data"},
+        "type": "automation-google-sheets", "connection": "credential:cred_1"}
+    assert [o.value for o in found.options] == ["sp_1"]
+
+
 async def test_both_read_the_same_in_async_code(api, client):
     api.post(f"/v1/workflows/{WF}/steps/post/options").respond(json={
         "object": "step_options", "field": "channel", "next_page_token": None, "withheld": [],
