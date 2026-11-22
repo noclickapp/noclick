@@ -71,6 +71,12 @@ export interface HoldKind {
   defaults: Record<string, string>;
   /** Whether your account may switch it (`ApprovalPolicy.set`). */
   settable: boolean;
+  /**
+   * What it may be set to: most kinds `allow`, `ask` or `deny`; terms a person accepts and what an app's code files in
+   * a person's name (`terms`, `person_filing`) `ask`, `standing` (runs with what it needs on file, a registrant's
+   * acceptance or a number holder's profile, else refused with the step that files it, never held) or `deny`.
+   */
+  dispositions: string[];
   /** What your account set it to (`disposition`, `under_usd`, `until`, `effective_at`, `pending`), or null. */
   setting: JsonObject | null;
   /** The loosest a narrower scope may set it to, or null. */
@@ -138,10 +144,11 @@ export interface ApprovalExplanation {
   raw: JsonObject;
 }
 
-/** A kind's switch: `"allow"`, `"ask"`, `"deny"`, the same as an object (a purchase may take `under_usd`; any kind
- *  `until`), or null for NoClick's default. */
-export type ApprovalSetting = "allow" | "ask" | "deny" | {
-  disposition: "allow" | "ask" | "deny";
+/** A kind's switch: `"allow"`, `"ask"`, `"deny"` (`terms` and `person_filing` take `"standing"` in place of `"allow"`:
+ *  what's on file decides, never a person), the same as an object (a purchase may take `under_usd`; any kind `until`),
+ *  or null for NoClick's default. */
+export type ApprovalSetting = "allow" | "ask" | "deny" | "standing" | {
+  disposition: "allow" | "ask" | "deny" | "standing";
   under_usd?: number;
   until?: Date | string;
 } | null;
@@ -244,6 +251,7 @@ export class ApprovalPolicy {
       return {
         kind: String(k.kind), description: String(k.description), approver: String(k.approver),
         outsideOnly: Boolean(k.outside_only), defaults, settable: Boolean(k.settable),
+        dispositions: (k.dispositions ?? []) as string[],
         setting: (k.setting as JsonObject | null) ?? null, ceiling: (k.ceiling as JsonObject | null) ?? null,
         effective: k.effective ? { ...(asObject(k.effective) as Record<string, string>) } : { ...defaults },
         own: (k.own as JsonObject | null | undefined) ?? null,
