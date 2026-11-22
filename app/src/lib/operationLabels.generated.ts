@@ -678,9 +678,9 @@ bouncer bouncify box brandfetch brandfolder braze breezy-hr brex brightcove brig
 browseai browserbase-tool browserless bsc-designer btcpay-server bubbles bugbug bugherd bugsnag buildium buildkite
 builtwith bulkpublish bulksmscom bungie bunnycdn burstyai businessmap bytescale cabinpanda cakemail cal-com calendly
 callerapi callfire campaign-cleaner canada-holidays canopy canopy-connect canva captivated carbone cardclan cardly
-carsxe casebook caspio cats centralstationcrm cert-seal certifier charla chaser chatbase chatbotkit chatwoot
-check-cherry checkfront chili-piper chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl circle
-circleback circleci claid-ai clay clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse
+carsxe casebook caspio cats centralstationcrm cert-seal certifier certs365 charla chaser chatbase chatbotkit
+chatwoot check-cherry checkfront chili-piper chmeetings chorus-by-zoominfo chroma churchtools cin7-core cinc circl
+circle circleback circleci claid-ai clay clearblade clearout clerk-io cleverreach clevertap clickfunnels clickhouse
 clicksend clicksign clicktime clickup cliengo climate cling cliniko clio clockify cloro cloudbeds cloudflare
 cloudsmith cloudtalk cloudzero clover cloze club-os coassemble coda codacy codat codesearch cody coinapi coinbase
 coingecko coinmarketcal coinmarketcap college-football-data combell cometapi commerce-layer common-room commusoft
