@@ -6,9 +6,10 @@
 // that closes as it goes. All of it reads only the account's status, which a key may.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { NoClick } from 'noclick';
-import { createMemoryRouter, RouterProvider, useLocation } from 'react-router';
+import { createMemoryRouter, RouterProvider, useLocation, useOutletContext } from 'react-router';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { isOwnerOnly } from '@/screens/console/ownerOnly';
+import type { ShellOutlet } from '@/screens/workflows/routes';
 import { ClientProvider } from '@/sdk/client';
 import Shell from './shell';
 
@@ -34,10 +35,20 @@ const client = new NoClick({
     },
 });
 
-/** The page, saying where the app is. */
+/** The page, saying where the app is, and opening the builder where the frame hands it one. */
 function Where() {
     const { pathname, search } = useLocation();
-    return <div data-testid="where">{pathname + search}</div>;
+    const builder = useOutletContext<ShellOutlet>()?.builder;
+    return (
+        <div data-testid="where">
+            {pathname + search}
+            {builder && (
+                <button type="button" aria-pressed={builder.open} onClick={() => builder.onOpenChange(!builder.open)}>
+                    Build
+                </button>
+            )}
+        </div>
+    );
 }
 
 function open(address: string) {
@@ -47,7 +58,7 @@ function open(address: string) {
             {
                 path: '/',
                 element: <Shell />,
-                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }, { path: 'usage', ...page }, { path: 'settings', ...page }],
+                children: [{ index: true, ...page }, { path: 'chat', ...page }, { path: 'work', ...page }, { path: 'connections', ...page }, { path: 'resources', ...page }, { path: 'usage', ...page }, { path: 'settings', ...page }, { path: 'workflows', ...page }, { path: 'workflows/:id', ...page }],
             },
             { path: '/developers/*', ...page },
         ],
@@ -60,7 +71,7 @@ function open(address: string) {
     );
 }
 
-const where = () => screen.getByTestId('where').textContent;
+const where = () => screen.getByTestId('where').firstChild?.textContent;
 const nav = () => within(screen.getByRole('navigation', { name: 'Main' }));
 const current = () => nav().queryAllByRole('button').filter((b) => b.getAttribute('aria-current') === 'page').map((b) => b.textContent);
 
@@ -96,11 +107,15 @@ afterEach(() => {
 describe('the frame on a laptop', () => {
     it('lists the pages the app serves, marks the one open, and goes to each by its route', async () => {
         open('/');
-        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Connections', 'Resources', 'Settings']);
+        expect(nav().getAllByRole('button').map((b) => b.textContent)).toEqual(['Chat', 'Work', 'Automations', 'Connections', 'Resources', 'Settings']);
         expect(current()).toEqual([]);
         fireEvent.click(nav().getByRole('button', { name: 'Work' }));
         expect(where()).toBe('/work');
         expect(current()).toEqual(['Work']);
+        // Automations is the workflows' route, and one workflow's page is under it.
+        fireEvent.click(nav().getByRole('button', { name: 'Automations' }));
+        expect(where()).toBe('/workflows');
+        expect(current()).toEqual(['Automations']);
         fireEvent.click(nav().getByRole('button', { name: 'Connections' }));
         expect(where()).toBe('/connections');
         expect(current()).toEqual(['Connections']);
@@ -168,6 +183,24 @@ describe('the frame on a laptop', () => {
         expect(calls.length).toBeGreaterThan(0);
         expect([...new Set(calls)]).toEqual(['GET /v1/status']);
         expect(calls.filter((call) => isOwnerOnly(...(call.split(' ') as [string, string])))).toEqual([]);
+    });
+});
+
+describe('the frame beside an open workflow', () => {
+    it('marks Automations, and draws the builder once the workflow’s page opens it, gone again when the page is left', async () => {
+        open('/workflows/wf_1');
+        expect(current()).toEqual(['Automations']);
+        // Closed, there's none; the page opens it, and the frame draws it for that workflow.
+        expect(screen.queryByRole('complementary', { name: 'Build with NoClick' })).toBeNull();
+        fireEvent.click(screen.getByRole('button', { name: 'Build' }));
+        const builder = await screen.findByRole('complementary', { name: 'Build with NoClick' });
+        expect(builder.textContent).toContain('Say what to add or change');
+        expect(screen.getByRole('button', { name: 'Build' }).getAttribute('aria-pressed')).toBe('true');
+        // The list of workflows has no builder to open, and leaving the workflow closes it.
+        fireEvent.click(nav().getByRole('button', { name: 'Automations' }));
+        expect(where()).toBe('/workflows');
+        expect(screen.queryByRole('button', { name: 'Build' })).toBeNull();
+        await waitFor(() => expect(screen.queryByRole('complementary', { name: 'Build with NoClick' })).toBeNull());
     });
 });
 
