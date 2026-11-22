@@ -664,7 +664,7 @@ export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
 actionstep active-merge activecampaign acuity-scheduling adafruit-io adapty addevent addressfinder addresszen
 adobe-analytics adobe-campaign adyen adyntel affinda affinity agencyzoom agent-mail agenty agiled agorapulse aha
 ahrefs ai-ml-api aimtell air airbyte airtable airtop airwallex airweave akeneo akta alchemy alegra algolia alpaca
-altoviz alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache
+altoviz alttext-ai amazing-marvin amplemarket amplience anakin-io anchor-browser android-texter any-db apache apacta
 api-bible api-ninjas api2cart apiframe apify apigee apilio apipie-ai apitemplateio apiverve apollo appcenter
 appcircle apphud appointedd appsheet apptivegrid apptoto appwrite aprimo arbox arcads arize-ax arthur-online
 artificial-analysis aryeo asana ashby assemblyai assemblycom asset-panda atlas-admin atlas-ai-revenue-engine
