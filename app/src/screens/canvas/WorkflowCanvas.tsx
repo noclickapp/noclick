@@ -210,7 +210,8 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
         },
     });
 
-    const { copySelection, pasteFromClipboard } = useWorkflowCopyPaste({ nodes, edges, active: true, setNodes, setEdges, screenToFlowPosition, captureState });
+    // A copy still being read is drawn, not edited: its keys and menus wait for the workflow to open.
+    const { copySelection, pasteFromClipboard } = useWorkflowCopyPaste({ nodes, edges, active: loaded, setNodes, setEdges, screenToFlowPosition, captureState });
 
     const fit = useCallback(() => void fitView({ duration: 500, padding: 0.22, maxZoom: 1 }), [fitView]);
     const tidy = useTidyLayout({ nodesRef, edgesRef, setNodes, history, fit });
@@ -253,9 +254,9 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                 edgeTypes={EDGE_TYPES}
                 {...editing}
                 onSelectionChange={onSelectionChange}
-                onPaneContextMenu={menus.handlePaneContextMenu}
-                onNodeContextMenu={menus.handleNodeContextMenu}
-                onSelectionContextMenu={menus.handleSelectionContextMenu}
+                onPaneContextMenu={loaded ? menus.handlePaneContextMenu : undefined}
+                onNodeContextMenu={loaded ? menus.handleNodeContextMenu : undefined}
+                onSelectionContextMenu={loaded ? menus.handleSelectionContextMenu : undefined}
                 panActivationKeyCode={panActivationKeyCode}
             >
                 <CanvasBackground />

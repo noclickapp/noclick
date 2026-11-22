@@ -182,9 +182,17 @@ describe('the canvas on its own', () => {
 
     it('says why when the workflow can’t be read', async () => {
         readable = false;
-        await draw();
+        const { container } = await draw();
         expect(screen.getByRole('alert').textContent).toContain('couldn’t be read');
         expect(screen.queryByRole('button', { name: /add step/i })).toBeNull();
+        // Nothing to edit: no menus, and a paste is left alone.
+        expect(surface(container).onPaneContextMenu).toBeUndefined();
+        await act(() => {
+            const event = new Event('paste', { bubbles: true, cancelable: true });
+            Object.assign(event, { clipboardData: { getData: () => JSON.stringify({ type: 'noclick-workflow', nodes: [{ id: 'a', type: 'log', position: { x: 0, y: 0 }, config: {} }], edges: [] }) } });
+            window.dispatchEvent(event);
+        });
+        expect(rec().nodes).toHaveLength(0);
     });
 
     it('adds a step from the palette, found by what it’s called, and saves it', async () => {
