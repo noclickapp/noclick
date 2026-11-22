@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds and tests everything in this repository, as CI does: the Python SDK (its tests and its
-# wheel), the examples (each parses), the TypeScript SDK (typecheck, tests, build), then the app
-# (install from its lockfile, typecheck, tests, build).
+# wheel), the examples (each parses), the workflow builder (its tests, on that SDK), the TypeScript
+# SDK (typecheck, tests, build), then the app (install from its lockfile, typecheck, tests, build).
 # Needs python3, Node 22.12 or later, and pnpm 10 on the PATH (`corepack enable pnpm` provides the
 # version app/package.json names). The rest goes into a throwaway virtualenv,
 # sdk/typescript/node_modules and app/node_modules.
@@ -34,6 +34,9 @@ from pathlib import Path
 for path in sorted(Path("sdk/examples").rglob("*.py")):
     ast.parse(path.read_text(), str(path))
 PY
+
+echo "== Workflow builder"
+(cd agents/builder && "$python" -m pytest -q -p no:cacheprovider)
 
 echo "== TypeScript SDK"
 cd "$root/sdk/typescript"
