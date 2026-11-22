@@ -40,3 +40,22 @@ def test_a_message_of_your_own_is_staged_on_a_trigger_step(api, client):
     sent = route.calls.last.request
     assert body(sent) == {"trigger": "automation-gmail", "body": "Hello?"}
     assert sent.headers["NoClick-User"] == "user_42"
+
+
+def test_the_test_runs_a_workflow_offers_are_listed(api, client):
+    offered = [
+        {"object": "workflow_test_run", "key": "sales-inbound-lead", "name": "Big lead", "custom": False,
+         "trigger": {"type": "automation-gmail", "label": "Gmail", "operation": "poll_for_new_emails"},
+         "message": {"title": "Pricing", "body": "We need 40 seats.", "author": "Priya"}},
+        {"object": "workflow_test_run", "key": "refund-request", "name": "Refund request", "custom": True,
+         "trigger": {"type": "automation-gmail", "label": "Gmail", "operation": "poll_for_new_emails"},
+         "message": {"title": "Refund for 1042", "body": "I'd like a refund."}},
+    ]
+    route = api.get("/v1/workflows/wf_1/test_runs").respond(json={"object": "list", "next_cursor": None, "data": offered})
+    runs = nc.Workflow.from_id("wf_1").test_runs()
+    assert route.called
+    assert all(isinstance(run, nc.WorkflowTestRun) for run in runs)
+    assert [(run.key, run.name, run.custom) for run in runs] == [
+        ("sales-inbound-lead", "Big lead", False), ("refund-request", "Refund request", True)]
+    assert runs[0].trigger["label"] == "Gmail" and runs[0].message["body"] == "We need 40 seats."
+    assert runs[1].raw == offered[1]
