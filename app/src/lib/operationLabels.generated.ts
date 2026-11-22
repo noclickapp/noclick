@@ -1588,6 +1588,7 @@ metricool
 mews
 mezmo
 microsoft-bookings
+microsoft-dynamics365-business-c
 microsoft-entra-id
 microsoft-exchange
 microsoft-graph-security
