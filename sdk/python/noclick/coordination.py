@@ -598,7 +598,10 @@ class Platform:
         ``delete``) bound what kind of call it makes, and API areas (a key's scopes, like
         ``domains``, ``phone`` or ``agents``) which part of the API it reaches; each
         narrows only its own kind. Without ``spend`` it isn't offered ``quote`` and
-        ``buy``, without ``delete`` not ``delete``. Names are checked when the agent is saved.
+        ``buy``, without ``delete`` not ``delete``. ``"admin"`` adds the admin group, which nothing holds
+        unnamed (``"noclick"`` alone never does): a few administrative calls and loosening what agents may do,
+        each off until your approval settings switch ``admin`` or ``elevate``; it narrows nothing. Names are
+        checked when the agent is saved.
 
         Returns:
             NoClick narrowed to those names, for ``tools=`` (on the wire, ``"noclick.read"``, ...).

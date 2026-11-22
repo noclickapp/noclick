@@ -640,6 +640,13 @@ export class Connection extends ApiObject {
   get account(): string | null {
     return this._field("account");
   }
+  /**
+   * The id of the account it holds, as a workflow step's `connections` names it, so a step's account is matched to
+   * its connection; `null` while none is connected.
+   */
+  get credentialId(): string | null {
+    return this._field<string | null | undefined>("credential_id") ?? null;
+  }
   /** Whether it's a test account, which an app's preview writes through as well as reads. */
   get testAccount(): boolean {
     return this._field<unknown>("test_account") === true;

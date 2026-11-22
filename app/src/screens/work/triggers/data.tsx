@@ -19,12 +19,14 @@ import { fixLabel, itemOf, sentenceOf, wakeupItem, type Names, type TriggerItem,
 import { openTabForLater } from '@/lib/oauthPopup';
 import { useSlot } from '@/slots';
 import { CONNECT_APP } from '@/ui/slots';
+import { connectionFor } from '@/lib/agentTools';
 
 /** An account connected in the app, as a trigger names its connection: `credential:<id>`. */
 const APP_REF = 'credential:';
 
-/** The connection a trigger names: a named one by its name, an account connected in the app by its ref (its id). */
-const connectionOf = (connections: readonly Connection[] | undefined, ref: string) => connections?.find((c) => c.name === ref || c.id === ref);
+/** The connection a trigger names, by its ref as the platform resolves it (an account connected in the app by its id,
+ *  never by a name a named connection has). */
+const connectionOf = (connections: readonly Connection[] | undefined, ref: string) => (connections ? connectionFor(ref, connections) : null);
 
 /** Its triggers and the one-off wake-ups it set itself, as one list; `loading` until both are read. */
 export function useTriggerItems(agentId: string, agentPaused: boolean): { items: TriggerItem[]; loading: boolean; error: boolean } {

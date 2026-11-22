@@ -41,6 +41,7 @@ import { useDrawsCanvas, useNewerCard } from './canvases';
 import type { BuildState } from './inline/setup';
 import { WorkCard } from './progress/WorkCard';
 import { workViewOf } from './progress/workView';
+import { OwnerQuestion } from './OwnerQuestionCard';
 import { connectAskOf, CoordinatorJobsContext, useCoordinatorJob } from './toolCardRegistry';
 import { useAgentCard } from './useTeamCards';
 import { useBuiltWorkflow } from './useBuiltWorkflow';
@@ -295,8 +296,9 @@ export function PlatformBuildCard({ call }: { call: CoordinatorToolCall }) {
 }
 
 /** The build read on /v1: its automation's graph (Workflow.graph()), re-read while it builds, and the question its
- *  operation carries while it waits on one (the thread follows the operation, so a question arrives as it's asked),
- *  answered with the builder's own form. */
+ *  operation carries while it waits on one (the thread follows the operation, so a question arrives as it's asked):
+ *  each input a human request, answered on its own card as any question to the owner is; a question asked before
+ *  its inputs were requests, with the host's form. */
 function PlatformWorkflowBuild({ callId, workflowId, jobId, reported, name }: { callId: string; workflowId: string; jobId?: string; reported: JsonObject; name?: string }) {
     const { live, job } = useCoordinatorJob(jobId);
     const view: JsonObject | undefined = job ?? reported;
@@ -310,8 +312,35 @@ function PlatformWorkflowBuild({ callId, workflowId, jobId, reported, name }: { 
     const asking = questionId && questionId !== sent ? questionId : null;
     const state: BuildState = reportedState === 'waiting' && sent && !asking ? 'building' : reportedState;
     const Question = useSlot(BUILD_QUESTION);
-    const question = asking && <Question key={asking} askId={asking} workflowId={workflowId} question={obj(view, 'question') ?? {}} onSending={setSent} />;
+    const asked = obj(view, 'question') ?? {};
+    const requests = buildRequests(asked);
+    const question =
+        asking &&
+        (requests.length > 0 ? (
+            <div key={asking} className="mt-3 space-y-2.5" data-testid="coordinator-build-requests">
+                {requests.map((r) => (
+                    <OwnerQuestion key={r.requestId} requestId={r.requestId} asked={r.label} offered={r.options} />
+                ))}
+            </div>
+        ) : (
+            <Question key={asking} askId={asking} workflowId={workflowId} question={asked} onSending={setSent} />
+        ));
     return <BuildBody workflowId={workflowId} view={view} state={state} graph={graph} name={name} canvas={canvas} question={question} />;
+}
+
+/** The human requests a build's question asks, in its order: each input that names one (a pick waiting for the
+ *  account it reads with names none until it's asked). */
+export function buildRequests(question: JsonObject): { requestId: string; label?: string; options: string[] }[] {
+    return list(question, 'inputs').flatMap((raw) => {
+        const input = raw as JsonObject;
+        const requestId = str(input, 'request_id');
+        if (!requestId) return [];
+        const options = list(input, 'options').flatMap((o) => {
+            const label = typeof o === 'string' ? o : (str(o as JsonObject, 'label') ?? str(o as JsonObject, 'id'));
+            return label ? [label] : [];
+        });
+        return [{ requestId, label: str(input, 'label'), options }];
+    });
 }
 
 // ── An agent made or changed ─────────────────────────────────────────────────

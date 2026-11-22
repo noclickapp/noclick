@@ -156,6 +156,9 @@ export interface FakeWorkAgent {
     watching: () => number;
     /** The account's connections as GET /v1/connections lists them (change one to reconnect it in place). */
     connections: Json[];
+    /** A person connects `account` at the newest connect page waiting (a connection POST /v1/connections made): it
+     *  holds the account (its `credential_id`), and the link's operation succeeds. Returns that connection. */
+    connectAccount: (account: string) => Json;
     /** The agent's MCP servers, as added and taken away (each drawn as GET …/tool_servers lists it, `serverView`). */
     toolServers: Json[];
     /** A person signs in to a server through its connect link: it holds the sign-in, and the link's operation succeeds. */
@@ -426,6 +429,18 @@ export function fakeWorkAgent(
         if (method === 'GET' && path === '/v1/machines') return json({ object: 'list', data: machines, agents_enabled: true, next_cursor: null });
         const machine = path.match(/^\/v1\/machines\/([^/]+)$/);
         if (machine && method === 'GET') return json(machines.find((m) => m.id === machine[1]) ?? {});
+        if (method === 'POST' && path === '/v1/connections') {
+            // As the API makes one: a named connection waiting for its account, with the link where someone connects it.
+            const b = body as Json;
+            const operation = { object: 'operation', id: `op-connect-${++made}`, kind: 'connection.connect', status: 'awaiting_human', created_at: at(), updated_at: at() };
+            operations.set(operation.id, operation);
+            const row: Json = {
+                object: 'connection', id: `conn-new-${made}`, name: b.name, integration: b.integration, credential_type: b.credential_type ?? null, status: 'pending', connected: false, user_id: null, origin: 'api', account: null, credential_id: null,
+                connect_link: { id: `link-${made}`, url: `https://noclick.test/connect/${b.name}`, expires_at: null, operation_id: operation.id }, created_at: at(),
+            };
+            connections.push(row);
+            return json(row, 201);
+        }
         const catalog = catalogRoutes(method, path, connections, options.checks, at, query);
         if (catalog) return catalog;
         const op = path.match(/^\/v1\/operations\/([^/]+)(\/wait|\/cancel)?$/);
@@ -669,6 +684,14 @@ export function fakeWorkAgent(
         reply,
         connections,
         toolServers,
+        connectAccount: (account) => {
+            const waiting = connections.filter((c) => c.status === 'pending' && c.connect_link).at(-1);
+            if (!waiting) throw new Error('No connection is waiting for its account.');
+            const operationId = String((waiting.connect_link as Json).operation_id);
+            Object.assign(waiting, { status: 'connected', connected: true, account, credential_id: String(waiting.id).replace(/^conn-/, 'cred-'), connect_link: null });
+            settle(operationId, 'succeeded');
+            return waiting;
+        },
         signIn: (step) => {
             const server = toolServers.find((s) => s.id === step)!;
             Object.assign(server, { signed_in: true, sign_in: 'browser', status: 'unchecked', problem: null });
