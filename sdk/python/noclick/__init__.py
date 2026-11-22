@@ -111,6 +111,7 @@ from .exceptions import (
     UpstreamError,
     WebhookSignatureError,
 )
+from .connected_app import ConnectedApp
 from .export import ExportBundle, ExportItem
 from .human import Answer, Human, HumanOperations, HumanRequest, OwnerEmail, OwnerLine, OwnerReach
 from .inbox import Inbox, InboxMessage, InboxReply, InboxThread
@@ -123,10 +124,15 @@ from .machine import (
     MachineShell, MachineSize, MachineSizeRegion,
 )
 from .mcp_server import McpClient, McpServer
+from .key import Key
 from .notifications import Notifications
+from .popups import Popups
+from .account_phones import AccountPhones, LinkedPhone, PhoneChallenge
+from .builder_skill import BuilderSkill
 from .operation import Operation, OperationEvent, OperationSummary, OperationTransition
 from .phone_number import (
-    AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberPlace, PhoneCall, PhoneNumber,
+    AvailableNumber, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberHolderProfile, NumberPlace,
+    PhoneCall, PhoneNumber,
     PhoneNumberOrder, PhoneText, PortRequest, TextingRegistration, TransferOut,
 )
 from .policy import Policy, PolicyVerdict, Rule
@@ -164,10 +170,12 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepOption, StepOptions,
+    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepLastRun, StepOption,
+    StepOptions,
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
-    WorkflowStep, WorkflowVersion,
+    WorkflowTestRun,
+    WorkflowStep, WorkflowVariables, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_example import WorkflowExample, workflow_example, workflow_examples
@@ -209,7 +217,7 @@ __all__ = [
     "Workspace", "WorkspaceMember", "WorkspaceInvite", "MyWorkspace", "WorkspaceResource", "SpaceQuestion",
     "Inbox", "InboxMessage", "InboxReply", "InboxThread",
     "PhoneNumber", "AvailableNumber", "PhoneCall", "ConnectableNumber", "PortRequest", "TextingRegistration",
-    "PhoneText", "TransferOut", "NumberHolder", "NumberCoverage", "NumberPlace", "NumberDocument", "PhoneNumberOrder",
+    "PhoneText", "TransferOut", "NumberHolder", "NumberHolderProfile", "NumberCoverage", "NumberPlace", "NumberDocument", "PhoneNumberOrder",
     "Sandbox", "SandboxFiles", "ExecResult", "Machine", "MachineSize", "MachineSizeRegion", "MachineHost", "MachinePort", "MachinePairing", "MachineRefusal", "MachineFiles", "MachineFileEntry", "MachineHealth", "MachineShell",
     "regions", "Region",
     "Browser", "BrowserLiveView", "BrowserProfile", "BrowserLogin", "PageState", "ActResult", "SiteLogin",
@@ -235,13 +243,13 @@ __all__ = [
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
-    "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal",
+    "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
-    "WorkflowVersion",
+    "WorkflowVersion", "WorkflowVariables",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
     "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "workflow_examples", "workflow_example",
     "WorkflowExample",
-    "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "ExpressionPreview",
+    "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "StepLastRun", "ExpressionPreview",
     "ClearedStepState",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
@@ -249,7 +257,8 @@ __all__ = [
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
     "Workstream",
-    "AccountCap", "CapChange", "Notifications",
+    "AccountCap", "CapChange", "Notifications", "Key", "ConnectedApp", "Popups", "AccountPhones", "LinkedPhone",
+    "PhoneChallenge", "BuilderSkill",
     "Error", "Offer", "InvalidRequest", "Unauthenticated", "PaymentRequired", "PlanRequired",
     "PriceExceeded", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused", "PermissionDenied", "PolicyDenied", "NotFound",
     "Conflict", "NotAvailable", "ActionRequired", "AnswerRequired", "NeedsConnection", "CredentialDisconnected",

@@ -6,12 +6,12 @@
  *     const run = await (await brief.run()).wait();
  *
  * Your keys read every workflow your account can open in the app, its own and those shared with it
- * (`access`), and change, build and run the ones it owns and pays for. NoClick's builder (the one in
- * the app) builds and changes one from what you describe: a `WorkflowBuild` you wait on, which may
- * stop to ask something first, and which can publish the workflow's app too. A run starts where its
- * trigger does, with the inputs as the trigger's payload. A run started inside `asUser` (or with
- * `user`) is recorded for that user and counts toward their spend cap; its steps still use the
- * app's connections.
+ * (`access`), and change, build and run the ones they can edit (one a team workspace's owner pays
+ * for is billed to them). NoClick's builder (the one in the app) builds and changes one from what
+ * you describe: a `WorkflowBuild` you wait on, which may stop to ask something first, and which can
+ * publish the workflow's app too. A run starts where its trigger does, with the inputs as the
+ * trigger's payload. A run started inside `asUser` (or with `user`) is recorded for that user and
+ * counts toward their spend cap; its steps still use the app's connections.
  *
  * A workflow's graph is also a handle you change directly: `graph()` reads its steps, each `Step`
  * changes with one call (`update`, `connect`, ...), and `edit()` sends several changes as one batch
@@ -37,6 +37,34 @@ import { WorkflowApproval } from "./workflowApproval.ts";
 import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
 export type WorkflowRunStatus = "running" | "succeeded" | "failed";
+
+/** How a run started: from code (`api`, the workflow's `endpoint`), in the app, on a schedule, or by an event at one
+ *  of its triggers. */
+export type WorkflowRunSource = "api" | "endpoint" | "app" | "schedule" | "trigger";
+
+/**
+ * The kind of event that started a run whose `source` is `trigger`: a delivery to one of its trigger steps (`webhook`:
+ * a webhook's, or an app's event), mail (`email`), a phone call (`call`), an agent's turn (`agent`), a visitor on its
+ * agent's shared page (`shared_link`), or another run's failure it handles (`error`).
+ */
+export type WorkflowRunTrigger = "webhook" | "email" | "call" | "agent" | "shared_link" | "error";
+
+/** What a running run waits on: an approval, a delay, or (a run from code) an agent's turn. */
+export type WorkflowRunWait = "approval" | "delay" | "agent_turn";
+
+/**
+ * Which runs `Workflow.runs` lists: by `status`, by how they started (`source`), by the kind of event that started
+ * them (`trigger`), only those that wait (`waiting: true`) or that don't (`false`), and by text in their error
+ * (`search`, any case).
+ */
+export interface WorkflowRunsOptions extends ReadOptions {
+  status?: WorkflowRunStatus | readonly WorkflowRunStatus[];
+  source?: WorkflowRunSource | readonly WorkflowRunSource[];
+  trigger?: WorkflowRunTrigger | readonly WorkflowRunTrigger[];
+  waiting?: boolean;
+  search?: string;
+  limit?: number;
+}
 
 /**
  * One of your account's workflow folders, as the app's Automations page shows it: `Workflow.folders()` lists them,
@@ -119,21 +147,24 @@ export interface StepOutput {
 }
 
 /**
- * One run of a workflow. `status` is `running` (a run waiting on an approval or a delay too),
- * `succeeded` or `failed` (`error` says why). `outputs` holds what its final steps produced (each
- * step that finished with nothing after it running), by step name. `source` is how it started:
- * `api`, `endpoint`, `schedule`, `trigger` (an event, like a webhook or an email) or `app`;
- * `inputs` and `operationId` are set for a run started from code. `steps` says what each step did,
- * read with one run (`Workflow.getRun`); empty in a list.
+ * One run of a workflow. `status` is `running` (a run waiting on an approval or a delay too:
+ * `waitingOn` says on what, `null` while it runs on), `succeeded` or `failed` (`error` says why).
+ * `outputs` holds what its final steps produced (each step that finished with nothing after it
+ * running), by step name. `source` is how it started: `api`, `endpoint`, `schedule`, `trigger` (an
+ * event, whose kind `trigger` names: `webhook`, `email`, …) or `app`; `inputs` and `operationId` are
+ * set for a run started from code. `steps` says what each step did, read with one run
+ * (`Workflow.getRun`); empty in a list.
  */
 export interface WorkflowRun {
   id: string;
   workflowId: string | null;
   status: WorkflowRunStatus;
+  waitingOn: WorkflowRunWait | null;
   inputs: JsonObject;
   outputs: JsonObject;
   error: string | null;
   source: string | null;
+  trigger: WorkflowRunTrigger | null;
   userId: string | null;
   operationId: string | null;
   startedAt: Date | null;
@@ -147,10 +178,11 @@ export interface WorkflowRun {
  * (`trigger`: `{step_id, type, name}`) and the agents it reached took a real turn while a simulated world
  * answered every tool call, so nothing was sent and no account was touched. `testRun` is the run it played
  * (`{key, name, custom}`; `null` for a message you typed). `reply` is the agent's closing words; `toolCalls` the
- * calls it made, each with its `tool`, `arguments` and the `result` the world answered; `transcript` the run step
- * by step (`role` `assistant` steps, its `text`, and `tool` steps; a coding harness's own shell and file steps carry
- * `source` `harness`). `scenario` is the world it ran in, `note` says when it wrote nothing or what it did to act was
- * simulated, and `costUsd` is what it cost you.
+ * calls it made, each with its `tool`, `arguments` and the `result` the world answered (and `outbound`, the message
+ * it would have sent, for a call that carries one); `transcript` the run step by step (`role` `assistant` steps, its
+ * `text`, and `tool` steps; a coding harness's own shell and file steps carry `source` `harness`). `scenario` is the
+ * world it ran in, `note` says when it wrote nothing or what it did to act was simulated, and `costUsd` is what it
+ * cost you.
  */
 export interface WorkflowRehearsal {
   workflowId: string | null;
@@ -164,6 +196,35 @@ export interface WorkflowRehearsal {
   costUsd: number | null;
   operationId: string | null;
   raw: JsonObject;
+}
+
+/**
+ * A test run a workflow offers (`Workflow.testRuns`), as its Test Run screen lists it: a staged situation for one of
+ * its triggers, or one the workflow authored (`custom`; `edit().addTestRun`). `key` and `name` each name it to
+ * `rehearse`. `trigger` is what it stages on: the trigger step's `type`, the type's `label` in the app and the step's
+ * `operation`. `message` is the staged message as the run would stage it (`title`, `body`, and where it has them
+ * `author`, `handle`, `meta` and `time`): an offered situation's with the workflow's edits, an authored run's own.
+ */
+export interface WorkflowTestRun {
+  key: string;
+  name: string;
+  custom: boolean;
+  trigger: { type: string; label: string | null; operation: string | null };
+  message: JsonObject;
+  raw: JsonObject;
+}
+
+function toTestRun(value: unknown): WorkflowTestRun {
+  const raw = asObject(value);
+  const trigger = asObject(raw.trigger);
+  return {
+    key: str(raw.key) ?? "",
+    name: str(raw.name) ?? "",
+    custom: raw.custom === true,
+    trigger: { type: str(trigger.type) ?? "", label: str(trigger.label), operation: str(trigger.operation) },
+    message: asObject(raw.message),
+    raw,
+  };
 }
 
 /** What `Workflow.rehearse` stages: a test run the workflow offers, or a message you type on one of its triggers. */
@@ -205,10 +266,12 @@ export function toWorkflowRun(value: unknown): WorkflowRun {
     id: str(raw.id) ?? "",
     workflowId: str(raw.workflow_id),
     status: (str(raw.status) ?? "running") as WorkflowRunStatus,
+    waitingOn: str(raw.waiting_on) as WorkflowRunWait | null,
     inputs: asObject(raw.inputs),
     outputs: asObject(raw.outputs),
     error: error && typeof error === "object" ? str((error as JsonObject).message) : str(error),
     source: str(raw.source),
+    trigger: str(raw.trigger) as WorkflowRunTrigger | null,
     userId: str(raw.user_id),
     operationId: str(raw.operation_id),
     startedAt: parseTime(raw.started_at),
@@ -262,21 +325,58 @@ export interface StepOutputOptions extends CallOptions {
 
 /**
  * How many runs `Workflow.runs` lists (`Workflow.runCounts`): the `total`, `byStatus` (`running`, `succeeded`,
- * `failed`, each there even at 0) and `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with
- * runs). A run from code counts once, however many executions it spans.
+ * `failed`, each there even at 0), `waiting` (how many of the running ones wait on an approval, a delay or an agent's
+ * turn), `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with runs) and `byTrigger` (the kinds
+ * of event that started the runs a trigger did: `webhook`, `email`, …, only those with runs). A run from code counts
+ * once, however many executions it spans.
  */
 export interface WorkflowRunCounts {
   workflowId: string;
   total: number;
   byStatus: Record<WorkflowRunStatus, number>;
+  waiting: number;
   bySource: Record<string, number>;
+  byTrigger: Record<string, number>;
   raw: JsonObject;
+}
+
+/** One of a workflow's variables as its settings hold it (`WorkflowVariables.definitions`). */
+export interface WorkflowVariableDefinition {
+  name: string;
+  value?: unknown;
+  description?: string;
+  /** Asked of each new owner when the workflow is copied: a copy starts without its value. Read here like any other. */
+  per_user?: boolean;
+  [key: string]: unknown;
+}
+
+/**
+ * A workflow's variables with their values (`Workflow.variables`), which no other read of it carries, as they were at
+ * `version`: `definitions` are its variables as its settings hold them, in their order, and `variables` the graph's
+ * own by name, as its Set variable steps last wrote them. `values` is what `{{vars.name}}` reads: the two together,
+ * the graph's own winning.
+ */
+export interface WorkflowVariables {
+  workflowId: string;
+  version: number | null;
+  definitions: WorkflowVariableDefinition[];
+  variables: JsonObject;
+  values: JsonObject;
+  raw: JsonObject;
+}
+
+/** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
+export interface StepLastRun {
+  status: string;
+  finishedAt: Date | null;
+  error: string | null;
 }
 
 /**
  * Each step's latest output, whatever run it's from (`Workflow.latestOutputs`): `outputs` by step id, each cut short
  * as a run's steps are unless read `full` (`truncated` names the steps cut), never a secret (`withheld`: each step's
- * paths left out). A step that never stored one isn't in `outputs`.
+ * paths left out). A step that never stored one isn't in `outputs`. `lastRuns`: how each step's latest run ended, as
+ * the app's canvas marks it beside the step; a step never run isn't in it.
  */
 export interface LatestOutputs {
   workflowId: string;
@@ -284,6 +384,7 @@ export interface LatestOutputs {
   withheld: Record<string, string[]>;
   full: boolean;
   truncated: string[];
+  lastRuns: Record<string, StepLastRun>;
   raw: JsonObject;
 }
 
@@ -314,7 +415,29 @@ function toRunCounts(value: unknown): WorkflowRunCounts {
     workflowId: str(raw.workflow_id) ?? "",
     total: Number(raw.total ?? 0),
     byStatus: { running: 0, succeeded: 0, failed: 0, ...(asObject(raw.by_status) as Record<string, number>) },
+    waiting: Number(raw.waiting ?? 0),
     bySource: { ...(asObject(raw.by_source) as Record<string, number>) },
+    byTrigger: { ...(asObject(raw.by_trigger) as Record<string, number>) },
+    raw,
+  };
+}
+
+function toWorkflowVariables(value: unknown): WorkflowVariables {
+  const raw = asObject(value);
+  const definitions = asList(raw.definitions)
+    .filter((d): d is JsonObject => !!d && typeof d === "object" && !Array.isArray(d))
+    .map((d) => ({ ...d }) as WorkflowVariableDefinition);
+  const variables = { ...asObject(raw.variables) };
+  const values: JsonObject = {};
+  for (const d of definitions) {
+    if (d.name && d.value !== undefined && d.value !== null && d.value !== "") values[d.name] = d.value;
+  }
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    version: typeof raw.version === "number" ? raw.version : null,
+    definitions,
+    variables,
+    values: { ...values, ...variables },
     raw,
   };
 }
@@ -329,6 +452,10 @@ function toLatestOutputs(value: unknown): LatestOutputs {
     withheld,
     full: raw.full === true,
     truncated: asList(raw.truncated).map(String),
+    lastRuns: Object.fromEntries(Object.entries(asObject(raw.last_runs)).map(([step, value]) => {
+      const run = asObject(value);
+      return [step, { status: str(run.status) ?? "", finishedAt: parseTime(run.finished_at), error: str(run.error) }];
+    })),
     raw,
   };
 }
@@ -394,7 +521,11 @@ export interface WorkflowReadiness {
   status: string;
   /** What `status` means, in a sentence. */
   meaning: string;
-  /** What's in the way of it working, a step whose last run failed among them. */
+  /**
+   * What's in the way of it working, a step whose last run failed among them. An issue's `code` says whose move it
+   * is: `missing_credentials` waits on an account, `left_for_user` on a required setting the step leaves for its
+   * person to fill in, and `invalid_config` is a setting a run would refuse.
+   */
   issues: { step: string | null; code: string; message: string }[];
   /** What doesn't stop it running: an agent's tool with no account connected, which only a call to it needs. */
   warnings: { step: string | null; code: string; message: string }[];
@@ -410,11 +541,17 @@ export interface WorkflowUrl {
   public: boolean;
 }
 
+/** Whether a build asks what it can't decide (`ask`, the default) or asks nothing (`assume`). */
+export type BuildQuestions = "ask" | "assume";
+
 /**
- * What a build waits on. Each of `inputs` is `{ id, label, type, description, options? }`; answer
- * them with `build.answer({ [id]: value })` where `answerableFromCode`. An input of type
- * `credential` (an account to connect) or `env` (secret values) needs a person: send them to
- * `answerUrl`, and the build goes on once they answer.
+ * What a build waits on. Each of `inputs` is `{ id, label, type, description, options?, request_id? }`:
+ * `request_id` is the human request that asks it, which NoClick sent the person whose build it is
+ * (`sentTo`) and any client answers (its page, a chat's card, their texts,
+ * `POST /v1/humans/requests/{id}/answer`); the build goes on once each is answered. Or answer them all
+ * at once with `build.answer({ [id]: value })`, which goes on now: an input of type `credential` takes
+ * a connection's ref or name, one of type `env` its values in `secretValues` (both with a key acting
+ * for the whole account). `answerUrl` is a page anyone holding it answers on.
  */
 export interface BuildQuestion {
   id: string | null;
@@ -422,6 +559,8 @@ export interface BuildQuestion {
   inputs: JsonObject[];
   answerUrl: string | null;
   answerableFromCode: boolean;
+  /** Where NoClick sent its requests (`web`, `email`, `whatsapp`, `imessage`). */
+  sentTo: string[];
   raw: JsonObject;
 }
 
@@ -433,7 +572,7 @@ export interface BuildQuestion {
  * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
  * workflow is as it was, whatever `summary` says), the `version` it ended on (what
  * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
- * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, as an
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user`, as an
  * edit answers them). `sentBack` counts the times the build went back to the builder for settings
  * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
  * named in `unread`: then nothing says the workflow is ready.
@@ -490,6 +629,7 @@ function toQuestion(value: unknown): BuildQuestion {
     inputs: Array.isArray(raw.inputs) ? (raw.inputs as JsonObject[]) : [],
     answerUrl: str(raw.answer_url),
     answerableFromCode: raw.answerable_from_code === true,
+    sentTo: Array.isArray(raw.sent_to) ? raw.sent_to.filter((c): c is string => typeof c === "string") : [],
     raw,
   };
 }
@@ -529,9 +669,9 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
  * A finished draft: the workflow's `version` once the drafted steps were written (one version of its history,
  * `historyVersion`; `changed` false when the drafter changed nothing), a `summary` of what changed, and for each step
  * it drafted (`steps`, by id) the verdict an edit answers (`config_valid`, `validation_error`, `missing_required`,
- * `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a person (`unfilled`:
- * a choice read from the connected account, a value only they know) and, for a step it couldn't draft (left as it
- * was), its `error`.
+ * `left_for_user`, `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a
+ * person (`unfilled`: a choice read from the connected account, a value only they know; a required one reads as
+ * `left_for_user` until it's filled in) and, for a step it couldn't draft (left as it was), its `error`.
  */
 export interface WorkflowDraftResult {
   workflowId: string;
@@ -612,8 +752,9 @@ const BUILD_DONE = ["succeeded", "failed", "canceled", "expired"];
  * resolves to the `WorkflowBuildResult`, or throws why the build failed.
  *
  * While it builds, `step` is `building`. When the builder needs something it's `awaiting_human`
- * (step `asking`) and `question` says what: answer it with `answer()`, or send a person to its
- * `answerUrl`. `wait()` stops at a question it hasn't shown you, throwing `AnswerRequired` with it;
+ * (step `asking`) and `question` says what: each input is a human request NoClick sent the person
+ * whose build it is, and the build goes on once they answer; or answer it all now with `answer()`.
+ * `wait()` stops at a question it hasn't shown you, throwing `AnswerRequired` with it;
  * called again, it waits through that question for its answer. `nextQuestion()` resolves as soon as
  * there is one.
  */
@@ -642,7 +783,7 @@ export class WorkflowBuild extends Operation<WorkflowBuildResult> {
       if (!this._shown(question)) {
         const asks = question.title ?? question.inputs.map((input) => input.label).find((label) => typeof label === "string");
         const err = new AnswerRequired(`The build is waiting on an answer: ${asks ?? "the builder has a question"}`, {
-          nextStep: "Answer it with build.answer({ inputId: value }) where question.answerableFromCode, else send a person to question.answerUrl; then call wait() again.",
+          nextStep: "Answer it with build.answer({ inputId: value }), or let the person NoClick sent each input's request (question.sentTo) answer it; then call wait() again.",
           details: { operation_id: this._id(), question: raw.question as JsonObject },
         });
         err.question = question;
@@ -690,14 +831,20 @@ export class WorkflowBuild extends Operation<WorkflowBuildResult> {
   }
 
   /**
-   * Answer the question the build waits on, by input id; `message` tells the builder anything
-   * else, `skip: true` goes on without answering. An input only a person can answer (an account
-   * to connect, secret values) throws `InvalidRequest` naming `answerUrl`. Resolves to this build,
+   * Answer the question the build waits on, all at once, by input id: the build goes on now. Each
+   * value answers its input's human request as your key; those you leave unanswered are withdrawn.
+   * A choice, words, or for a `credential` input a connection's ref or name; an `env` input's values
+   * go in `secretValues` (`{ [inputId]: { KEY: value } }`), kept as the account's secret and never
+   * shown to a model. An account or a secret takes a key acting for the whole account. `message`
+   * tells the builder anything else, `skip: true` goes on without answering. Resolves to this build,
    * `running` again.
    */
-  async answer(values: JsonObject = {}, options: { message?: string; skip?: boolean } = {}): Promise<this> {
+  async answer(
+    values: JsonObject = {},
+    options: { message?: string; skip?: boolean; secretValues?: Record<string, Record<string, string>> } = {},
+  ): Promise<this> {
     const raw = await this._request("POST", `/v1/workflows/${this.workflowId}/builds/${this._id()}/answer`, {
-      json: compact({ values, message: options.message, skip: options.skip || undefined }),
+      json: compact({ values, secret_values: options.secretValues, message: options.message, skip: options.skip || undefined }),
     });
     this._absorb(raw);
     return this;
@@ -804,6 +951,13 @@ export interface EditOptions {
   origin?: string;
   /** In a browser, send the batch so it outlives the page (a closing tab's last save; `RequestOptions.keepalive`). */
   keepalive?: boolean;
+  /**
+   * `true`: wait, up to 30 seconds, for what the batch sets going (a trigger's registration: its webhook, its
+   * schedule, its inbox; a removed step's teardown) before the answer: `settled` says whether it finished in time,
+   * the graph (with `includeGraph`) carries what it wrote on the steps (a trigger's `webhook_url`), and
+   * `unregistered` names, by step, why each trigger it left unregistered can't be registered yet.
+   */
+  settle?: boolean;
 }
 
 /** What `Workflow.update` changes; a field left out is never touched. */
@@ -842,10 +996,13 @@ export interface NameVersionOptions {
  * order (an added step's `id`, and what the
  * edit did on its own: `resolutions`, `harness_switch`, `coerced_values`, `stripped_trigger_refs`,
  * `http_auth_credential_hint`); and, for each step an op touched, whether it's ready to run (`steps`:
- * `config_valid`, `validation_error`, `missing_required`, `agent_credential_hint`, and `references`: each read of
- * another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
+ * `config_valid`, `validation_error`, `missing_required`, `left_for_user`, `agent_credential_hint`, and `references`:
+ * each read of another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
- * history a restore put back.
+ * history a restore put back. `warnings` say what an edit did that won't work as it may look (a workspace member's
+ * own connection given to a team workflow's step, which its owner's automatic runs can't use). An edit sent with
+ * `settle` also says whether what it set going finished in time (`settled`) and, by step, why each trigger it left
+ * unregistered can't be registered yet (`unregistered`).
  */
 export interface WorkflowEdit {
   workflowId: string;
@@ -857,6 +1014,9 @@ export interface WorkflowEdit {
   steps: Record<string, JsonObject>;
   graph: WorkflowGraph | null;
   restoredFrom: number | null;
+  warnings: string[];
+  settled: boolean | null;
+  unregistered: Record<string, string>;
   raw: JsonObject;
 }
 
@@ -927,6 +1087,10 @@ export interface StepOptionsQuery {
   search?: string;
   /** The `nextPageToken` of the page before. */
   pageToken?: string;
+  /** The step's type (`automation-slack`), for a step the workflow doesn't hold yet (one a canvas hasn't saved). */
+  type?: string;
+  /** The connected account to read from, in place of the one the step holds: its ref (`Connection.ref`) or id. */
+  connection?: string;
 }
 
 /**
@@ -1141,6 +1305,9 @@ function toWorkflowEdit(value: unknown, workflow: Workflow): WorkflowEdit {
     steps,
     graph: definitionOf(raw, workflow),
     restoredFrom: numberOrNull(raw.restored_from),
+    warnings: Array.isArray(raw.warnings) ? raw.warnings.map(String) : [],
+    settled: typeof raw.settled === "boolean" ? raw.settled : null,
+    unregistered: Object.fromEntries(Object.entries(asObject(raw.unregistered)).map(([k, v]) => [k, String(v)])),
     raw,
   };
 }
@@ -1295,8 +1462,10 @@ export class Step extends ApiObject {
   }
   /**
    * Whether it's ready to run, as the last edit through this handle that touched it judged: `config_valid`, and
-   * when it isn't, `validation_error` and `missing_required`; an agent's `agent_credential_hint`; and `references`
-   * (see `references`). `null` until an edit judged it (a read doesn't).
+   * when it isn't, `validation_error`, `missing_required` and `left_for_user` (the required settings it leaves for
+   * its person to fill in, a value only they know: they wait on that person and are never part of the error); an
+   * agent's `agent_credential_hint`; and `references` (see `references`). `null` until an edit judged it (a read
+   * doesn't).
    */
   get verdict(): JsonObject | null {
     return this._verdict;
@@ -1493,11 +1662,17 @@ export class Step extends ApiObject {
    * and `settings` laid over them (what a list that depends on another reads, like the tabs of a spreadsheet you
    * haven't saved yet). `search` narrows them where the service can search. A page at a time: pass `pageToken` its
    * `nextPageToken`. A connection whose owner reviews its calls holds the lookup for them (`ApprovalRequired`).
-   * Takes edit access to the workflow.
+   * A step the workflow doesn't hold yet (one a canvas added and hasn't saved) lists its choices by its `type`, and
+   * `connection` names the account to read from in place of the one the step holds. Takes read access to the workflow:
+   * whoever can change it reads through the step's account as a run does, anyone else only through an account that's
+   * theirs to use.
    */
   async options(field: string, query: StepOptionsQuery = {}): Promise<StepOptions> {
     return toStepOptions(await this._request("POST", `${await this._workflow._stepPath(this.id)}/options`, {
-      json: compact({ field, settings: query.settings, search: query.search, page_token: query.pageToken }),
+      json: compact({
+        field, settings: query.settings, search: query.search, page_token: query.pageToken, type: query.type,
+        connection: query.connection,
+      }),
     }));
   }
 
@@ -1506,8 +1681,8 @@ export class Step extends ApiObject {
    * registered where its events come from (`webhook_url`), an app's event subscription (`subscription_status`), the
    * files in a filesystem step's volume (`file_browser`), an alarm's schedules (`active_alarms`), an MCP step's
    * hosted link (`hosted_url`). `settings` are laid over the step's saved ones. One that mints or registers something
-   * changes the account; a hosted MCP link's URL is its capability, so no MCP connection loads it. Takes edit access
-   * to the workflow.
+   * changes the account, and takes what changing the workflow takes; one that only reads (a list, an id from the
+   * step's account) takes read access. A hosted MCP link's URL is its capability, so no MCP connection loads it.
    */
   async value(field: string, options: { settings?: JsonObject } = {}): Promise<StepValue> {
     return toStepValue(await this._request("POST", `${await this._workflow._stepPath(this.id)}/values`, {
@@ -1558,7 +1733,8 @@ export class Step extends ApiObject {
  *
  * A secret is never read back, and writing a step or the settings back without one keeps it: `withheld` names, by
  * step id, the paths of the settings left out (`api_key`, `auth.password`, `headers[0].value`), `settingsWithheld`
- * those of the workflow's own settings (`variable_definitions[1].value`), and `variablesWithheld` the graph's own
+ * those of the workflow's own settings (`variable_definitions[1].value`: a variable's value, whatever its name; one
+ * with no value yet reads as blank, so you can tell which still need one), and `variablesWithheld` the graph's own
  * variables. The graph a `Conflict` carries holds the steps and edges alone: its `name`, `description`,
  * `settings` and `settingsWithheld` are `null`. `displayMetadata` is what the app shows of the workflow (its
  * canvas's viewport, the step open in its panel), read with `graph()`: never part of a version.
@@ -1576,6 +1752,10 @@ export class WorkflowGraph {
   readonly withheld: Record<string, string[]>;
   readonly variablesWithheld: string[];
   readonly displayMetadata: JsonObject | null;
+  /** What you may do with it, as the app's canvas judges it: `owner`, `editor` or `viewer` (null for a conflict's). */
+  readonly access: "owner" | "editor" | "viewer" | null;
+  /** The agent whose own flow it is (`yours`: your account's own agent), else null. */
+  readonly agent: { id: string; name: string; yours: boolean } | null;
   readonly raw: JsonObject;
 
   /**
@@ -1601,6 +1781,10 @@ export class WorkflowGraph {
     this.withheld = withheld;
     this.variablesWithheld = Array.isArray(raw.variables_withheld) ? raw.variables_withheld.map(String) : [];
     this.displayMetadata = own?.display_metadata && typeof own.display_metadata === "object" ? { ...asObject(own.display_metadata) } : null;
+    const access = own ? str(own.access) : null;
+    this.access = access === "owner" || access === "editor" || access === "viewer" ? access : null;
+    const agent = own?.agent && typeof own.agent === "object" ? asObject(own.agent) : null;
+    this.agent = agent ? { id: str(agent.id) ?? "", name: str(agent.name) ?? "", yours: agent.yours === true } : null;
     this.raw = raw;
   }
 
@@ -1796,8 +1980,9 @@ export interface WorkflowRunOptions extends CallOptions {
 /**
  * A workflow built in the NoClick app: its trigger, steps and outputs. Run it with
  * `run(inputs)`; `inputs` names what its trigger takes. `access` is your account's: `owner`,
- * `editor` or `viewer` (one shared with it); changing, building and running take owning it and
- * paying for it.
+ * `editor` or `viewer` (one shared with it); building, running, testing and publishing it take
+ * edit access, billed to whoever pays for it (a team workspace's owner; its app stays its owner's);
+ * pausing and deleting it take owning it and paying for it.
  *
  * It's also a handle to its graph: `graph()` reads its steps whole, each `Step` changes with one
  * call, and `edit()` sends several changes as one version, checked against the version you read
@@ -1840,14 +2025,19 @@ export class Workflow extends ApiObject {
     return await Workflow.fromId(workflowId, options).hydrate();
   }
 
-  /** The workflows your account can open (its own and those shared with it), most recently changed first; `q` is a prefix of the name. */
-  static async list(options: { q?: string; limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
-    return await listAll({ ...options, path: "/v1/workflows", user: null, query: { q: options.q } }, (raw) => new Workflow({ raw, client: options.client }));
+  /**
+   * The workflows your account can open (its own and those shared with it), most recently changed first; `q` is a
+   * prefix of the name, `search` text its name or description holds (in any case).
+   */
+  static async list(options: { q?: string; search?: string; limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
+    return await listAll({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+      (raw) => new Workflow({ raw, client: options.client }));
   }
 
   /** One page of workflows; pass `nextCursor` back as `cursor`. */
-  static async listPage(options: PageOptions & { q?: string; client?: NoClick } = {}): Promise<Page<Workflow>> {
-    return await listPage({ ...options, path: "/v1/workflows", user: null, query: { q: options.q } }, (raw) => new Workflow({ raw, client: options.client }));
+  static async listPage(options: PageOptions & { q?: string; search?: string; client?: NoClick } = {}): Promise<Page<Workflow>> {
+    return await listPage({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+      (raw) => new Workflow({ raw, client: options.client }));
   }
 
   get id(): string {
@@ -1925,14 +2115,14 @@ export class Workflow extends ApiObject {
   /**
    * A new workflow in your account. With `instructions` NoClick's builder starts building it:
    * wait on `latestBuild`. A name your account already has throws `Conflict` (change that one with
-   * `build`).
+   * `build`). `questions: "assume"`: the builder asks nothing, as `build()` takes it.
    */
   static async create(
     name: string,
-    options: { instructions?: string; description?: string; client?: NoClick } = {},
+    options: { instructions?: string; description?: string; questions?: BuildQuestions; client?: NoClick } = {},
   ): Promise<Workflow> {
     const raw = await resolveClient(options.client).request<JsonObject>("POST", "/v1/workflows", {
-      json: compact({ name, instructions: options.instructions, description: options.description }),
+      json: compact({ name, instructions: options.instructions, description: options.description, questions: options.questions }),
     });
     return new Workflow({ raw, client: options.client });
   }
@@ -1963,6 +2153,21 @@ export class Workflow extends ApiObject {
       json: compact({ name, description: options.description, parent_id: folderIdOf(options.parent ?? null) }),
       user: null,
     });
+    return toFolder(asObject(raw));
+  }
+
+  /**
+   * Delete one of your account's folders (a folder or its id), as the app does: the workflows in it move to its parent
+   * (the top, for one at the top) and the folders in it go with it, their workflows moving to the top. No workflow is
+   * deleted. Answers the folder as it was.
+   *
+   *     for (const folder of await Workflow.folders()) {
+   *       if (folder.workflowCount === 0) await Workflow.deleteFolder(folder);
+   *     }
+   */
+  static async deleteFolder(folder: WorkflowFolder | string, options: { client?: NoClick } = {}): Promise<WorkflowFolder> {
+    const raw = await resolveClient(options.client).request(
+      "DELETE", `/v1/workflows/folders/${encodeURIComponent(folderIdOf(folder) ?? "")}`, { user: null });
     return toFolder(asObject(raw));
   }
 
@@ -2073,6 +2278,20 @@ export class Workflow extends ApiObject {
   }
 
   /**
+   * Read its variables with their values, which `graph()` and every other read hold back (`settingsWithheld`,
+   * `variablesWithheld`): its `definitions` whole, the graph's own `variables`, and `values` by name.
+   *
+   * For the workflow's owner and the teammates who can edit it: signed in, or with one of their account's own secret
+   * keys that names the `workflows:variables` scope (a key with every scope, `*`, holds it only when it's named too)
+   * and acts for no user. Anyone else throws `PermissionDenied`: someone who only views the workflow, a user's
+   * session, an app's code, an agent or an MCP connection. Writing a variable stays its owner's. A step reads a
+   * variable as `{{vars.name}}` without this call.
+   */
+  async variables(): Promise<WorkflowVariables> {
+    return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
+  }
+
+  /**
    * A handle to one of its steps by id. Nothing is sent: an edit through it names the step by its id, and
    * `await step.hydrate()` loads its fields from the graph (a step that isn't there throws `NotFound` then).
    */
@@ -2091,7 +2310,7 @@ export class Workflow extends ApiObject {
       raw = await this._request("POST", `${path}/edits`, {
         json: compact({
           ops: sent, if_version: options.ifVersion, include_graph: options.includeGraph || undefined, source: options.source,
-          origin: options.origin,
+          origin: options.origin, settle: options.settle || undefined,
         }),
         keepalive: options.keepalive,
       });
@@ -2187,6 +2406,19 @@ export class Workflow extends ApiObject {
   }
 
   /**
+   * Wait, up to 30 seconds, for what earlier edits set going (their triggers' registrations, removed steps'
+   * teardowns), changing nothing, as an edit with `settle` waits for its own: `settled` says whether it finished in
+   * time, `unregistered` (by step) why each trigger left unregistered can't be yet, and with `includeGraph` the answer
+   * carries the workflow as that left it.
+   *
+   *     const settled = await brief.settle({ includeGraph: true });
+   *     console.log(settled.graph?.step("hook").settings.webhook_url);
+   */
+  async settle(options: { includeGraph?: boolean } = {}): Promise<WorkflowEdit> {
+    return await this._send([], { includeGraph: options.includeGraph, settle: true });
+  }
+
+  /**
    * Its versions, newest first, kept 90 days (a named one for good): the first `limit` (20 by default; `null` for
    * all), fetched page by page. `named: true` lists only the named ones, its checkpoints.
    */
@@ -2242,10 +2474,20 @@ export class Workflow extends ApiObject {
    * and `unpublish()` publish without a change). One build at a time: another in progress throws
    * `Conflict`. A change costs AI usage, as building in the app does. `wait()` resolves to the
    * `WorkflowBuildResult`; `nextQuestion()` resolves to anything it asks first.
+   *
+   * What the builder can't decide it asks the person whose build it is (you as the account's owner,
+   * or the user your key acts for): each input of its question is a human request NoClick sends
+   * them, which any client answers. `questions: "assume"` asks nothing: the builder decides, and its
+   * summary and the workflow's readiness say what it assumed and what's missing.
    */
-  async build(instructions?: string, options: { publish?: boolean | JsonObject } = {}): Promise<WorkflowBuild> {
+  async build(
+    instructions?: string,
+    options: { publish?: boolean | JsonObject; questions?: BuildQuestions } = {},
+  ): Promise<WorkflowBuild> {
     const publish = options.publish === true ? {} : options.publish || undefined;
-    const payload = await this._request("POST", `${await this.path()}/builds`, { json: compact({ instructions, publish }) });
+    const payload = await this._request("POST", `${await this.path()}/builds`, {
+      json: compact({ instructions, publish, questions: options.questions }),
+    });
     this.startedBuild = WorkflowBuild._from(payload, { client: this._client });
     return this.startedBuild;
   }
@@ -2355,12 +2597,25 @@ export class Workflow extends ApiObject {
   }
 
   /**
+   * The test runs the workflow offers, as its Test Run screen lists them, in the order `rehearse` finds them: for
+   * each trigger an agent comes after, the staged situations NoClick offers for it (under the names the workflow
+   * gave them, with its edits to their messages, less the ones it removed) and the runs it authored
+   * (`edit().addTestRun`). Each `key` and `name` names its run to `rehearse`. Empty for a workflow with no trigger
+   * a test can stage. Reading them costs nothing.
+   */
+  async testRuns(): Promise<WorkflowTestRun[]> {
+    const raw = asObject(await this._request("GET", `${await this.path()}/test_runs`));
+    return (Array.isArray(raw.data) ? raw.data : []).map(toTestRun);
+  }
+
+  /**
    * A test run of the workflow, as the app's Test Run plays one: a staged event arrives at one of its triggers and
    * the agents it reaches take a real turn (their models, instructions and tools) while a simulated world answers
    * every tool call, so nothing is sent, no account is touched and its connections needn't be connected yet (its
    * agents' model connections must be). The steps after an agent that would reach an account never run.
    *
-   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them: a staged
+   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them (`testRuns()`
+   * reads them): a staged
    * situation for one of its triggers, or one authored for it (`edit().addTestRun`). Or stage a message you type on
    * `trigger` (a trigger `Step`, its id or its type): `body`, with `title`, `author` and `handle`. `scenario` says
    * what the simulated world is like. One the workflow doesn't offer throws `NotFound` naming the ones it does.
@@ -2385,12 +2640,15 @@ export class Workflow extends ApiObject {
 
   /**
    * Recent runs, newest first, however they started. Outside `asUser` you read runs recorded for
-   * your account; `userFilter` reads your users'. The first `limit` (20 by default).
+   * your account; `userFilter` reads your users'. The first `limit` (20 by default). Narrowed by `status`, by how they
+   * started (`source`), by the kind of event that started them (`trigger`), to those that wait or don't (`waiting`),
+   * and by text in their error (`search`).
    */
-  async runs(options: ReadOptions & { status?: WorkflowRunStatus | readonly WorkflowRunStatus[]; limit?: number } = {}): Promise<WorkflowRun[]> {
+  async runs(options: WorkflowRunsOptions = {}): Promise<WorkflowRun[]> {
     const path = `${await this.path()}/runs`;
-    const { status, limit = 20, ...read } = options;
-    return await listAll({ ...read, client: read.client ?? this._client, path, query: { status: csv(status) }, limit }, (raw) => toWorkflowRun(raw));
+    const { status, source, trigger, waiting, search, limit = 20, ...read } = options;
+    const query = { status: csv(status), source: csv(source), trigger: csv(trigger), waiting, search: search || undefined };
+    return await listAll({ ...read, client: read.client ?? this._client, path, query, limit }, (raw) => toWorkflowRun(raw));
   }
 
   /**
@@ -2417,8 +2675,8 @@ export class Workflow extends ApiObject {
   }
 
   /**
-   * How many runs `runs()` lists: in all, `byStatus` and `bySource`. Outside `asUser` you count the runs recorded for
-   * your account; `userFilter` counts your users'.
+   * How many runs `runs()` lists: in all, `byStatus` (and how many of the running ones are `waiting`), `bySource` and
+   * `byTrigger`. Outside `asUser` you count the runs recorded for your account; `userFilter` counts your users'.
    */
   async runCounts(options: ReadOptions = {}): Promise<WorkflowRunCounts> {
     const { user, userId } = await readScope(options);

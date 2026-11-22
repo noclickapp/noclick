@@ -41,3 +41,24 @@ test("a message of your own is staged on a trigger step", async () => {
   assert.deepEqual(route.last.body, { trigger: "automation-gmail", body: "Hello?" });
   assert.equal(route.last.headers.get("NoClick-User"), USER_ID);
 });
+
+test("the test runs a workflow offers are listed", async () => {
+  const { api } = setup();
+  const offered = [
+    { object: "workflow_test_run", key: "sales-inbound-lead", name: "Big lead", custom: false,
+      trigger: { type: "automation-gmail", label: "Gmail", operation: "poll_for_new_emails" },
+      message: { title: "Pricing", body: "We need 40 seats.", author: "Priya" } },
+    { object: "workflow_test_run", key: "refund-request", name: "Refund request", custom: true,
+      trigger: { type: "automation-gmail", label: "Gmail", operation: null },
+      message: { title: "Refund for 1042", body: "I'd like a refund." } },
+  ];
+  const route = api.on("GET", "/v1/workflows/wf_1/test_runs", json({ object: "list", next_cursor: null, data: offered }));
+  const runs = await nc.Workflow.fromId("wf_1").testRuns();
+  assert.equal(route.calls.length, 1);
+  assert.deepEqual(runs.map((run) => [run.key, run.name, run.custom]),
+    [["sales-inbound-lead", "Big lead", false], ["refund-request", "Refund request", true]]);
+  assert.deepEqual(runs[0].trigger, { type: "automation-gmail", label: "Gmail", operation: "poll_for_new_emails" });
+  assert.equal(runs[1].trigger.operation, null);
+  assert.equal(runs[0].message.body, "We need 40 seats.");
+  assert.deepEqual(runs[1].raw, offered[1]);
+});
