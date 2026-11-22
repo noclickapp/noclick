@@ -1758,6 +1758,7 @@ pipedrive
 pipeless
 pipeline-crm
 pitchbox
+pixxi-crm
 placetel
 planable
 planday
