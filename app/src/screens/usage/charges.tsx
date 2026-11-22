@@ -15,7 +15,7 @@ import { SearchClearButton } from '@/ui/SearchClearButton';
 import { ROWS } from '@/ui/primitives';
 import { HUED, ShareBar, serviceColor, type Ink } from '@/screens/usage/charts';
 import { useSlot } from '@/slots';
-import { SERVICES, ZONE_LABEL, chargeQuery, dayKey, dayLabel, foldReadings, lineItem, money, planName, timeLabel, type ChargeFilter, type ConsumerKind, type LineItem, type ServiceId, type UsageView } from '@/screens/usage/derive';
+import { SERVICES, ZONE_LABEL, chargeQuery, dayKey, dayLabel, foldReadings, forLine, lineItem, money, planName, timeLabel, type ChargeFilter, type ConsumerKind, type LineItem, type ServiceId, type UsageView } from '@/screens/usage/derive';
 import { useUsageMotion } from '@/screens/usage/motion';
 import { Pills } from '@/screens/usage/parts';
 import { CHARGE_ASK, CHARGE_PRICE, CHARGE_RUN } from '@/screens/usage/slots';
@@ -184,6 +184,8 @@ export function ChargesTable({
                         service: SERVICES[i.service].label,
                         for: i.thing,
                         ran_by: i.runner ?? '',
+                        person: i.person ?? '',
+                        workstream: i.workstream ?? '',
                         quantity: r.quantity,
                         unit: r.unit_type,
                         amount_usd: i.usd.toFixed(6),
@@ -332,6 +334,7 @@ export function ChargesTable({
 
 function ChargeLine({ item: i, ink, columns, billed, onOpen }: { item: LineItem; ink: Ink; columns: string; billed: boolean; onOpen: () => void }) {
     const dot = ink === 'services' ? serviceColor(HUED.includes(i.service) ? i.service : 'rest', ink) : null;
+    const who = forLine(i);
     return (
         <div
             role="row"
@@ -354,7 +357,8 @@ function ChargeLine({ item: i, ink, columns, billed, onOpen }: { item: LineItem;
                 <span className="shrink-0 tabular-nums text-foreground">{money(i.usd)}</span>
             </div>
             <div className="mt-0.5 truncate text-[12px] text-muted-foreground @[640px]:hidden">
-                {timeLabel(i.at)} · {i.thing} · {i.quantity}
+                {timeLabel(i.at)} · {i.thing}
+                {who ? ` · ${who}` : ''} · {i.quantity}
                 {i.paidFrom ? ` · ${i.paidFrom}` : ''}
             </div>
             {/* Wide: one cell a column. */}
@@ -368,7 +372,7 @@ function ChargeLine({ item: i, ink, columns, billed, onOpen }: { item: LineItem;
             </span>
             <span role="cell" className="hidden min-w-0 truncate text-muted-foreground @[640px]:block">
                 {i.thing}
-                {i.runner && <span className="text-muted-foreground/70"> · {i.runner}</span>}
+                {who && <span className="text-muted-foreground/70"> · {who}</span>}
             </span>
             <span role="cell" className="hidden truncate text-right tabular-nums text-muted-foreground @[640px]:block">
                 {i.quantity}
@@ -460,6 +464,9 @@ function ChargeDrawer({ view, item, run, onClose, onOpenRun }: { view: UsageView
                 ),
             });
         if (i.runner) facts.push({ label: 'Ran by', value: `${i.runner}, billed to you as the workspace’s owner` });
+        // Who it was for, where the run doesn't already say.
+        if (i.person && i.person !== i.runner) facts.push({ label: 'Person', value: i.person });
+        if (i.workstream) facts.push({ label: 'Workstream', value: i.workstream });
         if (m.model) facts.push({ label: 'Model', value: <span className="font-mono text-[12.5px]">{m.model}</span> });
         if (m.prompt_tokens != null) facts.push({ label: 'Tokens', value: `${m.prompt_tokens.toLocaleString('en-US')} in · ${(m.completion_tokens ?? 0).toLocaleString('en-US')} out` });
         if (m.number) facts.push({ label: 'Number', value: `${m.number}${m.direction ? ` · ${m.direction === 'inbound' ? 'answered' : 'placed'}` : ''}` });

@@ -35,6 +35,25 @@ one autonomous key buys unasked while everything else still asks::
 
     noclick.ApprovalPolicy.set(ceilings={"purchase": {"disposition": "allow", "under_usd": 50}})
     noclick.ApprovalPolicy.set_for_key(key_id, {"purchase": {"disposition": "allow", "under_usd": 20}})
+
+An agent does too (``Agent.update(approvals=...)``), and a child it spawns follows it, only ever tighter::
+
+    noclick.Agent.from_name("buyer").update(approvals={"purchase": {"disposition": "allow", "under_usd": 20}})
+
+An agent gives your workflows' steps your account's own connections and secrets itself (``attach_connection``,
+allowed by default); switched to ``ask``, its edit waits for the owner's yes, and to ``deny``, it asks them which
+account to use::
+
+    noclick.ApprovalPolicy.set(settings={"attach_connection": "ask"})
+
+Who answers a held call is a setting too (``routing``): the owner by default, or a person by email, one of your users,
+one of your agents (a supervisor, woken once for every call waiting on it, approving only what it could do itself), or
+your own code; with how long they have and whether an unanswered call is declined or escalated to the next approver up
+(finally the owner)::
+
+    noclick.ApprovalPolicy.set(routing={"approver": {"agent_id": "supervisor"}, "on_timeout": "escalate",
+                                        "expires_in_s": 3600})
+    noclick.Agent.from_name("worker").update(approvals={"routing": {"approver": {"code": True}}})
 """
 
 from __future__ import annotations
@@ -55,12 +74,13 @@ STATUSES = ("pending", "approved", "declined", "expired", "used", "canceled")
 class HoldKind:
     """One kind of call NoClick may hold for a person: what it does by default, and what your account switched."""
 
-    #: Its name (``purchase``, ``delete``, ``raise_limit``, ...).
+    #: Its name (``purchase``, ``delete``, ``raise_limit``, ``attach_connection``, ...).
     kind: str
     #: What it covers, in a person's words.
     description: str
-    #: Who answers it: ``owner`` (the account's owner, from the link NoClick sends them) or ``connection_owner``
-    #: (whoever owns the connection the call runs on: its user, else the account's owner).
+    #: Who answers it by default: ``owner`` (the account's owner, from the link NoClick sends them, unless your
+    #: ``routing`` names another approver: ``ApprovalPolicy.approvers``) or ``connection_owner`` (whoever owns the
+    #: connection the call runs on: its user, else the account's owner).
     approver: str
     #: It applies only on a turn answering someone outside the agent's scope.
     outside_only: bool
@@ -70,47 +90,57 @@ class HoldKind:
     defaults: Dict[str, str]
     #: Whether your account may switch it (``ApprovalPolicy.set``).
     settable: bool = False
+    #: What it may be set to: most kinds ``allow``, ``ask`` or ``deny``; terms a person accepts and what an app's code
+    #: files in a person's name (``terms``, ``person_filing``) ``ask``, ``standing`` (runs with what it needs on file,
+    #: a registrant's acceptance or a number holder's profile, else refused with the step that files it, never held)
+    #: or ``deny``.
+    dispositions: List[str] = dc_field(default_factory=list)
     #: What your account set it to (``disposition``, ``under_usd``, ``until``, ``effective_at``, ``pending``), or None.
     setting: Optional[Dict[str, Any]] = None
     #: The loosest a narrower scope may set it to, or None.
     ceiling: Optional[Dict[str, Any]] = None
     #: What each caller meets now: a default, or ``allow``, ``ask``, ``deny`` or ``allow_under`` (a purchase at or
-    #: under the setting's ``under_usd`` runs) by your account's setting (or the key's or connected app's own, read
-    #: with ``get(key_id=...)``).
+    #: under the setting's ``under_usd`` runs) by your account's setting (or the key's, connected app's or agent's
+    #: own, read with ``get(key_id=...)`` or ``get(agent_id=...)``).
     effective: Dict[str, str] = dc_field(default_factory=dict)
-    #: Read for a key or connected app: what it sets for itself, or None.
+    #: Read for a key, connected app or agent: what it sets for itself, or None.
     own: Optional[Dict[str, Any]] = None
 
 
 @dataclass(frozen=True)
 class PolicyChange:
-    """One change to your account's approval switches (``ApprovalPolicy.set``), or a key's or connected app's own
-    (``set_for_key``, ``set_for_connected_app``)."""
+    """One change to your account's approval switches (``ApprovalPolicy.set``), a key's, connected app's or agent's own
+    (``set_for_key``, ``set_for_connected_app``, an agent's ``approvals``), or a connection's approval rule lifted
+    (``Connection.lift_approval``, or its owner's page in the app)."""
 
     id: str
     batch_id: str
-    #: The kind it changed, and whether its setting, its ceiling or (``auto_approve``) a connected app's auto-approve
-    #: amount.
+    #: The kind it changed, and whether its setting, its ceiling, (``auto_approve``) a connected app's auto-approve
+    #: amount or (``operations``, kind ``credential_rule``) a connection's approval rule.
     kind: str
     target: str
     before: Optional[Dict[str, Any]]
-    #: What it set (``disposition``, ``under_usd``, ``until``); None put NoClick's default back.
+    #: What it set (``disposition``, ``under_usd``, ``until``; a connection's rule, its ``operations``); None put
+    #: NoClick's default back.
     after: Optional[Dict[str, Any]]
     #: It lets a caller do more than before: a key's loosening waits out an undo window first.
     loosens: bool
-    #: ``owner`` (signed in), ``key`` (with ``key_id``) or ``assistant`` (NoClick's, once the owner approved a
-    #: loosening).
+    #: ``owner`` (signed in), ``key`` (with ``key_id``), or through NoClick's tools ``assistant`` (NoClick's),
+    #: ``agent`` or ``connection`` (a connected app): on the owner's word or approval, or a loosening the account
+    #: lets them make.
     changed_by: str
     key_id: Optional[str]
     effective_at: Any
     until: Any
-    #: It still waits out its undo window: ``ApprovalPolicy.undo`` takes it back.
+    #: It still waits out its undo window: ``ApprovalPolicy.undo`` takes it back. A lift of a connection's rule waiting
+    #: is taken back too by approval required for one of its operations again (``undone_by`` ``superseded``).
     pending: bool
     undone_at: Any
     undone_by: Optional[str]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
-    #: Whose settings it changed: ``account``, ``key`` or ``connected_app``, and that key's or connected app's id.
+    #: Whose settings it changed: ``account``, ``key``, ``connected_app``, ``agent`` or ``credential`` (a connection's
+    #: approval rule), and that key's, connected app's, agent's or connection's account's id.
     scope: str = "account"
     scope_id: Optional[str] = None
 
@@ -140,12 +170,20 @@ class ApprovalExplanation:
     why: Optional[str]
     setting: Optional[Dict[str, Any]]
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: Where it waits, who it goes to in turn (each ``approver``, ``expires_in_s``, ``on_timeout``, ``source``),
+    #: finally the owner; empty when it runs or is refused.
+    approvers: List[Dict[str, Any]] = dc_field(default_factory=list)
 
 
 def _wire_setting(value: Any) -> Any:
     if isinstance(value, dict):
         return {k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in value.items()}
     return value
+
+
+def settings_wire(settings: Dict[str, Any]) -> Dict[str, Any]:
+    """Approval settings by kind as the API takes them (an agent's ``approvals`` among them)."""
+    return {k: _wire_setting(v) for k, v in settings.items()}
 
 
 @dataclass(frozen=True)
@@ -184,17 +222,28 @@ class ApprovalPolicy:
     spend_cap_set: bool = False
     #: The changes the call that returned it made (``set``); empty from ``get``.
     changes: List[PolicyChange] = dc_field(default_factory=list)
+    #: Who your account names to answer what its callers hold (``approver``, ``on_timeout``, ``expires_in_s``,
+    #: ``effective_at``, ``pending``), or None: the owner.
+    routing: Optional[Dict[str, Any]] = None
+    #: Read for a key, connected app or agent: who it names to answer its own held calls, or None.
+    own_routing: Optional[Dict[str, Any]] = None
+    #: Who answers what each kind of caller holds, in turn, by caller: each ``approver`` (``kind`` ``owner``,
+    #: ``person``, ``user``, ``agent`` or ``code``), ``expires_in_s``, ``on_timeout`` and ``source``; the owner always
+    #: last.
+    approvers: Dict[str, List[Dict[str, Any]]] = dc_field(default_factory=dict)
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "ApprovalPolicy":
         return cls(
             kinds=[HoldKind(kind=k["kind"], description=k["description"], approver=k["approver"],
                             outside_only=bool(k.get("outside_only")), defaults=dict(k["defaults"]),
-                            settable=bool(k.get("settable")), setting=k.get("setting"), ceiling=k.get("ceiling"),
+                            settable=bool(k.get("settable")), dispositions=list(k.get("dispositions") or []),
+                            setting=k.get("setting"), ceiling=k.get("ceiling"),
                             effective=dict(k.get("effective") or k["defaults"]), own=k.get("own"))
                    for k in raw.get("kinds") or []],
             callers=dict(raw.get("callers") or {}), raw=raw, spend_cap_set=bool(raw.get("spend_cap_set")),
-            changes=[PolicyChange._from(c) for c in raw.get("changes") or []])
+            changes=[PolicyChange._from(c) for c in raw.get("changes") or []], routing=raw.get("routing"),
+            own_routing=raw.get("own_routing"), approvers=dict(raw.get("approvers") or {}))
 
     def _kind(self, kind: str) -> HoldKind:
         found = next((k for k in self.kinds if k.kind == kind), None)
@@ -240,12 +289,13 @@ class ApprovalPolicy:
     @synced
     @classmethod
     async def get(cls, *, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
-                  client: Optional[Client] = None) -> "ApprovalPolicy":
+                  agent_id: Optional[str] = None, client: Optional[Client] = None) -> "ApprovalPolicy":
         """What waits for a person: each kind of hold (a purchase, a deletion that can't be undone, a spending limit
         raised, a call whose terms a person accepts, ...), what it covers, who approves it, what it does by default
         for each kind of caller (a connected app, NoClick's assistant, an agent's tools, a key used through MCP,
-        code, an app's own code), and what your account switched. With ``key_id`` or ``connected_app_id``, also what
-        that key or connected app sets for itself (each kind's ``own``), which ``effective`` reads for its calls.
+        code, an app's own code), and what your account switched. With ``key_id``, ``connected_app_id`` or
+        ``agent_id``, also what that key, connected app or agent sets for itself (each kind's ``own``), which
+        ``effective`` reads for its calls (an agent's through its parent's, which it follows where it sets none).
 
         Returns:
             The policy: ``kinds``, each a ``HoldKind``, ``callers`` and ``spend_cap_set``.
@@ -258,22 +308,33 @@ class ApprovalPolicy:
                 print(kind.kind, kind.effective)
             mine = noclick.ApprovalPolicy.get(key_id=key_id)
             print(mine.effective("purchase", "key"))
+            buyer = noclick.ApprovalPolicy.get(agent_id=agent.id)
+            print(buyer.effective("purchase", "agent"))   # "allow_under" once it's allowed under an amount
         """
         return cls._from(await resolve_client(client).request(
-            "GET", "/v1/approvals/policy", params=compact(key_id=key_id, connected_app_id=connected_app_id),
-            user=None))
+            "GET", "/v1/approvals/policy",
+            params=compact(key_id=key_id, connected_app_id=connected_app_id, agent_id=agent_id), user=None))
 
     @synced
     @classmethod
     async def set(
         cls, *, settings: Optional[Dict[str, Any]] = None, ceilings: Optional[Dict[str, Any]] = None,
-        client: Optional[Client] = None,
+        routing: Any = UNSET, client: Optional[Client] = None,
     ) -> "ApprovalPolicy":
         """Switch what NoClick holds for a person, for your whole account, from the kinds a ``get`` lists as
-        ``settable``: each named kind to ``"allow"``, ``"ask"`` or ``"deny"``, a dict with ``disposition`` (and for a
-        purchase ``under_usd``, allowed at or under it, asked above; any kind may take ``until``, when it lapses back),
-        or None for NoClick's default. Kinds you don't name stay as they are. ``ceilings`` are the loosest a narrower
+        ``settable``: each named kind to ``"allow"``, ``"ask"`` or ``"deny"`` (``terms`` and ``person_filing`` take
+        ``"standing"`` in place of ``"allow"``: what's on file decides, never a person), a dict with ``disposition``
+        (and for a purchase ``under_usd``, allowed at or under it, asked above; any kind may take ``until``, when it
+        lapses back), or None for NoClick's default. Kinds you don't name stay as they are. ``ceilings`` are the loosest a narrower
         scope (a key, an agent) may set.
+
+        ``routing`` names who answers what your account's callers hold, in place of the owner: ``approver``
+        (``"owner"``, ``{"email": ...}``, ``{"user_id": ...}`` one of your users, ``{"agent_id": ...}`` one of your
+        agents by id or name, or ``{"code": True}`` your code with a key holding ``approvals:answer``),
+        ``on_timeout`` (``"decline"``, the default, or ``"escalate"`` to the next approver up, finally the owner) and
+        ``expires_in_s`` (how long the approver has: 60 seconds to 7 days, a day by default); None puts the owner
+        back. A key's, connected app's or agent's own (``approvals["routing"]``) comes first. Naming an approver other
+        than the owner is a loosening: from a key it waits the undo window.
 
         Signed in as the account's owner, or with one of its own secret keys naming the ``approvals:policy`` scope
         (``*`` holds it only when it's named too). A key's loosening takes effect after a 10-minute undo window, and
@@ -285,8 +346,8 @@ class ApprovalPolicy:
         Raises:
             noclick.PermissionDenied: the caller may not switch them, or loosening a purchase or a deletion past the
                 default while the account has no monthly spending cap (``reason`` ``spend_cap_required``).
-            noclick.InvalidRequest: a kind not settable yet, ``under_usd`` on anything but a purchase allowed, or a
-                setting looser than its ceiling.
+            noclick.InvalidRequest: a kind not settable yet, a disposition the kind doesn't take, ``under_usd`` on
+                anything but a purchase allowed, or a setting looser than its ceiling.
 
         Usage::
 
@@ -294,10 +355,16 @@ class ApprovalPolicy:
                 "purchase": {"disposition": "allow", "under_usd": 20},
                 "purge": "allow",
                 "outside_outbound": "allow",
+                # An app's code buys domains and numbers with the registrant and holder on file, unasked.
+                "terms": "standing",
+                "person_filing": "standing",
             })
+            noclick.ApprovalPolicy.set(routing={"approver": {"agent_id": "supervisor"}, "on_timeout": "escalate"})
         """
         body = compact(settings={k: _wire_setting(v) for k, v in settings.items()} if settings is not None else None,
                        ceilings={k: _wire_setting(v) for k, v in ceilings.items()} if ceilings is not None else None)
+        if routing is not UNSET:
+            body["routing"] = routing
         return cls._from(await resolve_client(client).request("PUT", "/v1/approvals/policy", json=body, user=None))
 
     @synced
@@ -305,10 +372,11 @@ class ApprovalPolicy:
     async def explain(
         cls, kind: str, caller: str, *, amount_usd: Optional[float] = None, quoted: bool = True,
         previewed: bool = True, key_id: Optional[str] = None, connected_app_id: Optional[str] = None,
-        client: Optional[Client] = None,
+        agent_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> ApprovalExplanation:
         """What a call of ``kind`` by ``caller`` would meet now, and why: the key's or connected app's own setting
-        (``key_id``, ``connected_app_id``: the call is its), your account's setting, what NoClick asks that caller
+        (``key_id``, ``connected_app_id``: the call is its), an agent's own or its parent's (``agent_id``, with
+        ``caller="agent"``: ``source`` ``agent`` or ``parent``), your account's setting, what NoClick asks that caller
         first, or the default. Nothing runs and nothing is held.
 
         Returns:
@@ -321,9 +389,10 @@ class ApprovalPolicy:
         """
         raw = await resolve_client(client).request("POST", "/v1/approvals/policy/explain", json=compact(
             kind=kind, caller=caller, amount_usd=amount_usd, quoted=quoted, previewed=previewed, key_id=key_id,
-            connected_app_id=connected_app_id), user=None)
+            connected_app_id=connected_app_id, agent_id=agent_id), user=None)
         return ApprovalExplanation(kind=raw["kind"], caller=raw["caller"], disposition=raw["disposition"],
-                                   source=raw["source"], why=raw.get("why"), setting=raw.get("setting"), raw=raw)
+                                   source=raw["source"], why=raw.get("why"), setting=raw.get("setting"), raw=raw,
+                                   approvers=list(raw.get("approvers") or []))
 
     @synced
     @classmethod
@@ -371,7 +440,8 @@ class ApprovalPolicy:
                           client: Optional[Client] = None) -> OwnApprovals:
         """Switch what one of your secret keys waits for, in place of the account's, for the calls it makes through
         MCP and the code it runs: each named kind to ``"allow"``, ``"ask"`` or ``"deny"``, a dict as ``set`` takes,
-        or None for the account's. Never looser than the account's ceiling for the kind (else its own setting, else
+        or None for the account's; and ``"routing"``, who answers its held calls first, as ``set``'s ``routing``.
+        Never looser than the account's ceiling for the kind (else its own setting, else
         NoClick's default for a key): raise the ceiling with ``set(ceilings=...)`` first. Lowering the ceiling later
         tightens every key at once. A purchase or a deletion past the default needs a monthly cap on the account.
 
@@ -467,18 +537,31 @@ class Approval(_Object):
         "consent", doc="Terms a person accepts by approving it (each ``terms``, ``title``, ``url``): only the owner "
         "approves such a call.",
     )
-    sent_to: List[str] = field("sent_to", doc="Where NoClick sent the owner its link: ``whatsapp``, ``imessage``, "
-                               "``email``, or ``web`` (a card in the chat they were watching); empty when it reached "
-                               "nobody and waits for your code.")
+    sent_to: List[str] = field("sent_to", doc="Where NoClick sent its link: ``whatsapp``, ``imessage``, ``email``, or "
+                               "``web`` (a card in the chat the owner was watching); empty when it reached nobody "
+                               "and waits for your code, or an agent named approver.")
+    approver: Dict[str, Any] = field(
+        "approver", doc="Who it waits on: ``kind`` ``owner``, ``person`` (with ``email``), ``user`` (``user_id``), "
+        "``agent`` (``agent_id``) or ``code``, as your ``routing`` named them (the owner unless one names another).",
+    )
+    on_timeout: Optional[str] = field(
+        "on_timeout", doc="What happens if they don't answer by ``expires_at``: ``decline`` or ``escalate`` (to the "
+        "next approver up, finally the owner).",
+    )
     created_at: Any = field("created_at", parse_time)
-    expires_at: Any = field("expires_at", parse_time, doc="When it lapses unanswered (a day after it was held).")
+    expires_at: Any = field("expires_at", parse_time, doc="When the approver it waits on must answer by (a day "
+                            "after it reached them, unless your ``routing`` says otherwise).")
     decided_at: Any = field("decided_at", parse_time)
     decided_by: Optional[str] = field(
-        "decided_by", doc="Who decided: ``owner`` (signed in, or from NoClick's link) or ``code``; None while "
-        "pending.",
+        "decided_by", doc="Who decided: ``owner`` (signed in, or from NoClick's link), ``person`` (a person or user "
+        "named approver, from the link NoClick emailed them), ``agent`` (an agent named approver) or ``code``; None "
+        "while pending.",
     )
     decided_by_key: Optional[Dict[str, Any]] = field(
         "decided_by_key", doc="The key whose code decided (``key_id``, ``key_name``); None otherwise.",
+    )
+    decided_by_agent: Optional[Dict[str, Any]] = field(
+        "decided_by_agent", doc="The agent named approver that decided (``agent_id``, ``name``); None otherwise.",
     )
     note: Optional[str] = field("note", doc="What whoever decided wrote with it.")
 

@@ -32,6 +32,7 @@ from ._object import (
 )
 from ._scope import AMBIENT, resolve_scope, user_ref
 from ._sync import synced
+from .approval import PolicyChange
 from .exceptions import Conflict, Error, InvalidRequest, NotFound, OperationCanceled, OperationExpired, OperationTimeout
 from .database import Database
 from .operation import _LONG_POLL_S, Operation, OperationSummary, _with_kinds, register_result
@@ -403,11 +404,14 @@ class Connection(_Object):
     approval_operations: List[str] = field(
         "approval_operations",
         doc="Operations its owner approves call by call wherever it runs (``*``: all of them); "
-        "``require_approval`` adds to them.",
+        "``require_approval`` adds to them and ``lift_approval`` lifts them.",
     )
     account: Optional[str] = field("account", doc=(
         "The account it reaches, as the app's Connections list names it: its login, else its email, else who a "
         "check verified it as, else the number it links; ``None`` when none is known."))
+    credential_id: Optional[str] = field("credential_id", doc=(
+        "The id of the account it holds, as a workflow step's ``connections`` names it, so a step's account is "
+        "matched to its connection; ``None`` while none is connected."))
     test_account: bool = field(
         "test_account", bool, doc="Whether it's a test account, which an app's preview writes through as well as reads.",
     )
@@ -1263,8 +1267,8 @@ class Connection(_Object):
     async def require_approval(self, *operations: str) -> "Connection":
         """From now on its owner approves each call of these operations, wherever
         it runs: your code, agents, and the app's workflows. ``"*"`` means every
-        operation. It only ever adds to ``approval_operations``; lifting one is
-        done in the app. On one shared with your account, ``noclick.PermissionDenied``.
+        operation. It only ever adds to ``approval_operations`` (``lift_approval``
+        lifts). On one shared with your account, ``noclick.PermissionDenied``.
 
         Returns:
             The connection, with its ``approval_operations``.
@@ -1277,6 +1281,39 @@ class Connection(_Object):
         """
         self._raw = await self._act("POST", "/require_approval", json={"operations": list(operations)}) or {}
         return self
+
+    @synced
+    async def lift_approval(self, *operations: str) -> List[PolicyChange]:
+        """Let calls of these operations run without its owner's OK again: each named as
+        ``approval_operations`` names it, or none to lift every one (``"*"`` lifts the rule for
+        every operation, leaving any named on their own). Signed in as your account's owner it
+        applies at once, and so it does from your agent (NoClick's assistant, or any agent of yours)
+        on a turn your own message started, recorded as yours. One a model makes on its own (a turn
+        no message of yours started, a connected app, a key used through MCP) waits for your approval.
+        From a key it needs one naming the ``approvals:policy`` scope (a key with every scope, ``*``,
+        holds it only when it's named too) and ``credentials:use``, and it waits a 10-minute undo
+        window, in which ``noclick.ApprovalPolicy.undo(change.id)`` takes it back; the owner is told.
+        Requiring approval for one of them again meanwhile takes it back too.
+
+        Returns:
+            The change it made: ``pending`` while it waits, ``effective_at`` when it takes effect.
+            The connection's ``approval_operations`` read as they stand.
+
+        Raises:
+            noclick.PermissionDenied: a key without ``approvals:policy``, a call acting for one of
+                your users, an app's code, or one shared with your account.
+            noclick.InvalidRequest: an operation it asks no approval for.
+            noclick.Conflict: it asks no approval at all, or a lift of the same operation already waits.
+
+        Usage::
+
+            gmail = noclick.Connection.from_name("gmail")
+            [change] = gmail.lift_approval("send_email_message")
+            print(change.pending, change.effective_at)   # True 2026-11-22 09:10:00+00:00
+        """
+        params = {"operations": ",".join(operations)} if operations else None
+        self._raw = await self._act("DELETE", "/require_approval", params=params) or {}
+        return [PolicyChange._from(change) for change in self._raw.get("approval_changes") or []]
 
     @synced
     async def rename(self, name: str) -> "Connection":

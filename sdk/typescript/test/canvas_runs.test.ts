@@ -27,23 +27,47 @@ test("stopRun() answers the run as it stands, as the caller's user inside asUser
   assert.equal(route.last.headers.get("NoClick-User"), USER_ID);
 });
 
+test("runs() narrows by how a run started, what started it, whether it waits and its error's text", async () => {
+  const { api } = setup();
+  const waits = { ...RUN, id: "run_2", status: "running", error: null, source: "trigger", trigger: "email", waiting_on: "approval", steps: [] };
+  const page = { object: "list", data: [waits], next_cursor: null };
+  const route = api.on("GET", "/v1/workflows/wf_1/runs", json(page), json({ object: "list", data: [RUN], next_cursor: null }));
+  const [run] = await nc.Workflow.fromId("wf_1").runs({
+    status: "running", source: ["trigger", "schedule"], trigger: "email", waiting: true, search: "refused", limit: 5,
+  });
+  assert.deepEqual(
+    ["status", "source", "trigger", "waiting", "search", "limit"].map((name) => route.last.query.get(name)),
+    ["running", "trigger,schedule", "email", "true", "refused", "5"]);
+  assert.deepEqual([run.status, run.waitingOn, run.source, run.trigger], ["running", "approval", "trigger", "email"]);
+  // A run from code names no trigger and, once it ended, waits on nothing; nothing asked narrows nothing.
+  const [ended] = await nc.Workflow.fromId("wf_1").runs({ waiting: false });
+  assert.deepEqual([ended.waitingOn, ended.trigger, route.last.query.get("waiting")], [null, null, "false"]);
+  assert.deepEqual(["source", "trigger", "search"].map((name) => route.last.query.get(name)), [null, null, null]);
+});
+
 test("runCounts() reads every status and takes a userFilter", async () => {
   const { api } = setup();
-  const body = { object: "run_counts", workflow_id: "wf_1", total: 3, by_status: { succeeded: 2, failed: 1 }, by_source: { api: 2, schedule: 1 } };
+  const body = {
+    object: "run_counts", workflow_id: "wf_1", total: 3, by_status: { succeeded: 2, failed: 1 }, waiting: 1,
+    by_source: { api: 2, schedule: 1 }, by_trigger: { email: 1 },
+  };
   const route = api.on("GET", "/v1/workflows/wf_1/runs/counts", json(body), json(body));
   const counts = await nc.Workflow.fromId("wf_1").runCounts();
   assert.deepEqual([counts.total, counts.byStatus, counts.bySource], [3, { running: 0, succeeded: 2, failed: 1 }, { api: 2, schedule: 1 }]);
+  assert.deepEqual([counts.waiting, counts.byTrigger], [1, { email: 1 }]);
   assert.equal(route.last.query.get("user_id"), null);
   await nc.Workflow.fromId("wf_1").runCounts({ userFilter: nc.ALL_USERS });
   assert.equal(route.last.query.get("user_id"), "all");
   assert.equal(route.last.headers.get("NoClick-User"), null);
 });
 
-test("latestOutputs() names what each step left out", async () => {
+test("latestOutputs() names what each step left out, and how each step's last run ended", async () => {
   const { api } = setup();
   const body = {
     object: "step_outputs", workflow_id: "wf_1", outputs: { hook: { order_id: "o_9" } },
     withheld: { hook: ["_webhook.headers.Authorization"] }, full: true, truncated: [],
+    last_runs: { hook: { status: "succeeded", finished_at: "2026-11-21T10:00:04+00:00", error: null },
+      note: { status: "failed", finished_at: null, error: "the shop answered 500" } },
   };
   const route = api.on("GET", "/v1/workflows/wf_1/outputs", json(body), json(body));
   const intake = nc.Workflow.fromId("wf_1");
@@ -51,6 +75,10 @@ test("latestOutputs() names what each step left out", async () => {
   assert.deepEqual([route.last.query.get("steps"), route.last.query.get("full")], ["hook,note", "true"]);
   assert.deepEqual([latest.outputs, latest.withheld, latest.full, latest.truncated],
     [{ hook: { order_id: "o_9" } }, { hook: ["_webhook.headers.Authorization"] }, true, []]);
+  assert.deepEqual(latest.lastRuns, {
+    hook: { status: "succeeded", finishedAt: new Date("2026-11-21T10:00:04Z"), error: null },
+    note: { status: "failed", finishedAt: null, error: "the shop answered 500" },
+  });
   await intake.latestOutputs();
   assert.deepEqual([...route.last.query.keys()], []);
 });

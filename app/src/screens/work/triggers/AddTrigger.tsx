@@ -23,6 +23,7 @@ import { describeEvent, KindIcon, type TriggerActions } from './data';
 import { eventLabel, longWhen, PLATFORM_EVENTS, readSchedule, sentenceOf, type Names, type TriggerItem, type TriggerKind } from './model';
 import { FIELD, INPUT, LABEL, NOTE, PILL, PILL_OFF, Pills, ScheduleField, ThenField, localZone } from './parts';
 import { openTabForLater } from '@/lib/oauthPopup';
+import { refFor } from '@/lib/agentTools';
 
 export type AddKind = 'cron' | 'event' | 'email' | 'channel' | 'call' | 'webhook' | 'platform';
 
@@ -89,10 +90,10 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
     const connections = useAppConnections();
     const apps = useEventApps();
     const [draft, setDraft] = useState<Draft>(() => ({ ...empty(), kind: seed.kind, words: seed.words ?? '', integration: seed.integration, event: seed.event }));
-    // A stopped one's replacement names its connection: its app is read from it.
+    // A stopped one's replacement names its connection by its ref: its app is read from it.
     useEffect(() => {
         if (!seed.connection || draft.integration) return;
-        const known = [...connections.values()].find((c) => c.name === seed.connection);
+        const known = [...connections.values()].find((c) => refFor(c) === seed.connection);
         if (known) setDraft((d) => ({ ...d, integration: known.integration }));
     }, [seed.connection, connections, draft.integration]);
     const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
@@ -142,7 +143,7 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
               spec: {
                   cron: readSchedule(draft.words)?.expr ?? '',
                   tz: draft.tz,
-                  connection: connection?.name ?? '',
+                  connection: connection ? refFor(connection) : '',
                   event: draft.event ?? '',
                   filters: Object.fromEntries(Object.entries(draft.filters).filter(([, v]) => v.trim())),
                   senders: draft.senders,
@@ -189,7 +190,8 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
                     break;
                 }
                 case 'event': {
-                    const id = await actions.add(new OnEvent(connection!.name, draft.event!, { filters: preview!.spec.filters as JsonObject, message }));
+                    // By its ref: an account connected in the app goes by `credential:<id>`, never its name.
+                    const id = await actions.add(new OnEvent(refFor(connection!), draft.event!, { filters: preview!.spec.filters as JsonObject, message }));
                     if (id) done(id, () => me.removeTrigger(id));
                     break;
                 }
