@@ -1111,6 +1111,7 @@ easypromos
 ebi
 echtpost
 eduzz
+egestor
 egnyte
 elai
 elastic-email
