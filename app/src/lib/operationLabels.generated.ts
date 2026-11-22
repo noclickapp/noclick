@@ -1979,6 +1979,7 @@ smily
 smokeball
 smol-machines
 smoove
+sms77
 smsapi
 smsglobal
 smtp2go
