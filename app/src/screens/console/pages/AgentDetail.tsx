@@ -42,6 +42,7 @@ import {
     harnessSummary,
     inputClass,
     keepsModelConnection,
+    modelIntegrationNames,
     modelUsageText,
     parseBudget,
     personLabel,
@@ -1541,6 +1542,10 @@ const MAX_BATCH = 25;
 function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: (t: AgentTrigger) => void; onClose: () => void }) {
     const { client } = useConsole();
     const connections = useScopeConnections(agent.userId);
+    const catalog = useIntegrations();
+    // A model provider's connection has no app events, so the API refuses a trigger on one: the catalog says which they are.
+    const models = modelIntegrationNames(catalog.data);
+    const hearing = connections.data && models ? connections.data.filter((c) => !models.has(c.integration)) : undefined;
     const [kind, setKind] = useState<TriggerKindChoice>('cron');
     const [cron, setCron] = useState('0 8 * * 1-5');
     const [tz, setTz] = useState('UTC');
@@ -1556,7 +1561,7 @@ function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: 
     const queues = useV1(kind === 'queue' ? `queues?scope=${agent.userId ?? NO_USER}` : null, () => Queue.list({ client, userFilter: agent.userId ?? NO_USER }));
     // The picked connection's app events, from its integration's catalog. It's held by the ref a trigger names it by:
     // an account connected in the app by `credential:<id>`, never its name.
-    const picked = (connections.data ?? []).find((c) => refFor(c) === connection);
+    const picked = (hearing ?? []).find((c) => refFor(c) === connection);
     const events = useV1(kind === 'event' && picked?.integration ? `integrations/${picked.integration}/events` : null, () => picked!.events());
     const eventInfo = events.data?.find((e) => e.name === event.trim());
     // NoClick's own events, from the catalog, the ones it sends today.
@@ -1655,8 +1660,16 @@ function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: 
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <FormField label="Connection">
                                 <select value={connection} onChange={(e) => setConnection(e.target.value)} className={inputClass}>
-                                    <option value="">{connections.data ? (connections.data.length ? 'Pick one' : 'No connections in its scope') : 'Loading…'}</option>
-                                    {(connections.data ?? []).map((c) => (
+                                    <option value="">
+                                        {hearing
+                                            ? hearing.length
+                                                ? 'Pick one'
+                                                : 'No app connections in its scope'
+                                            : connections.error !== undefined || catalog.error !== undefined
+                                              ? "Couldn't load the connections"
+                                              : 'Loading…'}
+                                    </option>
+                                    {(hearing ?? []).map((c) => (
                                         <option key={c.id} value={refFor(c)}>
                                             {c.name}
                                         </option>
