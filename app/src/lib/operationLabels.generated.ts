@@ -1028,6 +1028,7 @@ devin
 devto
 dex
 dialpad
+diffchecker
 digicert
 digistore24
 digitalocean
