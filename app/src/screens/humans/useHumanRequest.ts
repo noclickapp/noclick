@@ -17,6 +17,40 @@ export interface OwnerPick {
     arguments: Record<string, unknown>;
 }
 
+/** A workflow step a question fills in. */
+export interface QuestionStep {
+    workflow_id: string;
+    workflow_name?: string | null;
+    step_id: string;
+    step_name?: string | null;
+}
+
+/** One of the account's connections a connect question's step could take. */
+export interface StepChoice {
+    ref: string;
+    name: string;
+    account?: string | null;
+    integration?: string | null;
+    credential_type?: string | null;
+}
+
+/** Which of the account's connections a workflow step uses: `choices` as the signed-in owner reads them. */
+export interface ConnectQuestion {
+    integration: string;
+    label: string;
+    credential_types: string[];
+    slot?: string | null;
+    step: QuestionStep;
+    choices?: StepChoice[];
+}
+
+/** The values of a secret, kept as the account's secret and, with `step`, given to an agent step's shell. */
+export interface SecretQuestion {
+    name: string;
+    keys: string[];
+    step?: QuestionStep | null;
+}
+
 /** The request as `/v1/humans/requests/{id}` answers it (the fields the card reads). */
 export interface OwnerQuestion {
     id: string;
@@ -24,20 +58,37 @@ export interface OwnerQuestion {
     message: string;
     options: string[] | null;
     pick?: OwnerPick | null;
-    /** An approval's answer carries `approved`. */
-    answer: { choice?: string | null; value?: string | null; text?: string | null; approved?: boolean | null } | null;
+    multiple?: boolean;
+    connect?: ConnectQuestion | null;
+    secret?: SecretQuestion | null;
+    /** Its page: the owner's own link, for the signed-in owner. */
+    url?: string | null;
+    /** An approval's answer carries `approved`; a connect question's `connection` and `account`; a secret's `secret`. */
+    answer: {
+        choice?: string | null;
+        choices?: string[] | null;
+        value?: string | null;
+        text?: string | null;
+        approved?: boolean | null;
+        connection?: string | null;
+        account?: string | null;
+        secret?: string | null;
+    } | null;
     /** `account`: the account held only one, so it answered and nobody was asked. */
     answered_by?: string | null;
     expires_at: string | null;
     owner_can_answer?: boolean;
 }
 
-/** A question's answer (`choice` or `text`), or an approval's (`approved`, with an optional `note`). */
+/** A question's answer (`choice` or `text`), an approval's (`approved`, with an optional `note`), a connect
+ *  question's (`connection`: a connection's ref) or a secret's (`secret_values`, never shown again). */
 export interface OwnerAnswer {
     choice?: string;
     text?: string;
     approved?: boolean;
     note?: string | null;
+    connection?: string;
+    secret_values?: Record<string, string>;
 }
 
 function messageOf(error: unknown): string {
