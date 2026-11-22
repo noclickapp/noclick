@@ -1416,6 +1416,7 @@ jackrabbit-class
 jaicob
 jev
 jigsawstack
+jina-reader
 jinko
 jira
 jira-service-management-alert-ca
