@@ -4,6 +4,8 @@ reads the answer, against the mocked transport."""
 
 import json
 
+import httpx
+
 import noclick as nc
 from platform_helpers import USER_ID
 
@@ -27,30 +29,55 @@ def test_stopping_a_run_answers_it_as_it_stands(api, client):
     assert route.calls.last.request.headers["NoClick-User"] == USER_ID
 
 
+def test_runs_narrow_by_how_a_run_started_what_started_it_whether_it_waits_and_its_errors_text(api, client):
+    waits = {**RUN, "id": "run_2", "status": "running", "error": None, "source": "trigger", "trigger": "email",
+             "waiting_on": "approval", "steps": []}
+    route = api.get("/v1/workflows/wf_1/runs").mock(side_effect=[
+        httpx.Response(200, json={"object": "list", "data": [waits], "next_cursor": None}),
+        httpx.Response(200, json={"object": "list", "data": [RUN], "next_cursor": None})])
+    [run] = nc.Workflow.from_id("wf_1").runs(status="running", source=["trigger", "schedule"], trigger="email",
+                                             waiting=True, search="refused", limit=5)
+    sent = route.calls.last.request.url.params
+    assert [sent[name] for name in ("status", "source", "trigger", "waiting", "search")] == [
+        "running", "trigger,schedule", "email", "true", "refused"]
+    assert (run.status, run.waiting_on, run.source, run.trigger) == ("running", "approval", "trigger", "email")
+    # A run from code names no trigger and, once it ended, waits on nothing; nothing asked narrows nothing.
+    [ended] = nc.Workflow.from_id("wf_1").runs(waiting=False)
+    sent = route.calls.last.request.url.params
+    assert (ended.waiting_on, ended.trigger, sent["waiting"]) == (None, None, "false")
+    assert not {"source", "trigger", "search", "status"} & set(sent.keys())
+
+
 def test_run_counts_read_every_status_and_take_a_user_filter(api, client):
     route = api.get("/v1/workflows/wf_1/runs/counts").respond(json={
         "object": "run_counts", "workflow_id": "wf_1", "total": 3, "by_status": {"succeeded": 2, "failed": 1},
-        "by_source": {"api": 2, "schedule": 1}})
+        "waiting": 1, "by_source": {"api": 2, "schedule": 1}, "by_trigger": {"email": 1}})
     counts = nc.Workflow.from_id("wf_1").run_counts()
     assert isinstance(counts, nc.WorkflowRunCounts)
     assert (counts.total, counts.by_status, counts.by_source) == (
         3, {"running": 0, "succeeded": 2, "failed": 1}, {"api": 2, "schedule": 1})
+    assert (counts.waiting, counts.by_trigger) == (1, {"email": 1})
     assert "user_id" not in route.calls.last.request.url.params
     nc.Workflow.from_id("wf_1").run_counts(user_filter=nc.ALL_USERS)
     request = route.calls.last.request
     assert request.url.params["user_id"] == "all" and "NoClick-User" not in request.headers
 
 
-def test_latest_outputs_name_what_they_left_out(api, client):
+def test_latest_outputs_name_what_they_left_out_and_how_each_steps_last_run_ended(api, client):
     route = api.get("/v1/workflows/wf_1/outputs").respond(json={
         "object": "step_outputs", "workflow_id": "wf_1", "outputs": {"hook": {"order_id": "o_9"}},
-        "withheld": {"hook": ["_webhook.headers.Authorization"]}, "full": True, "truncated": []})
+        "withheld": {"hook": ["_webhook.headers.Authorization"]}, "full": True, "truncated": [],
+        "last_runs": {"hook": {"status": "succeeded", "finished_at": "2026-11-21T10:00:04+00:00", "error": None},
+                      "note": {"status": "failed", "finished_at": None, "error": "the shop answered 500"}}})
     intake = nc.Workflow.from_id("wf_1")
     latest = intake.latest_outputs(steps=[intake.step("hook"), "note"], full=True)
     params = route.calls.last.request.url.params
     assert (params["steps"], params["full"]) == ("hook,note", "true")
     assert (latest.outputs, latest.withheld, latest.full, latest.truncated) == (
         {"hook": {"order_id": "o_9"}}, {"hook": ["_webhook.headers.Authorization"]}, True, [])
+    assert latest.last_runs["note"] == nc.StepLastRun("failed", None, "the shop answered 500")
+    hook = latest.last_runs["hook"]
+    assert (hook.status, hook.finished_at.isoformat(), hook.error) == ("succeeded", "2026-11-21T10:00:04+00:00", None)
     intake.latest_outputs()
     assert dict(route.calls.last.request.url.params) == {}
 
