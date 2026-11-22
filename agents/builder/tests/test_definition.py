@@ -65,6 +65,15 @@ def test_the_instructions_name_only_calls_the_builder_can_make():
         assert tool in text
 
 
+def test_a_test_run_is_of_one_step_alone():
+    """A run from a step goes on through every step after it unless it's asked for alone: the builder tests a step
+    with ``only``, so reading what a fetch returned never sends the email after it."""
+    text = definition.instructions()
+    assert "`workflows_runs_create {workflow_id, from_step, only: true}`" in text
+    assert "Always pass `only: true` to test a step" in text
+    assert "Never run a step that sends, writes, pays or deletes unless the request asks for a real test" in text
+
+
 def test_a_build_goes_back_for_what_a_run_would_refuse_twice_and_for_nothing_built_once():
     issue = [{"step": "send", "message": "to: field required"}]
     assert definition.send_back(built=True, empty=False, rejected=issue, sent=[]) == definition.REJECTED

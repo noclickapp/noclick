@@ -1456,6 +1456,43 @@ class WorkflowGraph:
         return named[0]
 
 
+@dataclass(frozen=True)
+class WorkflowVariables:
+    """A workflow's variables with their values, which no other read of it carries, as they
+    were at ``version``: ``definitions`` are its variables as its settings hold them, in
+    their order (each ``{name, value, description, per_user}``; ``per_user``: asked of each
+    new owner when the workflow is copied, and read here like any other), and ``variables``
+    the graph's own by name, as
+    its Set variable steps last wrote them. ``values`` is what ``{{vars.name}}`` reads: the
+    two together, the graph's own winning."""
+
+    workflow_id: str
+    version: Optional[int]
+    definitions: List[Dict[str, Any]]
+    variables: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowVariables":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("version"),
+                   [dict(d) for d in raw.get("definitions") or [] if isinstance(d, dict)],
+                   dict(raw.get("variables") or {}), raw)
+
+    @property
+    def values(self) -> Dict[str, Any]:
+        """Each variable's value by name: a definition's when it has one, the graph's own
+        over it."""
+        defined = {d["name"]: d["value"] for d in self.definitions
+                   if d.get("name") and d.get("value") not in (None, "")}
+        return {**defined, **self.variables}
+
+    def __repr__(self) -> str:
+        # Never the values: a repr lands in logs.
+        names = sorted({*(d.get("name") for d in self.definitions if d.get("name")), *self.variables})
+        return f"WorkflowVariables(workflow_id={self.workflow_id!r}, version={self.version!r}, names={names!r})"
+
+
 def _definition(raw: Mapping[str, Any], workflow: "Workflow") -> Optional[WorkflowGraph]:
     """The definition an answer carries beside its graph (``GET .../graph``, an edit with ``include_graph``, one
     version), or None when it carries none."""
@@ -2270,6 +2307,32 @@ class Workflow(_Object):
             print(graph.edges, graph.version)
         """
         return await self._read_graph()
+
+    @synced
+    async def variables(self) -> WorkflowVariables:
+        """Read its variables with their values, which ``graph()`` and every other read hold
+        back (``settings_withheld``, ``variables_withheld``).
+
+        For the workflow's owner and the teammates who can edit it: signed in, or with one
+        of their account's own secret keys that names the ``workflows:variables`` scope (a
+        key with every scope, ``*``, holds it only when it's named too) and acts for no
+        user. Anyone else raises ``noclick.PermissionDenied``: someone who only views the
+        workflow, a user's session, an app's code, an agent or an MCP connection. Writing a
+        variable stays its owner's. A step reads a variable as ``{{vars.name}}`` without
+        this call.
+
+        Returns:
+            The ``WorkflowVariables``: its ``definitions`` whole, the graph's own
+            ``variables``, and ``values`` by name.
+
+        Usage::
+
+            owner = noclick.Client(api_key="nk_live_...")   # a key that names workflows:variables
+            brief = noclick.Workflow.from_name("Morning brief", client=owner)
+            for name, value in brief.variables().values.items():
+                print(name, "is set" if value else "is empty")
+        """
+        return WorkflowVariables._from(await self._request("GET", f"{await self._path()}/variables"))
 
     def step(self, step_id: str) -> Step:
         """A handle to one of its steps by id. Nothing is sent: an edit through it names the
