@@ -75,12 +75,14 @@ export interface RunsFetchOptions {
     started?: () => { run: Json } | { error: Json };
     /** One run as it reads now (a run of RUNS with its steps by default). */
     oneRun?: (runId: string) => Json | null;
+    /** How the graph fixtures answer the rest: the workflow as the server holds it, its version and each edit. */
+    graph?: Pick<Parameters<typeof graphFetch>[0], 'server' | 'version' | 'edit'>;
 }
 
 /** The platform API's answers for the canvas's runs and results, the graph fixtures answering the rest. Acting as one
  *  of the account's keys (`key`), what the API refuses a key is refused here too. */
 export function runsFetch(options: RunsFetchOptions = {}): typeof fetch {
-    const graph = graphFetch({ actsAs: options.actsAs, observe: options.observe });
+    const graph = graphFetch({ ...options.graph, actsAs: options.actsAs, observe: options.observe });
     const runs = options.runs ?? (() => RUNS);
     const pageSize = options.pageSize ?? 2;
     const started = options.started ?? (() => ({ run: run('run_new', 'succeeded', 'api', AT, '2026-10-16T15:00:02.000Z', { operation_id: 'op_new' }) }));

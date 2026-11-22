@@ -2,8 +2,10 @@
 // store, graph/), its steps and connections drawn (nodes/, edges/), and edited on the surface (surface/): steps selected,
 // added from the palette (on their own, after a step from its "+", into a connection from its "+"), moved, removed,
 // connected as the workflow's rules allow, copied, cut, pasted and duplicated, laid out, saved to a file and read from
-// one, undone and done again, from the keys a canvas answers to and its right-click menus. Other writers' changes arrive
-// through the account's change stream (graph/followCommits.ts), so the canvas renders inside the app's live frames
+// one, undone and done again, from the keys a canvas answers to and its right-click menus; and run (runs/): the
+// workflow run and stopped from its toolbar, each step showing how it stands as a run goes, its run log behind the
+// pill, and one run's results opened from the log. Other writers' changes and a run's moves arrive through the
+// account's change stream (graph/followCommits.ts, runs/useRun.ts), so the canvas renders inside the app's live frames
 // (@/sdk/live). What only a host has (other people editing live, the builder chat, a step's panel) isn't here yet.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlowProvider, useNodesInitialized, useReactFlow, type Edge, type Node, type OnSelectionChangeParams } from '@xyflow/react';
@@ -26,6 +28,7 @@ import { useOpenGraph } from './graph/useOpenGraph';
 import { useUndoKeepsServerWrites } from './graph/useUndoKeepsServerWrites';
 import { useWorkflowUndoRedo } from './graph/useWorkflowUndoRedo';
 import { buildLazyNodeTypes } from './nodes/lazyNodeTypes';
+import { useCanvasRuns } from './runs/useCanvasRuns';
 import { PALETTE, STEP_ROLES } from './slots';
 import { CanvasSurface } from './surface/CanvasSurface';
 import { isStepArrow, selectOnly, stepInDirection } from './surface/stepTraversal';
@@ -245,6 +248,17 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
 
     const panActivationKeyCode = useCtrlPan(canvasRef);
 
+    // Its runs: run and stopped from the toolbar, the log behind the pill, a run's results from the log. A step of a
+    // run opens selected and in view.
+    const openStep = useCallback(
+        (stepId: string) => {
+            setNodes((ns) => selectOnly(ns, stepId));
+            panToNode(stepId);
+        },
+        [setNodes, panToNode]
+    );
+    const runs = useCanvasRuns({ client, workflowId, open: loaded, setNodes, onOpenStep: openStep });
+
     return (
         <div ref={canvasRef} data-testid="workflow-canvas" className="relative h-full w-full select-none bg-[hsl(var(--canvas-bg))]">
             <CanvasSurface
@@ -273,6 +287,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                     {open.message}
                 </p>
             )}
+            {loaded && runs.element}
             {loaded && (
                 <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
                     {nodes.length > 0 && (
@@ -283,6 +298,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                     <button type="button" className={BUTTON_SECONDARY} onClick={() => setPalette((shown) => !shown)} aria-expanded={palette}>
                         <Plus className="h-4 w-4" /> Add step
                     </button>
+                    {runs.button}
                 </div>
             )}
             {loaded && palette && (

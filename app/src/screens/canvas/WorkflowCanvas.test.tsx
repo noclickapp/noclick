@@ -3,18 +3,20 @@
 // opens a workflow writing nothing, adds a step from the palette (on its own, after a step from its "+", into a
 // connection from its "+"), connects steps as the workflow's rules allow, moves, walks, turns off, removes and brings
 // back steps from the keyboard, copies, cuts, pastes and duplicates them, offers its right-click menus, tidies the
-// layout, saves the workflow to a file and reads one back, saves each change as the edits that made it, and takes
-// another writer's commit when the account's change stream says one landed.
-import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+// layout, saves the workflow to a file and reads one back, saves each change as the edits that made it, takes another
+// writer's commit when the account's change stream says one landed, and runs the workflow: its pending save first, each
+// step as the run left it, the run log behind the pill and one run's results from a row (runs/fixtures.ts).
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import type { Connection, Edge, Node, NodeChange } from '@xyflow/react';
 import { NoClick } from 'noclick';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
 import { createWorkLive, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { fill, standing } from '@/slots';
-import { graphFetch, stored, WORKFLOW } from './graph/fixtures';
+import { stored, WORKFLOW } from './graph/fixtures';
 import { graphRecords } from './graph/liveGraphStore';
 import { V1_GRAPH_SAVES } from './graph/saves';
+import { RUNS, runsFetch } from './runs/fixtures';
 import { GRAPH_SAVES, STEP_DRAWING } from './slots';
 import { WorkflowCanvas } from './WorkflowCanvas';
 
@@ -36,11 +38,12 @@ let live: WorkLive;
 /** What the canvas last put on the clipboard, which a paste from a menu reads. */
 const clipboard = { text: '' };
 
-// The plain drawing loads with the first step a canvas draws, the SDK with the standards' first read and the palette
-// when it first opens: loaded once here, with real timers.
+// The plain drawing loads with the first step a canvas draws, the SDK with the standards' first read, the palette when
+// it first opens and a run's results with the first run opened: loaded once here, with real timers.
 beforeAll(async () => {
     await import('./standardsSdk');
     await import('./surface/StepPalette');
+    await import('./runs/RunSteps');
     Object.defineProperty(navigator, 'clipboard', {
         configurable: true,
         value: { writeText: async (text: string) => void (clipboard.text = text), readText: async () => clipboard.text },
@@ -58,6 +61,7 @@ beforeEach(() => {
     server = stored();
     version = 4;
     readable = true;
+    runs = RUNS;
     live = createWorkLive();
     clipboard.text = '';
 });
@@ -68,10 +72,13 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-const answers = graphFetch({
-    server: () => server,
-    version: () => version,
-    edit: () => ({ version: ++version }),
+// The workflow's runs as the server lists them, newest first.
+let runs = RUNS;
+
+const answers = runsFetch({
+    graph: { server: () => server, version: () => version, edit: () => ({ version: ++version }) },
+    runs: () => runs,
+    pageSize: 50,
 });
 
 const client = () =>
@@ -506,5 +513,60 @@ describe('the canvas on its own', () => {
         expect(ids()).toContain('theirs');
         expect(rec().graphVersion).toBe(5);
         expect(edits()).toEqual([]);
+    });
+
+    it('reads the run log as the workflow opens, and shows it behind the pill with one run’s results a row away', async () => {
+        await draw();
+        const read = (path: string) => calls.filter((c) => c.method === 'GET' && c.path === `/v1/workflows/${WORKFLOW}${path}`);
+        expect(read('/runs')).toHaveLength(1);
+        expect(read('/runs/counts')).toHaveLength(1);
+        expect(screen.queryByRole('dialog', { name: 'Runs' })).toBeNull();
+        fireEvent.click(screen.getByTitle('View this workflow\'s run results'));
+        await settle(300);
+        const log = screen.getByRole('dialog', { name: 'Runs' });
+        expect(log.textContent).toContain('channel_not_found');
+        // Opening the log read nothing again: its first page is the one the canvas opened with.
+        expect(read('/runs')).toHaveLength(1);
+        fireEvent.click(within(log).getAllByText(/channel_not_found/)[0]);
+        await settle(300);
+        expect(read('/runs/run_4')).toHaveLength(1);
+        expect(screen.getByTestId('run-step-slack').textContent).toContain('channel_not_found');
+        expect(edits()).toEqual([]);
+    });
+
+    it('runs the workflow once its pending change is saved, leaves each step as the run left it, and reads the log again', async () => {
+        const { container } = await draw();
+        await call(container, 'onNodesChange', [{ type: 'position', id: 'victim', position: { x: 1000, y: 60 }, dragging: false }] as NodeChange[]);
+        calls = [];
+        fireEvent.click(screen.getByRole('button', { name: 'Run' }));
+        await settle(300);
+        const made = calls.map((c) => `${c.method} ${c.path}`);
+        const saved = made.indexOf(`POST /v1/workflows/${WORKFLOW}/edits`);
+        const started = made.indexOf(`POST /v1/workflows/${WORKFLOW}/runs`);
+        // A run reads the saved workflow: the move went first, ahead of the debounce.
+        expect(saved).toBeGreaterThanOrEqual(0);
+        expect(started).toBeGreaterThan(saved);
+        expect(opsOf(edits()[0])).toEqual(['move']);
+        // The run ended: its steps say how they went and hold what they output, and the log starts over from it.
+        expect(made).toContain(`GET /v1/workflows/${WORKFLOW}/runs/run_new`);
+        expect(node('slack').data._lastRunStatus).toBe('completed');
+        expect(node('slack').data.executionState).toBe('idle');
+        expect(node('slack').data.output).toEqual({ ok: true, ts: '1.2' });
+        expect(made.filter((line) => line === `GET /v1/workflows/${WORKFLOW}/runs`)).toHaveLength(1);
+        expect(screen.getByRole('button', { name: 'Run' })).toBeTruthy();
+        // What a run put on the steps is no edit: nothing more is saved.
+        await settle(2500);
+        expect(edits()).toHaveLength(1);
+    });
+
+    it('offers to stop a run under way, and stops it', async () => {
+        await draw();
+        act(() => live.deliver('platform:resource', { kind: 'workflow_run', id: 'run_3', status: null, parent_id: WORKFLOW, version: null }));
+        await settle(300);
+        expect(node('slack').data.executionState).toBe('running');
+        calls = [];
+        fireEvent.click(screen.getByRole('button', { name: 'Stop' }));
+        await settle(300);
+        expect(calls.map((c) => `${c.method} ${c.path}`)).toContain(`POST /v1/workflows/${WORKFLOW}/runs/run_3/stop`);
     });
 });

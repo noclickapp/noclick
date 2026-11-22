@@ -247,11 +247,14 @@ async function editing(actsAs: 'owner' | 'key'): Promise<Call[]> {
         apiKey: 'nk_test',
         baseUrl: 'https://api.test',
         maxRetries: 0,
-        fetch: graphFetch({
+        // The canvas reads its run log as it opens: the runs' fixtures answer that, the graph's the rest.
+        fetch: runsFetch({
             actsAs,
-            server: () => server,
-            version: () => version,
-            edit: (body) => ({ version: (version = ((body.if_version as number | undefined) ?? version) + 1) }),
+            graph: {
+                server: () => server,
+                version: () => version,
+                edit: (body) => ({ version: (version = ((body.if_version as number | undefined) ?? version) + 1) }),
+            },
             observe: (method, path, answered, body) => {
                 calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
             },

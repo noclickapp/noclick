@@ -196,7 +196,9 @@ SDK, the plain step's drawing, the palette's listing) loads the first time it's 
 downloads it: whatever reads one of these imports them all. Running a workflow (the whole of it, from one step, or one
 step alone) and stopping a run are no slot: `runs/useRun.ts` does both on the platform API
 (`POST /v1/workflows/{id}/runs`, `.../runs/{run}/stop`), after the canvas's pending save lands, and puts each step's
-state on the canvas as the account's change stream says a run's steps moved.
+state on the canvas as the account's change stream says a run's steps moved. The canvas mounts them
+(`runs/useCanvasRuns.tsx`): Run and Stop in its toolbar, the run log behind the pill at its top left, and one run's
+results opened from a row of the log.
 
 | Slot | Where it is | By default |
 |---|---|---|
