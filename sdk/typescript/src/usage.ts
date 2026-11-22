@@ -547,10 +547,13 @@ export class Usage {
 /**
  * A line of work your spend is counted under. An agent names one when it starts work (a child's task, a message it
  * hands another agent, an app's coding job; `agent.spawn(task, { workstream })`), from your workstreams or a new
- * name, and every charge of that work, and of what it starts, belongs to it. A person renames one.
+ * name, and every charge of that work, and of what it starts, belongs to it. A person renames one, or archives it
+ * once its work is done: its charges still read under it, and it leaves the workstreams agents choose from until
+ * it's brought back or an agent names it again.
  *
  *     for (const workstream of await Workstream.list()) console.log(workstream.name, workstream.spentUsd);
  *     await Workstream.rename("Menu", "Bakery site");   // merges Menu into Bakery site
+ *     await Workstream.archive("Q3 launch");
  */
 export class Workstream {
   readonly id: string;
@@ -559,6 +562,8 @@ export class Workstream {
   /** What it spent this month (a call acting for one of your users: that user's share). */
   readonly spentUsd: number;
   readonly events: number;
+  /** Put away: out of the workstreams agents choose from, its charges still under it. */
+  readonly archived: boolean;
   readonly createdAt: Date | null;
   readonly raw: JsonObject;
 
@@ -567,16 +572,20 @@ export class Workstream {
     this.name = String(raw.name);
     this.spentUsd = num(raw.spent_usd) ?? 0;
     this.events = num(raw.events) ?? 0;
+    this.archived = raw.archived === true;
     this.createdAt = parseTime(raw.created_at);
     this.raw = raw;
   }
 
   /**
-   * Your workstreams, most spent this month first, each with what it spent (as `usage({ groupBy: "workstream" })`
-   * counts it). Needs the `usage` scope.
+   * Your open workstreams (`archived: true`: the ones put away), most spent this month first, each with what it spent
+   * (as `usage({ groupBy: "workstream" })` counts it). Needs the `usage` scope.
    */
-  static async list(options: { user?: UserOption; client?: NoClick } = {}): Promise<Workstream[]> {
-    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workstreams", { user: options.user }));
+  static async list(options: { archived?: boolean; user?: UserOption; client?: NoClick } = {}): Promise<Workstream[]> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workstreams", {
+      user: options.user,
+      query: options.archived ? { archived: true } : undefined,
+    }));
     return rows(raw.data).map((row) => new Workstream(row));
   }
 
@@ -587,9 +596,27 @@ export class Workstream {
    * workstream it reads as now, without this month's spend (`Workstream.list()` reads it). Needs the `usage` scope.
    */
   static async rename(workstream: string | Workstream, name: string, options: { client?: NoClick } = {}): Promise<Workstream> {
+    return Workstream.change(workstream, { name }, options);
+  }
+
+  /**
+   * Archive `workstream` (a `Workstream`, its name in any case, or its id) once its work is done: its charges still
+   * read under it, and it leaves `Workstream.list()` (`{ archived: true }` lists it) and the workstreams agents choose
+   * from, until `unarchive` brings it back or an agent names it again. Your account's alone. Needs the `usage` scope.
+   */
+  static async archive(workstream: string | Workstream, options: { client?: NoClick } = {}): Promise<Workstream> {
+    return Workstream.change(workstream, { archived: true }, options);
+  }
+
+  /** Bring an archived `workstream` back among your open ones. Your account's alone. Needs the `usage` scope. */
+  static async unarchive(workstream: string | Workstream, options: { client?: NoClick } = {}): Promise<Workstream> {
+    return Workstream.change(workstream, { archived: false }, options);
+  }
+
+  private static async change(workstream: string | Workstream, json: JsonObject, options: { client?: NoClick }): Promise<Workstream> {
     const ref = typeof workstream === "string" ? workstream : workstream.id;
     const raw = await resolveClient(options.client).request("PATCH", `/v1/workstreams/${encodeURIComponent(ref)}`, {
-      json: { name },
+      json,
       user: null,
     });
     return new Workstream(asObject(raw));

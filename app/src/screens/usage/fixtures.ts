@@ -384,7 +384,8 @@ function freeNew(): UsageSnapshot {
     });
 }
 
-function memberBusy(seed = 22, opts: { org?: boolean } = {}): UsageSnapshot {
+/** `named`: each charge says who it was for, and the work its agents named a workstream for says which. */
+function memberBusy(seed = 22, opts: { org?: boolean; named?: boolean } = {}): UsageSnapshot {
     const you = 'u_priya';
     const people = opts.org ? ['u_priya', 'u_sam', 'u_lena', 'u_theo'] : undefined;
     const wf = { support: 'wf_support', desk: 'wf_desk', leads: 'wf_leads', investor: 'wf_investor', site: 'wf_site' };
@@ -394,7 +395,10 @@ function memberBusy(seed = 22, opts: { org?: boolean } = {}): UsageSnapshot {
     const supportMeta = { workflow_id: wf.support, node_id: 'agent' };
     const deskMeta = { workflow_id: wf.desk, node_id: 'receptionist' };
     const leadsMeta = { workflow_id: wf.leads, node_id: 'researcher' };
-    const runnerOf = (p: string) => (people ? { actual_user_id: p } : {});
+    // A workstream an agent named: support's, the launch's, and "Launch prep", since merged into the launch's.
+    const ws = { support: 'ws_support', launch: 'ws_launch', prep: 'ws_prep' };
+    const runnerOf = (p: string, workstream?: string) =>
+        people ? { actual_user_id: p, ...(opts.named ? { responsible_user_id: p, ...(workstream ? { workstream_id: workstream } : {}) } : {}) } : {};
     const b: Build = {
         seed,
         payer: you,
@@ -403,15 +407,15 @@ function memberBusy(seed = 22, opts: { org?: boolean } = {}): UsageSnapshot {
         since: '2026-09-03',
         sources: [
             ai({ ...runnerOf('u_priya') }, 16, [0.004, 0.09], [SONNET], { hours: [7, 23] }),
-            ai({ ...supportMeta, ...runnerOf('u_lena') }, 26, [0.01, 0.11], [SONNET], { surge: { '2026-10-13': 2.6 } }),
-            sandbox({ ...supportMeta, ...runnerOf('u_lena') }, 14, [0.02, 0.09], { surge: { '2026-10-13': 2.4 } }),
-            api({ workflow_id: wf.support, from: 'fernway-support@noclick.email', ...runnerOf('u_lena') }, 9, [0.0009, 0.0009], 'email/agent_reply', 'Email reply'),
+            ai({ ...supportMeta, ...runnerOf('u_lena', ws.support) }, 26, [0.01, 0.11], [SONNET], { surge: { '2026-10-13': 2.6 } }),
+            sandbox({ ...supportMeta, ...runnerOf('u_lena', ws.support) }, 14, [0.02, 0.09], { surge: { '2026-10-13': 2.4 } }),
+            api({ workflow_id: wf.support, from: 'fernway-support@noclick.email', ...runnerOf('u_lena', ws.support) }, 9, [0.0009, 0.0009], 'email/agent_reply', 'Email reply'),
             calls({ ...deskMeta, ...runnerOf('u_sam') }, 6, { weekdays: [1, 2, 3, 4, 5, 6], from: '2026-09-21' }),
             ai({ ...deskMeta, ...runnerOf('u_sam') }, 10, [0.004, 0.03], [FLASH], { from: '2026-09-21', hours: [14, 23] }),
-            ai({ ...leadsMeta, ...runnerOf('u_theo') }, 12, [0.01, 0.08], [GPT], { weekdays: WEEKDAYS, hours: [13, 18] }),
-            api({ ...leadsMeta, ...runnerOf('u_theo') }, 18, [0.005, 0.005], 'exa/search_api', 'Web search', 'requests', { weekdays: WEEKDAYS, hours: [13, 18] }),
-            api({ ...leadsMeta, ...runnerOf('u_theo') }, 7, [0.012, 0.03], 'linkedin/scrape_profile', 'LinkedIn profile', 'requests', { weekdays: WEEKDAYS, hours: [13, 18] }),
-            ai({ workflow_id: wf.investor, node_id: 'writer', ...runnerOf('u_priya') }, 8, [0.03, 0.12], [GPT], { weekdays: [1], hours: [9, 10] }),
+            ai({ ...leadsMeta, ...runnerOf('u_theo', ws.launch) }, 12, [0.01, 0.08], [GPT], { weekdays: WEEKDAYS, hours: [13, 18] }),
+            api({ ...leadsMeta, ...runnerOf('u_theo', ws.launch) }, 18, [0.005, 0.005], 'exa/search_api', 'Web search', 'requests', { weekdays: WEEKDAYS, hours: [13, 18] }),
+            api({ ...leadsMeta, ...runnerOf('u_theo', ws.prep) }, 7, [0.012, 0.03], 'linkedin/scrape_profile', 'LinkedIn profile', 'requests', { weekdays: WEEKDAYS, hours: [13, 18] }),
+            ai({ workflow_id: wf.investor, node_id: 'writer', ...runnerOf('u_priya', ws.launch) }, 8, [0.03, 0.12], [GPT], { weekdays: [1], hours: [9, 10] }),
             api({ database_id: db }, 30, [0.0002, 0.0015], 'database/rows_read', 'Database reads', 'rows'),
             api({ project_id: proj }, 3, [0.0009, 0.0009], 'email/platform_app', 'Order confirmation email'),
             api({ workflow_id: wf.investor, node_id: 'writer', ...runnerOf('u_priya') }, 1, [0.0009, 0.0009], 'email/agent_update', 'Email update', 'requests', { weekdays: [1], hours: [10, 11] }),
@@ -440,6 +444,7 @@ function memberBusy(seed = 22, opts: { org?: boolean } = {}): UsageSnapshot {
         databases: { [db]: { name: 'fernway-orders' } },
         people: opts.org ? { u_priya: { name: 'Priya Shah', you: true }, u_sam: { name: 'Sam Ortiz' }, u_lena: { name: 'Lena Park' }, u_theo: { name: 'Theo Grant' } } : { [you]: { name: 'Priya Shah', you: true } },
         keys: {},
+        ...(opts.named ? { workstreams: { [ws.support]: { name: 'Customer support' }, [ws.launch]: { name: 'Spring launch' }, [ws.prep]: { name: 'Spring launch', reads_as: ws.launch } } } : {}),
     };
     return snapshot(b, {
         account: { id: you, name: 'Priya Shah', email: 'priya@fernway.studio' },
@@ -530,6 +535,10 @@ function inDebt(): UsageSnapshot {
 function workspace(): UsageSnapshot {
     const s = memberBusy(55, { org: true });
     return s;
+}
+
+function team(): UsageSnapshot {
+    return memberBusy(88, { org: true, named: true });
 }
 
 function legacyPro(): UsageSnapshot {
@@ -661,6 +670,7 @@ export const USAGE_FIXTURES: UsageFixture[] = [
     { slug: 'running-out', name: 'About to run out', premise: 'Free with $2 left, burning $4 a day. Auto top-up off.', build: runningOut },
     { slug: 'debt', name: 'Owes money', premise: 'A declined top-up and a long call left the balance below zero.', build: inDebt },
     { slug: 'workspace', name: 'Workspace of four', premise: 'Owner Pays: four people’s work billed to the owner.', build: workspace },
+    { slug: 'team', name: 'A team naming its work', premise: 'Each charge says who it was for, and the workstream an agent named for it.', build: team },
     { slug: 'legacy', name: 'Pro, old plan', premise: 'Credits and 3× prices, until the switch-over.', build: legacyPro },
     { slug: 'platform', name: 'Developer platform', premise: 'Keys, users and agents on /v1, with caps.', build: platform, console: true },
 ];
@@ -683,7 +693,7 @@ export function fixtureSnapshot(slug: string): UsageSnapshot {
 function groupKey(r: UsageEventRow): string {
     const m = r.metadata;
     const pa = m.platform_api;
-    return JSON.stringify([r.usage_type, r.usage_subtype, r.unit_type, r.user_resource, m.workflow_id, m.node_id, (m as { surface?: string }).surface, m.actual_user_id, m.responsible_user_id, m.project_id, m.database_id, m.repo_id, m.inbox_id, m.phone_number_id, (m as { number?: string }).number, m.channel, m.from, m.credential_id, m.domain, pa?.agent_id, pa?.tenant_id, pa?.key_id, pa?.project_id, pa?.surface]);
+    return JSON.stringify([r.usage_type, r.usage_subtype, r.unit_type, r.user_resource, m.workflow_id, m.node_id, (m as { surface?: string }).surface, m.actual_user_id, m.responsible_user_id, m.workstream_id, m.project_id, m.database_id, m.repo_id, m.inbox_id, m.phone_number_id, (m as { number?: string }).number, m.channel, m.from, m.credential_id, m.domain, pa?.agent_id, pa?.tenant_id, pa?.key_id, pa?.project_id, pa?.surface]);
 }
 
 const includedOf = (r: UsageEventRow) => r.total_cost - r.topup_paid - r.balance_paid;
