@@ -889,6 +889,7 @@ cakemail
 cal-com
 cal-id
 calendly
+call-loop
 callerapi
 callfire
 campaign-cleaner
