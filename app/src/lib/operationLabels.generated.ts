@@ -2016,6 +2016,7 @@ socialkit
 socket
 softr
 solcast
+sonderplan
 soundcloud
 soundee
 spacebring
