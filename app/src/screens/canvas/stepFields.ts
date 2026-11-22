@@ -123,3 +123,17 @@ export function describeRequireOneOfGroup(
 ): string {
     return group.map(alt => alt.map(titleOf).join(' + ')).join(' or ');
 }
+
+/** Whether a field (or operation) that only some kinds of account run (`x-supported-credential-types`) runs on the
+ *  accounts attached: always while none is, so its settings stay available until one is chosen. */
+export function runsOnAttachedCredentials(supported: unknown, credentialIds: Record<string, string>): boolean {
+    const attached = Object.entries(credentialIds)
+        .filter(([key, id]) => key !== 'credential_type' && typeof id === 'string' && id.trim() !== '')
+        .map(([key]) => key);
+    return !Array.isArray(supported) || attached.length === 0 || attached.some(key => supported.includes(key));
+}
+
+/** Credential-specific fields stay available until an account is selected. */
+export function isFieldApplicable(prop: Record<string, unknown>, credentialIds: Record<string, string>): boolean {
+    return runsOnAttachedCredentials(prop['x-supported-credential-types'], credentialIds);
+}
