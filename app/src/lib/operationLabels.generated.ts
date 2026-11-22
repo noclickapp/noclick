@@ -1366,6 +1366,7 @@ ionoscloud
 ip2location-io
 ip2proxy
 ip2whois
+ipbase
 ipinfo-io
 iplocate
 ironclad
