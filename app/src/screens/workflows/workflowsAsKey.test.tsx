@@ -22,6 +22,7 @@ import { GRAPH_SAVES, STEP_DRAWING } from '@/screens/canvas/slots';
 import { forgetAuthoring } from '@/screens/canvas/testRun/authoring';
 import { forgetTestRuns } from '@/screens/canvas/testRun/standards';
 import { isOwnerOnly } from '@/screens/console/ownerOnly';
+import { VARIABLE_SECRET } from '@/screens/canvas/setup/fixtures';
 import { fill } from '@/slots';
 import { SCENES, SceneView, type WorkflowsScene } from './lab/WorkflowsLab';
 
@@ -193,6 +194,27 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     fireEvent.click(tab('Setup'));
     const setup = await screen.findByTestId('workflow-setup');
     await waitFor(() => expect(setup.querySelector('h2')).not.toBeNull(), SAVED);
+    // Its one variable has a value. The owner's page read it apart and shows it; a key's never asked, and says it's
+    // saved and hidden.
+    const expand = setup.querySelector('button[aria-label="Expand sidebar"]');
+    if (expand) fireEvent.click(expand);
+    fireEvent.click(
+        await waitFor(() => {
+            const row = [...setup.querySelectorAll('aside nav button')].find((b) => b.textContent?.includes('Reply to'));
+            expect(row).toBeTruthy();
+            return row as HTMLButtonElement;
+        }, SAVED)
+    );
+    const value = await waitFor(() => {
+        const field = setup.querySelector('input[placeholder]');
+        expect(setup.querySelector('h2')?.textContent).toBe('Reply to');
+        return field as HTMLInputElement;
+    }, SAVED);
+    const asked = page.calls.filter((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/variables`).length;
+    expect([value.value, value.placeholder, asked]).toEqual(actsAs === 'owner' ? [VARIABLE_SECRET, 'Enter a value', 1] : ['', 'Saved, hidden. Type to replace it.', 0]);
+    // Leaving the field as it was writes nothing, whoever reads it.
+    fireEvent.blur(value);
+    expect(edits(page.calls).some((e) => opsOf(e).includes('define_variable'))).toBe(false);
 
     // Its Test Run: the message it stages.
     fireEvent.click(tab('Test Run'));
@@ -241,6 +263,10 @@ describe('the workflows pages acting as a key', () => {
                 called.add(asLine(call));
                 if (actsAs === 'key' && isOwnerOnly(call.method, call.path)) refused.push(asLine(call));
                 expect(await call.answer, `${asLine(call)} was refused`).not.toContain('permission_denied');
+                // A variable's value is read by the one read that answers its owner, and never sent back unchanged.
+                const readsValues = asLine(call) === `GET /v1/workflows/${WORKFLOW}/variables`;
+                expect((await call.answer).includes(VARIABLE_SECRET), `${asLine(call)} read a variable's value`).toBe(actsAs === 'owner' && readsValues);
+                expect(JSON.stringify(call.body), `${asLine(call)} sent a variable's value`).not.toContain(VARIABLE_SECRET);
             }
         }
         expect(refused).toEqual([]);

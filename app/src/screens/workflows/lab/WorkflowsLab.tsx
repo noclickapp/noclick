@@ -72,7 +72,7 @@ export function SceneView({ scene, actsAs, observe }: { scene: WorkflowsScene; a
             <WorkLiveContext.Provider value={live}>
                 <div className="h-screen bg-background text-foreground">
                     {open ? (
-                        <WorkflowPage workflowId={open} name={open === WORKFLOW ? 'Orders' : undefined} tab={tab} onTab={setTab} onBack={() => setOpen(null)} />
+                        <WorkflowPage workflowId={open} name={open === WORKFLOW ? 'Orders' : undefined} tab={tab} onTab={setTab} onBack={() => setOpen(null)} asOwner={actsAs === 'owner'} />
                     ) : (
                         <WorkflowsPage onOpen={setOpen} />
                     )}

@@ -5,7 +5,7 @@
 import { refusedToAccountKey } from '@/screens/console/ownerOnly';
 import { stored, WORKFLOW, type Observe } from '@/screens/canvas/graph/fixtures';
 import { runsFetch } from '@/screens/canvas/runs/fixtures';
-import { SETUP_STEP_TYPES } from '@/screens/canvas/setup/fixtures';
+import { SETUP_STEP_TYPES, VARIABLE_SECRET } from '@/screens/canvas/setup/fixtures';
 import { testRunFetch } from '@/screens/canvas/testRun/fixtures';
 
 type Json = Record<string, unknown>;
@@ -25,6 +25,9 @@ export function listedWorkflows(): Json[] {
         workflow('wf_shared', 'Shared intake', { access: 'viewer', updated_at: '2026-10-12T11:30:00.000Z' }),
     ];
 }
+
+/** The open workflow's one declared variable, as the server stores it: its value is read back by its owner alone. */
+export const DECLARED: Json[] = [{ name: 'reply_to', value: VARIABLE_SECRET, description: 'Who replies go to.' }];
 
 const FOLDERS: Json[] = [{ object: 'workflow_folder', id: 'fld_reports', name: 'Reports', description: null, parent_id: null, depth: 0, workflow_count: 1, created_at: AT, updated_at: AT }];
 
@@ -94,6 +97,10 @@ export function workflowsFetch(options: WorkflowsFetchOptions = {}): typeof fetc
         if (method === 'GET' && path === '/v1/connections') {
             return Response.json({ object: 'list', next_cursor: null, data: [connection('acme-slack', 'cred_slack', 'slack_oauth', 'slack'), connection('openai', 'cred_openai', 'agent_openai', 'openai')] });
         }
+        // Its variables' values: the workflow's owner's own read (a key is refused it above).
+        if (method === 'GET' && path === `/v1/workflows/${WORKFLOW}/variables`) {
+            return Response.json({ object: 'workflow_variables', workflow_id: WORKFLOW, version: held.version, definitions: DECLARED, variables: { last_order: 'o_1042' } });
+        }
         const kind = path.match(/^\/v1\/step_types\/([^/]+)$/);
         if (method === 'GET' && kind && SETUP_STEP_TYPES[kind[1]]) return Response.json(SETUP_STEP_TYPES[kind[1]]);
         const choices = path.match(/^\/v1\/workflows\/[^/]+\/steps\/([^/]+)\/options$/);
@@ -116,7 +123,15 @@ export function workflowsFetch(options: WorkflowsFetchOptions = {}): typeof fetc
             answered = await runs(request.url, again);
             if (await unanswered(answered)) answered = await tests(request.url, again);
             else if (request.method === 'GET' && decodeURIComponent(url.pathname) === `/v1/workflows/${WORKFLOW}/graph`) {
-                answered = Response.json({ ...((await answered.json()) as Json), access: options.access ?? 'owner' });
+                // Its declared variable's value is held back and named, and so are the graph's own.
+                const read = (await answered.json()) as Json;
+                answered = Response.json({
+                    ...read,
+                    access: options.access ?? 'owner',
+                    settings: { ...(read.settings as Json), variable_definitions: DECLARED.map(({ value: _value, ...shown }) => shown) },
+                    settings_withheld: ['variable_definitions[0].value'],
+                    graph: { ...(read.graph as Json), variables_withheld: ['last_order'] },
+                });
             }
         }
         options.observe?.(request.method, url.pathname, Promise.resolve(answered), body, init);
