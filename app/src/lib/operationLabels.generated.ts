@@ -1006,6 +1006,7 @@ cypher-learning
 dacast
 dadata-ru
 daily
+dante-ai
 dart
 databox
 databricks
