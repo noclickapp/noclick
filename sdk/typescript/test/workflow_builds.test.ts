@@ -65,6 +65,34 @@ test("a build that asks is answered from code", async () => {
   assert.equal(reads.count, 3);
 });
 
+test("a build asks through human requests, and code answers accounts and secrets", async () => {
+  const { api } = setup();
+  const asked = {
+    ...QUESTION, sent_to: ["email", "web"],
+    inputs: [
+      { id: "slack", label: "Connect Slack", type: "credential", credential_type: "slack_oauth", request_id: "hr_1" },
+      { id: "env", label: "Its token", type: "env", env_keys: [{ name: "WAREHOUSE_TOKEN" }], request_id: "hr_2" },
+    ],
+  };
+  api.on("POST", "/v1/workflows/wf_1/builds", json(building({ status: "awaiting_human", step: "asking", question: asked }), { status: 202 }));
+  const answered = api.on("POST", "/v1/workflows/wf_1/builds/op_b/answer", json(building()));
+  const build = await nc.Workflow.fromId("wf_1").build("Post it to Slack");
+  assert.deepEqual(build.question?.sentTo, ["email", "web"]);
+  assert.deepEqual(build.question?.inputs.map((i) => i.request_id), ["hr_1", "hr_2"]);
+  await build.answer({ slack: "credential:c1" }, { secretValues: { env: { WAREHOUSE_TOKEN: "t0k" } } });
+  assert.deepEqual(answered.last.body, { values: { slack: "credential:c1" }, secret_values: { env: { WAREHOUSE_TOKEN: "t0k" } } });
+});
+
+test("a build or a new workflow can ask nothing", async () => {
+  const { api } = setup();
+  const made = api.on("POST", "/v1/workflows", json({ ...WORKFLOW, build: building() }, { status: 201 }));
+  const started = api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
+  await nc.Workflow.create("Morning brief", { instructions: "Email me at 8", questions: "assume" });
+  await nc.Workflow.fromId("wf_1").build("Text me too", { questions: "assume" });
+  assert.deepEqual(made.last.body, { name: "Morning brief", instructions: "Email me at 8", questions: "assume" });
+  assert.deepEqual(started.last.body, { instructions: "Text me too", questions: "assume" });
+});
+
 test("wait stops at a question, then waits through it for its answer", async () => {
   // The guide's first example, wait() straight after create(), blocked its whole timeout on a question
   // nobody was shown (2026-10-28): wait() throws the question, and once it has, waits for the answer.
