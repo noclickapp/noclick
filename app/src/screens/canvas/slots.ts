@@ -1,10 +1,16 @@
 // The canvas's slots (src/slots.ts): the places on a workflow's canvas a host may fill, each with what stands there
 // when none does (slotStandards.tsx). Connecting the account a step or an agent needs is the shared `connect.app` and
 // `connect.model` (src/ui/slots.ts); these are the canvas's parts only a host has: the builder chat beside it, other
-// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; and what a
-// step's settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in
-// accountStandards.tsx). A host fills them before the canvas first draws (some hold hooks the canvas and the form call).
+// people editing it live, the Interface tab, an agent's chat there, and sharing the workflow with people; what a step's
+// settings form (`form/`) reads from whoever renders it, its accounts' among them (standards in accountStandards.tsx);
+// what drawing its steps and connections reads (`nodes/`, `edges/`, standards in drawingStandards.tsx); how the
+// graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts); the palette steps are added from;
+// what a copy carries and a paste reads (`surface/`); what showing a workflow's runs and each step's results reads
+// (`runs/`, standards in runs/standards.tsx); and what a workflow's Test Run reads, with the pieces its frames and a
+// run's story draw with (`testRun/`, standards in testRun/standards.tsx and testRun/frameParts.tsx). A host fills them
+// before the canvas first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
+import type { Node } from '@xyflow/react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
 import type { AccountCredential } from '@/screens/connections/model';
 import { slot } from '@/slots';
@@ -13,17 +19,29 @@ import type { AgentWiring } from './agentWiring';
 import type { NodeDisplayStrategy } from './form/referenceTypes';
 import type { StepReads } from './form/reads';
 import type { WidgetRenderProps } from './form/schemaWidgetRegistry';
-import type { Collaborator, Presence, PresenceOptions } from './presence';
+import { V1_GRAPH_SAVES, type GraphSaves } from './graph/saves';
+import type { NodeDefinition, NodeDimensions } from './nodes/types';
+import type { AiEditInfo, Collaborator, Presence, PresenceOptions } from './presence';
+import type { RunFixes, RunReadsHost, RunResults, SavedOutputsHost } from './runs/reads';
+import { RunStepsOnV1, useNothingSaved, useV1Fix, useV1RunReads } from './runs/standards';
+import type { ClipboardParser } from './surface/clipboard/types';
+import type { AddStepRequest } from './surface/useClickToAddNode';
+import { FRAME_STANDARD, type FrameParts } from './testRun/frameParts';
+import type { TestRunHost } from './testRun/reads';
+import { useKeptHere, useV1Scenarios, useV1TestRun, useV1Unmet, v1Authoring } from './testRun/standards';
 import { useV1AccountWays, useV1Accounts, useV1SaveAccount } from './accountStandards';
+import { catalogOutline, NoteAsReadme, plainDrawingOf, usePlainDrawingLoaded, useV1StepRoles } from './drawingStandards';
 import {
     AgentChatOnNoClick,
     BuildWithNoClick,
     InterfaceOnNoClick,
     NOBODY_ELSE,
     noclickStepLink,
+    PaletteOfStepTypes,
     ShareOnNoClick,
     standardDisplayStrategy,
     useNoTrack,
+    useSettingsWithoutSecrets,
     useV1ConnectionMissing,
     useV1StepReads,
     useV1StepSchema,
@@ -391,3 +409,166 @@ export const STEP_ACCOUNTS = slot<StepAccountsHost>('canvas.step.accounts', {
     Share: null,
     forms: {},
 });
+
+// ── drawing the steps and connections ───────────────────────────────────────
+
+/** What a step is in a workflow, by its type, as the drawing reads it. */
+export interface StepRoles {
+    /** Whether a step of the type, with its operation, starts runs: it takes nothing in, and wears the trigger's bolt. */
+    trigger: (type: string | null | undefined, operation: string | null | undefined) => boolean;
+    /** Whether an agent can use a step of the type as its tools: it has a handle on top to wire it into one. */
+    tool: (type: string | null | undefined) => boolean;
+    /** Whether a step of the type talks to the rest through the SDK rather than connections (a page with its own code):
+     *  nothing connects to or from it. */
+    connectionless: (type: string | null | undefined) => boolean;
+    /** The type an older one became (a step saved before two types merged), or the type itself. */
+    canonical: (type: string) => string;
+}
+
+/** What steps are by their type, as their nodes, connections and hints are drawn and connections are judged: a trigger's
+ *  bolt and missing input, a tool's handle on top, a step nothing connects to, an older type drawn as the one it became.
+ *  The standard knows a type once `GET
+ *  /v1/step_types/{type}` has read it (the step form's read, once a session per client), drawing again as each lands;
+ *  NoClick's app knows every type from the catalog it was built with. */
+export const STEP_ROLES = slot<{ useRoles: () => StepRoles }>('canvas.step.roles', { useRoles: useV1StepRoles });
+
+/** A build working on a step: what it's doing, and whose it is where it's another person's. */
+export interface StepEdit {
+    info?: AiEditInfo;
+    /** The person whose build it is; undefined for this canvas's own. */
+    by?: string;
+}
+
+/** Which steps a build is working on right now, asked by each step's card every tenth of a second to open while it
+ *  lands. The standard knows of none: a build the canvas follows marks the steps it adds and configures in their data
+ *  (`mcpAnimationState`), which opens their cards all the same; NoClick's app also knows its own builder's edits and
+ *  those other people's builders are making. */
+export const STEP_EDITING = slot<{ editing: (nodeId: string) => StepEdit | null }>('canvas.step.editing', { editing: () => null });
+
+/** What a step type draws as before its node loads: its size and glyph. */
+export interface StepOutline {
+    dimensions?: NodeDimensions;
+    /** The glyph's markup, as a catalog serializes it. */
+    iconHtml?: string;
+    iconColor?: string;
+}
+
+export interface StepDrawing {
+    /** The types the canvas draws (React Flow's node types), older ones included; null for any type, each drawn as the
+     *  canvas meets it. */
+    types: readonly string[] | null;
+    /** Loads the nodes of `types`, drawing again as they land; true once all have. */
+    useLoaded: (types: Iterable<string | null | undefined>) => boolean;
+    /** A type's node once loaded (an older type's, the node of the one it became). */
+    definition: (type: string) => NodeDefinition | undefined;
+    /** What a type draws as until its node loads. */
+    outline: (type: string) => StepOutline | undefined;
+}
+
+/** How each step type is drawn on the canvas (nodes/lazyNodeTypes.tsx wraps each in its label, pills and hints). The
+ *  standard draws a sticky note as a note and any other step as a plain step (nodes/PlainStep.tsx): its card with the
+ *  glyph of the catalog the host loaded, if any, and a handle for each connection it holds, both loaded with the first
+ *  step drawn. NoClick's app draws each integration's own node, loaded as its first step is drawn. */
+export const STEP_DRAWING = slot<StepDrawing>('canvas.step.drawing', {
+    types: null,
+    useLoaded: usePlainDrawingLoaded,
+    definition: plainDrawingOf,
+    outline: catalogOutline,
+});
+
+/** A sticky note's text, drawn from its Markdown. The standard draws it as a code repository's README is; NoClick's
+ *  app as its chat draws a reply. */
+export const NOTE_MARKDOWN = slot<ComponentType<{ content: string; className?: string }>>('canvas.note.markdown', NoteAsReadme);
+
+// ── the graph's saves ───────────────────────────────────────────────────────
+
+/** How the canvas's graph is saved and read again (graph/saves.ts), asked by the graph store outside any component:
+ *  which way each workflow's record saves, a host's own whole-graph save, the graph read again and whether saves wait
+ *  for another writer. The standard saves every record as the edits that changed it (`POST
+ *  /v1/workflows/{id}/edits`), reads `GET /v1/workflows/{id}/graph` and never waits. */
+export const GRAPH_SAVES = slot<GraphSaves>('canvas.graph.saves', V1_GRAPH_SAVES);
+
+// ── adding a step ───────────────────────────────────────────────────────────
+
+export interface CanvasPaletteProps {
+    /** What's searched for, where the canvas around the palette holds the search box; undefined where the palette
+     *  holds its own. */
+    query?: string;
+    /** Empties the canvas's search box: offered where a search finds nothing, and done after a pick from the keyboard. */
+    onClearQuery?: () => void;
+    /** Adds the step picked, with what the search seeded (surface/useClickToAddNode.ts places and connects it). */
+    onAdd: (step: AddStepRequest) => void;
+    /** Closes the palette, where the canvas draws it over itself. */
+    onClose?: () => void;
+}
+
+/** The palette steps are added from: every kind of step a workflow can hold, searched by name and by what it does. The
+ *  standard lists what the platform does (`GET /v1/step_types`, with a search its best matches: surface/StepPalette.tsx,
+ *  loaded when first opened); NoClick's app draws its own tiles from the catalog it was built with, searched as it's
+ *  typed in, a model or a coding agent by name too. */
+export const PALETTE = slot<ComponentType<CanvasPaletteProps>>('canvas.palette', PaletteOfStepTypes);
+
+// ── the clipboard ───────────────────────────────────────────────────────────
+
+export interface CanvasClipboard {
+    /** Other things a paste (and a file read) turns into steps, beyond the canvas's own format: each tried in the
+     *  order of its priority (surface/clipboard/parse.ts). */
+    formats: readonly ClipboardParser[];
+    /** A step's settings as a copy and a saved file carry them. */
+    useSettingsOf: () => (node: Node) => Record<string, unknown>;
+}
+
+/** What leaves the canvas as text and what comes back: a copied step's settings, and the formats a paste is read in.
+ *  The standard writes a step without its secrets (stepSecrets.ts: what a read of the workflow would show of it) and
+ *  reads the canvas's own format alone; NoClick's app also reads a spreadsheet's link, a curl command and other tools'
+ *  exports. */
+export const CLIPBOARD = slot<CanvasClipboard>('canvas.clipboard', { formats: [], useSettingsOf: useSettingsWithoutSecrets });
+
+// ── a workflow's runs and each step's results ───────────────────────────────
+
+/** What the run log, a step's output history and its expected shape read (runs/reads.ts). The standard reads the
+ *  platform API: a page of runs (`GET /v1/workflows/{id}/runs`) and their counts (`.../runs/counts`), a step's stored
+ *  outputs (`.../steps/{step}/outputs`, each whole from `.../outputs/{run}`) and what a step type outputs (`GET
+ *  /v1/step_types/{type}/output_shape`). The log is narrowed as the API narrows runs: by how they ended, the runs
+ *  that wait apart from those that run, how they started and text in their errors. */
+export const RUN_READS = slot<RunReadsHost>('canvas.runs.reads', { useRunReads: useV1RunReads });
+
+/** Outputs saved under a name, to pin on a step of the same type later (and to share with other people). The API has
+ *  none: the standard saves nothing under a name, so the output panel offers only pinning the output shown as the
+ *  step's mock, which is an edit of the workflow. NoClick's app keeps them. */
+export const SAVED_OUTPUTS = slot<SavedOutputsHost>('canvas.runs.saved', { useSaved: useNothingSaved });
+
+/** What can be done about a failed step: asking the builder beside the canvas about its error, and the fix the API
+ *  names for it. The standard asks no builder, opens adding funds and the spending cap in NoClick's app, and offers no
+ *  jump to the step's accounts (they're on the step, in its settings). */
+export const RUN_FIXES = slot<RunFixes>('canvas.runs.fixes', { ask: null, useFix: useV1Fix });
+
+/** One run's results, opened from the run log or the pill. The standard lists what each step did (`GET
+ *  /v1/workflows/{id}/runs/{run}`: its status, error and output), read again as its steps move, and says that a run
+ *  replayed on the canvas and the calls its agents made are in NoClick's app (the API has neither a run's graph as it
+ *  ran nor its tool calls). NoClick's app draws the run as a story (runs/story/): what came in, what its agents did,
+ *  what went out, from the run's stored record with its agents' calls, which the API doesn't give yet. */
+export const RUN_RESULTS = slot<RunResults>('canvas.runs.results', RunStepsOnV1);
+
+// ── a workflow's Test Run ───────────────────────────────────────────────────
+
+/** What a workflow's Test Run screen reads (testRun/reads.ts): the situations it can stage, a run of one, where the
+ *  workflow's own test runs are kept, what it still needs connected, and sharing a finished run. The standard is the
+ *  platform API's: `GET /v1/workflows/{id}/test_runs`, a `workflow.rehearse` operation (`POST .../rehearsals`) whose
+ *  steps arrive when it ends, the workflow's `rehearsal_authoring` setting through an `update_workflow` edit (written
+ *  before a run plays it), and the workflow's own steps for what's unconnected; it shares nothing. NoClick's app shows
+ *  a run's steps as they happen and shares a finished run as a page. */
+export const TEST_RUN = slot<TestRunHost>('canvas.testRun', {
+    useScenarios: useV1Scenarios,
+    useRun: useV1TestRun,
+    runsSaved: true,
+    authoring: v1Authoring,
+    useUnmet: useV1Unmet,
+    Share: null,
+    useKept: useKeptHere,
+});
+
+/** What the frames of a Test Run and of a run's story draw with whoever renders them (testRun/frameParts.tsx): a
+ *  message's or a reply's text from its Markdown, and the mark of work under way. The standard draws Markdown as a
+ *  README is, and a live dot. The frames read it through `FRAMES` there, which names this same place. */
+export const FRAME_PARTS = slot<FrameParts>('canvas.frames', FRAME_STANDARD);

@@ -1,0 +1,344 @@
+/**
+ * Sticky Note Markdown Styling
+ * Custom CSS overrides for markdown rendering within sticky notes to respect color themes.
+ * These styles ensure that all markdown elements (text, code, tables, etc.) use the sticky note's color scheme.
+ */
+
+/* Base text color for all elements */
+.sticky-note-content .sticky-markdown * {
+    color: var(--sticky-text-color) !important;
+}
+
+/* Headings */
+.sticky-note-content .sticky-markdown h1,
+.sticky-note-content .sticky-markdown h2,
+.sticky-note-content .sticky-markdown h3,
+.sticky-note-content .sticky-markdown h4 {
+    color: var(--sticky-text-color) !important;
+    font-weight: 600 !important;
+}
+
+/* Horizontal rules */
+.sticky-note-content .sticky-markdown hr {
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Strong/bold text */
+.sticky-note-content .sticky-markdown strong {
+    color: var(--sticky-text-color) !important;
+    font-weight: 700 !important;
+}
+
+/* Inline code */
+.sticky-note-content .sticky-markdown code {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+    color: var(--sticky-text-color) !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+}
+
+/* Code blocks - Override SyntaxHighlighter styles */
+.sticky-note-content .sticky-markdown .relative.group > div[style] {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Code block text colors */
+.sticky-note-content .sticky-markdown .relative.group code,
+.sticky-note-content .sticky-markdown .relative.group code span,
+.sticky-note-content .sticky-markdown .relative.group code span.token {
+    color: var(--sticky-text-color) !important;
+    background: transparent !important;
+    text-shadow: none !important;
+}
+
+/* Copy button styling */
+.sticky-note-content .sticky-markdown .relative.group > button {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+    color: var(--sticky-text-color) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.sticky-note-content .sticky-markdown .relative.group > button:hover {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    color: var(--sticky-text-color) !important;
+}
+
+.sticky-note-content .sticky-markdown .relative.group > button svg {
+    color: var(--sticky-text-color) !important;
+}
+
+/* Links */
+.sticky-note-content .sticky-markdown a {
+    color: var(--sticky-text-color) !important;
+    text-decoration: underline !important;
+}
+
+/* Blockquotes */
+.sticky-note-content .sticky-markdown blockquote {
+    border-left-color: var(--sticky-border-color) !important;
+    color: var(--sticky-text-color) !important;
+    opacity: 0.8;
+}
+
+/* Lists */
+.sticky-note-content .sticky-markdown ul,
+.sticky-note-content .sticky-markdown ol {
+    color: var(--sticky-text-color) !important;
+}
+
+/* Checkboxes - Custom appearance */
+.sticky-note-content .sticky-markdown input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1em;
+    height: 1em;
+    border: 1.5px solid rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: default;
+    position: relative;
+    vertical-align: middle;
+    margin-right: 0.5em;
+}
+
+.sticky-note-content .sticky-markdown input[type="checkbox"]:checked {
+    background-color: var(--sticky-text-color);
+    border-color: var(--sticky-text-color);
+}
+
+.sticky-note-content .sticky-markdown input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 0.24em;
+    top: 0.03em;
+    width: 0.32em;
+    height: 0.58em;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Tables */
+.sticky-note-content .sticky-markdown .overflow-x-auto {
+    border: none !important;
+    overflow: hidden !important;
+    border-radius: 0.5rem !important;
+}
+
+.sticky-note-content .sticky-markdown table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    margin: 1em 0 !important;
+    border-radius: 0.5rem !important;
+}
+
+/* Table corner rounding */
+.sticky-note-content .sticky-markdown table thead tr:first-child th:first-child {
+    border-top-left-radius: 0.5rem !important;
+}
+
+.sticky-note-content .sticky-markdown table thead tr:first-child th:last-child {
+    border-top-right-radius: 0.5rem !important;
+}
+
+.sticky-note-content .sticky-markdown table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem !important;
+}
+
+.sticky-note-content .sticky-markdown table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem !important;
+}
+
+/* Table header styling */
+.sticky-note-content .sticky-markdown table thead {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.sticky-note-content .sticky-markdown table thead tr:first-child {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
+
+.sticky-note-content .sticky-markdown table thead tr {
+    background-color: transparent !important;
+}
+
+.sticky-note-content .sticky-markdown table thead tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.sticky-note-content .sticky-markdown table th {
+    color: var(--sticky-text-color) !important;
+    font-weight: 600 !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    text-align: left !important;
+}
+
+/* Table body styling */
+.sticky-note-content .sticky-markdown table td {
+    color: var(--sticky-text-color) !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.sticky-note-content .sticky-markdown table tbody tr {
+    background-color: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.sticky-note-content .sticky-markdown table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.sticky-note-content .sticky-markdown table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Sticky Note Action Buttons */
+/* Hover-activated buttons that appear below the sticky note */
+
+.sticky-note-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.sticky-note-actions {
+    position: absolute;
+    bottom: -40px;
+    left: 8px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    z-index: 10;
+    pointer-events: all;
+}
+
+/* Base button styling — matches node/edge delete pills (popover base with
+   a border outline) so all hover-revealed action buttons share one look. */
+.sticky-note-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--popover));
+    backdrop-filter: blur(8px);
+    color: hsl(var(--foreground));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.sticky-note-action-btn:hover {
+    background-color: hsl(var(--accent));
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.sticky-note-action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Delete button - red hover (white glyph for contrast on the red fill) */
+.delete-btn:hover {
+    background-color: rgb(239, 68, 68);
+    color: white;
+}
+
+/* Color picker container */
+.sticky-note-color-picker {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Rainbow circle (collapsed state) */
+.rainbow-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        #d97706 0deg,
+        #dc2626 45deg,
+        #2563eb 90deg,
+        #16a34a 135deg,
+        #9333ea 180deg,
+        #db2777 225deg,
+        #ea580c 270deg,
+        #71717a 315deg,
+        #525252 337.5deg,
+        #d97706 360deg
+    );
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Expanded color options */
+.color-picker-expanded {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    background-color: hsl(var(--popover) / 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    animation: slideColorPickerRight 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+}
+
+/* Closing state animation (reverse slide) */
+.color-picker-expanded.closing {
+    animation: slideColorPickerLeft 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideColorPickerRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideColorPickerLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+/* Individual color options */
+.color-option {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--foreground) / 0.3);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-option:hover {
+    transform: scale(1.2);
+    border-color: hsl(var(--foreground) / 0.8);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.color-option:active {
+    transform: scale(1);
+}
