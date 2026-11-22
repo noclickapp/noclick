@@ -1450,6 +1450,7 @@ keycloak
 kibana
 kick
 kieai
+kindo
 kintone
 kisi
 kit
