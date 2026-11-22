@@ -872,6 +872,7 @@ bytescale
 cabinpanda
 cakemail
 cal-com
+cal-id
 calendly
 callerapi
 callfire
