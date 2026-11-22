@@ -72,8 +72,8 @@ still cloned, so the SDK's source is there to build with) and set the three sett
 names the API scopes the app's screens call (`account_key`). NoClick asks the account's owner once, saying in plain
 words what a key with those scopes can do, and then gives each production release `NOCLICK_API_KEY` itself: a key
 that works only while that release serves, is listed among the account's keys, and is revoked when the app is
-deleted. Nobody creates, copies or pastes one. Until the owner approves, every page says the app is waiting for its
-key, and it opens by itself once the key works, with no new deploy. A preview or a live editing session is given
+deleted. Nobody creates, copies or pastes one. Until the owner approves, every page says the app's key isn't ready
+and why, and it opens by itself once the key works, with no new deploy. A preview or a live editing session is given
 none. The list is every scope the screens use, and none that reads a secret or stands in for the account's owner
 (making keys, answering approvals): add to it when a screen you write calls another part of the API. `APP_PASSWORD`
 and `SESSION_SECRET` are still yours to choose, as the app's secrets there.

@@ -21,12 +21,12 @@ export function isSetupData(value: unknown): value is SetupData {
 }
 
 export function SetupScreen({ problems }: { problems: SetupProblem[] }) {
-    // Nothing here is the reader's to set when the host gives every setting named: the page says what it waits on.
+    // Nothing here is the reader's to set when the host gives every setting named: the page says where each stands.
     const waiting = problems.every((problem) => problem.given);
     return (
         <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-6 px-6 py-16">
             <div className="flex flex-col gap-2">
-                <h1 className={PAGE_TITLE}>{waiting ? 'This app is waiting for its key' : 'Finish setting up this app'}</h1>
+                <h1 className={PAGE_TITLE}>{waiting ? 'This app’s key isn’t ready' : 'Finish setting up this app'}</h1>
                 <p className="text-[14px] text-muted-foreground">
                     {waiting
                         ? 'NoClick gives this app its key to your account itself. Nobody pastes one.'

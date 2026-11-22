@@ -205,7 +205,7 @@ describe('a copy deployed on NoClick, which gives it its key', () => {
 
         const page = await read(await send('/'));
         expect(page.status).toBe(503);
-        expect(page.body).toContain('This app is waiting for its key');
+        expect(page.body).toContain('This app’s key isn’t ready');
         expect(page.body).toContain('waits for the account’s owner to approve it');
         expect(page.body).toContain('There is nothing to paste');
         // Nothing asks the reader to set a variable, and the key itself is nowhere.
@@ -249,7 +249,7 @@ describe('a copy deployed on NoClick, which gives it its key', () => {
         configure({ NOCLICK_API_KEY: '', NOCLICK_PROJECT_ID: 'prj_1', NOCLICK_DEPLOYMENT_TOKEN: 'nk_dep_preview' });
         const page = await read(await send('/'));
         expect(page.status).toBe(503);
-        expect(page.body).toContain('This app is waiting for its key');
+        expect(page.body).toContain('This app’s key isn’t ready');
         expect(page.body).toContain('this release has none');
         expect(page.body).not.toContain('developer console');
         expect(page.body).not.toContain('nk_dep_preview');
