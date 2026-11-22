@@ -2236,6 +2236,7 @@ writer
 xama-hub
 xata
 xero
+ycloud
 yelp
 yelp-leads
 ynab
