@@ -1027,6 +1027,7 @@ dev-cycle
 devin
 devto
 dex
+dial
 dialpad
 digicert
 digistore24
