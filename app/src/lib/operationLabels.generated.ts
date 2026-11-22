@@ -1358,6 +1358,7 @@ humanitec
 humanitix
 humanloop
 hunter
+huntress
 hypeauditor
 hyperbrowser
 hyros
