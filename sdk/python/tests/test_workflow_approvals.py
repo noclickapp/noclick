@@ -67,3 +67,18 @@ def test_a_key_without_the_scope_a_second_answer_and_a_late_one_are_refused(api,
     route.respond(410, json={"error": {"type": "expired", "message": "This approval expired."}})
     with pytest.raises(nc.Expired):
         nc.WorkflowApproval.from_id("wf_1", "wa_1").approve()
+
+
+def test_a_step_names_who_answers_it_and_says_which_agent_decided(api, client):
+    agent = {"object": "approver", "kind": "agent", "agent_id": "ag_1"}
+    api.get("/v1/workflows/wf_1/approvals/wa_1").respond(
+        json={**APPROVAL, "approver": agent, "on_timeout": "escalate", "sent_to": []})
+    routed = nc.WorkflowApproval.from_id("wf_1", "wa_1")
+    assert (routed.approver["kind"], routed.approver["agent_id"], routed.on_timeout, routed.sent_to) == (
+        "agent", "ag_1", "escalate", [])
+    api.post("/v1/workflows/wf_1/approvals/wa_1/answer").respond(json={
+        **APPROVAL, "status": "approved", "decided_by": "agent", "approver": agent, "on_timeout": "decline",
+        "decided_by_agent": {"agent_id": "ag_1", "name": "Finance lead"}})
+    decided = routed.approve()
+    assert (decided.decided_by, decided.decided_by_agent["name"], decided.decided_by_key) == (
+        "agent", "Finance lead", None)

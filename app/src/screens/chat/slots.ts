@@ -5,7 +5,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { slot } from '@/slots';
 import type { SetupRef } from '@/lib/agentThread/thread';
 import type { JsonObject } from '@/lib/toolCalls';
-import type { OwnerPick } from '@/screens/humans/useHumanRequest';
+import type { OwnerAnswer, OwnerPick, OwnerQuestion } from '@/screens/humans/useHumanRequest';
 import type { TextApp } from '@/ui/AppTile';
 import type { HeldApproval } from './atWork/types';
 import type { CanvasOf, NewestCard } from './cards/canvases';
@@ -17,6 +17,7 @@ import {
     ConnectPlansLinks,
     OutOfFundsLink,
     PickInWords,
+    StepOnNoClick,
     WorkingDot,
     noclickPlaces,
     textOnNoClick,
@@ -68,6 +69,19 @@ export interface QuestionPickProps {
 
 /** Under an agent's question about the owner's own account: how they pick. The standard takes the answer in words. */
 export const QUESTION_PICK = slot<ComponentType<QuestionPickProps>>('chat.question.pick', PickInWords);
+
+export interface QuestionStepProps {
+    /** A question that fills in a workflow step: which connection it uses (`connect`), or a secret's values
+     *  (`secret`), as `/v1/humans/requests/{id}` reads it for the signed-in owner. */
+    question: OwnerQuestion;
+    /** Answers it: `{ connection }` (a connection's ref) or `{ secret_values }`. */
+    onAnswer: (answer: OwnerAnswer) => void;
+    disabled: boolean;
+}
+
+/** Under a question that fills in a workflow step (the builder's: the step's account, an agent step's secret): how
+ *  the owner answers it. The standard opens its page on NoClick. */
+export const QUESTION_STEP = slot<ComponentType<QuestionStepProps>>('chat.question.step', StepOnNoClick);
 
 /** The card under a note that sets up an automation picked on another page (its setup); `newer` is a newer card in the
  *  thread about the same automation, which folds it. Nothing stands there: the note's words do. */

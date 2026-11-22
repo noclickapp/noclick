@@ -156,9 +156,11 @@ there, and Settings doesn't list it:
 | `settings.notifications` | Notifications: the email alerts sent to the owner | Each alert with its switch |
 | `settings.developer` | Developer: the way into the developer console | The console's row, at its address |
 | `settings.members` | Members: who's in the workspace and how they sign in | Nothing, and no section |
-| `settings.phone` | Phone: the numbers a person messages and calls from | Nothing, and no section |
-| `settings.skills` | Skills: the reusable context a builder loads | Nothing, and no section |
-| `settings.popups` | Popups: which of the deployment's popups appear | Nothing, and no section |
+| `settings.phone` | Phone: the numbers the account's owner messages and calls NoClick from | The app's own, linked by a code (listed only where the page acts as the owner) |
+| `settings.skills` | Skills: the skills NoClick's builder loads for the account | The app's own, through `/v1/builder_skills` |
+| `settings.skills.editor` | Skills: the editor a skill opens in | Its words (name, description, text) |
+| `settings.skills.share` | Skills: sharing one of the account's skills | Nothing, and no Share button |
+| `settings.popups` | Popups: which of the app's popups and banners appear | The app's own |
 | `settings.developer.olderKeys` | Developer, under the console's row: keys made before the console | Nothing |
 
 The app shell's (`src/screens/shell/slots.ts`): the frame and sidebar a page sits in (see [The frame](#the-frame)).
@@ -181,8 +183,22 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
 
 The workflow canvas's (`src/screens/canvas/slots.ts`): the canvas isn't one of this app's pages yet, and these are the
-parts of it only a host has. Connecting the account a step or an agent needs is the shared `connect.app` and
-`connect.model`.
+parts of it only a host has. Its editing surface is the app's own (`WorkflowCanvas.tsx` over `surface/`): steps selected,
+added from the palette (on their own, after a step from its "+", into a connection from its "+": `useClickToAddNode.ts`),
+moved, removed and connected as the workflow's rules allow (`surface/connectionRules.ts`), copied, cut, pasted and
+duplicated (`useWorkflowCopyPaste.ts`, `useCanvasContextMenu.tsx`: the right-click menus on the canvas, a step and a
+selection), laid out (`autolayout.ts`), saved to a file and read from one (`workflowFile.ts`), undone and done again
+from the keyboard, and other writers' changes followed through the account's change stream (`graph/followCommits.ts`),
+so it renders inside the app's live frames. A copy and a saved file carry a step's settings without their secrets
+(`stepSecrets.ts`: what a read of the workflow would show of the step); its accounts go along by their ids. Connecting
+the account a step or an agent needs is the shared `connect.app` and `connect.model`. What's heavy in a default (the
+SDK, the plain step's drawing, the palette's listing) loads the first time it's used, so a host that fills a slot never
+downloads it: whatever reads one of these imports them all. Running a workflow (the whole of it, from one step, or one
+step alone) and stopping a run are no slot: `runs/useRun.ts` does both on the platform API
+(`POST /v1/workflows/{id}/runs`, `.../runs/{run}/stop`), after the canvas's pending save lands, and puts each step's
+state on the canvas as the account's change stream says a run's steps moved. The canvas mounts them
+(`runs/useCanvasRuns.tsx`): Run and Stop in its toolbar, the run log behind the pill at its top left, and one run's
+results opened from a row of the log.
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -191,6 +207,19 @@ parts of it only a host has. Connecting the account a step or an agent needs is 
 | `canvas.interface` | The Interface tab: the workflow's forms, tables and chats as a page | A note that it's laid out and published on NoClick, with the workflow's link there |
 | `canvas.agentChat` | An agent step's chat, a block of the Interface tab | A note that the agent is talked to on NoClick, with the link |
 | `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
+| `canvas.graph.saves` | How the workflow's graph is saved and read again, beyond `/v1` (asked by the graph store, `graph/liveGraphStore.ts`) | Every save as the edits that changed it (`POST /v1/workflows/{id}/edits`), the graph read from `/v1` |
+| `canvas.step.drawing` | How each step type is drawn (`nodes/lazyNodeTypes.tsx`), and what it draws as before its node loads | A sticky note as a note; any other step as a plain step (`nodes/PlainStep.tsx`): its card, the catalog's glyph where the host loaded it, and a handle for each connection it holds; both loaded with the first step drawn, every step its outline until then |
+| `canvas.step.roles` | What a step is by its type, for its node, handles and hints and the connections it takes: a trigger, an agent's tool, a step nothing connects to, an older type's new name | What `GET /v1/step_types/{type}` says, read once a session and drawn again as each lands |
+| `canvas.step.editing` | Which steps a build is working on, to open their cards while it lands | None known: a build the canvas follows marks the steps it adds in their data, which opens them all the same |
+| `canvas.note.markdown` | A sticky note's text, drawn from its Markdown | Drawn as a code repository's README is |
+| `canvas.palette` | The palette a step is added from, wherever the canvas frames it (with the canvas's own search box, or its own) | Every kind of step the platform lists (`GET /v1/step_types`; with a search, its best matches by name or by what they do), loaded when it first opens |
+| `canvas.clipboard` | What a copied step's settings carry onto the clipboard and into a saved file, and what else a paste and a file are read as beyond the canvas's own format | A step's settings without their secrets; the canvas's own format alone |
+| `canvas.runs.reads` | What the run log, a step's output history and its expected shape read (`runs/reads.ts`), and what the log narrows by | The API: `GET /v1/workflows/{id}/runs` and `.../runs/counts`, a step's `.../steps/{step}/outputs` (each whole from `.../outputs/{run}`), `GET /v1/step_types/{type}/output_shape`. The API lists runs by how they ended and nothing more yet, so the log is narrowed by that alone and says so |
+| `canvas.runs.saved` | Outputs saved under a name, to pin on a step later and share | None: the API has none, so the output shown is only pinned as the step's mock (an edit of the workflow) |
+| `canvas.runs.fixes` | What can be done about a failed step: asking the builder about it, and the fix the API names | No builder asked; adding funds and the spending cap open in NoClick's app; a link stays a link |
+| `canvas.runs.results` | One run's results, opened from the run log | What each step did (`GET /v1/workflows/{id}/runs/{run}`), read again as its steps move, with a note that a run replayed on the canvas and its agents' calls are in NoClick's app |
+| `canvas.testRun` | What a workflow's Test Run reads (`testRun/reads.ts`): the situations it can stage, a run of one, where the workflow's own test runs are kept, what it still needs connected, sharing a finished run | The workflow's test runs (`GET /v1/workflows/{id}/test_runs`), a run as a `workflow.rehearse` operation (`POST .../rehearsals`) whose steps arrive when it ends, the workflow's own test runs in its settings (an `update_workflow` edit), what's unconnected from the workflow's own steps (`GET /v1/workflows/{id}`); nothing is shared |
+| `canvas.frames` | What the frames of a Test Run and of a run's story draw with (`testRun/frameParts.tsx`): a message's or a reply's text from its Markdown, and the mark of work under way | Markdown drawn as a README is; a live dot |
 
 Work's are listed under [Work](#work).
 
@@ -256,12 +285,15 @@ in development only: `?scene=` picks a view, and `?as=key` answers as the API an
 and the balance as the account reads them (`GET /v1/account`), with NoClick's pages for changing the plan and adding
 funds, and the monthly spending cap with what its period spent (`Usage.limits` and `Usage.setAccountCap` in the SDK);
 Notifications, the email alerts NoClick sends the account's owner, one switch each (`Notifications.get` and
-`Notifications.update`); and Developer, the way into the console at `/developers`. It acts as the app's key: a key
-lowers the cap, or sets one where there's none, and raising or removing it opens NoClick's own Plan and billing (the
-owner's, `src/screens/console/ownerOnly.ts`). What only a deployment has (its people, linking a phone, its builder's
-skills, its own popups) is a slot no section stands in, so Settings doesn't list it. Its section is the address's
-`?section=`. `src/screens/settings/settingsAsKey.test.tsx` opens every scene of its lab as the owner and as a key and
-fails if a key's asks for what only the owner may have, or is refused; `/settings-lab` is the page over a made-up
+`Notifications.update`); Popups, which of the app's popups and banners appear, one switch each (`Popups.get` and
+`Popups.update`); and Developer, the way into the console at `/developers`. It acts as the app's key: a key lowers the
+cap, or sets one where there's none, and raising or removing it opens NoClick's own Plan and billing (the owner's,
+`src/screens/console/ownerOnly.ts`). Phone, the numbers linked to the account (`AccountPhones`), is listed only where
+the page acts as the owner: a linked number signs in to the account, so a key links one only with the `account:phones`
+scope, which this app's key doesn't carry. What only a deployment has (its people, its builder's skills) is a slot no
+section stands in, so Settings doesn't list it. Its section is the address's `?section=`.
+`src/screens/settings/settingsAsKey.test.tsx` opens every scene of its lab as the owner and as a key and fails if a
+key's asks for what only the owner may have, or is refused, or if any call sends or reads a secret; `/settings-lab` is the page over a made-up
 account (`src/screens/settings/lab`) in development only: `?scene=` picks a view, and `?as=key` answers as the API
 answers a key.
 
