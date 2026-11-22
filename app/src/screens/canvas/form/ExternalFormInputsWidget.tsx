@@ -71,7 +71,7 @@ export function ExternalFormInputsWidget({ fieldKey, value, onChange, config, no
         setLoading(true);
         setError(null);
         try {
-            const resp = await reads.options({
+            const resp = await reads.lookup({
                 node_type: nodeType || 'automation-submit-external-form',
                 field_name: 'form_fields',
                 credential_id: '',
