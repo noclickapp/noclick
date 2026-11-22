@@ -88,6 +88,16 @@ export interface ConnectableApp {
     iconColor?: string;
 }
 
+/** A connection that just landed through a connect dialog (`connect.app`'s `Connect`, `connect.model`), by both of
+ *  the names it goes by. */
+export interface LandedConnection {
+    /** The ref an agent names it by, in its tools or as its model connection: `credential:<id>` for an account connected
+     *  in the app, else its named connection's name (`refFor`; `credential:` never names a named connection). */
+    ref: string;
+    /** The id of the account it holds, which a workflow step keeps in its `credentialIds`. */
+    credentialId: string;
+}
+
 /** An account that just landed, as a list of accounts names it (its credential's id, name and type). */
 export interface LandedAccount {
     id: string;
@@ -136,9 +146,9 @@ export interface RekeyProps {
 
 export interface AppConnecting {
     /** The dialog that connects one of an app's accounts for `name` (an agent, say), with the platform client the screen
-     *  drawing it reads with, handing back the account that lands (`credential:<id>`'s id) and closing itself as
-     *  `onClose` says. */
-    Connect: ComponentType<{ app: ConnectableApp; name: string; client: NoClick; onConnected: (credentialId: string) => void; onClose: () => void }>;
+     *  drawing it reads with, handing back the connection that lands (`LandedConnection`: Work's tools panel names it
+     *  by its ref) and closing itself as `onClose` says. */
+    Connect: ComponentType<{ app: ConnectableApp; name: string; client: NoClick; onConnected: (landed: LandedConnection) => void; onClose: () => void }>;
     /** Connecting one of a step's accounts in its form, drawn in place under its pickers, with the platform client a
      *  `ClientProvider` above gives where it reads one. */
     InPlace: ComponentType<InPlaceConnectProps>;
@@ -182,10 +192,10 @@ export interface ModelConnectProps {
     /** The platform client the screen drawing it reads with. */
     client: NoClick;
     onOpenChange: (open: boolean) => void;
-    /** The account that landed: its credential's id. */
-    onConnected: (credentialId: string) => void;
+    /** The connection that landed: the model picker names it by its ref, an agent step keeps the account it holds. */
+    onConnected: (landed: LandedConnection) => void;
 }
 
-/** Connecting the AI account a model needs (the model picker's). The standard makes the connection and opens its
+/** Connecting the AI account a model needs (the model picker's, an agent step's). The standard makes the connection and opens its
  *  connect page on NoClick (a key, or signing in with a plan) in a new tab, then waits for it to land. */
 export const CONNECT_MODEL = slot<ComponentType<ModelConnectProps>>('connect.model', ModelConnectLink);

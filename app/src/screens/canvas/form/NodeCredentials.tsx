@@ -679,7 +679,7 @@ function ModelConnectInPlace({ provider, way, app, onConnected }: { provider: st
                 others={[]}
                 client={client}
                 onOpenChange={setOpen}
-                onConnected={(credentialId) => onConnected({ id: credentialId, name: way.label, credential_type: way.credential_type }, null)}
+                onConnected={({ credentialId }) => onConnected({ id: credentialId, name: way.label, credential_type: way.credential_type }, null)}
             />
         </div>
     );
