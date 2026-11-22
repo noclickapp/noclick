@@ -1417,6 +1417,7 @@ kisi
 kit
 kiwify
 kizeo-forms
+klasio
 klaviyo
 klicktipp
 knowify
