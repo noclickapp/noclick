@@ -1182,6 +1182,7 @@ fidel-api
 figma
 figshare
 filepost
+filescan
 filevine
 fillout
 financial-datasets-ai
