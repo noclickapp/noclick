@@ -2175,6 +2175,7 @@ video-db
 videoupscaler
 vimeo
 viral-loops
+virtualbadgeio
 virtuous-crm
 virustotal
 visma-eaccounting
