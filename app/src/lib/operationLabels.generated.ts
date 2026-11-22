@@ -1389,6 +1389,7 @@ inmobalia-crm
 inmobile-sms-gateway
 insightly
 instagram
+instamojo
 instantly
 instapaper
 instatus
