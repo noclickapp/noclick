@@ -35,7 +35,7 @@ export function WorkflowPickerWidget({ fieldKey, value, onChange, nodeType }: Wo
     const loadOptions = useCallback(async () => {
         setLoading(true);
         try {
-            const resp = await reads.options({
+            const resp = await reads.lookup({
                 node_type: nodeType || 'noclick',
                 field_name: 'allowed_workflow_ids',
                 credential_id: '',
