@@ -847,6 +847,7 @@ botpress
 botsonic
 botstar
 bouncer
+bouncie
 bouncify
 box
 brandfetch
