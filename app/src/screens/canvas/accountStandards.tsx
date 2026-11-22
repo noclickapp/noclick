@@ -1,14 +1,13 @@
 // What stands in the canvas's account slot (`canvas.step.accounts`, slots.ts) when no host fills it: a step's ways in,
 // read from its type's schema on /v1; the account's connections; and a choice saved as the step's `set_connection`
-// edit, with the client a `ClientProvider` above gives.
+// edit, with the client a `ClientProvider` above gives. The SDK loads with the first read or save (standardsSdk.ts).
 import { useCallback, useMemo } from 'react';
-import { Connection, Workflow } from 'noclick';
+import type { Connection, NoClick } from 'noclick';
 import { requirementsFromSchema, runsOnNoClickKey, type StepSettings } from '@/lib/accountWays';
 import { humanizeCredentialLabel } from '@/lib/credentialLabels';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
 import { CONNECTIONS_READ } from '@/screens/connections/apiAccounts';
-import { errorText } from '@/screens/console/pages/resources/shared';
 import { useStepScope } from './form/reads';
 import { knownStepType, useV1StepSchema } from './slotStandards';
 import type { AccountWaysRead, StepAccount, StepAccountList } from './slots';
@@ -78,15 +77,25 @@ function accountOf(connection: Holding): StepAccount {
 /** The pickers' read of the account's connections: under Connections' prefix, so a write there reads them again. */
 const STEP_ACCOUNTS_READ = `${CONNECTIONS_READ}:step-accounts`;
 
+/** The account's connections; a read that fails says so as one line. */
+async function readAccounts(client: NoClick): Promise<Connection[]> {
+    const { Connection, errorText } = await import('./standardsSdk');
+    try {
+        return await Connection.list({ client });
+    } catch (error) {
+        throw new Error(`Your accounts couldn’t be read: ${errorText(error)}`);
+    }
+}
+
 export function useV1Accounts(): StepAccountList {
     const client = useClient();
-    const read = useV1(STEP_ACCOUNTS_READ, () => Connection.list({ client }), { client });
+    const read = useV1(STEP_ACCOUNTS_READ, () => readAccounts(client), { client });
     // One still waiting for its account holds none a step could keep.
     const accounts = useMemo(() => (read.data ?? []).filter((c): c is Holding => c.credentialId !== null).map(accountOf), [read.data]);
     return {
         accounts,
         loading: read.loading,
-        error: read.error === undefined ? null : `Your accounts couldn’t be read: ${errorText(read.error)}`,
+        error: read.error === undefined ? null : read.error instanceof Error ? read.error.message : String(read.error),
         reload: read.refresh,
         // Every connection names the account it holds, so one a step holds that isn't listed is gone or another's.
         namesEvery: true,
@@ -101,13 +110,16 @@ export function useV1SaveAccount(): ((credentialType: string, credentialId: stri
     const scope = useStepScope();
     const workflowId = scope?.workflowId;
     const nodeId = scope?.nodeId;
-    return useCallback(
+    const save = useCallback(
         async (credentialType: string, credentialId: string | null) => {
             if (!workflowId || !nodeId) throw new Error('A step’s account is saved through its workflow and step: draw the pickers inside its form.');
             if (credentialId?.startsWith('{{')) throw new Error('A credential variable is chosen with the workflow’s settings, not saved as a step’s connection.');
+            const { Workflow } = await import('./standardsSdk');
             const step = Workflow.fromId(workflowId, { client }).step(nodeId);
             await step.setConnection(credentialId, { slot: credentialType });
         },
         [client, workflowId, nodeId]
     );
+    // On a canvas that saves the step from what it's told (its graph's own edits), the pickers save nothing.
+    return scope?.hostSaves ? null : save;
 }
