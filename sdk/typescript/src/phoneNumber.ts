@@ -36,7 +36,7 @@ import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOption
 import { Operation, registerResult, withKinds } from "./operation.ts";
 import type { KindScopedFilters } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
-import type { UserOption } from "./scope.ts";
+import type { UserOption, UserRef } from "./scope.ts";
 
 /** A kind of number, as the carriers name them. */
 export type PhoneNumberType = "local" | "mobile" | "toll_free" | "national" | "shared_cost";
@@ -115,6 +115,18 @@ export interface NumberHolder {
   country: string;
   /** A number to contact them on, in E.164; required where one of the requirements' `kind` is `contact`. */
   phone?: string;
+}
+
+/** The number holder profile on file (`PhoneNumber.setHolderProfile`): who your numbers (or a user's) are registered to
+ *  where their country asks, the answers to what those countries ask by requirement id, and when the holder accepted
+ *  having them filed in their name. A purchase files it with `holderOnFile: true`; where your approval settings make
+ *  `person_filing` standing, an app's code buying a number that files it runs with no one asked. */
+export interface NumberHolderProfile {
+  holder: NumberHolder;
+  requirements: Record<string, string>;
+  acceptedAt: Date | null;
+  userId: string | null;
+  raw: JsonObject;
 }
 
 /** A country numbers are for sale in, the kinds in stock there, the kinds that can text, the kinds bought with
@@ -386,7 +398,28 @@ function toAvailable(raw: JsonObject): AvailableNumber {
 export type PhoneNumberBuyOptions = CallOptions & {
   maxMonthlyUsd: number; maxUpfrontUsd?: number; country?: string; type?: PhoneNumberType;
   address?: NumberHolder; requirements?: Record<string, string | NumberDocument>; name?: string;
+  /** File the holder profile on file (`PhoneNumber.setHolderProfile`: yours, or inside `asUser` the user's) in place
+   *  of `address` and `requirements`, with the answers it holds that the number's country asks; with none on file it
+   *  throws `ActionRequired`. */
+  holderOnFile?: boolean;
 };
+
+function toHolderProfile(raw: JsonObject | null | undefined): NumberHolderProfile | null {
+  if (!raw || !raw.holder) return null;
+  const h = raw.holder as JsonObject;
+  const holder: NumberHolder = {
+    name: String(h.name), street: String(h.street), city: String(h.city), postalCode: String(h.postal_code),
+    country: String(h.country),
+    ...(h.business_name ? { businessName: String(h.business_name) } : {}),
+    ...(h.street2 ? { street2: String(h.street2) } : {}),
+    ...(h.region ? { region: String(h.region) } : {}),
+    ...(h.phone ? { phone: String(h.phone) } : {}),
+  };
+  return {
+    holder, requirements: (raw.requirements ?? {}) as Record<string, string>, acceptedAt: parseTime(raw.accepted_at),
+    userId: str(raw.user_id), raw,
+  };
+}
 
 function toDocument(raw: JsonObject): NumberDocument {
   return {
@@ -883,8 +916,9 @@ export class PhoneNumber extends ApiObject {
    * `PhoneNumber.uploadDocument`); it resolves to a `PhoneNumberOrder` in the carrier's review (days,
    * sometimes), and nothing is charged until it completes. `name` is what your code calls it, unique among
    * its user's numbers (a taken one is a `Conflict` with `existingId`, before anything is bought).
+   * `holderOnFile: true` files the holder profile on file in place of `address` and `requirements`.
    */
-  static buy(number: string | AvailableNumber, options: PhoneNumberBuyOptions & { address?: undefined; requirements?: undefined }): Promise<PhoneNumber>;
+  static buy(number: string | AvailableNumber, options: PhoneNumberBuyOptions & { address?: undefined; requirements?: undefined; holderOnFile?: false }): Promise<PhoneNumber>;
   static buy(number: string | AvailableNumber, options: PhoneNumberBuyOptions): Promise<PhoneNumber | PhoneNumberOrder>;
   static async buy(number: string | AvailableNumber, options: PhoneNumberBuyOptions): Promise<PhoneNumber | PhoneNumberOrder> {
     const scope = resolveScope(options.user);
@@ -896,11 +930,46 @@ export class PhoneNumber extends ApiObject {
         max_upfront_usd: options.maxUpfrontUsd ?? picked?.upfrontUsd ?? undefined,
         address: options.address ? numberHolderWire(options.address) : undefined,
         requirements: requirementsWire(options.requirements), name: options.name,
+        holder_on_file: options.holderOnFile ? true : undefined,
       }),
       user: scope,
     });
     if (raw.object === "phone_number_order") return PhoneNumberOrder._fromRaw(raw, { client: options.client, user: scope });
     return new PhoneNumber({ raw, client: options.client, user: scope });
+  }
+
+  /** The number holder profile on file: your account's, or with `user` (a `User` or your id for one) that user's. */
+  static async holderProfile(options: { client?: NoClick; user?: UserRef | null } = {}): Promise<NumberHolderProfile | null> {
+    return toHolderProfile(await resolveClient(options.client).request<JsonObject>("GET", "/v1/phone_numbers/holder", {
+      user: options.user ?? null,
+    }));
+  }
+
+  /**
+   * File (or with `null` clear) the number holder profile: your account's, or with `user` that user's. `holder` is
+   * who numbers are registered to where their country asks, `requirements` the answers to what those countries ask by
+   * requirement id (the text, or a `NumberDocument`), and `acceptedAt` when the holder accepted having them filed with
+   * the carrier in their name (required: only the person accepts it; your server records when they did). A purchase
+   * files it with `PhoneNumber.buy(..., { holderOnFile: true })`.
+   */
+  static async setHolderProfile(
+    holder: NumberHolder | null,
+    options: { client?: NoClick; user?: UserRef | null; acceptedAt?: Date | string; requirements?: Record<string, string | NumberDocument> } = {},
+  ): Promise<NumberHolderProfile | null> {
+    const api = resolveClient(options.client);
+    const user = options.user ?? null;
+    if (holder === null) {
+      await api.request("DELETE", "/v1/phone_numbers/holder", { user });
+      return null;
+    }
+    if (options.acceptedAt === undefined) throw new TypeError("Pass acceptedAt: when the holder accepted having their details filed.");
+    return toHolderProfile(await api.request<JsonObject>("PUT", "/v1/phone_numbers/holder", {
+      json: compact({
+        holder: numberHolderWire(holder), requirements: requirementsWire(options.requirements),
+        accepted_at: isoTime(options.acceptedAt),
+      }),
+      user,
+    }));
   }
 
   /**

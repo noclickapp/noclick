@@ -17,7 +17,7 @@ export type ActsAs = 'owner' | 'key';
 export const CLOCK = NOW;
 
 /** A billed fixture account (fixtures.ts USAGE_FIXTURES). */
-export type BilledAccount = 'member' | 'free-new' | 'running-out' | 'debt' | 'workspace' | 'legacy' | 'platform';
+export type BilledAccount = 'member' | 'free-new' | 'running-out' | 'debt' | 'workspace' | 'team' | 'legacy' | 'platform';
 
 /** An account the page reads (billed, or one nobody bills with charges or with none), or a read that never answers
  *  (`waiting`) or fails (`failed`, with the backend's own words). */
@@ -49,6 +49,8 @@ function wireGroup(g: UsageGroup): UsagePageData['groups'][number] {
         node_id: m.node_id ?? null,
         surface: m.surface ?? null,
         actual_user_id: m.actual_user_id ?? null,
+        responsible_user_id: m.responsible_user_id ?? null,
+        workstream_id: m.workstream_id ?? null,
         project_id: m.project_id ?? null,
         database_id: m.database_id ?? null,
         repo_id: m.repo_id ?? null,

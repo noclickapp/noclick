@@ -204,6 +204,8 @@ export interface Directory {
     numbers?: Record<string, { name: string }>;
     /** platform inboxes, by `metadata.inbox_id`. */
     inboxes?: Record<string, { name: string }>;
+    /** platform_workstreams, by `metadata.workstream_id`; `reads_as` the one a merged workstream joined. */
+    workstreams?: Record<string, { name: string; reads_as?: string }>;
 }
 
 /** Everything one usage page reads for one payer. */
