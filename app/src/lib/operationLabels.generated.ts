@@ -684,6 +684,7 @@ abyssale
 abysshub
 accredible-certificates
 acculynx
+acronis-cyber-protect-cloud-ca18
 act-crm
 actionstep
 active-merge
@@ -717,6 +718,7 @@ airwallex
 airweave
 akeneo
 akismet
+akkio
 akta
 alchemy
 alegra
@@ -725,6 +727,7 @@ alpaca
 altoviz
 alttext-ai
 amazing-marvin
+amazon-polly
 amplemarket
 amplience
 anakin-io
@@ -793,6 +796,7 @@ baserow
 baseten
 basin
 batchdialer
+bc-gov-news
 bclaws
 beach-day-api
 beaconchain
@@ -876,6 +880,7 @@ bulkpublish
 bulksmscom
 bungie
 bunnycdn
+burst-sms
 burstyai
 businessmap
 bytescale
@@ -1119,6 +1124,7 @@ elasticsearch
 elevenlabs
 elmah
 eloqua
+email-on-acid
 emaillistverify
 emailoctopus
 emailvalidation
@@ -1151,6 +1157,7 @@ exceptionless
 exercisecom
 exlibrisgroup
 exoscale
+expedy
 expensify
 explorium
 extend
@@ -1164,6 +1171,7 @@ facebook
 facecheck
 factorial
 facturadirecta
+faktoora
 fal
 faraday
 fareharbor
@@ -1179,6 +1187,7 @@ fidel-api
 figma
 figshare
 filepost
+filescan
 filevine
 fillout
 financial-datasets-ai
@@ -1395,6 +1404,7 @@ instapaper
 instatus
 intelliprint
 intercom
+intulse
 investorbase
 investorlift
 invofox
@@ -1426,7 +1436,7 @@ jobadder
 jobber
 jogg-ai
 join-it
-jooto
+joomla
 jq
 json2video
 jumpcloud
@@ -1514,6 +1524,7 @@ linode
 linq
 listclean
 listennotes
+listrak
 liveagent
 lofty
 logo-dev
@@ -1577,6 +1588,7 @@ metricool
 mews
 mezmo
 microsoft-bookings
+microsoft-dynamics365-business-c
 microsoft-entra-id
 microsoft-exchange
 microsoft-graph-security
@@ -1592,6 +1604,7 @@ mightycall
 mihu-ai
 milvus
 mindbody
+mindstamp
 minelead
 minerstat
 mineskin
@@ -1664,6 +1677,7 @@ okta
 ollama
 olostep
 omnisend
+onboardio
 onedesk
 onedrive
 onelake
@@ -1770,6 +1784,7 @@ postwire
 powerdns
 practice-better
 precisefp
+precisely
 predictleads
 printful
 printify
@@ -1848,6 +1863,7 @@ responder
 responsys
 retell-ai
 reteno
+reviewflowz
 revolut-for-business
 rezdy
 rillet
@@ -1893,6 +1909,7 @@ sap-concur
 saucelabs
 savvycal
 scale-ai
+scalepad
 scalr
 scheduleonce
 schoolmaker
@@ -1900,6 +1917,7 @@ scoro
 scrape-do
 scrapecreators
 scrapegraph-ai
+screenshotbase
 se-ranking
 seam
 search-api
@@ -2020,6 +2038,7 @@ stream-chat
 streamtime
 stripe
 studio-by-ai21-labs
+subscriptionflow
 sumoquote
 sumup
 supabase
@@ -2106,6 +2125,7 @@ tomba
 tomtom
 toneden
 topdesk
+total-synergy
 touchsms
 tovuti
 traccar
@@ -2124,6 +2144,7 @@ tripadvisor
 tripworks
 true-list
 truss
+trustlayer
 tryfundable
 turbot-pipes
 turso
