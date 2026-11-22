@@ -2226,6 +2226,7 @@ walcu-crm
 wallsio
 wati
 wayfront
+wbiztool
 weatherbit
 weaviate
 webcrawlerapi
