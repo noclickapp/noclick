@@ -16,7 +16,7 @@
 // room hands the store what it hears (adoptServerVersion, applyToBase).
 
 import { proxy, subscribe, useSnapshot } from 'valtio';
-import type { Node, Edge, Node as XYFlowNode, Edge as XYFlowEdge } from '@xyflow/react';
+import type { Node, Edge } from '@xyflow/react';
 import { Conflict, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
 import { valtioCache } from '@/lib/indexeddb';
 import { standing } from '@/slots';
@@ -859,9 +859,10 @@ export function recordDeletedNodes(workflowId: string, ids: string[]): void {
     scheduleSave(rec);
 }
 
-/** Tombstone a collaborator's delete (delivered over the collab channel)
- *  so a CAS-conflict rebase can't re-add the node while their save is
- *  still in flight. Never sent to the server — their save owns the cleanup. */
+/** Tombstone a removal the canvas took from another writer before it was
+ *  stored (a builder run's, which persists after its terminal frame) so a
+ *  CAS-conflict rebase can't re-add the node while that save is still on its
+ *  way. Never sent to the server — that writer's save owns the cleanup. */
 export function recordRemoteDeletedNodes(workflowId: string, ids: string[]): void {
     const rec = graphRecords[workflowId];
     if (!rec) return;
@@ -1092,66 +1093,6 @@ export function hasLiveGraphState(workflowId: string): boolean {
     const rec = graphRecords[workflowId];
     if (!rec) return false;
     return rec.loaded || rec.nodes.length > 0 || rec.edges.length > 0;
-}
-
-// ── Remote-edit application (used by a host's live presence when the
-//    canvas isn't mounted). When the canvas IS mounted, presence routes
-//    remote events through setNodes/setEdges, which then flow into this
-//    store via the canvas's recordGraphSnapshot effect — so these helpers
-//    are background-only and presence skips them while canvasMounted is
-//    true. ────────────────────────────────────────────────────────────
-
-export function applyRemoteNodeAdd(workflowId: string, nodeData: unknown): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const node = nodeData as XYFlowNode;
-    if (!node?.id) return;
-    if (rec.nodes.some(n => n.id === node.id)) return;
-    rec.nodes = [...rec.nodes, node];
-    // Don't mark dirty — remote edits are already persisted by the
-    // origin side. We only need to keep the canvas's view of the graph
-    // current; firing our own save on top would be redundant and risk a
-    // clobber if our snapshot lags theirs.
-}
-
-export function applyRemoteNodeUpdate(workflowId: string, nodeId: string, data: Record<string, unknown>): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const idx = rec.nodes.findIndex(n => n.id === nodeId);
-    if (idx === -1) return;
-    rec.nodes = [
-        ...rec.nodes.slice(0, idx),
-        { ...rec.nodes[idx], data: { ...rec.nodes[idx].data, ...data } },
-        ...rec.nodes.slice(idx + 1),
-    ];
-}
-
-export function applyRemoteNodeRemove(workflowId: string, nodeId: string): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    // Tombstone before the existence check: the removal may race a snapshot
-    // that hasn't listed the node yet, and the rebase guard must still hold.
-    rec.remoteDeletedNodeIds.add(nodeId);
-    if (!rec.nodes.some(n => n.id === nodeId)) return;
-    rec.nodes = rec.nodes.filter(n => n.id !== nodeId);
-    rec.edges = rec.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
-}
-
-export function applyRemoteEdgeAdd(workflowId: string, edgeData: unknown): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const edge = edgeData as XYFlowEdge;
-    if (!edge?.id) return;
-    if (rec.edges.some(e => e.id === edge.id)) return;
-    rec.edges = [...rec.edges, edge];
-}
-
-export function applyRemoteEdgeRemove(workflowId: string, edgeId: string): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    rec.remoteDeletedEdgeIds.add(edgeId);
-    if (!rec.edges.some(e => e.id === edgeId)) return;
-    rec.edges = rec.edges.filter(e => e.id !== edgeId);
 }
 
 // ── Agentic graph_event application ────────────────────────────────────
