@@ -42,7 +42,8 @@ PAGE_OF_MODULE = {
     "region": "Region", "_attachment": "Agent", "_feedback": "feedback", "trash": "TrashItem", "versions": "Secret",
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "workflow_resources": "Workflow", "_watch": "watch",
-    "step_type": "Workflow", "notifications": "Notifications",
+    "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "connected_app": "ConnectedApp",
+    "popups": "Popups", "account_phones": "AccountPhones", "builder_skill": "BuilderSkill",
     "workflow_approval": "Workflow", "workflow_example": "Workflow",
 }
 # Module docstrings that describe internals rather than the page's names.
@@ -51,7 +52,7 @@ NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "ag
 
 # The index page's sections, like the reference's table of contents.
 GROUPS: List[Tuple[str, List[str]]] = [
-    ("Configuration", ["Client", "configure", "default_client", "Page", "regions", "Region"]),
+    ("Configuration", ["Client", "configure", "default_client", "Page", "Key", "regions", "Region"]),
     ("Your users", ["User", "Spending", "as_user", "Session", "Brand"]),
     ("Their accounts", ["Connection", "run", "ConnectLink", "IntegrationInfo", "IntegrationOperation", "IntegrationEvent"]),
     ("Hosted agents", ["Agent", "HarnessInfo", "ModelUsage", "AgentGrant", "Cron", "OnWebhook", "OnEvent", "OnPlatformEvent", "OnQueue", "AgentTrigger", "AgentMemory", "Memory", "Skill",
@@ -60,14 +61,14 @@ GROUPS: List[Tuple[str, List[str]]] = [
                        "Channel", "Subscription",
                        "Workspace", "A2AMember"]),
     ("Tools for your own LLM", ["Toolkit", "ToolResult", "McpServer", "AI"]),
-    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Approval", "Policy"]),
+    ("People in the loop", ["Human", "HumanOperations", "HumanRequest", "Approval", "Policy", "ConnectedApp"]),
     ("Acting in the world", ["Inbox", "PhoneNumber", "Browser", "BrowserProfile", "BrowserLogin", "Card", "Sandbox",
                              "Machine", "compute"]),
     ("Build and host", ["Project", "Deployment", "Schedule", "ProjectEmail", "ProjectPayments", "ProjectSignIn", "ProjectAI", "ProjectLive", "Repo",
                         "Domain", "DomainPurchase", "Workflow", "estimate", "Estimate"]),
     ("Data", ["Database", "Bucket", "Volume", "Dict", "Queue", "Secret"]),
     ("In production", ["Operation", "TrashItem", "Event", "Webhook", "watch", "ToolCall", "ApiRequest", "usage", "Usage",
-                       "Notifications", "ExportBundle", "feedback"]),
+                       "Notifications", "Popups", "AccountPhones", "BuilderSkill", "ExportBundle", "feedback"]),
     ("Errors", ["Error", "NeedsConnection", "CredentialDisconnected", "ApprovalRequired", "SpendCapExceeded", "SpendingPaused",
                 "Conflict",
                 "WebhookSignatureError"]),
