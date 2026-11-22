@@ -1,0 +1,15 @@
+// The app (app/) as a Worker, for Cloudflare Workers and for NoClick's own app hosting, which reads the same file.
+// It is at this repository's root, not in app/, because the app compiles the TypeScript SDK's source beside it:
+// a host that copies one folder of a repository would leave the SDK behind.
+//
+// Its three settings (app/README.md, "Configuration") are the Worker's secrets; .dev.vars.example names them.
+{
+    "name": "noclick-app",
+    "main": "app/worker.js",
+    "compatibility_date": "2026-11-01",
+    // Node's built-ins the server build names, and its settings in process.env.
+    "compatibility_flags": ["nodejs_compat"],
+    "assets": { "directory": "app/build/client" },
+    "build": { "command": "pnpm install --frozen-lockfile && pnpm build", "cwd": "app" },
+    "observability": { "enabled": true }
+}
