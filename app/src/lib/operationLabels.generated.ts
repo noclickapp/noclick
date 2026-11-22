@@ -1997,6 +1997,7 @@ spacebring
 speechmatics
 spiro
 splitwise
+spoonacular
 spotify
 spotio2
 sprig
