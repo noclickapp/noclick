@@ -197,6 +197,9 @@ importers:
       unist-util-visit:
         specifier: ^5.0.0
         version: 5.0.0
+      valtio:
+        specifier: ~2.1.7
+        version: 2.1.7(@types/react@19.3.0)(react@19.3.1)
     devDependencies:
       '@react-router/dev':
         specifier: 7.18.2
@@ -2993,6 +2996,9 @@ packages:
     resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
     engines: {node: '>= 0.10'}
 
+  proxy-compare@3.0.1:
+    resolution: {integrity: sha512-V9plBAt3qjMlS1+nC8771KNf6oJ12gExvaxnNzN/9yVRLdTv/lc+oJlnSzrdYDAvBfTStPCoiaCOTmTs0adv7Q==}
+
   qs@6.16.2:
     resolution: {integrity: sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==}
     engines: {node: '>=0.6'}
@@ -3405,6 +3411,18 @@ packages:
       typescript: '>=5'
     peerDependenciesMeta:
       typescript:
+        optional: true
+
+  valtio@2.1.7:
+    resolution: {integrity: sha512-DwJhCDpujuQuKdJ2H84VbTjEJJteaSmqsuUltsfbfdbotVfNeTE4K/qc/Wi57I9x8/2ed4JNdjEna7O6PfavRg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      react: '>=18.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
         optional: true
 
   vary@1.1.2:
@@ -6525,6 +6543,8 @@ snapshots:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
 
+  proxy-compare@3.0.1: {}
+
   qs@6.16.2:
     dependencies:
       es-define-property: 1.0.1
@@ -7063,6 +7083,13 @@ snapshots:
   valibot@1.5.0(typescript@5.6.3):
     optionalDependencies:
       typescript: 5.6.3
+
+  valtio@2.1.7(@types/react@19.3.0)(react@19.3.1):
+    dependencies:
+      proxy-compare: 3.0.1
+    optionalDependencies:
+      '@types/react': 19.3.0
+      react: 19.3.1
 
   vary@1.1.2: {}
 
