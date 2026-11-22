@@ -2013,6 +2013,7 @@ snitcher
 snowflake
 snyk
 socialkit
+socket
 softr
 solcast
 soundcloud
