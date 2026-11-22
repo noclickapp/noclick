@@ -405,12 +405,16 @@ export interface StepRoles {
     trigger: (type: string | null | undefined, operation: string | null | undefined) => boolean;
     /** Whether an agent can use a step of the type as its tools: it has a handle on top to wire it into one. */
     tool: (type: string | null | undefined) => boolean;
+    /** Whether a step of the type talks to the rest through the SDK rather than connections (a page with its own code):
+     *  nothing connects to or from it. */
+    connectionless: (type: string | null | undefined) => boolean;
     /** The type an older one became (a step saved before two types merged), or the type itself. */
     canonical: (type: string) => string;
 }
 
-/** What steps are by their type, as their nodes, connections and hints are drawn: a trigger's bolt and missing input, a
- *  tool's handle on top, an older type drawn as the one it became. The standard knows a type once `GET
+/** What steps are by their type, as their nodes, connections and hints are drawn and connections are judged: a trigger's
+ *  bolt and missing input, a tool's handle on top, a step nothing connects to, an older type drawn as the one it became.
+ *  The standard knows a type once `GET
  *  /v1/step_types/{type}` has read it (the step form's read, once a session per client), drawing again as each lands;
  *  NoClick's app knows every type from the catalog it was built with. */
 export const STEP_ROLES = slot<{ useRoles: () => StepRoles }>('canvas.step.roles', { useRoles: useV1StepRoles });

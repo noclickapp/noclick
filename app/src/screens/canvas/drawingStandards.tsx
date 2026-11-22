@@ -27,6 +27,7 @@ export function useV1StepRoles(): StepRoles {
                 return known.trigger || (!!operation && known.operations.some((op) => op.name === operation && op.trigger));
             },
             tool: (type) => read(type)?.kinds.includes('tool') ?? false,
+            connectionless: (type) => read(type)?.schema?.['x-connectionless'] === true,
             canonical: (type) => read(type)?.type ?? type,
         };
     }, [client, settled]);

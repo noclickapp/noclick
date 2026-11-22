@@ -1,3 +1,4 @@
+GET /v1/step_types
 GET /v1/step_types/agent
 GET /v1/step_types/automation-slack
 GET /v1/step_types/log

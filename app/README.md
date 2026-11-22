@@ -183,9 +183,13 @@ A host fills what it keeps in its sidebar and menu:
 | `shell.palette` | The ⌘K palette's commands, the sections "Open …" narrows to and the shortcuts it lists | The pages this app serves and Resources' kinds, what its pages handed over, the theme, the shortcuts and signing out |
 
 The workflow canvas's (`src/screens/canvas/slots.ts`): the canvas isn't one of this app's pages yet, and these are the
-parts of it only a host has. Connecting the account a step or an agent needs is the shared `connect.app` and
-`connect.model`. What's heavy in a default (the SDK, the plain step's drawing) loads the first time it's used, so a host
-that fills a slot never downloads it: whatever reads one of these imports them all.
+parts of it only a host has. Its editing surface is the app's own (`WorkflowCanvas.tsx` over `surface/`): steps selected,
+added from the palette (`GET /v1/step_types`), moved, removed and connected as the workflow's rules allow
+(`surface/connectionRules.ts`), undone and done again from the keyboard, and other writers' changes followed through the
+account's change stream (`graph/followCommits.ts`), so it renders inside the app's live frames. Connecting the account a
+step or an agent needs is the shared `connect.app` and `connect.model`. What's heavy in a default (the SDK, the plain
+step's drawing) loads the first time it's used, so a host that fills a slot never downloads it: whatever reads one of
+these imports them all.
 
 | Slot | Where it is | By default |
 |---|---|---|
@@ -196,7 +200,7 @@ that fills a slot never downloads it: whatever reads one of these imports them a
 | `canvas.share` | Sharing the workflow with people, from its top bar | A dialog that sends you to share it on NoClick |
 | `canvas.graph.saves` | How the workflow's graph is saved and read again, beyond `/v1` (asked by the graph store, `graph/liveGraphStore.ts`) | Every save as the edits that changed it (`POST /v1/workflows/{id}/edits`), the graph read from `/v1` |
 | `canvas.step.drawing` | How each step type is drawn (`nodes/lazyNodeTypes.tsx`), and what it draws as before its node loads | A sticky note as a note; any other step as a plain step (`nodes/PlainStep.tsx`): its card, the catalog's glyph where the host loaded it, and a handle for each connection it holds; both loaded with the first step drawn, every step its outline until then |
-| `canvas.step.roles` | What a step is by its type, for its node, handles and hints: a trigger, an agent's tool, an older type's new name | What `GET /v1/step_types/{type}` says, read once a session and drawn again as each lands |
+| `canvas.step.roles` | What a step is by its type, for its node, handles and hints and the connections it takes: a trigger, an agent's tool, a step nothing connects to, an older type's new name | What `GET /v1/step_types/{type}` says, read once a session and drawn again as each lands |
 | `canvas.step.editing` | Which steps a build is working on, to open their cards while it lands | None known: a build the canvas follows marks the steps it adds in their data, which opens them all the same |
 | `canvas.note.markdown` | A sticky note's text, drawn from its Markdown | Drawn as a code repository's README is |
 

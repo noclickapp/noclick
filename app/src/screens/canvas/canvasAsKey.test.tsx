@@ -1,17 +1,20 @@
 // @vitest-environment happy-dom
 // The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
-// graph: the store that saves it, graph/liveGraphStore.ts; and its drawing: the steps and connections, nodes/ and
-// edges/) opens a workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws what
-// it holds, over fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
+// graph: the store that saves it, graph/liveGraphStore.ts; its drawing: the steps and connections, nodes/ and edges/;
+// and its editing surface with the palette, surface/ and WorkflowCanvas.tsx) opens a workflow, edits it in each way a
+// canvas does, meets another writer's change, closes, and draws what it holds, and the canvas on its own adds a step
+// from the palette, connects, moves, deletes and brings back steps and follows another writer's commit, over fixtures
+// that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
 // exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
 // hold to the table. And what it does with what it reads: every request goes through the app's client (none off its
 // origin), and no secret the account holds is in anything it reads or sends.
-import { act, cleanup, render, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { Position, ReactFlow, ReactFlowProvider, type Edge, type Node } from '@xyflow/react';
 import { NoClick } from 'noclick';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
+import { createWorkLive, WorkLiveContext } from '@/sdk/live';
 import { fill, standing } from '@/slots';
 import { applyNodeUpdate, createWorkflowNode } from '@/screens/canvas/applyNodeUpdate';
 import { isOwnerOnly } from '@/screens/console/ownerOnly';
@@ -32,6 +35,7 @@ import {
 } from './graph/liveGraphStore';
 import { V1_GRAPH_SAVES } from './graph/saves';
 import { GRAPH_SAVES, STEP_DRAWING } from './slots';
+import { WorkflowCanvas } from './WorkflowCanvas';
 
 type Json = Record<string, unknown>;
 
@@ -45,9 +49,10 @@ interface Call {
 /** Requests that left the app's client: a `fetch` of its own, an XHR, a socket. */
 const offClient: string[] = [];
 
-// The plain drawing loads with the first step a canvas draws (drawingStandards.tsx): loaded once here, with real timers,
-// so each canvas below draws its steps rather than their outlines.
+// The plain drawing loads with the first step a canvas draws (drawingStandards.tsx), and the SDK with the standards'
+// first read: loaded once here, with real timers, so each canvas below draws its steps rather than their outlines.
 beforeAll(async () => {
+    await import('./standardsSdk');
     const { result, unmount } = renderHook(() => standing(STEP_DRAWING).useLoaded([]));
     await waitFor(() => expect(result.current).toBe(true));
     unmount();
@@ -190,6 +195,106 @@ async function drawing(actsAs: 'owner' | 'key', graph: { nodes: Node[]; edges: E
     return { calls, container };
 }
 
+/** What the canvas hands React Flow, read from the element React Flow draws. */
+function surfaceOf(container: HTMLElement): Json {
+    const el = container.querySelector('.react-flow') as Element & Record<string, unknown>;
+    const key = Object.keys(el).find((k) => k.startsWith('__reactFiber'));
+    let fiber = key ? (el[key] as { memoizedProps?: Json; return?: unknown } | null) : null;
+    while (fiber) {
+        const props = fiber.memoizedProps;
+        if (props && typeof props.isValidConnection === 'function' && typeof props.onConnect === 'function') return props;
+        fiber = fiber.return as typeof fiber;
+    }
+    throw new Error('React Flow’s props not found');
+}
+
+async function press(target: Document | Window, init: KeyboardEventInit) {
+    await act(() => {
+        fireEvent.keyDown(target, init);
+    });
+    await act(() => {
+        fireEvent.keyUp(target, init);
+    });
+}
+
+/** The canvas on its own (WorkflowCanvas.tsx): opened, a step added from the palette, two connected, one moved, one
+ *  deleted from the keyboard, brought back and deleted again, another writer's commit followed, then closed. */
+async function editing(actsAs: 'owner' | 'key'): Promise<Call[]> {
+    const calls: Call[] = [];
+    let server = stored();
+    let version = 4;
+    const client = new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: graphFetch({
+            actsAs,
+            server: () => server,
+            version: () => version,
+            edit: (body) => ({ version: (version = ((body.if_version as number | undefined) ?? version) + 1) }),
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    });
+    const live = createWorkLive();
+    const { container, unmount } = render(
+        <ClientProvider client={client}>
+            <WorkLiveContext.Provider value={live}>
+                <div style={{ width: 1200, height: 800 }}>
+                    <WorkflowCanvas workflowId={WORKFLOW} />
+                </div>
+            </WorkLiveContext.Provider>
+        </ClientProvider>
+    );
+    await act(() => settle(500));
+    expect(graphRecords[WORKFLOW].nodes.map((n) => n.id)).toEqual(['hook', 'agent', 'slack', 'victim']);
+
+    // A step from the palette.
+    fireEvent.click(screen.getByRole('button', { name: /add step/i }));
+    await act(() => settle(300));
+    fireEvent.change(screen.getByRole('textbox', { name: 'Search steps' }), { target: { value: 'log' } });
+    await act(() => settle(300));
+    fireEvent.keyDown(screen.getByRole('textbox', { name: 'Search steps' }), { key: 'Enter' });
+    const added = graphRecords[WORKFLOW].nodes.find((n) => n.type === 'log' && n.id !== 'victim');
+    expect(added).toBeDefined();
+
+    // Connected as the rules allow, moved, deleted and brought back.
+    const surface = () => surfaceOf(container);
+    expect((surface().isValidConnection as (c: object) => boolean)({ source: 'victim', sourceHandle: null, target: 'hook', targetHandle: null })).toBe(false);
+    await act(() => (surface().onConnect as (c: object) => void)({ source: 'slack', sourceHandle: null, target: added!.id, targetHandle: null }));
+    await act(() => (surface().onNodesChange as (c: object[]) => void)([{ type: 'position', id: 'victim', position: { x: 980, y: 60 }, dragging: true }]));
+    await act(() => (surface().onNodesChange as (c: object[]) => void)([{ type: 'position', id: 'victim', position: { x: 1000, y: 80 }, dragging: false }]));
+    await act(() => settle(2500));
+    await act(() =>
+        (surface().onNodesChange as (c: object[]) => void)([
+            { type: 'select', id: added!.id, selected: false },
+            { type: 'select', id: 'victim', selected: true },
+        ])
+    );
+    // Each lands in the undo history a task later.
+    await press(document, { key: 'Backspace' });
+    await act(() => settle(0));
+    await press(window, { key: 'z', metaKey: true, ctrlKey: true });
+    await act(() => settle(0));
+    await press(window, { key: 'z', metaKey: true, ctrlKey: true, shiftKey: true });
+    await act(() => settle(2500));
+    expect(graphRecords[WORKFLOW].nodes.map((n) => n.id)).not.toContain('victim');
+
+    // Another writer's commit, heard on the account's change stream and read again.
+    server = { ...server, nodes: [...server.nodes, { id: 'theirs', type: 'log', position: { x: 0, y: 400 }, config: { label: 'Theirs' } }] };
+    version += 1;
+    act(() => live.deliver('platform:resource', { kind: 'workflow', id: WORKFLOW, status: null, parent_id: null, version }));
+    await act(() => settle(2500));
+    expect(graphRecords[WORKFLOW].nodes.map((n) => n.id)).toContain('theirs');
+
+    // Closed with one more change.
+    await act(() => (surface().onNodesChange as (c: object[]) => void)([{ type: 'position', id: 'theirs', position: { x: 40, y: 420 } }]));
+    unmount();
+    await settle(0);
+    return calls;
+}
+
 /** Every key anywhere in `value`. */
 function keysIn(value: unknown): string[] {
     if (Array.isArray(value)) return value.flatMap(keysIn);
@@ -223,6 +328,9 @@ describe('the canvas acting as a key', () => {
             const { nodes, edges } = graphRecords[WORKFLOW];
             calls.push(...(await drawing(actsAs, { nodes, edges })).calls);
             cleanup();
+            for (const id of Object.keys(graphRecords)) delete graphRecords[id];
+            calls.push(...(await editing(actsAs)));
+            cleanup();
             await holdsNoSecret(calls);
             for (const call of calls) {
                 called.add(asLine(call));
@@ -247,6 +355,23 @@ describe('the canvas acting as a key', () => {
         expect((edits[0].body.ops as Json[]).find((op) => op.op === 'set_connection')).toEqual({
             op: 'set_connection', id: 'agent', connection: 'cred_openai_2', slot: 'agent_openai',
         });
+        await holdsNoSecret(calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('edits on its own, adding from the palette, without asking for an owner’s call or sending a value', async () => {
+        const calls = await editing('key');
+        const edits = calls.filter((c) => asLine(c) === `POST /v1/workflows/${WORKFLOW}/edits`);
+        expect(edits.map((e) => (e.body.ops as Json[]).map((op) => op.op).sort())).toEqual([
+            ['add_step', 'connect', 'move'],
+            ['remove_step'],
+            ['move'],
+        ]);
+        // Each on the version the last left; closing sends the last change at once, on the version after the commit.
+        expect(edits.map((e) => e.body.if_version ?? null)).toEqual([4, 5, 7]);
+        expect(calls.filter((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/graph`)).toHaveLength(2);
+        expect(calls.some((c) => asLine(c) === 'GET /v1/step_types')).toBe(true);
+        for (const call of calls) expect(isOwnerOnly(call.method, call.path), asLine(call)).toBe(false);
         await holdsNoSecret(calls);
         expect(offClient).toEqual([]);
     });

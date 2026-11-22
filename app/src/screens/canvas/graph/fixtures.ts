@@ -1,6 +1,7 @@
 // A made-up workflow and the platform API's answers for the graph store's calls (its read and its edits) and the step
-// types the canvas's drawing reads, for the store's tests and the canvas acting as a key (../canvasAsKey.test.tsx). The
-// server holds secrets in some steps' settings and never reads one back, as the API withholds them (`withheld`).
+// types the canvas's drawing and its palette read, for the store's tests and the canvas acting as a key
+// (../canvasAsKey.test.tsx). The server holds secrets in some steps' settings and never reads one back, as the API
+// withholds them (`withheld`).
 import { refusedToAccountKey } from '@/screens/console/ownerOnly';
 
 type Json = Record<string, unknown>;
@@ -55,8 +56,8 @@ const stepType = (type: string, label: string, more: Json): Json => ({
 });
 
 /** What the API says of the workflow's step types (`GET /v1/step_types/{type}`), as the canvas's drawing reads them: the
- *  webhook starts runs, Slack can be an agent's tools and starts runs on a message, an older type answers as the one it
- *  became. */
+ *  webhook starts runs, Slack can be an agent's tools and starts runs on a message, a page talks through the SDK rather
+ *  than connections, an older type answers as the one it became. */
 export const STEP_TYPES: Record<string, Json> = {
     'trigger-webhook': stepType('trigger-webhook', 'Webhook', { kinds: ['trigger'], trigger: true }),
     agent: stepType('agent', 'AI Agent', { operations: [operation('default')] }),
@@ -64,8 +65,17 @@ export const STEP_TYPES: Record<string, Json> = {
         category: 'communication', kinds: ['trigger', 'tool'], operations: [operation('send_message'), operation('on_channel_message', true)],
     }),
     log: stepType('log', 'Log', { operations: [operation('default')] }),
+    'interface-html-react': stepType('interface-html-react', 'Page', { schema: { type: 'object', 'x-connectionless': true } }),
     'trigger-form-input': stepType('interface-form', 'Form', { kinds: ['trigger'], trigger: true }),
 };
+
+/** The step types a listing (`GET /v1/step_types`) holds, in the API's order, each as a listing gives it (no schema;
+ *  an older type's name isn't listed, only the type it became). */
+export function listedStepTypes(): Json[] {
+    return Object.entries(STEP_TYPES)
+        .filter(([name, found]) => found.type === name)
+        .map(([, found]) => ({ ...found, schema: null }));
+}
 
 export type Observe = (method: string, path: string, answered: Promise<Response>, body: Json, init: RequestInit | undefined) => void;
 
@@ -101,6 +111,11 @@ export function graphFetch(options: {
                 object: 'workflow_graph', workflow_id: WORKFLOW, version: version(), name: 'Orders', description: null,
                 settings: {}, settings_withheld: [], display_metadata: null, graph: asRead(server()),
             });
+        }
+        if (method === 'GET' && path === '/v1/step_types') {
+            const q = (url.searchParams.get('q') ?? '').toLowerCase();
+            const data = listedStepTypes().filter((t) => !q || `${t.type} ${t.label}`.toLowerCase().includes(q));
+            return Response.json({ object: 'list', data, next_cursor: null });
         }
         const kind = path.match(/^\/v1\/step_types\/([^/]+)$/);
         if (method === 'GET' && kind) {

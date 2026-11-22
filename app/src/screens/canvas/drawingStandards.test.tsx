@@ -59,6 +59,20 @@ describe('what a step is, by its type', () => {
     });
 });
 
+describe('a step nothing connects to', () => {
+    it('is one whose schema says it talks through the SDK, once its type is read', async () => {
+        const asked: string[] = [];
+        const { result } = renderHook(() => useV1StepRoles(), { wrapper: provided(clientAsking(asked)) });
+        expect(result.current.connectionless('interface-html-react')).toBe(false);
+        expect(result.current.connectionless('automation-slack')).toBe(false);
+        await waitFor(() => expect(result.current.connectionless('interface-html-react')).toBe(true));
+        await waitFor(() => expect(result.current.tool('automation-slack')).toBe(true));
+        expect(result.current.connectionless('automation-slack')).toBe(false);
+        expect(result.current.connectionless(undefined)).toBe(false);
+        expect(asked.sort()).toEqual(['GET /v1/step_types/automation-slack', 'GET /v1/step_types/interface-html-react']);
+    });
+});
+
 describe('a step with no drawing of its own', () => {
     const at = (x: number) => ({ x, y: 0 });
     const sized = (node: Node, handles: NonNullable<Node['handles']> = []): Node => ({ ...node, width: 90, height: 90, handles });
