@@ -147,10 +147,11 @@ export interface WorkflowRun {
  * (`trigger`: `{step_id, type, name}`) and the agents it reached took a real turn while a simulated world
  * answered every tool call, so nothing was sent and no account was touched. `testRun` is the run it played
  * (`{key, name, custom}`; `null` for a message you typed). `reply` is the agent's closing words; `toolCalls` the
- * calls it made, each with its `tool`, `arguments` and the `result` the world answered; `transcript` the run step
- * by step (`role` `assistant` steps, its `text`, and `tool` steps; a coding harness's own shell and file steps carry
- * `source` `harness`). `scenario` is the world it ran in, `note` says when it wrote nothing or what it did to act was
- * simulated, and `costUsd` is what it cost you.
+ * calls it made, each with its `tool`, `arguments` and the `result` the world answered (and `outbound`, the message
+ * it would have sent, for a call that carries one); `transcript` the run step by step (`role` `assistant` steps, its
+ * `text`, and `tool` steps; a coding harness's own shell and file steps carry `source` `harness`). `scenario` is the
+ * world it ran in, `note` says when it wrote nothing or what it did to act was simulated, and `costUsd` is what it
+ * cost you.
  */
 export interface WorkflowRehearsal {
   workflowId: string | null;
@@ -164,6 +165,35 @@ export interface WorkflowRehearsal {
   costUsd: number | null;
   operationId: string | null;
   raw: JsonObject;
+}
+
+/**
+ * A test run a workflow offers (`Workflow.testRuns`), as its Test Run screen lists it: a staged situation for one of
+ * its triggers, or one the workflow authored (`custom`; `edit().addTestRun`). `key` and `name` each name it to
+ * `rehearse`. `trigger` is what it stages on: the trigger step's `type`, the type's `label` in the app and the step's
+ * `operation`. `message` is the staged message as the run would stage it (`title`, `body`, and where it has them
+ * `author`, `handle`, `meta` and `time`): an offered situation's with the workflow's edits, an authored run's own.
+ */
+export interface WorkflowTestRun {
+  key: string;
+  name: string;
+  custom: boolean;
+  trigger: { type: string; label: string | null; operation: string | null };
+  message: JsonObject;
+  raw: JsonObject;
+}
+
+function toTestRun(value: unknown): WorkflowTestRun {
+  const raw = asObject(value);
+  const trigger = asObject(raw.trigger);
+  return {
+    key: str(raw.key) ?? "",
+    name: str(raw.name) ?? "",
+    custom: raw.custom === true,
+    trigger: { type: str(trigger.type) ?? "", label: str(trigger.label), operation: str(trigger.operation) },
+    message: asObject(raw.message),
+    raw,
+  };
 }
 
 /** What `Workflow.rehearse` stages: a test run the workflow offers, or a message you type on one of its triggers. */
@@ -2452,12 +2482,25 @@ export class Workflow extends ApiObject {
   }
 
   /**
+   * The test runs the workflow offers, as its Test Run screen lists them, in the order `rehearse` finds them: for
+   * each trigger an agent comes after, the staged situations NoClick offers for it (under the names the workflow
+   * gave them, with its edits to their messages, less the ones it removed) and the runs it authored
+   * (`edit().addTestRun`). Each `key` and `name` names its run to `rehearse`. Empty for a workflow with no trigger
+   * a test can stage. Reading them costs nothing.
+   */
+  async testRuns(): Promise<WorkflowTestRun[]> {
+    const raw = asObject(await this._request("GET", `${await this.path()}/test_runs`));
+    return (Array.isArray(raw.data) ? raw.data : []).map(toTestRun);
+  }
+
+  /**
    * A test run of the workflow, as the app's Test Run plays one: a staged event arrives at one of its triggers and
    * the agents it reaches take a real turn (their models, instructions and tools) while a simulated world answers
    * every tool call, so nothing is sent, no account is touched and its connections needn't be connected yet (its
    * agents' model connections must be). The steps after an agent that would reach an account never run.
    *
-   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them: a staged
+   * `testRun` plays one the workflow offers, by its name or key, as its Test Run screen lists them (`testRuns()`
+   * reads them): a staged
    * situation for one of its triggers, or one authored for it (`edit().addTestRun`). Or stage a message you type on
    * `trigger` (a trigger `Step`, its id or its type): `body`, with `title`, `author` and `handle`. `scenario` says
    * what the simulated world is like. One the workflow doesn't offer throws `NotFound` naming the ones it does.

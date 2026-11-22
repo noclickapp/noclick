@@ -368,10 +368,11 @@ class WorkflowRehearsal:
     (``trigger``: ``{step_id, type, name}``) and the agents it reached took a real turn while a simulated world
     answered every tool call, so nothing was sent and no account was touched. ``test_run`` is the run it played
     (``{key, name, custom}``; ``None`` for a message you typed). ``reply`` is the agent's closing words;
-    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered;
-    ``transcript`` the run step by step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding
-    harness's own shell and file steps carry ``source`` ``harness``). ``scenario`` is the world it ran in,
-    ``note`` says when it wrote nothing or what it did to act was simulated, and ``cost_usd`` is what it cost you."""
+    ``tool_calls`` the calls it made, each with its ``tool``, ``arguments`` and the ``result`` the world answered
+    (and ``outbound``, the message it would have sent, for a call that carries one); ``transcript`` the run step by
+    step (``role`` ``assistant`` steps, its ``text``, and ``tool`` steps; a coding harness's own shell and file steps
+    carry ``source`` ``harness``). ``scenario`` is the world it ran in, ``note`` says when it wrote nothing or what
+    it did to act was simulated, and ``cost_usd`` is what it cost you."""
 
     workflow_id: Optional[str]
     test_run: Optional[Dict[str, Any]]
@@ -384,6 +385,29 @@ class WorkflowRehearsal:
     cost_usd: Optional[float]
     operation_id: Optional[str]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+@dataclass(frozen=True)
+class WorkflowTestRun:
+    """A test run a workflow offers (``Workflow.test_runs``), as its Test Run screen lists it: a staged situation for
+    one of its triggers, or one the workflow authored (``custom``; ``edit().add_test_run``). ``key`` and ``name``
+    each name it to ``rehearse``. ``trigger`` is what it stages on (``{type, label, operation}``: the trigger step's
+    type, the type's name in the app and the step's operation), and ``message`` the staged message as the run would
+    stage it (``title``, ``body``, and where it has them ``author``, ``handle``, ``meta`` and ``time``): an offered
+    situation's with the workflow's edits, an authored run's own."""
+
+    key: str
+    name: str
+    custom: bool
+    trigger: Dict[str, Any]
+    message: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowTestRun":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(key=str(raw.get("key") or ""), name=str(raw.get("name") or ""), custom=raw.get("custom") is True,
+                   trigger=dict(raw.get("trigger") or {}), message=dict(raw.get("message") or {}), raw=raw)
 
 
 def _read_rehearsal(result: Any, op: Operation) -> WorkflowRehearsal:
@@ -2828,6 +2852,27 @@ class Workflow(_Object):
         return Operation._from_payload(payload, client=self._client, user=scope, kind="workflow.run", reader=_read_run)
 
     @synced
+    async def test_runs(self) -> List[WorkflowTestRun]:
+        """The test runs the workflow offers, as its Test Run screen lists them: for each trigger an agent comes
+        after, the staged situations NoClick offers for it (under the names the workflow gave them, with its edits
+        to their messages, less the ones it removed) and the runs it authored (``edit().add_test_run``). Empty for
+        a workflow with no trigger a test can stage. Reading them costs nothing.
+
+        Returns:
+            Each ``WorkflowTestRun``, in the order ``rehearse`` finds them: its ``key`` and ``name`` (either names
+            it to ``rehearse``), the ``trigger`` it stages on and its staged ``message``.
+
+        Usage::
+
+            inbox = noclick.Workflow.from_name("Support inbox")
+            for run in inbox.test_runs():
+                print(run.name, run.trigger["label"], run.message.get("title"))
+            test = inbox.rehearse(inbox.test_runs()[0].key).wait()
+        """
+        raw = await self._request("GET", f"{await self._path()}/test_runs") or {}
+        return [WorkflowTestRun._from(run) for run in (raw.get("data") or [])]
+
+    @synced
     async def rehearse(
         self,
         test_run: Optional[str] = None,
@@ -2848,7 +2893,7 @@ class Workflow(_Object):
         must be). The steps after an agent that would reach an account never run.
 
         ``test_run`` plays one the workflow offers, by its name or key, as its
-        Test Run screen lists them: a staged situation for one of its triggers,
+        Test Run screen lists them (``test_runs()`` reads them): a staged situation for one of its triggers,
         or one authored for it (``edit().add_test_run``). Or stage a message you
         type on ``trigger`` (a trigger ``Step``, its id or its type): ``body``,
         with ``title``, ``author`` and ``handle``. ``scenario`` says what the

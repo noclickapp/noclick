@@ -174,6 +174,7 @@ from .workflow import (
     StepOptions,
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
+    WorkflowTestRun,
     WorkflowStep, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
@@ -242,7 +243,7 @@ __all__ = [
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
-    "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal",
+    "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
