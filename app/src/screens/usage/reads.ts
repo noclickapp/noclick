@@ -1,7 +1,8 @@
 // The usage page's data, read through the SDK client its host hands it: the account's ledger (`Usage.ledger`), the
 // money behind it (`Usage.billing`) and its first page of charges (`Usage.charges`), together. They're read again when
-// the host's live frames say the account was charged (`platform:usage`, one a burst) or that anything may have moved
-// (`reset`), and when the page comes back into view: never on a timer. The read is kept per client (useV1), so a return
+// the host's live frames say the account was charged (`platform:usage`, one a burst), that a workstream was renamed or
+// archived (whose name its charges read under), or that anything may have moved (`reset`), and when the page comes back
+// into view: never on a timer. The read is kept per client (useV1), so a return
 // to the page shows it at once and reads it again behind it.
 import { useCallback, useRef } from 'react';
 import { Usage, type NoClick, type UsageCharges } from 'noclick';
@@ -56,6 +57,9 @@ export function useUsagePage(): UsagePageState {
     const client = useClient();
     const { data, error, refresh } = useV1(USAGE_READ, () => readUsage(client), { client });
     useWorkFrames('platform:usage', readUsageAgain);
+    useWorkFrames('platform:resource', (frame) => {
+        if (frame.kind === 'workstream') readUsageAgain();
+    });
     useWorkFrames('reset', readUsageAgain);
 
     // The latest read's period, for the charges the table reads after it.

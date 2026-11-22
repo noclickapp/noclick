@@ -40,15 +40,15 @@ export const OWNER_ONLY = {
     /** The API keys section, a key's cap on Usage, a key's name beside a call in Logs, and Quickstart's "Create key". */
     keys: {
         what: 'API keys',
-        why: 'A key can’t list, make, change or revoke keys.',
+        why: 'A key can’t list, change or revoke keys, and makes one only while it holds keys:create, which a key with every scope doesn’t.',
         operations: ['GET /v1/keys', 'POST /v1/keys', 'PATCH /v1/keys/{key_id}', 'DELETE /v1/keys/{key_id}', 'GET /v1/public_endpoints'],
         at: { page: 'keys', link: 'Manage API keys on NoClick' },
     },
     /** The apps a person connected over MCP, on the API keys page. */
     connectedApps: {
         what: 'Connected apps',
-        why: 'A key can’t list or revoke the apps a person connected.',
-        operations: ['GET /v1/connected_apps', 'DELETE /v1/connected_apps/{grant_id}'],
+        why: 'A key can’t list, revoke or restore the apps a person connected.',
+        operations: ['GET /v1/connected_apps', 'DELETE /v1/connected_apps/{grant_id}', 'POST /v1/connected_apps/{grant_id}/restore'],
         at: { page: 'keys', link: 'See connected apps on NoClick' },
     },
     /** The page `noclick login` opens, where a person approves a command line's sign-in. */
@@ -78,6 +78,12 @@ export const OWNER_ONLY = {
         operations: ['PUT /v1/usage/limits/account'],
         only: 'a cap above the one in place, or none where one is set; a key lowers it or sets one where there’s none',
     },
+    /** The numbers linked to the account, in Settings → Phone: a linked number signs in to the account. */
+    accountPhones: {
+        what: 'Linking phone numbers',
+        why: 'A number linked to the account signs in to it, so a key links one only with the account:phones scope, which an account’s key with every scope (*) doesn’t hold and this app’s key doesn’t carry.',
+        operations: ['GET /v1/account/phones', 'POST /v1/account/phones', 'POST /v1/account/phones/verify', 'DELETE /v1/account/phones/{phone}'],
+    },
     /** A team workspace's spending cap, which the account paying for the workspace sets, in Settings → Plan and
      *  billing. */
     teamCap: {
@@ -101,7 +107,7 @@ export const OWNER_ONLY = {
     /** Asking NoClick for machines. */
     machineAccess: {
         what: 'Asking for machines',
-        why: 'Only a person signed in to NoClick asks for machines and accepts their usage policy.',
+        why: 'Only a person signed in to NoClick asks for machines and accepts their usage policy, or the account’s server with a key given the machines:vetting scope, which this app’s key doesn’t carry.',
         operations: ['POST /v1/machines/vetting'],
         at: { page: 'resources/machines', link: 'Ask on NoClick' },
     },
@@ -161,9 +167,8 @@ export const OWNER_ONLY = {
      *  `POST /v1/connections/{ref}/require_approval`, which a key may make). */
     connectionApprovals: {
         what: 'Lifting a connected account’s approvals',
-        appOnly: true,
-        why: 'The API only adds approvals to a connected account, so a key can’t let one of its actions run without the owner’s OK again.',
-        operations: [],
+        why: 'Lifting one takes the owner, their word through an agent, or a key they gave the approvals:policy scope, which this app’s key doesn’t carry.',
+        operations: ['DELETE /v1/connections/{ref}/require_approval'],
     },
 } as const satisfies Record<string, OwnerOnlyRow>;
 

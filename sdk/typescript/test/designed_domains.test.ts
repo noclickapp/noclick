@@ -133,6 +133,24 @@ test("a claim, a term and a missing agreement are refused", async () => {
     err instanceof nc.InvalidRequest && err.details.field === "registrant.agreement_accepted_at");
 });
 
+test("a user's registrant profile is set, read and cleared for that user; the account's otherwise", async () => {
+  const { api } = setup();
+  const wire = { name: "Ana Silva", email: "ana@example.com", phone: "+14155550123", address: "500 Market St",
+    city: "San Francisco", region: "CA", postal_code: "94105", country: "US", agreement_accepted_at: "2026-11-20T09:30:00Z" };
+  const put = api.on("PUT", "/v1/domains/registrant", json(wire));
+  const get = api.on("GET", "/v1/domains/registrant", json(wire));
+  const del = api.on("DELETE", "/v1/domains/registrant", json(undefined, { status: 204 }));
+  const saved = await nc.Domain.setDefaultRegistrant(ANA, { user: "user_42" });
+  assert.equal(put.last.headers.get("NoClick-User"), "user_42");
+  assert.equal(saved?.name, "Ana Silva");
+  assert.equal((await nc.Domain.defaultRegistrant({ user: "user_42" }))?.email, "ana@example.com");
+  assert.equal(get.last.headers.get("NoClick-User"), "user_42");
+  await nc.asUser("user_42", () => nc.Domain.defaultRegistrant());
+  assert.equal(get.last.headers.get("NoClick-User"), null); // the account's, whoever asks, unless user is named
+  assert.equal(await nc.Domain.setDefaultRegistrant(null, { user: "user_42" }), null);
+  assert.equal(del.last.headers.get("NoClick-User"), "user_42");
+});
+
 test("Domain.agreement is the account's", async () => {
   const { api } = setup();
   const route = api.on("GET", "/v1/domains/agreement", json({ object: "domain_agreement", url: "https://agreements.example/domains", version: "2026-10-02" }));
@@ -144,12 +162,11 @@ test("Domain.agreement is the account's", async () => {
 test("a user's domain is registered to them and charged to the account", async () => {
   const { api } = setup();
   const start = api.on("POST", "/v1/domains", json(operation({ id: "op_u", kind: "domain.buy", status: "running", domain_id: DOMAIN_ID, price_usd: 14 })));
-  await nc.asUser("user_42", async () => {
-    await assert.rejects(nc.Domain.buy("anasilva.dev", { maxPriceUsd: 20 }), (err: unknown) =>
-      err instanceof nc.InvalidRequest && err.details.field === "registrant");
-    assert.throws(() => nc.Domain.fromName("anasilva.dev", { createIfMissing: true, maxPriceUsd: 20 }), nc.InvalidRequest);
-  });
-  assert.equal(start.calls.length, 0); // refused before anything is sent
+  // Naming none, the user's registrant profile on file is what it's registered to: NoClick reads it (and refuses,
+  // naming registrant, where there's none).
+  await nc.asUser("user_42", () => nc.Domain.buy("anasilva.dev", { maxPriceUsd: 20 }));
+  assert.equal((start.last.body as { registrant?: unknown }).registrant, undefined);
+  assert.equal(start.last.headers.get("NoClick-User"), "user_42");
 
   const purchase = await nc.Domain.buy("anasilva.dev", { maxPriceUsd: 20, registrant: ANA, user: "user_42" });
   assert.equal((start.last.body as { registrant: { email: string } }).registrant.email, "ana@example.com");
@@ -399,13 +416,14 @@ test("Domain.transferIn is charged, waits for the registry, and resolves to the 
   assert.equal((await resumed.wait()).source, "transferred");
 });
 
-test("a connected domain transfers in its own scope, and a user's needs their registrant", async () => {
+test("a connected domain transfers in its own scope, a user's to their registrant", async () => {
   const { api } = setup();
   const read = api.on("GET", "/v1/domains/dom_2", json(ACME));
   const start = api.on("POST", "/v1/domains/transfer_in", json(operation({ id: "op_c", kind: "domain.transfer_in", status: "awaiting_human", domain_id: "dom_2" })));
   const acme = nc.Domain.fromId("dom_2");
-  await assert.rejects(nc.Domain.transferIn(acme, { authCode: "Xy7#pQ2!", maxPriceUsd: 15 }), nc.InvalidRequest); // user_42's: their registrant
-  assert.equal(start.count, 0);
+  await nc.Domain.transferIn(acme, { authCode: "Xy7#pQ2!", maxPriceUsd: 15 }); // user_42's: their registrant profile
+  assert.equal(start.count, 1);
+  assert.equal((start.last.body as { registrant?: unknown }).registrant, undefined);
   const held = await nc.asUser("someone_else", () => nc.Domain.transferIn(acme, { authCode: "Xy7#pQ2!", maxPriceUsd: 15, registrant: ANA }));
   assert.equal((start.last.body as { name: string }).name, "acme.test"); // the lazy domain loads for its name
   assert.equal(start.last.headers.get("NoClick-User"), USER_ID); // the domain's own user, not the ambient one
@@ -418,11 +436,9 @@ test("a connected domain transfers in its own scope, and a user's needs their re
   assert.equal(start.last.headers.get("NoClick-User"), null); // an account domain: the account
   await assert.rejects(nc.Domain.transferIn(acme, { authCode: "Xy7#pQ2!", maxPriceUsd: 15, registrant: ANA, user: "user_7" }), /own scope/);
 
-  await nc.asUser("user_42", async () => {
-    await assert.rejects(nc.Domain.transferIn("anasilva.dev", { authCode: "Kq9!mT4z", maxPriceUsd: 20 }), (err: unknown) =>
-      err instanceof nc.InvalidRequest && err.details.field === "registrant");
-  });
-  assert.equal(start.count, 2); // refused before anything is sent
+  await nc.asUser("user_42", () => nc.Domain.transferIn("anasilva.dev", { authCode: "Kq9!mT4z", maxPriceUsd: 20 }));
+  assert.equal(start.last.headers.get("NoClick-User"), "user_42");
+  assert.equal(start.count, 4);
 });
 
 test("a transfer the registry refuses fails with its reason", async () => {

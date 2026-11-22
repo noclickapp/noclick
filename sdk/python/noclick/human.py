@@ -22,7 +22,10 @@ def _request_params(status: Many, status_not: Many, kind: Many, answerable: Opti
 class Answer:
     """What the person chose (``choice``) and/or wrote (``text``). A ``pick``'s answer names the
     choice in the account too (``value``: a repository's ``owner/name``, a channel's id); a question
-    asked with ``multiple`` names each one they chose (``choices``, and a pick's ``values``)."""
+    asked with ``multiple`` names each one they chose (``choices``, and a pick's ``values``). A
+    ``connect`` question's names the connection set on the step (``connection``, its ref, also its
+    ``value``; ``choice`` its name), a ``secret`` question's the secret its values went into
+    (``secret``), never the values."""
 
     choice: Optional[str]
     text: Optional[str]
@@ -30,9 +33,11 @@ class Answer:
     value: Optional[str] = None
     choices: List[str] = dc_field(default_factory=list)
     values: List[str] = dc_field(default_factory=list)
+    connection: Optional[str] = None
+    secret: Optional[str] = None
 
     def __str__(self) -> str:
-        return self.choice or ", ".join(self.choices) or self.text or ""
+        return self.choice or ", ".join(self.choices) or self.text or self.secret or ""
 
 
 @dataclass(frozen=True)
@@ -68,7 +73,8 @@ class OwnerReach:
 def _read_answer(result: Any, _op: Operation) -> Answer:
     if isinstance(result, dict):
         return Answer(result.get("choice"), result.get("text"), result, value=result.get("value"),
-                      choices=list(result.get("choices") or []), values=list(result.get("values") or []))
+                      choices=list(result.get("choices") or []), values=list(result.get("values") or []),
+                      connection=result.get("connection"), secret=result.get("secret"))
     return Answer(None, None if result is None else str(result), result)
 
 
@@ -235,14 +241,46 @@ class HumanRequest(Operation):
             return result["note"]
         return self._request_view.get("note")
 
-    async def _answer(self, approved: bool, note: Optional[str]) -> "HumanRequest":
+    async def _answer(self, body: Dict[str, Any]) -> "HumanRequest":
         if not self.request_id:
             raise ValueError("This request has no request id to answer; list it with noclick.HumanRequest.list(...).")
         self._request_view = dict(await self._request(
-            "POST", f"/v1/humans/requests/{path_segment(self.request_id)}/answer",
-            json=compact(approved=approved, note=note),
+            "POST", f"/v1/humans/requests/{path_segment(self.request_id)}/answer", json=compact(**body),
         ) or {})
         return self
+
+    @synced
+    async def answer(
+        self,
+        *,
+        choice: Optional[str] = None,
+        choices: Optional[Sequence[str]] = None,
+        text: Optional[str] = None,
+        connection: Any = None,
+        secret_values: Optional[Mapping[str, str]] = None,
+    ) -> "HumanRequest":
+        """Answer a question from your own code, as the person it waits on (who may: as ``approve``
+        says). A question takes a ``choice`` (or ``choices`` for one asked with ``multiple``) and/or
+        ``text``; a ``connect`` question, a ``connection`` (a ``Connection``, or its ref or name: one of
+        the account's that fits), which NoClick sets on the step as your key, so it needs the
+        ``workflows`` scope and a key acting for your whole account, never a user's or an agent's own
+        tools; a ``secret`` question, ``secret_values`` (a value for each of its keys), kept in the
+        secret and never with the answer, which needs the ``secrets`` scope.
+
+        Returns:
+            This request, answered: ``request_status`` is ``answered``.
+
+        Usage::
+
+            for request in noclick.HumanRequest.list(status="pending", kind="ask", answerable="code"):
+                if request.request.get("connect"):
+                    request.answer(connection="work-slack")
+        """
+        if isinstance(connection, Connection):
+            connection = connection._ref()
+        return await self._answer({"choice": choice, "choices": list(choices) if choices else None, "text": text,
+                                   "connection": connection,
+                                   "secret_values": dict(secret_values) if secret_values is not None else None})
 
     @synced
     async def approve(self, *, note: Optional[str] = None) -> "HumanRequest":
@@ -266,7 +304,7 @@ class HumanRequest(Operation):
                 if request.request["details"].get("amount_usd", 0) < 50:
                     request.approve(note="Under $50: fine.")
         """
-        return await self._answer(True, note)
+        return await self._answer({"approved": True, "note": note})
 
     @synced
     async def decline(self, *, note: Optional[str] = None) -> "HumanRequest":
@@ -282,7 +320,7 @@ class HumanRequest(Operation):
             [request] = noclick.HumanRequest.list(status="pending", kind="approve", answerable="code", limit=1)
             request.decline(note="Refunds over $500 go through finance; ask the customer for the invoice.")
         """
-        return await self._answer(False, note)
+        return await self._answer({"approved": False, "note": note})
 
 
 def _via(via: Union[str, Sequence[str]]) -> Union[str, List[str]]:
@@ -306,6 +344,22 @@ def _pick(pick: Optional[Mapping[str, Any]]) -> Optional[Dict[str, Any]]:
     body = dict(pick)
     if isinstance(body.get("connection"), Connection):
         body["connection"] = body["connection"]._ref()
+    return body
+
+
+def _step_ask(ask: Optional[Mapping[str, Any]]) -> Optional[Dict[str, Any]]:
+    """A ``connect`` or ``secret`` question as sent: its step's workflow by id, a ``Workflow``'s own."""
+    if ask is None:
+        return None
+    body = dict(ask)
+    if isinstance(body.get("step"), Mapping):
+        step = dict(body["step"])
+        workflow = step.pop("workflow", None)
+        if workflow is not None:
+            step["workflow_id"] = workflow if isinstance(workflow, str) else workflow.id
+        body["step"] = step
+    if isinstance(body.get("keys"), (list, tuple)):
+        body["keys"] = list(body["keys"])
     return body
 
 
@@ -589,6 +643,8 @@ class Human:
         options: Optional[Sequence[str]] = None,
         pick: Optional[Mapping[str, Any]] = None,
         multiple: bool = False,
+        connect: Optional[Mapping[str, Any]] = None,
+        secret: Optional[Mapping[str, Any]] = None,
         via: Union[str, Sequence[str]] = "auto",
         expires_in: Union[None, int, float, timedelta] = None,
     ) -> HumanRequest:
@@ -601,6 +657,20 @@ class Human:
         reads the choices from the account, the person picks from it, and an account that holds
         just one answers at once with it, asking nobody. ``multiple`` lets them choose several of
         the options, or of a pick's choices.
+
+        ``connect`` asks the owner which of the account's connections a workflow step uses:
+        ``{"integration": "slack", "step": {"workflow": wf, "step_id": "post"}}`` (or
+        ``credential_type`` in place of ``integration``; ``step["slot"]`` narrows it to one kind).
+        Their page lists the connections that fit and connects another with the provider's own
+        sign-in; NoClick sets the one they choose on the step as them, never as you, and an account
+        holding just one that fits answers at once with it. Needs the ``workflows`` scope.
+
+        ``secret`` asks for a secret's values: ``{"name": "warehouse", "keys": ["WAREHOUSE_TOKEN"]}``,
+        typed on NoClick's page (its link carries a key, so the request's id alone opens nothing),
+        kept as the account's secret ``name`` (made, or those keys replaced) and never shown to you
+        or a model; with ``"step": {"workflow": wf, "step_id": "agent"}`` (the owner's only), the
+        agent step's shell gets it too. Needs the ``secrets`` scope. Your code can answer either
+        with ``HumanRequest.answer``.
 
         Returns:
             The request, already sent. ``wait()`` blocks until the person answers
@@ -631,10 +701,22 @@ class Human:
                 human = noclick.User.from_id("user_42").human
                 request = human.ask("What should we call your workspace?", via=["web"], expires_in=3600)
                 print(request.url)
+
+            Ask the owner which Slack a step posts with, and for the token an agent step needs::
+
+                wf = noclick.Workflow.from_id("wf_123")
+                owner = noclick.Human.owner()
+                slack = owner.ask("Which Slack should the Post step use?",
+                                  connect={"integration": "slack", "step": {"workflow": wf, "step_id": "post"}})
+                token = owner.ask("The warehouse API token, please.",
+                                  secret={"name": "warehouse", "keys": ["WAREHOUSE_TOKEN"],
+                                          "step": {"workflow": wf, "step_id": "agent"}})
+                print(slack.wait().connection, token.wait().secret)
         """
         return await self._send("ask", {
             "message": message, "options": list(options) if options else None, "pick": _pick(pick),
-            "multiple": True if multiple else None, "via": _via(via), "expires_in_s": _seconds(expires_in),
+            "multiple": True if multiple else None, "connect": _step_ask(connect), "secret": _step_ask(secret),
+            "via": _via(via), "expires_in_s": _seconds(expires_in),
         })
 
     @synced
