@@ -1871,6 +1871,7 @@ reteno
 reviewflowz
 revolut-for-business
 rezdy
+riddle-quiz-maker
 rillet
 ringcentral
 ringover
