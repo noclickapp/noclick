@@ -1,9 +1,20 @@
 """A workflow's Approval steps: the runs that wait at one for a yes or a no, read and answered from your own code.
 
-A run that reaches an Approval step waits there, for 7 days at most. NoClick asks your account's owner to answer it:
-a one-tap link on the app they text NoClick on (else by email), or a card in the web chat while they're watching it.
-Your code may answer it too, with one of your account's secret keys that names the ``approvals:answer`` scope (a key
-with every scope, ``*``, holds it only when it's named too)::
+A run that reaches an Approval step waits there, for 7 days unless the step says otherwise. By default NoClick asks
+your account's owner to answer it: a one-tap link on the app they text NoClick on (else by email), or a card in the
+web chat while they're watching it. A step can name its own approver, the same shapes your account's approval
+routing takes (``noclick.ApprovalPolicy.set(routing=...)``, which an unset step follows): a person (``{"email":
+...}``), one of your users (``{"user_id": ...}``), one of your agents (``{"agent_id": ...}``: it answers with its
+``approvals__answer`` tool, never on a run its own turn started) or your code (``{"code": True}``); how long they have
+(``expires_in_s``, 60 seconds to 7 days); and what happens when they don't answer (``on_timeout``: ``"decline"``
+ends the run, ``"escalate"`` asks the next approver up, finally the owner)::
+
+    invoices.add_step("approval", settings={
+        "title": "Pay this invoice?", "approver": {"agent_id": "Finance lead"},
+        "on_timeout": "escalate", "expires_in_s": 3600})
+
+Whoever it waits on, your code may answer it too, with one of your account's secret keys that names the
+``approvals:answer`` scope (a key with every scope, ``*``, holds it only when it's named too)::
 
     invoices = noclick.Workflow.from_name("Invoices")
     for approval in invoices.approvals(status="pending"):
@@ -11,8 +22,8 @@ with every scope, ``*``, holds it only when it's named too)::
             approval.approve(note="Under $500: fine.")
 
 Whoever answers first decides: the run goes on once, down the step's approved or rejected branch, with the form's
-values as they were answered, and every later answer is refused (``noclick.Conflict``), as one after the 7 days is
-(``noclick.Expired``).
+values as they were answered, and every later answer is refused (``noclick.Conflict``), as one after its run ended
+unanswered is (``noclick.Expired``).
 
 Rather than poll, your code can hear each one: a webhook subscribed to ``workflow.approval.requested`` gets it as its
 run starts waiting, and to ``workflow.approval.decided`` as it's answered. The event's ``data`` is the approval as it
@@ -61,14 +72,30 @@ class WorkflowApproval(_Object):
     )
     status: str = field("status", doc=f"One of {', '.join(STATUSES)}.")
     created_at: Any = field("created_at", parse_time)
-    expires_at: Any = field("expires_at", parse_time, doc="When it lapses unanswered (7 days after it was asked).")
+    expires_at: Any = field(
+        "expires_at", parse_time, doc="When the approver it waits on must answer by (7 days after it was asked, "
+        "unless the step's ``expires_in_s`` says otherwise; an escalation gives the next approver theirs).",
+    )
+    approver: Dict[str, Any] = field(
+        "approver", doc="Who it waits on (or waited on last): ``kind`` ``owner``, ``person`` (with ``email``), "
+        "``user`` (``user_id``), ``agent`` (``agent_id``) or ``code``: the step's approver, else your account's, "
+        "else the owner.",
+    )
+    on_timeout: Optional[str] = field(
+        "on_timeout", doc="What happens if they don't answer by ``expires_at``: ``decline`` (the run ends) or "
+        "``escalate`` (the next approver up answers it, finally the owner).",
+    )
     decided_at: Any = field("decided_at", parse_time)
     decided_by: Optional[str] = field(
-        "decided_by", doc="Who decided: ``owner`` (signed in, or from NoClick's link or the web chat), ``code`` or "
-        "``app`` (someone who may edit the workflow, in the NoClick app); None while it waits.",
+        "decided_by", doc="Who decided: ``owner`` (signed in, or from NoClick's link or the web chat), ``person`` (a "
+        "person or user named approver, from the link NoClick emailed them), ``agent`` (an agent named approver), "
+        "``code`` or ``app`` (someone who may edit the workflow, in the NoClick app); None while it waits.",
     )
     decided_by_key: Optional[Dict[str, Any]] = field(
         "decided_by_key", doc="The key whose code decided (``key_id``, ``key_name``); None otherwise.",
+    )
+    decided_by_agent: Optional[Dict[str, Any]] = field(
+        "decided_by_agent", doc="The agent named approver that decided (``agent_id``, ``name``); None otherwise.",
     )
     note: Optional[str] = field("note", doc="What whoever decided wrote with it.")
     sent_to: List[str] = field(
@@ -133,7 +160,7 @@ class WorkflowApproval(_Object):
         """Approve it from your own code, with one of your account's secret keys that names the ``approvals:answer``
         scope: the run goes on down the step's approved branch, once, with ``values`` (by field name) as the form's
         values where you give them. Refused with ``noclick.PermissionDenied`` for a key without the scope or one
-        acting for a user, ``noclick.Conflict`` once it was answered, and ``noclick.Expired`` after its 7 days.
+        acting for a user, ``noclick.Conflict`` once it was answered, and ``noclick.Expired`` once it lapsed unanswered.
 
         Returns:
             This approval, answered: ``status`` is ``approved``, ``decided_by`` is ``code``.
