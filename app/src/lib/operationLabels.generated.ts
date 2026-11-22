@@ -724,6 +724,7 @@ alpaca
 altoviz
 alttext-ai
 amazing-marvin
+amazon-polly
 amplemarket
 amplience
 anakin-io
