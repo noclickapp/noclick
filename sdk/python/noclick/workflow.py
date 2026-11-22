@@ -108,22 +108,28 @@ class StepOutput:
 @dataclass(frozen=True)
 class WorkflowRunCounts:
     """How many runs ``Workflow.runs`` lists (``Workflow.run_counts``): the ``total``,
-    ``by_status`` (``running``, ``succeeded``, ``failed``, each there even at 0) and
+    ``by_status`` (``running``, ``succeeded``, ``failed``, each there even at 0), ``waiting``
+    (how many of the running ones wait on an approval, a delay or an agent's turn),
     ``by_source`` (``api``, ``endpoint``, ``schedule``, ``trigger``, ``app``: only those with
-    runs). A run from code counts once, however many executions it spans."""
+    runs) and ``by_trigger`` (the kinds of event that started the runs a trigger did:
+    ``webhook``, ``email``, …, only those with runs). A run from code counts once, however
+    many executions it spans."""
 
     workflow_id: str
     total: int
     by_status: Dict[str, int]
     by_source: Dict[str, int]
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    waiting: int = 0
+    by_trigger: Dict[str, int] = dc_field(default_factory=dict)
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowRunCounts":
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("workflow_id") or "", int(raw.get("total") or 0),
                    {"running": 0, "succeeded": 0, "failed": 0, **(raw.get("by_status") or {})},
-                   dict(raw.get("by_source") or {}), raw)
+                   dict(raw.get("by_source") or {}), raw, waiting=int(raw.get("waiting") or 0),
+                   by_trigger=dict(raw.get("by_trigger") or {}))
 
 
 @dataclass(frozen=True)
@@ -205,13 +211,18 @@ class ClearedStepState:
 @dataclass(frozen=True)
 class WorkflowRun:
     """One run of a workflow. ``status`` is ``running`` (a run waiting on an
-    approval or a delay too), ``succeeded`` or ``failed`` (``error`` says why).
-    ``outputs`` holds what its final steps produced (each step that finished
-    with nothing after it running), by step name. ``source`` is how it started:
-    ``api``, ``endpoint``, ``schedule``, ``trigger`` (an event, like a webhook
-    or an email) or ``app``; ``inputs`` and ``operation_id`` are set for a run
-    started from code. ``steps`` says what each step did, read with one run
-    (``Workflow.get_run``); empty in a list."""
+    approval or a delay too: ``waiting_on`` says on what, ``approval``,
+    ``delay`` or for a run from code ``agent_turn``; ``None`` while it runs
+    on), ``succeeded`` or ``failed`` (``error`` says why). ``outputs`` holds
+    what its final steps produced (each step that finished with nothing after
+    it running), by step name. ``source`` is how it started: ``api``,
+    ``endpoint``, ``schedule``, ``trigger`` (an event) or ``app``; for a
+    ``trigger`` run, ``trigger`` names the kind of event: ``webhook`` (a
+    delivery to one of its trigger steps, a webhook's or an app's event),
+    ``email``, ``call``, ``agent`` (an agent's turn), ``shared_link`` or
+    ``error`` (it handled another run's failure). ``inputs`` and
+    ``operation_id`` are set for a run started from code. ``steps`` says what
+    each step did, read with one run (``Workflow.get_run``); empty in a list."""
 
     id: str
     workflow_id: Optional[str]
@@ -226,6 +237,8 @@ class WorkflowRun:
     finished_at: Any
     steps: List[RunStep] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    trigger: Optional[str] = None
+    waiting_on: Optional[str] = None
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowRun":
@@ -238,6 +251,7 @@ class WorkflowRun:
             user_id=raw.get("user_id"), operation_id=raw.get("operation_id"),
             started_at=parse_time(raw.get("started_at")), finished_at=parse_time(raw.get("finished_at")),
             steps=[RunStep._from(s) for s in raw.get("steps") or []], raw=raw,
+            trigger=raw.get("trigger"), waiting_on=raw.get("waiting_on"),
         )
 
 
@@ -959,7 +973,7 @@ class Step(_Object):
     @synced
     async def options(
         self, field: str, *, settings: Optional[Dict[str, Any]] = None, search: Optional[str] = None,
-        page_token: Optional[str] = None,
+        page_token: Optional[str] = None, type: Optional[str] = None, connection: Optional[str] = None,
     ) -> StepOptions:
         """The choices ``field`` takes, as the app's dropdown lists them: read from the account the
         step connects to (a Google account's spreadsheets, a Slack workspace's channels) by the
@@ -967,7 +981,12 @@ class Step(_Object):
         that depends on another reads, like the tabs of a spreadsheet you haven't saved yet).
         ``search`` narrows them where the service can search. A page at a time: pass
         ``page_token=`` its ``next_page_token``. A connection whose owner reviews its calls holds
-        the lookup for them (``noclick.ApprovalRequired``). Takes edit access to the workflow.
+        the lookup for them (``noclick.ApprovalRequired``). A step the workflow doesn't hold yet
+        (one a canvas added and hasn't saved) lists its choices by its ``type``
+        (``automation-slack``), and ``connection`` (a connection's ref or id) names the account to
+        read from in place of the one the step holds. Takes read access to the workflow: whoever
+        can change it reads through the step's account as a run does, anyone else only through
+        an account that's theirs to use.
 
         Returns:
             The ``StepOptions``: ``options`` (each a ``StepOption``), ``next_page_token`` and
@@ -981,7 +1000,7 @@ class Step(_Object):
             tabs = sheet.options("sheet_name", settings={"spreadsheet_id": "1AbCdEf"})
         """
         raw = await self._form("options", {"field": field, "settings": settings, "search": search,
-                                           "page_token": page_token})
+                                           "page_token": page_token, "type": type, "connection": connection})
         return StepOptions._from(raw)
 
     @synced
@@ -991,8 +1010,9 @@ class Step(_Object):
         app's event subscription (``subscription_status``), the files in a filesystem step's
         volume (``file_browser``), an alarm's schedules (``active_alarms``), an MCP step's hosted
         link (``hosted_url``). ``settings`` are laid over the step's saved ones. One that mints or
-        registers something changes the account; a hosted MCP link's URL is its capability, so no
-        MCP connection loads it. Takes edit access to the workflow.
+        registers something changes the account, and takes what changing the workflow takes; one
+        that only reads (a list, an id from the step's account) takes read access. A hosted MCP
+        link's URL is its capability, so no MCP connection loads it.
 
         Returns:
             The ``StepValue``: ``value``, or ``values`` where it fills several settings at once,
@@ -2935,10 +2955,20 @@ class Workflow(_Object):
         limit: Optional[int] = 20,
         user_filter: Any = None,
         user: Any = AMBIENT,
+        source: Union[None, str, Sequence[str]] = None,
+        trigger: Union[None, str, Sequence[str]] = None,
+        waiting: Optional[bool] = None,
+        search: Optional[str] = None,
     ) -> List[WorkflowRun]:
         """Recent runs, newest first, however they started (your code, its
         endpoint, a schedule, the app). Outside ``as_user`` you read runs recorded
-        for your account; ``user_filter`` reads your users'.
+        for your account; ``user_filter`` reads your users'. Narrow them by
+        ``status``, by how they started (``source``: ``api``, ``endpoint``,
+        ``app``, ``schedule``, ``trigger``), by the kind of event that started
+        them (``trigger``: ``webhook``, ``email``, ``call``, ``agent``,
+        ``shared_link``, ``error``), to those that wait (``waiting=True``) or
+        that don't (``False``), and by text in their error (``search``, any
+        case).
 
         Returns:
             The first ``limit`` matching runs (20 by default; ``None`` for all of them).
@@ -2948,10 +2978,15 @@ class Workflow(_Object):
             intake = noclick.Workflow.from_name("order-intake")
             for run in intake.runs(status="failed", user_filter=noclick.ALL_USERS):
                 print(run.started_at, run.source, run.error)
+            for run in intake.runs(trigger="email", waiting=True):
+                print(run.id, "waits on", run.waiting_on)
         """
         return await list_all(
             f"{await self._path()}/runs", lambda raw, _scope: WorkflowRun._from(raw),
-            params={"status": csv(status)}, user=user, user_filter=user_filter, limit=limit, client=self._client,
+            params={"status": csv(status), "source": csv(source), "trigger": csv(trigger),
+                    "waiting": None if waiting is None else ("true" if waiting else "false"),
+                    "search": search or None},
+            user=user, user_filter=user_filter, limit=limit, client=self._client,
         )
 
     @synced
@@ -2996,9 +3031,9 @@ class Workflow(_Object):
 
     @synced
     async def run_counts(self, *, user_filter: Any = None, user: Any = AMBIENT) -> WorkflowRunCounts:
-        """How many runs ``runs()`` lists: in all, ``by_status`` and ``by_source``. Outside
-        ``as_user`` you count the runs recorded for your account; ``user_filter`` counts your
-        users'.
+        """How many runs ``runs()`` lists: in all, ``by_status`` (and how many of the running
+        ones are ``waiting``), ``by_source`` and ``by_trigger``. Outside ``as_user`` you count
+        the runs recorded for your account; ``user_filter`` counts your users'.
 
         Returns:
             The ``WorkflowRunCounts``.

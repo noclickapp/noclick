@@ -38,6 +38,34 @@ import type { WorkflowApprovalListOptions } from "./workflowApproval.ts";
 
 export type WorkflowRunStatus = "running" | "succeeded" | "failed";
 
+/** How a run started: from code (`api`, the workflow's `endpoint`), in the app, on a schedule, or by an event at one
+ *  of its triggers. */
+export type WorkflowRunSource = "api" | "endpoint" | "app" | "schedule" | "trigger";
+
+/**
+ * The kind of event that started a run whose `source` is `trigger`: a delivery to one of its trigger steps (`webhook`:
+ * a webhook's, or an app's event), mail (`email`), a phone call (`call`), an agent's turn (`agent`), a visitor on its
+ * agent's shared page (`shared_link`), or another run's failure it handles (`error`).
+ */
+export type WorkflowRunTrigger = "webhook" | "email" | "call" | "agent" | "shared_link" | "error";
+
+/** What a running run waits on: an approval, a delay, or (a run from code) an agent's turn. */
+export type WorkflowRunWait = "approval" | "delay" | "agent_turn";
+
+/**
+ * Which runs `Workflow.runs` lists: by `status`, by how they started (`source`), by the kind of event that started
+ * them (`trigger`), only those that wait (`waiting: true`) or that don't (`false`), and by text in their error
+ * (`search`, any case).
+ */
+export interface WorkflowRunsOptions extends ReadOptions {
+  status?: WorkflowRunStatus | readonly WorkflowRunStatus[];
+  source?: WorkflowRunSource | readonly WorkflowRunSource[];
+  trigger?: WorkflowRunTrigger | readonly WorkflowRunTrigger[];
+  waiting?: boolean;
+  search?: string;
+  limit?: number;
+}
+
 /**
  * One of your account's workflow folders, as the app's Automations page shows it: `Workflow.folders()` lists them,
  * `Workflow.createFolder()` makes one and `workflow.moveTo()` files a workflow in one.
@@ -119,21 +147,24 @@ export interface StepOutput {
 }
 
 /**
- * One run of a workflow. `status` is `running` (a run waiting on an approval or a delay too),
- * `succeeded` or `failed` (`error` says why). `outputs` holds what its final steps produced (each
- * step that finished with nothing after it running), by step name. `source` is how it started:
- * `api`, `endpoint`, `schedule`, `trigger` (an event, like a webhook or an email) or `app`;
- * `inputs` and `operationId` are set for a run started from code. `steps` says what each step did,
- * read with one run (`Workflow.getRun`); empty in a list.
+ * One run of a workflow. `status` is `running` (a run waiting on an approval or a delay too:
+ * `waitingOn` says on what, `null` while it runs on), `succeeded` or `failed` (`error` says why).
+ * `outputs` holds what its final steps produced (each step that finished with nothing after it
+ * running), by step name. `source` is how it started: `api`, `endpoint`, `schedule`, `trigger` (an
+ * event, whose kind `trigger` names: `webhook`, `email`, …) or `app`; `inputs` and `operationId` are
+ * set for a run started from code. `steps` says what each step did, read with one run
+ * (`Workflow.getRun`); empty in a list.
  */
 export interface WorkflowRun {
   id: string;
   workflowId: string | null;
   status: WorkflowRunStatus;
+  waitingOn: WorkflowRunWait | null;
   inputs: JsonObject;
   outputs: JsonObject;
   error: string | null;
   source: string | null;
+  trigger: WorkflowRunTrigger | null;
   userId: string | null;
   operationId: string | null;
   startedAt: Date | null;
@@ -235,10 +266,12 @@ export function toWorkflowRun(value: unknown): WorkflowRun {
     id: str(raw.id) ?? "",
     workflowId: str(raw.workflow_id),
     status: (str(raw.status) ?? "running") as WorkflowRunStatus,
+    waitingOn: str(raw.waiting_on) as WorkflowRunWait | null,
     inputs: asObject(raw.inputs),
     outputs: asObject(raw.outputs),
     error: error && typeof error === "object" ? str((error as JsonObject).message) : str(error),
     source: str(raw.source),
+    trigger: str(raw.trigger) as WorkflowRunTrigger | null,
     userId: str(raw.user_id),
     operationId: str(raw.operation_id),
     startedAt: parseTime(raw.started_at),
@@ -292,14 +325,18 @@ export interface StepOutputOptions extends CallOptions {
 
 /**
  * How many runs `Workflow.runs` lists (`Workflow.runCounts`): the `total`, `byStatus` (`running`, `succeeded`,
- * `failed`, each there even at 0) and `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with
- * runs). A run from code counts once, however many executions it spans.
+ * `failed`, each there even at 0), `waiting` (how many of the running ones wait on an approval, a delay or an agent's
+ * turn), `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with runs) and `byTrigger` (the kinds
+ * of event that started the runs a trigger did: `webhook`, `email`, …, only those with runs). A run from code counts
+ * once, however many executions it spans.
  */
 export interface WorkflowRunCounts {
   workflowId: string;
   total: number;
   byStatus: Record<WorkflowRunStatus, number>;
+  waiting: number;
   bySource: Record<string, number>;
+  byTrigger: Record<string, number>;
   raw: JsonObject;
 }
 
@@ -353,7 +390,9 @@ function toRunCounts(value: unknown): WorkflowRunCounts {
     workflowId: str(raw.workflow_id) ?? "",
     total: Number(raw.total ?? 0),
     byStatus: { running: 0, succeeded: 0, failed: 0, ...(asObject(raw.by_status) as Record<string, number>) },
+    waiting: Number(raw.waiting ?? 0),
     bySource: { ...(asObject(raw.by_source) as Record<string, number>) },
+    byTrigger: { ...(asObject(raw.by_trigger) as Record<string, number>) },
     raw,
   };
 }
@@ -999,6 +1038,10 @@ export interface StepOptionsQuery {
   search?: string;
   /** The `nextPageToken` of the page before. */
   pageToken?: string;
+  /** The step's type (`automation-slack`), for a step the workflow doesn't hold yet (one a canvas hasn't saved). */
+  type?: string;
+  /** The connected account to read from, in place of the one the step holds: its ref (`Connection.ref`) or id. */
+  connection?: string;
 }
 
 /**
@@ -1568,11 +1611,17 @@ export class Step extends ApiObject {
    * and `settings` laid over them (what a list that depends on another reads, like the tabs of a spreadsheet you
    * haven't saved yet). `search` narrows them where the service can search. A page at a time: pass `pageToken` its
    * `nextPageToken`. A connection whose owner reviews its calls holds the lookup for them (`ApprovalRequired`).
-   * Takes edit access to the workflow.
+   * A step the workflow doesn't hold yet (one a canvas added and hasn't saved) lists its choices by its `type`, and
+   * `connection` names the account to read from in place of the one the step holds. Takes read access to the workflow:
+   * whoever can change it reads through the step's account as a run does, anyone else only through an account that's
+   * theirs to use.
    */
   async options(field: string, query: StepOptionsQuery = {}): Promise<StepOptions> {
     return toStepOptions(await this._request("POST", `${await this._workflow._stepPath(this.id)}/options`, {
-      json: compact({ field, settings: query.settings, search: query.search, page_token: query.pageToken }),
+      json: compact({
+        field, settings: query.settings, search: query.search, page_token: query.pageToken, type: query.type,
+        connection: query.connection,
+      }),
     }));
   }
 
@@ -1581,8 +1630,8 @@ export class Step extends ApiObject {
    * registered where its events come from (`webhook_url`), an app's event subscription (`subscription_status`), the
    * files in a filesystem step's volume (`file_browser`), an alarm's schedules (`active_alarms`), an MCP step's
    * hosted link (`hosted_url`). `settings` are laid over the step's saved ones. One that mints or registers something
-   * changes the account; a hosted MCP link's URL is its capability, so no MCP connection loads it. Takes edit access
-   * to the workflow.
+   * changes the account, and takes what changing the workflow takes; one that only reads (a list, an id from the
+   * step's account) takes read access. A hosted MCP link's URL is its capability, so no MCP connection loads it.
    */
   async value(field: string, options: { settings?: JsonObject } = {}): Promise<StepValue> {
     return toStepValue(await this._request("POST", `${await this._workflow._stepPath(this.id)}/values`, {
@@ -2525,12 +2574,15 @@ export class Workflow extends ApiObject {
 
   /**
    * Recent runs, newest first, however they started. Outside `asUser` you read runs recorded for
-   * your account; `userFilter` reads your users'. The first `limit` (20 by default).
+   * your account; `userFilter` reads your users'. The first `limit` (20 by default). Narrowed by `status`, by how they
+   * started (`source`), by the kind of event that started them (`trigger`), to those that wait or don't (`waiting`),
+   * and by text in their error (`search`).
    */
-  async runs(options: ReadOptions & { status?: WorkflowRunStatus | readonly WorkflowRunStatus[]; limit?: number } = {}): Promise<WorkflowRun[]> {
+  async runs(options: WorkflowRunsOptions = {}): Promise<WorkflowRun[]> {
     const path = `${await this.path()}/runs`;
-    const { status, limit = 20, ...read } = options;
-    return await listAll({ ...read, client: read.client ?? this._client, path, query: { status: csv(status) }, limit }, (raw) => toWorkflowRun(raw));
+    const { status, source, trigger, waiting, search, limit = 20, ...read } = options;
+    const query = { status: csv(status), source: csv(source), trigger: csv(trigger), waiting, search: search || undefined };
+    return await listAll({ ...read, client: read.client ?? this._client, path, query, limit }, (raw) => toWorkflowRun(raw));
   }
 
   /**
@@ -2557,8 +2609,8 @@ export class Workflow extends ApiObject {
   }
 
   /**
-   * How many runs `runs()` lists: in all, `byStatus` and `bySource`. Outside `asUser` you count the runs recorded for
-   * your account; `userFilter` counts your users'.
+   * How many runs `runs()` lists: in all, `byStatus` (and how many of the running ones are `waiting`), `bySource` and
+   * `byTrigger`. Outside `asUser` you count the runs recorded for your account; `userFilter` counts your users'.
    */
   async runCounts(options: ReadOptions = {}): Promise<WorkflowRunCounts> {
     const { user, userId } = await readScope(options);
