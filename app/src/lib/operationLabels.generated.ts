@@ -1514,6 +1514,7 @@ linq
 listclean
 listennotes
 liveagent
+localazy
 lofty
 logo-dev
 lokalise
