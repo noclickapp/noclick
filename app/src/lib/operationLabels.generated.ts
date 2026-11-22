@@ -2251,6 +2251,7 @@ zadarma
 zeeg
 zeffy
 zendesk
+zenegy
 zeno
 zenoti
 zenrows
