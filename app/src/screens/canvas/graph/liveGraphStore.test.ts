@@ -57,17 +57,23 @@ function client(): NoClick {
     });
 }
 
-/** The canvas opens the workflow as the API reads it. */
-async function open(c: NoClick) {
+interface Held {
+    nodes: Node[];
+    edges: Edge[];
+}
+
+/** The canvas opens the workflow as the API reads it. `meanwhile` is what it holds once the load's merge has landed,
+ *  having been changed while the load was out; the baseline is what the load read either way. */
+async function open(c: NoClick, meanwhile: (loaded: Held) => Held = (loaded) => loaded) {
     const graph = await Workflow.fromId(WORKFLOW, { client: c }).graph();
     const raw = graph.raw as { nodes: Json[]; edges: Json[] };
     const nodes = raw.nodes.map((n) => createWorkflowNode(String(n.id), String(n.type), n.position as Node['position'], n.config as Json));
     const edges = raw.edges.map((e) => ({ id: String(e.id), source: String(e.source), target: String(e.target) }) as Edge);
-    recordGraphSnapshot(WORKFLOW, false, { nodes, edges }, false);
+    recordGraphSnapshot(WORKFLOW, false, meanwhile({ nodes, edges }), false);
     setCanvasMounted(WORKFLOW, false, true);
     setGraphLoaded(WORKFLOW, true);
     setGraphVersion(WORKFLOW, graph.version);
-    seedSaveBaseline(WORKFLOW);
+    seedSaveBaseline(WORKFLOW, { nodes, edges });
     calls = [];
 }
 
@@ -259,6 +265,85 @@ describe('the graph store on /v1', () => {
         const sent = JSON.stringify(calls.map((call) => call.body));
         for (const secret of Object.values(SECRETS)) expect(sent).not.toContain(secret);
         expect(JSON.stringify(rec().nodes)).not.toContain(SECRETS.agentKey);
+    });
+});
+
+// The canvas takes edits as soon as it mounts, and a load's merge keeps a step added while the load was out and leaves
+// out one removed meanwhile. The baseline and the base are what the load read, so that work is the canvas's own and is
+// saved: taken for the server's, the added step was never written and the removed one stayed on the server.
+describe('changes made before the load answered', () => {
+    const late = () => createWorkflowNode('late', 'log', { x: 0, y: 400 }, { label: 'Late' });
+    const lateEdge = { id: 'agent-late', source: 'agent', target: 'late' } as Edge;
+
+    it('saves a step added meanwhile, with its connection, then has nothing more to send', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c, ({ nodes, edges }) => ({ nodes: [...nodes, late()], edges: [...edges, lateEdge] }));
+        expect(rec().dirty).toBe(true);
+        await settle();
+        expect(edits().map((e) => e.body)).toEqual([
+            {
+                ops: [
+                    { op: 'add_step', type: 'log', id: 'late', settings: { label: 'Late' }, position: { x: 0, y: 400 } },
+                    { op: 'connect', from: 'agent', to: 'late', id: 'agent-late', kind: 'data' },
+                ],
+                if_version: 4, source: 'canvas', origin: expect.stringMatching(/^canvas-/),
+            },
+        ]);
+        expect([...rec().base!.nodes.keys()]).toEqual(['hook', 'agent', 'slack', 'victim', 'late']);
+        markGraphDirty(WORKFLOW);
+        await settle();
+        expect(edits()).toHaveLength(1);
+    });
+
+    it('still writes a step added meanwhile when it is changed later', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c, ({ nodes, edges }) => ({ nodes: [...nodes, late()], edges }));
+        change('late', { label: 'Later' });
+        await settle();
+        expect(edits().map((e) => e.body.ops)).toEqual([
+            [{ op: 'add_step', type: 'log', id: 'late', settings: { label: 'Later' }, position: { x: 0, y: 400 } }],
+        ]);
+    });
+
+    it('sends a step added meanwhile with a closing tab’s changes', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c, ({ nodes, edges }) => ({ nodes: [...nodes, late()], edges }));
+        flushAllGraphsNow();
+        for (let i = 0; i < 50; i++) await Promise.resolve();
+        expect(edits().map((e) => [e.keepalive, e.body.ops])).toEqual([
+            [true, [{ op: 'add_step', type: 'log', id: 'late', settings: { label: 'Late' }, position: { x: 0, y: 400 } }]],
+        ]);
+    });
+
+    it('removes a step deleted meanwhile, which the load’s merge left out', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        // The canvas showed the workflow from an earlier open, and its Slack step was deleted before the load answered.
+        recordGraphSnapshot(WORKFLOW, false, { nodes: [], edges: [] }, false);
+        recordDeletedNodes(WORKFLOW, ['slack']);
+        await open(c, ({ nodes, edges }) => ({
+            nodes: nodes.filter((n) => n.id !== 'slack'),
+            edges: edges.filter((e) => e.source !== 'slack' && e.target !== 'slack'),
+        }));
+        await settle();
+        expect(edits().map((e) => [e.body.if_version, e.body.ops])).toEqual([[4, [{ op: 'remove_step', id: 'slack' }]]]);
+        expect(rec().deletedNodeIds.size).toBe(0);
+        expect([...rec().base!.nodes.keys()]).toEqual(['hook', 'agent', 'victim']);
+        expect([...rec().base!.edges.keys()]).toEqual(['hook-agent']);
+    });
+
+    it('takes what the canvas holds for loaded when the load carried no list of it', async () => {
+        const c = client();
+        setCanvasEditsClient(c);
+        await open(c);
+        seedSaveBaseline(WORKFLOW, {});
+        expect(rec().dirty).toBe(false);
+        markGraphDirty(WORKFLOW);
+        await settle();
+        expect(calls).toEqual([]);
     });
 });
 

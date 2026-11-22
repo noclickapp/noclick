@@ -1007,16 +1007,50 @@ export async function reloadFromServer(workflowId: string): Promise<boolean> {
     }
 }
 
-/** Snapshot the record's current content as the no-op-save baseline. Called
- *  after the load's merges land so freshly-loaded content doesn't read
- *  as "dirty" and fire a pointless save (DB write + updated_at churn) on
- *  every open. */
-export function seedSaveBaseline(workflowId: string): void {
+/** The server's graph as a load read it, in the canvas's shape. A kind the load carried no list of is left out, and
+ *  what the canvas holds of it counts as loaded. */
+export interface LoadedGraph {
+    nodes?: Node[];
+    edges?: Edge[];
+}
+
+/** What the server holds of `mine`, given what a load read (`theirs`): the canvas's copy of each item the load read
+ *  (the load's merge took the server's), in the canvas's order, then the server's (`own`: in the canvas's form) of
+ *  those the canvas holds no more. */
+function asLoaded<M extends { id: string }, T extends { id: string }>(mine: M[], theirs: T[] | undefined, own: (theirs: T) => M): M[] {
+    if (!theirs) return mine;
+    const read = new Set(theirs.map((t) => t.id));
+    const kept = mine.filter((m) => read.has(m.id));
+    const held = new Set(kept.map((k) => k.id));
+    return [...kept, ...theirs.filter((t) => !held.has(t.id)).map(own)];
+}
+
+/** Sets the no-op-save baseline and the per-step base once a load's merge has landed, so freshly-loaded content
+ *  doesn't read as "dirty" and fire a pointless save (DB write + updated_at churn) on every open. Both are what the
+ *  load read (`loaded`; without it the record is the load), never what the canvas holds after the merge: the merge
+ *  keeps a step added while the load was out and leaves out one removed meanwhile, and taken for the server's, the
+ *  first was never written and the second never removed (/v1 edits send only what differs from the base). What
+ *  differs is the canvas's own unsaved work, and is saved. */
+export function seedSaveBaseline(workflowId: string, loaded?: LoadedGraph): void {
     const rec = graphRecords[workflowId];
     if (!rec) return;
     try {
-        rec.lastSavedPayloadJson = JSON.stringify(buildPayload(rec).savePayload);
-        rec.base = baseOf(rec.nodes, rec.edges, layoutJson(rec.interfaceGridState));
+        const { savePayload } = buildPayload(rec);
+        const held = savePayload as { nodes: Array<{ id: string }>; edges: Array<{ id: string }> };
+        rec.lastSavedPayloadJson = JSON.stringify({
+            ...savePayload,
+            nodes: asLoaded(held.nodes, loaded?.nodes, serializeNodeForSave),
+            edges: asLoaded(held.edges, loaded?.edges, serializeEdgeForSave),
+        });
+        rec.base = baseOf(
+            asLoaded(rec.nodes, loaded?.nodes, (node) => node),
+            asLoaded(rec.edges, loaded?.edges, (edge) => edge),
+            layoutJson(rec.interfaceGridState),
+        );
+        if (rec.lastSavedPayloadJson !== JSON.stringify(savePayload)) {
+            rec.dirty = true;
+            scheduleSave(rec);
+        }
     } catch {
         /* non-serializable state — leave unseeded; the save fires normally */
     }
