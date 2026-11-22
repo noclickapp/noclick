@@ -1,10 +1,10 @@
 // `/settings`: Settings (src/screens/settings), read with the app's key through the app's own server, as every
 // screen's calls are. Usage; the plan and the balance, with NoClick's pages for changing them; the monthly spending cap,
 // which the key lowers or sets where there's none (raising or removing it is the owner's, on NoClick:
-// src/screens/console/ownerOnly.ts); the owner's email alerts; and the way into the developer console. What only a
-// deployment has (its people, linking a phone, its builder's skills, its own popups) isn't here. It reads again when the
-// account's change stream says something it shows moved, where the API serves the stream, and when the page comes back
-// into view: never on a timer.
+// src/screens/console/ownerOnly.ts); the owner's email alerts; the app's popups; and the way into the developer
+// console. Linking a phone takes the owner or a key that names its scope, which this one doesn't, and what only a
+// deployment has (its people, its builder's skills) isn't here. It reads again when the account's change stream says
+// something it shows moved, where the API serves the stream, and when the page comes back into view: never on a timer.
 import { useMemo } from 'react';
 import { useLoaderData } from 'react-router';
 import { useLocaleCountry } from '@/lib/localeCountry';
