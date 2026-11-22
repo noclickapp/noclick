@@ -1104,6 +1104,7 @@ dynatrace
 e-conomic
 e2b
 easy-email-verification
+easy-project
 easybizy
 easybroker-archive
 easypromos
