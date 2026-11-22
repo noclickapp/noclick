@@ -1312,6 +1312,7 @@ hospitable
 hostfully
 housecall-pro
 houzz-pro
+hover
 http-request
 hubfit
 hubflo
