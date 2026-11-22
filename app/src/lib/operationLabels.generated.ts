@@ -712,25 +712,25 @@ gohighlevel gong goodapi-plant-trees goodbarber goody google-ads google-ai-studi
 google-business-profile google-calendar google-chat google-classroom google-cloud-natural-language
 google-cloud-storage google-contacts google-docs google-drive google-forms google-maps google-meet
 google-search-console google-sheets google-slides google-tasks google-translate gorgias gorilladesk gotify
-gotowebinar gov grafana granola graphhopper greenhouse griptape grocy grok gsmtasks gtmetrix gusto hackernews hackmd
-haku halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here hetrixtools
-hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni hlr-lookup holded
-homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request hubfit hubflo
-hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed icypeas id4i
-idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts imagekit-io imagerouter imap immich inblog
-incident-io increase infakt infinity infisical inforumobile infraspeak inmobalia-crm inmobile-sms-gateway insightly
-instagram instantly instapaper instatus intelliprint intercom investorbase investorlift invofox invoiceninja
-invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate ironclad isn iterable itm-platform
-jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca jira-software-server
-jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller junglescout just-eat
-just-one-api justcall jvzoo jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila kenect-text-messaging
-kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp knowify kobotoolbox kommo
-kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard lambdatest landbot langbase
-langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper leadboxer leadfeeder
-leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch lemlist lenz
-lessonspace lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup linkwarden linode
-linq listclean listennotes liveagent lofty logo-dev lokalise lonescale looker loops loopy-loyalty loyverse luma
-lumapps lusha luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud
+gotowebinar gov gptzero-detect-ai grafana granola graphhopper greenhouse griptape grocy grok gsmtasks gtmetrix gusto
+hackernews hackmd haku halopsa handwrytten harness harvey hasslefreebooks heartbeat hedy hello-tracks helloasso here
+hetrixtools hetzner hevo hex heygen heymarket higgsfield highergov hitl hitpay hive hivelocity hiver hjarni
+hlr-lookup holded homebase honeybadger honeycomb hookdeck hospitable hostfully housecall-pro houzz-pro http-request
+hubfit hubflo hubhopper hubspot hubstaff humanitec humanitix humanloop hunter hypeauditor hyperbrowser hyros iclosed
+icypeas id4i idealpostcodes idloom ignav-flights ignisign ignition ilert image-charts imagekit-io imagerouter imap
+immich inblog incident-io increase infakt infinity infisical inforumobile infraspeak inmobalia-crm
+inmobile-sms-gateway insightly instagram instantly instapaper instatus intelliprint intercom investorbase
+investorlift invofox invoiceninja invoicexpress ionoscloud ip2location-io ip2proxy ip2whois ipinfo-io iplocate
+ironclad isn iterable itm-platform jackrabbit-class jev jigsawstack jinko jira jira-service-management-alert-ca
+jira-software-server jiraservicemanagement jobadder jobber jogg-ai join-it json2video jumpcloud jumpseller
+junglescout just-eat just-one-api justcall jvzoo jwplayer kadoa kajabi kantataox kapso karbon katana-mrp keap keila
+kenect-text-messaging kernel keycloak kibana kick kieai kintone kisi kit kiwify kizeo-forms klaviyo klicktipp
+knowify kobotoolbox kommo kontent-ai koyeb krisp kubernetes kudosity kumpeapps kvcore lagrowthmachine lakera-guard
+lambdatest landbot langbase langflow langfuse languagetool laposta lassocrm launchdarkly lead-forensics lead-prosper
+leadboxer leadfeeder leadmagic leadsforge leadsimple leanix leap leap-crm learnifier learnworlds leexi legalmatch
+lemlist lenz lessonspace lettr levitate libretranslate lightspeed line linear linkace linkedin linkly linkup
+linkwarden linode linq listclean listennotes liveagent lofty logo-dev lokalise lonescale looker loops loopy-loyalty
+loyverse luma lumapps lusha luxury-presence lytho magento-v2 magic-hour magicplan mailchimp maildroppa mailercloud
 mailerlite-classic mailersend mailgun mailjet mailmodo mailslurp mailsoftly maintainx manifestly manus manychat
 manyreach manyrequests mapbox marketsharp marketstack markup-ai mastodon mateo matillion mattermost me-qr-qr-code
 mediasilo meetgeekai meilisearch melo mem mem0 membershipio memberspot memelord mentortools mercado-pago mercury
