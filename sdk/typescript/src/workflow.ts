@@ -476,7 +476,11 @@ export interface WorkflowReadiness {
   status: string;
   /** What `status` means, in a sentence. */
   meaning: string;
-  /** What's in the way of it working, a step whose last run failed among them. */
+  /**
+   * What's in the way of it working, a step whose last run failed among them. An issue's `code` says whose move it
+   * is: `missing_credentials` waits on an account, `left_for_user` on a required setting the step leaves for its
+   * person to fill in, and `invalid_config` is a setting a run would refuse.
+   */
   issues: { step: string | null; code: string; message: string }[];
   /** What doesn't stop it running: an agent's tool with no account connected, which only a call to it needs. */
   warnings: { step: string | null; code: string; message: string }[];
@@ -523,7 +527,7 @@ export interface BuildQuestion {
  * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
  * workflow is as it was, whatever `summary` says), the `version` it ended on (what
  * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
- * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, as an
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user`, as an
  * edit answers them). `sentBack` counts the times the build went back to the builder for settings
  * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
  * named in `unread`: then nothing says the workflow is ready.
@@ -620,9 +624,9 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
  * A finished draft: the workflow's `version` once the drafted steps were written (one version of its history,
  * `historyVersion`; `changed` false when the drafter changed nothing), a `summary` of what changed, and for each step
  * it drafted (`steps`, by id) the verdict an edit answers (`config_valid`, `validation_error`, `missing_required`,
- * `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a person (`unfilled`:
- * a choice read from the connected account, a value only they know) and, for a step it couldn't draft (left as it
- * was), its `error`.
+ * `left_for_user`, `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a
+ * person (`unfilled`: a choice read from the connected account, a value only they know; a required one reads as
+ * `left_for_user` until it's filled in) and, for a step it couldn't draft (left as it was), its `error`.
  */
 export interface WorkflowDraftResult {
   workflowId: string;
@@ -947,8 +951,8 @@ export interface NameVersionOptions {
  * order (an added step's `id`, and what the
  * edit did on its own: `resolutions`, `harness_switch`, `coerced_values`, `stripped_trigger_refs`,
  * `http_auth_credential_hint`); and, for each step an op touched, whether it's ready to run (`steps`:
- * `config_valid`, `validation_error`, `missing_required`, `agent_credential_hint`, and `references`: each read of
- * another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
+ * `config_valid`, `validation_error`, `missing_required`, `left_for_user`, `agent_credential_hint`, and `references`:
+ * each read of another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
  * history a restore put back. `warnings` say what an edit did that won't work as it may look (a workspace member's
  * own connection given to a team workflow's step, which its owner's automatic runs can't use). An edit sent with
@@ -1413,8 +1417,10 @@ export class Step extends ApiObject {
   }
   /**
    * Whether it's ready to run, as the last edit through this handle that touched it judged: `config_valid`, and
-   * when it isn't, `validation_error` and `missing_required`; an agent's `agent_credential_hint`; and `references`
-   * (see `references`). `null` until an edit judged it (a read doesn't).
+   * when it isn't, `validation_error`, `missing_required` and `left_for_user` (the required settings it leaves for
+   * its person to fill in, a value only they know: they wait on that person and are never part of the error); an
+   * agent's `agent_credential_hint`; and `references` (see `references`). `null` until an edit judged it (a read
+   * doesn't).
    */
   get verdict(): JsonObject | null {
     return this._verdict;

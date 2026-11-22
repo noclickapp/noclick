@@ -346,7 +346,7 @@ class WorkflowBuildResult:
     its ``readiness`` as ``Workflow.readiness`` reads it (``status``,
     ``meaning``, ``issues``, ``warnings``, ``unverified``), and each step's
     verdict by step id (``verdicts``: ``config_valid``, ``validation_error``,
-    ``missing_required``, as an edit answers them). ``sent_back`` counts the
+    ``missing_required``, ``left_for_user``, as an edit answers them). ``sent_back`` counts the
     times the build went back to the builder for settings the run engine
     rejects (at most 2) before it finished. A fact NoClick couldn't read is
     ``None`` and named in ``unread``: then nothing says the workflow is
@@ -439,9 +439,10 @@ class WorkflowDraftResult:
     """A finished draft: the workflow's ``version`` once the drafted steps were written (one version of its
     history, ``history_version``; ``changed`` false when the drafter changed nothing), a ``summary`` of what
     changed, and for each step it drafted (``steps``, by id) the verdict an edit answers (``config_valid``,
-    ``validation_error``, ``missing_required``, ``references``) beside ``drafted``, its ``operation``, the
-    ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the connected account, a
-    value only they know) and, for a step it couldn't draft (left as it was), its ``error``."""
+    ``validation_error``, ``missing_required``, ``left_for_user``, ``references``) beside ``drafted``, its
+    ``operation``, the ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the
+    connected account, a value only they know; a required one reads as ``left_for_user`` until it's filled in) and,
+    for a step it couldn't draft (left as it was), its ``error``."""
 
     workflow_id: str
     mode: str
@@ -926,9 +927,10 @@ class Step(_Object):
     @property
     def verdict(self) -> Optional[Dict[str, Any]]:
         """Whether it's ready to run, as the last edit through this handle that touched it judged:
-        ``config_valid``, and when it isn't, ``validation_error`` and ``missing_required``; an agent's
-        ``agent_credential_hint``; and ``references`` (see ``references``). ``None`` until an edit judged it (a
-        read doesn't)."""
+        ``config_valid``, and when it isn't, ``validation_error``, ``missing_required`` and ``left_for_user``
+        (the required settings it leaves for its person to fill in, a value only they know: they wait on that
+        person and are never part of the error); an agent's ``agent_credential_hint``; and ``references`` (see
+        ``references``). ``None`` until an edit judged it (a read doesn't)."""
         return self._verdict
 
     @property
@@ -1476,7 +1478,7 @@ class WorkflowEdit:
     ``harness_switch``, ``coerced_values``, ``stripped_trigger_refs``,
     ``http_auth_credential_hint``); and, for each step an op touched, whether it's ready
     to run (``steps``: ``config_valid``, ``validation_error``, ``missing_required``,
-    ``agent_credential_hint``, and ``references``: each read of another step's output that
+    ``left_for_user``, ``agent_credential_hint``, and ``references``: each read of another step's output that
     won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
     the version of its history a restore put back. ``warnings`` say what an edit did that
@@ -1941,7 +1943,9 @@ class Workflow(_Object):
         "``configured``, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
         "whose last run failed among them), the ``warnings`` that don't stop it running (an agent's tool with "
         "no account connected), and ``unverified``, the steps no run has completed yet, each "
-        "``{step, code, message}``."))
+        "``{step, code, message}``. An issue's ``code`` says whose move it is: ``missing_credentials`` waits on "
+        "an account, ``left_for_user`` on a required setting the step leaves for its person to fill in, and "
+        "``invalid_config`` is a setting a run would refuse."))
     urls: List[Dict[str, Any]] = field("urls", lambda raw: list(raw or []), doc=(
         "The URLs it answers at: ``{kind, url, step, public}``, ``kind`` ``endpoint``, ``app`` (its published "
         "app) or ``mcp`` (a hosted MCP server)."))
