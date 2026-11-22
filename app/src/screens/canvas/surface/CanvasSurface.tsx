@@ -2,9 +2,9 @@
 // selects, a middle drag or Cmd/Ctrl+drag pans: useCtrlPan.ts), how far it zooms, how near a handle a dragged connection
 // snaps, the line drawn while one is dragged, and that a frozen canvas (a run's replay) is only looked at. Whoever draws
 // it hands the graph, the node and edge types and what each change does (useSurfaceEditing.ts), and draws what goes
-// inside it (the grid, other people's pointers) as its children.
+// inside it (the grid, other people's pointers) as its children. React Flow's stylesheet is the page's to load, where its
+// other styles are (WorkflowCanvas.tsx does), so the cascade stays the page's own.
 import { ReactFlow, type ReactFlowProps, type Edge, type Node } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import { CustomConnectionLine } from '../edges/CustomConnectionLine';
 
 // The dragged line in the drawn connections' own colour, soft gray in light and white in dark.

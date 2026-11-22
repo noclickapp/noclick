@@ -98,11 +98,14 @@ function nearestAfterRemoval(removed: Node | undefined, remaining: Node[]): Node
     return pool.reduce((a, b) => (dist(b) < dist(a) ? b : a));
 }
 
-/** The canvas's editing handlers for React Flow (the module's header). */
+/** The canvas's editing handlers for React Flow (the module's header). Each reads the graph and the options as they are
+ *  when it's called, and is a new function only when one it calls is (so React Flow's own updates follow the host's). */
 export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditing {
     const latest = useRef(options);
     latest.current = options;
     const { getInternalNode, screenToFlowPosition } = useReactFlow();
+    const { setNodes, setEdges, history, layer, panToNode, frozen, on } = options;
+    const { captureState, startBatch, endBatch } = history;
 
     const isValidConnection = useCallback((connection: Connection | Edge) => {
         const { nodesRef, edgesRef, roles } = latest.current;
@@ -176,7 +179,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
             }
             return updated;
         });
-    }, []);
+    }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode]);
 
     const onEdgesChange = useCallback((changes: EdgeChange[]) => {
         const { setEdges, nodesRef, history, on } = latest.current;
@@ -188,7 +191,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
             setTimeout(() => history.captureState(nodesRef.current ?? [], updated), 0);
             return updated;
         });
-    }, []);
+    }, [setEdges, captureState, on?.edgeRemoved]);
 
     const onConnect = useCallback((raw: Connection) => {
         const { setNodes, setEdges, nodesRef, history, syncingRef, on } = latest.current;
@@ -225,7 +228,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                 );
             }
         }
-    }, []);
+    }, [setNodes, setEdges, captureState, on?.edgeAdded]);
 
     // A connection dragged onto a step's body (or an invalid handle) lands on the nearest handle it can take, so a drop
     // needn't hit the small dot; one dropped on a valid handle connected already (`onConnect`).
@@ -262,7 +265,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
             });
             if (connection) onConnect(connection);
         },
-        [getInternalNode, screenToFlowPosition, isValidConnection, onConnect]
+        [frozen, getInternalNode, screenToFlowPosition, isValidConnection, onConnect]
     );
 
     return { isValidConnection, onNodesChange, onEdgesChange, onConnect, onConnectEnd };

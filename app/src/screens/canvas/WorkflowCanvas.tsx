@@ -6,6 +6,7 @@
 // chat, a step's panel) isn't here yet.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlowProvider, useNodesInitialized, useReactFlow, type Edge, type Node, type OnSelectionChangeParams } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { Loader2, Plus } from 'lucide-react';
 import type { StepType } from 'noclick';
 import { isTextEntryTarget } from '@/lib/keyboard';
@@ -92,6 +93,7 @@ function CanvasEditor({ workflowId, onSelect }: WorkflowCanvasProps) {
     const { stickyNoteRenderer, recalculateZIndex } = useStickyNoteNode({ setNodes });
     const nodeTypes = useMemo(() => buildLazyNodeTypes({ stickyNote: stickyNoteRenderer }), [stickyNoteRenderer]);
 
+    const stepRemoved = useCallback((nodeId: string) => void deleted.current.add(nodeId), []);
     const editing = useSurfaceEditing({
         workflowId,
         setNodes,
@@ -105,7 +107,7 @@ function CanvasEditor({ workflowId, onSelect }: WorkflowCanvasProps) {
         canvasRef,
         panToNode,
         layer: recalculateZIndex,
-        on: { removed: (nodeId) => deleted.current.add(nodeId) },
+        on: { removed: stepRemoved },
     });
 
     // Every change after the open is an edit to save; removed steps are told to the store so a merge never brings them
