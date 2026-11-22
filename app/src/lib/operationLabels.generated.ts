@@ -1438,6 +1438,7 @@ langflow
 langfuse
 languagetool
 laposta
+lara-translate
 lassocrm
 launchdarkly
 lead-forensics
