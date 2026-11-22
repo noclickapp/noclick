@@ -934,6 +934,7 @@ clay
 clearblade
 clearout
 clerk-io
+clever
 cleverreach
 clevertap
 clickfunnels
