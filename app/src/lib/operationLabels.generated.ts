@@ -1437,6 +1437,7 @@ jobber
 jogg-ai
 join-it
 joomla
+jooto
 jq
 json2video
 jumpcloud
