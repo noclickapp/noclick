@@ -113,3 +113,21 @@ def test_an_example_that_isnt_listed_raises_not_found(api, client):
         assert "nope" in str(missing)
     else:
         raise AssertionError("an unknown example is refused")
+
+
+def test_delete_folder_deletes_one_and_answers_it_as_it_was(api, client):
+    route = api.delete("/v1/workflows/folders/f2").respond(json={**WEEKLY, "deleted": True})
+    with nc.as_user("user_42"):
+        deleted = nc.Workflow.delete_folder(nc.WorkflowFolder._from(WEEKLY))
+    assert "NoClick-User" not in route.calls.last.request.headers
+    assert (deleted.id, deleted.name, deleted.raw["deleted"]) == ("f2", "Weekly", True)
+    api.delete("/v1/workflows/folders/f1").respond(json={**REPORTS, "deleted": True})
+    assert nc.Workflow.delete_folder("f1").id == "f1"
+
+
+def test_list_sends_the_text_to_search_names_and_descriptions_for(api, client):
+    route = api.get("/v1/workflows").respond(json=listing(workflow(None)))
+    found = nc.Workflow.list(search="digest")
+    assert route.calls.last.request.url.params["search"] == "digest" and found[0].id == WF
+    nc.Workflow.list_page(search="brief", limit=5)
+    assert route.calls.last.request.url.params["search"] == "brief"
