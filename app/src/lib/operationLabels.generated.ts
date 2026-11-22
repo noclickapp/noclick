@@ -692,7 +692,7 @@ dacast dadata-ru daily dart databox databricks datadog dataforseo datagma dataro
 debitura debounce deel deepgram deepimage deployhq deputy dev-cycle devin devto dex dialpad digicert digistore24
 digitalocean directiq directus discord discourse dixa dnsfilter dnsimple dnsmadeeasy docamatic dock-certs docker-hub
 docraptor docsautomator docsbot-ai docspell docugenerate documenso docupilot docuseal docusign dodo doit dokploy
-domainsdb doorloop doppler doqs dovetail dpd2 dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox
+domainsdb doorloop doppler doqs dots dovetail dpd2 dragn-survey dreamstudio dromo drop-cowboy drop-to-cdn dropbox
 dropbox-sign dropcontact dropinblog dub dust dux-soup dv360 dynamic-mockups dynapictures dynatrace e2b
 easy-email-verification easybizy easybroker-archive ebi echtpost eduzz egnyte elai elastic-email elasticsearch
 elevenlabs elmah eloqua emaillistverify emailoctopus emailvalidation emelia emnify encharge encircle enforcedflow
