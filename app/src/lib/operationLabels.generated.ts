@@ -1360,6 +1360,7 @@ housecall-pro
 houzz-pro
 hover
 http-request
+httpsms
 hubfit
 hubflo
 hubhopper
