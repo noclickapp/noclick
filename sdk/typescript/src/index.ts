@@ -26,8 +26,8 @@ export type { PhoneVerification, Spending, SpendingAction, UserFields, UserListO
 export { Session } from "./session.ts";
 export { Operation } from "./operation.ts";
 export type {
-  KindScopedFilters, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus, OperationStep,
-  OperationSummary, OperationTransition,
+  KindScopedFilters, NamedWorkstream, OperationEvent, OperationFilters, OperationProgress, OperationStage, OperationStatus,
+  OperationStep, OperationSummary, OperationTransition,
   PortStep, TurnStep,
 } from "./operation.ts";
 export { ToolCall } from "./toolCall.ts";
@@ -46,9 +46,10 @@ export type {
 export { Human, HumanOperations, HumanRequest } from "./human.ts";
 export { Approval, ApprovalPolicy } from "./approval.ts";
 export type {
-  ApprovalExplanation, ApprovalListOptions, ApprovalSetting, ApprovalStatus, HoldKind, OwnApprovals, PolicyChange,
+  ApprovalExplanation, ApprovalListOptions, ApprovalRouting, ApprovalSetting, ApprovalStatus, Approver, HoldKind,
+  OwnApprovals, PolicyChange, ScopeApprovals,
 } from "./approval.ts";
-export type { Answer, HumanAskOptions, HumanOptions, HumanPick, HumanRequestFilters, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
+export type { Answer, HumanAnswerFields, HumanAskOptions, HumanConnectAsk, HumanOptions, HumanPick, HumanRequestFilters, HumanSecretAsk, HumanStepRef, HumanRequestStatus, HumanTool, OwnerEmail, OwnerLine, OwnerReach, Via } from "./human.ts";
 export { Agent, AgentConversation } from "./agent.ts";
 export { TERMINAL_CLOSED_FOR_GOOD, TERMINAL_RENEW, Terminal, TerminalConnection } from "./terminal.ts";
 export { AgentMove } from "./agentMove.ts";
@@ -56,7 +57,7 @@ export type { AgentMoveArrived, AgentMoveCreateOptions, AgentMoveSource, AgentMo
 export type { TerminalConnectOptions, TerminalEnd, TerminalState, TerminalStatus } from "./terminal.ts";
 export type {
   AgentCommand, AgentCommandInput, AgentCommands, AgentCommandSource, HarnessRequest,
-  PermissionMode, RequestDecision, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
+  PermissionMode, RequestDecision, AgentApprovalsOption, AgentCreateOptions, AgentFields, AgentGrant, SandboxSize, AppTesting,
   ModelSwitching, ModelSwitchingChange, SwitchedFrom, ModelSwitchGrant, ModelSwitchResult,
   AgentHistoryOptions, AgentListOptions, AgentMovedFrom, AgentOrigin, AgentReply, AgentSkill, AgentStatus,
   AgentStep, AgentStepDiff, AgentStepKind, ChangedFile, DiffStat, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
@@ -73,6 +74,14 @@ export type { PolicyDraft, PolicyOptions, PolicyRules, PolicyVerdict, RuleInput 
 export { Brand } from "./brand.ts";
 export type { BrandFields } from "./brand.ts";
 export { Notifications } from "./notifications.ts";
+export { Key } from "./key.ts";
+export type { KeyOptions } from "./key.ts";
+export { ConnectedApp } from "./connectedApp.ts";
+export { Popups } from "./popups.ts";
+export { AccountPhones } from "./accountPhones.ts";
+export { BuilderSkill } from "./builderSkill.ts";
+export type { BuilderSkillFields } from "./builderSkill.ts";
+export type { LinkedPhone, PhoneChallenge } from "./accountPhones.ts";
 export { Usage, usage, Workstream } from "./usage.ts";
 export type {
   AccountCap, AgentBudget, CapChange, KeyCap, LedgerCharge, LedgerGroup, ProjectBudget, UsageBilling, UsageCharges,
@@ -96,7 +105,8 @@ export { Inbox, InboxMessage } from "./inbox.ts";
 export type { InboxCreateOptions, InboxReply, InboxSenders, InboxSendOptions, InboxThread } from "./inbox.ts";
 export { PhoneNumber, PhoneNumberOrder, PortRequest, TextingRegistration, TransferOut } from "./phoneNumber.ts";
 export type {
-  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder, NumberPlace,
+  AnswerWithOptions, AvailableNumber, CallLine, ConnectableNumber, NumberCoverage, NumberDocument, NumberHolder,
+  NumberHolderProfile, NumberPlace,
   NumberRequirement, NumberRequirements, PhoneNumberBuyOptions,
   PhoneCall, PhoneCallers, PhoneNumberSource, PhoneNumberType, PhoneText, PortDetails, PortInOptions,
   PortRequestNumber, StreetAddress, TextingContact, TextingRegistrationDetails, TranscriptTurn,
@@ -205,12 +215,14 @@ export type {
 } from "./webhook.ts";
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
-  AddNoteOptions, AddStepOptions, BuildQuestion, ClearedStepState, EditOptions, ExpressionPreview, GraphEdge,
-  LatestOutputs, Position, PublishOptions, RunStep,
-  StepConnection, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
-  StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowEdge, WorkflowEdit,
-  WorkflowEndpoint, WorkflowReadiness, WorkflowRun, WorkflowRunCounts, WorkflowRunOptions, WorkflowRunStatus,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
+  AddNoteOptions, AddStepOptions, BuildQuestion, BuildQuestions, ClearedStepState, DraftOptions, DraftStep, EditOptions,
+  ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
+  StepConnection, StepLastRun, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
+  StepTrigger, StepUpdate, StepValue, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
+  WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
+  WorkflowTestRun,
+  WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";

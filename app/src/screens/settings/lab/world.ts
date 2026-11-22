@@ -1,7 +1,8 @@
 // The Settings lab's world: every read Settings' own sections make on the platform API (the email alerts, the account,
-// its monthly spending cap), answered as the API answers the account's signed-in owner or one of its keys (`actsAs`),
-// and Usage's reads as the Usage lab's member (../../usage/lab/world.ts). A scene picks the alerts' switches, the plan,
-// the balance, the cap and what its period spent; the rest is the same for every scene. A host's own lab answers the
+// its monthly spending cap, its workstreams, its linked numbers, the app's popups), answered as the API answers the
+// account's signed-in owner or one of its keys (`actsAs`), and Usage's reads as the Usage lab's member
+// (../../usage/lab/world.ts). A scene picks the alerts' switches, the plan, the balance, the cap and what its period
+// spent, the workstreams and the linked numbers; the rest is the same for every scene. A host's own lab answers the
 // same reads with `settingsAnswers`.
 import type { NoClick } from 'noclick';
 import { workFixtureClient } from '@/screens/work/fixtures/client';
@@ -23,13 +24,59 @@ export interface SettingsApiWorld {
     capUsd: number | null;
     /** What the cap's period has spent. */
     spentUsd: number;
+    /** The account's workstreams: a few open and one archived (as they are unless said), none yet, or a read that never
+     *  answers. */
+    workstreams?: 'some' | 'none' | 'waiting';
+    /** The numbers linked to the account: none (as they are unless said), two, or none where this NoClick sends no
+     *  codes. */
+    phone?: 'none' | 'linked' | 'not-configured';
+    /** The skills NoClick's builder loads: two of the account's and one shared with it (as they are unless said), or
+     *  none. */
+    skills?: 'some' | 'none';
 }
+
+/** The workstreams a world starts with, as GET /v1/workstreams lists them (`merged_into` is the lab's own: the one a
+ *  merged workstream joined). */
+interface LabWorkstream {
+    id: string;
+    name: string;
+    spent_usd: number;
+    events: number;
+    archived: boolean;
+    merged_into?: string;
+}
+
+const WORKSTREAMS: readonly LabWorkstream[] = [
+    { id: 'ws_support', name: 'Customer support', spent_usd: 12.4, events: 318, archived: false },
+    { id: 'ws_launch', name: 'Spring launch', spent_usd: 8.1, events: 142, archived: false },
+    { id: 'ws_menu', name: 'Menu refresh', spent_usd: 0, events: 0, archived: false },
+    { id: 'ws_q3', name: 'Q3 launch', spent_usd: 0, events: 0, archived: true },
+];
 
 export const ACCOUNT_ID = 'u_ada';
 export const OWNER_EMAIL = 'ada@example.test';
 /** The account's billing period. */
 export const PERIOD = { period_start: '2026-10-01T00:00:00Z', resets_at: '2026-11-01T00:00:00Z' };
 const PREFS = { run_failure: true, credits: true, digest: false, approvals: true, referrals: false };
+/** The app's popups: the invite banner dismissed. */
+const POPUPS_SHOWN = { run_results: true, invite_banner: false, publish_banner: true };
+/** Two numbers linked, one proven by a code and one by texting NoClick on WhatsApp. */
+const PHONES = [
+    { phone: '+14155550123', verified_at: '2026-09-02T09:00:00Z', source: 'verify' },
+    { phone: '+447700900123', verified_at: '2026-10-11T09:00:00Z', source: 'whatsapp' },
+];
+const MAX_PHONES = 3;
+/** A builder skill as GET /v1/builder_skills lists it. */
+const builderSkill = (id: string, name: string, description: string, over: Record<string, unknown> = {}) => ({
+    object: 'builder_skill', id, name, description, scope: 'owned', owner_id: ACCOUNT_ID, enabled: true, muted: false,
+    has_text: true, has_workflow: false, created_at: '2026-09-14T09:00:00Z', updated_at: '2026-09-14T09:00:00Z', ...over,
+});
+const SKILLS = [
+    builderSkill('s1', 'Brand voice', 'How we write.'),
+    builderSkill('s2', 'Weekly report', 'The steps of the Monday report.', { has_text: false, has_workflow: true, enabled: false }),
+    builderSkill('s3', 'Support tone', 'How support answers.', { scope: 'shared', owner_id: 'u_priya' }),
+];
+const KEY_REFUSES_PHONES = 'Only the signed-in account owner, or one of the account’s own secret keys holding the ‘account:phones’ scope, makes this call.';
 
 const KEY_REFUSES_RAISE =
     'One of the account’s keys lowers its monthly spending cap, or sets one where there’s none: raising or removing it is the owner’s.';
@@ -40,6 +87,13 @@ const KEY_REFUSES_ACCOUNT = 'A key reads the account and can’t change it.';
 export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner'): (call: LedgerCall) => Promise<Response> | null {
     let prefs: Record<string, boolean> = { ...Object.fromEntries(NOTIFICATION_CATEGORIES.map((c) => [c.key, true])), ...PREFS };
     let cap = world.capUsd;
+    let workstreams: LabWorkstream[] = world.workstreams === 'none' ? [] : WORKSTREAMS.map((w) => ({ ...w }));
+    let popups: Record<string, boolean> = { ...POPUPS_SHOWN };
+    let phones = world.phone === 'linked' ? PHONES.map((p) => ({ ...p })) : [];
+    let challenged: string | null = null;
+    let skills: Record<string, unknown>[] = world.skills === 'none' ? [] : SKILLS.map((s) => ({ ...s, body_text: s.has_text ? `${s.name}: as written.` : null, body_workflow: null }));
+    const skillView = ({ body_text: _text, body_workflow: _workflow, ...listed }: Record<string, unknown>) => listed;
+    const workstreamView = ({ merged_into: _, ...w }: LabWorkstream) => ({ object: 'workstream', ...w, created_at: '2026-10-02T09:00:00Z', updated_at: '2026-10-02T09:00:00Z' });
     const capView = () => ({
         object: 'spend_cap',
         cap_usd: cap,
@@ -66,6 +120,51 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
             prefs = { ...prefs, ...(body?.categories as Record<string, boolean>) };
             return answer({ object: 'notifications', categories: prefs });
         }
+        if (route === 'GET /v1/popups') return answer({ object: 'popups', popups });
+        if (route === 'PATCH /v1/popups') {
+            popups = { ...popups, ...(body?.popups as Record<string, boolean>) };
+            return answer({ object: 'popups', popups });
+        }
+        if (url.pathname.startsWith('/v1/account/phones')) {
+            if (actsAs === 'key') return refused(KEY_REFUSES_PHONES);
+            if (route === 'GET /v1/account/phones') {
+                return answer({ object: 'phones', configured: world.phone !== 'not-configured', max_phones: MAX_PHONES, phones });
+            }
+            if (route === 'POST /v1/account/phones') {
+                challenged = String(body?.phone);
+                return answer({ object: 'phone_challenge', id: 'ch_1', phone: challenged, expires_at: '2026-10-16T15:30:00Z' });
+            }
+            if (route === 'POST /v1/account/phones/verify' && challenged) {
+                const linked = { phone: challenged, verified_at: CLOCK, source: 'verify' };
+                challenged = null;
+                phones = [...phones.filter((p) => p.phone !== linked.phone), linked];
+                return answer({ object: 'phone', ...linked });
+            }
+            if (method === 'DELETE') {
+                const phone = decodeURIComponent(url.pathname.slice('/v1/account/phones/'.length));
+                phones = phones.filter((p) => p.phone !== phone);
+                return answer({ object: 'phone', phone, unlinked: true });
+            }
+        }
+        if (route === 'GET /v1/builder_skills') return answer({ object: 'list', data: skills.map(skillView) });
+        if (route === 'POST /v1/builder_skills') {
+            const made = { ...builderSkill(`s${skills.length + 1}`, String(body?.name), String(body?.description ?? '')), has_text: false, body_text: null, body_workflow: null };
+            skills = [made, ...skills];
+            return answer(made);
+        }
+        if (url.pathname.startsWith('/v1/builder_skills/')) {
+            const id = decodeURIComponent(url.pathname.slice('/v1/builder_skills/'.length));
+            const found = skills.find((s) => s.id === id);
+            if (!found) return Promise.resolve(Response.json({ error: { type: 'not_found', message: `No builder skill '${id}'.` } }, { status: 404 }));
+            if (method === 'GET') return answer(found);
+            if (method === 'DELETE') {
+                skills = skills.filter((s) => s.id !== id);
+                return answer({ object: 'builder_skill', id, deleted: true });
+            }
+            const changed = { ...found, ...body, ...(typeof body?.body_text === 'string' ? { has_text: !!body.body_text.trim() } : {}) };
+            skills = skills.map((s) => (s.id === id ? changed : s));
+            return answer(changed);
+        }
         if (route === 'GET /v1/account') return answer(account());
         if (route === 'PATCH /v1/account') {
             if (actsAs === 'key') return refused(KEY_REFUSES_ACCOUNT);
@@ -73,6 +172,38 @@ export function settingsAnswers(world: SettingsApiWorld, actsAs: ActsAs = 'owner
             return answer(account());
         }
         if (route === 'GET /v1/usage/limits') return answer({ object: 'usage_limits', ...PERIOD, keys: [], users: [], agents: [], projects: [], account: capView() });
+        if (route === 'GET /v1/workstreams') {
+            if (world.workstreams === 'waiting') return new Promise<Response>(() => undefined);
+            const archived = url.searchParams.get('archived') === 'true';
+            const listed = workstreams.filter((w) => !w.merged_into && w.archived === archived).sort((a, b) => b.spent_usd - a.spent_usd);
+            return answer({ object: 'list', data: listed.map(workstreamView), period_start: PERIOD.period_start, period_end: PERIOD.resets_at, unnamed_usd: 1.25 });
+        }
+        if (method === 'PATCH' && url.pathname.startsWith('/v1/workstreams/')) {
+            // Renamed onto another's name it merges there, which is open again; then archived or brought back.
+            const ref = decodeURIComponent(url.pathname.slice('/v1/workstreams/'.length)).toLowerCase();
+            const current = workstreams.find((w) => !w.merged_into && (w.id === ref || w.name.toLowerCase() === ref));
+            if (!current) return Promise.resolve(Response.json({ error: { type: 'not_found', message: `No workstream '${ref}'.` } }, { status: 404 }));
+            let now = current;
+            let mergedFrom: { id: string; name: string } | null = null;
+            const name = typeof body?.name === 'string' ? body.name.split(/\s+/).filter(Boolean).join(' ') : null;
+            if (name) {
+                const target = workstreams.find((w) => !w.merged_into && w.id !== current.id && w.name.toLowerCase() === name.toLowerCase());
+                if (target) {
+                    workstreams = workstreams.map((w) => (w.id === current.id ? { ...w, merged_into: target.id } : w.id === target.id ? { ...w, archived: false, spent_usd: w.spent_usd + current.spent_usd, events: w.events + current.events } : w));
+                    mergedFrom = { id: current.id, name: current.name };
+                    now = workstreams.find((w) => w.id === target.id)!;
+                } else {
+                    workstreams = workstreams.map((w) => (w.id === current.id ? { ...w, name } : w));
+                    now = workstreams.find((w) => w.id === current.id)!;
+                }
+            }
+            if (typeof body?.archived === 'boolean') {
+                const archived = body.archived;
+                workstreams = workstreams.map((w) => (w.id === now.id ? { ...w, archived } : w));
+                now = workstreams.find((w) => w.id === now.id)!;
+            }
+            return answer({ ...workstreamView({ ...now, spent_usd: 0, events: 0 }), ...(mergedFrom ? { merged_from: mergedFrom } : {}) });
+        }
         if (route === 'PUT /v1/usage/limits/account') {
             const next = (body?.cap_usd ?? null) as number | null;
             if (actsAs === 'key') {

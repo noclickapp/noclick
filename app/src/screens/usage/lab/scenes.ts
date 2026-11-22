@@ -21,6 +21,7 @@ export interface UsageScene {
 const SONNET = 'openrouter/anthropic/claude-sonnet-4.6';
 const INSIDE_SONNET = `service:ai,item:${encodeURIComponent(SONNET)}`;
 const MEMBER: UsageWorld = { billed: 'member' };
+const TEAM: UsageWorld = { billed: 'team' };
 const CHARGE_ROW: LabStep = { click: 'section[aria-label="Charges"] [role="row"][tabindex="0"]' };
 
 const billed = (account: BilledAccount, title: string): UsageScene => ({ id: `account-${account}`, title, group: 'Billed accounts', world: { billed: account } });
@@ -31,6 +32,7 @@ export const SCENES: readonly UsageScene[] = [
     billed('running-out', 'About to run out: $2 left at $4 a day'),
     billed('debt', 'Owes money: a declined top-up and a long call'),
     billed('workspace', 'A workspace of four, its owner paying'),
+    billed('team', 'A team naming its work: each charge for whom, and in which workstream'),
     billed('legacy', 'On an old plan: credits read as dollars'),
     billed('platform', 'The developer platform: keys, users and agents'),
 
@@ -45,9 +47,12 @@ export const SCENES: readonly UsageScene[] = [
     { id: 'inside-a-site', title: 'Inside a site', group: 'Where it goes', world: MEMBER, place: { by: 'app', in: 'app:prj_site' } },
     { id: 'inside-a-person', title: 'Inside a person’s work', group: 'Where it goes', world: { billed: 'workspace' }, place: { by: 'person', in: 'person:u_sam' } },
     { id: 'inside-a-platform-agent', title: 'Inside a platform agent', group: 'Where it goes', world: { billed: 'platform' }, place: { by: 'agent', in: 'agent:agt_concierge' } },
+    { id: 'by-workstream', title: 'By workstream, the work a team’s agents named', group: 'Where it goes', world: TEAM, place: { by: 'workstream' } },
+    { id: 'inside-a-workstream', title: 'Inside a workstream, one merged into it included', group: 'Where it goes', world: TEAM, place: { by: 'workstream', in: 'workstream:ws_launch' } },
 
     { id: 'charges-one-service', title: 'One service over the charges', group: 'The charges', world: MEMBER, steps: [{ button: 'Calls and texts' }] },
     { id: 'charge-drawer', title: 'A charge’s drawer: what it was for and how it was priced', group: 'The charges', world: MEMBER, steps: [CHARGE_ROW] },
+    { id: 'charge-in-a-workstream', title: 'A teammate’s charge in a workstream: who it was for, and which', group: 'The charges', world: TEAM, steps: [{ type: 'input[aria-label="Search charges"]', text: 'Spring launch' }, CHARGE_ROW] },
     { id: 'charges-no-match', title: 'A search that finds nothing', group: 'The charges', world: MEMBER, steps: [{ type: 'input[aria-label="Search charges"]', text: 'zzzz' }] },
 
     { id: 'unbilled', title: 'What each thing cost, where nobody is billed', group: 'Nobody billed', world: { unbilled: 'busy' } },

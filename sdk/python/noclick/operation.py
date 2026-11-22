@@ -144,6 +144,12 @@ class Operation(_Object):
     input: Optional[Dict[str, Any]] = field(
         "input", doc="What it was started with (single-operation views, account principals).",
     )
+    workstream: Optional[Dict[str, str]] = field(
+        "workstream",
+        doc="The workstream its work belongs to, as it reads now (``{\"id\", \"name\"}``: a renamed one by its new "
+        "name, a merged one as the one it joined); ``None`` when its work named none. A single operation's view and "
+        "``Operation.list()`` name it.",
+    )
     started_at: Any = field("started_at", parse_time)
     finished_at: Any = field("finished_at", parse_time)
     wait_ms: Optional[int] = field("wait_ms", doc="Time queued before it ran.")

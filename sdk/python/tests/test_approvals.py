@@ -4,7 +4,7 @@ names ``approvals:answer``), always as the account, against the mocked transport
 import pytest
 
 import noclick as nc
-from platform_helpers import body, listing
+from platform_helpers import agent_row, body, listing
 
 APPROVAL = {
     "object": "approval", "id": "apr_1", "status": "pending", "action": "Buy +1 567 483 3618", "summary": None,
@@ -178,3 +178,115 @@ def test_the_policy_reads_and_explains_for_one_key(api, client):
         "bounds": False})
     seen = nc.ApprovalPolicy.explain("purchase", "key", connected_app_id="app_1")
     assert body(explained.calls.last.request)["connected_app_id"] == "app_1" and seen.source == "key"
+
+
+AGENT_CHANGE = {**CHANGE, "scope": "agent", "scope_id": "ag_1", "changed_by": "owner", "key_id": None,
+                "pending": False}
+UNDER_20 = {"disposition": "allow", "under_usd": 20.0, "until": None, "pending": False}
+
+
+def test_an_agent_sets_its_own_on_create_update_and_spawn(api, client):
+    created = api.post("/v1/agents").respond(201, json=agent_row(
+        approvals={"purchase": UNDER_20}, approval_changes=[AGENT_CHANGE]))
+    buyer = nc.Agent.create("buyer", instructions="Buy what's asked.",
+                            approvals={"purchase": {"disposition": "allow", "under_usd": 20}})
+    assert body(created.calls.last.request)["approvals"] == {"purchase": {"disposition": "allow", "under_usd": 20}}
+    assert buyer.approvals["purchase"]["under_usd"] == 20.0
+    assert buyer.raw["approval_changes"][0]["scope"] == "agent"
+
+    patched = api.patch("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    api.get("/v1/agents/ag_1").respond(json=agent_row(approvals={"purchase": UNDER_20}))
+    nc.Agent.from_id("ag_1").update(approvals={"purchase": None, "outside_other_connection": "allow"})
+    assert body(patched.calls.last.request) == {"approvals": {"purchase": None, "outside_other_connection": "allow"}}
+
+    spawned = api.post("/v1/agents/ag_1/children").respond(201, json=agent_row(id="ag_2", parent_id="ag_1"))
+    nc.Agent.from_id("ag_1").spawn("Buy a number.", approvals={"purchase": "ask"})
+    assert body(spawned.calls.last.request)["approvals"] == {"purchase": "ask"}
+    # A child looser than its parent is refused.
+    spawned.respond(400, json={"error": {"type": "invalid_request", "field": "approvals.purchase", "message": (
+        "That's looser than its parent agent lets it set 'purchase': a child follows its parent's settings and only "
+        "tightens them.")}})
+    with pytest.raises(nc.InvalidRequest, match="parent"):
+        nc.Agent.from_id("ag_1").spawn("Buy a number.", approvals={"purchase": "allow"})
+
+
+ATTACH = {"kind": "attach_connection", "description": "Giving a workflow's step a connection or a secret.",
+          "approver": "owner", "outside_only": False, "settable": True,
+          "defaults": {"connected_app": "allow", "assistant": "allow", "agent": "allow", "key": "allow",
+                       "code": "allow"}}
+
+
+def test_agents_attaching_connections_is_a_kind_switched_for_the_account_and_one_agent(api, client):
+    read = api.get("/v1/approvals/policy").respond(json={**POLICY, "kinds": [ATTACH]})
+    assert nc.ApprovalPolicy.get().default("attach_connection", "agent") == "allow"
+    assert read.called
+    put = api.put("/v1/approvals/policy").respond(json={**POLICY, "kinds": [ATTACH], "changes": []})
+    nc.ApprovalPolicy.set(settings={"attach_connection": "ask"}, ceilings={"attach_connection": "allow"})
+    assert body(put.calls.last.request) == {"settings": {"attach_connection": "ask"},
+                                            "ceilings": {"attach_connection": "allow"}}
+    patched = api.patch("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    api.get("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    nc.Agent.from_id("ag_1").update(approvals={"attach_connection": "allow"})
+    assert body(patched.calls.last.request) == {"approvals": {"attach_connection": "allow"}}
+
+
+def test_the_policy_reads_and_explains_for_one_agent(api, client):
+    read = api.get("/v1/approvals/policy").respond(json={**POLICY, "agent_id": "ag_1", "kinds": [
+        {**POLICY["kinds"][0], "own": None,
+         "effective": {"connected_app": "under_auto_approve", "agent": "allow_under", "app": "allow", "key": "ask"}}]})
+    policy = nc.ApprovalPolicy.get(agent_id="ag_1")
+    assert read.calls.last.request.url.params["agent_id"] == "ag_1"
+    assert policy.effective("purchase", "agent") == "allow_under" and policy.kinds[0].own is None
+    explained = api.post("/v1/approvals/policy/explain").respond(json={
+        "object": "approval_explanation", "kind": "purchase", "caller": "agent", "disposition": "allow",
+        "source": "parent", "why": None, "setting": {"disposition": "allow", "under_usd": 20.0, "until": None},
+        "bounds": False})
+    seen = nc.ApprovalPolicy.explain("purchase", "agent", amount_usd=19, agent_id="ag_2")
+    assert body(explained.calls.last.request)["agent_id"] == "ag_2"
+    assert (seen.disposition, seen.source) == ("allow", "parent")
+
+
+ROUTING = {"object": "approval_routing",
+           "approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"}, "on_timeout": "escalate",
+           "expires_in_s": 3600, "effective_at": "2026-11-21T09:00:00+00:00", "pending": False, "before": None,
+           "change_id": "chg_2"}
+STAGES = [{"approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"}, "expires_in_s": 3600,
+           "on_timeout": "escalate", "source": "account"},
+          {"approver": {"object": "approver", "kind": "owner"}, "expires_in_s": 86400, "on_timeout": "decline",
+           "source": "default"}]
+
+
+def test_the_account_names_who_answers_and_reads_the_chain_back(api, client):
+    put = api.put("/v1/approvals/policy").respond(json={**POLICY, "routing": ROUTING,
+                                                        "approvers": {"agent": STAGES, "key": STAGES}})
+    policy = nc.ApprovalPolicy.set(routing={"approver": {"agent_id": "supervisor"}, "on_timeout": "escalate",
+                                            "expires_in_s": 3600})
+    assert body(put.calls.last.request) == {"routing": {"approver": {"agent_id": "supervisor"},
+                                                        "on_timeout": "escalate", "expires_in_s": 3600}}
+    assert policy.routing["approver"]["kind"] == "agent"
+    assert [s["approver"]["kind"] for s in policy.approvers["key"]] == ["agent", "owner"]
+    # None puts the owner back; leaving it out leaves it as it is.
+    nc.ApprovalPolicy.set(routing=None)
+    assert body(put.calls.last.request) == {"routing": None}
+    nc.ApprovalPolicy.set(settings={"purge": "allow"})
+    assert body(put.calls.last.request) == {"settings": {"purge": "allow"}}
+    api.post("/v1/approvals/policy/explain").respond(json={
+        "object": "approval_explanation", "kind": "purchase", "caller": "key", "disposition": "ask",
+        "source": "default", "why": "Purchases through an API key always ask.", "setting": None, "bounds": False,
+        "approvers": STAGES})
+    assert [s["approver"]["kind"] for s in nc.ApprovalPolicy.explain("purchase", "key").approvers] == [
+        "agent", "owner"]
+
+
+def test_an_agent_names_its_own_approver_and_an_approval_says_who_it_waits_on(api, client):
+    patched = api.patch("/v1/agents/ag_1").respond(json=agent_row(approvals={"routing": ROUTING}))
+    api.get("/v1/agents/ag_1").respond(json=agent_row(approvals={}))
+    nc.Agent.from_id("ag_1").update(approvals={"routing": {"approver": {"code": True}}})
+    assert body(patched.calls.last.request) == {"approvals": {"routing": {"approver": {"code": True}}}}
+    routed = {**APPROVAL, "approver": {"object": "approver", "kind": "agent", "agent_id": "ag_9"},
+              "on_timeout": "escalate", "sent_to": [], "status": "approved", "decided_by": "agent",
+              "decided_by_agent": {"agent_id": "ag_9", "name": "Supervisor"}}
+    api.get("/v1/approvals/apr_1").respond(json=routed)
+    approval = nc.Approval.from_id("apr_1")
+    assert (approval.approver["kind"], approval.on_timeout, approval.decided_by) == ("agent", "escalate", "agent")
+    assert approval.decided_by_agent["name"] == "Supervisor"

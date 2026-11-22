@@ -1,6 +1,7 @@
 // Settings: one page, its sections listed in groups in a column of their own beside the open one on a laptop, and on a
 // phone a list a section opens over (SettingsFrame). Each section's body is a slot (slots.ts): the app's own where it
-// has one (Usage, Plan and billing, Notifications, Developer), and a host's for what only a deployment has; a section
+// has one (Usage, Workstreams, Plan and billing, Notifications, Phone, Popups, Developer), and a host's for what only a
+// deployment has; a section
 // nobody draws isn't listed. Whoever draws the page says what it knows of the account (`SectionContext`) and where the
 // open section lives (`SettingsAddress`): `/settings` keeps it in the address's `?section=` (`useSettingsAddress`). The
 // app's sections read with the client and live frames `SettingsScope` hands them, acting as whoever the console context
@@ -11,6 +12,7 @@ import { getAccount } from '@/sdk/owner';
 import { WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { useV1 } from '@/sdk/useV1';
 import { ConsoleScope } from '@/screens/console/ConsoleProviders';
+import { useOwnerOnly } from '@/screens/console/ownerOnly';
 import { AccountContext, type ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { TooltipProvider } from '@/ui/tooltip';
 import { groupSections, visibleSections, type SectionContext, type SettingsSectionId } from './sections';
@@ -28,9 +30,13 @@ export interface SettingsAddress {
     closePhone: () => void;
 }
 
-/** What the app knows of the account it acts in: no organization, no members to show, no phone linking (each a
- *  deployment's own). */
-export const APP_CONTEXT: SectionContext = { inOrganization: false, hasMembers: false, phoneLinking: false };
+/** What the app knows of the account it acts in: no organization and no members to show (each a deployment's own), and
+ *  phone linking where the page acts as the account's owner (screens/console/ownerOnly.ts: a key links a number only
+ *  with a scope this app's key doesn't carry). */
+export function useAppContext(): SectionContext {
+    const phoneLinking = useOwnerOnly()('accountPhones');
+    return useMemo(() => ({ inOrganization: false, hasMembers: false, phoneLinking }), [phoneLinking]);
+}
 
 const NONE: readonly string[] = [];
 
@@ -125,7 +131,8 @@ export function SettingsScope({ value, children }: { value: ConsoleContextValue 
 
 /** Settings as the app draws it at `/settings`: its own sections, the address's `?section=`. */
 export function AppSettings() {
-    const { sections } = useShownSections(APP_CONTEXT);
+    const context = useAppContext();
+    const { sections } = useShownSections(context);
     const address = useSettingsAddress(useMemo(() => sections.map((s) => s.id), [sections]));
-    return <SettingsView context={APP_CONTEXT} address={address} />;
+    return <SettingsView context={context} address={address} />;
 }

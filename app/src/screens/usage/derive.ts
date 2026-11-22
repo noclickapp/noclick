@@ -142,9 +142,9 @@ export function serviceOf(row: UsageRow): ServiceId {
  *  them where they fall instead of folding them into the daily rate. */
 export const isScheduled = (row: UsageRow) => row.usage_type === 'recurring' || row.usage_subtype.startsWith('domain/');
 
-// ── things: which automation, agent, app, person or key ───────────────────────
+// ── things: which automation, agent, app, person, workstream or key ───────────
 
-export type Dimension = 'service' | 'automation' | 'agent' | 'app' | 'person' | 'key';
+export type Dimension = 'service' | 'automation' | 'agent' | 'app' | 'person' | 'workstream' | 'key';
 
 export const DIMENSION_LABEL: Record<Dimension, string> = {
     service: 'Service',
@@ -152,6 +152,7 @@ export const DIMENSION_LABEL: Record<Dimension, string> = {
     agent: 'Agent',
     app: 'Site',
     person: 'Person',
+    workstream: 'Workstream',
     key: 'API key',
 };
 
@@ -176,6 +177,21 @@ function inChat(snap: UsageSnapshot, m: UsageRow['metadata']): boolean {
     return m.surface === 'coordinator' || !!(agent && snap.directory.agents[agent]?.chat);
 }
 
+/** The platform user a charge was made for, when it was one of your apps' own users (not one of your people). */
+function appUserOf(snap: UsageSnapshot, m: UsageRow['metadata']): string | undefined {
+    const tenant = m.platform_api?.tenant_id;
+    return tenant && tenant !== 'self' && !snap.directory.people[tenant]?.person ? tenant : undefined;
+}
+
+/** The person a charge was for, by login, as it records it. A charge recorded before then: the person its platform
+ *  user is, the member who ran it when the owner pays, else the payer. */
+function loginOf(snap: UsageSnapshot, row: UsageRow): string {
+    const m = row.metadata;
+    const tenant = m.platform_api?.tenant_id;
+    const login = tenant && tenant !== 'self' ? snap.directory.people[tenant]?.person : undefined;
+    return m.responsible_user_id ?? login ?? m.actual_user_id ?? row.user_id;
+}
+
 /** The charge's thing along `dim`. */
 export function thingOf(snap: UsageSnapshot, row: UsageRow, dim: Dimension): string {
     const m = row.metadata;
@@ -193,16 +209,12 @@ export function thingOf(snap: UsageSnapshot, row: UsageRow, dim: Dimension): str
         }
         case 'app':
             return m.project_id ?? m.platform_api?.project_id ?? OUTSIDE;
-        case 'person': {
-            // Who it was for, as each charge records it; one of your apps' own users (a platform user who isn't one
-            // of your people) splits as that user. A charge recorded before then: its platform user, the member who
-            // ran it when the owner pays, else the payer.
-            const tenant = m.platform_api?.tenant_id;
-            const user = tenant && tenant !== 'self' ? tenant : undefined;
-            const login = user ? snap.directory.people[user]?.person : undefined;
-            if (user && !login) return user;
-            return m.responsible_user_id ?? login ?? m.actual_user_id ?? row.user_id;
-        }
+        case 'person':
+            // Who it was for; one of your apps' own users splits as that user.
+            return appUserOf(snap, m) ?? loginOf(snap, row);
+        case 'workstream':
+            // As it reads now: one renamed onto another's name is that one's (the directory's `reads_as`).
+            return m.workstream_id ? (snap.directory.workstreams?.[m.workstream_id]?.reads_as ?? m.workstream_id) : OUTSIDE;
         case 'key':
             return m.platform_api?.key_id ?? OUTSIDE;
     }
@@ -217,13 +229,22 @@ export function thingLabel(snap: UsageSnapshot, dim: Dimension, id: string): str
         if (dim === 'automation') return 'Not in an automation';
         if (dim === 'agent') return 'Not an agent';
         if (dim === 'app') return 'Not a site';
+        if (dim === 'workstream') return 'No workstream named';
         return 'Not through a key';
     }
     if (dim === 'automation') return d.workflows[id]?.name ?? 'Deleted automation';
     if (dim === 'agent') return agentName(snap, id);
     if (dim === 'app') return d.projects?.[id]?.name ?? 'A site';
     if (dim === 'person') return d.people[id] ? `${d.people[id].name}${id === snap.account.id ? ' (you)' : ''}` : 'Former member';
+    if (dim === 'workstream') return workstreamName(snap, id);
     return d.keys?.[id]?.name ?? 'A key';
+}
+
+/** A workstream's name as it reads now, by the id it's grouped under: its own, or (merged) the one it joined, which a
+ *  merged id's entry names. */
+function workstreamName(snap: UsageSnapshot, id: string): string {
+    const named = snap.directory.workstreams ?? {};
+    return named[id]?.name ?? Object.values(named).find((w) => w.reads_as === id)?.name ?? 'A workstream';
 }
 
 /** An agent node by its automation ("Support agent · Inbox triage"), or a platform agent by name. An automation named
@@ -439,6 +460,7 @@ export function toSnapshot(data: UsagePageData): UsageSnapshot {
             surface: str(g.surface),
             actual_user_id: str(g.actual_user_id),
             responsible_user_id: str(g.responsible_user_id),
+            workstream_id: str(g.workstream_id),
             project_id: str(g.project_id),
             database_id: str(g.database_id),
             repo_id: str(g.repo_id),
@@ -923,7 +945,7 @@ export function selectionOf(view: UsageView, match: (r: UsageGroup) => boolean):
 }
 
 /** "All services", "All automations": the top of a drill. */
-export const ROOT_LABEL: Record<Dimension, string> = { service: 'All services', automation: 'All automations', agent: 'All agents', app: 'All sites', person: 'Everyone', key: 'All keys' };
+export const ROOT_LABEL: Record<Dimension, string> = { service: 'All services', automation: 'All automations', agent: 'All agents', app: 'All sites', person: 'Everyone', workstream: 'All workstreams', key: 'All keys' };
 
 const NOUN: Partial<Record<ServiceId, string>> = { email: 'emails', calls: 'messages' };
 
@@ -1076,6 +1098,7 @@ export function dimensionsFor(view: UsageView): Dimension[] {
     if (rows.some((r) => r.metadata.platform_api?.agent_id || (r.metadata.workflow_id && r.metadata.node_id))) dims.push('agent');
     if (rows.some((r) => r.metadata.project_id ?? r.metadata.platform_api?.project_id)) dims.push('app');
     if (rows.some((r) => thingOf(view.snap, r, 'person') !== view.snap.account.id)) dims.push('person');
+    if (rows.some((r) => r.metadata.workstream_id)) dims.push('workstream');
     return dims;
 }
 
@@ -1094,6 +1117,10 @@ export interface LineItem {
     thingKind: ConsumerKind;
     /** Who ran it, when a workspace's owner pays for someone else's work. */
     runner: string | null;
+    /** Who it was for, where that's someone other than the account (the person the Person split puts it under). */
+    person: string | null;
+    /** The workstream it belongs to, as it reads now. */
+    workstream: string | null;
     quantity: string;
     usd: number;
     paidFrom: 'Included' | 'Balance' | 'Top-up' | 'Split' | null;
@@ -1125,10 +1152,27 @@ function forOf(snap: UsageSnapshot, r: UsageRow): { thing: string; thingKind: Co
     return { thing: c.label, thingKind: consumerKind(c.id) };
 }
 
+/** Who a charge was for and the workstream it belongs to, as far as it says: the person (by login) where that isn't
+ *  the payer, and the workstream as it reads now. */
+function whoFor(snap: UsageSnapshot, r: UsageRow): { person: string | null; workstream: string | null } {
+    const login = loginOf(snap, r);
+    return {
+        person: login !== r.user_id ? thingLabel(snap, 'person', login) : null,
+        workstream: r.metadata.workstream_id ? thingLabel(snap, 'workstream', thingOf(snap, r, 'workstream')) : null,
+    };
+}
+
+/** "for Sam Ortiz · Spring launch": who a charge was for and its workstream, as far as it says; null when neither. */
+export function forLine(item: Pick<LineItem, 'person' | 'workstream'>): string | null {
+    const parts = [item.person && `for ${item.person}`, item.workstream].filter(Boolean);
+    return parts.length ? parts.join(' · ') : null;
+}
+
 /** The text a search matches a group or a charge by. */
 export function searchText(snap: UsageSnapshot, r: UsageRow): string {
     const actual = r.metadata.actual_user_id;
-    return `${chargeName(r.usage_subtype)} ${forOf(snap, r).thing} ${actual ? thingLabel(snap, 'person', actual) : ''} ${SERVICES[rowOf(r).service].label} ${r.usage_subtype} ${facetOf(snap, r).label}`.toLowerCase();
+    const who = whoFor(snap, r);
+    return `${chargeName(r.usage_subtype)} ${forOf(snap, r).thing} ${actual ? thingLabel(snap, 'person', actual) : ''} ${who.person ?? ''} ${who.workstream ?? ''} ${SERVICES[rowOf(r).service].label} ${r.usage_subtype} ${facetOf(snap, r).label}`.toLowerCase();
 }
 
 /** What narrows the charges table: a drill, a service, a search, a day. */
@@ -1234,6 +1278,7 @@ function buildLineItem(snap: UsageSnapshot, r: ChargeRow): LineItem {
         service: rowOf(r).service,
         ...forOf(snap, r),
         runner: actual ? thingLabel(snap, 'person', actual) : null,
+        ...whoFor(snap, r),
         quantity: quantityLabel(r),
         usd: r.total_cost,
         paidFrom: !snap.billing || r.user_resource ? null : parts > 1 ? 'Split' : split.balance > 1e-9 ? 'Balance' : split.topup > 1e-9 ? 'Top-up' : 'Included',
