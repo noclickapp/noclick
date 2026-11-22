@@ -1007,6 +1007,7 @@ creem
 crelate
 crew-ai
 crisp
+crossmint
 crowdin
 crunchbase
 csvbox
