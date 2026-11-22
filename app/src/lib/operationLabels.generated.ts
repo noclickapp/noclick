@@ -1379,6 +1379,7 @@ itm-platform
 jackrabbit-class
 jev
 jigsawstack
+jina-reader
 jinko
 jira
 jira-service-management-alert-ca
