@@ -727,6 +727,7 @@ akta
 alchemy
 alegra
 algolia
+algorand-developer-portal
 alpaca
 altoviz
 alttext-ai
