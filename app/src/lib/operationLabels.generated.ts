@@ -2034,6 +2034,7 @@ splitwise
 spotify
 spotio2
 sprig
+spruce
 spydra
 squadcast
 squarespace-commerce
