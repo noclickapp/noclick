@@ -2042,6 +2042,7 @@ soundee
 spacebring
 specstream
 speechmatics
+spider
 spiro
 splitwise
 spotify
