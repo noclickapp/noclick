@@ -365,6 +365,35 @@ export interface WorkflowVariables {
   raw: JsonObject;
 }
 
+/**
+ * What a workflow needs from its person before it can run (`Workflow.setup`), derived from it as it stands: `items`,
+ * each with a `kind`: `connect` (an app to connect, once for every step that needs it: `app`, `label`, `steps`,
+ * `reconnect`), `setting` (a value only the person knows: its `step`, the `setting`'s name, `label`, `type`,
+ * `options`) or `secret` (the `keys` an agent step's shell asked for, kept as the secret `name`). `ready` when there's
+ * nothing; `request` the setup request still waiting on the person; `sent` the request `requestSetup` just sent.
+ */
+export interface WorkflowSetup {
+  workflowId: string;
+  ready: boolean;
+  items: JsonObject[];
+  request: JsonObject | null;
+  sent: JsonObject | null;
+  raw: JsonObject;
+}
+
+function toWorkflowSetup(value: unknown): WorkflowSetup {
+  const raw = asObject(value);
+  const objectOrNull = (v: unknown) => (v && typeof v === "object" && !Array.isArray(v) ? (v as JsonObject) : null);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    ready: raw.ready === true,
+    items: asList(raw.items).filter((i): i is JsonObject => !!objectOrNull(i)),
+    request: objectOrNull(raw.request),
+    sent: objectOrNull(raw.sent),
+    raw,
+  };
+}
+
 /** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
 export interface StepLastRun {
   status: string;
@@ -2308,6 +2337,29 @@ export class Workflow extends ApiObject {
    */
   async variables(): Promise<WorkflowVariables> {
     return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
+  }
+
+  /**
+   * Read what the workflow needs from its person before it can run: the accounts to connect, the values only they know
+   * and the variables an agent step's shell asked for, derived from the workflow as it stands. Code that builds without
+   * a person reads this and connects or fills in each item itself; a build's result carries it too (`setup`).
+   */
+  async setup(): Promise<WorkflowSetup> {
+    return toWorkflowSetup(await this._request("GET", `${await this.path()}/setup`));
+  }
+
+  /**
+   * Send what the workflow needs to the account's owner as ONE request: one message and one page, where they connect
+   * each app and fill in each value, each part landing on the workflow as they give it. An app the account holds
+   * exactly one working connection of is connected at once, asking nobody. The same list already waiting isn't sent
+   * again (`sent` null); a different one replaces it. `via`: `"auto"` (the app they last texted NoClick on, else
+   * email), or a list of `web`, `email`, `whatsapp`, `imessage`, `sms`. Needs the `workflows` and `humans` scopes,
+   * acting for the whole account.
+   */
+  async requestSetup(options: { via?: "auto" | string[] } = {}): Promise<WorkflowSetup> {
+    return toWorkflowSetup(
+      await this._request("POST", `${await this.path()}/setup/request`, { json: { via: options.via ?? "auto" } }),
+    );
   }
 
   /**

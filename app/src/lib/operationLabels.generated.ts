@@ -1767,6 +1767,7 @@ paystack
 pdfco
 pdfless
 pdq-connect
+peach
 peaka
 peekalink
 peerdom
@@ -1871,6 +1872,7 @@ rasa
 rawg-video-games-database
 razorpay
 rbaskets
+reapit-foundations
 rebrandly
 recallai
 reclaim-ai
@@ -1942,6 +1944,7 @@ runscope
 runsignup
 safetyculture
 sakari-sms
+sales-simplify
 salesforce
 salesforge
 salesloft
@@ -1956,6 +1959,7 @@ samsara
 sanity
 sap-concur
 sap-s-4hana-cloud
+sapling-ai
 saucelabs
 savvycal
 scale-ai
@@ -2019,6 +2023,7 @@ showpad
 sidetracker
 sierra-interactive
 sigma
+sign-plus
 signable
 signal8
 signalwire
@@ -2115,6 +2120,7 @@ supabase
 supadata
 super-dispatch
 supercast
+superdocu
 supermemory
 supernormal
 superset
@@ -2199,6 +2205,7 @@ timescaledb
 tinyfish
 tinypages
 tinyurl
+tisane-labs
 tmetric
 todoist
 tomba
@@ -2239,6 +2246,7 @@ typecast
 typeform
 typefully
 uberduck
+uchat
 ulama
 unifi
 unione
@@ -2278,6 +2286,7 @@ videoupscaler
 vimeo
 viral-loops
 virtualbadgeio
+virtualsms
 virtuous-crm
 virustotal
 visma-eaccounting
