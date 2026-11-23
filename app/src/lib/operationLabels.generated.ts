@@ -1621,6 +1621,7 @@ microsoft-sharepoint
 microsoft-teams
 microsoft-teams-events
 microsoft-todo
+middesk
 mighty-networks
 mightycall
 mihu-ai
