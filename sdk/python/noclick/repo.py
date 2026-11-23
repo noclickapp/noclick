@@ -408,11 +408,6 @@ class Repo(_Object):
                 print(repo.default_branch, repo.last_commit.sha)
                 app = noclick.Project.create("blog", repo=repo)
 
-            Fork an app someone made public, from its address alone::
-
-                repo = noclick.Repo.create("my-pilot-hub", from_url="pilot-hub.noclick.site").wait()
-                print(repo.forked_from)   # {'address': 'pilot-hub.noclick.site'}
-
             Copy one release of it, as the branch ``main``::
 
                 repo = noclick.Repo.create("blog-v2", from_url="https://github.com/acme/blog", ref="v2.0.0").wait()
