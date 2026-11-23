@@ -2046,6 +2046,7 @@ sncf
 snitcher
 snowflake
 snyk
+social-fetch
 socialkit
 socket
 softr
