@@ -1896,6 +1896,7 @@ responder
 responsys
 retell-ai
 reteno
+returnista
 reviewflowz
 revolut-for-business
 rezdy
