@@ -1956,6 +1956,7 @@ send-pulse
 sendbird
 sendfox
 sendgrid
+sendit
 sendlane
 sendsafely
 sendspark
