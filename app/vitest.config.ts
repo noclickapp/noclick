@@ -11,6 +11,7 @@ export default defineConfig({
         fsModuleCachePath: `${cacheDir}/vitest-modules`,
         include: ['src/**/*.test.{ts,tsx}', 'test/**/*.test.ts'],
         // A timer a DOM test leaves behind fails the run by name (test/pendingTimers.ts).
-        setupFiles: ['./test/pendingTimers.ts'],
+        // DOM tests wait up to five seconds (test/domWaits.ts).
+        setupFiles: ['./test/domWaits.ts', './test/pendingTimers.ts'],
     },
 });
