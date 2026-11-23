@@ -1716,6 +1716,7 @@ oracle-field-service
 oracle-hcm
 orgo
 orshot
+ory
 osv
 otasync
 outlook
