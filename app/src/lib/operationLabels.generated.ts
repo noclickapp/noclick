@@ -2138,6 +2138,7 @@ swarmsyncai
 swidoc
 sympla
 synap
+syncmate-by-assitro
 syncro
 synthflow-ai
 systemeio
