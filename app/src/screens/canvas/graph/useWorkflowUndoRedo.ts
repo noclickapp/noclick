@@ -78,6 +78,18 @@ export function useWorkflowUndoRedo(
 
     // Track if we're applying a history state (to prevent adding it back to history)
     const isApplyingHistoryRef = useRef(false);
+    // Lets go of the flag once the applied state has been committed; cleared if the canvas goes first.
+    const applyingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const settleAfterApplying = useCallback(() => {
+        if (applyingTimerRef.current) clearTimeout(applyingTimerRef.current);
+        applyingTimerRef.current = setTimeout(() => {
+            applyingTimerRef.current = null;
+            isApplyingHistoryRef.current = false;
+        }, 0);
+    }, []);
+    useEffect(() => () => {
+        if (applyingTimerRef.current) clearTimeout(applyingTimerRef.current);
+    }, []);
 
     // Force re-render when canUndo/canRedo state changes
     const [, forceUpdate] = useState({});
@@ -283,12 +295,10 @@ export function useWorkflowUndoRedo(
         // Broadcast changes to collaborators
         broadcastChanges(oldPresent, newPresent);
 
-        setTimeout(() => {
-            isApplyingHistoryRef.current = false;
-        }, 0);
+        settleAfterApplying();
 
         forceUpdate({});
-    }, [canUndo, onNodesChange, onEdgesChange, broadcastChanges]);
+    }, [canUndo, onNodesChange, onEdgesChange, broadcastChanges, settleAfterApplying]);
 
     /**
      * Redo to next state
@@ -323,12 +333,10 @@ export function useWorkflowUndoRedo(
         // Broadcast changes to collaborators
         broadcastChanges(oldPresent, newPresent);
 
-        setTimeout(() => {
-            isApplyingHistoryRef.current = false;
-        }, 0);
+        settleAfterApplying();
 
         forceUpdate({});
-    }, [canRedo, onNodesChange, onEdgesChange, broadcastChanges]);
+    }, [canRedo, onNodesChange, onEdgesChange, broadcastChanges, settleAfterApplying]);
 
     /**
      * Keyboard shortcuts for undo/redo

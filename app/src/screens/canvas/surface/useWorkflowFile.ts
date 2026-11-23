@@ -6,6 +6,7 @@ import { useCallback, type ChangeEvent } from 'react';
 import type { Edge, Node } from '@xyflow/react';
 import { useSlot } from '@/slots';
 import { CLIPBOARD } from '../slots';
+import { useLater } from '@/lib/useLater';
 import { computeImportOffset, exportWorkflowToFile, readWorkflowFile, repositionImportedNodes } from './workflowFile';
 
 export interface WorkflowFileOptions {
@@ -33,6 +34,7 @@ export interface WorkflowFile {
 
 export function useWorkflowFile({ nodes, edges, title, setNodes, setEdges, captureState, getViewport, refuse, onImported }: WorkflowFileOptions): WorkflowFile {
     const settingsOf = useSlot(CLIPBOARD).useSettingsOf();
+    const later = useLater();
 
     const exportFile = useCallback(() => {
         try {
@@ -69,14 +71,14 @@ export function useWorkflowFile({ nodes, edges, title, setNodes, setEdges, captu
                     newEdges = [...existing, ...read.edges];
                     return newEdges;
                 });
-                setTimeout(() => captureState(newNodes, newEdges), 0);
+                later(() => captureState(newNodes, newEdges));
                 onImported?.(placed);
             } catch (error) {
                 console.error('[Import] Error importing workflow file:', error);
                 refuse('Error importing workflow. Please check that the file is valid JSON.');
             }
         },
-        [setNodes, setEdges, captureState, getViewport, refuse, onImported]
+        [setNodes, setEdges, captureState, getViewport, refuse, onImported, later]
     );
 
     return { exportFile, importFile };

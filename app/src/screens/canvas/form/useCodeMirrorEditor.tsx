@@ -9,6 +9,7 @@ import { EditorState, Compartment, type Extension } from '@codemirror/state';
 import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 import { useIsDark } from '@/ui/useIsDark';
+import { useNextFrame } from '@/lib/useLater';
 
 // ---------------------------------------------------------------------------
 // Theme
@@ -150,6 +151,7 @@ export function useCodeMirrorEditor({ value, onChange, langExtension, placeholde
     const inlineEditorRef = useRef<HTMLDivElement>(null);
     const fullscreenEditorRef = useRef<HTMLDivElement>(null);
     const inlineViewRef = useRef<EditorView | null>(null);
+    const nextFrame = useNextFrame();
     const fullscreenViewRef = useRef<EditorView | null>(null);
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
@@ -217,13 +219,13 @@ export function useCodeMirrorEditor({ value, onChange, langExtension, placeholde
 
     const handleCloseFullscreen = useCallback(() => {
         setIsFullscreen(false);
-        requestAnimationFrame(() => {
+        nextFrame(() => {
             const view = inlineViewRef.current;
             if (!view) return;
             const cur = view.state.doc.toString();
             if (cur !== value) view.dispatch({ changes: { from: 0, to: cur.length, insert: value } });
         });
-    }, [value]);
+    }, [value, nextFrame]);
 
     const handleOpenFullscreen = useCallback(() => {
         const el = getSidebarElement();
