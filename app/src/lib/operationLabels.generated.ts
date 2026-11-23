@@ -2268,6 +2268,7 @@ wildjar
 winston-ai
 wisboo
 wistia
+wix
 wiza
 wodify-core
 wolfram-alpha-api
