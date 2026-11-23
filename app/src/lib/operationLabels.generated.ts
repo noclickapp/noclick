@@ -2281,6 +2281,7 @@ vagaro
 valuecase
 vast-ai
 vaultre
+vc-deal-flow-signal
 vcita
 vdocipher
 vectara
