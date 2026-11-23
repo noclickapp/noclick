@@ -113,7 +113,7 @@ export interface NodeConfigProps {
     onActiveViewChange?: (view: 'configuration' | 'settings') => void;
     // Lifted validation state — lets parent render the badge elsewhere in the UI
     onValidationStateChange?: (state: { validating: boolean; valid: boolean }) => void;
-    // AI single-field autofill — wired to useCanvasWorkflowEdit.startAutofill
+    // AI single-field autofill: the host's AI Fill (`aiFill.ts`)
     onAutofillField?: (fieldKey: string) => void;
     // AI operation-only autofill — wired to startAutofill(node, 'operation')
     onAutofillOperation?: () => void;

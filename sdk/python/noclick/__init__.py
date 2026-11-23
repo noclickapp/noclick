@@ -174,7 +174,7 @@ from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, W
 from .workflow import (
     BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepLastRun, StepOption,
     StepOptions,
-    StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
+    StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuilder, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
     WorkflowTestRun,
     WorkflowSetup, WorkflowStep, WorkflowVariables, WorkflowVersion,
@@ -246,7 +246,7 @@ __all__ = [
     "Webhook", "WebhookDelivery", "Event", "EventType",
     "watch", "watch_token", "WatchMessage", "WatchReady", "WatchChange", "WatchTyping", "WatchReset", "WatchToken",
     "WatchRefused",
-    "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
+    "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuilder", "WorkflowBuildResult",
     "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion", "WorkflowVariables", "WorkflowSetup",

@@ -501,6 +501,20 @@ _QUESTION_POLL_S = 2.0
 _QUESTION_WAIT_S = 5
 
 
+@dataclass(frozen=True)
+class WorkflowBuilder:
+    """Where a workflow's builds are talked through (``Workflow.builder()``)."""
+
+    workflow_id: str
+    #: The account's builder agent, whose conversation ``conversation`` this workflow's builds share; None where the
+    #: caller's builds aren't the agent's, or it was never made.
+    agent_id: Optional[str]
+    conversation: Optional[str]
+    #: The workflow's build under way or waiting on a question, else None.
+    build: Optional["WorkflowBuild"]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
 class WorkflowBuild(Operation):
     """A build of a workflow from a description (kind ``workflow.build``). It's
     an ``Operation``: ``wait()`` returns the ``WorkflowBuildResult``, or raises
@@ -515,6 +529,8 @@ class WorkflowBuild(Operation):
     question for its answer. ``next_question()`` returns as soon as there is one."""
 
     workflow_id: Optional[str] = field("workflow_id")
+    #: The conversation of the builder agent the build runs in (``Workflow.builder()``); None for a build it doesn't run.
+    conversation: Optional[str] = field("conversation")
     _wait_window_s = _QUESTION_WAIT_S
 
     def _shown(self, question: BuildQuestion) -> bool:
@@ -2833,6 +2849,27 @@ class Workflow(_Object):
         build = WorkflowBuild._from_payload(payload, client=self._client, user=None)
         self._started_build = build
         return build
+
+    @synced
+    async def builder(self) -> "WorkflowBuilder":
+        """Where the workflow's builds are talked through: the account's builder agent and the conversation this
+        workflow's builds share (read it as any agent conversation: ``Agent.from_id(agent_id).history(conversation)``),
+        and its build under way or waiting on a question.
+
+        Returns:
+            A ``WorkflowBuilder``: ``agent_id`` and ``conversation`` are None where your builds aren't the agent's
+            (a user's key, an app's code), or it was never made; ``build`` is None when nothing is building.
+
+        Usage::
+
+            found = noclick.Workflow.from_name("Morning brief").builder()
+            if found.agent_id:
+                print(noclick.Agent.from_id(found.agent_id).history(found.conversation))
+        """
+        raw = await self._request("GET", f"{await self._path()}/builder")
+        build = WorkflowBuild._from_payload(raw["build"], client=self._client, user=None) if raw.get("build") else None
+        return WorkflowBuilder(workflow_id=str(raw.get("workflow_id")), agent_id=raw.get("agent_id"),
+                               conversation=raw.get("conversation"), build=build, raw=raw)
 
     @synced
     async def draft(

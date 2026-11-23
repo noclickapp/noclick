@@ -86,6 +86,9 @@ export interface CanvasBuilderProps {
  *  NoClick's builder (`Workflow.build`) and shows how it goes, a question it asks answered on its page on NoClick. */
 export const BUILDER = slot<ComponentType<CanvasBuilderProps>>('canvas.builder', BuildWithNoClick);
 
+/** What a host shows above the builder's composer for the workflow it builds (a nudge to share or publish it). */
+export const BUILDER_ABOVE_COMPOSER = slot<ComponentType<{ workflowId: string }>>('canvas.builder.aboveComposer', () => null);
+
 // ── other people on the canvas ──────────────────────────────────────────────
 
 export interface CanvasPresence {

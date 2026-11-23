@@ -726,6 +726,18 @@ export interface WorkflowDraftResult {
   raw: JsonObject;
 }
 
+/** Where a workflow's builds are talked through (`Workflow.builder()`). */
+export interface WorkflowBuilder {
+  workflowId: string;
+  /** The account's builder agent, whose conversation `conversation` this workflow's builds share; null where the
+   *  caller's builds aren't the agent's, or it was never made. */
+  agentId: string | null;
+  conversation: string | null;
+  /** The workflow's build under way or waiting on a question, else null. */
+  build: WorkflowBuild | null;
+  raw: JsonObject;
+}
+
 /** A step to draft: a `Step`, its id, or `{ id, goal }` (what it's for, which a drafted step keeps). */
 export type DraftStep = StepRef | { id: StepRef; goal?: string };
 
@@ -819,6 +831,11 @@ export class WorkflowBuild extends Operation<WorkflowBuildResult> {
     if (this._questionsShown.has(question.id)) return true;
     this._questionsShown.add(question.id);
     return false;
+  }
+
+  /** The conversation of the builder agent the build runs in (`Workflow.builder()`); null for a build it doesn't run. */
+  get conversation(): string | null {
+    return this._field("conversation");
   }
 
   protected override get _waitWindowS(): number {
@@ -2577,6 +2594,24 @@ export class Workflow extends ApiObject {
     });
     this.startedBuild = WorkflowBuild._from(payload, { client: this._client });
     return this.startedBuild;
+  }
+
+  /**
+   * Where the workflow's builds are talked through: the account's builder agent and the conversation this
+   * workflow's builds share (read it as any agent conversation: `Agent.fromId(agentId).history(conversation)`), and
+   * its build under way or waiting on a question. `agentId` and `conversation` are null where your builds aren't the
+   * agent's (a user's key, an app's code), or it was never made.
+   */
+  async builder(): Promise<WorkflowBuilder> {
+    const raw = await this._request<JsonObject>("GET", `${await this.path()}/builder`);
+    const build = raw.build && typeof raw.build === "object" ? WorkflowBuild._from(raw.build as JsonObject, { client: this._client }) : null;
+    return {
+      workflowId: String(raw.workflow_id),
+      agentId: typeof raw.agent_id === "string" ? raw.agent_id : null,
+      conversation: typeof raw.conversation === "string" ? raw.conversation : null,
+      build,
+      raw,
+    };
   }
 
   /**

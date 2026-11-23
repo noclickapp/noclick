@@ -598,6 +598,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflow_examples_list": ["List Workflow Examples", "GET", "read"],
     "workflows_approvals_get": ["Get Workflow Approval", "GET", "read"],
     "workflows_approvals_list": ["List Workflow Approvals", "GET", "read"],
+    "workflows_builder": ["Workflow Builder", "GET", "read"],
     "workflows_builds_answer": ["Answer Build", "POST", "write"],
     "workflows_builds_create": ["Start Build", "POST", "write"],
     "workflows_create": ["Create Workflow", "POST", "write"],

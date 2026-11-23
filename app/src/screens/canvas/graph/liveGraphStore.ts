@@ -468,6 +468,11 @@ export function setCanvasEditsClient(client: NoClick | null): void {
     editsClient = client;
 }
 
+/** That client, for what the canvas asks of /v1 beside its saves (AI Fill's drafts). */
+export function canvasEditsClient(): NoClick | null {
+    return editsClient;
+}
+
 /** How the record saves, decided at its first save and kept (`canvas.graph.saves`). */
 function saveTransport(rec: GraphRecord): CanvasSaveTransport {
     if (rec.transport === null) {

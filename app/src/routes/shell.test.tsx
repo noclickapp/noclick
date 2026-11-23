@@ -187,6 +187,11 @@ describe('the frame on a laptop', () => {
 });
 
 describe('the frame beside an open workflow', () => {
+    // The frame loads the builder lazily, and its first load in a worker transforms the panel's whole module graph
+    // (Work's thread, rows and cards): about 2s alone, past 5s beside a full parallel run. Loaded here, the test times
+    // what the panel draws; the hook gets the time a busy worker needs for that load.
+    beforeAll(() => import('@/screens/canvas/BuilderPanel'), 30_000);
+
     it('marks Automations, and draws the builder once the workflow’s page opens it, gone again when the page is left', async () => {
         open('/workflows/wf_1');
         expect(current()).toEqual(['Automations']);

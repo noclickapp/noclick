@@ -7,7 +7,7 @@
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { NoClick } from 'noclick';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
 import { ClientProvider } from '@/sdk/client';
 import { standing } from '@/slots';
@@ -21,6 +21,8 @@ afterEach(cleanup);
 
 const WORKFLOW = 'wf_7f3a';
 const BUILD = { object: 'operation', id: 'op_build', kind: 'workflow.build', status: 'running', workflow_id: WORKFLOW };
+/** Where the workflow's builds are talked through: no builder agent here, so the panel shows the build itself. */
+const NO_AGENT = { object: 'workflow_builder', workflow_id: WORKFLOW, agent_id: null, conversation: null, build: null };
 const QUESTION = { id: 'ask_1', title: 'Which Slack channel should it post in?', inputs: [], answer_url: 'https://noclick.test/b/ask_1' };
 
 /** A client whose builds go as `waits` says, one answer per wait on the build (each a promise the test may hold); every
@@ -35,6 +37,7 @@ function builds(waits: Array<Promise<Record<string, unknown>>>) {
             const path = new URL(String(input)).pathname.replace(/^\/api/, '');
             const method = init?.method ?? 'GET';
             sent.push({ method, path, body: init?.body ? JSON.parse(String(init.body)) : null });
+            if (method === 'GET' && path === `/v1/workflows/${WORKFLOW}/builder`) return Response.json(NO_AGENT);
             if (method === 'POST' && path === `/v1/workflows/${WORKFLOW}/builds`) return Response.json(BUILD, { status: 201 });
             if (method === 'GET' && path === `/v1/operations/${BUILD.id}/wait`) {
                 const next = waits.shift();
@@ -60,6 +63,11 @@ function drawBuilder(client: NoClick, props: Partial<CanvasBuilderProps> = {}) {
 }
 
 describe('the builder beside the canvas', () => {
+    // The builder's standard loads its panel lazily, and its first load in a worker transforms the panel's whole module graph
+    // (Work's thread, rows and cards): about 2s alone, past 5s beside a full parallel run. Loaded here, the test times
+    // what the panel draws; the hook gets the time a busy worker needs for that load.
+    beforeAll(() => import('./BuilderPanel'), 30_000);
+
     it('builds what’s asked for, shows the question it asks with its page on NoClick, then what it did', async () => {
         let finish!: (view: Record<string, unknown>) => void;
         const { client, sent } = builds([
@@ -80,8 +88,9 @@ describe('the builder beside the canvas', () => {
         const answer = screen.getByRole('link', { name: /Answer on NoClick/ });
         expect(answer.getAttribute('href')).toBe(QUESTION.answer_url);
         expect(answer.getAttribute('target')).toBe('_blank');
-        // One build at a time: nothing more is sent while this one waits.
-        expect((screen.getByRole('button', { name: 'Send' }) as HTMLButtonElement).disabled).toBe(true);
+        // One build at a time: while this one waits the box offers to stop it, not to send another.
+        expect(screen.queryByRole('button', { name: 'Send' })).toBeNull();
+        expect(screen.getByRole('button', { name: 'Stop the build' })).toBeTruthy();
 
         await act(async () => finish({ ...BUILD, status: 'succeeded', result: { summary: 'Added a Slack step that posts urgent emails to #support.', built: true } }));
         expect(await screen.findByText('Added a Slack step that posts urgent emails to #support.')).toBeTruthy();
@@ -95,8 +104,10 @@ describe('the builder beside the canvas', () => {
             apiKey: 'held-by-this-app-server',
             baseUrl: 'http://app.test/api',
             maxRetries: 0,
-            fetch: async () =>
-                Response.json({ error: { type: 'conflict', message: 'This workflow is already being built.', next_step: 'Wait for that build to finish.' } }, { status: 409 }),
+            fetch: async (input, init) =>
+                (init?.method ?? 'GET') === 'GET'
+                    ? Response.json(NO_AGENT)
+                    : Response.json({ error: { type: 'conflict', message: 'This workflow is already being built.', next_step: 'Wait for that build to finish.' } }, { status: 409 }),
         });
         drawBuilder(client);
         fireEvent.change(await screen.findByRole('textbox', { name: 'What to build' }), { target: { value: 'Add a step' } });
