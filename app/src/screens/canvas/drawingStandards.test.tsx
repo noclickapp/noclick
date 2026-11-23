@@ -150,6 +150,9 @@ describe('a step with no drawing of its own', () => {
     });
 
     it('draws a note’s text as a README is drawn', async () => {
+        // The README renderer loads with the first note (Prism's languages: seconds on a slow disk), so wait for that
+        // load itself rather than for find's one second.
+        await import('@/screens/resources/CodeView');
         const Note = buildLazyNodeTypes().stickyNote;
         render(
             <ClientProvider client={clientAsking([])}>
