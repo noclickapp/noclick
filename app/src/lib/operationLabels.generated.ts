@@ -1613,6 +1613,7 @@ microsoft-bookings
 microsoft-dynamics365-business-c
 microsoft-entra-id
 microsoft-exchange
+microsoft-graph-api-daemon-app
 microsoft-graph-security
 microsoft-onenote
 microsoft-power-bi
