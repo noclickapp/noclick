@@ -2089,6 +2089,7 @@ sumup
 supabase
 supadata
 super-dispatch
+supercast
 supermemory
 supernormal
 superset
