@@ -1,12 +1,14 @@
 // The canvas's React Flow: how it's navigated (a trackpad's scroll pans and its pinch zooms, a drag on the empty canvas
 // selects, a middle drag or Cmd/Ctrl+drag pans: useCtrlPan.ts), how far it zooms, how near a handle a dragged connection
 // snaps, the line drawn while one is dragged, and that a frozen canvas (a run's replay, a workflow its viewer may only
-// view) is only looked at, which its steps hear (frozen.ts) so they show nothing that changes them. Whoever draws
+// view) is only looked at, which its steps hear (frozen.ts) so they show nothing that changes them. Backspace removes
+// the selected steps only while the canvas has the keyboard (CanvasDeleteKey.tsx). Whoever draws
 // it hands the graph, the node and edge types and what each change does (useSurfaceEditing.ts), and draws what goes
 // inside it (the grid, other people's pointers) as its children. React Flow's stylesheet is the page's to load, where its
 // other styles are (WorkflowCanvas.tsx does), so the cascade stays the page's own.
 import { ReactFlow, type ReactFlowProps, type Edge, type Node } from '@xyflow/react';
 import { CustomConnectionLine } from '../edges/CustomConnectionLine';
+import { CanvasDeleteKey } from './CanvasDeleteKey';
 import { CanvasFrozen } from './frozen';
 
 // The dragged line in the drawn connections' own colour, soft gray in light and white in dark.
@@ -49,9 +51,13 @@ export type CanvasSurfaceProps = Pick<
 > & {
     /** Nothing moves, connects or is deleted: a run's replay, or a workflow its viewer may only view. */
     frozen?: boolean;
+    /** Something of the host's holds the keys (a dialog of its own): Backspace removes nothing. */
+    keysHeld?: () => boolean;
+    /** Puts back the last edit: a removal of several steps from the keyboard offers it. */
+    undo?: () => void;
 };
 
-export function CanvasSurface({ frozen = false, ...props }: CanvasSurfaceProps) {
+export function CanvasSurface({ frozen = false, keysHeld, undo, children, ...props }: CanvasSurfaceProps) {
     return (
         <CanvasFrozen.Provider value={frozen}>
             <ReactFlow
@@ -60,7 +66,7 @@ export function CanvasSurface({ frozen = false, ...props }: CanvasSurfaceProps) 
                 connectionRadius={30}
                 nodesDraggable={!frozen}
                 nodesConnectable={!frozen}
-                deleteKeyCode={frozen ? null : undefined}
+                deleteKeyCode={null}
                 elevateNodesOnSelect={false}
                 onlyRenderVisibleElements={false}
                 connectionLineStyle={CONNECTION_LINE_STYLE}
@@ -76,7 +82,10 @@ export function CanvasSurface({ frozen = false, ...props }: CanvasSurfaceProps) 
                 panOnScrollSpeed={1}
                 zoomOnScroll={false}
                 selectionOnDrag
-            />
+            >
+                {children}
+                {!frozen && <CanvasDeleteKey held={keysHeld} undo={undo} />}
+            </ReactFlow>
         </CanvasFrozen.Provider>
     );
 }
