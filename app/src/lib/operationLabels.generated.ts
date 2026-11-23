@@ -450,6 +450,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "projects_payments_list": ["Payments Status", "GET", "read"],
     "projects_previews_link": ["Preview Link", "POST", "write"],
     "projects_previews_links_revoke": ["Revoke Preview Links", "POST", "write"],
+    "projects_public": ["Make Public", "POST", "write"],
+    "projects_public_delete": ["Make Private", "DELETE", "write"],
     "projects_schedules_create": ["Put Schedule", "POST", "write"],
     "projects_schedules_list": ["List Schedules", "GET", "read"],
     "projects_secrets_delete": ["Delete Secret", "DELETE", "destructive"],
@@ -1822,6 +1824,7 @@ posthog
 postiz
 postman
 postmark
+postnitro
 postwire
 powerdns
 practice-better
@@ -1834,6 +1837,7 @@ prisma
 process-street
 procore
 productboard
+productify-ai
 productlane
 productplan
 project-broadcast
@@ -1896,6 +1900,7 @@ reloadify
 remote
 remove-bg
 render
+rendi
 rentcast
 rentec-direct
 rentman
@@ -2054,6 +2059,7 @@ smartemailing
 smarthr
 smartlead
 smartproxy
+smartroutes
 smartsheet
 smily
 smokeball
@@ -2130,12 +2136,14 @@ sure-send
 surecart
 surevoip
 surf
+surveymethods
 svix
 swaggerhub
 swarmsyncai
 swidoc
 sympla
 synap
+syncmate-by-assitro
 syncro
 synthflow-ai
 systemeio
@@ -2143,6 +2151,7 @@ table
 tableau
 taggun
 tailscale
+taleez
 talend
 talenthr
 talentlms
@@ -2222,6 +2231,7 @@ trackdesk
 trackingmore
 trackvia
 trakt
+translate-com
 transloadit
 trekksoft
 trello
@@ -2271,12 +2281,14 @@ vagaro
 valuecase
 vast-ai
 vaultre
+vc-deal-flow-signal
 vcita
 vdocipher
 vectara
 vendasta
 vendschat
 vercel-ai-gateway
+verifone
 vervoe
 veryfi
 vibe
@@ -2331,6 +2343,7 @@ whoisfreaks
 whop
 wikimedia
 wild-apricot
+wildberries
 wildjar
 winston-ai
 wisboo
@@ -2340,6 +2353,7 @@ wiza
 wodify-core
 wolfram-alpha-api
 woop-social
+woovi
 word
 wordnik
 wordpress

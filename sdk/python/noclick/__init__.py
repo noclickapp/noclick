@@ -139,7 +139,7 @@ from .policy import Policy, PolicyVerdict, Rule
 from .project import (
     AccountKey, AccountKeyRequest, AccountKeyScope, AnalyticsSummary, AppRequests, Binding, CheckReview, Deployment,
     DeploymentCheck, LogLine, LogLines, PathCheck, PathTraffic, PreviewLink, Project, ProjectAccountKey, ProjectAI,
-    ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings,
+    ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings, PublicApp, PublicCode,
     ProjectUsage, RequestOutcomes, RouteTiming, Schedule, TrafficInterval, DurableObjectClass, DurableObjectClasses,
     DurableObjectInstance,
 )
@@ -232,6 +232,7 @@ __all__ = [
     "ProjectAccountKey", "AccountKey", "AccountKeyScope", "AccountKeyRequest",
     "LogLines", "ProjectUsage", "DeploymentCheck", "PathCheck", "CheckReview", "RequestOutcomes", "RouteTiming",
     "ProjectAnalytics", "TrafficInterval", "PathTraffic", "AnalyticsSummary", "AppRequests", "PreviewLink",
+    "PublicCode", "PublicApp",
     "ProjectContainer", "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",
     "ProjectLive", "LiveStatus", "LiveSession", "LiveEditCounts", "LiveDataCopy", "LiveEdit", "LiveEdits",
     "LiveExecResult", "LiveEnterLink", "LiveEnd",

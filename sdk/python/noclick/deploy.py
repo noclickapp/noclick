@@ -79,7 +79,8 @@ def _secrets(raw: Mapping[str, Any]) -> List[DeploySecret]:
 class DeployPlan:
     """What a deploy would do, with nothing made: ``noclick.deploy(..., dry_run=True)``."""
 
-    #: What it read: ``kind`` (``url`` or ``repo``), the ``url`` or ``repo_id``, and the ``commit`` and ``branch``.
+    #: What it read: ``kind`` (``url`` or ``repo``), the ``url`` or ``repo_id``, and the ``commit`` and ``branch``;
+    #: ``forked_from`` (``{"address": ...}``) names public work on NoClick the deploy copies.
     source: Dict[str, Any]
     #: The app's name (and its copy's): the one you gave, or the first free one from the repository's.
     name: str
@@ -185,8 +186,10 @@ async def deploy(source: Any, *, dry_run: bool = False, ref: Optional[str] = Non
                  key_spend_cap_usd_per_month: Optional[float] = None, user: Any = AMBIENT,
                  client: Optional[Client] = None) -> Union[DeployPlan, RepoDeploy]:
     """Deploy ``source`` as a new app of yours: a public git repository's https URL, on any host (copied into a new
-    repo of yours, the one branch it deploys), or one of your own repos (a ``Repo``, its id or its name, deployed as
-    it is). ``ref`` names a branch, tag or full commit sha (the default branch otherwise).
+    repo of yours, the one branch it deploys), public work on NoClick by its https address
+    (``"https://pilot-hub.noclick.site"``: a copy of the code its owner made public), or one of your own repos (a
+    ``Repo``, its id or its name, deployed as it is). ``ref`` names a branch, tag or full commit sha (the default
+    branch otherwise).
 
     It makes the app (``name``, or the repository's own name, or the first of name-2, name-3... free), sets the
     secrets its noclick.json says its code reads (NoClick makes the ones marked ``generate``; ``secrets`` brings
