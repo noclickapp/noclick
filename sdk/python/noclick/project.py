@@ -303,6 +303,103 @@ class PreviewLink:
                    raw.get("preview_access") or "", parse_time(raw.get("expires_at")), raw)
 
 
+@dataclass(frozen=True)
+class PublicCode:
+    """An app's code made public: anyone clones it from ``clone_url`` (the app's own address: ``git clone
+    https://booking.noclick.site``) and deploys their own copy from that address alone. What's public is a copy of
+    the production commit's files, with none of its earlier history or other branches, checked for secrets before
+    each publish. ``public`` is False once it's private again (``blocked`` when NoClick took it down)."""
+
+    public: bool
+    clone_url: Optional[str]
+    #: The same code at NoClick's API, which any git client clones too; it doesn't change when the app is renamed.
+    origin_url: Optional[str]
+    #: The public copy's newest commit, and the production commit it holds.
+    commit_sha: Optional[str]
+    source_commit: Optional[str]
+    published_at: Any
+    files: Optional[int]
+    #: The licence its LICENSE file names (an SPDX id, ``other``), None without one.
+    license: Optional[str]
+    forks: int
+    #: The most anonymous clones cost you a month, in dollars at the store's price: past it they pause.
+    transfer_cap_usd: Optional[float]
+    blocked: bool
+    #: A dry run's: whether it would publish, and each file whose name or content looks like a secret.
+    would_publish: Optional[bool]
+    findings: List[Dict[str, str]]
+    #: What it makes public, in words a person reads; or, made private, that copies already made stay.
+    summary: Optional[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "PublicCode":
+        raw = raw if isinstance(raw, dict) else {}
+        commit = raw.get("commit") if isinstance(raw.get("commit"), dict) else {}
+        scanned = raw.get("scanned") if isinstance(raw.get("scanned"), dict) else {}
+        return cls(bool(raw.get("public")), raw.get("clone_url") or raw.get("address"), raw.get("origin_url"),
+                   commit.get("sha") or (raw.get("commit") if isinstance(raw.get("commit"), str) else None),
+                   commit.get("source_commit"), parse_time(commit.get("published_at")), raw.get("files"),
+                   raw.get("license"), int(raw.get("forks") or 0), raw.get("transfer_cap_usd"),
+                   bool(raw.get("blocked")), raw.get("would_publish"), list(scanned.get("findings") or []),
+                   raw.get("summary") or raw.get("note"), raw)
+
+
+@dataclass(frozen=True)
+class PublicApp:
+    """What anyone may know of an address (``PublicApp.lookup``): whether NoClick has public work there and, when it
+    does, what a clone and a deploy of it need. Anything else (a private app, none, a malformed address) is only
+    ``public=False``."""
+
+    address: str
+    public: bool
+    name: Optional[str]
+    title: Optional[str]
+    clone_url: Optional[str]
+    origin_url: Optional[str]
+    default_branch: Optional[str]
+    commit_sha: Optional[str]
+    published_at: Any
+    forks: int
+    license: Optional[str]
+    #: What a deploy of it asks for, read from its ``noclick.json``: ``account_key_scopes``, ``build_env``,
+    #: ``secrets``.
+    deploy: Dict[str, Any]
+    #: Where to report public work that's harmful.
+    report: Optional[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "PublicApp":
+        raw = raw if isinstance(raw, dict) else {}
+        commit = raw.get("commit") if isinstance(raw.get("commit"), dict) else {}
+        return cls(raw.get("address") or "", bool(raw.get("public")), raw.get("name"), raw.get("title"),
+                   raw.get("clone_url"), raw.get("origin_url"), raw.get("default_branch"), commit.get("sha"),
+                   parse_time(commit.get("published_at")), int(raw.get("forks") or 0), raw.get("license"),
+                   dict(raw.get("deploy") or {}), raw.get("report"), raw)
+
+    @synced
+    @classmethod
+    async def lookup(cls, address: str, *, client: Optional[Client] = None) -> "PublicApp":
+        """What's public at ``address``: an app's address (``pilot-hub.noclick.site``, a custom domain), its clone
+        URL, or a Deploy on NoClick link. Needs no key of the address's owner.
+
+        Returns:
+            What anyone may know of it: ``public`` false and nothing else for anything but public work; for public
+            work, its clone URL, commit, licence and what a deploy of it asks for.
+
+        Usage::
+
+            found = noclick.PublicApp.lookup("pilot-hub.noclick.site")
+            if found.public:
+                print(found.clone_url, found.deploy["account_key_scopes"])
+        """
+        from urllib.parse import quote
+
+        raw = await resolve_client(client).request("GET", f"/v1/public/apps?address={quote(address, safe='')}")
+        return cls._from(raw)
+
+
 # The settings ``container`` takes, by name (``ProjectContainer`` reads each back).
 _CONTAINER_SETTINGS = ("cpu", "memory", "min_instances", "max_instances", "cpu_always", "request_timeout_s")
 
@@ -1822,6 +1919,12 @@ class Project(_Object):
         return Deployment._new(raw=view, client=self._client, user=self._call_scope()) if view else None
 
     @property
+    def public(self) -> Optional[PublicCode]:
+        """Its code, while its owner keeps it public (``make_public()``); None while it's private."""
+        view = self._sync_raw().get("public")
+        return PublicCode._from(view) if view else None
+
+    @property
     def repo(self) -> Optional[Repo]:
         """The repo it deploys from (None for an app NoClick publishes)."""
         if self.repo_id is None:
@@ -2477,6 +2580,46 @@ class Project(_Object):
             json=compact(branch=branch, expires_in=expires_in),
         )
         return PreviewLink._from(payload)
+
+    @synced
+    async def make_public(self, *, dry_run: bool = False,
+                          transfer_cap_usd: Optional[float] = None) -> PublicCode:
+        """Make the app's code public: anyone can clone it from the app's own address and deploy their own copy with
+        NoClick from that address alone. What's public is a copy of the production commit's files, never its earlier
+        history or other branches; every file is checked for secrets first, and one finding refuses it all, naming
+        each (``noclick.InvalidRequest``, reason ``secrets_found``). Called again, it publishes the production commit
+        as it is now. ``dry_run`` answers what would be published, changing nothing. ``transfer_cap_usd`` bounds what
+        people's clones cost you a month ($5 unless set).
+
+        A clone can't be recalled, so through MCP (an agent, a connected app) a first publish waits for the account's
+        owner; a key needs the scope ``projects:publish``, which ``*`` holds only when it's named.
+
+        Returns:
+            Its ``PublicCode``.
+
+        Usage::
+
+            app = noclick.Project.from_name("pilot-hub")
+            preview = app.make_public(dry_run=True)
+            print(preview.summary, preview.findings)
+            print(app.make_public().clone_url)   # https://pilot-hub.noclick.site
+        """
+        raw = await self._request("POST", f"{await self._project_path()}/public",
+                                  json=compact(dry_run=dry_run or None, transfer_cap_usd=transfer_cap_usd))
+        return PublicCode._from(raw)
+
+    @synced
+    async def make_private(self) -> PublicCode:
+        """Nobody can clone the app's code from now on. Copies people already cloned or deployed stay theirs.
+
+        Returns:
+            Its ``PublicCode``, ``public=False``, its ``summary`` saying so.
+
+        Usage::
+
+            noclick.Project.from_name("pilot-hub").make_private()
+        """
+        return PublicCode._from(await self._request("DELETE", f"{await self._project_path()}/public"))
 
     @synced
     async def revoke_preview_links(self) -> "Project":

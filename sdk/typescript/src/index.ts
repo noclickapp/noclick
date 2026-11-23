@@ -131,7 +131,8 @@ export type {
 export { Cron } from "./cron.ts";
 export type { CronOptions } from "./cron.ts";
 export {
-  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, Schedule,
+  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, PublicApp,
+  Schedule,
 } from "./project.ts";
 export type {
   AccountKey, AccountKeyRequest, AccountKeyScope, AccountKeyStatus,
@@ -141,6 +142,7 @@ export type {
   DeploymentDatabase, DeploymentEnvironment, DeploymentFix, DeploymentRuntime, DeploymentStatus, LogLine, LogLines,
   PathCheck, PathTraffic,
   PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
+  PublicAppView, PublicCode,
   ProjectLogsOptions,
   ProjectContainer, ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";

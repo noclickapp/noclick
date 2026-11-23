@@ -342,6 +342,92 @@ function toPreviewLink(value: unknown): PreviewLink {
 }
 
 /**
+ * An app's code made public: anyone clones it from `cloneUrl` (the app's own address: `git clone
+ * https://booking.noclick.site`) and deploys their own copy from that address alone. What's public is a copy of the
+ * production commit's files, with none of its earlier history or other branches, checked for secrets before each
+ * publish. `public` is false once it's private again (`blocked` when NoClick took it down).
+ */
+export interface PublicCode {
+  public: boolean;
+  cloneUrl: string | null;
+  /** The same code at NoClick's API, which any git client clones too; it doesn't change when the app is renamed. */
+  originUrl: string | null;
+  /** The public copy's newest commit, and the production commit it holds. */
+  commitSha: string | null;
+  sourceCommit: string | null;
+  publishedAt: Date | null;
+  files: number | null;
+  /** The licence its LICENSE file names (an SPDX id, `other`), null without one. */
+  license: string | null;
+  forks: number;
+  /** The most anonymous clones cost you a month, in dollars at the store's price: past it they pause. */
+  transferCapUsd: number | null;
+  blocked: boolean;
+  /** A dry run's: whether it would publish, and each file whose name or content looks like a secret. */
+  wouldPublish: boolean | null;
+  findings: { path: string; why: string }[];
+  /** What it makes public, in words a person reads; or, made private, that copies already made stay. */
+  summary: string | null;
+  raw: JsonObject;
+}
+
+function toPublicCode(value: unknown): PublicCode {
+  const raw = asObject(value);
+  const commit = raw.commit && typeof raw.commit === "object" ? asObject(raw.commit) : {};
+  const scanned = asObject(raw.scanned);
+  return {
+    public: raw.public === true, cloneUrl: str(raw.clone_url) ?? str(raw.address), originUrl: str(raw.origin_url),
+    commitSha: str(commit.sha) ?? str(raw.commit), sourceCommit: str(commit.source_commit),
+    publishedAt: parseTime(commit.published_at), files: num(raw.files), license: str(raw.license),
+    forks: num(raw.forks) ?? 0, transferCapUsd: num(raw.transfer_cap_usd), blocked: raw.blocked === true,
+    wouldPublish: typeof raw.would_publish === "boolean" ? raw.would_publish : null,
+    findings: Array.isArray(scanned.findings) ? (scanned.findings as { path: string; why: string }[]) : [],
+    summary: str(raw.summary) ?? str(raw.note), raw,
+  };
+}
+
+/**
+ * What anyone may know of an address (`PublicApp.lookup`): whether NoClick has public work there and, when it does,
+ * what a clone and a deploy of it need. Anything else (a private app, none, a malformed address) is only
+ * `public: false`.
+ */
+export interface PublicAppView {
+  address: string;
+  public: boolean;
+  name: string | null;
+  title: string | null;
+  cloneUrl: string | null;
+  originUrl: string | null;
+  defaultBranch: string | null;
+  commitSha: string | null;
+  publishedAt: Date | null;
+  forks: number;
+  license: string | null;
+  /** What a deploy of it asks for, read from its `noclick.json`: `account_key_scopes`, `build_env`, `secrets`. */
+  deploy: JsonObject;
+  /** Where to report public work that's harmful. */
+  report: string | null;
+  raw: JsonObject;
+}
+
+export const PublicApp = {
+  /**
+   * What's public at `address`: an app's address (`pilot-hub.noclick.site`, a custom domain), its clone URL, or a
+   * Deploy on NoClick link. Needs no key of the address's owner.
+   */
+  async lookup(address: string, options: { client?: NoClick } = {}): Promise<PublicAppView> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/public/apps", { query: { address } }));
+    const commit = asObject(raw.commit);
+    return {
+      address: str(raw.address) ?? "", public: raw.public === true, name: str(raw.name), title: str(raw.title),
+      cloneUrl: str(raw.clone_url), originUrl: str(raw.origin_url), defaultBranch: str(raw.default_branch),
+      commitSha: str(commit.sha), publishedAt: parseTime(commit.published_at), forks: num(raw.forks) ?? 0,
+      license: str(raw.license), deploy: asObject(raw.deploy), report: str(raw.report), raw,
+    };
+  },
+};
+
+/**
  * How each instance of an app runs in a container, by name, as `Project.create` and `update` take it: each one left
  * out is the default (in `update`, keeps its value). `minInstances` applies at once, the rest from the app's next
  * release.
@@ -1884,6 +1970,11 @@ export class Project extends ApiObject {
     const raw = this._field<JsonObject | null>("production");
     return raw ? Deployment._fromRaw(raw, { client: this._client, user: this._callScope() }) : null;
   }
+  /** Its code, while its owner keeps it public (`makePublic()`); null while it's private. */
+  get public(): PublicCode | null {
+    const raw = this._field<JsonObject | null>("public");
+    return raw ? toPublicCode(raw) : null;
+  }
   /** The repo it deploys from (null for an app NoClick publishes). */
   get repo(): Repo | null {
     const repoId = this.repoId;
@@ -2061,6 +2152,26 @@ export class Project extends ApiObject {
     return toPreviewLink(await this._request("POST", await this._projectPath("previews", "link"), {
       json: compact({ branch: options.branch, expires_in: options.expiresIn }),
     }));
+  }
+
+  /**
+   * Make the app's code public: anyone can clone it from the app's own address and deploy their own copy with NoClick
+   * from that address alone. What's public is a copy of the production commit's files, never its earlier history or
+   * other branches; every file is checked for secrets first, and one finding refuses it all, naming each
+   * (`InvalidRequest`, reason `secrets_found`). Called again, it publishes the production commit as it is now.
+   * `dryRun` answers what would be published, changing nothing; `transferCapUsd` bounds what people's clones cost you
+   * a month ($5 unless set). A clone can't be recalled, so through MCP a first publish waits for the account's owner;
+   * a key needs the scope `projects:publish`, which `*` holds only when it's named.
+   */
+  async makePublic(options: { dryRun?: boolean; transferCapUsd?: number } = {}): Promise<PublicCode> {
+    return toPublicCode(await this._request("POST", await this._projectPath("public"), {
+      json: compact({ dry_run: options.dryRun || undefined, transfer_cap_usd: options.transferCapUsd }),
+    }));
+  }
+
+  /** Nobody can clone the app's code from now on. Copies people already cloned or deployed stay theirs. */
+  async makePrivate(): Promise<PublicCode> {
+    return toPublicCode(await this._request("DELETE", await this._projectPath("public")));
   }
 
   /**
