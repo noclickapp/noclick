@@ -2007,6 +2007,7 @@ showmojo
 sidetracker
 sierra-interactive
 sigma
+sign-plus
 signable
 signal8
 signalwire
