@@ -2180,6 +2180,7 @@ timescaledb
 tinyfish
 tinypages
 tinyurl
+tisane-labs
 todoist
 tomba
 tomtom
