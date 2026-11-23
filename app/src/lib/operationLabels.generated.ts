@@ -1252,6 +1252,7 @@ geekflare
 gender-api
 genderapi-io
 genesiscloud
+genmagic
 geoapify
 geocodio
 geodatasource
