@@ -1722,6 +1722,7 @@ openpolicy
 openstates
 openstatus
 openwa
+operating
 opn-form
 opsgenie
 opusclip
