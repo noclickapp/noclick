@@ -79,7 +79,7 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
         covers: 'Databases, buckets, volumes, dicts, queues and secrets.',
         scopes: ['databases', 'storage', 'volumes', 'dicts', 'queues', 'secrets'],
     },
-    { label: 'Platform', covers: 'Workflows.', scopes: ['workflows'] },
+    { label: 'Platform', covers: 'Workflows, and reading the values of a workflow’s variables.', scopes: ['workflows', 'workflows:variables'] },
 ];
 
 /** What each scope a key holds only when it's named does, offered beside Full access or Read-only. */
@@ -93,6 +93,7 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
     'keys:create': 'makes keys no wider than itself, which go when it’s revoked',
     'account:phones': 'links phone numbers to the account, each of which signs in to it',
+    'workflows:variables': 'reads the values of a workflow’s variables, which hold what its steps are given as secrets',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

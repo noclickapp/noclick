@@ -682,17 +682,26 @@ def _step_settings(settings: Optional[Dict[str, Any]], secrets: Any) -> Optional
     return {**(settings or {}), "secrets": list(secrets) if isinstance(secrets, (list, tuple)) else [secrets]}
 
 
+def _left(left_for_user: Any) -> Optional[List[str]]:
+    """``left_for_user`` as an edit takes it: the settings' names, one given alone as a list of it."""
+    if left_for_user is None:
+        return None
+    return [left_for_user] if isinstance(left_for_user, str) else list(left_for_user)
+
+
 def _add_step_op(kind: str, operation: Optional[str], settings: Optional[Dict[str, Any]], name: Optional[str],
-                 step_id: Optional[str], position: Optional[Position], secrets: Any = None) -> Dict[str, Any]:
+                 step_id: Optional[str], position: Optional[Position], secrets: Any = None,
+                 left_for_user: Any = None) -> Dict[str, Any]:
     return compact(op="add_step", type=kind, operation=operation, settings=_step_settings(settings, secrets),
                    name=name, id=step_id or _new_id(kind),
-                   position=_position(position) if position is not None else None)
+                   position=_position(position) if position is not None else None,
+                   left_for_user=_left(left_for_user))
 
 
 def _update_step_op(step: Any, settings: Optional[Dict[str, Any]], name: Optional[str], operation: Optional[str],
-                    enabled: Optional[bool], secrets: Any = None) -> Dict[str, Any]:
+                    enabled: Optional[bool], secrets: Any = None, left_for_user: Any = None) -> Dict[str, Any]:
     return compact(op="update_step", id=_step_id(step), settings=_step_settings(settings, secrets), name=name,
-                   operation=operation, enabled=enabled)
+                   operation=operation, enabled=enabled, left_for_user=_left(left_for_user))
 
 
 def _connect_op(op: str, source: Any, target: Any, **fields: Any) -> Dict[str, Any]:
@@ -1033,6 +1042,7 @@ class Step(_Object):
     async def update(
         self, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
         operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
+        left_for_user: Any = None,
     ) -> "Step":
         """Change its settings, name or operation, or switch it off or on. ``settings`` merge
         into what it has (a nested object merges, any other value replaces, and ``None`` takes
@@ -1049,6 +1059,15 @@ class Step(_Object):
         (``attach_connection``, allowed by default); any other caller keeps or drops what it
         was given. Their values never show in a read of the workflow, nor to the agent's model.
 
+        ``left_for_user`` names settings to leave for the step's person to fill in: a value only
+        they know (their own address, number or URL). Each is cleared and noted on the step, so a
+        required one reads ``left_for_user`` in the step's ``verdict`` and the workflow's
+        readiness, never an invalid setting, until it's given a value; giving it one takes it
+        off the note. It's how code or an agent that builds a workflow says "this one is yours"
+        without making a value up. A name that isn't one of the step's settings, or one given a
+        value in the same call, is refused. A value that only stands in for one
+        (``YOUR_PHONE_NUMBER``, ``<your website url>``) is refused too, naming this instead.
+
         Returns:
             This step as written, with ``notes`` and ``verdict``.
 
@@ -1059,8 +1078,12 @@ class Step(_Object):
             send.update(settings={"to": "team@acme.com", "subject": "Today"}, name="Email the team")
             print(send.verdict)   # {"config_valid": True}
             brief.step("summarize").update(secrets=["warehouse"])
+
+            alert = noclick.Workflow.from_name("Site monitor").step("text_me")
+            alert.update(left_for_user=["to_number", "from_number"])   # only its owner knows these
+            print(alert.verdict["left_for_user"])                      # ['to_number', 'from_number']
         """
-        return await self._edit(_update_step_op(self, settings, name, operation, enabled, secrets))
+        return await self._edit(_update_step_op(self, settings, name, operation, enabled, secrets, left_for_user))
 
     @synced
     async def patch(self, field: str, patch: str) -> "Step":
@@ -1374,7 +1397,8 @@ class WorkflowGraph:
     A secret is never read back, and writing a step or the settings back without one keeps
     it: ``withheld`` names, by step id, the paths of the settings left out
     (``api_key``, ``auth.password``, ``headers[0].value``), ``settings_withheld`` those of
-    the workflow's own settings (``variable_definitions[1].value``), and
+    the workflow's own settings (``variable_definitions[1].value``: a variable's value, whatever its
+    name; one with no value yet reads as blank, so you can tell which still need one), and
     ``variables_withheld`` the graph's own variables. The graph a ``noclick.Conflict``
     carries holds the steps and edges alone: its ``name``, ``description``, ``settings``
     and ``settings_withheld`` are ``None``.
@@ -1453,6 +1477,43 @@ class WorkflowGraph:
             raise NotFound(f"No step has the id or name {ref!r}.",
                            next_step="Read the steps' ids and names with graph.steps.", details={"step": ref})
         return named[0]
+
+
+@dataclass(frozen=True)
+class WorkflowVariables:
+    """A workflow's variables with their values, which no other read of it carries, as they
+    were at ``version``: ``definitions`` are its variables as its settings hold them, in
+    their order (each ``{name, value, description, per_user}``; ``per_user``: asked of each
+    new owner when the workflow is copied, and read here like any other), and ``variables``
+    the graph's own by name, as
+    its Set variable steps last wrote them. ``values`` is what ``{{vars.name}}`` reads: the
+    two together, the graph's own winning."""
+
+    workflow_id: str
+    version: Optional[int]
+    definitions: List[Dict[str, Any]]
+    variables: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowVariables":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("version"),
+                   [dict(d) for d in raw.get("definitions") or [] if isinstance(d, dict)],
+                   dict(raw.get("variables") or {}), raw)
+
+    @property
+    def values(self) -> Dict[str, Any]:
+        """Each variable's value by name: a definition's when it has one, the graph's own
+        over it."""
+        defined = {d["name"]: d["value"] for d in self.definitions
+                   if d.get("name") and d.get("value") not in (None, "")}
+        return {**defined, **self.variables}
+
+    def __repr__(self) -> str:
+        # Never the values: a repr lands in logs.
+        names = sorted({*(d.get("name") for d in self.definitions if d.get("name")), *self.variables})
+        return f"WorkflowVariables(workflow_id={self.workflow_id!r}, version={self.version!r}, names={names!r})"
 
 
 def _definition(raw: Mapping[str, Any], workflow: "Workflow") -> Optional[WorkflowGraph]:
@@ -1675,12 +1736,12 @@ class EditBatch:
     def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
-        secrets: Any = None,
+        secrets: Any = None, left_for_user: Any = None,
     ) -> Step:
         """Queue a new step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``),
         doing ``operation`` with ``settings``. ``id`` names it (made from its type when left
         out); without ``position`` it's laid out beside the rest. An agent step's ``secrets``
-        are as ``Step.update`` takes them.
+        and the settings ``left_for_user`` are as ``Step.update`` takes them.
 
         Returns:
             The step, whose ``id`` later edits in the batch can name. Its fields load once the batch is sent.
@@ -1694,7 +1755,7 @@ class EditBatch:
                 e.connect("summarize", post)
                 e.set_connection(post, "work-slack")
         """
-        op = _add_step_op(type, operation, settings, name, id, position, secrets)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets, left_for_user)
         self._queue(op)
         step = Step._of(self._workflow, op["id"])
         self._added.append((len(self._ops) - 1, step))
@@ -1703,16 +1764,18 @@ class EditBatch:
     def update_step(
         self, step: Any, *, settings: Optional[Dict[str, Any]] = None, name: Optional[str] = None,
         operation: Optional[str] = None, enabled: Optional[bool] = None, secrets: Any = None,
+        left_for_user: Any = None,
     ) -> None:
-        """Queue a change to a step, as ``Step.update`` makes it (``secrets`` too).
+        """Queue a change to a step, as ``Step.update`` makes it (``secrets`` and ``left_for_user`` too).
 
         Usage::
 
             with noclick.Workflow.from_name("Morning brief").edit() as e:
                 e.update_step("send_summary", settings={"subject": "Today"}, enabled=True)
                 e.update_step("summarize", secrets=["warehouse"])
+                e.update_step("text_me", left_for_user=["to_number"])
         """
-        self._queue(_update_step_op(step, settings, name, operation, enabled, secrets))
+        self._queue(_update_step_op(step, settings, name, operation, enabled, secrets, left_for_user))
 
     def patch_step(self, step: Any, field: str, patch: str) -> None:
         """Queue a patch to one long text setting of a step, as ``Step.patch`` makes it.
@@ -2270,6 +2333,32 @@ class Workflow(_Object):
         """
         return await self._read_graph()
 
+    @synced
+    async def variables(self) -> WorkflowVariables:
+        """Read its variables with their values, which ``graph()`` and every other read hold
+        back (``settings_withheld``, ``variables_withheld``).
+
+        For the workflow's owner and the teammates who can edit it: signed in, or with one
+        of their account's own secret keys that names the ``workflows:variables`` scope (a
+        key with every scope, ``*``, holds it only when it's named too) and acts for no
+        user. Anyone else raises ``noclick.PermissionDenied``: someone who only views the
+        workflow, a user's session, an app's code, an agent or an MCP connection. Writing a
+        variable stays its owner's. A step reads a variable as ``{{vars.name}}`` without
+        this call.
+
+        Returns:
+            The ``WorkflowVariables``: its ``definitions`` whole, the graph's own
+            ``variables``, and ``values`` by name.
+
+        Usage::
+
+            owner = noclick.Client(api_key="nk_live_...")   # a key that names workflows:variables
+            brief = noclick.Workflow.from_name("Morning brief", client=owner)
+            for name, value in brief.variables().values.items():
+                print(name, "is set" if value else "is empty")
+        """
+        return WorkflowVariables._from(await self._request("GET", f"{await self._path()}/variables"))
+
     def step(self, step_id: str) -> Step:
         """A handle to one of its steps by id. Nothing is sent: an edit through it names the
         step by its id, and its fields load from the graph the first time you read one (a step
@@ -2334,7 +2423,7 @@ class Workflow(_Object):
     async def add_step(
         self, type: str, *, operation: Optional[str] = None, settings: Optional[Dict[str, Any]] = None,
         name: Optional[str] = None, id: Optional[str] = None, position: Optional[Position] = None,
-        secrets: Any = None,
+        secrets: Any = None, left_for_user: Any = None,
     ) -> Step:
         """Add a step of ``type`` (``automation-gmail``, ``agent``, ``trigger-cron``) doing
         ``operation`` with ``settings``, as one edit. ``id`` names it (made from its type when
@@ -2342,7 +2431,8 @@ class Workflow(_Object):
         builder judges one: a type, operation or value that can't be is refused with
         ``noclick.InvalidRequest`` naming it, and a setting it can't run without yet is in its
         ``verdict``. A trigger's schedule or webhook registers once it's added. An agent step's
-        ``secrets`` are as ``Step.update`` takes them.
+        ``secrets`` and the settings ``left_for_user`` (a value only its person knows, left for
+        them to fill in) are as ``Step.update`` takes them.
 
         Returns:
             The new ``Step``, with its ``verdict`` and what the edit said about it (``notes``).
@@ -2357,7 +2447,7 @@ class Workflow(_Object):
             brief.step("summarize").connect(send)
             print(send.id, send.verdict)
         """
-        op = _add_step_op(type, operation, settings, name, id, position, secrets)
+        op = _add_step_op(type, operation, settings, name, id, position, secrets, left_for_user)
         return await self._edit_step(Step._of(self, op["id"]), op)
 
     @synced

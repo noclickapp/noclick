@@ -340,6 +340,31 @@ export interface WorkflowRunCounts {
   raw: JsonObject;
 }
 
+/** One of a workflow's variables as its settings hold it (`WorkflowVariables.definitions`). */
+export interface WorkflowVariableDefinition {
+  name: string;
+  value?: unknown;
+  description?: string;
+  /** Asked of each new owner when the workflow is copied: a copy starts without its value. Read here like any other. */
+  per_user?: boolean;
+  [key: string]: unknown;
+}
+
+/**
+ * A workflow's variables with their values (`Workflow.variables`), which no other read of it carries, as they were at
+ * `version`: `definitions` are its variables as its settings hold them, in their order, and `variables` the graph's
+ * own by name, as its Set variable steps last wrote them. `values` is what `{{vars.name}}` reads: the two together,
+ * the graph's own winning.
+ */
+export interface WorkflowVariables {
+  workflowId: string;
+  version: number | null;
+  definitions: WorkflowVariableDefinition[];
+  variables: JsonObject;
+  values: JsonObject;
+  raw: JsonObject;
+}
+
 /** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
 export interface StepLastRun {
   status: string;
@@ -393,6 +418,26 @@ function toRunCounts(value: unknown): WorkflowRunCounts {
     waiting: Number(raw.waiting ?? 0),
     bySource: { ...(asObject(raw.by_source) as Record<string, number>) },
     byTrigger: { ...(asObject(raw.by_trigger) as Record<string, number>) },
+    raw,
+  };
+}
+
+function toWorkflowVariables(value: unknown): WorkflowVariables {
+  const raw = asObject(value);
+  const definitions = asList(raw.definitions)
+    .filter((d): d is JsonObject => !!d && typeof d === "object" && !Array.isArray(d))
+    .map((d) => ({ ...d }) as WorkflowVariableDefinition);
+  const variables = { ...asObject(raw.variables) };
+  const values: JsonObject = {};
+  for (const d of definitions) {
+    if (d.name && d.value !== undefined && d.value !== null && d.value !== "") values[d.name] = d.value;
+  }
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    version: typeof raw.version === "number" ? raw.version : null,
+    definitions,
+    variables,
+    values: { ...values, ...variables },
     raw,
   };
 }
@@ -850,6 +895,15 @@ export interface StepUpdate {
    * show in a read of the workflow, nor to the agent's model.
    */
   secrets?: SecretRef[];
+  /**
+   * Settings to leave for the step's person to fill in, by name: a value only they know (their own address, number
+   * or URL). Each is cleared and noted on the step, so a required one reads `left_for_user` in the step's `verdict`
+   * and the workflow's readiness, never an invalid setting, until it's given a value; giving it one takes it off the
+   * note. It's how code or an agent that builds a workflow says "this one is yours" without making a value up. A
+   * name that isn't one of the step's settings, or one given a value in the same call, is refused; so is a value
+   * that only stands in for one (`YOUR_PHONE_NUMBER`, `<your website url>`), naming this instead.
+   */
+  leftForUser?: string[];
 }
 
 /** What `addStep` takes beside the step's type. */
@@ -859,6 +913,8 @@ export interface AddStepOptions {
   settings?: JsonObject;
   /** An agent step's secrets, as `StepUpdate.secrets` takes them. */
   secrets?: SecretRef[];
+  /** Settings left for the step's person to fill in, as `StepUpdate.leftForUser` takes them. */
+  leftForUser?: string[];
   /** Its name in the app. */
   name?: string;
   /** Its id; made from its type when left out. */
@@ -1202,13 +1258,14 @@ function addStepOp(type: string, options: AddStepOptions): JsonObject {
     op: "add_step", type, operation: options.operation, settings: stepSettings(options.settings, options.secrets),
     name: options.name, id: options.id ?? newId(type),
     position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
+    left_for_user: options.leftForUser,
   });
 }
 
 function updateStepOp(step: StepRef, update: StepUpdate): JsonObject {
   return compact({
     op: "update_step", id: stepId(step), settings: stepSettings(update.settings, update.secrets), name: update.name,
-    operation: update.operation, enabled: update.enabled,
+    operation: update.operation, enabled: update.enabled, left_for_user: update.leftForUser,
   });
 }
 
@@ -1688,7 +1745,8 @@ export class Step extends ApiObject {
  *
  * A secret is never read back, and writing a step or the settings back without one keeps it: `withheld` names, by
  * step id, the paths of the settings left out (`api_key`, `auth.password`, `headers[0].value`), `settingsWithheld`
- * those of the workflow's own settings (`variable_definitions[1].value`), and `variablesWithheld` the graph's own
+ * those of the workflow's own settings (`variable_definitions[1].value`: a variable's value, whatever its name; one
+ * with no value yet reads as blank, so you can tell which still need one), and `variablesWithheld` the graph's own
  * variables. The graph a `Conflict` carries holds the steps and edges alone: its `name`, `description`,
  * `settings` and `settingsWithheld` are `null`. `displayMetadata` is what the app shows of the workflow (its
  * canvas's viewport, the step open in its panel), read with `graph()`: never part of a version.
@@ -2229,6 +2287,20 @@ export class Workflow extends ApiObject {
    */
   async graph(): Promise<WorkflowGraph> {
     return await this._readGraph();
+  }
+
+  /**
+   * Read its variables with their values, which `graph()` and every other read hold back (`settingsWithheld`,
+   * `variablesWithheld`): its `definitions` whole, the graph's own `variables`, and `values` by name.
+   *
+   * For the workflow's owner and the teammates who can edit it: signed in, or with one of their account's own secret
+   * keys that names the `workflows:variables` scope (a key with every scope, `*`, holds it only when it's named too)
+   * and acts for no user. Anyone else throws `PermissionDenied`: someone who only views the workflow, a user's
+   * session, an app's code, an agent or an MCP connection. Writing a variable stays its owner's. A step reads a
+   * variable as `{{vars.name}}` without this call.
+   */
+  async variables(): Promise<WorkflowVariables> {
+    return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
   }
 
   /**

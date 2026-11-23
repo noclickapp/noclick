@@ -938,6 +938,15 @@ export function isStepPartial(workflowId: string | undefined, nodeId: string | u
     return !!(workflowId && nodeId && graphRecords[workflowId]?.partialNodeIds[nodeId]);
 }
 
+/** Whether the server holds this step, as far as the canvas knows (its base), for a component: one just added holds
+ *  nothing stored until its save lands. True where the canvas keeps no base for the workflow (it can't tell). */
+export function useStepStored(workflowId: string | undefined, nodeId: string | undefined): boolean {
+    const records = useSnapshot(graphRecords);
+    const base = workflowId ? records[workflowId]?.base : undefined;
+    if (!nodeId || !base) return true;
+    return base.nodes.has(nodeId);
+}
+
 /** The step is held in part, for a component (its panel shows it loading). */
 export function useStepPartial(workflowId: string | undefined, nodeId: string | undefined): boolean {
     const records = useSnapshot(graphRecords);
@@ -1005,6 +1014,8 @@ export async function reloadFromServer(workflowId: string): Promise<boolean> {
     try {
         const read = await standing(GRAPH_SAVES).read(workflowId, editsClient);
         if (!read.graph) return false;
+        // A reader who may only look at the workflow never saves it.
+        if (read.access !== undefined && read.access !== null) rec.readOnly = read.access === 'viewer';
         rebaseFromServer(rec, read.graph, read.version);
         rec.dirty = true;
         scheduleSave(rec);

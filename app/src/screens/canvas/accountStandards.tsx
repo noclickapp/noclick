@@ -110,7 +110,7 @@ export function useV1SaveAccount(): ((credentialType: string, credentialId: stri
     const scope = useStepScope();
     const workflowId = scope?.workflowId;
     const nodeId = scope?.nodeId;
-    return useCallback(
+    const save = useCallback(
         async (credentialType: string, credentialId: string | null) => {
             if (!workflowId || !nodeId) throw new Error('A step’s account is saved through its workflow and step: draw the pickers inside its form.');
             if (credentialId?.startsWith('{{')) throw new Error('A credential variable is chosen with the workflow’s settings, not saved as a step’s connection.');
@@ -120,4 +120,6 @@ export function useV1SaveAccount(): ((credentialType: string, credentialId: stri
         },
         [client, workflowId, nodeId]
     );
+    // On a canvas that saves the step from what it's told (its graph's own edits), the pickers save nothing.
+    return scope?.hostSaves ? null : save;
 }

@@ -14,6 +14,7 @@ import { OperationPicker } from './OperationPicker';
 import { SearchableEnumField } from './SearchableEnumField';
 import { MultiSelectEnumField } from './MultiSelectEnumField';
 import { renderSchemaWidget } from './schemaWidgetRegistry';
+import { WITHHELD_PLACEHOLDER, withheldRows } from './withheld';
 import { getOptionDisplayName } from '@/screens/canvas/operationNames';
 import { BANNER_PULSE_CYCLES, pulseElement } from '@/ui/pulseHighlight';
 import { cn } from '@/ui/utils';
@@ -25,6 +26,7 @@ import { evaluateShowIf, judgeConfigForm, type ConfigFormValidation } from '@/sc
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
 import { StepContext } from './reads';
+import { useLater } from '@/lib/useLater';
 import { STEP_CONNECTION, STEP_LINK, STEP_MARKS, STEP_PANELS, STEP_READS, STEP_SCHEMAS, STEP_TRACK } from '../slots';
 
 /** What the form tells its host a person did (`canvas.step.track`). */
@@ -71,7 +73,7 @@ function IncompleteConfigBanner({
  *  false when the field isn't in the DOM (e.g. inside a collapsed section).
  *  The pulse targets [data-field-control] — not the whole field block — so it
  *  doesn't ring the label, which looks bad for tall controls like a code editor. */
-function highlightConfigField(fieldKey: string, opts?: { focus?: boolean }): boolean {
+function highlightConfigField(fieldKey: string, later: (fn: () => void, ms?: number) => void, opts?: { focus?: boolean }): boolean {
     const fieldElement = document.querySelector(`[data-field-key="${fieldKey}"]`) ??
         document.getElementById(`field-${fieldKey}`);
     if (!fieldElement) return false;
@@ -79,7 +81,7 @@ function highlightConfigField(fieldKey: string, opts?: { focus?: boolean }): boo
     pulseElement(fieldElement.querySelector('[data-field-control]') ?? fieldElement);
     if (opts?.focus) {
         const input = fieldElement.querySelector('input, textarea, select');
-        if (input instanceof HTMLElement) setTimeout(() => input.focus(), 300);
+        if (input instanceof HTMLElement) later(() => input.focus(), 300);
     }
     return true;
 }
@@ -199,7 +201,6 @@ function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): 
 }
 
 /** What a field whose secret the workflow's read held back shows in its place. */
-const WITHHELD_PLACEHOLDER = 'Saved, hidden. Type to replace it.';
 
 /** The node's config form, drawn once its schema has loaded (the form, its defaults and its checks come from it:
  *  `canvas.step.schemas`). */
@@ -269,6 +270,27 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
     const lastFetchKeyRef = useRef<Record<string, string>>({});
     const desiredFetchKeyRef = useRef<Record<string, string>>({});
     useEffect(() => () => { desiredFetchKeyRef.current = {}; }, []);
+    const later = useLater();
+    // The parent hears a change a task later, out of the state update that made it. One still waiting when the form
+    // goes is told then (after the cleanup above, so a load the form no longer wants stays untold), never dropped.
+    const toTell = useRef(new Map<ReturnType<typeof setTimeout>, () => void>());
+    const tellLater = useCallback((tell: () => void) => {
+        const timer = setTimeout(() => {
+            toTell.current.delete(timer);
+            tell();
+        }, 0);
+        toTell.current.set(timer, tell);
+    }, []);
+    useEffect(() => {
+        const waiting = toTell.current;
+        return () => {
+            waiting.forEach((tell, timer) => {
+                clearTimeout(timer);
+                tell();
+            });
+            waiting.clear();
+        };
+    }, []);
     const [frontendValidation, setFrontendValidation] = useState<ConfigFormValidation>({ valid: true, errors: [] });
     // Track collapsed state for collapsible sections (function_inputs, python_editor, nested objects)
     const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
@@ -415,7 +437,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
     useEffect(() => {
         const handleScrollToField = (event: CustomEvent<{ fieldKey: string }>) => {
             const { fieldKey } = event.detail;
-            if (highlightConfigField(fieldKey)) return;
+            if (highlightConfigField(fieldKey, later)) return;
             // Field might be inside a collapsed section — expand it and retry.
             setCollapsedSections(prev => {
                 // fieldKey may be nested (e.g. "hardware.gpu_type") — check the parent too.
@@ -424,7 +446,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 const updated = { ...prev };
                 if (updated[parentKey] === true) updated[parentKey] = false;
                 if (updated[fieldKey] === true) updated[fieldKey] = false;
-                setTimeout(() => highlightConfigField(fieldKey), 100);
+                later(() => highlightConfigField(fieldKey, later), 100);
                 return updated;
             });
         };
@@ -433,7 +455,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
         return () => {
             document.removeEventListener('noclick:field:scroll-to', handleScrollToField as EventListener);
         };
-    }, []);
+    }, [later]);
 
     // Update local config and notify parent
     // Uses functional update + debouncing to handle rapid successive updates
@@ -492,7 +514,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 const capturedNodeId = nodeId;
                 setLocalConfig(prev => {
                     const newConfig = { ...prev, ...response.values };
-                    setTimeout(() => onChange(newConfig, capturedNodeId), 0);
+                    tellLater(() => onChange(newConfig, capturedNodeId));
                     return newConfig;
                 });
             }
@@ -502,7 +524,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
             isLoadingValuesRef.current[fieldName] = false;
             setIsLoadingValues(prev => ({ ...prev, [fieldName]: false }));
         }
-    }, [workflowId, nodeId, nodeType, localConfig, credentialIds, onChange, reads]);
+    }, [workflowId, nodeId, nodeType, localConfig, credentialIds, onChange, reads, tellLater]);
 
     // Resolve $refs from root schema's $defs (safe even when schema is null)
     const resolveRef = useCallback((ref: string) => {
@@ -749,7 +771,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                         setLocalConfig(prev => {
                             if (!isCurrent()) return prev;
                             const newConfig = { ...prev, ...response.values };
-                            setTimeout(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); }, 0);
+                            tellLater(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); });
                             return newConfig;
                         });
                     } else if (response.value !== undefined) {
@@ -758,7 +780,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                         setLocalConfig(prev => {
                             if (!isCurrent()) return prev;
                             const newConfig = { ...prev, [fieldName]: response.value };
-                            setTimeout(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); }, 0);
+                            tellLater(() => { if (isCurrent()) onChange(newConfig, capturedNodeId); });
                             return newConfig;
                         });
                     }
@@ -829,7 +851,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                     // Use functional update to avoid race conditions with user typing
                     setLocalConfig(prev => {
                         const newConfig = { ...prev, ...response.values };
-                        setTimeout(() => onChange(newConfig, capturedNodeId), 0);
+                        tellLater(() => onChange(newConfig, capturedNodeId));
                         return newConfig;
                     });
                 } else {
@@ -1186,7 +1208,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                                     {error.type === 'field' && error.fieldKey ? (
                                         <>
                                             <button
-                                                onClick={() => highlightConfigField(error.fieldKey!, { focus: true })}
+                                                onClick={() => highlightConfigField(error.fieldKey!, later, { focus: true })}
                                                 className={cn('inline-flex items-center gap-1', NOTICE_LINK)}
                                             >
                                                 {error.fieldLabel}
@@ -1525,7 +1547,13 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 const fieldHasError = fieldErrors[key] && fieldErrors[key].length > 0;
                 // A secret the read held back: set, unread, kept unless something is typed in its place.
                 const held = !!withheld?.includes(key) && !isFieldFilled(localConfig[key]);
-                const shownProp = held ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER } : prop;
+                // A list's rows whose values it held back (a header's), for its editor to say so.
+                const heldRows = withheldRows(withheld, key);
+                const shownProp = held
+                    ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER }
+                    : heldRows.length
+                      ? { ...prop, 'x-withheld-rows': heldRows }
+                      : prop;
 
                 // A field bound to a workflow variable ({{vars.x}} as its WHOLE
                 // value) shows the RESOLVED value and its editor writes through
@@ -1639,7 +1667,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                                                 // Use functional update to avoid race conditions
                                                 setLocalConfig(prev => {
                                                     const newConfig = { ...prev, ...reloadResponse.values };
-                                                    setTimeout(() => onChange(newConfig, capturedNodeId), 0);
+                                                    tellLater(() => onChange(newConfig, capturedNodeId));
                                                     return newConfig;
                                                 });
                                             }
@@ -2003,6 +2031,7 @@ function ClearStateButton({ nodeId, workflowId, nodeType, config, onChange }: {
     const reads = useSlot(STEP_READS).useStepReads();
     const [isClearing, setIsClearing] = useState(false);
     const [cleared, setCleared] = useState(false);
+    const later = useLater();
 
     const handleClearState = async () => {
         setIsClearing(true);
@@ -2015,7 +2044,7 @@ function ClearStateButton({ nodeId, workflowId, nodeType, config, onChange }: {
                     onChange({ ...config, state: {} }, nodeId);
                 }
                 setCleared(true);
-                setTimeout(() => setCleared(false), 2000);
+                later(() => setCleared(false), 2000);
             }
         } catch (error) {
             console.error('Failed to clear node state:', error);

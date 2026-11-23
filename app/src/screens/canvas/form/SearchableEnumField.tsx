@@ -19,6 +19,7 @@ import {
 import { ReferenceHighlightOverlay } from './ReferenceHighlight';
 import { scoreFields } from '@/lib/fuzzySearch';
 import { valueToText } from './valueText';
+import { useLater } from '@/lib/useLater';
 
 interface SearchableEnumFieldProps {
     /** Field identifier */
@@ -48,6 +49,7 @@ export function SearchableEnumField({
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const later = useLater();
     const containerRef = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
 
@@ -131,13 +133,13 @@ export function SearchableEnumField({
         const newPos = pos + reference.length;
         setCursorPosition(newPos);
 
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [cursorPosition, valueText, onChange, fieldKey]);
+        });
+    }, [cursorPosition, valueText, onChange, fieldKey, later]);
 
     // Insert a reference suggestion (replaces partial)
     const insertSuggestion = useCallback((suggestion: ReferenceSuggestion) => {
@@ -158,13 +160,13 @@ export function SearchableEnumField({
         const newPos = partialRef.startIndex + fullRef.length;
         setCursorPosition(newPos);
 
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [partialRef, cursorPosition, valueText, onChange, fieldKey]);
+        });
+    }, [partialRef, cursorPosition, valueText, onChange, fieldKey, later]);
 
     // Register insertReference in the shared global registry (from DroppableTextField)
     const insertRefWrapper = useRef<{ fn: (reference: string) => void } | null>(null);
@@ -260,14 +262,14 @@ export function SearchableEnumField({
 
     // Close on real focus loss (e.g. Tab away) — option clicks never blur
     const handleBlur = useCallback(() => {
-        setTimeout(() => {
+        later(() => {
             if (!containerRef.current?.contains(document.activeElement)) {
                 setIsOpen(false);
                 setInputValue('');
                 setShowRefAutocomplete(false);
             }
         }, 150);
-    }, []);
+    }, [later]);
 
     // Handle keyboard
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {

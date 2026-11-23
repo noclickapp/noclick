@@ -130,8 +130,11 @@ export type {
 } from "./repo.ts";
 export { Cron } from "./cron.ts";
 export type { CronOptions } from "./cron.ts";
-export { Deployment, DurableObjectClass, Project, ProjectAI, ProjectSecrets, ProjectSettings, Schedule } from "./project.ts";
+export {
+  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, Schedule,
+} from "./project.ts";
 export type {
+  AccountKey, AccountKeyRequest, AccountKeyScope, AccountKeyStatus,
   AnalyticsPeriod, AnalyticsSummary, AppRequests, BadgeCorner, Bindable, Binding, BindingKind, CheckCookie, CheckPath,
   DurableObjectClasses, DurableObjectInstance,
   CheckRequest, CheckReview, ConsoleError, ContainerSettings, DeployOnPush, DeploymentCheck, DeploymentCheckOptions,
@@ -222,7 +225,7 @@ export type {
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
   WorkflowTestRun,
   WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVersion,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";

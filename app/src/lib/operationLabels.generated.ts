@@ -403,6 +403,10 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "policy_replace": ["Put Policy", "PUT", "sensitive"],
     "popups_list": ["Get Popups", "GET", "read"],
     "popups_update": ["Update Popups", "PATCH", "write"],
+    "projects_account_key": ["Get Account Key", "GET", "read"],
+    "projects_account_key_replace": ["Give Account Key", "PUT", "write"],
+    "projects_account_key_revoke": ["Revoke Account Key", "POST", "write"],
+    "projects_account_key_rotate": ["Rotate Account Key", "POST", "write"],
     "projects_analytics_list": ["Project Analytics", "GET", "read"],
     "projects_analytics_summary": ["Projects Analytics Summary", "GET", "read"],
     "projects_bindings_create": ["Bind", "POST", "write"],
@@ -684,6 +688,7 @@ abyssale
 abysshub
 accredible-certificates
 acculynx
+acronis-cyber-protect-cloud-ca18
 act-crm
 actionstep
 active-merge
@@ -716,6 +721,8 @@ airtop
 airwallex
 airweave
 akeneo
+akismet
+akkio
 akta
 alchemy
 alegra
@@ -724,18 +731,20 @@ alpaca
 altoviz
 alttext-ai
 amazing-marvin
-americommerce
+amazon-polly
 amplemarket
 amplience
 anakin-io
 anchor-browser
 android-texter
 any-db
+anymail-finder
 apache
 apacta
 api-bible
 api-ninjas
 api2cart
+api2convert
 apiframe
 apify
 apigee
@@ -765,6 +774,7 @@ askell
 assemblyai
 assemblycom
 asset-panda
+assignar
 atlas-admin
 atlas-ai-revenue-engine
 attentive
@@ -790,6 +800,7 @@ baserow
 baseten
 basin
 batchdialer
+bc-gov-news
 bclaws
 beach-day-api
 beaconchain
@@ -799,6 +810,7 @@ benchmark-email
 benchmark-email-classic
 benzinga
 bettercontact
+beyond-presence
 bfl
 bigcommerce
 bigmailer
@@ -807,8 +819,10 @@ bigquery
 bika
 bill
 billetweb
+billingo
 binsr-inspect
 birdeye
+bitbadges
 bitly
 bitrise
 bitsnap
@@ -832,15 +846,18 @@ bolna
 bonsai
 bonzo
 bookeo
+booking-experts
 bookingmood
 bookspot
 bookwhen
 botcake-1
 botconversa
+botmaker
 botpress
 botsonic
 botstar
 bouncer
+bouncie
 bouncify
 box
 brandfetch
@@ -860,6 +877,7 @@ bubbles
 bugbug
 bugherd
 bugsnag
+buildinai
 buildium
 buildkite
 builtwith
@@ -867,12 +885,14 @@ bulkpublish
 bulksmscom
 bungie
 bunnycdn
+burst-sms
 burstyai
 businessmap
 bytescale
 cabinpanda
 cakemail
 cal-com
+cal-id
 calendly
 callerapi
 callfire
@@ -881,11 +901,13 @@ canada-holidays
 canopy
 canopy-connect
 canva
+capgo
 captivated
 carbone
 cardclan
 cardly
 carsxe
+cartgenie
 casebook
 caspio
 cats
@@ -893,6 +915,7 @@ centralstationcrm
 cert-seal
 certifier
 certs365
+channeladvisor
 charla
 chaser
 chatbase
@@ -900,6 +923,7 @@ chatbotkit
 chatwoot
 check-cherry
 checkfront
+checkout-com
 chili-piper
 chmeetings
 chorus-by-zoominfo
@@ -931,7 +955,9 @@ cliniko
 clio
 clockify
 cloro
+closum
 cloudbeds
+cloudbees
 cloudflare
 cloudsmith
 cloudtalk
@@ -955,6 +981,7 @@ combell
 cometapi
 commerce-layer
 common-room
+commpeak
 commusoft
 companycam
 companyenrich
@@ -965,12 +992,14 @@ configcat
 confluence
 conjur
 connecteam
+consignly
 constant-contact
 consumerfinance
 contabo
 content-snare
 content-studio
 context-dev
+contribly
 control-d
 conversion-tools
 convertapi
@@ -990,12 +1019,14 @@ creem
 crelate
 crew-ai
 crisp
+crossmint
 crowdin
 crunchbase
 csvbox
 currents-api
 cursor
 custify
+customerbase
 customgpt
 cvent
 cycat
@@ -1004,6 +1035,7 @@ cypher-learning
 dacast
 dadata-ru
 daily
+dante-ai
 dart
 databox
 databricks
@@ -1025,7 +1057,9 @@ dev-cycle
 devin
 devto
 dex
+dial
 dialpad
+diffchecker
 digicert
 digistore24
 digitalocean
@@ -1033,12 +1067,14 @@ directiq
 directus
 discord
 discourse
+ditlead
 dixa
 dnsfilter
 dnsimple
 dnsmadeeasy
 docamatic
 dock-certs
+docker-engine
 docker-hub
 docraptor
 docsautomator
@@ -1053,10 +1089,13 @@ dodo
 doit
 dokploy
 domainsdb
+domo
 doorloop
 doppler
 doqs
+dots
 dovetail
+dpd-connect
 dpd2
 dragn-survey
 dreamstudio
@@ -1074,15 +1113,18 @@ dv360
 dynamic-mockups
 dynapictures
 dynatrace
+e-boekhoudennl
 e-conomic
 e2b
 easy-email-verification
+easy-project
 easybizy
 easybroker-archive
 easypromos
 ebi
 echtpost
 eduzz
+egestor
 egnyte
 elai
 elastic-email
@@ -1090,6 +1132,7 @@ elasticsearch
 elevenlabs
 elmah
 eloqua
+email-on-acid
 emaillistverify
 emailoctopus
 emailvalidation
@@ -1110,7 +1153,9 @@ event-tickets
 eventify
 everflow
 everhour
+evertransit
 everyaction
+everypage
 evetech
 evoliz
 evolution-go
@@ -1120,11 +1165,13 @@ exceptionless
 exercisecom
 exlibrisgroup
 exoscale
+expedy
 expensify
 explorium
 extend
 extole
 extrovert
+extruct-ai
 ez-texting
 ezeep-printing
 ezekia
@@ -1132,6 +1179,7 @@ facebook
 facecheck
 factorial
 facturadirecta
+faktoora
 fal
 faraday
 fareharbor
@@ -1146,6 +1194,8 @@ fiber
 fidel-api
 figma
 figshare
+filepost
+filescan
 filevine
 fillout
 financial-datasets-ai
@@ -1156,12 +1206,14 @@ fireberry
 firecrawl
 firestore
 firmable
+fivetran
 fixer
 fixer-io
 flashquotes
 flat
 flatfile
 fleetio
+flipdish
 flokzu
 flowsavvy
 flutterwave
@@ -1200,6 +1252,8 @@ futureagi
 fxapis
 fynk
 gainsight-customer-communities
+ganttic
+geekbot-da51177
 geekflare
 gender-api
 genderapi-io
@@ -1232,6 +1286,7 @@ gocardless
 gofundme-pro
 gohighlevel
 gong
+good-grants
 goodapi-plant-trees
 goodbarber
 goody
@@ -1274,6 +1329,7 @@ gtmetrix
 gusto
 hackernews
 hackmd
+hailey-hr
 haku
 halopsa
 handwrytten
@@ -1293,6 +1349,7 @@ heygen
 heymarket
 higgsfield
 highergov
+hipaatizer
 hitl
 hitpay
 hive
@@ -1309,7 +1366,9 @@ hospitable
 hostfully
 housecall-pro
 houzz-pro
+hover
 http-request
+httpsms
 hubfit
 hubflo
 hubhopper
@@ -1319,6 +1378,7 @@ humanitec
 humanitix
 humanloop
 hunter
+huntress
 hypeauditor
 hyperbrowser
 hyros
@@ -1336,6 +1396,7 @@ imagekit-io
 imagerouter
 imap
 immich
+implisense-api
 inblog
 incident-io
 increase
@@ -1348,20 +1409,24 @@ inmobalia-crm
 inmobile-sms-gateway
 insightly
 instagram
+instamojo
 instantly
 instapaper
 instatus
 intelliprint
 intercom
+intulse
 investorbase
 investorlift
 invofox
 invoiceninja
 invoicexpress
+ionos-hosting-services
 ionoscloud
 ip2location-io
 ip2proxy
 ip2whois
+ipbase
 ipinfo-io
 iplocate
 ironclad
@@ -1369,8 +1434,10 @@ isn
 iterable
 itm-platform
 jackrabbit-class
+jaicob
 jev
 jigsawstack
+jina-reader
 jinko
 jira
 jira-service-management-alert-ca
@@ -1380,6 +1447,8 @@ jobadder
 jobber
 jogg-ai
 join-it
+joomla
+jooto
 jq
 json2video
 jumpcloud
@@ -1404,6 +1473,7 @@ keycloak
 kibana
 kick
 kieai
+kindo
 kintone
 kisi
 kit
@@ -1430,6 +1500,7 @@ langflow
 langfuse
 languagetool
 laposta
+lara-translate
 lassocrm
 launchdarkly
 lead-forensics
@@ -1446,6 +1517,7 @@ learnifier
 learnworlds
 leexi
 legalmatch
+legl
 lemlist
 lenz
 lessonspace
@@ -1464,7 +1536,9 @@ linode
 linq
 listclean
 listennotes
+listrak
 liveagent
+localazy
 lofty
 logo-dev
 lokalise
@@ -1527,6 +1601,7 @@ metricool
 mews
 mezmo
 microsoft-bookings
+microsoft-dynamics365-business-c
 microsoft-entra-id
 microsoft-exchange
 microsoft-graph-security
@@ -1542,6 +1617,7 @@ mightycall
 mihu-ai
 milvus
 mindbody
+mindstamp
 minelead
 minerstat
 mineskin
@@ -1666,6 +1742,7 @@ paypro
 paystack
 pdfco
 pdfless
+pdq-connect
 peaka
 peekalink
 peerdom
@@ -1720,6 +1797,7 @@ postwire
 powerdns
 practice-better
 precisefp
+precisely
 predictleads
 printful
 printify
@@ -1734,6 +1812,7 @@ projul
 promptlayer
 propertyradar
 proposify
+proworkflow-nexus
 proxiedmail
 pulsetic
 pulumi
@@ -1797,6 +1876,7 @@ responder
 responsys
 retell-ai
 reteno
+reviewflowz
 revolut-for-business
 rezdy
 rillet
@@ -1842,6 +1922,7 @@ sap-concur
 saucelabs
 savvycal
 scale-ai
+scalepad
 scalr
 scheduleonce
 schoolmaker
@@ -1849,6 +1930,7 @@ scoro
 scrape-do
 scrapecreators
 scrapegraph-ai
+screenshotbase
 se-ranking
 seam
 search-api
@@ -1867,6 +1949,7 @@ sendbird
 sendfox
 sendgrid
 sendlane
+sendsafely
 sendspark
 sendx
 senta
@@ -1898,6 +1981,7 @@ sigma
 signable
 signal8
 signalwire
+signify
 signpath
 signrequest
 signupgenius
@@ -1938,17 +2022,21 @@ snitcher
 snowflake
 snyk
 socialkit
+socket
 softr
 solcast
+sonderplan
 soundcloud
 soundee
 spacebring
+specstream
 speechmatics
 spiro
 splitwise
 spotify
 spotio2
 sprig
+spruce
 spydra
 squadcast
 squarespace-commerce
@@ -1962,6 +2050,7 @@ statuspage
 statuspal
 stibee
 stigg
+stonly
 stora
 strale
 streak
@@ -1969,6 +2058,7 @@ stream-chat
 streamtime
 stripe
 studio-by-ai21-labs
+subscriptionflow
 sumoquote
 sumup
 supabase
@@ -2020,6 +2110,7 @@ templated
 templatefox
 temporal
 tentary
+terros
 text-request
 textcortex
 textline
@@ -2034,6 +2125,7 @@ thoughtspot
 threads
 thrivecart
 ticket-tailor
+ticketsource
 tidb-cloud
 tidely
 tidio
@@ -2049,16 +2141,19 @@ timelink
 timely
 timerex
 tinyfish
+tinypages
 tinyurl
 todoist
 tomba
 tomtom
 toneden
 topdesk
+total-synergy
 touchsms
 tovuti
 traccar
 track-pod
+trackabi
 trackdesk
 trackingmore
 trackvia
@@ -2073,6 +2168,7 @@ tripadvisor
 tripworks
 true-list
 truss
+trustlayer
 tryfundable
 turbot-pipes
 turso
@@ -2084,6 +2180,7 @@ typebot
 typecast
 typeform
 typefully
+ulama
 unifi
 unione
 unipile
@@ -2121,6 +2218,7 @@ video-db
 videoupscaler
 vimeo
 viral-loops
+virtualbadgeio
 virtuous-crm
 virustotal
 visma-eaccounting
@@ -2137,6 +2235,7 @@ vybit-notifications
 wachete
 waiverfile
 walcu-crm
+wallsio
 wati
 wayfront
 weatherbit
@@ -2182,6 +2281,7 @@ writer
 xama-hub
 xata
 xero
+ycloud
 yelp
 yelp-leads
 ynab
@@ -2196,6 +2296,7 @@ zadarma
 zeeg
 zeffy
 zendesk
+zenegy
 zeno
 zenoti
 zenrows

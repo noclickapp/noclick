@@ -433,6 +433,32 @@ test("an agent step's secrets go by name, whatever names them", async () => {
   ]);
 });
 
+test("a setting only the person knows is left for them", async () => {
+  // `leftForUser` on a step's update, a batch's add or update and the workflow's add: the settings' names, sent as
+  // the edit takes them. Never beside a made-up value.
+  const { api } = setup();
+  const left = { config_valid: false, left_for_user: ["to_number"] };
+  const route = api.on("POST", EDITS, json(edited(5, [{ op: "update_step", id: "writer", changed: true }], {
+    graph: bare(), steps: { writer: left },
+  })));
+  const workflow = nc.Workflow.fromId(WF);
+  const step = await workflow.step("writer").update({ leftForUser: ["to_number"] });
+  assert.deepEqual(ops(route), [{ op: "update_step", id: "writer", left_for_user: ["to_number"] }]);
+  assert.deepEqual(step.verdict, left);
+  await workflow.step("writer").update({ settings: { body: "Down." }, leftForUser: ["to_number"] });
+  assert.deepEqual(ops(route), [
+    { op: "update_step", id: "writer", settings: { body: "Down." }, left_for_user: ["to_number"] }]);
+
+  await workflow.edit({}, async (e) => {
+    e.addStep("automation-http-request", { id: "check", operation: "send_http_get_request", leftForUser: ["url"] });
+    e.updateStep("writer", { leftForUser: ["from_number", "to_number"] });
+  });
+  assert.deepEqual(ops(route), [
+    { op: "add_step", type: "automation-http-request", id: "check", operation: "send_http_get_request", left_for_user: ["url"] },
+    { op: "update_step", id: "writer", left_for_user: ["from_number", "to_number"] },
+  ]);
+});
+
 // --- refusals ----------------------------------------------------------------------------
 
 test("a stale batch is a Conflict carrying the workflow as it stands", async () => {

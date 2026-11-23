@@ -213,6 +213,11 @@ export function readStepType(client: NoClick, name: string): StepType | undefine
     return knownOf(client, name).type;
 }
 
+/** Whether this session's read of the type has ended (described, or refused), starting it if it hasn't begun. */
+export function stepTypeSettled(client: NoClick, name: string): boolean {
+    return knownOf(client, name).read.status !== 'loading';
+}
+
 /** How many step types have settled for this client so far, drawing again each time another does. */
 export function useStepTypesSettled(client: NoClick): number {
     const every = settledOf(client);
