@@ -119,3 +119,33 @@ def test_a_build_goes_back_for_what_a_run_would_refuse_twice_and_for_nothing_bui
     # What couldn't be read is never taken for nothing built.
     assert definition.send_back(built=None, empty=True, rejected=[], sent=[]) is None
     assert definition.send_back(built=True, empty=False, rejected=[], sent=[]) is None
+
+
+READ = {"step": "log_text", "field": "rows[0].zen_text", "source": "fetch_zen", "key": "body",
+        "known_keys": ["status_code", "response"],
+        "message": "Log zen text (`log_text`): `rows[0].zen_text` reads `body` from Fetch GitHub Zen (`fetch_zen`), "
+                   "whose output has no `body` (it has status_code, response): a run reads nothing there."}
+
+
+def test_a_read_that_gets_no_value_goes_back_on_the_same_budget_as_what_a_run_would_refuse():
+    """A read of a key the step's output lacks fails nothing: the run succeeds and the setting is empty. So the
+    build goes back for it as for settings a run would refuse, twice at most counting both."""
+    assert definition.send_back(built=True, empty=False, rejected=[], unresolved=[READ], sent=[]) == definition.REJECTED
+    assert definition.send_back(built=True, empty=False, rejected=[], unresolved=[READ],
+                                sent=["rejected"]) == definition.REJECTED
+    assert definition.send_back(built=True, empty=False, rejected=[], unresolved=[READ],
+                                sent=["rejected", "rejected"]) is None
+
+
+def test_a_build_sent_back_for_a_read_hears_what_it_reads_and_what_the_step_has():
+    text = definition.sent_back([], unresolved=[READ])
+    assert f"- {READ['message']}" in text and "reads nothing" in text and "the run still succeeds" in text
+    assert "will fail exactly as listed" not in text
+    both = definition.sent_back([{"step": "send", "message": "to: field required"}], unresolved=[READ])
+    assert "- send: to: field required" in both and f"- {READ['message']}" in both
+
+
+def test_the_instructions_say_a_run_that_succeeded_doesnt_show_a_read_got_a_value():
+    assert ("A test run that succeeded doesn't show that a read got a value: a `{{ $('step').key }}` whose key the "
+            "step's output doesn't have reads nothing and the run still succeeds, so check the step's output has "
+            "each key the next step reads.") in definition.instructions()

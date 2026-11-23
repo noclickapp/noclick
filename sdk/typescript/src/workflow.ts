@@ -572,10 +572,14 @@ export interface BuildQuestion {
  * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
  * workflow is as it was, whatever `summary` says), the `version` it ended on (what
  * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
- * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user`, as an
- * edit answers them). `sentBack` counts the times the build went back to the builder for settings
- * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
- * named in `unread`: then nothing says the workflow is ready.
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user` and
+ * `references`, as an edit answers them). `references` lists, across the workflow, each read of another step's
+ * output that gets no value, said in a sentence (`message`): `{step, field, source, key, known_keys, message}` for a
+ * key the `source` step's known output lacks (a run reads nothing there and still succeeds, so a test run never
+ * shows it), or `{step, field, source, reference, missing, near, message}` for a step the workflow doesn't have; a
+ * step whose output nothing has shown isn't judged. `sentBack` counts the times the build went back to the builder
+ * for settings the run engine rejects or reads that get no value (at most 2) before it finished. A fact NoClick
+ * couldn't read is `null` and named in `unread`: then nothing says the workflow is ready.
  */
 export interface WorkflowBuildResult {
   workflowId: string | null;
@@ -587,6 +591,7 @@ export interface WorkflowBuildResult {
   version: number | null;
   readiness: WorkflowReadiness | null;
   verdicts: Record<string, JsonObject> | null;
+  references: JsonObject[] | null;
   sentBack: number;
   unread: string[];
   raw: JsonObject;
@@ -659,6 +664,7 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
     version: typeof raw.version === "number" ? raw.version : null,
     readiness: raw.readiness && typeof raw.readiness === "object" ? toReadiness(raw.readiness) : null,
     verdicts: raw.verdicts && typeof raw.verdicts === "object" ? verdicts : null,
+    references: Array.isArray(raw.references) ? raw.references.map(asObject) : null,
     sentBack: typeof raw.sent_back === "number" ? raw.sent_back : 0,
     unread: Array.isArray(raw.unread) ? raw.unread.filter((name): name is string => typeof name === "string") : [],
     raw,
@@ -1010,8 +1016,9 @@ export interface NameVersionOptions {
  * `config_valid`, `validation_error`, `missing_required`, `left_for_user`, `agent_credential_hint`, and `references`:
  * each read of another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
- * history a restore put back. `warnings` say what an edit did that won't work as it may look (a workspace member's
- * own connection given to a team workflow's step, which its owner's automatic runs can't use). An edit sent with
+ * history a restore put back. `warnings` say what an edit did that won't work as it may look: a read in a touched
+ * step's settings that gets no value (each of its `references`, in a sentence), and a workspace member's own
+ * connection given to a team workflow's step, which its owner's automatic runs can't use. An edit sent with
  * `settle` also says whether what it set going finished in time (`settled`) and, by step, why each trigger it left
  * unregistered can't be registered yet (`unregistered`).
  */
