@@ -18,10 +18,26 @@ const USABLE = {
 describe('settings', () => {
     it('takes usable settings, NoClick’s API by default, and never puts the key in the config', () => {
         const check = checkConfig(USABLE);
-        expect(check).toEqual({ ok: true, config: { password: USABLE.APP_PASSWORD, sessionSecret: USABLE.SESSION_SECRET, apiUrl: DEFAULT_BASE_URL } });
+        expect(check).toEqual({ ok: true, config: { password: USABLE.APP_PASSWORD, sessionSecret: USABLE.SESSION_SECRET, apiUrl: DEFAULT_BASE_URL, keyGiven: false } });
         expect(JSON.stringify(check)).not.toContain(USABLE.NOCLICK_API_KEY);
         expect(noclickApiKey(USABLE)).toBe(USABLE.NOCLICK_API_KEY);
         expect(() => noclickApiKey({})).toThrow('NOCLICK_API_KEY is not set, or not one line of printable characters.');
+    });
+
+    it('knows a key NoClick gave it from one somebody set, and says so where NoClick’s hosting gave it none', () => {
+        // The bearer NoClick's app hosting hands a production release of an app whose repository asks for a key.
+        expect(checkConfig({ ...USABLE, NOCLICK_API_KEY: 'nk_app_given.by.noclick' })).toMatchObject({ ok: true, config: { keyGiven: true } });
+        const HOSTED = { NOCLICK_PROJECT_ID: 'prj_1', NOCLICK_DEPLOYMENT_TOKEN: 'nk_dep_release' };
+        const preview = checkConfig({ ...USABLE, ...HOSTED, NOCLICK_API_KEY: '' });
+        expect(preview.ok).toBe(false);
+        if (preview.ok) return;
+        expect(preview.problems).toEqual([expect.objectContaining({ name: 'NOCLICK_API_KEY', given: true, problem: 'is given to this app by NoClick, and this release has none.' })]);
+        expect(preview.problems[0].fix).toContain('once the account’s owner approves');
+        expect(preview.problems[0].fix).not.toContain('developer console');
+        // Anywhere else a missing key is the deployer's to create and set.
+        const elsewhere = checkConfig({ ...USABLE, NOCLICK_API_KEY: '' });
+        expect(elsewhere.ok ? [] : elsewhere.problems).toEqual([expect.objectContaining({ name: 'NOCLICK_API_KEY', problem: 'is not set.' })]);
+        expect(elsewhere.ok ? null : elsewhere.problems[0].given).toBeUndefined();
     });
 
     it.each([

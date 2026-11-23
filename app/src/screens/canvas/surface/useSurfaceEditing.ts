@@ -23,6 +23,7 @@ import { setGraphDragging } from '../graph/liveGraphStore';
 import { fromHintHandleId } from '../nodes/NextStepHint';
 import { perfState } from '../perfState';
 import { consumePointerDrivenDelete } from '../pointerDelete';
+import { useLater } from '@/lib/useLater';
 import { connectionAllowed, normalizeConnection, type ConnectionRoles } from './connectionRules';
 
 /** The canvas's undo history, as each edit records itself in it. */
@@ -106,6 +107,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
     const { getInternalNode, screenToFlowPosition } = useReactFlow();
     const { setNodes, setEdges, history, layer, panToNode, frozen, on } = options;
     const { captureState, startBatch, endBatch } = history;
+    const later = useLater();
 
     const isValidConnection = useCallback((connection: Connection | Edge) => {
         const { nodesRef, edgesRef, roles } = latest.current;
@@ -164,7 +166,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                     updated = updated.map((n) => ({ ...n, selected: n.id === next.id }));
                     // Deleted with the pointer (the delete pill), the view stays where the pointer is; from the keyboard,
                     // it follows the selection.
-                    if (!consumePointerDrivenDelete()) setTimeout(() => panToNode(next.id), 0);
+                    if (!consumePointerDrivenDelete()) later(() => panToNode(next.id));
                 }
             }
 
@@ -173,13 +175,13 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                 if (workflowId) setGraphDragging(workflowId, false);
                 canvasRef.current?.classList.remove('perf-optimizing');
                 perfState.shouldOptimize = false;
-                setTimeout(() => history.endBatch(updated, edgesRef.current ?? []), 0);
+                later(() => history.endBatch(updated, edgesRef.current ?? []));
             } else if (!draggingRef.current && !dragStart) {
-                setTimeout(() => history.captureState(updated, edgesRef.current ?? []), 0);
+                later(() => history.captureState(updated, edgesRef.current ?? []));
             }
             return updated;
         });
-    }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode]);
+    }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode, later]);
 
     const onEdgesChange = useCallback((changes: EdgeChange[]) => {
         const { setEdges, nodesRef, history, on } = latest.current;
@@ -188,10 +190,10 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
         }
         setEdges((eds) => {
             const updated = applyEdgeChanges(changes, eds);
-            setTimeout(() => history.captureState(nodesRef.current ?? [], updated), 0);
+            later(() => history.captureState(nodesRef.current ?? [], updated));
             return updated;
         });
-    }, [setEdges, captureState, on?.edgeRemoved]);
+    }, [setEdges, captureState, on?.edgeRemoved, later]);
 
     const onConnect = useCallback((raw: Connection) => {
         const { setNodes, setEdges, nodesRef, history, syncingRef, on } = latest.current;
@@ -202,7 +204,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
             const styled = applyEdgeStyle(next[next.length - 1]);
             const edges = [...next.slice(0, -1), styled];
             on?.edgeAdded?.(styled);
-            setTimeout(() => history.captureState(nodesRef.current ?? [], edges), 0);
+            later(() => history.captureState(nodesRef.current ?? [], edges));
             return edges;
         });
 
@@ -228,7 +230,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                 );
             }
         }
-    }, [setNodes, setEdges, captureState, on?.edgeAdded]);
+    }, [setNodes, setEdges, captureState, on?.edgeAdded, later]);
 
     // A connection dragged onto a step's body (or an invalid handle) lands on the nearest handle it can take, so a drop
     // needn't hit the small dot; one dropped on a valid handle connected already (`onConnect`).
