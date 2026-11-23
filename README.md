@@ -10,6 +10,7 @@
 <p align="center">
   <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnoclickapp%2Fnoclick&root-directory=app&project-name=noclick-app&repository-name=noclick-app&env=NOCLICK_API_KEY,APP_PASSWORD,SESSION_SECRET&envDescription=Your%20NoClick%20secret%20key,%20a%20password%20to%20sign%20in%20to%20this%20app%20with%20%2812%20characters%20or%20more%29%20and%20a%20random%20secret%20of%2032%20characters%20or%20more.&envLink=https%3A%2F%2Fgithub.com%2Fnoclickapp%2Fnoclick%2Ftree%2Fmain%2Fapp%23configuration"><img src="https://vercel.com/button" alt="Deploy the app to Vercel" height="32"></a>
   <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy the app to Render" height="32"></a>
+  <a href="https://railway.com/new/template/noclick-app"><img src="https://railway.com/button.svg" alt="Deploy the app to Railway" height="32"></a>
   <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main"><img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy the app to DigitalOcean" height="32"></a>
 </p>
 
