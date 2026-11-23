@@ -1969,6 +1969,7 @@ servicetrade
 setmore
 sevdesk
 seven-io
+sheetdb
 shipengine
 shipmondo
 shippo
