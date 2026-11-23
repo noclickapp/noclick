@@ -107,7 +107,7 @@ function RunFromHerePill({ nodeId }: { nodeId: string }) {
 }
 
 // Hover-revealed delete button. Uses ReactFlow's deleteElements so the deletion
-// flows through onNodesChange — cron cleanup, broadcast to collaborators,
+// flows through onNodesChange — cron cleanup, the save's tombstones,
 // interface block sync — the same way keyboard Delete or right-click → Remove
 // does. Vertically aligned with RunFromHerePill (same 25×25 / top: -28).
 function DeletePill({ nodeId }: { nodeId: string }) {
@@ -137,8 +137,8 @@ const NODE_TOGGLE_BTN_BASE =
     'w-[25px] h-[25px] rounded-full flex items-center justify-center backdrop-blur-sm border shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-colors duration-200 active:scale-95';
 
 // On-node edits go through the same custom event the inline label editor uses,
-// so they flow through handleNodeDataUpdate (undo capture + collaborator
-// broadcast) rather than a raw setNodes that would be local-only.
+// so they flow through handleNodeDataUpdate (undo capture, and a viewer's
+// refusal) rather than a raw setNodes that would skip both.
 function dispatchNodeDataUpdate(nodeId: string, data: Record<string, unknown>) {
     document.dispatchEvent(
         new CustomEvent('noclick:node:update-data', {
