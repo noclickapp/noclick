@@ -15,8 +15,8 @@ it('fails the run on a timer that fires after its environment, naming where it c
     const output = `${run.stdout}\n${run.stderr}`;
     expect(run.status, output).toBe(1);
     expect(output).toContain('a-leaves.fixture.ts left pending fired after that file\'s test environment was torn down, and failed: window is not defined');
-    expect(output).toContain('setTimeout(…, 300) in "starts a timer and never clears it"');
-    expect(output).toMatch(/a-leaves\.fixture\.ts:5:\d+/);
+    expect(output).toContain('setInterval(…, 100) in "starts a timer and never clears it"');
+    expect(output).toMatch(/a-leaves\.fixture\.ts:6:\d+/);
     expect(output).toContain('3 passed');
     expect(output).not.toContain('c-clears.fixture.ts left pending');
     expect(output.match(/left pending fired/g)).toHaveLength(1);
