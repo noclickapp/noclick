@@ -2,7 +2,7 @@
 // from another site, a request served on this machine, and where to go after signing in. test/server.test.ts runs
 // them in the app, behind the gate (which sets some of the same headers again).
 import { DEFAULT_BASE_URL } from 'noclick';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BROWSER_BEARER } from '@/sdk/proxied';
 import { checkConfig, noclickApiKey } from './config.server';
 import { crossSite, isLoopbackHost, servedLocally } from './origin.server';
@@ -135,6 +135,75 @@ describe('the key proxy on its own', () => {
         });
         expect(response.status).toBe(403);
         expect(called).toBe(false);
+    });
+
+    describe('when the connection to the API drops', () => {
+        const BEARER = { authorization: `Bearer ${BROWSER_BEARER}` };
+        /** What Node's fetch throws when a socket is reset under it. */
+        const dropped = () => new TypeError('fetch failed', { cause: Object.assign(new Error(`read ECONNRESET ${UPSTREAM.key}`), { code: 'ECONNRESET' }) });
+        let logged: string[];
+        beforeEach(() => {
+            logged = [];
+            for (const method of ['error', 'warn'] as const) vi.spyOn(console, method).mockImplementation((...args: unknown[]) => void logged.push(args.join(' ')));
+        });
+        afterEach(() => {
+            vi.restoreAllMocks();
+        });
+
+        /** A fetch that throws `failures` times, then answers. */
+        function flaky(failures: number) {
+            const calls: RequestInit[] = [];
+            const fetchImpl = async (_input: RequestInfo | URL, init?: RequestInit) => {
+                calls.push(init!);
+                if (calls.length <= failures) throw dropped();
+                return new Response('{"ok":true}', { headers: { 'content-type': 'application/json' } });
+            };
+            return { calls, fetchImpl };
+        }
+
+        it('asks again once for a GET, and answers from the second call', async () => {
+            const { calls, fetchImpl } = flaky(1);
+            const response = await forward(new Request('http://app.test/api/v1/status', { headers: BEARER }), UPSTREAM, fetchImpl);
+            expect(response.status).toBe(200);
+            expect(await response.json()).toEqual({ ok: true });
+            expect(calls).toHaveLength(2);
+            expect(new Headers(calls[1].headers).get('authorization')).toBe(`Bearer ${UPSTREAM.key}`);
+            expect(logged.join('\n')).toContain('(ECONNRESET); trying once more.');
+            expect(logged.join('\n')).not.toContain(UPSTREAM.key);
+        });
+
+        it('answers 502 when the second call drops too, and calls no third time', async () => {
+            const { calls, fetchImpl } = flaky(2);
+            const response = await forward(new Request('http://app.test/api/v1/status', { headers: BEARER }), UPSTREAM, fetchImpl);
+            expect(response.status).toBe(502);
+            expect((await response.json()).error).toMatchObject({ type: 'upstream_error', message: 'This app’s server couldn’t reach NoClick’s API.' });
+            expect(calls).toHaveLength(2);
+            expect(logged.at(-1)).toBe("The key proxy couldn't reach NoClick's API at https://api.example (ECONNRESET).");
+            expect(logged.join('\n')).not.toContain(UPSTREAM.key);
+        });
+
+        it('never asks again for a write, which may have landed', async () => {
+            for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+                const { calls, fetchImpl } = flaky(1);
+                const request = new Request('http://app.test/api/v1/agents', { method, body: '{}', headers: { ...BEARER, 'idempotency-key': 'nc_once' } });
+                const response = await forward(request, UPSTREAM, fetchImpl);
+                expect(response.status, method).toBe(502);
+                expect(calls, method).toHaveLength(1);
+            }
+        });
+
+        it('never asks again once the browser has gone away', async () => {
+            const browser = new AbortController();
+            const calls: RequestInit[] = [];
+            const response = await forward(new Request('http://app.test/api/v1/status', { headers: BEARER, signal: browser.signal }), UPSTREAM, async (_input, init) => {
+                calls.push(init!);
+                browser.abort();
+                throw new DOMException('This operation was aborted', 'AbortError');
+            });
+            expect(response.status).toBe(502);
+            expect(calls).toHaveLength(1);
+            expect(logged).toEqual([]);
+        });
     });
 });
 

@@ -2038,7 +2038,7 @@ class Workflow(_Object):
     paused: bool = field("paused", lambda raw: bool(raw), doc="Whether a pause switched its triggers off.")
     readiness: Dict[str, Any] = field("readiness", lambda raw: dict(raw or {}), doc=(
         "Whether it's set up to run: ``status`` (``needs_setup``, ``waiting_for_input``, ``input_observed``, "
-        "``configured``, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
+        "``configured``, ``paused`` when its triggers are all switched off, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
         "whose last run failed among them), the ``warnings`` that don't stop it running (an agent's tool with "
         "no account connected), and ``unverified``, the steps no run has completed yet, each "
         "``{step, code, message}``. An issue's ``code`` says whose move it is: ``missing_credentials`` waits on "

@@ -12,7 +12,28 @@ import {
     detectAccessorContext,
     blockAtCursor,
     referenceAtCursor,
+    isEmptyStepReference,
+    holdsEmptyStepReference,
+    STEP_REFERENCE_SCAFFOLD,
+    STEP_REFERENCE_SCAFFOLD_CARET,
 } from './expressionSyntax';
+
+describe('empty step references', () => {
+    it("knows a read of no step, in either quote, whatever is read off it", () => {
+        for (const inner of [" $('') ", '$("")', "$( ' ' )", " $('').text.trim() "]) expect(isEmptyStepReference(inner)).toBe(true);
+        for (const inner of [" $('trigger') ", ' $json ', ' $vars.name ', ' ', ' trigger.text ']) expect(isEmptyStepReference(inner)).toBe(false);
+    });
+    it('finds one in a string, a list or an object, but only inside {{ }}', () => {
+        expect(holdsEmptyStepReference("Hi {{ $('') }}{{ $json }}")).toBe(true);
+        expect(holdsEmptyStepReference([{ value: '{{ $("").to }}' }])).toBe(true);
+        expect(holdsEmptyStepReference("quoting $('') in prose")).toBe(false);
+        expect(holdsEmptyStepReference({ a: "{{ $('a').b }}", n: 3, none: null })).toBe(false);
+    });
+    it('puts the scaffold’s caret between its quotes, where the step’s id goes', () => {
+        expect(STEP_REFERENCE_SCAFFOLD.slice(0, STEP_REFERENCE_SCAFFOLD_CARET)).toBe("{{ $('");
+        expect(holdsEmptyStepReference(STEP_REFERENCE_SCAFFOLD)).toBe(true);
+    });
+});
 
 describe('isJsExpression', () => {
     it('treats $-accessors as expressions', () => {
