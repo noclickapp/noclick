@@ -2147,6 +2147,7 @@ the-events-calendar
 the-odds-api
 thecompaniesapi
 thehive
+thesportsdb
 thinkific
 thoughtspot
 threads
