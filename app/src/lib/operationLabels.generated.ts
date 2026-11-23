@@ -1621,6 +1621,7 @@ microsoft-sharepoint
 microsoft-teams
 microsoft-teams-events
 microsoft-todo
+middesk
 mighty-networks
 mightycall
 mihu-ai
@@ -1635,6 +1636,7 @@ mirakl
 miro
 mist
 mixmax
+mixpanel-service-account
 mobile-message-ca21345
 mobile-text-alerts
 moco
@@ -1649,8 +1651,10 @@ moskit
 motaword
 moxo
 msg91
+mumara
 mural
 murf
+mux
 mx-technologies
 mycase
 mycashflow
@@ -1837,12 +1841,14 @@ pulsetic
 pulumi
 pushcut
 pylon-1
+qase
 qdrant
 qomon
 qonto
 qonversion
 qovery
 qstash
+quadratic
 quentn
 quickbase
 quickbooks
@@ -1856,6 +1862,7 @@ ragic
 raisely
 rally-corp
 ramp
+rasa
 rawg-video-games-database
 razorpay
 rbaskets
@@ -1901,6 +1908,7 @@ reviewflowz
 revolut-for-business
 rezdy
 rillet
+ringba
 ringcentral
 ringover
 rippling
@@ -1908,6 +1916,7 @@ ritekit
 rkvst
 roam
 roblox
+robocorp
 rocket-reach
 rocketadmin
 rocketlane
@@ -2085,6 +2094,7 @@ stibee
 stigg
 stonly
 stora
+straico
 strale
 streak
 stream-chat
@@ -2092,6 +2102,7 @@ streamtime
 stripe
 studio-by-ai21-labs
 subscriptionflow
+sumo-logic
 sumoquote
 sumup
 supabase
@@ -2110,6 +2121,7 @@ surf
 svix
 swaggerhub
 swarmsyncai
+swidoc
 sympla
 synap
 syncro
@@ -2180,7 +2192,7 @@ timescaledb
 tinyfish
 tinypages
 tinyurl
-tisane-labs
+tmetric
 todoist
 tomba
 tomtom
@@ -2219,6 +2231,7 @@ typebot
 typecast
 typeform
 typefully
+uberduck
 ulama
 unifi
 unione
@@ -2274,6 +2287,7 @@ vybit-notifications
 wachete
 waiverfile
 walcu-crm
+walletap
 wallsio
 wati
 wayfront
