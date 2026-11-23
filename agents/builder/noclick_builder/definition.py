@@ -114,12 +114,18 @@ def send_back(*, built: Optional[bool], empty: bool, rejected: List[Dict[str, An
     return None
 
 
-def sent_back(issues: List[Dict[str, Any]]) -> str:
+def sent_back(issues: List[Dict[str, Any]], *, skipped: bool = False) -> str:
     """The message a finished build is sent back with when its workflow holds settings a run would refuse: each
-    issue is ``{step, message}``, as the workflow's readiness names them."""
+    issue is ``{step, message}``, as the workflow's readiness names them. A value only the person knows is never
+    the builder's to make up: it leaves that setting for them (an edit's ``left_for_user``), which is no longer an
+    issue here. ``skipped``: the person skipped a question of this build, so it asks for nothing more."""
     listed = "\n".join(f"- {i.get('step')}: {i.get('message')}" for i in issues)
+    asking = ("They skipped a question in this build, so don't ask for anything now." if skipped else
+              "Don't ask for it now unless nothing else can be built without it.")
     return ("The workflow isn't ready to run: these steps' settings will fail exactly as listed (a run checks them "
             "the same way).\n"
             f"{listed}\n"
-            "Fix each one, asking only where the person alone knows the value, then reply again with what you "
-            "changed. If one genuinely can't be fixed, say which and why.")
+            "Fix each one whose value follows from the request, then reply again with what you changed. A setting "
+            "whose value only the person knows isn't yours to fix or make up: leave it for them with update_step "
+            f"and left_for_user, and name it in your reply. {asking} If one genuinely can't be fixed, say which "
+            "and why.")

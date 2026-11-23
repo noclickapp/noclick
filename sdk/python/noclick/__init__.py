@@ -137,8 +137,9 @@ from .phone_number import (
 )
 from .policy import Policy, PolicyVerdict, Rule
 from .project import (
-    AnalyticsSummary, AppRequests, Binding, CheckReview, Deployment, DeploymentCheck, LogLine, LogLines, PathCheck,
-    PathTraffic, PreviewLink, Project, ProjectAI, ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings,
+    AccountKey, AccountKeyRequest, AccountKeyScope, AnalyticsSummary, AppRequests, Binding, CheckReview, Deployment,
+    DeploymentCheck, LogLine, LogLines, PathCheck, PathTraffic, PreviewLink, Project, ProjectAccountKey, ProjectAI,
+    ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings,
     ProjectUsage, RequestOutcomes, RouteTiming, Schedule, TrafficInterval, DurableObjectClass, DurableObjectClasses,
     DurableObjectInstance,
 )
@@ -227,6 +228,7 @@ __all__ = [
     "CardMerchantCategory",
     "Project", "Deployment", "Schedule", "DurableObjectClass", "DurableObjectClasses", "DurableObjectInstance",
     "ProjectSecrets", "ProjectSettings", "ProjectAI", "Binding", "LogLine",
+    "ProjectAccountKey", "AccountKey", "AccountKeyScope", "AccountKeyRequest",
     "LogLines", "ProjectUsage", "DeploymentCheck", "PathCheck", "CheckReview", "RequestOutcomes", "RouteTiming",
     "ProjectAnalytics", "TrafficInterval", "PathTraffic", "AnalyticsSummary", "AppRequests", "PreviewLink",
     "ProjectContainer", "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",

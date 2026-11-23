@@ -895,6 +895,15 @@ export interface StepUpdate {
    * show in a read of the workflow, nor to the agent's model.
    */
   secrets?: SecretRef[];
+  /**
+   * Settings to leave for the step's person to fill in, by name: a value only they know (their own address, number
+   * or URL). Each is cleared and noted on the step, so a required one reads `left_for_user` in the step's `verdict`
+   * and the workflow's readiness, never an invalid setting, until it's given a value; giving it one takes it off the
+   * note. It's how code or an agent that builds a workflow says "this one is yours" without making a value up. A
+   * name that isn't one of the step's settings, or one given a value in the same call, is refused; so is a value
+   * that only stands in for one (`YOUR_PHONE_NUMBER`, `<your website url>`), naming this instead.
+   */
+  leftForUser?: string[];
 }
 
 /** What `addStep` takes beside the step's type. */
@@ -904,6 +913,8 @@ export interface AddStepOptions {
   settings?: JsonObject;
   /** An agent step's secrets, as `StepUpdate.secrets` takes them. */
   secrets?: SecretRef[];
+  /** Settings left for the step's person to fill in, as `StepUpdate.leftForUser` takes them. */
+  leftForUser?: string[];
   /** Its name in the app. */
   name?: string;
   /** Its id; made from its type when left out. */
@@ -1247,13 +1258,14 @@ function addStepOp(type: string, options: AddStepOptions): JsonObject {
     op: "add_step", type, operation: options.operation, settings: stepSettings(options.settings, options.secrets),
     name: options.name, id: options.id ?? newId(type),
     position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
+    left_for_user: options.leftForUser,
   });
 }
 
 function updateStepOp(step: StepRef, update: StepUpdate): JsonObject {
   return compact({
     op: "update_step", id: stepId(step), settings: stepSettings(update.settings, update.secrets), name: update.name,
-    operation: update.operation, enabled: update.enabled,
+    operation: update.operation, enabled: update.enabled, left_for_user: update.leftForUser,
   });
 }
 
