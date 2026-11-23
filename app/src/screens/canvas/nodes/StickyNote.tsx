@@ -10,6 +10,7 @@ import { stickyColors, stickyScheme } from '@/lib/stickyColors';
 import { useSlot } from '@/slots';
 import { useIsDark } from '@/ui/useIsDark';
 import { NOTE_MARKDOWN } from '../slots';
+import { useLater } from '@/lib/useLater';
 import './StickyNote.css';
 
 interface StickyNoteData {
@@ -51,6 +52,7 @@ const StickyNote = ({ data, selected, id }: NodeProps) => {
     const [editContent, setEditContent] = useState(content);
     const [isColorPickerExpanded, setIsColorPickerExpanded] = useState(false);
     const [isColorPickerClosing, setIsColorPickerClosing] = useState(false);
+    const later = useLater();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // Color scheme flips with the rendered theme (pastel-on-dark-text in light,
@@ -133,7 +135,7 @@ const StickyNote = ({ data, selected, id }: NodeProps) => {
         // Trigger closing animation
         setIsColorPickerClosing(true);
         // Wait for animation to finish before actually closing
-        setTimeout(() => {
+        later(() => {
             setIsColorPickerExpanded(false);
             setIsColorPickerClosing(false);
         }, 250); // Match animation duration

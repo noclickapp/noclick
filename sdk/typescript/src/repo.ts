@@ -88,10 +88,12 @@ export interface RepoBackup {
 /**
  * An entry in a repo's tree; `size` is in bytes, null for a directory, and
  * `sha` is git's blob id for a file's content (it changes whenever the content does).
+ * A `link` is a symbolic link someone committed: listed as the entry it is, with no
+ * size or sha, and never followed.
  */
 export interface RepoFile {
   path: string;
-  type: "file" | "dir";
+  type: "file" | "dir" | "link";
   size: number | null;
   sha: string | null;
   raw: JsonObject;
@@ -152,7 +154,8 @@ function toRepoBackup(value: unknown): RepoBackup {
 
 function toRepoFile(value: unknown): RepoFile {
   const raw = asObject(value);
-  return { path: str(raw.path) ?? "", type: raw.type === "dir" ? "dir" : "file", size: num(raw.size), sha: str(raw.sha), raw };
+  const type = raw.type === "dir" || raw.type === "link" ? raw.type : "file";
+  return { path: str(raw.path) ?? "", type, size: num(raw.size), sha: str(raw.sha), raw };
 }
 
 /** Where a checkout goes and what it may push. */
@@ -558,14 +561,19 @@ export class Repo extends ApiObject {
     const globs = exclude.map(globRegex);
     const local = await readFolder(folder, globs);
     const ref = branch && (await this.branches()).some((b) => b.name === branch) ? branch : undefined;
-    const remote = new Map((await this.files("", { ref, recursive: true })).map((f) => [f.path, f.sha]));
+    // A link in the repo is left as it is: a commit through the API writes files, so it can't put one back.
+    const listed = (await this.files("", { ref, recursive: true })).filter((f) => f.type === "file");
+    const remote = new Map(listed.map((f) => [f.path, f.sha]));
     const changes: Record<string, Uint8Array | null> = {};
     for (const [path, data] of local) if (remote.get(path) !== (await blobSha(data))) changes[path] = data;
     for (const path of remote.keys()) if (!local.has(path) && !excluded(path, globs)) changes[path] = null;
     return changes;
   }
 
-  /** One file's bytes at `ref` (a branch, tag or sha; the default branch's head when omitted). */
+  /**
+   * One file's bytes at `ref` (a branch, tag or sha; the default branch's head when omitted). A link is
+   * never followed: its path reads as the path it points to.
+   */
   async read(path: string, options: { ref?: string } = {}): Promise<Uint8Array> {
     return await this._request<Uint8Array>("GET", await this._repoPath("files"), {
       query: { path, ref: options.ref },
@@ -580,7 +588,8 @@ export class Repo extends ApiObject {
 
   /**
    * What's in the directory `prefix` (the root when empty), directories first; `recursive` lists
-   * every file below it instead, without the directories.
+   * every file below it instead, without the directories. A symbolic link is one entry of type
+   * `link`, whatever it points to.
    */
   async files(prefix = "", options: { ref?: string; recursive?: boolean } = {}): Promise<RepoFile[]> {
     const page = await this._request("GET", await this._repoPath("files"), {

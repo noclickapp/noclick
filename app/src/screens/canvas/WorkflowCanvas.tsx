@@ -44,6 +44,7 @@ import { useSurfaceEditing } from './surface/useSurfaceEditing';
 import { useTidyLayout } from './surface/useTidyLayout';
 import { useWorkflowFile } from './surface/useWorkflowFile';
 import { useWorkflowKeyboardShortcuts } from './surface/useWorkflowKeyboardShortcuts';
+import { useLater } from '@/lib/useLater';
 
 const EDGE_TYPES = { animated: AnimatedWorkflowEdge };
 const NO_NODES: Node[] = [];
@@ -117,12 +118,13 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
     const { resetBaseline, rebaseHistory, captureState } = history;
     // An edit made outside React Flow's own changes (a menu's, a pick's): the graph as the store holds it after it,
     // one step back, a task later as the surface's edits are recorded.
+    const later = useLater();
     const record = useCallback(() => {
-        setTimeout(() => {
+        later(() => {
             const held = graphRecords[workflowId];
             if (held) captureState(held.nodes as Node[], held.edges as Edge[]);
-        }, 0);
-    }, [workflowId, captureState]);
+        });
+    }, [workflowId, captureState, later]);
     useUndoKeepsServerWrites(workflowId, rebaseHistory, resetBaseline);
     // Undo starts from the workflow as it was opened.
     useEffect(() => {
@@ -193,11 +195,11 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
             const update = normalizeNodeUpdatePayload(data);
             setNodes((current) => {
                 const updated = current.map((n) => (n.id === nodeId ? applyNodeUpdate(n, update) : n));
-                setTimeout(() => captureState(updated, edgesRef.current), 0);
+                later(() => captureState(updated, edgesRef.current));
                 return updated;
             });
         },
-        [workflowId, setNodes, captureState]
+        [workflowId, setNodes, captureState, later]
     );
     // The canvas's own keys change steps: off on a workflow the key may only look at (as on any tab that isn't the canvas).
     useWorkflowKeyboardShortcuts({ nodes, activeTab: readOnly ? 'logs' : 'canvas', onNodeDataUpdate: updateStep });
