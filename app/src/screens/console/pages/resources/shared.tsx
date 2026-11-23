@@ -1,9 +1,12 @@
 // Pieces the four Resources panels share: the toolbar (limit line, user
 // facet, the create action), a detail field row, the destructive confirm, the
 // read-only "acts for" line for writes on an owned resource, and error text.
-import { useState, type ReactNode } from 'react';
+import { useContext, useState, type ReactNode } from 'react';
+import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { useReportHeld } from '@/sdk/held';
+import { invalidateV1 } from '@/sdk/useV1';
 import { userLabel, type UserFilterValue } from '@/screens/console/lib/userFilter';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
@@ -87,6 +90,7 @@ export function ConfirmAction({
     const [open, setOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<unknown>(undefined);
+    const reportHeld = useReportHeld(useContext(ConsoleContext));
     const run = async () => {
         setBusy(true);
         setError(undefined);
@@ -94,7 +98,9 @@ export function ConfirmAction({
             await onConfirm();
             setOpen(false);
         } catch (e) {
-            setError(e);
+            // Held for the account's owner: the dialog's done, and a toast follows it until it's done or not.
+            if (reportHeld(e, title.replace(/\?$/, ''), () => invalidateV1(''))) setOpen(false);
+            else setError(e);
         } finally {
             setBusy(false);
         }

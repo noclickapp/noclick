@@ -17,6 +17,7 @@ import type { StatusLook } from '@/screens/console/lib/status';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { useOwnerAccepts } from '@/sdk/client';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { ErrorPanel } from '../../ui/ErrorPanel';
@@ -137,6 +138,8 @@ export function PurchaseProgress({
  */
 export function useRegistrant(active: boolean, user: string | null): { registrant: DomainContact | undefined; ready: boolean; reset: () => void; fields: ReactNode } {
     const { client, now } = useConsole();
+    // A key NoClick gave this app never accepts terms for a person: the account's owner does, approving the call.
+    const ownerAccepts = useOwnerAccepts();
     const [who, setWho] = useState<Who>('now');
     const [contact, setContact] = useState<RegistrantDraft>(EMPTY_REGISTRANT);
     // When the box was ticked: the registrant's acceptance of the agreement, sent with their details.
@@ -191,13 +194,9 @@ export function useRegistrant(active: boolean, user: string | null): { registran
                         {user !== null ? "A user's domain is registered to them, so these are their details. " : 'The person the domain belongs to. '}
                         ICANN requires real details and emails them to confirm; privacy protection keeps them off the public record.
                     </p>
-                    <div className="flex flex-col gap-1 sm:col-span-2">
-                        <label className="flex items-start gap-2 text-[13px]">
-                            <input type="checkbox" className="mt-0.5" checked={acceptedAt !== null} onChange={(e) => setAcceptedAt(e.target.checked ? new Date(now()) : null)} />
-                            <span>They accepted the domain registration agreement</span>
-                        </label>
-                        <p className="m-0 pl-5 text-[12px] text-muted-foreground">
-                            Show them{' '}
+                    {ownerAccepts ? (
+                        <p className="m-0 text-[13px] sm:col-span-2" data-testid="owner-accepts-agreement">
+                            The account&apos;s owner accepts{' '}
                             {agreement.data ? (
                                 <a href={agreement.data.url} target="_blank" rel="noreferrer" className="text-foreground underline underline-offset-2">
                                     the registration agreement
@@ -205,17 +204,35 @@ export function useRegistrant(active: boolean, user: string | null): { registran
                             ) : (
                                 'the registration agreement'
                             )}{' '}
-                            first: it names the registrar, and carries the fees and ICANN&apos;s registrant rights. Ticking this records when they accepted it, and
-                            nothing is registered without it.
+                            for them when they approve it.
                         </p>
-                    </div>
+                    ) : (
+                        <div className="flex flex-col gap-1 sm:col-span-2">
+                            <label className="flex items-start gap-2 text-[13px]">
+                                <input type="checkbox" className="mt-0.5" checked={acceptedAt !== null} onChange={(e) => setAcceptedAt(e.target.checked ? new Date(now()) : null)} />
+                                <span>They accepted the domain registration agreement</span>
+                            </label>
+                            <p className="m-0 pl-5 text-[12px] text-muted-foreground">
+                                Show them{' '}
+                                {agreement.data ? (
+                                    <a href={agreement.data.url} target="_blank" rel="noreferrer" className="text-foreground underline underline-offset-2">
+                                        the registration agreement
+                                    </a>
+                                ) : (
+                                    'the registration agreement'
+                                )}{' '}
+                                first: it names the registrar, and carries the fees and ICANN&apos;s registrant rights. Ticking this records when they accepted it, and
+                                nothing is registered without it.
+                            </p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
     );
     return {
-        registrant: registrant && acceptedAt ? { ...registrant, agreementAcceptedAt: acceptedAt } : undefined,
-        ready: choice === 'account' ? !!accountDefault.data?.agreementAcceptedAt : registrant !== null && acceptedAt !== null,
+        registrant: registrant && ownerAccepts ? registrant : registrant && acceptedAt ? { ...registrant, agreementAcceptedAt: acceptedAt } : undefined,
+        ready: choice === 'account' ? !!accountDefault.data?.agreementAcceptedAt : registrant !== null && (ownerAccepts || acceptedAt !== null),
         reset: () => {
             setWho('now');
             setContact(EMPTY_REGISTRANT);
@@ -240,6 +257,7 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<unknown>(undefined);
     const reg = useRegistrant(open && !!picked, user);
+    const ownerAccepts = useOwnerAccepts();
 
     const start = () => {
         setQuery('');
@@ -278,7 +296,7 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
         setBusy(true);
         setError(undefined);
         try {
-            setPurchase(await Domain.buy(picked, { client, user, years, maxPriceUsd: Number(max), registrant: reg.registrant, acceptClaims }));
+            setPurchase(await Domain.buy(picked, { client, user, years, maxPriceUsd: Number(max), registrant: reg.registrant, acceptClaims: !ownerAccepts && acceptClaims }));
             invalidateV1('domains?');
         } catch (e) {
             setError(e);
@@ -288,7 +306,7 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
     };
     const total = picked ? totalFor(picked, years) : null;
     const minYears = picked?.minYears ?? 1;
-    const claimsPending = !!picked?.claimsNotice && !acceptClaims;
+    const claimsPending = !!picked?.claimsNotice && !ownerAccepts && !acceptClaims;
 
     const title = purchase ? `Buying ${picked?.name}` : picked ? `Buy ${picked.name}` : 'Buy a domain';
     const description = purchase
@@ -392,10 +410,14 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
                                 <p className={cn('m-0 max-h-48 overflow-y-auto whitespace-pre-wrap rounded-md border bg-foreground/[0.03] p-2 text-[12px]', HAIRLINE)}>
                                     {picked.claimsNotice}
                                 </p>
-                                <label className="mt-2 flex items-start gap-2 text-[13px] text-foreground">
-                                    <input type="checkbox" className="mt-0.5" checked={acceptClaims} onChange={(e) => setAcceptClaims(e.target.checked)} />
-                                    <span>They&apos;ve seen this notice and still want the name</span>
-                                </label>
+                                {ownerAccepts ? (
+                                    <p className="m-0 mt-2 text-[13px] text-foreground">The account&apos;s owner reads it and accepts it when they approve the purchase.</p>
+                                ) : (
+                                    <label className="mt-2 flex items-start gap-2 text-[13px] text-foreground">
+                                        <input type="checkbox" className="mt-0.5" checked={acceptClaims} onChange={(e) => setAcceptClaims(e.target.checked)} />
+                                        <span>They&apos;ve seen this notice and still want the name</span>
+                                    </label>
+                                )}
                             </Notice>
                         )}
                         {reg.fields}

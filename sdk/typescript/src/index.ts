@@ -131,7 +131,8 @@ export type {
 export { Cron } from "./cron.ts";
 export type { CronOptions } from "./cron.ts";
 export {
-  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, Schedule,
+  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, PublicApp,
+  Schedule,
 } from "./project.ts";
 export type {
   AccountKey, AccountKeyRequest, AccountKeyScope, AccountKeyStatus,
@@ -141,6 +142,7 @@ export type {
   DeploymentDatabase, DeploymentEnvironment, DeploymentFix, DeploymentRuntime, DeploymentStatus, LogLine, LogLines,
   PathCheck, PathTraffic,
   PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
+  PublicCode,
   ProjectLogsOptions,
   ProjectContainer, ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";
@@ -225,7 +227,7 @@ export type {
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
   WorkflowTestRun,
   WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowSetup, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";
