@@ -1505,6 +1505,7 @@ languagetool
 laposta
 lara-translate
 lassocrm
+lattice
 launchdarkly
 lead-forensics
 lead-prosper
