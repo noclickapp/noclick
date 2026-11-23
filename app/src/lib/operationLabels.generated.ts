@@ -2121,6 +2121,7 @@ surf
 svix
 swaggerhub
 swarmsyncai
+swidoc
 sympla
 synap
 syncro
