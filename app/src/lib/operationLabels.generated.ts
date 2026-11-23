@@ -1930,6 +1930,7 @@ samdock
 samsara
 sanity
 sap-concur
+sap-s-4hana-cloud
 saucelabs
 savvycal
 scale-ai
