@@ -2058,6 +2058,7 @@ spacebring
 specstream
 speechmatics
 spider
+spike
 spiro
 splitwise
 spotify
