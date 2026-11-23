@@ -1767,6 +1767,7 @@ pdq-connect
 peaka
 peekalink
 peerdom
+peliqan
 pencil-spaces
 pennylane
 penpot
