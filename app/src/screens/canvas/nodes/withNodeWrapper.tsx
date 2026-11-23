@@ -22,6 +22,7 @@ import { NextStepHintGroup } from './NextStepHint';
 import { useSnapshot } from 'valtio';
 import { useAwaitingAgentTurn } from '@/screens/canvas/agentRunState';
 import { agentPresenceStore } from '@/screens/canvas/agentPresenceStore';
+import { useCanvasFrozen } from '@/screens/canvas/surface/frozen';
 
 const AFFORDANCE_EXCLUDED_TYPES = new Set(['stickyNote']);
 
@@ -263,9 +264,13 @@ export function withNodeWrapper<P extends NodeProps>(
         const toggleData = props.data as
             | { disabled?: boolean; mockedOutput?: unknown; output?: unknown }
             | undefined;
+        // A read-only preview's step, or one on a frozen canvas (a replay, a workflow its viewer may only view):
+        // nothing on it changes the workflow.
+        const frozen = useCanvasFrozen();
         const isReadOnly =
+            frozen ||
             (props.data as { isReadOnly?: boolean } | undefined)?.isReadOnly ===
-            true;
+                true;
         const previewHidden =
             (props.data as { _previewHidden?: boolean } | undefined)
                 ?._previewHidden === true;

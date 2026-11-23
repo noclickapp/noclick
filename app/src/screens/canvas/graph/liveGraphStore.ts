@@ -17,7 +17,7 @@
 
 import { proxy, subscribe, useSnapshot } from 'valtio';
 import type { Node, Edge } from '@xyflow/react';
-import { Conflict, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
+import { Conflict, PermissionDenied, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
 import { valtioCache } from '@/lib/indexeddb';
 import { standing } from '@/slots';
 import { serializeNodeForSave, serializeEdgeForSave, createWorkflowNode, applyNodeUpdate, mergeServerNodes, rawConfigToPayload } from '@/screens/canvas/applyNodeUpdate';
@@ -655,6 +655,13 @@ function fireEditsSave(rec: GraphRecord, closing: boolean): void {
             scheduleSave(rec);
             return;
         }
+        if (e instanceof PermissionDenied) {
+            // The person may no longer change the workflow (its owner made them a viewer): the canvas is read-only
+            // from here, and what this save carried stays unsaved.
+            rec.readOnly = true;
+            rec.dirty = false;
+            return;
+        }
         console.warn(`[liveGraphStore] save rejected for ${rec.workflowId}:`, e);
         saveFailed(rec, e instanceof Error ? e.message : String(e));
     });
@@ -925,6 +932,13 @@ export function setGraphReadOnly(workflowId: string, readOnly: boolean): void {
 
 export function isGraphReadOnly(workflowId: string): boolean {
     return graphRecords[workflowId]?.readOnly ?? false;
+}
+
+/** The viewer may only read this workflow, for a component: it draws again when that changes (an access change heard
+ *  while the canvas is open, a save the server refused for it). */
+export function useGraphReadOnly(workflowId: string | undefined): boolean {
+    const records = useSnapshot(graphRecords);
+    return !!(workflowId && records[workflowId]?.readOnly);
 }
 
 /** The canvas holds this step only in part (the room held some of it back) until it's read whole

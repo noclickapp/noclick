@@ -8,9 +8,11 @@
 
 import { useCallback, useEffect } from 'react';
 import type { NoClick } from 'noclick';
+import { toast } from 'sonner';
 import { proxy, useSnapshot } from 'valtio';
 import { useProvidedClient } from '@/sdk/client';
 import { standing } from '@/slots';
+import { isGraphReadOnly } from '../graph/liveGraphStore';
 import type { LeadPatch } from './native';
 import type { MockRun, TriggerFixture } from './scenarios';
 import { TEST_RUN } from '../slots';
@@ -187,6 +189,11 @@ export function useRehearsalAuthoring(scope: string) {
 
     const mutate = useCallback(
         (fn: (draft: AuthoringSlot) => void) => {
+            // A workflow its viewer may only view keeps its test runs as they are.
+            if (isLive && isGraphReadOnly(scope)) {
+                toast.info('You can look at this workflow. Changing it takes edit access.', { id: 'view-only' });
+                return;
+            }
             fn(slotFor(scope));
             if (isLive) schedulePush(scope);
         },

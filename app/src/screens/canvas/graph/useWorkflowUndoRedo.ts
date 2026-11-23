@@ -20,13 +20,8 @@ interface UseWorkflowUndoRedoOptions {
     historyLimit?: number;
     onNodesChange: (nodes: Node[]) => void;
     onEdgesChange: (edges: Edge[]) => void;
-    /** Collaboration callbacks for broadcasting changes to other users */
-    onNodeAdded?: (node: Node) => void;
-    onNodeRemoved?: (nodeId: string) => void;
-    onEdgeAdded?: (edge: Edge) => void;
-    onEdgeRemoved?: (edgeId: string) => void;
-    /** Callback for broadcasting node position changes (for undo/redo of drag operations) */
-    onNodePositionChange?: (nodeId: string, position: { x: number; y: number }) => void;
+    /** Only looked at (a workflow its viewer may only view): undo and redo change nothing, from the keys or a button. */
+    frozen?: boolean;
 }
 
 interface UseWorkflowUndoRedoReturn {
@@ -59,11 +54,7 @@ export function useWorkflowUndoRedo(
         historyLimit = 50,
         onNodesChange,
         onEdgesChange,
-        onNodeAdded,
-        onNodeRemoved,
-        onEdgeAdded,
-        onEdgeRemoved,
-        onNodePositionChange,
+        frozen = false,
     } = options;
 
     // History state
@@ -201,60 +192,10 @@ export function useWorkflowUndoRedo(
     }, [captureState]);
 
     /**
-     * Broadcast collaboration changes when transitioning between states
-     */
-    const broadcastChanges = useCallback((oldState: WorkflowState, newState: WorkflowState) => {
-        // Build maps for efficient lookup
-        const oldNodesMap = new Map(oldState.nodes.map(n => [n.id, n]));
-        const newNodesMap = new Map(newState.nodes.map(n => [n.id, n]));
-        const oldNodeIds = new Set(oldState.nodes.map(n => n.id));
-        const newNodeIds = new Set(newState.nodes.map(n => n.id));
-
-        // Find removed nodes (in old but not in new)
-        oldState.nodes.forEach(node => {
-            if (!newNodeIds.has(node.id)) {
-                onNodeRemoved?.(node.id);
-            }
-        });
-
-        // Find added nodes (in new but not in old)
-        newState.nodes.forEach(node => {
-            if (!oldNodeIds.has(node.id)) {
-                onNodeAdded?.(node);
-            }
-        });
-
-        // Find nodes with changed positions (exist in both but position differs)
-        newState.nodes.forEach(newNode => {
-            const oldNode = oldNodesMap.get(newNode.id);
-            if (oldNode && (oldNode.position.x !== newNode.position.x || oldNode.position.y !== newNode.position.y)) {
-                onNodePositionChange?.(newNode.id, newNode.position);
-            }
-        });
-
-        // Find removed edges (in old but not in new)
-        const oldEdgeIds = new Set(oldState.edges.map(e => e.id));
-        const newEdgeIds = new Set(newState.edges.map(e => e.id));
-
-        oldState.edges.forEach(edge => {
-            if (!newEdgeIds.has(edge.id)) {
-                onEdgeRemoved?.(edge.id);
-            }
-        });
-
-        // Find added edges (in new but not in old)
-        newState.edges.forEach(edge => {
-            if (!oldEdgeIds.has(edge.id)) {
-                onEdgeAdded?.(edge);
-            }
-        });
-    }, [onNodeAdded, onNodeRemoved, onEdgeAdded, onEdgeRemoved, onNodePositionChange]);
-
-    /**
      * Undo to previous state
      */
     const undo = useCallback(() => {
-        if (!canUndo) return;
+        if (!canUndo || frozen) return;
 
         const oldPresent = historyRef.current.present;
         const newPast = [...historyRef.current.past];
@@ -280,21 +221,18 @@ export function useWorkflowUndoRedo(
         onNodesChange(nodesWithoutTransition);
         onEdgesChange(newPresent.edges);
 
-        // Broadcast changes to collaborators
-        broadcastChanges(oldPresent, newPresent);
-
         setTimeout(() => {
             isApplyingHistoryRef.current = false;
         }, 0);
 
         forceUpdate({});
-    }, [canUndo, onNodesChange, onEdgesChange, broadcastChanges]);
+    }, [canUndo, frozen, onNodesChange, onEdgesChange]);
 
     /**
      * Redo to next state
      */
     const redo = useCallback(() => {
-        if (!canRedo) return;
+        if (!canRedo || frozen) return;
 
         const oldPresent = historyRef.current.present;
         const newFuture = [...historyRef.current.future];
@@ -320,15 +258,12 @@ export function useWorkflowUndoRedo(
         onNodesChange(nodesWithoutTransition);
         onEdgesChange(newPresent.edges);
 
-        // Broadcast changes to collaborators
-        broadcastChanges(oldPresent, newPresent);
-
         setTimeout(() => {
             isApplyingHistoryRef.current = false;
         }, 0);
 
         forceUpdate({});
-    }, [canRedo, onNodesChange, onEdgesChange, broadcastChanges]);
+    }, [canRedo, frozen, onNodesChange, onEdgesChange]);
 
     /**
      * Keyboard shortcuts for undo/redo
