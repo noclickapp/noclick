@@ -727,6 +727,7 @@ akta
 alchemy
 alegra
 algolia
+algorand-developer-portal
 alpaca
 altoviz
 alttext-ai
@@ -915,6 +916,7 @@ centralstationcrm
 cert-seal
 certifier
 certs365
+channeladvisor
 charla
 chaser
 chatbase
@@ -991,6 +993,7 @@ configcat
 confluence
 conjur
 connecteam
+consignly
 constant-contact
 consumerfinance
 contabo

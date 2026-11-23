@@ -14,6 +14,7 @@ import { OperationPicker } from './OperationPicker';
 import { SearchableEnumField } from './SearchableEnumField';
 import { MultiSelectEnumField } from './MultiSelectEnumField';
 import { renderSchemaWidget } from './schemaWidgetRegistry';
+import { WITHHELD_PLACEHOLDER, withheldRows } from './withheld';
 import { getOptionDisplayName } from '@/screens/canvas/operationNames';
 import { BANNER_PULSE_CYCLES, pulseElement } from '@/ui/pulseHighlight';
 import { cn } from '@/ui/utils';
@@ -200,7 +201,6 @@ function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): 
 }
 
 /** What a field whose secret the workflow's read held back shows in its place. */
-const WITHHELD_PLACEHOLDER = 'Saved, hidden. Type to replace it.';
 
 /** The node's config form, drawn once its schema has loaded (the form, its defaults and its checks come from it:
  *  `canvas.step.schemas`). */
@@ -1547,7 +1547,13 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 const fieldHasError = fieldErrors[key] && fieldErrors[key].length > 0;
                 // A secret the read held back: set, unread, kept unless something is typed in its place.
                 const held = !!withheld?.includes(key) && !isFieldFilled(localConfig[key]);
-                const shownProp = held ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER } : prop;
+                // A list's rows whose values it held back (a header's), for its editor to say so.
+                const heldRows = withheldRows(withheld, key);
+                const shownProp = held
+                    ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER }
+                    : heldRows.length
+                      ? { ...prop, 'x-withheld-rows': heldRows }
+                      : prop;
 
                 // A field bound to a workflow variable ({{vars.x}} as its WHOLE
                 // value) shows the RESOLVED value and its editor writes through
