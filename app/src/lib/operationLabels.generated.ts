@@ -1001,6 +1001,7 @@ consumerfinance
 contabo
 content-snare
 content-studio
+contentstack
 context-dev
 contribly
 control-d
@@ -1491,12 +1492,14 @@ kontent-ai
 koyeb
 krisp
 kubernetes
+kucoin-futures
 kudosity
 kumpeapps
 kvcore
 lagrowthmachine
 lakera-guard
 lambdatest
+lamini
 landbot
 langbase
 langflow
@@ -1505,6 +1508,7 @@ languagetool
 laposta
 lara-translate
 lassocrm
+lattice
 launchdarkly
 lead-forensics
 lead-prosper
@@ -1525,6 +1529,7 @@ lemlist
 lenz
 lessonspace
 lettr
+lev
 levitate
 libretranslate
 lightspeed
@@ -1585,6 +1590,7 @@ mattermost
 me-qr-qr-code
 mediasilo
 meetgeekai
+meetstream-ai
 meilisearch
 melo
 mem
@@ -1632,6 +1638,7 @@ mixmax
 mobile-message-ca21345
 mobile-text-alerts
 moco
+modern-treasury
 modusign
 mollie-1
 monday
@@ -1643,10 +1650,12 @@ motaword
 moxo
 msg91
 mural
+murf
 mx-technologies
 mycase
 mycashflow
 mycrm-leads
+myotp-app
 namsor
 nango
 nanonets-ocr
@@ -1654,7 +1663,9 @@ nationbuilder
 navigatr
 nebl
 neetocal
+neetodesk
 neetoform
+neetoinvoice
 neo4j
 neon
 neoncrm
@@ -1715,7 +1726,9 @@ opusclip
 oracle-field-service
 oracle-hcm
 orgo
+orq-ai
 orshot
+ory
 osv
 otasync
 outlook
@@ -1754,12 +1767,14 @@ penpot
 people-data-labs
 perfect-venue
 perigon
+permit-io
 perplexity
 persona
 personio
 phantombuster
 phone
 phone-harness
+phrase
 picsart
 pidgeon
 pims
@@ -1767,6 +1782,7 @@ pinata
 pinecone
 pingdom
 pinterest
+pipedream-connect
 pipedrive
 pipeless
 pipeline-crm
@@ -1889,6 +1905,7 @@ rippling
 ritekit
 rkvst
 roam
+roblox
 rocket-reach
 rocketadmin
 rocketlane
@@ -1922,6 +1939,7 @@ samdock
 samsara
 sanity
 sap-concur
+sap-s-4hana-cloud
 saucelabs
 savvycal
 scale-ai
@@ -1951,6 +1969,7 @@ send-pulse
 sendbird
 sendfox
 sendgrid
+sendit
 sendlane
 sendsafely
 sendspark
@@ -1969,6 +1988,7 @@ servicetrade
 setmore
 sevdesk
 seven-io
+sheetdb
 shipengine
 shipmondo
 shippo
@@ -1977,6 +1997,7 @@ shopify
 shopvox
 shortcut
 shorten-rest
+shortpen
 showmojo
 sidetracker
 sierra-interactive
@@ -1984,6 +2005,7 @@ sigma
 signable
 signal8
 signalwire
+signatureapi
 signify
 signpath
 signrequest
@@ -2021,10 +2043,12 @@ smsglobal
 smtp2go
 smtping
 snapchat
+snapdocs
 sncf
 snitcher
 snowflake
 snyk
+social-fetch
 socialkit
 socket
 softr
@@ -2035,6 +2059,8 @@ soundee
 spacebring
 specstream
 speechmatics
+spider
+spike
 spiro
 splitwise
 spotify
@@ -2045,6 +2071,7 @@ spydra
 squadcast
 squarespace-commerce
 stack-exchange
+stack-overflow-for-teams
 stackitdns
 staffbase
 starbridge
@@ -2068,6 +2095,7 @@ sumup
 supabase
 supadata
 super-dispatch
+supercast
 supermemory
 supernormal
 superset
@@ -2089,6 +2117,7 @@ table
 tableau
 taggun
 tailscale
+talend
 talenthr
 talentlms
 talkable
@@ -2124,6 +2153,7 @@ the-events-calendar
 the-odds-api
 thecompaniesapi
 thehive
+thesportsdb
 thinkific
 thoughtspot
 threads
@@ -2144,6 +2174,7 @@ timelinesai
 timelink
 timely
 timerex
+timescaledb
 tinyfish
 tinypages
 tinyurl
@@ -2174,6 +2205,7 @@ true-list
 truss
 trustlayer
 tryfundable
+turbosmtp
 turbot-pipes
 turso
 twelve-data
