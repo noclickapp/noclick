@@ -362,8 +362,9 @@ class PublicApp:
     published_at: Any
     forks: int
     license: Optional[str]
-    #: What a deploy of it asks for, read from its ``noclick.json``: ``account_key_scopes``, ``build_env``,
-    #: ``secrets``.
+    #: What a deploy of it asks for, read from its ``noclick.json``, as a deploy's dry run shows it:
+    #: ``account_key_scopes``, ``build_env``, and ``secrets`` (``generated``, what NoClick makes; ``asked``, what
+    #: its owner sets).
     deploy: Dict[str, Any]
     #: Where to report public work that's harmful.
     report: Optional[str]

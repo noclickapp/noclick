@@ -403,7 +403,10 @@ export class PublicApp {
   readonly publishedAt: Date | null;
   readonly forks: number;
   readonly license: string | null;
-  /** What a deploy of it asks for, read from its `noclick.json`: `account_key_scopes`, `build_env`, `secrets`. */
+  /**
+   * What a deploy of it asks for, read from its `noclick.json`, as a deploy's dry run shows it: `account_key_scopes`,
+   * `build_env`, and `secrets` (`generated`, what NoClick makes; `asked`, what its owner sets).
+   */
   readonly deploy: JsonObject;
   /** Where to report public work that's harmful. */
   readonly report: string | null;
