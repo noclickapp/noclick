@@ -1034,7 +1034,9 @@ export interface WorkflowEdit {
 /**
  * One version of a workflow's history: its own number (`historyVersion`, what `versionAt` and `restore` take,
  * fixed once given), the workflow's `version` its latest write left, where the change came from (`source`: `api`,
- * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `baseline`, the workflow before its history
+ * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `noclick`, NoClick's own change such as a schedule
+ * it switched off after it kept failing the same way, `link`, the person's own word through a link NoClick emailed
+ * them, `baseline`, the workflow before its history
  * began, or `checkpoint`, one saved in the app before its history was kept, numbered below 1), who began it
  * (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it (`authors`, its author
  * first), a `summary` and its `changes`, and for a restore the version of the history it put back (`restoredFrom`).
