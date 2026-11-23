@@ -2283,6 +2283,7 @@ videoupscaler
 vimeo
 viral-loops
 virtualbadgeio
+virtualsms
 virtuous-crm
 virustotal
 visma-eaccounting
