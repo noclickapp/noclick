@@ -1205,6 +1205,23 @@ class ProjectSecrets(_Service):
         await self._request("DELETE", name, params=_environment(environment))
 
     @synced
+    async def reveal(self, name: str) -> str:
+        """The password NoClick made for ``name`` (``{"generate": "password"}`` in the repository's noclick.json),
+        once: NoClick keeps a sealed copy only until it's read, for 7 days, or until the secret is set or deleted. A
+        second call raises ``noclick.NotFound``; set a new value to replace a lost one. A secret's value is never read
+        back otherwise, and no model or agent can read this one. A deploy's result names the passwords waiting.
+
+        Returns:
+            The password, as NoClick made it.
+
+        Usage::
+
+            app = noclick.Project.from_name("console")
+            print(app.secrets.reveal("APP_PASSWORD"))   # this once
+        """
+        return (await self._request("POST", name, "reveal"))["value"]
+
+    @synced
     async def versions(self, name: str, *, environment: str = "all") -> List[Version]:
         """What ``name`` held before each change or deletion of the last 30 days, newest first, in
         ``environment`` (``production``, ``preview`` or ``all``), never the values.

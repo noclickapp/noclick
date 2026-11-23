@@ -249,6 +249,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "deployments_logs_list": ["Deployment Logs", "GET", "read"],
     "deployments_promote": ["Promote Deployment", "POST", "write"],
     "deployments_requests_list": ["Deployment Requests", "GET", "read"],
+    "deploys_create": ["Deploy Repository", "POST", "write"],
     "dicts_clear": ["Clear Dict", "POST", "destructive"],
     "dicts_create": ["Create Dict", "POST", "write"],
     "dicts_delete": ["Delete Dict", "DELETE", "destructive"],
