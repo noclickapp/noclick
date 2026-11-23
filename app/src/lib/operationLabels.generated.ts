@@ -2109,6 +2109,7 @@ supabase
 supadata
 super-dispatch
 supercast
+superdocu
 supermemory
 supernormal
 superset
