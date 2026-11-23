@@ -1965,6 +1965,7 @@ semrush
 send-email
 send-pulse
 sendbird
+sendcloud
 sendfox
 sendgrid
 sendit
