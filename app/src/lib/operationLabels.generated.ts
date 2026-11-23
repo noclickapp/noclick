@@ -1958,6 +1958,7 @@ samsara
 sanity
 sap-concur
 sap-s-4hana-cloud
+sapling-ai
 saucelabs
 savvycal
 scale-ai
