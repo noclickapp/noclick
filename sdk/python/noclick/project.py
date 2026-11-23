@@ -2592,10 +2592,7 @@ class Project(_Object):
 
         Usage::
 
-            app = noclick.Project.from_name("pilot-hub")
-            preview = app.make_public(dry_run=True)
-            print(preview.summary, preview.findings)
-            print(app.make_public().clone_url)   # https://pilot-hub.noclick.site
+            print(noclick.Project.from_name("pilot-hub").make_public().clone_url)
         """
         raw = await self._request("POST", f"{await self._project_path()}/public",
                                   json=compact(dry_run=dry_run or None, transfer_cap_usd=transfer_cap_usd))
