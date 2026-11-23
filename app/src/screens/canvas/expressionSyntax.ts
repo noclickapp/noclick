@@ -15,6 +15,29 @@ export function isJsExpression(inner: string): boolean {
     return ACCESSOR_RE.test(inner);
 }
 
+// A `$('')` read names no step, so no run can resolve it (the backend's EMPTY_STEP_REF_RE).
+const EMPTY_STEP_REF_RE = /\$\(\s*(['"])\s*\1\s*\)/;
+
+/** What "Add reference" inserts (a typed `{{` is completed the same way) for the expression picker to fill. */
+export const STEP_REFERENCE_SCAFFOLD = "{{ $('') }}";
+/** Where the caret goes in the scaffold: between the quotes, where the step's id belongs. */
+export const STEP_REFERENCE_SCAFFOLD_CARET = STEP_REFERENCE_SCAFFOLD.indexOf("''") + 1;
+
+export const EMPTY_STEP_REFERENCE_MESSAGE = "holds an empty step reference $(''): pick the step it reads from, or remove it";
+
+/** Whether a `{{ }}` block's inner text reads a step with no name. */
+export function isEmptyStepReference(inner: string): boolean {
+    return EMPTY_STEP_REF_RE.test(inner);
+}
+
+/** Whether a config value (a string, or the strings in a list or object) holds a `{{ }}` block reading no step. */
+export function holdsEmptyStepReference(value: unknown): boolean {
+    if (typeof value === 'string') return scanBlocks(value).some((block) => isEmptyStepReference(block.inner));
+    if (Array.isArray(value)) return value.some(holdsEmptyStepReference);
+    if (value && typeof value === 'object') return Object.values(value).some(holdsEmptyStepReference);
+    return false;
+}
+
 // A "pure accessor" — `$('id')` or `$vars` followed only by a property / numeric-index
 // chain, with no transform (no calls, operators, etc.). It's semantically a reference,
 // just written in `$()` syntax, so it renders and validates as a reference (not a
