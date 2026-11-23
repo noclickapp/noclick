@@ -1211,6 +1211,9 @@ class ProjectSecrets(_Service):
         second call raises ``noclick.NotFound``; set a new value to replace a lost one. A secret's value is never read
         back otherwise, and no model or agent can read this one. A deploy's result names the passwords waiting.
 
+        Returns:
+            The password, as NoClick made it.
+
         Usage::
 
             app = noclick.Project.from_name("console")

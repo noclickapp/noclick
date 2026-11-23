@@ -193,6 +193,10 @@ export class RepoDeploy extends Operation<DeployResult> {
   get repoId(): string | null {
     return str(this._known("repo_id"));
   }
+  /** The production deployment, once it's started. */
+  get deploymentId(): string | null {
+    return str(this._known("deployment_id"));
+  }
 }
 
 async function sourceOf(source: string | ApiObject, ref: string | undefined): Promise<JsonObject> {
