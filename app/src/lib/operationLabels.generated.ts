@@ -1894,6 +1894,7 @@ rippling
 ritekit
 rkvst
 roam
+roblox
 rocket-reach
 rocketadmin
 rocketlane
