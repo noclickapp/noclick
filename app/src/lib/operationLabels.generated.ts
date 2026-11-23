@@ -2335,6 +2335,7 @@ whoisfreaks
 whop
 wikimedia
 wild-apricot
+wildberries
 wildjar
 winston-ai
 wisboo
