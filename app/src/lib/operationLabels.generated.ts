@@ -2146,6 +2146,7 @@ table
 tableau
 taggun
 tailscale
+taleez
 talend
 talenthr
 talentlms
