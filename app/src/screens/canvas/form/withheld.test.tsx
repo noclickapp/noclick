@@ -21,7 +21,8 @@ describe('withheld rows', () => {
             { key: 'Accept', value: 'application/json', enabled: true },
         ];
         const view = render(<KeyValueEditor fieldKey="headers" value={rows} onChange={(next) => (rows = next)} withheldRows={[0]} />);
-        const values = () => [...view.container.querySelectorAll('input, textarea')].filter((el) => !el.getAttribute('placeholder')?.includes('Header'));
+        // Each row's value box (its name box says "Name").
+        const values = () => [...view.container.querySelectorAll('input, textarea')].filter((el) => el.getAttribute('placeholder') !== 'Name');
         const placeholders = () => values().map((el) => el.getAttribute('placeholder'));
         expect(placeholders()).toEqual([WITHHELD_PLACEHOLDER, '{{node.field}} or value']);
         // Typed over: the new value is what's there.
