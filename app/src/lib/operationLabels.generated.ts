@@ -1862,6 +1862,7 @@ ragic
 raisely
 rally-corp
 ramp
+rasa
 rawg-video-games-database
 razorpay
 rbaskets
