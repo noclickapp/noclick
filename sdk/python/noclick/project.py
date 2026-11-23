@@ -305,14 +305,12 @@ class PreviewLink:
 
 @dataclass(frozen=True)
 class PublicCode:
-    """An app's code made public: anyone clones it from ``clone_url`` (the app's own address: ``git clone
-    https://booking.noclick.site``) and deploys their own copy from that address alone. What's public is a copy of
-    the production commit's files, with none of its earlier history or other branches, checked for secrets before
-    each publish. ``public`` is False once it's private again (``blocked`` when NoClick took it down)."""
+    """An app's code made public (``Project.make_public``): anyone clones it from ``clone_url``, the app's own
+    address. ``public`` is False once it's private again (``blocked`` when NoClick took it down)."""
 
     public: bool
     clone_url: Optional[str]
-    #: The same code at NoClick's API, which any git client clones too; it doesn't change when the app is renamed.
+    #: The same code at NoClick's API, unchanged when the app is renamed.
     origin_url: Optional[str]
     #: The public copy's newest commit, and the production commit it holds.
     commit_sha: Optional[str]
@@ -322,13 +320,13 @@ class PublicCode:
     #: The licence its LICENSE file names (an SPDX id, ``other``), None without one.
     license: Optional[str]
     forks: int
-    #: The most anonymous clones cost you a month, in dollars at the store's price: past it they pause.
+    #: The most clones cost you a month, in dollars: past it they pause.
     transfer_cap_usd: Optional[float]
     blocked: bool
     #: A dry run's: whether it would publish, and each file whose name or content looks like a secret.
     would_publish: Optional[bool]
     findings: List[Dict[str, str]]
-    #: What it makes public, in words a person reads; or, made private, that copies already made stay.
+    #: What it makes public, in words; made private, that copies already made stay.
     summary: Optional[str]
     raw: Dict[str, Any] = dc_field(repr=False)
 
@@ -347,9 +345,8 @@ class PublicCode:
 
 @dataclass(frozen=True)
 class PublicApp:
-    """What anyone may know of an address (``PublicApp.lookup``): whether NoClick has public work there and, when it
-    does, what a clone and a deploy of it need. Anything else (a private app, none, a malformed address) is only
-    ``public=False``."""
+    """What anyone may know of an address (``PublicApp.lookup``): whether it holds public work, and what a clone and
+    a deploy of it need."""
 
     address: str
     public: bool
@@ -362,9 +359,7 @@ class PublicApp:
     published_at: Any
     forks: int
     license: Optional[str]
-    #: What a deploy of it asks for, read from its ``noclick.json``, as a deploy's dry run shows it:
-    #: ``account_key_scopes``, ``build_env``, and ``secrets`` (``generated``, what NoClick makes; ``asked``, what
-    #: its owner sets).
+    #: What a deploy of it asks for, from its ``noclick.json``: ``account_key_scopes``, ``build_env``, ``secrets``.
     deploy: Dict[str, Any]
     #: Where to report public work that's harmful.
     report: Optional[str]
@@ -386,8 +381,8 @@ class PublicApp:
         URL, or a Deploy on NoClick link. Needs no key of the address's owner.
 
         Returns:
-            What anyone may know of it: ``public`` false and nothing else for anything but public work; for public
-            work, its clone URL, commit, licence and what a deploy of it asks for.
+            ``public=False`` and nothing else for anything but public work; else its clone URL, commit, licence and
+            what a deploy of it asks for.
 
         Usage::
 
@@ -2585,15 +2580,12 @@ class Project(_Object):
     @synced
     async def make_public(self, *, dry_run: bool = False,
                           transfer_cap_usd: Optional[float] = None) -> PublicCode:
-        """Make the app's code public: anyone can clone it from the app's own address and deploy their own copy with
-        NoClick from that address alone. What's public is a copy of the production commit's files, never its earlier
-        history or other branches; every file is checked for secrets first, and one finding refuses it all, naming
-        each (``noclick.InvalidRequest``, reason ``secrets_found``). Called again, it publishes the production commit
-        as it is now. ``dry_run`` answers what would be published, changing nothing. ``transfer_cap_usd`` bounds what
-        people's clones cost you a month ($5 unless set).
-
-        A clone can't be recalled, so through MCP (an agent, a connected app) a first publish waits for the account's
-        owner; a key needs the scope ``projects:publish``, which ``*`` holds only when it's named.
+        """Make the app's code public: anyone can clone it from the app's address and deploy their own copy from it.
+        What's public is a copy of the production commit's files, never earlier history or other branches; one file
+        that looks like a secret refuses it all, naming each (``noclick.InvalidRequest``, reason ``secrets_found``).
+        Called again, it publishes the production commit as it is now. ``dry_run`` changes nothing;
+        ``transfer_cap_usd`` bounds what clones cost you a month ($5 unless set). Through MCP a first publish waits
+        for the account's owner; a key needs ``projects:publish``, which ``*`` holds only when named.
 
         Returns:
             Its ``PublicCode``.
