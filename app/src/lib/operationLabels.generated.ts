@@ -1724,6 +1724,7 @@ opusclip
 oracle-field-service
 oracle-hcm
 orgo
+orq-ai
 orshot
 ory
 osv
