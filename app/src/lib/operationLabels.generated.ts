@@ -1717,6 +1717,7 @@ opusclip
 oracle-field-service
 oracle-hcm
 orgo
+orq-ai
 orshot
 osv
 otasync
