@@ -1932,6 +1932,7 @@ runscope
 runsignup
 safetyculture
 sakari-sms
+sales-simplify
 salesforce
 salesforge
 salesloft
