@@ -6,6 +6,8 @@
 import { createContext, lazy, Suspense, useContext, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
+import { useReportHeld } from '@/sdk/held';
+import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { AlertCircle, Check, Clock, Plus } from 'lucide-react';
 import { BUTTON_SECONDARY } from '@/ui/buttons';
 import type { ResourceItem } from './model';
@@ -138,11 +140,13 @@ function AppDomains({ project }: { project: Project }) {
     const [adding, setAdding] = useState(false);
     const served = servedNames(domains, project.id);
     const unread = platform?.errors.domains;
+    const reportHeld = useReportHeld(useContext(ConsoleContext));
     const remove = async (name: ServedName) => {
         try {
             await stopServing(project, name, 'resources:');
             toast.success(`Your site is no longer at ${name.stops.join(' and ')}`, { description: `${name.domain.name} stays yours.` });
         } catch (error) {
+            if (reportHeld(error, `Stop serving your site at ${name.stops.join(' and ')}`)) return;
             toast.error(servingRefusal(error));
         }
     };
