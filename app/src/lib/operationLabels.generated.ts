@@ -2290,6 +2290,7 @@ yelp
 yelp-leads
 ynab
 yodeck
+yodlee
 youcanbookme
 yousearch
 youtrack
