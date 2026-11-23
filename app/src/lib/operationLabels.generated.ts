@@ -2281,6 +2281,7 @@ visma-eaccounting
 visualping
 visualstudio
 vocal-video
+voice-ai
 voiceflow
 volunteerhub
 voluum
