@@ -1765,6 +1765,7 @@ penpot
 people-data-labs
 perfect-venue
 perigon
+permit-io
 perplexity
 persona
 personio
