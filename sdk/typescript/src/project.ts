@@ -1290,6 +1290,169 @@ export class ProjectSettings {
   }
 }
 
+// --- its key to the account ----------------------------------------------------
+
+/** One scope an app's key to the account holds or asks for, with what it lets the app do in plain words. */
+export interface AccountKeyScope {
+  scope: string;
+  /** What a key holding it can do, as the account's owner reads it before they agree. */
+  can: string;
+  /** Whether it reads a secret (a raw token, a sandbox's keys): said apart when the owner is asked. */
+  readsSecrets: boolean;
+}
+
+/** Where an app's key stands: see `AccountKey.status`. */
+export type AccountKeyStatus =
+  | "granted" | "waiting" | "declined" | "expired" | "revoked" | "denied" | "unsent" | "not_asked" | "none";
+
+/** The request to the account's owner an app's key waits on, or waited on last. */
+export interface AccountKeyRequest {
+  /**
+   * `waiting`, `approved` (its key is being made), `declined`, `expired` (nobody answered: the next deploy asks
+   * again), `canceled`, `revoked`, `denied` (the account's approval settings give no app a key) or `unsent` (it
+   * reached nobody).
+   */
+  status: string;
+  scopes: string[];
+  askedAt: Date | null;
+  /** The held call the owner answers and the operation to wait on; null where the account's settings decided. */
+  approvalId: string | null;
+  operationId: string | null;
+}
+
+/**
+ * An app's key to the account it's deployed in (`app.accountKey.get()`).
+ *
+ * An app whose repository asks for one, in `noclick.json` at its root
+ * (`{"account_key": {"scopes": ["agents", "channels"]}}`), reads it as `NOCLICK_API_KEY`: NoClick gives each
+ * production release a bearer of its own, which works while that release serves and the app holds its key. No key is
+ * ever shown, pasted or answered by the API. A preview gets none.
+ */
+export interface AccountKey {
+  /**
+   * `granted`; `waiting` (the owner was asked); `declined`; `expired`; `revoked`; `denied`; `unsent`; `not_asked` (its
+   * repository asks for one and nobody was asked yet: before its first production deploy); or `none` (its repository
+   * asks for none).
+   */
+  status: AccountKeyStatus;
+  granted: boolean;
+  /** The name its code reads the key from: `NOCLICK_API_KEY`. */
+  variable: string;
+  /** The scopes its repository asks for, each in plain words; empty when it asks for none. */
+  asks: AccountKeyScope[];
+  /** The commit that asks for them (its production branch's head, else the release production serves). */
+  commit: string | null;
+  /** The key it holds, one of the account's keys (`Key`); null while it holds none. */
+  keyId: string | null;
+  /** What the key it holds may do; empty while it holds none. */
+  scopes: string[];
+  spendCapUsdPerMonth: number | null;
+  grantedAt: Date | null;
+  lastUsedAt: Date | null;
+  /** Scopes its repository asks for that its key doesn't hold yet: its code acts without them meanwhile. */
+  missingScopes: string[];
+  request: AccountKeyRequest | null;
+  /** What the key can never do, whatever it holds. */
+  cannot: string[];
+  raw: JsonObject;
+}
+
+function toAccountKey(value: unknown): AccountKey {
+  const raw = asObject(value);
+  const asks = asObject(raw.asks);
+  const key = asObject(raw.key);
+  const request = raw.request === null || raw.request === undefined ? null : asObject(raw.request);
+  const status = (str(raw.status) ?? "none") as AccountKeyStatus;
+  const strings = (items: unknown): string[] => (Array.isArray(items) ? items.map(String) : []);
+  return {
+    status, granted: status === "granted", variable: str(raw.variable) ?? "NOCLICK_API_KEY",
+    asks: (Array.isArray(asks.can) ? asks.can : []).map(asObject).map((line) => ({
+      scope: str(line.scope) ?? "", can: str(line.can) ?? "", readsSecrets: line.reads_secrets === true,
+    })),
+    commit: str(asks.commit), keyId: str(key.id), scopes: strings(key.scopes),
+    spendCapUsdPerMonth: num(key.spend_cap_usd_per_month), grantedAt: parseTime(key.granted_at),
+    lastUsedAt: parseTime(key.last_used_at), missingScopes: strings(raw.missing_scopes),
+    request: request && {
+      status: str(request.status) ?? "", scopes: strings(request.scopes), askedAt: parseTime(request.asked_at),
+      approvalId: str(request.approval_id), operationId: str(request.operation_id),
+    },
+    cannot: strings(raw.cannot), raw,
+  };
+}
+
+/**
+ * `app.accountKey`: the key to the account an app's own code acts with, given by NoClick.
+ *
+ * The app's repository says which scopes its code needs, in `noclick.json` at its root:
+ * `{"account_key": {"scopes": ["agents", "channels"]}}`. Its first production deploy then asks the account's owner
+ * once, from a link NoClick sends them, saying what the key can do. Once they agree the app's code reads the key as
+ * `NOCLICK_API_KEY` (the name the SDK reads by itself), with no deploy between. Nobody creates, copies or pastes a
+ * key, and none is ever shown: each production release holds a bearer of its own that works only while that release
+ * serves, and the key is revoked when the app is deleted. Whoever can change the app's code acts with the key, so an
+ * app asks only for the scopes it uses.
+ */
+export class ProjectAccountKey {
+  private readonly project: Project;
+
+  constructor(project: Project) {
+    this.project = project;
+  }
+
+  private async path(action?: string): Promise<string> {
+    return await this.project._projectPath("account_key", ...(action === undefined ? [] : [action]));
+  }
+
+  /**
+   * Where the app's key stands: what its repository asks for in plain words, the key it holds, and the request to
+   * the owner it waits on.
+   */
+  async get(): Promise<AccountKey> {
+    return toAccountKey(await this.project._request("GET", await this.path()));
+  }
+
+  /**
+   * Give the app its key, or change what the one it holds may do, without waiting for a deploy to ask.
+   *
+   * `scopes` are exactly what the app's repository asks for now (left out, they're read from `get()`); anything else
+   * throws `Conflict` naming what it asks for. It works at once: the release production serves already holds its
+   * bearer.
+   *
+   * Who may: the account's owner, signed in; one of the account's own keys that holds `keys:create`, for scopes it
+   * holds itself; an agent or a connected app, whose call waits for the owner (`ApprovalRequired`) unless the
+   * account's `app_key` approval setting allows it. Any other key throws `PermissionDenied`: deploy the app, and
+   * NoClick asks its owner.
+   *
+   * `spendCapUsdPerMonth`: the most the key may spend in a calendar month (null: no cap of its own). Left out, a key
+   * it holds keeps its cap.
+   */
+  async give(scopes?: readonly string[], options: { spendCapUsdPerMonth?: number | null } = {}): Promise<AccountKey> {
+    const wanted = scopes ?? (await this.get()).asks.map((line) => line.scope);
+    const body: JsonObject = { scopes: [...wanted] };
+    if (options.spendCapUsdPerMonth !== undefined) body.spend_cap_usd_per_month = options.spendCapUsdPerMonth;
+    return toAccountKey(await this.project._request("PUT", await this.path(), { json: body }));
+  }
+
+  /**
+   * Take the app's key away: its code is refused from now on, and a request it waited on is called off. The owner
+   * isn't asked again for the same scopes at the app's next deploy.
+   */
+  async revoke(): Promise<AccountKey> {
+    return toAccountKey(await this.project._request("POST", await this.path("revoke")));
+  }
+
+  /**
+   * Replace the bearer the app's code holds: every one NoClick gave it before stops at once, and the release
+   * production serves is released again with a new one (the promote this answers; the app's key is refused until
+   * it settles). The key, its scopes and its cap stay. Every deploy does the same by itself.
+   */
+  async rotate(): Promise<Operation<Deployment>> {
+    const payload = await this.project._request("POST", await this.path("rotate"));
+    return Operation._fromPayload<Deployment>(payload, {
+      client: this.project._client, user: this.project._callScope(), kind: "deployment.promote", reader: readDeployment,
+    });
+  }
+}
+
 // --- AI as the app -------------------------------------------------------------
 
 /**
@@ -1719,6 +1882,10 @@ export class Project extends ApiObject {
   /** Its plain settings: `project.settings.set("PUBLIC_BASE_URL", "...")`. */
   get settings(): ProjectSettings {
     return new ProjectSettings(this);
+  }
+  /** The key to the account its own code acts with, which NoClick gives it: `app.accountKey.get()`. */
+  get accountKey(): ProjectAccountKey {
+    return new ProjectAccountKey(this);
   }
   get email(): ProjectEmail {
     return new ProjectEmail(this);

@@ -403,6 +403,10 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "policy_replace": ["Put Policy", "PUT", "sensitive"],
     "popups_list": ["Get Popups", "GET", "read"],
     "popups_update": ["Update Popups", "PATCH", "write"],
+    "projects_account_key": ["Get Account Key", "GET", "read"],
+    "projects_account_key_replace": ["Give Account Key", "PUT", "write"],
+    "projects_account_key_revoke": ["Revoke Account Key", "POST", "write"],
+    "projects_account_key_rotate": ["Rotate Account Key", "POST", "write"],
     "projects_analytics_list": ["Project Analytics", "GET", "read"],
     "projects_analytics_summary": ["Projects Analytics Summary", "GET", "read"],
     "projects_bindings_create": ["Bind", "POST", "write"],
@@ -815,6 +819,7 @@ bigquery
 bika
 bill
 billetweb
+billingo
 binsr-inspect
 birdeye
 bitbadges
@@ -1106,6 +1111,7 @@ dv360
 dynamic-mockups
 dynapictures
 dynatrace
+e-boekhoudennl
 e-conomic
 e2b
 easy-email-verification
@@ -1440,6 +1446,7 @@ jobber
 jogg-ai
 join-it
 joomla
+jooto
 jq
 json2video
 jumpcloud
@@ -1529,6 +1536,7 @@ listclean
 listennotes
 listrak
 liveagent
+localazy
 lofty
 logo-dev
 lokalise
@@ -2027,6 +2035,7 @@ splitwise
 spotify
 spotio2
 sprig
+spruce
 spydra
 squadcast
 squarespace-commerce
@@ -2115,6 +2124,7 @@ thoughtspot
 threads
 thrivecart
 ticket-tailor
+ticketsource
 tidb-cloud
 tidely
 tidio
