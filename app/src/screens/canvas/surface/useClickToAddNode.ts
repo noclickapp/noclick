@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { createStyledEdge } from '@/lib/edgeStyle';
 import { generateNodeId } from '@/lib/nodeIdGenerator';
 import { createWorkflowNode } from '../applyNodeUpdate';
+import { useNextFrame } from '@/lib/useLater';
 import { nodeSize, stepDimensions, typeSize, type StepSize } from './stepSize';
 
 /** A step asked for: its type, with what the palette's search seeded and where it goes. */
@@ -246,6 +247,7 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
     const standaloneAddCountRef = useRef(0);
     // React Flow's store, read as a pick lands (handles' places, the transform) without drawing again for it.
     const storeApi = useStoreApi();
+    const nextFrame = useNextFrame();
 
     // A step's "+".
     useEffect(() => {
@@ -462,7 +464,7 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
                 // The next pick chains off this step.
                 sourceRef.current = { nodeId: newNodeId, handleId: null, handlePosition: Position.Right, handleOffsetFromCenter: 0 };
                 setPrimed(true);
-                requestAnimationFrame(() => panToNode(newNodeId));
+                nextFrame(() => panToNode(newNodeId));
             } else {
                 sourceRef.current = null;
                 insertRef.current = null;
@@ -470,10 +472,10 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
                 // A step on its own isn't beside anything in view: it's brought into view, a frame later so the pan
                 // doesn't compete with the step being drawn. A splice lands on the connection that was under the
                 // pointer, and a connected step beside its source.
-                if (!connected && !insert) requestAnimationFrame(() => panToNode(newNodeId));
+                if (!connected && !insert) nextFrame(() => panToNode(newNodeId));
             }
         },
-        [storeApi]
+        [storeApi, nextFrame]
     );
 
     // A pick, from wherever it's made.

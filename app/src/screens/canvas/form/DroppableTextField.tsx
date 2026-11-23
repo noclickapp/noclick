@@ -14,6 +14,7 @@ import { ReferenceHighlightOverlay, useReferenceSegments } from './ReferenceHigh
 import { scanBlocks, pathToExpression, blockAtCursor, referenceAtCursor } from '@/screens/canvas/expressionSyntax';
 import { ExpressionPanel } from './ExpressionPanel';
 import { insertReferenceRegistry, type InsertReferenceRef } from './insertReferenceRegistry';
+import { useLater } from '@/lib/useLater';
 
 interface DroppableTextFieldProps {
     value: string;
@@ -104,6 +105,7 @@ export const DroppableTextField = ({
     value = value == null ? '' : String(value);
 
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    const later = useLater();
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
     const [isActive, setIsActive] = useState(false);
 
@@ -183,18 +185,18 @@ export const DroppableTextField = ({
             const cursorInQuotes = newCursorPos + 4; // just past " $('"
             onChange(scaffolded);
             setCursorPosition(cursorInQuotes);
-            setTimeout(() => {
+            later(() => {
                 if (inputRef.current) {
                     inputRef.current.focus();
                     inputRef.current.setSelectionRange(cursorInQuotes, cursorInQuotes);
                 }
-            }, 0);
+            });
             return;
         }
 
         onChange(newValue);
         setCursorPosition(newCursorPos);
-    }, [onChange, autocompleteContext, value]);
+    }, [onChange, autocompleteContext, value, later]);
 
     // Insert a reference at the current cursor position
     const insertReference = useCallback((reference: string) => {
@@ -207,13 +209,13 @@ export const DroppableTextField = ({
         setCursorPosition(newPos);
 
         // Focus and set cursor position
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [cursorPosition, value, onChange]);
+        });
+    }, [cursorPosition, value, onChange, later]);
 
     // Use a ref to hold the insertReference function wrapper
     // This allows us to update the function without removing/re-adding to the registry
