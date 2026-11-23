@@ -230,7 +230,9 @@ export type {
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";
 export type { WorkflowExample } from "./workflowExample.ts";
-export type { StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation } from "./stepType.ts";
+export type {
+  StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation, StepTypeOperationKind,
+} from "./stepType.ts";
 export { WorkflowApproval } from "./workflowApproval.ts";
 export type {
   WorkflowApprovalAnswer, WorkflowApprovalField, WorkflowApprovalListOptions, WorkflowApprovalStatus,
