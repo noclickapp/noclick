@@ -2059,6 +2059,7 @@ smartemailing
 smarthr
 smartlead
 smartproxy
+smartroutes
 smartsheet
 smily
 smokeball
