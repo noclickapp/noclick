@@ -1585,6 +1585,7 @@ mattermost
 me-qr-qr-code
 mediasilo
 meetgeekai
+meetstream-ai
 meilisearch
 melo
 mem
