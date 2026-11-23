@@ -1532,6 +1532,7 @@ listclean
 listennotes
 listrak
 liveagent
+localazy
 lofty
 logo-dev
 lokalise
