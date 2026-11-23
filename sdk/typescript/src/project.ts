@@ -1227,6 +1227,19 @@ export class ProjectSecrets {
   }
 
   /**
+   * The password NoClick made for `name` (`{"generate": "password"}` in the repository's noclick.json), once:
+   * NoClick keeps a sealed copy only until it's read, for 7 days, or until the secret is set or deleted. A second call
+   * throws `NotFound`; set a new value to replace a lost one. No model or agent can read it.
+   *
+   *     const app = Project.fromName("console");
+   *     console.log(await app.secrets.reveal("APP_PASSWORD"));   // this once
+   */
+  async reveal(name: string): Promise<string> {
+    const raw = asObject(await this.project._request("POST", `${await this.path(name)}/reveal`));
+    return String(raw.value);
+  }
+
+  /**
    * What `name` held before each change or deletion of the last 30 days, newest first, in
    * `environment` (`all` by default), never the values.
    */

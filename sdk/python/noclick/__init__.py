@@ -162,6 +162,7 @@ from .volume import Volume, VolumeEntry
 from .memory import Memory, MemoryLink
 from .skill import Skill, SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillLink, SkillVersion
 from .compute import ComputeItem, ComputeRun, compute
+from .deploy import DeployKeyAsk, DeployPlan, DeployResult, DeploySecret, RepoDeploy, deploy
 from .estimate import (
     Estimate, EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateUsageField, estimate,
 )
@@ -255,6 +256,7 @@ __all__ = [
     "ClearedStepState",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
+    "deploy", "DeployPlan", "DeployResult", "DeploySecret", "DeployKeyAsk", "RepoDeploy",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",

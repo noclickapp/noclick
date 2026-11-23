@@ -246,6 +246,8 @@ export { Skill, SkillLink } from "./skill.ts";
 export type { SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillFiles, SkillRef, SkillVersion } from "./skill.ts";
 export { compute } from "./compute.ts";
 export type { ComputeItem, ComputeRun } from "./compute.ts";
+export { DeployPlan, RepoDeploy, deploy } from "./deploy.ts";
+export type { DeployKeyAsk, DeployOptions, DeployResult, DeploySecret } from "./deploy.ts";
 export { Estimate, estimate } from "./estimate.ts";
 export type {
   EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateRequestItem, EstimateUsageField,
