@@ -627,6 +627,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_runs_get": ["Get Run", "GET", "read"],
     "workflows_runs_list": ["List Runs", "GET", "read"],
     "workflows_runs_stop": ["Stop Run", "POST", "outbound"],
+    "workflows_setup": ["Get Workflow Setup", "GET", "read"],
+    "workflows_setup_request": ["Request Workflow Setup", "POST", "outbound"],
     "workflows_steps_clear_state": ["Clear Step State", "POST", "write"],
     "workflows_steps_expression": ["Preview Expression", "POST", "read"],
     "workflows_steps_options_create": ["List Step Options", "POST", "read"],
