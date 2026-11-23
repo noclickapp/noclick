@@ -12,7 +12,6 @@ import { toast } from 'sonner';
 import { proxy, useSnapshot } from 'valtio';
 import { useProvidedClient } from '@/sdk/client';
 import { standing } from '@/slots';
-import { isGraphReadOnly } from '../graph/liveGraphStore';
 import type { LeadPatch } from './native';
 import type { MockRun, TriggerFixture } from './scenarios';
 import { TEST_RUN } from '../slots';
@@ -175,7 +174,8 @@ export function forgetAuthoring(): void {
     for (const scope of Object.keys(store.byScope)) delete store.byScope[scope];
 }
 
-export function useRehearsalAuthoring(scope: string) {
+/** `readOnly`: the person may only view the workflow, so its test runs stay as they are. */
+export function useRehearsalAuthoring(scope: string, { readOnly = false }: { readOnly?: boolean } = {}) {
     const isLive = scope !== 'bench';
     const provided = useProvidedClient();
     useEffect(() => {
@@ -189,15 +189,14 @@ export function useRehearsalAuthoring(scope: string) {
 
     const mutate = useCallback(
         (fn: (draft: AuthoringSlot) => void) => {
-            // A workflow its viewer may only view keeps its test runs as they are.
-            if (isLive && isGraphReadOnly(scope)) {
+            if (isLive && readOnly) {
                 toast.info('You can look at this workflow. Changing it takes edit access.', { id: 'view-only' });
                 return;
             }
             fn(slotFor(scope));
             if (isLive) schedulePush(scope);
         },
-        [scope, isLive]
+        [scope, isLive, readOnly]
     );
 
     return {
