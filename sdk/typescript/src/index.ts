@@ -142,7 +142,7 @@ export type {
   DeploymentDatabase, DeploymentEnvironment, DeploymentFix, DeploymentRuntime, DeploymentStatus, LogLine, LogLines,
   PathCheck, PathTraffic,
   PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
-  PublicAppView, PublicCode,
+  PublicCode,
   ProjectLogsOptions,
   ProjectContainer, ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";

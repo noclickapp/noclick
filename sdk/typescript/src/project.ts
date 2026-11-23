@@ -391,41 +391,52 @@ function toPublicCode(value: unknown): PublicCode {
  * what a clone and a deploy of it need. Anything else (a private app, none, a malformed address) is only
  * `public: false`.
  */
-export interface PublicAppView {
-  address: string;
-  public: boolean;
-  name: string | null;
-  title: string | null;
-  cloneUrl: string | null;
-  originUrl: string | null;
-  defaultBranch: string | null;
-  commitSha: string | null;
-  publishedAt: Date | null;
-  forks: number;
-  license: string | null;
+export class PublicApp {
+  readonly address: string;
+  readonly public: boolean;
+  readonly name: string | null;
+  readonly title: string | null;
+  readonly cloneUrl: string | null;
+  readonly originUrl: string | null;
+  readonly defaultBranch: string | null;
+  readonly commitSha: string | null;
+  readonly publishedAt: Date | null;
+  readonly forks: number;
+  readonly license: string | null;
   /** What a deploy of it asks for, read from its `noclick.json`: `account_key_scopes`, `build_env`, `secrets`. */
-  deploy: JsonObject;
+  readonly deploy: JsonObject;
   /** Where to report public work that's harmful. */
-  report: string | null;
-  raw: JsonObject;
-}
+  readonly report: string | null;
+  readonly raw: JsonObject;
 
-export const PublicApp = {
+  /** @internal */
+  constructor(raw: JsonObject) {
+    const commit = asObject(raw.commit);
+    this.address = str(raw.address) ?? "";
+    this.public = raw.public === true;
+    this.name = str(raw.name);
+    this.title = str(raw.title);
+    this.cloneUrl = str(raw.clone_url);
+    this.originUrl = str(raw.origin_url);
+    this.defaultBranch = str(raw.default_branch);
+    this.commitSha = str(commit.sha);
+    this.publishedAt = parseTime(commit.published_at);
+    this.forks = num(raw.forks) ?? 0;
+    this.license = str(raw.license);
+    this.deploy = asObject(raw.deploy);
+    this.report = str(raw.report);
+    this.raw = raw;
+  }
+
   /**
    * What's public at `address`: an app's address (`pilot-hub.noclick.site`, a custom domain), its clone URL, or a
    * Deploy on NoClick link. Needs no key of the address's owner.
    */
-  async lookup(address: string, options: { client?: NoClick } = {}): Promise<PublicAppView> {
-    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/public/apps", { query: { address } }));
-    const commit = asObject(raw.commit);
-    return {
-      address: str(raw.address) ?? "", public: raw.public === true, name: str(raw.name), title: str(raw.title),
-      cloneUrl: str(raw.clone_url), originUrl: str(raw.origin_url), defaultBranch: str(raw.default_branch),
-      commitSha: str(commit.sha), publishedAt: parseTime(commit.published_at), forks: num(raw.forks) ?? 0,
-      license: str(raw.license), deploy: asObject(raw.deploy), report: str(raw.report), raw,
-    };
-  },
-};
+  static async lookup(address: string, options: { client?: NoClick } = {}): Promise<PublicApp> {
+    const raw = await resolveClient(options.client).request("GET", "/v1/public/apps", { query: { address } });
+    return new PublicApp(asObject(raw));
+  }
+}
 
 /**
  * How each instance of an app runs in a container, by name, as `Project.create` and `update` take it: each one left
