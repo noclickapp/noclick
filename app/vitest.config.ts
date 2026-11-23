@@ -9,7 +9,7 @@ export default defineConfig({
     test: {
         environment: 'node',
         // A run that writes the open app's node_modules fails (test/ownCaches.ts).
-        globalSetup: ['./test/ownCaches.ts'],
+        globalSetup: ['./test/ownCaches.ts', './test/pendingTimersReport.ts'],
         fsModuleCachePath: `${cacheDir}/vitest-modules`,
         include: ['src/**/*.test.{ts,tsx}', 'test/**/*.test.ts'],
         // A timer a DOM test leaves behind fails the run by name (test/pendingTimers.ts).

@@ -12,6 +12,7 @@ export default defineConfig({
         root: import.meta.dirname,
         include: ['*.fixture.ts'],
         environment: './slowTeardown.ts',
+        globalSetup: ['../../pendingTimersReport.ts'],
         setupFiles: ['../../pendingTimers.ts'],
         fsModuleCachePath: join(cacheDir, 'vitest-modules'),
     },
