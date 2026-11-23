@@ -2100,6 +2100,7 @@ table
 tableau
 taggun
 tailscale
+talend
 talenthr
 talentlms
 talkable
