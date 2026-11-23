@@ -162,7 +162,7 @@ describe('a step with no drawing of its own', () => {
             </ClientProvider>
         );
         expect((await screen.findByText('daily')).tagName).toBe('STRONG');
-    });
+    }, 30_000); // that load, about 2s alone, ran past vitest's 5s beside a full run of everything else
 });
 
 describe('a build working on a step', () => {
