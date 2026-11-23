@@ -2267,6 +2267,7 @@ vectara
 vendasta
 vendschat
 vercel-ai-gateway
+verifone
 vervoe
 veryfi
 vibe
