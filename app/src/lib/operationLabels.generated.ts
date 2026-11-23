@@ -2192,6 +2192,7 @@ timescaledb
 tinyfish
 tinypages
 tinyurl
+tisane-labs
 tmetric
 todoist
 tomba
