@@ -161,18 +161,19 @@ async def step_type(name: str, *, kind: Optional[str] = None, query: Optional[st
     Returns:
         The type, with its ``schema`` (``None`` for a type that takes no settings).
 
-    Usage::
+    Usage:
+        Read a type's operations and settings::
 
-        gmail = noclick.step_type("automation-gmail")
-        send = next(op for op in gmail.operations if op.name == "send_email_message")
-        print(send.description, gmail.connection.credential_types)
-        print(list(gmail.schema["$defs"]))
+            gmail = noclick.step_type("automation-gmail")
+            send = next(op for op in gmail.operations if op.name == "send_email_message")
+            print(send.description, gmail.connection.credential_types)
+            print(list(gmail.schema["$defs"]))
 
-    Or what starts a workflow in a large one, then one operation's settings::
+        Or what starts a workflow in a large one, then one operation's settings::
 
-        stripe = noclick.step_type("automation-stripe", kind="trigger", query="payment failed")
-        failed = noclick.step_type("automation-stripe", operation=stripe.operations[0].name)
-        print(failed.operations_total, list(failed.schema["$defs"]))
+            stripe = noclick.step_type("automation-stripe", kind="trigger", query="payment failed")
+            failed = noclick.step_type("automation-stripe", operation=stripe.operations[0].name)
+            print(failed.operations_total, list(failed.schema["$defs"]))
     """
     names = [operation] if isinstance(operation, str) else operation
     raw = await resolve_client(client).request("GET", f"/v1/step_types/{path_segment(name)}", user=None,
