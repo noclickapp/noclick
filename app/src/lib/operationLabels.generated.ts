@@ -1848,6 +1848,7 @@ qonto
 qonversion
 qovery
 qstash
+quadratic
 quentn
 quickbase
 quickbooks
