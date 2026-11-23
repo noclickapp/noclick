@@ -657,14 +657,30 @@ function fireEditsSave(rec: GraphRecord, closing: boolean): void {
         }
         if (e instanceof PermissionDenied) {
             // The person may no longer change the workflow (its owner made them a viewer): the canvas is read-only
-            // from here, and what this save carried stays unsaved.
+            // from here, and shows the workflow as stored rather than what this save carried.
             rec.readOnly = true;
             rec.dirty = false;
+            void takeStored(rec);
             return;
         }
         console.warn(`[liveGraphStore] save rejected for ${rec.workflowId}:`, e);
         saveFailed(rec, e instanceof Error ? e.message : String(e));
     });
+}
+
+/** The workflow as stored, taken whole: nothing the canvas holds is the person's own any more (they may only view it
+ *  now), so the merge takes the server's copy of everything and keeps none of what wasn't saved. */
+async function takeStored(rec: GraphRecord): Promise<void> {
+    try {
+        const read = await standing(GRAPH_SAVES).read(rec.workflowId, editsClient);
+        if (!read.graph) return;
+        rec.base = baseOf(rec.nodes, rec.edges, rec.base?.interface);
+        rec.deletedNodeIds.clear();
+        rebaseFromServer(rec, read.graph, read.version);
+        rec.dirty = false;
+    } catch (e) {
+        console.error(`[liveGraphStore] reading ${rec.workflowId} as stored failed:`, e);
+    }
 }
 
 /** The server's graph read again, for a save that has no base to diff against (one whose load never set it). */
