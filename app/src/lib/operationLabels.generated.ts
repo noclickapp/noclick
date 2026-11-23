@@ -1895,6 +1895,7 @@ reviewflowz
 revolut-for-business
 rezdy
 rillet
+ringba
 ringcentral
 ringover
 rippling
