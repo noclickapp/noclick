@@ -1907,6 +1907,7 @@ ritekit
 rkvst
 roam
 roblox
+robocorp
 rocket-reach
 rocketadmin
 rocketlane
