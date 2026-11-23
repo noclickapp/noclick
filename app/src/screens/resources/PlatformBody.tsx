@@ -1,7 +1,7 @@
 // What a platform item's page shows under its facts, read from the platform
 // API: a domain's website and DNS records, an email address's mail, a repo's
 // files at a branch, a database's tables and rows, a bucket's files, an app's
-// domains, requests, monthly budget, Durable Objects, deployments and log. Built from the Resources page's own pieces, so these pages look
+// domains, requests, monthly budget, public code, Durable Objects, deployments and log. Built from the Resources page's own pieces, so these pages look
 // like every other resource's.
 import { createContext, lazy, Suspense, useContext, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
@@ -26,6 +26,7 @@ import { AppDeployments, AppLog } from './AppActivity';
 import { AppAnalytics } from './AppAnalytics';
 import { AppBudget } from './AppBudget';
 import { AppDurableObjects } from './AppDurableObjects';
+import { AppPublicCode } from './AppPublicCode';
 import { BucketBody } from './BucketBody';
 import { DatabaseBody } from './DatabaseBody';
 import { MailBody } from './MailBody';
@@ -198,6 +199,7 @@ function AppBody({ project, now }: { project: Project; now: string }) {
             <AppDomains project={project} />
             <AppAnalytics project={project} />
             <AppBudget project={project} />
+            <AppPublicCode project={project} />
             <AppDurableObjects project={project} preview={previewDeletion} />
             <AppDeployments project={project} now={now} />
             <AppLog project={project} />
@@ -211,10 +213,15 @@ const RepoBrowser = lazy(() => import('./RepoBrowser').then((m) => ({ default: m
 
 function RepoBody({ repo, now }: { repo: Repo; now: string }) {
     const reader = useMemo(() => repoReader(repo), [repo]);
+    // Its code is public as an app that deploys it (`AppPublicCode`): the app whose address it's cloned from.
+    const app = useContext(PlatformObjects).projects.find((p) => p.repoId === repo.id && !p.published);
     return (
-        <Suspense fallback={<Skeleton className="h-64 w-full rounded-2xl" />}>
-            <RepoBrowser reader={reader} name={repo.name} summary={repoSummary(repo)} now={now} />
-        </Suspense>
+        <>
+            <Suspense fallback={<Skeleton className="h-64 w-full rounded-2xl" />}>
+                <RepoBrowser reader={reader} name={repo.name} summary={repoSummary(repo)} now={now} />
+            </Suspense>
+            {app && <AppPublicCode project={app} />}
+        </>
     );
 }
 

@@ -450,6 +450,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "projects_payments_list": ["Payments Status", "GET", "read"],
     "projects_previews_link": ["Preview Link", "POST", "write"],
     "projects_previews_links_revoke": ["Revoke Preview Links", "POST", "write"],
+    "projects_public": ["Make Public", "POST", "write"],
+    "projects_public_delete": ["Make Private", "DELETE", "write"],
     "projects_schedules_create": ["Put Schedule", "POST", "write"],
     "projects_schedules_list": ["List Schedules", "GET", "read"],
     "projects_secrets_delete": ["Delete Secret", "DELETE", "destructive"],
@@ -625,6 +627,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_runs_get": ["Get Run", "GET", "read"],
     "workflows_runs_list": ["List Runs", "GET", "read"],
     "workflows_runs_stop": ["Stop Run", "POST", "outbound"],
+    "workflows_setup": ["Get Workflow Setup", "GET", "read"],
+    "workflows_setup_request": ["Request Workflow Setup", "POST", "outbound"],
     "workflows_steps_clear_state": ["Clear Step State", "POST", "write"],
     "workflows_steps_expression": ["Preview Expression", "POST", "read"],
     "workflows_steps_options_create": ["List Step Options", "POST", "read"],
@@ -1727,6 +1731,7 @@ openpolicy
 openstates
 openstatus
 openwa
+operating
 opn-form
 opsgenie
 opusclip
@@ -1766,6 +1771,7 @@ paystack
 pdfco
 pdfless
 pdq-connect
+peach
 peaka
 peekalink
 peerdom
@@ -1820,6 +1826,7 @@ posthog
 postiz
 postman
 postmark
+postnitro
 postwire
 powerdns
 practice-better
@@ -1832,6 +1839,7 @@ prisma
 process-street
 procore
 productboard
+productify-ai
 productlane
 productplan
 project-broadcast
@@ -1870,6 +1878,7 @@ rasa
 rawg-video-games-database
 razorpay
 rbaskets
+reapit-foundations
 rebrandly
 recallai
 reclaim-ai
@@ -1893,6 +1902,7 @@ reloadify
 remote
 remove-bg
 render
+rendi
 rentcast
 rentec-direct
 rentman
@@ -1942,6 +1952,7 @@ runsignup
 safetyculture
 sailpoint
 sakari-sms
+sales-simplify
 salesforce
 salesforge
 salesloft
@@ -1956,6 +1967,7 @@ samsara
 sanity
 sap-concur
 sap-s-4hana-cloud
+sapling-ai
 saucelabs
 savvycal
 scale-ai
@@ -2019,6 +2031,7 @@ showpad
 sidetracker
 sierra-interactive
 sigma
+sign-plus
 signable
 signal8
 signalwire
@@ -2049,6 +2062,7 @@ smartemailing
 smarthr
 smartlead
 smartproxy
+smartroutes
 smartsheet
 smily
 smokeball
@@ -2115,6 +2129,7 @@ supabase
 supadata
 super-dispatch
 supercast
+superdocu
 supermemory
 supernormal
 superset
@@ -2124,12 +2139,14 @@ sure-send
 surecart
 surevoip
 surf
+surveymethods
 svix
 swaggerhub
 swarmsyncai
 swidoc
 sympla
 synap
+syncmate-by-assitro
 syncro
 synthflow-ai
 systemeio
@@ -2137,6 +2154,7 @@ table
 tableau
 taggun
 tailscale
+taleez
 talend
 talenthr
 talentlms
@@ -2199,6 +2217,7 @@ timescaledb
 tinyfish
 tinypages
 tinyurl
+tisane-labs
 tmetric
 todoist
 tomba
@@ -2215,6 +2234,7 @@ trackdesk
 trackingmore
 trackvia
 trakt
+translate-com
 transloadit
 trekksoft
 trello
@@ -2239,6 +2259,7 @@ typecast
 typeform
 typefully
 uberduck
+uchat
 ulama
 unifi
 unione
@@ -2263,12 +2284,14 @@ vagaro
 valuecase
 vast-ai
 vaultre
+vc-deal-flow-signal
 vcita
 vdocipher
 vectara
 vendasta
 vendschat
 vercel-ai-gateway
+verifone
 vervoe
 veryfi
 vibe
@@ -2278,6 +2301,7 @@ videoupscaler
 vimeo
 viral-loops
 virtualbadgeio
+virtualsms
 virtuous-crm
 virustotal
 visma-eaccounting
@@ -2322,6 +2346,7 @@ whoisfreaks
 whop
 wikimedia
 wild-apricot
+wildberries
 wildjar
 winston-ai
 wisboo
@@ -2331,6 +2356,7 @@ wiza
 wodify-core
 wolfram-alpha-api
 woop-social
+woovi
 word
 wordnik
 wordpress

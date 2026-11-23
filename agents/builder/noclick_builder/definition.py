@@ -13,7 +13,7 @@ objects), asks the account's owner through the ``human`` tool, and reads the web
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 #: The agent's name: one per account, made the first time it's needed and kept.
 NAME = "builder"
@@ -84,11 +84,13 @@ def request(workflow_id: str, instructions: str, *, name: Optional[str] = None, 
 # A reply is the builder's own words. What the workflow is, is read from the workflow: when that says the build
 # isn't done, the builder hears exactly what, in the same conversation, before anyone is told it's finished.
 
-#: Why a build goes back: settings a run would refuse (the readiness issue ``invalid_config``), or nothing built.
+#: Why a build goes back: settings a run would refuse (the readiness issue ``invalid_config``) or reads of a step's
+#: output that get no value, or nothing built.
 REJECTED, NOTHING = "rejected", "nothing"
 #: The readiness issue a run refuses outright: a step's settings the run engine rejects.
 REJECTED_ISSUE = "invalid_config"
-#: How many times a build goes back for settings a run would refuse. Nothing built sends it back once.
+#: How many times a build goes back for settings a run would refuse and reads that get no value, together. Nothing
+#: built sends it back once.
 SEND_BACKS = 2
 
 NOTHING_BUILT = (
@@ -101,30 +103,40 @@ NOTHING_CHANGED = (
     "or the workflow already does it), say which, and never say something was changed, tested or sent.")
 
 
-def send_back(*, built: Optional[bool], empty: bool, rejected: List[Dict[str, Any]],
-              sent: List[str]) -> Optional[str]:
+def send_back(*, built: Optional[bool], empty: bool, rejected: List[Dict[str, Any]], sent: List[str],
+              unresolved: Sequence[Dict[str, Any]] = ()) -> Optional[str]:
     """Whether a build whose builder just replied goes back to it, and why (``REJECTED`` or ``NOTHING``), from the
     workflow's facts: ``built`` (whether its definition moved since the build began; None when that couldn't be
-    read), ``empty`` (it has no steps), ``rejected`` (its readiness issues a run refuses) and ``sent`` (what this
-    build already went back for). None: the build is done, and its facts say how it stands."""
-    if rejected and sent.count(REJECTED) < SEND_BACKS:
+    read), ``empty`` (it has no steps), ``rejected`` (its readiness issues a run refuses), ``unresolved`` (reads of
+    a step's output that get no value: a key the step's known output lacks, which a run reads as nothing and still
+    succeeds, or a step the workflow doesn't have; only where a step's output is known, never a guess) and ``sent``
+    (what this build already went back for). None: the build is done, and its facts say how it stands."""
+    if (rejected or unresolved) and sent.count(REJECTED) < SEND_BACKS:
         return REJECTED
     if built is False and NOTHING not in sent:
         return NOTHING
     return None
 
 
-def sent_back(issues: List[Dict[str, Any]], *, skipped: bool = False) -> str:
-    """The message a finished build is sent back with when its workflow holds settings a run would refuse: each
-    issue is ``{step, message}``, as the workflow's readiness names them. A value only the person knows is never
-    the builder's to make up: it leaves that setting for them (an edit's ``left_for_user``), which is no longer an
-    issue here. ``skipped``: the person skipped a question of this build, so it asks for nothing more."""
-    listed = "\n".join(f"- {i.get('step')}: {i.get('message')}" for i in issues)
+def sent_back(issues: List[Dict[str, Any]], *, skipped: bool = False,
+              unresolved: Sequence[Dict[str, Any]] = ()) -> str:
+    """The message a finished build is sent back with when its workflow holds settings a run would refuse (each
+    issue is ``{step, message}``, as the workflow's readiness names them) or reads that get no value (each with its
+    ``message``, saying which setting reads what from which step, and what that step's output has). A value only
+    the person knows is never the builder's to make up: it leaves that setting for them (an edit's
+    ``left_for_user``), which is no longer an issue here. ``skipped``: the person skipped a question of this build,
+    so it asks for nothing more."""
+    said = []
+    if issues:
+        said.append("The workflow isn't ready to run: these steps' settings will fail exactly as listed (a run checks "
+                    "them the same way).\n" + "\n".join(f"- {i.get('step')}: {i.get('message')}" for i in issues))
+    if unresolved:
+        said.append("These reads of another step's output get no value, exactly as listed: a key the step's output "
+                    "doesn't have reads nothing, and the run still succeeds, so a test run never shows it. Read what "
+                    "the step outputs and read a key it has.\n" + "\n".join(f"- {r.get('message')}" for r in unresolved))
     asking = ("They skipped a question in this build, so don't ask for anything now." if skipped else
               "Don't ask for it now unless nothing else can be built without it.")
-    return ("The workflow isn't ready to run: these steps' settings will fail exactly as listed (a run checks them "
-            "the same way).\n"
-            f"{listed}\n"
+    return ("\n".join(said) + "\n"
             "Fix each one whose value follows from the request, then reply again with what you changed. A setting "
             "whose value only the person knows isn't yours to fix or make up: leave it for them with update_step "
             f"and left_for_user, and name it in your reply. {asking} If one genuinely can't be fixed, say which "
