@@ -1650,7 +1650,7 @@ motaword
 moxo
 msg91
 mural
-mux
+murf
 mx-technologies
 mycase
 mycashflow
@@ -1725,6 +1725,7 @@ opusclip
 oracle-field-service
 oracle-hcm
 orgo
+orq-ai
 orshot
 ory
 osv
@@ -1765,6 +1766,7 @@ penpot
 people-data-labs
 perfect-venue
 perigon
+permit-io
 perplexity
 persona
 personio
@@ -1935,6 +1937,7 @@ samdock
 samsara
 sanity
 sap-concur
+sap-s-4hana-cloud
 saucelabs
 savvycal
 scale-ai
@@ -2043,6 +2046,7 @@ sncf
 snitcher
 snowflake
 snyk
+social-fetch
 socialkit
 socket
 softr
@@ -2054,6 +2058,7 @@ spacebring
 specstream
 speechmatics
 spider
+spike
 spiro
 splitwise
 spotify
@@ -2064,6 +2069,7 @@ spydra
 squadcast
 squarespace-commerce
 stack-exchange
+stack-overflow-for-teams
 stackitdns
 staffbase
 starbridge
@@ -2087,6 +2093,7 @@ sumup
 supabase
 supadata
 super-dispatch
+supercast
 supermemory
 supernormal
 superset
@@ -2108,6 +2115,7 @@ table
 tableau
 taggun
 tailscale
+talend
 talenthr
 talentlms
 talkable
@@ -2143,6 +2151,7 @@ the-events-calendar
 the-odds-api
 thecompaniesapi
 thehive
+thesportsdb
 thinkific
 thoughtspot
 threads
@@ -2163,6 +2172,7 @@ timelinesai
 timelink
 timely
 timerex
+timescaledb
 tinyfish
 tinypages
 tinyurl
@@ -2193,6 +2203,7 @@ true-list
 truss
 trustlayer
 tryfundable
+turbosmtp
 turbot-pipes
 turso
 twelve-data
