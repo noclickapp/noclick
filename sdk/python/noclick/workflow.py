@@ -450,7 +450,13 @@ class WorkflowDraftResult:
     ``validation_error``, ``missing_required``, ``left_for_user``, ``references``) beside ``drafted``, its
     ``operation``, the ``settings`` it wrote, the ones it left for a person (``unfilled``: a choice read from the
     connected account, a value only they know; a required one reads as ``left_for_user`` until it's filled in) and,
-    for a step it couldn't draft (left as it was), its ``error``."""
+    for a step it couldn't draft (left as it was), its ``error``.
+
+    A draft asked not to write (``draft(..., write=False)``): ``written`` is false, ``version`` the one it was
+    judged on, ``changed`` whether writing it would change the workflow, and ``edits`` the ``update_step`` edits a
+    write would make, which ``edit()`` takes as they are, each step's own in its ``changes`` (``{operation?,
+    settings?}``, None for nothing); a secret the drafter set is left out of them and named in its step's
+    ``withheld``."""
 
     workflow_id: str
     mode: str
@@ -459,6 +465,8 @@ class WorkflowDraftResult:
     changed: bool
     summary: Optional[str]
     steps: Dict[str, Dict[str, Any]]
+    written: bool = True
+    edits: List[Dict[str, Any]] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -466,7 +474,8 @@ class WorkflowDraftResult:
         raw = raw if isinstance(raw, dict) else {}
         return cls(raw.get("workflow_id") or "", raw.get("mode") or "full", raw.get("version"),
                    raw.get("history_version"), bool(raw.get("changed")), raw.get("summary"),
-                   {str(k): dict(v) for k, v in (raw.get("steps") or {}).items()}, raw)
+                   {str(k): dict(v) for k, v in (raw.get("steps") or {}).items()},
+                   raw.get("written") is not False, [dict(e) for e in raw.get("edits") or []], raw)
 
 
 def _read_run(result: Any, op: Operation) -> WorkflowRun:
@@ -2828,7 +2837,7 @@ class Workflow(_Object):
     @synced
     async def draft(
         self, steps: Sequence[Any], *, mode: str = "full", field: Optional[str] = None,
-        instructions: Optional[str] = None,
+        instructions: Optional[str] = None, write: bool = True,
     ) -> Operation:
         """Have NoClick's drafter (the builder's own) pick ``steps``' operations and fill their settings, the steps
         together. Each step is a ``Step``, its id, or ``{"id": ..., "goal": ...}``: its goal says what it's for (the
@@ -2838,7 +2847,9 @@ class Workflow(_Object):
         setting ``field`` names). ``instructions`` say what the workflow does. A step the workflow doesn't have, a
         note, a step that provides an agent its tools or a setting it doesn't have raises
         ``noclick.InvalidRequest`` before anything runs. What's drafted lands as one version of the workflow,
-        written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost.
+        written as an edit with your key is; the drafter never connects an account. ``write=False`` drafts the same
+        and writes nothing: the result's ``edits`` are the edits a write would make, for you to apply as your own
+        change (``edit()`` takes them as they are). It costs its AI usage, at cost, written or not.
 
         Returns:
             An operation (kind ``workflow.draft``) that reports each step as it lands (``progress``); ``wait()``
@@ -2862,7 +2873,8 @@ class Workflow(_Object):
             return {"id": _step_id(step)}
 
         payload = await self._request("POST", f"{await self._path()}/drafts", json=compact(
-            steps=[entry(s) for s in steps], mode=mode, field=field, instructions=instructions))
+            steps=[entry(s) for s in steps], mode=mode, field=field, instructions=instructions,
+            write=None if write else False))
         return Operation._from_payload(payload, client=self._client, user=None, kind="workflow.draft",
                                        reader=_read_draft)
 

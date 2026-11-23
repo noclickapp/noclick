@@ -707,6 +707,11 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
  * `left_for_user`, `references`) beside `drafted`, its `operation`, the `settings` it wrote, the ones it left for a
  * person (`unfilled`: a choice read from the connected account, a value only they know; a required one reads as
  * `left_for_user` until it's filled in) and, for a step it couldn't draft (left as it was), its `error`.
+ *
+ * A draft asked not to write (`{ write: false }`): `written` is false, `version` the one it was judged on, `changed`
+ * whether writing it would change the workflow, and `edits` the `update_step` edits a write would make, which `edit()`
+ * takes as they are, each step's own in its `changes` (`{ operation?, settings? }`, `null` for nothing); a secret the
+ * drafter set is left out of them and named in its step's `withheld`.
  */
 export interface WorkflowDraftResult {
   workflowId: string;
@@ -716,6 +721,8 @@ export interface WorkflowDraftResult {
   changed: boolean;
   summary: string | null;
   steps: Record<string, JsonObject>;
+  written: boolean;
+  edits: JsonObject[];
   raw: JsonObject;
 }
 
@@ -733,6 +740,11 @@ export interface DraftOptions {
   field?: string;
   /** What the workflow does, in words, for the drafter to read beside each step's goal. */
   instructions?: string;
+  /**
+   * `false`: draft the steps and write nothing. The result's `edits` are the edits a write would make, for you to apply
+   * as your own change. Charged as any draft.
+   */
+  write?: boolean;
 }
 
 function toDraftResult(value: unknown): WorkflowDraftResult {
@@ -746,6 +758,8 @@ function toDraftResult(value: unknown): WorkflowDraftResult {
     changed: raw.changed === true,
     summary: str(raw.summary),
     steps: Object.fromEntries(Object.entries(steps).map(([id, step]) => [id, asObject(step)])),
+    written: raw.written !== false,
+    edits: Array.isArray(raw.edits) ? raw.edits.map(asObject) : [],
     raw,
   };
 }
@@ -2573,8 +2587,10 @@ export class Workflow extends ApiObject {
    * settings of the operation a step has, `field` fills the one setting `field` names; `instructions` say what the
    * workflow does. A step the workflow doesn't have, a note, a step that provides an agent its tools or a setting it
    * doesn't have throws `InvalidRequest` before anything runs. What's drafted lands as one version of the workflow,
-   * written as an edit with your key is; the drafter never connects an account. It costs its AI usage, at cost. The
-   * operation (kind `workflow.draft`) reports each step as it lands (`progress`); `wait()` resolves to the
+   * written as an edit with your key is; the drafter never connects an account. `{ write: false }` drafts the same and
+   * writes nothing: the result's `edits` are the edits a write would make, for you to apply as your own change
+   * (`edit()` takes them as they are). It costs its AI usage, at cost, written or not. The operation (kind
+   * `workflow.draft`) reports each step as it lands (`progress`); `wait()` resolves to the
    * `WorkflowDraftResult`, each step's verdict among it, or throws when no step could be drafted.
    */
   async draft(steps: readonly DraftStep[], options: DraftOptions = {}): Promise<Operation<WorkflowDraftResult>> {
@@ -2583,7 +2599,10 @@ export class Workflow extends ApiObject {
         ? compact({ id: stepId(step.id), goal: step.goal })
         : { id: stepId(step) });
     const payload = await this._request("POST", `${await this.path()}/drafts`, {
-      json: compact({ steps: entries, mode: options.mode ?? "full", field: options.field, instructions: options.instructions }),
+      json: compact({
+        steps: entries, mode: options.mode ?? "full", field: options.field, instructions: options.instructions,
+        write: options.write === false ? false : undefined,
+      }),
     });
     return Operation._fromPayload<WorkflowDraftResult>(payload, { client: this._client, kind: "workflow.draft", reader: toDraftResult });
   }

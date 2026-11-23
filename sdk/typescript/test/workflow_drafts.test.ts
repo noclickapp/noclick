@@ -45,3 +45,26 @@ test("a draft's result is each step's verdict", async () => {
   assert.equal(result.steps.post.error, "No operation fits");
   assert.deepEqual((result.steps.post.references as nc.JsonObject[])[0].known_keys, ["messages"]);
 });
+
+test("a draft that writes nothing asks so and reads the edits it answers", async () => {
+  const { api } = setup();
+  const preview = {
+    object: "workflow_draft", workflow_id: "wf_1", mode: "full", written: false, version: 7, history_version: null,
+    changed: true, summary: "Changed 1 step",
+    steps: { post: { drafted: true, error: null, operation: "send_message", settings: ["text"], unfilled: [],
+      withheld: [], config_valid: true, references: [] } },
+    edits: [{ op: "update_step", id: "post", operation: "send_message", settings: { text: "Hi" } }],
+  };
+  const drafts = api.on("POST", "/v1/workflows/wf_1/drafts", json(operation("succeeded", preview), { status: 202 }));
+  const result = await (await nc.Workflow.fromId("wf_1").draft(["post"], { write: false })).wait();
+  assert.deepEqual(drafts.last.body, { steps: [{ id: "post" }], mode: "full", write: false });
+  assert.deepEqual([result.written, result.version, result.historyVersion], [false, 7, null]);
+  assert.deepEqual(result.edits, preview.edits);
+});
+
+test("a written draft reads as written", async () => {
+  const { api } = setup();
+  api.on("POST", "/v1/workflows/wf_1/drafts", json(operation("succeeded", DRAFTED), { status: 202 }));
+  const result = await (await nc.Workflow.fromId("wf_1").draft(["fetch"])).wait();
+  assert.deepEqual([result.written, result.edits], [true, []]);
+});
