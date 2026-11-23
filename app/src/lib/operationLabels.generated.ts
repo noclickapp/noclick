@@ -1327,6 +1327,7 @@ hailey-hr
 haku
 halopsa
 handwrytten
+happy-scribe
 harness
 harvey
 hasslefreebooks
