@@ -2302,6 +2302,7 @@ zoho-cpaas-formerly-zeptomail
 zoho-creator
 zoho-crm
 zoho-inventory
+zoho-mail
 zoho-projects
 zoho-work-drive
 zoho-writer
