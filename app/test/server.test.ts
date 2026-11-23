@@ -34,7 +34,8 @@ beforeAll(async () => {
         });
     }
     [app, api] = await Promise.all([startApp(), startFakeApi()]);
-}, 60_000);
+    // Vite compiles the whole server build first: about 25s alone, past a minute beside a full run of everything else.
+}, 300_000);
 afterAll(async () => {
     await Promise.all([app?.close(), api?.close()]);
 });
