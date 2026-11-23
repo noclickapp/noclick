@@ -458,6 +458,10 @@ export class Repo extends ApiObject {
   get userId(): string | null {
     return this._field("user_id");
   }
+  /** Copied from someone's public work on NoClick: `{address}`, the address it was copied from; null for a repo of your own. */
+  get forkedFrom(): { address: string } | null {
+    return this._field<{ address: string } | null>("forked_from") ?? null;
+  }
   get createdAt(): Date | null {
     return parseTime(this._field("created_at"));
   }

@@ -1903,6 +1903,9 @@ class Project(_Object):
     )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
+    forked_from: Optional[Dict[str, Any]] = field(
+        "forked_from", doc="Its repo was copied from someone's public work on NoClick: ``{\"address\": ...}``, the "
+        "address it came from; None otherwise.")
 
     def _init(self, **kwargs: Any) -> None:
         self._create_with: Optional[Dict[str, Any]] = None

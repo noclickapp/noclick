@@ -42,8 +42,10 @@ def test_an_apps_view_says_whether_its_code_is_public(api, client):
     api.get("/v1/projects/prj_1").respond(json={**PROJECT, "public": PUBLIC})
     shown = nc.Project.from_id("prj_1").public
     assert shown is not None and shown.origin_url.endswith(".git")
-    api.get("/v1/projects/prj_2").respond(json={**PROJECT, "id": "prj_2"})
-    assert nc.Project.from_id("prj_2").public is None
+    api.get("/v1/projects/prj_2").respond(json={**PROJECT, "id": "prj_2",
+                                               "forked_from": {"address": "pilot-hub.noclick.site"}})
+    forked = nc.Project.from_id("prj_2")
+    assert forked.public is None and forked.forked_from == {"address": "pilot-hub.noclick.site"}
 
 
 def test_anyone_looks_an_address_up(api, client):

@@ -1984,6 +1984,10 @@ export class Project extends ApiObject {
     const raw = this._field<JsonObject | null>("production");
     return raw ? Deployment._fromRaw(raw, { client: this._client, user: this._callScope() }) : null;
   }
+  /** Its repo was copied from someone's public work on NoClick: `{address}`, the address it came from; null otherwise. */
+  get forkedFrom(): { address: string } | null {
+    return this._field<{ address: string } | null>("forked_from") ?? null;
+  }
   /** Its code, while its owner keeps it public (`makePublic()`); null while it's private. */
   get public(): PublicCode | null {
     const raw = this._field<JsonObject | null>("public");

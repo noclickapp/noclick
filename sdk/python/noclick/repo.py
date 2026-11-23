@@ -326,6 +326,9 @@ class Repo(_Object):
     )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
+    forked_from: Optional[Dict[str, Any]] = field(
+        "forked_from", doc="Copied from someone's public work on NoClick: ``{\"address\": ...}``, the address it was "
+        "copied from; None for a repo of your own.")
 
     def _init(self, **kwargs: Any) -> None:
         self._create_with: Optional[Dict[str, Any]] = None
@@ -378,6 +381,12 @@ class Repo(_Object):
         bytes it stores, at NoClick's vendors' prices. An import always makes a new
         repo, so ``allow_existing`` doesn't apply to it.
 
+        ``from_url`` may also be an app's address whose owner made its code public on NoClick
+        (``pilot-hub.noclick.site``, with or without ``https://``, or a custom domain it serves): its published code
+        is copied inside NoClick, as a fork, and the repo's ``forked_from`` names that address; the operation's
+        result says what a deploy of it asks for. An address with no public work raises ``noclick.InvalidRequest``
+        (reason ``not_public``).
+
         Returns:
             The new repo, loaded, with no commits yet; with ``from_url``, a
             ``RepoImport``: the operation doing the copy, whose ``wait()`` gives
@@ -400,6 +409,11 @@ class Repo(_Object):
                 repo = copy.wait()
                 print(repo.default_branch, repo.last_commit.sha)
                 app = noclick.Project.create("blog", repo=repo)
+
+            Fork an app someone made public, from its address alone::
+
+                repo = noclick.Repo.create("my-pilot-hub", from_url="pilot-hub.noclick.site").wait()
+                print(repo.forked_from)   # {'address': 'pilot-hub.noclick.site'}
 
             Copy one release of it, as the branch ``main``::
 

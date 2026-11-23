@@ -44,6 +44,9 @@ test("an app's view says whether its code is public", async () => {
   api.on("GET", "/v1/projects/prj_1", json({ ...PROJECT, public: PUBLIC }));
   const app = await nc.Project.fromId("prj_1").hydrate();
   assert.ok(app.public?.originUrl?.endsWith(".git"));
+  assert.equal(app.forkedFrom, null);
+  api.on("GET", "/v1/projects/prj_2", json({ ...PROJECT, id: "prj_2", forked_from: { address: "pilot-hub.noclick.site" } }));
+  assert.deepEqual((await nc.Project.fromId("prj_2").hydrate()).forkedFrom, { address: "pilot-hub.noclick.site" });
 });
 
 test("anyone looks an address up", async () => {
