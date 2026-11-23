@@ -2123,6 +2123,7 @@ thoughtspot
 threads
 thrivecart
 ticket-tailor
+ticketsource
 tidb-cloud
 tidely
 tidio
