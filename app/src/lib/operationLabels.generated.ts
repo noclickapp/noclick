@@ -1525,6 +1525,7 @@ lemlist
 lenz
 lessonspace
 lettr
+lev
 levitate
 libretranslate
 lightspeed
