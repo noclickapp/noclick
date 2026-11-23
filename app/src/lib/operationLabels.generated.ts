@@ -1999,6 +1999,7 @@ sigma
 signable
 signal8
 signalwire
+signatureapi
 signify
 signpath
 signrequest
