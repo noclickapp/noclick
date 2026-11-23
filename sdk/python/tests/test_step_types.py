@@ -81,3 +81,18 @@ def test_a_type_that_takes_no_settings_has_no_schema(api, client):
         **CRON, "type": "trigger-run", "label": "Run", "operations": [], "schema": None})
     run = nc.step_type("trigger-run")
     assert run.schema is None and run.operations == []
+
+
+def test_one_step_type_read_narrowed_sends_its_filters_and_counts_every_operation(api, client):
+    route = api.get("/v1/step_types/automation-slack").respond(json={
+        **SLACK, "operations": SLACK["operations"][:1], "operations_total": 2, "schema": None})
+    slack = nc.step_type("automation-slack", kind="trigger", query="new message", operation="on_channel_message")
+    params = route.calls.last.request.url.params
+    assert (params["kind"], params["q"], params.get_list("operation")) == ("trigger", "new message",
+                                                                            ["on_channel_message"])
+    assert [op.name for op in slack.operations] == ["on_channel_message"] and slack.operations_total == 2
+    nc.step_type("automation-slack", operation=["on_channel_message", "send_message_to_channel"])
+    assert route.calls.last.request.url.params.get_list("operation") == ["on_channel_message",
+                                                                          "send_message_to_channel"]
+    nc.step_type("automation-slack")
+    assert not route.calls.last.request.url.params  # a plain read sends no filter

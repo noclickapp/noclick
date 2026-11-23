@@ -16,7 +16,7 @@ catalog of services an account connects; this one holds every step.
 from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from ._client import Client, path_segment, resolve_client
 from ._object import paginate
@@ -82,7 +82,8 @@ class StepType:
     kinds: List[str]
     #: Whether a step of it starts runs whatever its operation (a trigger step: a schedule, a webhook, a form).
     trigger: bool
-    #: Each operation once, in the order the app lists them; empty for a type that has none (``trigger-run``).
+    #: Each operation once, its triggers first, in the order the app lists them; empty for a type that has none
+    #: (``trigger-run``). A read narrowed by ``kind``, ``query`` or ``operation`` holds only those it kept.
     operations: List[StepTypeOperation]
     #: The accounts it connects to; ``None`` for a type whose settings take none.
     connection: Optional[StepTypeConnection]
@@ -94,13 +95,16 @@ class StepType:
     #: listing, and for a type that takes no settings.
     schema: Optional[Dict[str, Any]]
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: How many operations the type has in all, whatever a read kept; ``None`` in a listing.
+    operations_total: Optional[int] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "StepType":
         return cls(raw["type"], raw.get("label"), raw.get("description"), raw.get("category"),
                    list(raw.get("kinds") or []), bool(raw["trigger"]),
                    [StepTypeOperation._from(op) for op in raw.get("operations") or []],
-                   StepTypeConnection._from(raw.get("connection")), raw.get("retired"), raw.get("schema"), raw)
+                   StepTypeConnection._from(raw.get("connection")), raw.get("retired"), raw.get("schema"), raw,
+                   raw.get("operations_total"))
 
 
 @synced
@@ -141,12 +145,18 @@ async def step_types(
 
 
 @synced
-async def step_type(name: str, *, client: Optional[Client] = None) -> StepType:
-    """One step type, each operation with its ``description``, and its
-    ``schema``: what a step's ``settings`` take, as the app's canvas draws its
-    form from it. ``name`` is the type as a workflow's graph names it
-    (``automation-gmail``, ``agent``); an unknown one raises
-    ``noclick.NotFound`` naming the nearest. Needs the ``workflows`` scope.
+async def step_type(name: str, *, kind: Optional[str] = None, query: Optional[str] = None,
+                    operation: Optional[Union[str, List[str]]] = None, client: Optional[Client] = None) -> StepType:
+    """One step type, each operation with its ``description`` (its triggers
+    first), and its ``schema``: what a step's ``settings`` take, as the app's
+    canvas draws its form from it. ``name`` is the type as a workflow's graph
+    names it (``automation-gmail``, ``agent``); an unknown one raises
+    ``noclick.NotFound`` naming the nearest. A type can be large (Stripe holds
+    491 operations): ``kind`` (``"trigger"`` or ``"action"``), ``query`` (the
+    operations its words fit, the best first) and ``operation`` (one name, or
+    several) keep only some, and the ``schema`` only their settings;
+    ``operations_total`` still counts them all. An operation the type doesn't
+    have raises ``noclick.InvalidRequest``. Needs the ``workflows`` scope.
 
     Returns:
         The type, with its ``schema`` (``None`` for a type that takes no settings).
@@ -157,8 +167,16 @@ async def step_type(name: str, *, client: Optional[Client] = None) -> StepType:
         send = next(op for op in gmail.operations if op.name == "send_email_message")
         print(send.description, gmail.connection.credential_types)
         print(list(gmail.schema["$defs"]))
+
+    Or what starts a workflow in a large one, then one operation's settings::
+
+        stripe = noclick.step_type("automation-stripe", kind="trigger", query="payment failed")
+        failed = noclick.step_type("automation-stripe", operation=stripe.operations[0].name)
+        print(failed.operations_total, list(failed.schema["$defs"]))
     """
-    raw = await resolve_client(client).request("GET", f"/v1/step_types/{path_segment(name)}", user=None)
+    names = [operation] if isinstance(operation, str) else operation
+    raw = await resolve_client(client).request("GET", f"/v1/step_types/{path_segment(name)}", user=None,
+                                               params={"kind": kind, "q": query, "operation": names or None})
     return StepType._from(raw)
 
 
