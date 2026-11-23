@@ -2004,6 +2004,7 @@ shortcut
 shorten-rest
 shortpen
 showmojo
+showpad
 sidetracker
 sierra-interactive
 sigma
