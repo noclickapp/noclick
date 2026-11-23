@@ -2225,6 +2225,7 @@ typebot
 typecast
 typeform
 typefully
+uberduck
 ulama
 unifi
 unione
