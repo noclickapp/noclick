@@ -1491,6 +1491,7 @@ kontent-ai
 koyeb
 krisp
 kubernetes
+kucoin-futures
 kudosity
 kumpeapps
 kvcore
