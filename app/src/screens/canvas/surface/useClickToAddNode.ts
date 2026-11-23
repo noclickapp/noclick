@@ -94,6 +94,8 @@ export interface ClickToAddOptions {
     };
     /** Brings a step into view. */
     panToNode: (nodeId: string) => void;
+    /** Only looked at (a workflow its viewer may only view): no step is added, from a pick or a "+". */
+    frozen?: boolean;
     on?: ClickToAddListeners;
 }
 
@@ -254,7 +256,7 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
         const handler = (e: Event) => {
             const detail = (e as CustomEvent).detail;
             const nodeId = detail?.nodeId as string | undefined;
-            if (!nodeId) return;
+            if (!nodeId || latest.current.frozen) return;
             sourceRef.current = {
                 nodeId,
                 handleId: detail?.handleId ?? null,
@@ -272,7 +274,7 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
     useEffect(() => {
         const handler = (e: Event) => {
             const detail = (e as CustomEvent).detail;
-            if (!detail?.edgeId || !detail?.source || !detail?.target) return;
+            if (!detail?.edgeId || !detail?.source || !detail?.target || latest.current.frozen) return;
             insertRef.current = {
                 edgeId: detail.edgeId,
                 source: detail.source,
@@ -300,10 +302,10 @@ export function useClickToAddNode(options: ClickToAddOptions): ClickToAdd {
 
     const add = useCallback(
         (detail: AddStepRequest) => {
-            const { nodesRef, setNodes, setEdges, palette, panToNode, on } = latest.current;
+            const { nodesRef, setNodes, setEdges, palette, panToNode, frozen, on } = latest.current;
             const nodes = nodesRef.current ?? [];
             const nodeType = detail?.nodeType;
-            if (!nodeType) return;
+            if (!nodeType || frozen) return;
             // A remembered connection comes before a remembered step and a step on its own. A step dropped on a
             // connection's "+" names the connection itself.
             const insert = detail?.insert ?? insertRef.current;
