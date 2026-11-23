@@ -1837,6 +1837,7 @@ pulsetic
 pulumi
 pushcut
 pylon-1
+qase
 qdrant
 qomon
 qonto
