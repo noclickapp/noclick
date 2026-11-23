@@ -1042,6 +1042,7 @@ dbt-cloud
 dealmachine
 debitura
 debounce
+decisionvault
 deel
 deepgram
 deepimage
