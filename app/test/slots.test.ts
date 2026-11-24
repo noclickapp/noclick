@@ -8,6 +8,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
+import { SCAN_S } from './limits';
 
 const APP = resolve(import.meta.dirname, '..');
 const SRC = join(APP, 'src');
@@ -237,5 +238,5 @@ describe('the app', () => {
             'work.toolServer.signIn',
         ]);
         expect(problems(modules).join('\n')).toBe('');
-    });
+    }, SCAN_S);
 });
