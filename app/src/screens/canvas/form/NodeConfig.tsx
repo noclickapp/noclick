@@ -14,6 +14,7 @@ import { OperationPicker } from './OperationPicker';
 import { SearchableEnumField } from './SearchableEnumField';
 import { MultiSelectEnumField } from './MultiSelectEnumField';
 import { renderSchemaWidget } from './schemaWidgetRegistry';
+import { WITHHELD_PLACEHOLDER, withheldRows } from './withheld';
 import { getOptionDisplayName } from '@/screens/canvas/operationNames';
 import { BANNER_PULSE_CYCLES, pulseElement } from '@/ui/pulseHighlight';
 import { cn } from '@/ui/utils';
@@ -22,6 +23,7 @@ import { CopyLinkButton } from '@/ui/CopyLinkButton';
 import { booleanSelectValue, isBooleanSchema, isListSchema, requireOneOfGroupsOf, schemaInfoOf } from '@/screens/canvas/stepSchema';
 import { evaluateRequireOneOf, isFieldApplicable, runsOnAttachedCredentials } from '@/screens/canvas/stepFields';
 import { evaluateShowIf, judgeConfigForm, type ConfigFormValidation } from '@/screens/canvas/configForm';
+import { holdsEmptyStepReference, STEP_REFERENCE_SCAFFOLD, STEP_REFERENCE_SCAFFOLD_CARET } from '@/screens/canvas/expressionSyntax';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
 import { StepContext } from './reads';
@@ -200,7 +202,6 @@ function detectDiscriminator(options: any[], resolveRef: (ref: string) => any): 
 }
 
 /** What a field whose secret the workflow's read held back shows in its place. */
-const WITHHELD_PLACEHOLDER = 'Saved, hidden. Type to replace it.';
 
 /** The node's config form, drawn once its schema has loaded (the form, its defaults and its checks come from it:
  *  `canvas.step.schemas`). */
@@ -1074,7 +1075,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
     if (earlyReturn) return earlyReturn;
 
     // Contextual buttons under a focused field, all in ONE low-key row: "Add
-    // reference" (insert a `{{ $('') }}` expression + open the builder), jump to the
+    // reference" (insert a `{{ $('') }}` expression, caret between the quotes, + open the builder), jump to the
     // Input panel ("Show previous nodes"), the Output panel ("Show output"), and — when
     // the field references an array — "Loop over each item" (injects an iteration node).
     // Each shown only when relevant.
@@ -1096,13 +1097,15 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
         // "Add reference" only for a reference-capable text field: a droppable input is
         // registered for this key (so not an array/widget) AND it isn't an enum,
         // dynamic-options, or non-textarea custom widget. The registry presence is the
-        // exact signal that a DroppableTextField is mounted here.
+        // exact signal that a DroppableTextField is mounted here. Hidden while the field
+        // holds a reference with no step picked yet, so clicks don't stack empty ones.
         const insertRef = getInsertReferenceForField(fieldKey);
         const showAddRefBtn = Boolean(
             refAutocomplete && insertRef
             && !fieldProp?.enum
             && !fieldProp?.['x-dynamic-options']
-            && (!fieldProp?.['ui:widget'] || fieldProp['ui:widget'] === 'textarea'),
+            && (!fieldProp?.['ui:widget'] || fieldProp['ui:widget'] === 'textarea')
+            && !holdsEmptyStepReference(fieldValue),
         );
         if (!showInputBtn && !showOutputBtn && !showLoopBtn && !showAddRefBtn) return null;
         const btnClass =
@@ -1113,7 +1116,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                     <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()} // keep the field focused so the builder opens
-                        onClick={() => insertRef("{{ $('') }}")}
+                        onClick={() => insertRef(STEP_REFERENCE_SCAFFOLD, STEP_REFERENCE_SCAFFOLD_CARET)}
                         className={btnClass}
                         title="Insert a reference / expression"
                     >
@@ -1547,7 +1550,13 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                 const fieldHasError = fieldErrors[key] && fieldErrors[key].length > 0;
                 // A secret the read held back: set, unread, kept unless something is typed in its place.
                 const held = !!withheld?.includes(key) && !isFieldFilled(localConfig[key]);
-                const shownProp = held ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER } : prop;
+                // A list's rows whose values it held back (a header's), for its editor to say so.
+                const heldRows = withheldRows(withheld, key);
+                const shownProp = held
+                    ? { ...prop, 'ui:placeholder': WITHHELD_PLACEHOLDER, placeholder: WITHHELD_PLACEHOLDER }
+                    : heldRows.length
+                      ? { ...prop, 'x-withheld-rows': heldRows }
+                      : prop;
 
                 // A field bound to a workflow variable ({{vars.x}} as its WHOLE
                 // value) shows the RESOLVED value and its editor writes through

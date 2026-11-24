@@ -78,6 +78,14 @@ none. The list is every scope the screens use, and none that reads a secret or s
 (making keys, answering approvals): add to it when a screen you write calls another part of the API. `APP_PASSWORD`
 and `SESSION_SECRET` are still yours to choose, as the app's secrets there.
 
+The repository's root also has a [`Dockerfile`](../Dockerfile): the app as one container, a Node server on `PORT`
+(3000 unless set). Build it from the root, for the same reason, and hand it the settings:
+
+```bash
+docker build -t noclick-app .
+docker run --env-file app/.env -p 3000:3000 noclick-app
+```
+
 ## The developer console
 
 `/developers` is NoClick's developer console (`src/screens/console`): the account's agents, users and resources
