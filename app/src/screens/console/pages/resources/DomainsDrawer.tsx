@@ -12,6 +12,8 @@ import { formatMoneyFull } from '@/screens/console/lib/format';
 import { userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { heldCallOf, useReportHeld, type HeldCall } from '@/sdk/held';
+import { HeldCallNotice } from '@/ui/HeldCallNotice';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { ConsoleButton } from '../../ui/Button';
 import { Drawer } from '../../ui/Drawer';
@@ -128,7 +130,8 @@ function BoughtDns({ domain }: { domain: Domain }) {
     const [value, setValue] = useState('');
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const run = async (write: () => Promise<unknown>, done: string) => {
+    const reportHeld = useReportHeld(useConsole());
+    const run = async (write: () => Promise<unknown>, done: string, what: string) => {
         setBusy(true);
         setError(null);
         try {
@@ -136,6 +139,7 @@ function BoughtDns({ domain }: { domain: Domain }) {
             await records.refresh();
             toast(done);
         } catch (e) {
+            if (reportHeld(e, what, () => void records.refresh())) return;
             setError(errorText(e));
         } finally {
             setBusy(false);
@@ -146,8 +150,9 @@ function BoughtDns({ domain }: { domain: Domain }) {
             await domain.dns.set(type, name.trim() || '@', value.trim());
             setName('');
             setValue('');
-        }, `Added the ${type} record`);
-    const remove = (record: DnsRecord) => void run(() => domain.dns.delete(record), `Deleted the ${record.type} record at ${record.name}`);
+        }, `Added the ${type} record`, `Add the ${type} record`);
+    const remove = (record: DnsRecord) =>
+        void run(() => domain.dns.delete(record), `Deleted the ${record.type} record at ${record.name}`, `Delete the ${record.type} record at ${record.name}`);
     return (
         <Section title="DNS records">
             <p className="m-0 mb-2 text-[12px] text-muted-foreground">{"NoClick hosts this domain's DNS. Locked records serve what it points at; the rest are yours."}</p>
@@ -201,6 +206,8 @@ function Renewal({ domain, onChanged }: { domain: Domain; onChanged: () => void 
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [held, setHeld] = useState(false);
+    // A renewal NoClick holds for the account's owner (the app's own key), followed where it was asked for.
+    const [heldCall, setHeldCall] = useState<HeldCall | null>(null);
     const act = async (write: () => Promise<void>) => {
         setBusy(true);
         setError(null);
@@ -208,6 +215,8 @@ function Renewal({ domain, onChanged }: { domain: Domain; onChanged: () => void 
             await write();
             onChanged();
         } catch (e) {
+            const call = heldCallOf(e);
+            if (call) return setHeldCall(call);
             setError(errorText(e));
         } finally {
             setBusy(false);
@@ -295,6 +304,14 @@ function Renewal({ domain, onChanged }: { domain: Domain; onChanged: () => void 
                             ? `Renewing works until ${dayLabel(domain.renewableUntil)}, the end of its renewal window; after that, NoClick support may restore it at the registry's fee.`
                             : `Its renewal window ended ${dayLabel(domain.renewableUntil)}, so it can't be renewed here; NoClick support may restore it at the registry's fee.`}
                     </p>
+                )}
+                {heldCall && (
+                    <HeldCallNotice
+                        key={heldCall.approvalId}
+                        held={heldCall}
+                        what={`Renew ${domain.name} for ${yearsLabel(years)}`}
+                        onSettled={(state) => state.phase === 'done' && (void domain.refresh().then(onChanged), invalidateV1('domains?'))}
+                    />
                 )}
                 {held && <Notice title="Renewal waiting for approval">Your policy holds renewals for a person to approve; it&apos;s charged to your account once they do.</Notice>}
                 {error && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{error}</p>}

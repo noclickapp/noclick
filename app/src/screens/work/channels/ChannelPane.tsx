@@ -2,9 +2,11 @@
 // (Messages, Pins, Files & links, Bookmarks), the timeline with each message's thread and pin, and the box. Every
 // message goes to every person and agent in it. You post, share files and voice clips, react, pin, open a thread, and
 // run slash commands in the box; on a phone the bar above becomes the channel's, with its way back.
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type DragEvent, type ReactNode } from 'react';
+import { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { ArchiveRestore, BellOff, BellRing, Hash, Link2, Lock, LogOut, MessageCircleQuestion, MoreHorizontal, Pencil, ScrollText, Star, StarOff, Trash2, Type, Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { useReportHeld } from '@/sdk/held';
+import { WorkClientContext } from '../client';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { HAIRLINE } from '@/ui/primitives';
 import { PhoneBarActions, PhoneBarBack } from '@/ui/phoneBar';
@@ -116,6 +118,7 @@ function ChannelPaneBody({
     const dragDepth = useRef(0);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [dialog, setDialog] = useState<ChannelDialog | null>(null);
+    const reportHeld = useReportHeld({ client: useContext(WorkClientContext) });
     const scrollRef = useRef<HTMLDivElement>(null);
     const [lit, setLit] = useState<string | null>(null);
 
@@ -246,6 +249,7 @@ function ChannelPaneBody({
                 action: { label: 'Undo', onClick: () => void reopenChannel() },
             });
         } catch (e) {
+            if (reportHeld(e, `Close #${channel.name}`)) return;
             note(errorText(e));
         }
     };

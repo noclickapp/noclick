@@ -11,6 +11,8 @@ import { Check, Globe, Server } from 'lucide-react';
 import { Machine, NoClickError, NotAvailable, PriceExceeded, type MachineSizeName, type RegionName } from 'noclick';
 import { getMachineAccess, requestMachineAccess } from '@/sdk/owner';
 import { invalidateV1 } from '@/sdk/useV1';
+import { heldCallOf, type HeldCall, type HeldState } from '@/sdk/held';
+import { HeldCallNotice } from '@/ui/HeldCallNotice';
 import { REGION_NAMES, REGION_PLACES } from '@/lib/regionNames';
 import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { ShellDialog } from '@/ui/ShellDialog';
@@ -81,6 +83,8 @@ export function BuyMachine({ agent, onBought, onClose, back: backTo, onOpen }: B
     const [why, setWhy] = useState<Requote['changed'] | 'chose'>('host');
     const [said, setSaid] = useState<Said | null>(null);
     const [bought, setBought] = useState<Machine | null>(null);
+    // A purchase NoClick holds for the account's owner (a key NoClick gave this app), followed until it's bought or not.
+    const [heldBuy, setHeldBuy] = useState<HeldCall | null>(null);
     const held = useHold();
 
     const listed = sizes.data ?? [];
@@ -124,6 +128,12 @@ export function BuyMachine({ agent, onBought, onClose, back: backTo, onOpen }: B
             const name = machineNameFor(agent?.name ?? regionName(quote.region), (machines.data ?? []).map((m) => m.name));
             machine = await Machine.create(name, { client, size: quote.size, region: quote.region, host: quote.host, maxMonthlyUsd: quote.usd });
         } catch (error) {
+            const call = heldCallOf(error);
+            if (call) {
+                setPhase(before === 'requoted' ? 'requoted' : 'quote');
+                setHeldBuy(call);
+                return;
+            }
             const stock = error instanceof NotAvailable || error instanceof PriceExceeded;
             const again = stock ? await Machine.sizes({ client, includeDominated: true }).catch(() => null) : null;
             const still = again?.some((s) => s.name === quote.size && !s.dominatedBy && s.regions.some((r) => r.region === quote.region && r.host === quote.host && r.monthlyUsd === quote.usd && !r.dominatedBy));
@@ -145,12 +155,25 @@ export function BuyMachine({ agent, onBought, onClose, back: backTo, onOpen }: B
             held.start();
             return;
         }
+        took(machine);
+    };
+    const took = (machine: Machine) => {
         invalidateV1(MACHINES_KEY);
         rereadMachine(machine.id);
         setBought(machine);
         // Held until NoClick approves the company: nothing is charged before it starts.
         setPhase(machine.raw.status === 'awaiting_approval' ? 'sent' : 'bought');
         onBought(machine);
+    };
+    /** Approved by the account's owner and made: as a purchase made at once is. */
+    const heldSettled = (state: HeldState) => {
+        if (state.phase !== 'done') return;
+        setHeldBuy(null);
+        const made = (state.response ?? {}) as { id?: unknown };
+        if (typeof made.id === 'string') void Machine.get(made.id, { client }).then(took, (error: unknown) => {
+                console.warn('[machines] reading the machine the owner approved failed:', error);
+                invalidateV1(MACHINES_KEY);
+            });
     };
     const choose = (other: Quote) => {
         if (!quote) return;
@@ -310,6 +333,16 @@ export function BuyMachine({ agent, onBought, onClose, back: backTo, onOpen }: B
                                     </button>
                                 ))}
                             </div>
+                        )}
+                        {heldBuy && quote && (
+                            <HeldCallNotice
+                                key={heldBuy.approvalId}
+                                held={heldBuy}
+                                from={{ client }}
+                                what={`Rent ${SIZE_NAMES[quote.size]} in ${regionName(quote.region)}`}
+                                onSettled={heldSettled}
+                                className="mt-2"
+                            />
                         )}
                         {said && (
                             <p role="alert" className="mt-2 text-[12.5px] leading-snug text-red-600 dark:text-red-400">
