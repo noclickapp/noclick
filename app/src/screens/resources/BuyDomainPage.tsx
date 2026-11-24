@@ -32,6 +32,8 @@ import { addFundsUrl } from '@/screens/console/lib/site';
 import { usePlatformResources } from './platform';
 import { Section, Surface } from './ui';
 import { UseBoughtDomain } from './UseForWebsite';
+import { HeldCallNotice } from '@/ui/HeldCallNotice';
+import { useOwnerAccepts } from '@/sdk/client';
 
 /** "a year", "2 years". */
 const term = (years: number) => (years === 1 ? 'a year' : `${years} years`);
@@ -134,17 +136,20 @@ function Checkout({
     // When the box was ticked: the registrant's acceptance of the agreement, sent with their details.
     const [acceptedAt, setAcceptedAt] = useState<Date | null>(null);
     const [claims, setClaims] = useState(false);
+    // A key NoClick gave this app never accepts terms for a person: the account's owner does, approving the purchase.
+    const ownerAccepts = useOwnerAccepts();
     const onFile = !other ? (checkout?.onFile ?? null) : null;
     const contact = registrantFrom(draft);
-    const registrantReady = onFile !== null || (contact !== null && acceptedAt !== null);
-    const ready = !!checkout && registrantReady && (!offer.claimsNotice || claims);
+    const registrantReady = onFile !== null || (contact !== null && (ownerAccepts || acceptedAt !== null));
+    const ready = !!checkout && registrantReady && (!offer.claimsNotice || ownerAccepts || claims);
     const price = formatDollars(offer.priceUsd);
     const renews = offer.renewalUsd != null ? `It renews at ${formatDollars(offer.renewalUsd)} ${offer.years === 1 ? 'a year' : `every ${offer.years} years`} until you turn renewal off.` : null;
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
         if (!ready) return;
-        onBuy({ registrant: onFile ? undefined : { ...contact!, agreementAcceptedAt: acceptedAt! }, acceptClaims: claims });
+        if (ownerAccepts) onBuy({ registrant: onFile ? undefined : contact!, acceptClaims: false });
+        else onBuy({ registrant: onFile ? undefined : { ...contact!, agreementAcceptedAt: acceptedAt! }, acceptClaims: claims });
     };
 
     return (
@@ -203,13 +208,24 @@ function Checkout({
                                 </>
                             )}
                         </p>
-                        <Agreed id="registrant-agreement" checked={acceptedAt !== null} onChange={(on) => setAcceptedAt(on ? new Date() : null)}>
-                            I accept the{' '}
-                            <a href={checkout.agreementUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-4">
-                                domain registration agreement
-                                <ExternalLink className="ml-0.5 inline h-3 w-3 align-baseline" />
-                            </a>
-                        </Agreed>
+                        {ownerAccepts ? (
+                            <p className="text-[13.5px] leading-snug text-foreground" data-testid="owner-accepts-agreement">
+                                The account’s owner accepts the{' '}
+                                <a href={checkout.agreementUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-4">
+                                    domain registration agreement
+                                    <ExternalLink className="ml-0.5 inline h-3 w-3 align-baseline" />
+                                </a>{' '}
+                                when they approve this purchase.
+                            </p>
+                        ) : (
+                            <Agreed id="registrant-agreement" checked={acceptedAt !== null} onChange={(on) => setAcceptedAt(on ? new Date() : null)}>
+                                I accept the{' '}
+                                <a href={checkout.agreementUrl} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-4">
+                                    domain registration agreement
+                                    <ExternalLink className="ml-0.5 inline h-3 w-3 align-baseline" />
+                                </a>
+                            </Agreed>
+                        )}
                     </div>
                 )}
             </Section>
@@ -219,9 +235,13 @@ function Checkout({
                     <p className="mb-3 text-[13.5px] text-muted-foreground">This name matches a registered trademark. Read the notice before buying it.</p>
                     <div className="max-h-56 overflow-y-auto whitespace-pre-wrap rounded-xl bg-foreground/[0.04] px-4 py-3 text-[13px] leading-relaxed text-foreground/85">{offer.claimsNotice}</div>
                     <div className="mt-3">
-                        <Agreed id="claims-notice" checked={claims} onChange={setClaims}>
-                            I’ve read the notice and still want {offer.domain}
-                        </Agreed>
+                        {ownerAccepts ? (
+                            <p className="text-[13.5px] leading-snug text-foreground">The account’s owner reads it and accepts it when they approve this purchase.</p>
+                        ) : (
+                            <Agreed id="claims-notice" checked={claims} onChange={setClaims}>
+                                I’ve read the notice and still want {offer.domain}
+                            </Agreed>
+                        )}
                     </div>
                 </Section>
             )}
@@ -323,6 +343,15 @@ export function DomainFinder({
                 </div>
             ) : (
                 <>
+                    {purchase.held.map((h) => (
+                        <HeldCallNotice
+                            key={h.call.approvalId}
+                            held={h.call}
+                            what={`Buy ${h.offer.domain}`}
+                            onSettled={(state) => purchase.heldSettled(h, state)}
+                            className="mb-4 max-w-xl"
+                        />
+                    ))}
                     <form onSubmit={onSubmit} className="flex max-w-xl items-center gap-2">
                         <label className="relative min-w-0 flex-1">
                             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
