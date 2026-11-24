@@ -191,6 +191,49 @@ export interface TurnEntry {
     groups: StepGroup[];
     /** What its harness did, once it ended. */
     summary: TurnSummary | null;
+    /** How far it's come as it runs (`paceOf`), for its working line. */
+    pace?: TurnPace;
+}
+
+/** A running turn's pace, as Claude Code's CLI shows it ("14s · ↓ 988 tokens · thought for 10s"), from its
+ *  `progress` moments (the one shape every harness's turn tells it in): the tokens it has written so far (`estimated`
+ *  where its harness reports none yet), and how long it thought, its thinking under way since `thinkingSince`. */
+export interface TurnPace {
+    tokens: number | null;
+    estimated: boolean;
+    thinkingMs: number;
+    thinkingSince: number | null;
+}
+
+const NO_PACE: TurnPace = { tokens: null, estimated: false, thinkingMs: 0, thinkingSince: null };
+
+/** A running turn's pace (none heard: nothing yet). */
+export const paceOf = (turn: TurnEntry): TurnPace => turn.pace ?? NO_PACE;
+
+/** Tokens written so far, as its progress last said. */
+export const tokensSoFar = (pace: TurnPace): number => pace.tokens ?? 0;
+
+/** How long it thought, by `now` (its thinking under way counts up to then). */
+export function thoughtMs(pace: TurnPace, now: number): number {
+    return pace.thinkingMs + (pace.thinkingSince === null ? 0 : Math.max(0, now - pace.thinkingSince));
+}
+
+/** Its thinking ended at `at`. */
+function doneThinking(pace: TurnPace, at: number): TurnPace {
+    return pace.thinkingSince === null ? pace : { ...pace, thinkingMs: thoughtMs(pace, at), thinkingSince: null };
+}
+
+/** One `progress` moment, said at `at`: its thinking starting or ending, its tokens so far. */
+function heardProgress(pace: TurnPace, raw: JsonObject, at: number): TurnPace {
+    let next = pace;
+    if (raw.thinking === true && next.thinkingSince === null) next = { ...next, thinkingSince: at };
+    if (raw.thinking === false) next = doneThinking(next, at);
+    if (typeof raw.output_tokens === 'number') next = { ...next, tokens: raw.output_tokens, estimated: raw.estimated === true };
+    return next;
+}
+
+function paced(turn: TurnEntry, change: (pace: TurnPace) => TurnPace): TurnEntry {
+    return { ...turn, pace: change(paceOf(turn)) };
 }
 
 export interface NoteEntry {
@@ -904,6 +947,14 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
                 }))
             );
         }
+        case 'progress': {
+            // How far the turn has come, the one shape every harness's turn tells it in.
+            if (settledOp(thread, event.operationId)) return thread;
+            const { thread: next, turn } = turnFor(thread, event.operationId, at);
+            if (turn.status !== 'running') return next;
+            const when = typeof event.raw.at === 'number' ? event.raw.at : at;
+            return replace(next, paced(turn, (p) => heardProgress(p, event.raw, when)));
+        }
         case 'status': {
             if (event.status === 'compacting' || event.status === 'compacted') {
                 // Compaction names the turn it's in, which can begin with it.
@@ -1063,6 +1114,7 @@ export function ended(thread: Thread, operationId: string, outcome: { status: Tu
         reply: outcome.reply ?? turn.reply ?? (turn.parts.flatMap((p) => (p.kind === 'text' ? [p.text] : [])).join('').trim() || null),
         status: outcome.status,
         endedAt: outcome.at,
+        pace: turn.pace && doneThinking(turn.pace, outcome.at),
         compacting: null,
         downloading: null,
         failure: outcome.failure ?? null,

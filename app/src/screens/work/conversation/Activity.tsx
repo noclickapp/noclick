@@ -10,7 +10,7 @@ import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
 import { spent } from './styles';
 import { ChildAgentRow, spawnedChild } from './subagents';
-import { isSubagentCall, type Download, type Step } from '@/lib/agentThread/thread';
+import { isSubagentCall, thoughtMs, tokensSoFar, type Download, type Step, type TurnPace } from '@/lib/agentThread/thread';
 
 /** How a conversation shows tool calls, on this device. */
 export type ToolCalls = 'all' | 'failures' | 'none';
@@ -62,13 +62,19 @@ export function summarize(steps: readonly Step[]): string {
     return line ? line.charAt(0).toUpperCase() + line.slice(1) : '';
 }
 
-/** A ticking "1m 04s" from a start time, in tabular figures so it never jitters. */
-export function Elapsed({ from }: { from: number }) {
+/** The clock, read again every second while mounted. */
+function useNow(): number {
     const [now, setNow] = useState(() => Date.now());
     useEffect(() => {
         const t = setInterval(() => setNow(Date.now()), 1000);
         return () => clearInterval(t);
     }, []);
+    return now;
+}
+
+/** A ticking "1m 04s" from a start time, in tabular figures so it never jitters. */
+export function Elapsed({ from }: { from: number }) {
+    const now = useNow();
     return (
         <span className="tabular-nums" suppressHydrationWarning>
             {spent(now - from)}
@@ -76,13 +82,34 @@ export function Elapsed({ from }: { from: number }) {
     );
 }
 
+/** "988", "1.2k", "34k": tokens as Claude Code's CLI counts them. */
+export function tokenCount(n: number): string {
+    if (n < 1000) return String(n);
+    if (n < 10_000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+    return `${Math.round(n / 1000)}k`;
+}
+
+/** What a running turn has come to, after its clock: "↓ 988 tokens · thought for 10s" ("thinking 4s" while it does),
+ *  each part once there's something to say. */
+export function paceLine(pace: TurnPace, now: number): string {
+    const parts: string[] = [];
+    const tokens = tokensSoFar(pace);
+    if (tokens > 0) parts.push(`↓ ${tokenCount(tokens)} tokens`);
+    const thought = thoughtMs(pace, now);
+    if (pace.thinkingSince !== null) parts.push(`thinking ${spent(thought)}`);
+    else if (thought >= 1000) parts.push(`thought for ${spent(thought)}`);
+    return parts.join(' · ');
+}
+
 /** What's alive: no dot, no spinner, a slow shine across the words. */
 export function Shine({ children, className }: { children: ReactNode; className?: string }) {
     return <span className={cn('work-shine', className)}>{children}</span>;
 }
 
-/** "Working for 4m 12s", or "Compacting for 12s" while older history is summarized. */
-export function WorkingLine({ from, compacting, downloading }: { from: number; compacting?: number | null; downloading?: Download | null }) {
+/** "Working for 4m 12s · ↓ 988 tokens · thought for 10s", as Claude Code's CLI shows a turn under way; "Compacting
+ *  for 12s" while older history is summarized. */
+export function WorkingLine({ from, compacting, downloading, pace }: { from: number; compacting?: number | null; downloading?: Download | null; pace?: TurnPace }) {
+    const now = useNow();
     // A machine fetching its harness says so in NoClick's words, a thin bar under it where the size is known.
     if (downloading) {
         const share = downloading.total ? Math.min(1, (downloading.bytes ?? 0) / downloading.total) : null;
@@ -104,7 +131,14 @@ export function WorkingLine({ from, compacting, downloading }: { from: number; c
         <p className="flex h-6 items-baseline gap-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite">
             {compacting ? <Minimize2 className="h-3.5 w-3.5 self-center" strokeWidth={2} /> : null}
             <Shine>{compacting ? 'Compacting for' : 'Working for'}</Shine>
-            <Elapsed from={compacting ?? from} />
+            <span className="tabular-nums" suppressHydrationWarning>
+                {spent(now - (compacting ?? from))}
+            </span>
+            {!compacting && pace && paceLine(pace, now) && (
+                <span className="tabular-nums opacity-70" data-testid="turn-pace" suppressHydrationWarning>
+                    · {paceLine(pace, now)}
+                </span>
+            )}
         </p>
     );
 }

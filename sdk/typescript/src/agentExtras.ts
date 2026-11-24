@@ -739,14 +739,18 @@ export class ShareLink extends ApiObject {
  * `change` and the `diff`). Its own steps' `tool_call` and `tool_result` say `source` `harness`, name their `callId`
  * and say what kind of step it is (`stepKind`), a `tool_call` what it's about (`command`, `path` or `query`), a
  * command's result its `exitCode` and `durationMs`: the fields a finished turn's `AgentStep` keeps. A `status` of
- * `events_dropped` says `count` moments its sandbox couldn't send. On a machine, a turn waiting for its harness's
+ * `events_dropped` says `count` moments its sandbox couldn't send. A turn's `progress`, the same shape whatever its
+ * harness, says in `raw` how far it has come: `thinking` (true as its thinking starts, false as it ends),
+ * `output_tokens` (written so far; `estimated` while its harness reports none, counted from what it streamed) and
+ * `usage` (`input_tokens`, `cached_tokens`, `output_tokens`, where its harness reports its model calls'). On a machine,
+ * a turn waiting for its harness's
  * image says `downloading` while it downloads (`text`, like "Downloading OpenCode for this machine: 450 MB of
  * 1.31 GB", with `downloaded_bytes` and `total_bytes` in `raw`), then `downloaded`.
  */
 export interface AgentEvent {
   type:
     | "text" | "reasoning" | "tool_call" | "tool_result" | "file" | "approval" | "operation" | "done" | "message"
-    | "status" | "output" | "diff" | "turn_end" | "group" | (string & {});
+    | "status" | "output" | "diff" | "turn_end" | "group" | "progress" | (string & {});
   text: string | null;
   tool: string | null;
   arguments: JsonObject | null;

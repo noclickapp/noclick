@@ -236,7 +236,7 @@ export function TurnView({
     const files = changedFiles(turn);
     const live = running && (
         <div className="px-1 pb-2 pt-1">
-            <WorkingLine from={turn.startedAt} compacting={turn.compacting} downloading={turn.downloading} />
+            <WorkingLine from={turn.startedAt} compacting={turn.compacting} downloading={turn.downloading} pace={turn.pace} />
             {turn.parts.map((p, i) =>
                 p.kind === 'steps' ? (
                     (() => {

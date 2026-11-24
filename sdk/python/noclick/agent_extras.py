@@ -934,7 +934,11 @@ class AgentEvent:
     what kind of step it is (``step_kind``), a ``tool_call`` what it's about (``command``, ``path``
     or ``query``), a command's result its ``exit_code`` and ``duration_ms``: the fields a finished
     turn's ``AgentStep`` keeps. A ``status`` of ``events_dropped`` says ``count`` moments its
-    sandbox couldn't send. On a machine, a turn waiting for its harness's image says
+    sandbox couldn't send. A turn's ``progress``, the same shape whatever its harness, says in
+    ``raw`` how far it has come: ``thinking`` (true as its thinking starts, false as it ends),
+    ``output_tokens`` (written so far; ``estimated`` while its harness reports none, counted from
+    what it streamed) and ``usage`` (``input_tokens``, ``cached_tokens``, ``output_tokens``, where
+    its harness reports its model calls'). On a machine, a turn waiting for its harness's image says
     ``downloading`` while it downloads (``text``, like "Downloading OpenCode for this machine:
     450 MB of 1.31 GB", with ``downloaded_bytes`` and ``total_bytes`` in ``raw``), then
     ``downloaded``."""
