@@ -40,3 +40,19 @@ test("a step runs the workflow from itself", async () => {
   await note.run();
   assert.deepEqual(runs.last.body, { inputs: {}, from_step: "note" });
 });
+
+test("a manual run sends what the app's Run sends", async () => {
+  const { api } = setup();
+  const runs = api.on("POST", "/v1/workflows/wf_1/runs", json(operation("queued"), { status: 202 }));
+  const intake = nc.Workflow.fromId("wf_1");
+  await intake.run({}, { manual: {} });
+  assert.deepEqual(runs.last.body, { inputs: {}, manual: {} });
+  await intake.run({}, {
+    fromStep: "note",
+    manual: { steps: ["hook", "note"], forwardOnly: false, settings: { note: { message: "x" } }, outputsFrom: { hook: "run_0" }, background: true },
+  });
+  assert.deepEqual(runs.last.body, {
+    inputs: {}, from_step: "note",
+    manual: { steps: ["hook", "note"], forward_only: false, settings: { note: { message: "x" } }, outputs_from: { hook: "run_0" }, background: true },
+  });
+});

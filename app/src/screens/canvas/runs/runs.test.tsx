@@ -214,11 +214,11 @@ describe('a step’s output on the API', () => {
             `GET /v1/workflows/${WORKFLOW}/steps/hook/outputs/run_5?full=true`,
             `GET /v1/workflows/${WORKFLOW}/steps/hook/outputs?limit=20`,
         ]);
-        // The older one, and the canvas is told which is shown.
+        // The older one, and the canvas is told which is shown, with the run it came from.
         fireEvent.click(view.container.querySelector('.-ml-1 button')!);
         await waitFor(() => expect(view.container.textContent).toContain('1 of 2'));
         expect(view.container.textContent).toContain('ord_80');
-        expect(picked.at(-1)).toEqual(['hook', 1, { body: { order: 'ord_80' }, headers: {} }]);
+        expect(picked.at(-1)).toEqual(['hook', 1, { body: { order: 'ord_80' }, headers: {} }, 'run_4']);
         expect(view.container.innerHTML).not.toContain(OUTPUT_SECRET);
         expect(JSON.stringify(sent)).not.toContain(OUTPUT_SECRET);
     });

@@ -20,7 +20,7 @@ interface UseNodeOutputHistoryOptions {
     /** Restore carousel to this index on mount (from persisted selection). */
     initialHistoryIndex?: number;
     /** Called when index or entries change — used to persist selection for execution. */
-    onIndexChange?: (nodeId: string, index: number, output: unknown | undefined) => void;
+    onIndexChange?: (nodeId: string, index: number, output: unknown | undefined, runId?: string) => void;
 }
 
 interface UseNodeOutputHistoryReturn {
@@ -90,7 +90,8 @@ export function useNodeOutputHistory({
     onIndexChangeRef.current = onIndexChange;
     useEffect(() => {
         if (nodeId) {
-            onIndexChangeRef.current?.(nodeId, historyIndex, historyEntries[historyIndex]?.output);
+            const entry = historyEntries[historyIndex];
+            onIndexChangeRef.current?.(nodeId, historyIndex, entry?.output, entry?.execution_id);
         }
     }, [nodeId, historyIndex, historyEntries]);
 

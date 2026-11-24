@@ -29,7 +29,7 @@ interface OutputPanelProps {
     onMockToggle?: (nodeId: string, isMocked: boolean, output: unknown) => void;
     workflowId?: string;
     initialHistoryIndex?: number;
-    onHistoryIndexChange?: (nodeId: string, historyIndex: number, output: unknown | undefined) => void;
+    onHistoryIndexChange?: (nodeId: string, historyIndex: number, output: unknown | undefined, runId?: string) => void;
 }
 
 export const OutputPanel = ({

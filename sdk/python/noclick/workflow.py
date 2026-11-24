@@ -3243,6 +3243,7 @@ class Workflow(_Object):
         *,
         from_step: Any = None,
         only: bool = False,
+        manual: Optional[Dict[str, Any]] = None,
         user: Any = AMBIENT,
         idempotency_key: Optional[str] = None,
     ) -> Operation:
@@ -3259,6 +3260,16 @@ class Workflow(_Object):
         from a step takes no inputs, unless it's a trigger that does. A step
         that provides an agent its tools has no run of its own
         (``noclick.InvalidRequest``, ``details["reason"]`` ``tool_provider``).
+
+        ``manual`` runs it as the app's Run button does (``{}`` for a plain
+        one): no trigger has to start runs from code (one no event fired gives
+        its no-event placeholder), its setup isn't judged up front, and inputs
+        go to the trigger or form step it starts at. Its keys: ``steps`` (only
+        these run), ``forward_only`` (``False``: the steps before ``from_step``
+        run again too), ``settings`` (one-run settings by step id, nothing
+        saved), ``outputs_from`` (a step id to the run whose stored output
+        stands in for it) and ``background``. Someone it's shared with to view
+        may run it so as saved, giving values only to a trigger.
 
         Returns:
             An operation whose ``.wait()`` gives the finished ``WorkflowRun``, or
@@ -3285,6 +3296,8 @@ class Workflow(_Object):
         scope = resolve_scope(user)
         body = {"inputs": inputs or {}, **compact(from_step=None if from_step is None else _step_id(from_step),
                                                   only=True if only else None)}
+        if manual is not None:
+            body["manual"] = dict(manual)
         payload = await self._api.request(
             "POST", f"{await self._path()}/runs", json=body, user=scope, idempotency_key=idempotency_key,
         )

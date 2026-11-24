@@ -31,3 +31,14 @@ def test_a_step_runs_the_workflow_from_itself(api, client):
     assert op.wait().outputs == {"Summary": {"message": "Order o_9 received"}}
     nc.Workflow.from_id("wf_1").step("note").run()
     assert body(runs.calls.last.request) == {"inputs": {}, "from_step": "note"}
+
+
+def test_a_manual_run_sends_what_the_apps_run_sends(api, client):
+    runs = api.post("/v1/workflows/wf_1/runs").respond(
+        status_code=202, json=operation(op_id="op_r", kind="workflow.run", status="queued"))
+    intake = nc.Workflow.from_id("wf_1")
+    intake.run(manual={})
+    assert body(runs.calls.last.request) == {"inputs": {}, "manual": {}}
+    intake.run(from_step="note", manual={"steps": ["hook", "note"], "outputs_from": {"hook": "run_0"}})
+    assert body(runs.calls.last.request) == {"inputs": {}, "from_step": "note",
+                                             "manual": {"steps": ["hook", "note"], "outputs_from": {"hook": "run_0"}}}

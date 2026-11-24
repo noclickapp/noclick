@@ -2108,6 +2108,33 @@ export interface WorkflowRunOptions extends CallOptions {
   fromStep?: StepRef;
   /** With `fromStep`: run that step alone, nothing after it. */
   only?: boolean;
+  /**
+   * Run it as the app's Run button does (`{}` for a plain one): no trigger has to start runs from code (one no event
+   * fired gives its no-event placeholder), its setup isn't judged up front, and inputs go to the trigger or form step
+   * it starts at. Someone it's shared with to view may run it so as saved, giving values only to a trigger.
+   */
+  manual?: ManualRun;
+}
+
+/** A run as the app's Run button starts one (`WorkflowRunOptions.manual`). */
+export interface ManualRun {
+  /** Only these steps run (their ids; `fromStep` among them), the whole graph still the run's record. */
+  steps?: string[];
+  /** With `fromStep`: `false` runs the steps before it again too, instead of giving what they last stored. */
+  forwardOnly?: boolean;
+  /** One-run settings by step id, laid over each step's own for this run only (nothing is saved). */
+  settings?: Record<string, JsonObject>;
+  /** A stored output to stand in for a step, by step id: the run id whose output it gives. */
+  outputsFrom?: Record<string, string>;
+  /** A run an interface starts for its own data: the app keeps it out of its run log and Run button. */
+  background?: boolean;
+}
+
+function manualBody(manual: ManualRun): JsonObject {
+  return compact({
+    steps: manual.steps, forward_only: manual.forwardOnly, settings: manual.settings,
+    outputs_from: manual.outputsFrom, background: manual.background,
+  }) as JsonObject;
 }
 
 /**
@@ -2892,7 +2919,11 @@ export class Workflow extends ApiObject {
     const scope = resolveScope(options.user);
     const from = options.fromStep === undefined ? undefined : stepId(options.fromStep);
     const payload = await this._api.request("POST", `${await this.path()}/runs`, {
-      json: { inputs, ...compact({ from_step: from, only: options.only ? true : undefined }) },
+      json: {
+        inputs,
+        ...compact({ from_step: from, only: options.only ? true : undefined }),
+        ...(options.manual ? { manual: manualBody(options.manual) } : {}),
+      },
       user: scope,
       idempotencyKey: options.idempotencyKey,
     });
