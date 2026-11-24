@@ -1473,6 +1473,7 @@ itm-platform
 jackrabbit-class
 jaicob
 jev
+jibble
 jigsawstack
 jina-reader
 jinko
