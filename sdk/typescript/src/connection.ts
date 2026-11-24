@@ -464,6 +464,14 @@ export interface ConnectionCreateOptions extends LinkOptions, CallOptions {
   credentialType?: string;
   /** A credential you hold: the connection holds it at once (validated and probed first). */
   data?: JsonObject;
+  /**
+   * `"app"` saves an account connected in the app instead, as the app's own forms do: your account's own
+   * (`credential:<id>`), its `credentialType` and `data` both given, named as you like, judged and proven first. An
+   * agent's environment variables and an MCP server's key are saved this way too.
+   */
+  origin?: "app";
+  /** With `origin: "app"`, the server an MCP server's key is for. */
+  serverUrl?: string;
 }
 
 /**
@@ -523,7 +531,10 @@ export class Connection extends ApiObject {
   static async create(name: string, options: ConnectionCreateOptions & AllowExisting = {}): Promise<Connection> {
     const scope = resolveScope(options.user);
     const integration = integrationName(options.integration);
-    const json = compact({ name, integration, credential_type: options.credentialType, data: options.data, ...linkBody(options) });
+    const json = compact({
+      name, integration, credential_type: options.credentialType, data: options.data, origin: options.origin,
+      server_url: options.serverUrl, ...linkBody(options),
+    });
     const raw = await createNamed("/v1/connections", json, { allowExisting: options.allowExisting, user: scope, client: options.client });
     if (options.allowExisting) checkUnchanged("connection", raw, { integration, credential_type: options.credentialType });
     return new Connection({ raw, client: options.client, user: scope });
@@ -729,6 +740,16 @@ export class Connection extends ApiObject {
    */
   get account(): string | null {
     return this._field("account");
+  }
+  /** An agent's environment variables by name (never their values); `null` for anything else. */
+  get variables(): string[] | null {
+    const names = this._field<unknown>("variables");
+    return Array.isArray(names) ? names.map(String) : null;
+  }
+  /** The MCP server an MCP sign-in is for; `null` for anything else (a server's key gives its host as `account`, since
+   *  its address may carry a secret). */
+  get serverUrl(): string | null {
+    return this._field<string | null | undefined>("server_url") ?? null;
   }
   /**
    * The id of the account it holds, as a workflow step's `connections` names it, so a step's account is matched to
@@ -948,7 +969,8 @@ export class Connection extends ApiObject {
     return this;
   }
 
-  /** Replace the connection's credential with one you hold (a rotated key), validated first. */
+  /** Replace the connection's credential with one you hold (a rotated key), validated first. An account connected in
+   *  the app keeps its id and its kind: its owner, or someone it's shared with to edit, gives it the new key in place. */
   async import(data: JsonObject, options: { credentialType?: string } = {}): Promise<this> {
     this._raw = await this.act<JsonObject>("POST", "/import", compact({ data, credential_type: options.credentialType }), true);
     return this;

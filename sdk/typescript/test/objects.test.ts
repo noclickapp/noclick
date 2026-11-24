@@ -362,6 +362,14 @@ test("an account connected in the app: who shared it, its live health, the check
   const variables = await nc.Connection.get("credential:cred_env");
   assert.deepEqual([variables.inAppOnly, variables.integration, variables.account, account.inAppOnly],
     [true, null, "STRIPE_KEY, SENTRY_DSN", false]);
+  // Saved as the app's own forms save one, named by its variables.
+  const made = api.on("POST", "/v1/connections", json({
+    ...APP, id: "credential:cred_env2", integration: null, credential_type: "agent_env", in_app_only: true,
+    variables: ["STRIPE_KEY"], server_url: null,
+  }));
+  const saved = await nc.Connection.create("Deploy variables", { origin: "app", credentialType: "agent_env", data: { env: { STRIPE_KEY: "sk" } } });
+  assert.deepEqual(made.last.body, { name: "Deploy variables", origin: "app", credential_type: "agent_env", data: { env: { STRIPE_KEY: "sk" } } });
+  assert.deepEqual([saved.variables, saved.serverUrl, variables.variables], [["STRIPE_KEY"], null, null]);
 });
 
 test("create with data, list, get, verify, token, import, delete", async () => {

@@ -628,6 +628,14 @@ def test_accounts_connected_in_the_app_list_load_and_run_by_their_credential_ref
     assert run.call_count == 1
     assert nc.run(f"{APP_ID}.send_email", {"to": "a@b.c"}) == {"id": "msg_2"}
     assert body(direct.calls.last.request)["ref"] == f"{APP_ID}.send_email"
+    # Saved as the app's own forms save one, an MCP server's key with the server it's for.
+    made = api.post("/v1/connections").respond(201, json={**env, "id": "credential:5d2c", "credential_type": "mcp_api_key",
+                                                         "variables": None, "account": "mcp.linear.app"})
+    key = nc.Connection.create("Linear MCP", origin="app", credential_type="mcp_api_key", data={"api_key": "k"},
+                               server_url="https://mcp.linear.app/mcp")
+    assert body(made.calls.last.request) == {"name": "Linear MCP", "origin": "app", "credential_type": "mcp_api_key",
+                                             "data": {"api_key": "k"}, "server_url": "https://mcp.linear.app/mcp"}
+    assert (key.id, key.in_app_only, key.variables) == ("credential:5d2c", True, None)
 
 
 TEAM = "5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70"

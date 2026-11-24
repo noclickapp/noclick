@@ -440,6 +440,11 @@ class Connection(_Object):
         "The account it reaches, as the app's Connections list names it: its login, else its email, else who a "
         "check verified it as, else the number it links; an agent's environment variables by their names, an MCP "
         "server's key by its server's host; ``None`` when none is known."))
+    variables: Optional[List[str]] = field("variables", doc=(
+        "An agent's environment variables by name (never their values); ``None`` for anything else."))
+    server_url: Optional[str] = field("server_url", doc=(
+        "The MCP server an MCP sign-in is for; ``None`` for anything else (a server's key gives its host as "
+        "``account``, since its address may carry a secret)."))
     credential_id: Optional[str] = field("credential_id", doc=(
         "The id of the account it holds, as a workflow step's ``connections`` names it, so a step's account is "
         "matched to its connection; ``None`` while none is connected."))
@@ -607,6 +612,8 @@ class Connection(_Object):
         reason: Optional[str] = None,
         send_to: Any = None,
         allow_existing: bool = False,
+        origin: Optional[str] = None,
+        server_url: Optional[str] = None,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
     ) -> "Connection":
@@ -650,10 +657,19 @@ class Connection(_Object):
                 slack = noclick.Connection.create("slack", integration="slack", user="user_42", allow_existing=True)
                 if not slack.connected:
                     print(slack.connect_url)
+
+            ``origin="app"`` saves an account connected in the app instead, as the app's own forms do: your account's
+            own (``credential:<id>``), its ``credential_type`` and ``data`` both given, named as you like, judged and
+            proven first. An agent's environment variables and an MCP server's key (``server_url``: the server it's
+            for) are saved this way too::
+
+                env = noclick.Connection.create("Deploy variables", origin="app", credential_type="agent_env",
+                                                data={"env": {"STRIPE_KEY": "sk_live_..."}})
+                print(env.variables)   # ["STRIPE_KEY"]
         """
         scope = resolve_scope(user)
         body = compact(name=name, integration=_integration_name(integration), credential_type=credential_type,
-                       data=data, **_link_options(redirect_url, reason, send_to))
+                       data=data, origin=origin, server_url=server_url, **_link_options(redirect_url, reason, send_to))
         raw = await cls._create_named("/v1/connections", body, allow_existing=allow_existing, user=scope, client=client)
         if allow_existing:
             check_unchanged("connection", raw, compact(integration=body.get("integration"),
@@ -1225,7 +1241,9 @@ class Connection(_Object):
         """Replace the connection's credential with one you hold (a rotated
         key), validated and probed first. ``credential_type``, when the
         integration takes more than one, is one of its ``credential_types``
-        (``Connection.integrations()``).
+        (``Connection.integrations()``). An account connected in the app keeps
+        its id and its kind: its owner, or someone it's shared with to edit,
+        gives it the new key in place, so whatever uses it keeps working.
 
         Returns:
             This connection, holding the new key, with the probe's ``verification``.
