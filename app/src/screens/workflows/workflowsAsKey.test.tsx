@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // The workflows pages acting as one of the account's keys, as this app serves them (lab/WorkflowsLab.tsx over
-// fixtures.ts): the list under its folders, a workflow made by name, and one workflow's page whole: its canvas opened,
+// fixtures.ts): the Automations page with its folders, one opened and a blank workflow made there, and one workflow's page whole: its canvas opened,
 // a step's panel with its settings changed (saved as the canvas's own edit, once), a step added from the palette, the
 // workflow run and its run shown, its Setup tab and its Test Run; then a workflow the key may only look at, read-only.
 // Over fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts) exactly as
@@ -138,19 +138,24 @@ const SAVED = { timeout: 8000 };
 
 /** The list, a workflow made, then one workflow's page whole. */
 async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
-    // The list: the account's workflows under its folders, and a new one made by name.
+    // The Automations page: the account's workflows and its folder, what's shared with it, a folder opened, and a
+    // blank workflow made.
     const list = draw(scene('list'), actsAs);
-    await screen.findByText('Orders');
-    expect(screen.getByRole('region', { name: 'Reports' }).textContent).toContain('Morning brief');
-    expect(screen.getByTestId('workflow-row-wf_shared').textContent).toContain('View only');
-    fireEvent.click(screen.getByRole('button', { name: /new workflow/i }));
-    fireEvent.change(screen.getByRole('textbox', { name: 'The workflow’s name' }), { target: { value: `Made as the ${actsAs}` } });
-    fireEvent.click(screen.getByRole('button', { name: 'Create' }));
+    await screen.findByText('Orders', undefined, SAVED);
+    await screen.findByText('Shared intake', undefined, SAVED);
+    expect(screen.getByText('Shared intake').closest('[data-testid="automations-grid"] > *')?.textContent).toContain('View only');
+    expect(screen.queryByText('Morning brief')).toBeNull();
+    fireEvent.click(await screen.findByText('Reports'));
+    await screen.findByText('Morning brief', undefined, SAVED);
+    expect(screen.queryByText('Orders')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /new automation/i }));
     await waitFor(() => expect(list.calls.some((c) => asLine(c) === 'POST /v1/workflows')).toBe(true));
-    // The new workflow's page opens; back, the list reads it.
-    await screen.findByTestId('workflow-page');
+    expect(list.calls.find((c) => asLine(c) === 'POST /v1/workflows')!.body).toEqual({ folder_id: 'fld_reports' });
+    // The new workflow's page opens; back, the page lists it in the folder it was made in.
+    await screen.findByTestId('workflow-page', undefined, SAVED);
     fireEvent.click(screen.getByRole('button', { name: /automations/i }));
-    await screen.findByText(`Made as the ${actsAs}`);
+    fireEvent.click(await screen.findByText('Reports', undefined, SAVED));
+    await screen.findByText('Untitled', undefined, SAVED);
     const calls = [...list.calls];
     list.unmount();
     for (const id of Object.keys(graphRecords)) delete graphRecords[id];

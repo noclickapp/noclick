@@ -6,6 +6,7 @@ import { ShellDialog } from '@/ui/ShellDialog';
 import { BUTTON_GHOST, BUTTON_PRIMARY } from '@/ui/buttons';
 import { FIELD, FIELD_LABEL } from '@/ui/fields';
 import { workflowRoute } from '../routes';
+import { useWorkflowsHost } from './context';
 import { browserWrites, failureOf } from './workflowBrowserStore';
 
 /** An open workflow, as the page hands it to whatever draws it. */
@@ -20,12 +21,14 @@ export interface WorkflowCanvasProps {
     onNavigateToWorkflow: (workflowId: string) => void;
 }
 
-/** The standard canvas: the workflow's own page in this app. */
+/** The standard canvas: the workflow's own page, where its host opens it, else in this app. */
 export function OpenOnItsPage({ workflowId }: WorkflowCanvasProps) {
     const navigate = useNavigate();
+    const { openWorkflow } = useWorkflowsHost();
     useEffect(() => {
-        navigate(workflowRoute(workflowId), { replace: true });
-    }, [navigate, workflowId]);
+        if (openWorkflow) openWorkflow(workflowId);
+        else navigate(workflowRoute(workflowId), { replace: true });
+    }, [navigate, openWorkflow, workflowId]);
     return null;
 }
 

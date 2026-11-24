@@ -11,7 +11,7 @@ import { WORKFLOW, type Observe } from '@/screens/canvas/graph/fixtures';
 import { workFixtureClient } from '@/screens/work/fixtures/client';
 import { workflowsFetch } from '../fixtures';
 import { WorkflowPage, type WorkflowTab } from '../WorkflowPage';
-import { WorkflowsPage } from '../WorkflowsPage';
+import { AutomationsPage } from '../AutomationsPage';
 
 export interface WorkflowsScene {
     id: string;
@@ -23,7 +23,7 @@ export interface WorkflowsScene {
 }
 
 export const SCENES: readonly WorkflowsScene[] = [
-    { id: 'list', title: 'The workflows, under their folders', shows: 'list' },
+    { id: 'list', title: 'The Automations page: folders and the workflows in each', shows: 'list' },
     { id: 'canvas', title: 'A workflow’s canvas', shows: 'canvas' },
     { id: 'setup', title: 'Its Setup tab', shows: 'setup' },
     { id: 'test', title: 'Its Test Run', shows: 'test' },
@@ -67,6 +67,7 @@ export function SceneView({ scene, actsAs, observe }: { scene: WorkflowsScene; a
     const live = useMemo(() => createWorkLive(), []);
     const [open, setOpen] = useState<string | null>(scene.shows === 'list' ? null : WORKFLOW);
     const [tab, setTab] = useState<WorkflowTab>(scene.shows === 'list' ? 'canvas' : scene.shows);
+
     return (
         <ClientProvider client={client}>
             <WorkLiveContext.Provider value={live}>
@@ -74,7 +75,7 @@ export function SceneView({ scene, actsAs, observe }: { scene: WorkflowsScene; a
                     {open ? (
                         <WorkflowPage workflowId={open} name={open === WORKFLOW ? 'Orders' : undefined} tab={tab} onTab={setTab} onBack={() => setOpen(null)} asOwner={actsAs === 'owner'} />
                     ) : (
-                        <WorkflowsPage onOpen={setOpen} />
+                        <AutomationsPage onOpen={setOpen} />
                     )}
                 </div>
             </WorkLiveContext.Provider>

@@ -12,6 +12,9 @@ export type FlowIntent =
     | { kind: 'action'; action: BrowserAction };
 
 export interface WorkflowsHostValue {
+    /** Opens a workflow's page where the page draws none itself (the `workflows.canvas` slot's standard); absent,
+     *  this app's own `/workflows/<id>`. */
+    openWorkflow?: (workflowId: string) => void;
     /** Hands a request to an assistant (the empty page's "Ask NoClick"); absent, no such button shows. */
     ask?: (text: string) => void;
     /** Whether a dialog holds the keyboard, so the page's bare-key shortcuts stand down. Absent: any open dialog. */

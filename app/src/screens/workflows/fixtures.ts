@@ -87,10 +87,22 @@ export function workflowsFetch(options: WorkflowsFetchOptions = {}): typeof fetc
         if (options.actsAs === 'key' && refusedToAccountKey(method, url.pathname)) {
             return refused(403, 'permission_denied', 'A key can’t do this: only the account’s signed-in owner can.');
         }
-        if (method === 'GET' && path === '/v1/workflows') return Response.json({ object: 'list', next_cursor: null, data: [...held.made, ...listedWorkflows()] });
-        if (method === 'GET' && path === '/v1/workflows/folders') return Response.json({ object: 'list', next_cursor: null, data: FOLDERS });
+        if (method === 'GET' && path === '/v1/workflows') {
+            // As the Automations page asks: a folder's own (`top`: none), or what's shared with the account.
+            const all = [...held.made, ...listedWorkflows()];
+            const folder = url.searchParams.get('folder_id');
+            const data = url.searchParams.get('shared_with_me') === 'true'
+                ? all.filter((w) => w.access !== 'owner')
+                : folder === null ? all : all.filter((w) => w.access === 'owner' && (w.folder_id ?? 'top') === folder);
+            return Response.json({ object: 'list', next_cursor: null, data, hidden_shared_count: 0, plan: 'free' });
+        }
+        if (method === 'GET' && path === '/v1/workflows/folders') {
+            return Response.json({ object: 'list', next_cursor: null, data: url.searchParams.get('shared_with_me') === 'true' ? [] : FOLDERS });
+        }
+        if (method === 'GET' && path === '/v1/workflows/trash') return Response.json({ object: 'list', next_cursor: null, data: [] });
         if (method === 'POST' && path === '/v1/workflows') {
-            const made = workflow('wf_new', String(body.name));
+            // A blank one is named the next free "Untitled", as the API names it.
+            const made = workflow('wf_new', body.name ? String(body.name) : 'Untitled', { folder_id: body.folder_id ?? null });
             held.made.unshift(made);
             return Response.json(made, { status: 201 });
         }
