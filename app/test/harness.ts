@@ -97,6 +97,8 @@ export interface FakeStream {
 export interface FakeApi {
     url: string;
     requests: Recorded[];
+    /** Keys the API refuses (401), each with the error it answers: a key NoClick gave an app that doesn't work yet. */
+    refused: Map<string, Record<string, unknown>>;
     /** Every /v1/stream request, as it arrives. */
     streams: FakeStream[];
     /** Resolved when the next /v1/echo request has received its first chunk of body. */
@@ -107,6 +109,7 @@ export interface FakeApi {
 /** NoClick's API as far as these tests need it. Every request is recorded (`requests`), headers and body. */
 export async function startFakeApi(): Promise<FakeApi> {
     const requests: Recorded[] = [];
+    const refused = new Map<string, Record<string, unknown>>();
     const streams: FakeStream[] = [];
     const echoWaiters: Signal[] = [];
     const json = (res: ServerResponse, status: number, body: unknown, headers: Record<string, string | string[]> = {}) => {
@@ -135,6 +138,8 @@ export async function startFakeApi(): Promise<FakeApi> {
             firstChunk?.resolve();
         });
         req.on('end', () => {
+            const refusal = refused.get(String(req.headers.authorization).replace(/^Bearer /, ''));
+            if (refusal) return json(res, 401, { error: { type: 'unauthenticated', ...refusal } });
             if (path === '/v1/status') {
                 return json(res, 200, STATUS, {
                     'set-cookie': ['api_session=upstream; Path=/; HttpOnly'],
@@ -168,6 +173,7 @@ export async function startFakeApi(): Promise<FakeApi> {
     return {
         url: `http://127.0.0.1:${port}`,
         requests,
+        refused,
         streams,
         firstChunkOfNextEcho: () => {
             const waiter = signal();

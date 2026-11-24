@@ -126,8 +126,9 @@ describe('other people on the canvas', () => {
         const first = result.current;
         expect(first.collaborators).toEqual([]);
         expect(first.nodeSelections.size).toBe(0);
+        expect(first.access).toBeNull();
         first.updateLocalCursor({ x: 1, y: 2 });
-        first.broadcastNodeDrag('agent', { x: 3, y: 4 });
+        first.broadcastAiEditingStart(['agent']);
         rerender();
         // The same value every time, so what depends on it never runs again for nothing.
         expect(result.current).toBe(first);

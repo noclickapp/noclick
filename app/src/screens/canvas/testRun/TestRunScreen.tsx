@@ -80,7 +80,8 @@ export function TestRunScreen({
     /** Run the REAL test for this workflow instead of replaying the
         fixture: the actual agent, tool calls answered by the fabricated
         world. The staged card shows the situation the run stages. */
-    live?: { workflowId: string };
+    /** `readOnly`: the person may only view the workflow, so its test runs, names and staged edits stay as they are. */
+    live?: { workflowId: string; readOnly?: boolean };
     className?: string;
 }) {
     // Conversation + cards + header outcome is the chosen composition — what
@@ -104,7 +105,7 @@ export function TestRunScreen({
     // rehearsal_authoring setting, which goes with a copy of it: a template
     // ships its test suite). Names apply to offered situations too (renaming
     // "Qualified lead" is fine — the key underneath never changes).
-    const authoring = useRehearsalAuthoring(stateScope);
+    const authoring = useRehearsalAuthoring(stateScope, { readOnly: live?.readOnly });
     const {
         loaded: authoringLoaded,
         runs: customRuns,
