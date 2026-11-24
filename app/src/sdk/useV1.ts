@@ -39,7 +39,9 @@ interface Reads {
 }
 const readsByCache = new WeakMap<object, Reads>();
 const allReads = new Set<Reads>();
-const NEVER = new AbortController().signal;
+// Made on first read: Workers refuse an AbortController made at module scope.
+let never: AbortSignal | null = null;
+const neverAborted = () => (never ??= new AbortController().signal);
 
 function cacheFor(scope: object): Map<string, Entry> {
     let cache = caches.get(scope);
@@ -58,7 +60,7 @@ function readsOf(cache: Map<string, Entry>): Reads {
 
 /** Begins a read of `key`, the newest from now: its result goes into the cache unless a newer one began meanwhile. */
 function begin<T>(cache: Map<string, Entry>, reads: Reads, key: string, fn: (signal: AbortSignal) => Promise<T>): Promise<T> {
-    const read = fn(NEVER);
+    const read = fn(neverAborted());
     reads.under.set(key, read);
     reads.newest.set(key, read);
     const done = () => void (reads.under.get(key) === read && reads.under.delete(key));

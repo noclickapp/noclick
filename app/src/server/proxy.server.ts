@@ -98,36 +98,43 @@ export async function forward(request: Request, upstream: Upstream, fetchImpl: t
         });
     }
 
+    const headers = new Headers();
+    for (const name of FORWARDED_REQUEST_HEADERS) {
+        const value = request.headers.get(name);
+        if (value !== null) headers.set(name, value);
+    }
+    headers.set('authorization', `Bearer ${upstream.key}`);
+    const hasBody = request.method !== 'GET' && request.method !== 'HEAD' && request.body !== null;
+    const init = {
+        method: request.method,
+        headers,
+        body: hasBody ? request.body : null,
+        // A body is passed on as it arrives, not read whole first.
+        ...(hasBody ? { duplex: 'half' } : {}),
+        redirect: 'manual',
+        // The browser going away (a closed tab, a stopped stream of events) ends the call to the API.
+        signal: request.signal,
+    } as RequestInit;
+    // A read carries no body and changes nothing, so a connection that drops under it (a reused socket the network
+    // reset, a connect that timed out) is tried once more, at once, on a new one. A write never is: it may have landed.
+    const attempts = !hasBody && (request.method === 'GET' || request.method === 'HEAD') ? 2 : 1;
+
     let response: Response;
-    try {
-        const headers = new Headers();
-        for (const name of FORWARDED_REQUEST_HEADERS) {
-            const value = request.headers.get(name);
-            if (value !== null) headers.set(name, value);
-        }
-        headers.set('authorization', `Bearer ${upstream.key}`);
-        const hasBody = request.method !== 'GET' && request.method !== 'HEAD' && request.body !== null;
-        response = await fetchImpl(target, {
-            method: request.method,
-            headers,
-            body: hasBody ? request.body : null,
-            // A body is passed on as it arrives, not read whole first.
-            ...(hasBody ? { duplex: 'half' } : {}),
-            redirect: 'manual',
-            // The browser going away (a closed tab, a stopped stream of events) ends the call to the API.
-            signal: request.signal,
-        } as RequestInit);
-    } catch (error) {
-        if (!request.signal.aborted) {
+    for (let attempt = 1; ; attempt++) {
+        try {
+            response = await fetchImpl(target, init);
+            break;
+        } catch (error) {
+            if (request.signal.aborted) return unreachable();
             // The error's name and code only: its message, or the request it describes, may carry the key.
             const reason = (error as { cause?: { code?: unknown } }).cause?.code ?? (error as Error).name;
+            if (attempt < attempts) {
+                console.warn(`The key proxy lost its connection to NoClick's API at ${base.origin} (${String(reason)}); trying once more.`);
+                continue;
+            }
             console.error(`The key proxy couldn't reach NoClick's API at ${base.origin} (${String(reason)}).`);
+            return unreachable();
         }
-        return apiError(502, {
-            type: 'upstream_error',
-            message: 'This app’s server couldn’t reach NoClick’s API.',
-            next_step: 'Check NOCLICK_API_URL and the server’s network connection, then try again.',
-        });
     }
 
     const out = new Headers();
@@ -141,6 +148,14 @@ export async function forward(request: Request, upstream: Upstream, fetchImpl: t
 
     const body = NULL_BODY_STATUSES.has(response.status) || request.method === 'HEAD' ? null : response.body;
     return new Response(body, { status: response.status, statusText: response.statusText, headers: out });
+}
+
+function unreachable(): Response {
+    return apiError(502, {
+        type: 'upstream_error',
+        message: 'This app’s server couldn’t reach NoClick’s API.',
+        next_step: 'Check NOCLICK_API_URL and the server’s network connection, then try again.',
+    });
 }
 
 /** A redirect to another API path, as this app's path for it; any other address as the API gave it. */
