@@ -19,7 +19,8 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { ApiObject, asList, asObject, listAll, listPage, parseTime, refId } from "./object.ts";
 import type { JsonObject, ObjectInit, Page, PageOptions } from "./object.ts";
-import type { Workflow } from "./workflow.ts";
+import { Workflow } from "./workflow.ts";
+import type { StepWorkspace } from "./workflow.ts";
 
 /** The most rows one page of a table holds. */
 const MAX_ROWS_PAGE = 10_000;
@@ -277,5 +278,69 @@ export class WorkflowTable extends ApiObject {
    */
   async delete(): Promise<void> {
     await this._request("DELETE", this.path());
+  }
+}
+
+/**
+ * One of your conversations with an agent step of a workflow, as a place its files are kept: what
+ * `Step.workspace(conversation)` reads. You list those of your own conversations with the agent steps of every
+ * workflow `Workflow.get` reads (never a share link's visitors', nor an agent's workflow: an agent keeps one
+ * workspace, `agent.workspace()`). They're your people's, never one of your users': acting for one, it's refused.
+ */
+export class AgentStepWorkspace extends ApiObject {
+  protected constructor(init: ObjectInit) {
+    super({ ...init, user: null });
+  }
+
+  /** Workflow routes are account-level. */
+  override _callScope(): null {
+    return null;
+  }
+
+  /**
+   * Your conversations' workspaces with agent steps, most recently active first, as Resources lists them;
+   * `organizationId` narrows to a team workspace's workflows (`"none"`: those in no workspace).
+   */
+  static async list(options: { organizationId?: string; limit?: number; client?: NoClick } = {}): Promise<AgentStepWorkspace[]> {
+    return await listAll(
+      { ...options, path: "/v1/workflows/workspaces", user: null, query: { organization_id: options.organizationId } },
+      (raw) => new AgentStepWorkspace({ raw, client: options.client }),
+    );
+  }
+
+  /** The workflow the step is in, and what it's made of. */
+  get workflow(): KeptBy {
+    return keptBy(this._field("workflow"));
+  }
+  get stepId(): string {
+    return this._field("step_id");
+  }
+  /** The agent step's name in the app. */
+  get stepName(): string {
+    return this._field("step_name");
+  }
+  /** The model the conversation last ran on. */
+  get model(): string | null {
+    return this._field("model");
+  }
+  /** The conversation, as `Step.workspace` takes it. */
+  get conversation(): string {
+    return this._field("conversation");
+  }
+  get title(): string {
+    return this._field("title");
+  }
+  get lastActivity(): Date | null {
+    return parseTime(this._field("last_activity"));
+  }
+
+  /** Its files, as `Step.workspace(conversation)` reads them. */
+  async files(): Promise<StepWorkspace> {
+    const workflow = Workflow.fromId(this.workflow.id, { client: this._client });
+    return await workflow.step(this.stepId).workspace(this.conversation);
+  }
+
+  protected async _load(): Promise<JsonObject> {
+    throw new Error("An agent step's workspace comes from AgentStepWorkspace.list().");
   }
 }

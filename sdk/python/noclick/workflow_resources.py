@@ -298,3 +298,66 @@ class WorkflowTable(_Object):
             scratch.delete()
         """
         await self._request("DELETE", self._path())
+
+
+class AgentStepWorkspace(_Object):
+    """One of your conversations with an agent step of a workflow, as a place
+    its files are kept: what ``Step.workspace(conversation)`` reads. You list
+    those of your own conversations with the agent steps of every workflow
+    ``Workflow.get`` reads (never a share link's visitors', nor an agent's
+    workflow: an agent keeps one workspace, ``agent.workspace()``). They're
+    your people's, never one of your users': acting for one, it's refused."""
+
+    _repr_keys = ("step_id", "conversation")
+
+    workflow: Dict[str, Any] = field("workflow", doc=(
+        "The workflow the step is in: ``{id, name, step_types}``, as ``WorkflowFile.workflow`` names it."))
+    step_id: str = field("step_id")
+    step_name: str = field("step_name", doc="The agent step's name in the app.")
+    model: Optional[str] = field("model", doc="The model the conversation last ran on.")
+    conversation: str = field("conversation", doc="The conversation, as ``Step.workspace`` takes it.")
+    title: str = field("title")
+    last_activity: Any = field("last_activity", parse_time)
+
+    # Workflow routes are account-level.
+    def _call_scope(self) -> Any:
+        return None
+
+    @synced
+    @classmethod
+    async def list(
+        cls, *, organization_id: Optional[str] = None, limit: Optional[int] = None, client: Optional[Client] = None,
+    ) -> List["AgentStepWorkspace"]:
+        """Your conversations' workspaces with agent steps, most recently active first, as Resources lists them;
+        ``organization_id`` narrows to a team workspace's workflows (``"none"``: those in no workspace).
+
+        Returns:
+            Each one (or the first ``limit``).
+
+        Usage::
+
+            for place in noclick.AgentStepWorkspace.list():
+                print(place.step_name, place.title, [f.path for f in place.files().files])
+        """
+        return await list_all(
+            "/v1/workflows/workspaces", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
+            params={"organization_id": organization_id}, user=None, limit=limit, client=client,
+        )
+
+    @synced
+    async def files(self) -> Any:
+        """Its files, as ``Step.workspace(conversation)`` reads them.
+
+        Returns:
+            The ``StepWorkspace``: its ``files``, and an ``upload_url`` when you may change the workflow.
+
+        Usage::
+
+            [place] = noclick.AgentStepWorkspace.list(limit=1)
+            for file in place.files().files:
+                print(file.path, file.url)
+        """
+        from .workflow import Workflow
+
+        step = Workflow.from_id(str(self._known("workflow")["id"]), client=self._client).step(self._known("step_id"))
+        return await step.workspace.aio(self._known("conversation"))

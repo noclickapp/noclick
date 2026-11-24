@@ -664,6 +664,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_versions_list": ["List Workflow Versions", "GET", "read"],
     "workflows_versions_restore": ["Restore Workflow Version", "POST", "write"],
     "workflows_versions_update": ["Rename Workflow Version", "PATCH", "write"],
+    "workflows_workspaces_list": ["List Step Workspaces", "GET", "read"],
     "workspaces_alerts_create": ["Alert Member", "POST", "read"],
     "workspaces_archive": ["Archive Workspace", "POST", "destructive"],
     "workspaces_create": ["Create Workspace", "POST", "write"],

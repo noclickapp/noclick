@@ -126,3 +126,19 @@ def test_through_mcp_a_deletion_waiting_for_the_owner_raises_as_one(api, client)
     [orders] = nc.WorkflowTable.list()
     with pytest.raises(nc.ApprovalRequired):
         orders.delete()
+
+
+def test_an_agent_steps_workspaces_list_as_resources_lists_them_each_reading_its_files(api, client):
+    place = {"object": "step_workspace", "workflow": {"id": "wf_1", "name": "Intake", "step_types": ["agent"]},
+             "step_id": "helper", "step_name": "Helper", "model": "claude-code", "conversation": "orders",
+             "title": "Orders", "last_activity": "2026-11-24T10:00:00+00:00"}
+    listed = api.get("/v1/workflows/workspaces").respond(json={"object": "list", "data": [place], "next_cursor": None})
+    files = api.get("/v1/workflows/wf_1/steps/helper/workspace").respond(json={
+        "object": "list", "data": [], "workspace": "/workspace", "exists": True, "truncated": False,
+        "upload_url": None})
+    [orders] = nc.AgentStepWorkspace.list(organization_id="none")
+    assert dict(listed.calls.last.request.url.params) == {"organization_id": "none"}
+    assert (orders.step_id, orders.step_name, orders.conversation, orders.workflow["id"]) == (
+        "helper", "Helper", "orders", "wf_1")
+    assert orders.files().workspace == "/workspace"
+    assert dict(files.calls.last.request.url.params) == {"conversation": "orders"}

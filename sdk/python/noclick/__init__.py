@@ -183,7 +183,7 @@ from .workflow import (
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_example import WorkflowExample, workflow_example, workflow_examples
-from .workflow_resources import RowsPage, TableRow, WorkflowFile, WorkflowTable
+from .workflow_resources import AgentStepWorkspace, RowsPage, TableRow, WorkflowFile, WorkflowTable
 
 __all__ = [
     "__version__",
@@ -252,7 +252,7 @@ __all__ = [
     "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion", "WorkflowVariables", "WorkflowSetup",
-    "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType", "check_step_settings", "StepSettingsCheck", "RunInputs",
+    "WorkflowFile", "WorkflowTable", "AgentStepWorkspace", "TableRow", "RowsPage", "step_types", "step_type", "StepType", "check_step_settings", "StepSettingsCheck", "RunInputs",
     "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "WorkflowFolderListing", "workflow_examples", "workflow_example",
     "WorkflowExample",
     "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "StepLastRun", "ExpressionPreview",

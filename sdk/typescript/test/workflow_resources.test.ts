@@ -112,3 +112,18 @@ test("the account's files page by cursor and are deleted as the account", async 
   assert.equal(gone.last.headers.get("noclick-user"), null);
   await assert.rejects(nc.deleteAttachment({ ...page.data[0], id: null }), TypeError);
 });
+
+test("an agent step's workspaces list as Resources lists them, each reading its files", async () => {
+  const { api } = setup();
+  const PLACE = { object: "step_workspace", workflow: { id: "wf_1", name: "Intake", step_types: ["agent"] },
+    step_id: "helper", step_name: "Helper", model: "claude-code", conversation: "orders", title: "Orders",
+    last_activity: "2026-11-24T10:00:00+00:00" };
+  const listed = api.on("GET", "/v1/workflows/workspaces", json(listing([PLACE])));
+  const files = api.on("GET", "/v1/workflows/wf_1/steps/helper/workspace",
+    json({ object: "list", data: [], workspace: "/workspace", exists: true, truncated: false, upload_url: null }));
+  const [place] = await nc.AgentStepWorkspace.list({ organizationId: "none" });
+  assert.deepEqual(params(listed.last.query), { organization_id: "none" });
+  assert.deepEqual([place.stepId, place.stepName, place.conversation, place.workflow.id], ["helper", "Helper", "orders", "wf_1"]);
+  assert.equal((await place.files()).workspace, "/workspace");
+  assert.deepEqual(params(files.last.query), { conversation: "orders" });
+});

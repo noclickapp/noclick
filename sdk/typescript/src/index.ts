@@ -240,7 +240,7 @@ export { WorkflowApproval } from "./workflowApproval.ts";
 export type {
   WorkflowApprovalAnswer, WorkflowApprovalField, WorkflowApprovalListOptions, WorkflowApprovalStatus,
 } from "./workflowApproval.ts";
-export { WorkflowFile, WorkflowTable } from "./workflowResources.ts";
+export { AgentStepWorkspace, WorkflowFile, WorkflowTable } from "./workflowResources.ts";
 export type { KeptBy, RowsPage, TableRow, WorkflowResourceListOptions } from "./workflowResources.ts";
 export type { ExportBundle, ExportItem } from "./export.ts";
 export { Volume } from "./volume.ts";
