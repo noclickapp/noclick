@@ -989,6 +989,7 @@ clover
 cloze
 club-os
 clust
+cmappsa
 coassemble
 coda
 codacy
