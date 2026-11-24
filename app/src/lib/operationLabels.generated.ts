@@ -1705,6 +1705,7 @@ monday
 moneybird
 mongodb
 monta
+moodle
 moonclerk
 moskit
 motaword
