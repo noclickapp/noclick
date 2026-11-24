@@ -131,7 +131,8 @@ export type {
 export { Cron } from "./cron.ts";
 export type { CronOptions } from "./cron.ts";
 export {
-  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, Schedule,
+  Deployment, DurableObjectClass, Project, ProjectAI, ProjectAccountKey, ProjectSecrets, ProjectSettings, PublicApp,
+  Schedule,
 } from "./project.ts";
 export type {
   AccountKey, AccountKeyRequest, AccountKeyScope, AccountKeyStatus,
@@ -141,6 +142,7 @@ export type {
   DeploymentDatabase, DeploymentEnvironment, DeploymentFix, DeploymentRuntime, DeploymentStatus, LogLine, LogLines,
   PathCheck, PathTraffic,
   PreviewAccess, PreviewLink, PreviewResources, ProjectAnalytics, ProjectAnalyticsOptions, ProjectCreateOptions,
+  PublicCode,
   ProjectLogsOptions,
   ProjectContainer, ProjectRuntime, ProjectUsage, RequestOutcomes, RouteTiming, SecretEnvironment, TrafficInterval,
 } from "./project.ts";
@@ -225,12 +227,14 @@ export type {
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
   WorkflowTestRun,
   WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
-  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowVersion,
+  WorkflowFolder, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowSetup, WorkflowVersion,
 } from "./workflow.ts";
 export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";
 export type { WorkflowExample } from "./workflowExample.ts";
-export type { StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation } from "./stepType.ts";
+export type {
+  StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation, StepTypeOperationKind,
+} from "./stepType.ts";
 export { WorkflowApproval } from "./workflowApproval.ts";
 export type {
   WorkflowApprovalAnswer, WorkflowApprovalField, WorkflowApprovalListOptions, WorkflowApprovalStatus,
@@ -246,6 +250,8 @@ export { Skill, SkillLink } from "./skill.ts";
 export type { SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillFiles, SkillRef, SkillVersion } from "./skill.ts";
 export { compute } from "./compute.ts";
 export type { ComputeItem, ComputeRun } from "./compute.ts";
+export { DeployPlan, RepoDeploy, deploy } from "./deploy.ts";
+export type { DeployKeyAsk, DeployOptions, DeployResult, DeploySecret } from "./deploy.ts";
 export { Estimate, estimate } from "./estimate.ts";
 export type {
   EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateRequestItem, EstimateUsageField,

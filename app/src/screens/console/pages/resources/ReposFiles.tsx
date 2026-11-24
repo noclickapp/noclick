@@ -2,7 +2,7 @@
 // opens, and a read-only viewer for the file picked (`?file=`). Binary files are named, never dumped, and a file too
 // big to show is named with its size, which its directory's listing gives (read again only for a linked file).
 import { useState } from 'react';
-import { ChevronRight, File, Folder, FolderOpen } from 'lucide-react';
+import { ChevronRight, File, Folder, FolderOpen, Link2 } from 'lucide-react';
 import { fmtBytes, HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import type { Repo, RepoFile } from 'noclick';
@@ -45,7 +45,8 @@ function Directory({ prefix, depth, ...tree }: TreeProps & { prefix: string; dep
             {listing.data.map((entry) => {
                 const isDir = entry.type === 'dir';
                 const expanded = isDir && open.has(entry.path);
-                const Icon = isDir ? (expanded ? FolderOpen : Folder) : File;
+                // A link someone committed is one entry, never a folder to open: picked, it reads as the path it points to.
+                const Icon = isDir ? (expanded ? FolderOpen : Folder) : entry.type === 'link' ? Link2 : File;
                 return (
                     <li key={entry.path}>
                         <button
@@ -62,6 +63,7 @@ function Directory({ prefix, depth, ...tree }: TreeProps & { prefix: string; dep
                             <ChevronRight aria-hidden className={cn('h-3 w-3 shrink-0 text-muted-foreground transition-transform', expanded && 'rotate-90', !isDir && 'invisible')} />
                             <Icon aria-hidden className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                             <span className="truncate">{baseName(entry.path)}</span>
+                            {entry.type === 'link' && <span className="ml-auto shrink-0 font-sans text-[11px] text-muted-foreground">link</span>}
                         </button>
                         {expanded && (
                             <ul className="m-0 list-none p-0">

@@ -5,6 +5,7 @@
 // words, and Add. It replaces the Triggers tab's list while it's open.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
+import { useReportHeld } from '@/sdk/held';
 import { ArrowLeft, Check, ChevronRight, Phone, Plus, Search, X } from 'lucide-react';
 import { Agent, Channel, Connection, Cron, Inbox, OnEvent, OnPlatformEvent, OnWebhook, PhoneNumber, Workspace, type JsonObject } from 'noclick';
 import { HAIRLINE } from '@/ui/primitives';
@@ -105,6 +106,7 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
     const channels = useWorkV1(draft.kind === 'channel' ? 'work:channels:open' : null, (c) => Channel.list({ client: c, status: 'open' }));
     const numbers = useWorkV1(draft.kind === 'call' ? 'work:phone-numbers' : null, (c) => PhoneNumber.list({ client: c }));
     const [busy, setBusy] = useState(false);
+    const reportHeld = useReportHeld({ client });
     const scroller = useRef<HTMLDivElement>(null);
     // Braced: Chrome's scrollTo answers with a promise, which React would take for the cleanup and call.
     useEffect(() => {
@@ -179,7 +181,13 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
         const me = Agent.fromId(agent.id, { client });
         const done = (id: string, undo?: () => Promise<unknown>) => {
             rereadAgent(agent.id);
-            toast('Added', { description: readBack ?? undefined, ...(undo && { action: { label: 'Undo', onClick: () => void undo().then(() => rereadAgent(agent.id)) } }) });
+            // Undoing what goes for good (a number's routing) is held for the account's owner, followed by its own toast.
+            const undone = (again: () => Promise<unknown>) => () =>
+                void again().then(
+                    () => rereadAgent(agent.id),
+                    (error: unknown) => reportHeld(error, 'Undo it', () => rereadAgent(agent.id)) || toast('Couldn’t undo it', { description: errorText(error) })
+                );
+            toast('Added', { description: readBack ?? undefined, ...(undo && { action: { label: 'Undo', onClick: undone(undo) } }) });
             onAdded(id);
         };
         try {

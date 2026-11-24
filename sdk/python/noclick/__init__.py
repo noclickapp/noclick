@@ -139,7 +139,7 @@ from .policy import Policy, PolicyVerdict, Rule
 from .project import (
     AccountKey, AccountKeyRequest, AccountKeyScope, AnalyticsSummary, AppRequests, Binding, CheckReview, Deployment,
     DeploymentCheck, LogLine, LogLines, PathCheck, PathTraffic, PreviewLink, Project, ProjectAccountKey, ProjectAI,
-    ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings,
+    ProjectAnalytics, ProjectContainer, ProjectSecrets, ProjectSettings, PublicApp, PublicCode,
     ProjectUsage, RequestOutcomes, RouteTiming, Schedule, TrafficInterval, DurableObjectClass, DurableObjectClasses,
     DurableObjectInstance,
 )
@@ -162,6 +162,7 @@ from .volume import Volume, VolumeEntry
 from .memory import Memory, MemoryLink
 from .skill import Skill, SkillAttachment, SkillAuthor, SkillFile, SkillFileInfo, SkillLink, SkillVersion
 from .compute import ComputeItem, ComputeRun, compute
+from .deploy import DeployKeyAsk, DeployPlan, DeployResult, DeploySecret, RepoDeploy, deploy
 from .estimate import (
     Estimate, EstimateItem, EstimateKind, EstimateLine, EstimatePrice, EstimateUsageField, estimate,
 )
@@ -176,7 +177,7 @@ from .workflow import (
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
     WorkflowTestRun,
-    WorkflowStep, WorkflowVariables, WorkflowVersion,
+    WorkflowSetup, WorkflowStep, WorkflowVariables, WorkflowVersion,
 )
 from .workflow_approval import WorkflowApproval
 from .workflow_example import WorkflowExample, workflow_example, workflow_examples
@@ -231,6 +232,7 @@ __all__ = [
     "ProjectAccountKey", "AccountKey", "AccountKeyScope", "AccountKeyRequest",
     "LogLines", "ProjectUsage", "DeploymentCheck", "PathCheck", "CheckReview", "RequestOutcomes", "RouteTiming",
     "ProjectAnalytics", "TrafficInterval", "PathTraffic", "AnalyticsSummary", "AppRequests", "PreviewLink",
+    "PublicCode", "PublicApp",
     "ProjectContainer", "ProjectEmail", "EmailSetup", "SentEmail", "Broadcast", "ProjectPayments", "PaymentsSetup", "ProjectSignIn", "SignInSetup",
     "ProjectLive", "LiveStatus", "LiveSession", "LiveEditCounts", "LiveDataCopy", "LiveEdit", "LiveEdits",
     "LiveExecResult", "LiveEnterLink", "LiveEnd",
@@ -247,7 +249,7 @@ __all__ = [
     "Workflow", "WorkflowRun", "RunStep", "StepOutput", "WorkflowEndpoint", "WorkflowBuild", "WorkflowBuildResult",
     "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
-    "WorkflowVersion", "WorkflowVariables",
+    "WorkflowVersion", "WorkflowVariables", "WorkflowSetup",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
     "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "workflow_examples", "workflow_example",
     "WorkflowExample",
@@ -255,6 +257,7 @@ __all__ = [
     "ClearedStepState",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
+    "deploy", "DeployPlan", "DeployResult", "DeploySecret", "DeployKeyAsk", "RepoDeploy",
     "estimate", "Estimate", "EstimateItem", "EstimateLine", "EstimateKind", "EstimateUsageField", "EstimatePrice",
     "UsageSeries", "UsageSeriesLine", "UsagePoint", "UsageLimits", "KeyCap", "UserCap", "AgentBudget", "ProjectBudget",
     "UsageLedger", "LedgerGroup", "UsageCharges", "LedgerCharge", "UsageBilling",
