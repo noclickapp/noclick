@@ -45,8 +45,14 @@ def test_reach_reads_noclicks_numbers_and_whether_a_phone_is_linked_as_the_accou
     assert "NoClick-User" not in read.calls.last.request.headers
     assert reach == nc.OwnerReach(lines=[nc.OwnerLine(app="whatsapp", number="+14155550100"),
                                          nc.OwnerLine(app="imessage", number="+14155550101")], phone_linked=True)
-    api.get("/v1/humans/owner/reach").respond(json={"object": "owner_reach", "lines": [], "phone_linked": False})
-    assert nc.Human.owner().reach() == nc.OwnerReach(lines=[], phone_linked=False)
+    api.get("/v1/humans/owner/reach").respond(json={"object": "owner_reach", "lines": [], "phone_linked": False,
+                                                    "email": {"address": "maya@noclick.email", "paused": True,
+                                                              "from_anyone": False}})
+    assert nc.Human.owner().reach() == nc.OwnerReach(lines=[], phone_linked=False, email=nc.OwnerEmailAddress(
+        address="maya@noclick.email", paused=True, from_anyone=False))
+    placed = api.put("/v1/humans/owner/timezone").respond(json={"object": "owner_timezone", "timezone": "Europe/London"})
+    nc.Human.owner().set_timezone("Europe/London")
+    assert body(placed.calls.last.request) == {"timezone": "Europe/London"}
     with pytest.raises(ValueError):
         nc.Human(email="ana@example.com").reach()
 

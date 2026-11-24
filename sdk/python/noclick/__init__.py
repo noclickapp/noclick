@@ -80,6 +80,7 @@ from .account_phones import (
     AccountPhones,
     LinkedPhone,
     PhoneChallenge,
+    PhoneLinkCode,
 )
 from .agent import (
     Agent,
@@ -364,6 +365,7 @@ from .human import (
     HumanOperations,
     HumanRequest,
     OwnerEmail,
+    OwnerEmailAddress,
     OwnerLine,
     OwnerReach,
 )
@@ -580,6 +582,7 @@ from .workflow import (
     ClearedStepState,
     EditBatch,
     ExpressionPreview,
+    HostedMcpStatus,
     LatestOutputs,
     PublishAddress,
     RunInputs,
@@ -1084,6 +1087,9 @@ __all__ = [
     "PhoneChallenge",
     "BuilderSkill",
     "SavedOutput",
+    "PhoneLinkCode",
+    "OwnerEmailAddress",
+    "HostedMcpStatus",
     "Error",
     "Offer",
     "InvalidRequest",

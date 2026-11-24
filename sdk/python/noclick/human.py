@@ -61,13 +61,25 @@ class OwnerLine:
 
 
 @dataclass(frozen=True)
+class OwnerEmailAddress:
+    """The address the owner emails their assistant at (``OwnerReach.email``): ``paused`` when
+    the owner turned its mail off (the address stays theirs), ``from_anyone`` when anyone's mail
+    reaches the assistant, not only the owner's."""
+
+    address: str
+    paused: bool
+    from_anyone: bool
+
+
+@dataclass(frozen=True)
 class OwnerReach:
     """Where the owner texts NoClick (``Human.reach``): NoClick's own numbers, one for each app
-    it answers on, and whether a phone of the owner's is linked to the account (which one is
-    never said)."""
+    it answers on, whether a phone of the owner's is linked to the account (which one is never
+    said), and the address they email their assistant at (``None`` before it has one)."""
 
     lines: List[OwnerLine]
     phone_linked: bool
+    email: Optional[OwnerEmailAddress] = None
 
 
 def _read_answer(result: Any, _op: Operation) -> Answer:
@@ -510,10 +522,11 @@ class Human:
 
     @synced
     async def reach(self) -> OwnerReach:
-        """NoClick's own numbers the owner texts it on, and whether a phone of theirs is
-        linked (never which). Show a number only once one is: a text from a phone the account
-        hasn't linked starts an account of its own, and linking one is the owner's, signed in
-        to NoClick. Your account's own key reads it, never a user's.
+        """NoClick's own numbers the owner texts it on, whether a phone of theirs is linked
+        (never which), and the address they email their assistant at (``email``, ``None``
+        before it has one). Show a number only once a phone is linked: a text from a phone the
+        account hasn't linked starts an account of its own, and linking one is the owner's,
+        signed in to NoClick. Your account's own key reads it, never a user's.
 
         Returns:
             The ``noclick.OwnerReach``.
@@ -529,7 +542,26 @@ class Human:
             raise ValueError("Only noclick.Human.owner() texts NoClick's own numbers.")
         raw = await resolve_client(self._client).request("GET", "/v1/humans/owner/reach", user=None) or {}
         lines = [OwnerLine(app=line["app"], number=line["number"]) for line in raw.get("lines") or []]
-        return OwnerReach(lines=lines, phone_linked=bool(raw.get("phone_linked")))
+        mail = raw.get("email")
+        email = OwnerEmailAddress(address=mail["address"], paused=bool(mail.get("paused")),
+                                  from_anyone=bool(mail.get("from_anyone"))) if mail else None
+        return OwnerReach(lines=lines, phone_linked=bool(raw.get("phone_linked")), email=email)
+
+    @synced
+    async def set_timezone(self, timezone: str) -> None:
+        """Where the signed-in owner is, from their browser (an IANA zone such as ``"Europe/London"``):
+        the clock of the account's assistant, and of each of its own agents NoClick placed, moves
+        there; a zone chosen through the API stays. The signed-in owner's alone: a key raises
+        ``noclick.PermissionDenied``.
+
+        Usage::
+
+            noclick.Human.owner().set_timezone("Europe/London")
+        """
+        if self._to != {"owner": True}:
+            raise ValueError("Only noclick.Human.owner() says where the owner is.")
+        await resolve_client(self._client).request("PUT", "/v1/humans/owner/timezone", json={"timezone": timezone},
+                                                   user=None)
 
     @synced
     async def add_email(self, email: str) -> None:

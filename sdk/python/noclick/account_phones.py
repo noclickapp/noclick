@@ -38,6 +38,14 @@ class PhoneChallenge:
 
 
 @dataclass(frozen=True)
+class PhoneLinkCode:
+    """A one-time code that links whichever phone texts it to NoClick, and how many seconds it has left."""
+
+    code: str
+    expires_in: int
+
+
+@dataclass(frozen=True)
 class AccountPhones:
     """The numbers linked to your account. A linked number reaches the account: texts and calls from it go to its
     owner's NoClick, and the web's phone sign-in signs in to the account with it. So these are the signed-in owner's,
@@ -107,6 +115,26 @@ class AccountPhones:
         body = {"challenge_id": challenge_id, "code": code}
         return LinkedPhone._from(await resolve_client(client).request(
             "POST", "/v1/account/phones/verify", json=body, user=None))
+
+    @synced
+    @classmethod
+    async def link_code(cls, *, client: Optional[Client] = None) -> PhoneLinkCode:
+        """A one-time code that links the phone it's texted from: sent to NoClick on WhatsApp or iMessage, it links
+        that number to the account. ``expires_in`` counts seconds from now; asked again while it has minutes left,
+        the same code. Raises ``noclick.NotAvailable`` (``reason`` ``codes_unavailable``) where this NoClick keeps no
+        codes, and ``noclick.Conflict`` (``too_many_phones``) for an account with ``max_phones`` numbers.
+
+        Returns:
+            The code and the seconds it has left.
+
+        Usage::
+
+            code = noclick.AccountPhones.link_code()
+            print(f"Text {code.code} to NoClick on WhatsApp")
+        """
+        raw = await resolve_client(client).request("POST", "/v1/account/phones/link_code", user=None)
+        raw = raw if isinstance(raw, dict) else {}
+        return PhoneLinkCode(str(raw.get("code") or ""), int(raw.get("expires_in") or 0))
 
     @synced
     @classmethod

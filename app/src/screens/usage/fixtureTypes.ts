@@ -1,6 +1,6 @@
 // The usage dashboard's data contract: the rows billing already keeps, shaped exactly as their tables hold them, so
 // the lab's fixtures and a productized loader feed the same renderer. Each field names its source. Everything is
-// dollars (`total_cost` is dollars in the table; only the old `usage:data` socket multiplies by CREDITS_PER_DOLLAR).
+// dollars (`total_cost` is dollars in the table).
 import type { AutoTopUpState } from './types';
 
 /** billing/schema.py:36 */

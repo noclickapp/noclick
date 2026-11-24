@@ -65,3 +65,14 @@ def test_a_runs_step_names_the_secrets_left_out_of_it(api, client):
                    "withheld": ["_webhook.headers.Authorization"]}]})
     [hook] = nc.Workflow.from_id("wf_1").get_run("run_1").steps
     assert hook.withheld == ["_webhook.headers.Authorization"]
+
+
+def test_a_hosted_mcp_links_status_reads_both_sides(api, client):
+    route = api.get("/v1/workflows/wf_1/steps/mcp/hosted_mcp").respond(json={
+        "object": "hosted_mcp", "exists": True, "is_active": True, "liveness_available": True,
+        "client_name": "claude-code", "last_method": "tools/list", "tool_count": 3, "tools_ready": 3,
+        "tools_sample": ["linear__create_issue"], "seconds_since_seen": 4.0, "first_tools_at": 1763629200})
+    link = nc.Workflow.from_id("wf_1").step("mcp").hosted_mcp(tools=True)
+    assert route.calls.last.request.url.params["tools"] == "true"
+    assert (link.exists, link.client_name, link.tools_ready, link.tools_sample) == (
+        True, "claude-code", 3, ["linear__create_issue"])

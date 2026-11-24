@@ -150,6 +150,8 @@ test("a team workspace is made, a teammate invited and the session switched", as
   const invite = await nc.Organization.invite(acme, "sam@example.com", { role: "admin" });
   assert.deepEqual([invite.id, invite.email_sent, invite.email_error], ["inv_1", false, "bounced"]);
   assert.deepEqual(invited.last.body, { email: "sam@example.com", role: "admin" });
+  api.on("GET", "/v1/organizations/org_1/spend_cap", json({ object: "spend_cap", cap_usd: 50, payer: { self: false, name: "Olu" } }));
+  assert.deepEqual((await nc.Organization.spendCap(acme)).payer, { self: false, name: "Olu" });
   await nc.Organization.switchTo(null);
   assert.deepEqual(switched.last.body, { organization_id: null });
 });

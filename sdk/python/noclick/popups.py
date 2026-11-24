@@ -57,3 +57,41 @@ class Popups:
         """
         body = {"popups": dict(popups)}
         return cls._from(await resolve_client(client).request("PATCH", "/v1/popups", json=body, user=None))
+
+    @synced
+    @staticmethod
+    async def seen_once(*, client: Optional[Client] = None) -> Dict[str, bool]:
+        """Every "show this once" flag the NoClick app keeps for your account's owner, by its key: each popup's
+        "Don't show again" and each tour they finished (``True``: seen, so not shown again). A key not there is
+        unseen.
+
+        Returns:
+            Every flag, by its key.
+
+        Usage::
+
+            seen = noclick.Popups.seen_once()
+            print(seen.get("invite_walkthrough", False))
+        """
+        return _seen(await resolve_client(client).request("GET", "/v1/popups/seen", user=None))
+
+    @synced
+    @staticmethod
+    async def set_seen_once(flags: Mapping[str, bool], *, client: Optional[Client] = None) -> Dict[str, bool]:
+        """Mark "show this once" flags seen (``True``) or unseen again (``False``), in one change; the rest stay as
+        they are. A key is lowercase letters, digits and ``_``.
+
+        Returns:
+            Every flag, as it stands after the change.
+
+        Usage::
+
+            noclick.Popups.set_seen_once({"invite_walkthrough": True})
+        """
+        body = {"seen_once": dict(flags)}
+        return _seen(await resolve_client(client).request("PATCH", "/v1/popups/seen", json=body, user=None))
+
+
+def _seen(raw: Any) -> Dict[str, bool]:
+    raw = raw if isinstance(raw, dict) else {}
+    return {str(k): v is True for k, v in (raw.get("seen_once") or {}).items()}

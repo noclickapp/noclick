@@ -44,4 +44,30 @@ export class Popups {
     const raw = await resolveClient(options.client).request("PATCH", "/v1/popups", { json: { popups }, user: null });
     return new Popups(asObject(raw));
   }
+
+  /**
+   * Every "show this once" flag the NoClick app keeps for your account's owner, by its key: each popup's "Don't show
+   * again" and each tour they finished (`true`: seen, so not shown again). A key not there is unseen.
+   *
+   *     const seen = await Popups.seenOnce();
+   *     if (!seen.invite_walkthrough) console.log("They haven't taken the invite tour");
+   */
+  static async seenOnce(options: { client?: NoClick } = {}): Promise<Record<string, boolean>> {
+    return seenOf(asObject(await resolveClient(options.client).request("GET", "/v1/popups/seen", { user: null })));
+  }
+
+  /**
+   * Mark "show this once" flags seen (`true`) or unseen again (`false`), in one change; the rest stay as they are. A
+   * key is lowercase letters, digits and `_`. Resolves to every flag, as it stands after the change.
+   *
+   *     await Popups.setSeenOnce({ invite_walkthrough: true });
+   */
+  static async setSeenOnce(flags: Record<string, boolean>, options: { client?: NoClick } = {}): Promise<Record<string, boolean>> {
+    const raw = await resolveClient(options.client).request("PATCH", "/v1/popups/seen", { json: { seen_once: flags }, user: null });
+    return seenOf(asObject(raw));
+  }
+}
+
+function seenOf(raw: JsonObject): Record<string, boolean> {
+  return Object.fromEntries(Object.entries(asObject(raw.seen_once)).map(([key, seen]) => [key, seen === true]));
 }

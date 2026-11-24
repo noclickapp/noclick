@@ -44,9 +44,18 @@ test("reach reads NoClick's numbers and whether a phone is linked, as the accoun
   assert.deepEqual(reach, {
     lines: [{ app: "whatsapp", number: "+14155550100" }, { app: "imessage", number: "+14155550101" }],
     phoneLinked: true,
+    email: null,
   });
-  api.on("GET", "/v1/humans/owner/reach", json({ object: "owner_reach", lines: [], phone_linked: false }));
-  assert.deepEqual(await nc.Human.owner().reach(), { lines: [], phoneLinked: false });
+  api.on("GET", "/v1/humans/owner/reach", json({
+    object: "owner_reach", lines: [], phone_linked: false,
+    email: { address: "maya@noclick.email", paused: true, from_anyone: false },
+  }));
+  assert.deepEqual(await nc.Human.owner().reach(), {
+    lines: [], phoneLinked: false, email: { address: "maya@noclick.email", paused: true, fromAnyone: false },
+  });
+  const placed = api.on("PUT", "/v1/humans/owner/timezone", json({ object: "owner_timezone", timezone: "Europe/London" }));
+  await nc.Human.owner().setTimezone("Europe/London");
+  assert.deepEqual(placed.last.body, { timezone: "Europe/London" });
   await assert.rejects(new nc.Human({ email: "ana@example.com" }).reach(), TypeError);
 });
 

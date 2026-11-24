@@ -150,6 +150,23 @@ class Organization:
 
     @synced
     @staticmethod
+    async def spend_cap(organization: Any, *, client: Optional[Client] = None) -> Dict[str, Any]:
+        """The monthly spending cap of the account that pays for its work, and what that account's billing period
+        has spent. Only the person who pays changes it, as their own account's cap (``PATCH /v1/account``).
+
+        Returns:
+            ``cap_usd`` (``None`` for none), ``spent_usd``, ``period_start``, ``resets_at``, ``reached``, and
+            ``payer``: ``{"self": True}`` when it's you, else ``{"self": False, "name": ...}``.
+
+        Usage::
+
+            cap = noclick.Organization.spend_cap(acme)
+            print(cap["cap_usd"], cap["payer"])
+        """
+        return await _call(client, "GET", f"/v1/organizations/{_id(organization)}/spend_cap")
+
+    @synced
+    @staticmethod
     async def invite(organization: Any, email: str, *, role: str = "member",
                      client: Optional[Client] = None) -> Dict[str, Any]:
         """Invite someone by email (its owner or an admin): they're emailed a link that joins them as ``role``

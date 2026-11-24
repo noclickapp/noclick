@@ -87,6 +87,18 @@ export class Organization {
   }
 
   /**
+   * The monthly spending cap of the account that pays for its work, and what that account's billing period has
+   * spent: `cap_usd` (null for none), `spent_usd`, `period_start`, `resets_at`, `reached`, and `payer`
+   * (`{ self: true }` when it's you, else `{ self: false, name }`). Only the person who pays changes it, as their own
+   * account's cap (`PATCH /v1/account`).
+   *
+   *     const { cap_usd, payer } = await Organization.spendCap(acme);
+   */
+  static async spendCap(organization: Ref, options: Options = {}): Promise<JsonObject> {
+    return await call(options, "GET", `${at(organization)}/spend_cap`);
+  }
+
+  /**
    * Invite someone by email (its owner or an admin): they're emailed a link that joins them as `role`. How many people
    * it holds is its plan's. Answers the invite, with `email_sent`: `false` when its email couldn't go (`email_error`
    * says why), and the invite stands all the same, so share its link yourself.

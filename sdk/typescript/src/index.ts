@@ -22,6 +22,7 @@ export {
 export type {
   LinkedPhone,
   PhoneChallenge,
+  PhoneLinkCode,
 } from "./accountPhones.ts";
 export {
   Agent,
@@ -558,6 +559,7 @@ export type {
   HumanStepRef,
   HumanTool,
   OwnerEmail,
+  OwnerEmailAddress,
   OwnerLine,
   OwnerReach,
   Via,
@@ -1043,6 +1045,7 @@ export type {
   EditOptions,
   ExpressionPreview,
   GraphEdge,
+  HostedMcpStatus,
   LatestOutputs,
   ManualRun,
   NameVersionOptions,

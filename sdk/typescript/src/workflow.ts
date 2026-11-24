@@ -491,6 +491,24 @@ export interface LatestOutputs {
  * What an expression gives (`Step.previewExpression`): `ok`, with the value's `kind` (`object`, `array`, `string`,
  * `number`, `boolean`, `null`), an object's `keys` and a short `preview`; or `ok` false with the `error`.
  */
+/** How an MCP step's hosted link stands (`WorkflowStep.hostedMcp`). */
+export interface HostedMcpStatus {
+  exists: boolean;
+  active: boolean;
+  /** False when the client's side couldn't be read just now: unknown, never "no client". */
+  livenessAvailable: boolean;
+  clientName: string | null;
+  lastMethod: string | null;
+  toolCount: number | null;
+  /** When a client first listed tools the link served (epoch seconds): it has worked at least once. */
+  firstToolsAt: number | null;
+  secondsSinceSeen: number | null;
+  /** What the link serves now, when asked for (`tools`); null otherwise or when the graph wouldn't resolve. */
+  toolsReady: number | null;
+  toolsSample: string[];
+  raw: JsonObject;
+}
+
 export interface ExpressionPreview {
   ok: boolean;
   kind: string | null;
@@ -1870,6 +1888,36 @@ export class Step extends ApiObject {
       user,
     });
     return toExpressionPreview(raw);
+  }
+
+  /**
+   * How an MCP step's hosted link stands: whether it's made (`exists`) and active, and the last request a client made
+   * of it (`clientName`, `lastMethod`, `toolCount`, `firstToolsAt`, `secondsSinceSeen`; `livenessAvailable` false when
+   * that couldn't be read, never "no client yet"). With `tools`, what the link serves now (`toolsReady`, the first few
+   * names in `toolsSample`), resolved from the stored graph: ask once and keep it. Never the link itself.
+   *
+   *     const link = await workflow.step("mcp").hostedMcp({ tools: true });
+   *     console.log(link.toolsReady, link.clientName ?? "no client yet");
+   */
+  async hostedMcp(options: CallOptions & { tools?: boolean } = {}): Promise<HostedMcpStatus> {
+    const { tools, client, user } = options;
+    const raw = asObject(await (client ?? this._api).request("GET", `${await this._workflow._stepPath(this.id)}/hosted_mcp`, {
+      query: { tools: tools ? "true" : undefined },
+      user,
+    }));
+    return {
+      exists: raw.exists === true,
+      active: raw.is_active === true,
+      livenessAvailable: raw.liveness_available !== false,
+      clientName: str(raw.client_name),
+      lastMethod: str(raw.last_method),
+      toolCount: num(raw.tool_count),
+      firstToolsAt: num(raw.first_tools_at),
+      secondsSinceSeen: num(raw.seconds_since_seen),
+      toolsReady: num(raw.tools_ready),
+      toolsSample: Array.isArray(raw.tools_sample) ? raw.tools_sample.map(String) : [],
+      raw,
+    };
   }
 
   /**

@@ -23,6 +23,12 @@ export interface PhoneChallenge {
   raw: JsonObject;
 }
 
+/** A one-time code that links whichever phone texts it to NoClick, and how many seconds it has left. */
+export interface PhoneLinkCode {
+  code: string;
+  expiresIn: number;
+}
+
 const linked = (raw: unknown): LinkedPhone => {
   const row = asObject(raw);
   return { phone: str(row.phone) ?? "", source: str(row.source) ?? "verify", verifiedAt: parseTime(row.verified_at) };
@@ -83,6 +89,20 @@ export class AccountPhones {
       user: null,
     });
     return linked(raw);
+  }
+
+  /**
+   * A one-time code that links the phone it's texted from: sent to NoClick on WhatsApp or iMessage, it links that
+   * number to the account. `expiresIn` counts seconds from now, so no clock is trusted; asked again while it has
+   * minutes left, the same code. Rejects with `NotAvailable` (`reason` `codes_unavailable`) where this NoClick keeps
+   * no codes, and `Conflict` (`too_many_phones`) for an account with `maxPhones` numbers.
+   *
+   *     const { code } = await AccountPhones.linkCode();
+   *     console.log(`Text ${code} to NoClick on WhatsApp`);
+   */
+  static async linkCode(options: { client?: NoClick } = {}): Promise<PhoneLinkCode> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/account/phones/link_code", { user: null }));
+    return { code: str(raw.code) ?? "", expiresIn: typeof raw.expires_in === "number" ? raw.expires_in : 0 };
   }
 
   /**

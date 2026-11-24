@@ -178,6 +178,9 @@ def test_a_team_workspace_is_made_a_teammate_invited_and_the_session_switched(ap
     assert (invite["id"], invite["email_sent"]) == ("inv_1", True)
     assert json.loads(invited.calls.last.request.content) == {"email": "sam@example.com", "role": "admin"}
     assert [m["role"] for m in nc.Organization.members("org_1")] == ["owner"]
+    api.get("/v1/organizations/org_1/spend_cap").respond(json={
+        "object": "spend_cap", "cap_usd": 50, "spent_usd": 12.5, "reached": False, "payer": {"self": False, "name": "Olu"}})
+    assert nc.Organization.spend_cap("org_1")["payer"] == {"self": False, "name": "Olu"}
     nc.Organization.switch_to(None)
     assert json.loads(switched.calls.last.request.content) == {}
 def test_a_workflow_is_shared_changed_and_unshared_and_a_person_leaves_one(api, client):

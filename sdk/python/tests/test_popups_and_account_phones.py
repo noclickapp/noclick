@@ -36,6 +36,18 @@ def test_a_popup_the_app_doesnt_have_raises_invalid_request(api, client):
         nc.Popups.update({"tour": False})
 
 
+def test_seen_once_flags_are_read_and_marked_as_the_account(api, client):
+    read = api.get("/v1/popups/seen").respond(json={"object": "seen_once", "seen_once": {"invite_walkthrough": True}})
+    marked = api.patch("/v1/popups/seen").respond(json={"object": "seen_once", "seen_once": {
+        "invite_walkthrough": True, "quickpublish_walkthrough": True}})
+    with nc.as_user("user_42"):
+        assert nc.Popups.seen_once() == {"invite_walkthrough": True}
+        seen = nc.Popups.set_seen_once({"quickpublish_walkthrough": True})
+    assert body(marked.calls.last.request) == {"seen_once": {"quickpublish_walkthrough": True}}
+    assert seen == {"invite_walkthrough": True, "quickpublish_walkthrough": True}
+    assert "NoClick-User" not in read.calls.last.request.headers
+
+
 def test_account_phones_read_the_linked_numbers(api, client):
     read = api.get("/v1/account/phones").respond(json=PHONES)
     with nc.as_user("user_42"):
@@ -68,6 +80,15 @@ def test_a_wrong_code_raises_invalid_request_naming_why(api, client):
     with pytest.raises(nc.InvalidRequest) as refused:
         nc.AccountPhones.verify("ch_1", "000000")
     assert refused.value.details["reason"] == "invalid_code"
+
+
+def test_a_link_code_is_minted_for_the_account(api, client):
+    minted = api.post("/v1/account/phones/link_code").respond(json={
+        "object": "phone_link_code", "code": "NC-7Q4M", "expires_in": 540})
+    with nc.as_user("user_42"):
+        code = nc.AccountPhones.link_code()
+    assert code == nc.PhoneLinkCode("NC-7Q4M", 540)
+    assert "NoClick-User" not in minted.calls.last.request.headers
 
 
 def test_unlink_names_the_number_in_the_path(api, client):

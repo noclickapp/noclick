@@ -63,3 +63,14 @@ test("a run's step names the secrets left out of it", async () => {
   const [hook] = (await nc.Workflow.fromId("wf_1").getRun("run_1")).steps;
   assert.deepEqual(hook.withheld, ["_webhook.headers.Authorization"]);
 });
+
+test("hostedMcp() reads both sides of a hosted MCP link", async () => {
+  const { api } = setup();
+  const route = api.on("GET", "/v1/workflows/wf_1/steps/mcp/hosted_mcp", json({
+    object: "hosted_mcp", exists: true, is_active: true, liveness_available: true, client_name: "claude-code",
+    last_method: "tools/list", tool_count: 3, tools_ready: 3, tools_sample: ["linear__create_issue"], seconds_since_seen: 4,
+  }));
+  const link = await nc.Workflow.fromId("wf_1").step("mcp").hostedMcp({ tools: true });
+  assert.equal(route.last.query.get("tools"), "true");
+  assert.deepEqual([link.exists, link.clientName, link.toolsReady, link.toolsSample], [true, "claude-code", 3, ["linear__create_issue"]]);
+});

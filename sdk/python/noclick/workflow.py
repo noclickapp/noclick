@@ -214,6 +214,32 @@ class ExpressionPreview:
 
 
 @dataclass(frozen=True)
+class HostedMcpStatus:
+    """How an MCP step's hosted link stands (``Step.hosted_mcp``). ``liveness_available`` False
+    means the client's side couldn't be read just now: unknown, never "no client".
+    ``tools_ready`` is None unless asked for (``tools``) or when the graph wouldn't resolve."""
+
+    exists: bool
+    active: bool
+    liveness_available: bool
+    client_name: Optional[str]
+    last_method: Optional[str]
+    tool_count: Optional[int]
+    first_tools_at: Optional[float]
+    seconds_since_seen: Optional[float]
+    tools_ready: Optional[int]
+    tools_sample: List[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "HostedMcpStatus":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(bool(raw.get("exists")), bool(raw.get("is_active")), raw.get("liveness_available") is not False,
+                   raw.get("client_name"), raw.get("last_method"), raw.get("tool_count"), raw.get("first_tools_at"),
+                   raw.get("seconds_since_seen"), raw.get("tools_ready"), list(raw.get("tools_sample") or []), raw)
+
+
+@dataclass(frozen=True)
 class ClearedStepState:
     """What ``Step.clear_state`` forgot: how many of its state records and of its
     conversations were deleted."""
@@ -1470,6 +1496,27 @@ class Step(_Object):
             json={"expression": expression, **compact(samples=samples)}, user=resolve_scope(user),
         )
         return ExpressionPreview._from(raw)
+
+    @synced
+    async def hosted_mcp(self, *, tools: bool = False, user: Any = AMBIENT) -> HostedMcpStatus:
+        """How an MCP step's hosted link stands: whether it's made (``exists``) and active, and
+        the last request a client made of it (``client_name``, ``last_method``, ``tool_count``,
+        ``first_tools_at``, ``seconds_since_seen``; ``liveness_available`` False when that
+        couldn't be read, never "no client yet"). With ``tools``, what the link serves now
+        (``tools_ready``, the first few names in ``tools_sample``), resolved from the stored
+        graph: ask once and keep it. Never the link itself.
+
+        Returns:
+            The ``HostedMcpStatus``.
+
+        Usage::
+
+            link = noclick.Workflow.from_name("crm-tools").step("mcp").hosted_mcp(tools=True)
+            print(link.tools_ready, link.client_name or "no client yet")
+        """
+        raw = await self._api.request("GET", f"{await self._step_path()}/hosted_mcp",
+                                      params=compact(tools="true" if tools else None), user=resolve_scope(user))
+        return HostedMcpStatus._from(raw)
 
     @synced
     async def clear_state(self) -> ClearedStepState:

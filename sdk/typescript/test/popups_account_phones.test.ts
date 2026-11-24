@@ -88,3 +88,21 @@ test("a key without account:phones rejects with PermissionDenied", async () => {
   api.on("GET", "/v1/account/phones", apiError(403, "permission_denied", "This key lacks the 'account:phones' scope"));
   await assert.rejects(nc.AccountPhones.get(), nc.PermissionDenied);
 });
+
+test("Popups.seenOnce and setSeenOnce read and mark the owner's show-once flags, as the account", async () => {
+  const { api } = setup();
+  const read = api.on("GET", "/v1/popups/seen", json({ object: "seen_once", seen_once: { invite_walkthrough: true } }));
+  const marked = api.on("PATCH", "/v1/popups/seen", json({ object: "seen_once", seen_once: { invite_walkthrough: true, quickpublish_walkthrough: true } }));
+  assert.deepEqual(await nc.asUser("user_42", () => nc.Popups.seenOnce()), { invite_walkthrough: true });
+  const seen = await nc.Popups.setSeenOnce({ quickpublish_walkthrough: true });
+  assert.deepEqual(marked.last.body, { seen_once: { quickpublish_walkthrough: true } });
+  assert.deepEqual(seen, { invite_walkthrough: true, quickpublish_walkthrough: true });
+  assert.equal(read.last.headers.get("NoClick-User"), null);
+});
+
+test("AccountPhones.linkCode mints the account's code", async () => {
+  const { api } = setup();
+  const minted = api.on("POST", "/v1/account/phones/link_code", json({ object: "phone_link_code", code: "NC-7Q4M", expires_in: 540 }));
+  assert.deepEqual(await nc.asUser("user_42", () => nc.AccountPhones.linkCode()), { code: "NC-7Q4M", expiresIn: 540 });
+  assert.equal(minted.last.headers.get("NoClick-User"), null);
+});

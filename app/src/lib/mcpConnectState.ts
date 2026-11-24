@@ -1,6 +1,6 @@
 // What a hosted MCP link's status means for the person waiting on it.
 //
-// `mcp_host:status` carries two independent stories: the SERVER side
+// A link's status (`GET /v1/workflows/{id}/steps/{step}/hosted_mcp`) carries two independent stories: the SERVER side
 // (`tools_ready` — what the link serves right now, resolved from the graph
 // without any client) and the CLIENT side (the liveness blob a client's
 // handshake stamps). One spinner conflating them left an owner unable to tell

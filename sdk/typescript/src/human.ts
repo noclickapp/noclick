@@ -129,6 +129,17 @@ export interface OwnerReach {
   lines: OwnerLine[];
   /** Whether a phone of the owner's is linked to the account; which one is never said. */
   phoneLinked: boolean;
+  /** The address the owner emails their assistant at; null before it has one. */
+  email: OwnerEmailAddress | null;
+}
+
+/** The address the owner emails their assistant at. */
+export interface OwnerEmailAddress {
+  address: string;
+  /** The owner turned its mail off: the address stays theirs, and mail to it is ignored. */
+  paused: boolean;
+  /** Anyone's mail to it reaches the assistant, not only the owner's. */
+  fromAnyone: boolean;
 }
 
 /** `"auto"` or the channels to use, e.g. `["email", "web"]`. */
@@ -428,9 +439,10 @@ export class Human {
   }
 
   /**
-   * NoClick's own numbers the owner texts it on, and whether a phone of theirs is linked (never which). Show
-   * a number only once one is: a text from a phone the account hasn't linked starts an account of its own,
-   * and linking one is the owner's, signed in to NoClick. Your account's own key reads it, never a user's.
+   * NoClick's own numbers the owner texts it on, whether a phone of theirs is linked (never which), and the
+   * address they email their assistant at (`email`, null before it has one). Show a number only once a phone is
+   * linked: a text from a phone the account hasn't linked starts an account of its own, and linking one is the
+   * owner's, signed in to NoClick. Your account's own key reads it, never a user's.
    *
    *     const { lines, phoneLinked } = await Human.owner().reach();
    *     if (phoneLinked) for (const line of lines) console.log(`${line.app}: ${line.number}`);
@@ -439,10 +451,24 @@ export class Human {
     if (!this.to.owner) throw new TypeError("Only Human.owner() texts NoClick's own numbers.");
     const raw = asObject(await resolveClient(this.client).request("GET", "/v1/humans/owner/reach", { user: null }));
     const lines = Array.isArray(raw.lines) ? raw.lines.map(asObject) : [];
+    const email = raw.email ? asObject(raw.email) : null;
     return {
       lines: lines.map((line) => ({ app: str(line.app) ?? "", number: str(line.number) ?? "" })),
       phoneLinked: Boolean(raw.phone_linked),
+      email: email && { address: str(email.address) ?? "", paused: email.paused === true, fromAnyone: email.from_anyone === true },
     };
+  }
+
+  /**
+   * Where the signed-in owner is, from their browser (an IANA zone such as `"Europe/London"`): the clock of the
+   * account's assistant, and of each of its own agents NoClick placed, moves there; a zone chosen through the API
+   * stays. The signed-in owner's alone: a key rejects with `PermissionDenied`.
+   *
+   *     await Human.owner().setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+   */
+  async setTimezone(timezone: string): Promise<void> {
+    if (!this.to.owner) throw new TypeError("Only Human.owner() says where the owner is.");
+    await resolveClient(this.client).request("PUT", "/v1/humans/owner/timezone", { json: { timezone }, user: null });
   }
 
   /**
