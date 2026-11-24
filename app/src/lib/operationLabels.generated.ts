@@ -809,6 +809,7 @@ bandsintown
 bannerbear
 bannerbite
 base44
+basecamp
 basedash
 baserow
 baseten
