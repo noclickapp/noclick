@@ -7,8 +7,9 @@
 // graph is saved and read again beyond /v1 (`graph/`, standard in graph/saves.ts); the palette steps are added from;
 // what a copy carries and a paste reads (`surface/`); what showing a workflow's runs and each step's results reads
 // (`runs/`, standards in runs/standards.tsx); and what a workflow's Test Run reads, with the pieces its frames and a
-// run's story draw with (`testRun/`, standards in testRun/standards.tsx and testRun/frameParts.tsx). A host fills them
-// before the canvas first draws (some hold hooks the canvas and the form call).
+// run's story draw with (`testRun/`, standards in testRun/standards.tsx and testRun/frameParts.tsx); and what a
+// workflow's Setup tab reads, with the three parts of it only a host has in full (`setup/`, standards in
+// setup/standards.tsx). A host fills them before the canvas first draws (some hold hooks the canvas and the form call).
 import type { ComponentType, ReactElement, ReactNode, RefAttributes } from 'react';
 import type { Node } from '@xyflow/react';
 import type { CredentialRequirement, StepSettings } from '@/lib/accountWays';
@@ -26,6 +27,19 @@ import type { RunFixes, RunReadsHost, RunResults, SavedOutputsHost } from './run
 import { RunStepsOnV1, useNothingSaved, useV1Fix, useV1RunReads } from './runs/standards';
 import type { ClipboardParser } from './surface/clipboard/types';
 import type { AddStepRequest } from './surface/useClickToAddNode';
+import type { McpConnectProps, SetupHost, SetupRuntime } from './setup/reads';
+import {
+    askHereForTestRun,
+    McpConnectOnNoClick,
+    NoCover,
+    QuietOrb,
+    RuntimeOnApi,
+    useCatalogIcons,
+    useV1Lens,
+    useV1Probe,
+    useV1Report,
+    useV1RuntimeStep,
+} from './setup/standards';
 import { FRAME_STANDARD, type FrameParts } from './testRun/frameParts';
 import type { TestRunHost } from './testRun/reads';
 import { useKeptHere, useV1Scenarios, useV1TestRun, useV1Unmet, v1Authoring } from './testRun/standards';
@@ -85,8 +99,8 @@ export interface CanvasPresence {
     Avatars: ComponentType<{ collaborators: Collaborator[] }>;
 }
 
-/** Other people editing the workflow as it's edited: their pointers, selections and unsaved moves. The standard draws
- *  nobody else (another person's changes reach the canvas once they're saved). */
+/** Other people with the workflow open: their pointers, selections and builder edits. Another person's changes reach
+ *  the canvas once they're saved, whoever fills this; the standard draws nobody else. */
 export const PRESENCE = slot<CanvasPresence>('canvas.presence', NOBODY_ELSE);
 
 // ── the Interface tab ───────────────────────────────────────────────────────
@@ -572,3 +586,38 @@ export const TEST_RUN = slot<TestRunHost>('canvas.testRun', {
  *  message's or a reply's text from its Markdown, and the mark of work under way. The standard draws Markdown as a
  *  README is, and a live dot. The frames read it through `FRAMES` there, which names this same place. */
 export const FRAME_PARTS = slot<FrameParts>('canvas.frames', FRAME_STANDARD);
+
+// ── a workflow's Setup tab ──────────────────────────────────────────────────
+
+/** What a workflow's Setup tab reads (setup/reads.ts): how each step stands (the lens its steps are derived through),
+ *  proof that a chosen account works, the workflow's setup check, the staged message's marks, what the tab remembers
+ *  and asking the Test Run screen for a run. The standard is the platform API's: each step judged against its type
+ *  (`GET /v1/step_types/{type}`), an account proved by its connection (`POST /v1/connections/{ref}/verify`), and the
+ *  check read from the workflow's readiness (`GET /v1/workflows/{id}`). NoClick's app judges by the catalog it was
+ *  built with, and its check also says what real input the workflow has had. */
+export const SETUP = slot<SetupHost>('canvas.setup', {
+    useLens: useV1Lens,
+    useProbe: useV1Probe,
+    useReport: useV1Report,
+    useIcons: useCatalogIcons,
+    useKept: useKeptHere,
+    askForTestRun: askHereForTestRun,
+    Orb: QuietOrb,
+});
+
+/** The Setup tab's step that chooses which agent runs the workflow. The standard shows the model the agent step
+ *  names and connects the AI account it runs on (`connect.model`); it never holds the step unmet (whether a model
+ *  runs on NoClick's key is NoClick's to know) and says that choosing among NoClick's models and coding agents is in
+ *  NoClick's app. NoClick's app draws that choice, each with the plan or key it takes. */
+export const SETUP_RUNTIME = slot<SetupRuntime>('canvas.setup.runtime', { useStep: useV1RuntimeStep, Phase: RuntimeOnApi });
+
+/** The Setup tab's last step for a workflow that serves its tools to a coding agent: connecting one. The link such an
+ *  agent adds is a capability the API hands to no app's key, so the standard shows none: it says the link is in
+ *  NoClick's app and opens the workflow there. NoClick's app shows the link, each agent's steps and whether one has
+ *  connected. */
+export const SETUP_MCP = slot<ComponentType<McpConnectProps>>('canvas.setup.mcp', McpConnectOnNoClick);
+
+/** What covers the page on the way into a workflow's Setup, drawn over the workflow's page while it opens. The
+ *  standard draws nothing: this app opens Setup in place, on a workflow it already holds. NoClick's app covers the
+ *  page while a workflow copied from a template is made and its Setup opens. */
+export const SETUP_COVER = slot<ComponentType>('canvas.setup.cover', NoCover);

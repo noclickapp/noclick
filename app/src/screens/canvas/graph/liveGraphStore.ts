@@ -16,8 +16,8 @@
 // room hands the store what it hears (adoptServerVersion, applyToBase).
 
 import { proxy, subscribe, useSnapshot } from 'valtio';
-import type { Node, Edge, Node as XYFlowNode, Edge as XYFlowEdge } from '@xyflow/react';
-import { Conflict, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
+import type { Node, Edge } from '@xyflow/react';
+import { Conflict, PermissionDenied, Workflow, type EditOptions, type NoClick, type WorkflowEdit } from 'noclick';
 import { valtioCache } from '@/lib/indexeddb';
 import { standing } from '@/slots';
 import { serializeNodeForSave, serializeEdgeForSave, createWorkflowNode, applyNodeUpdate, mergeServerNodes, rawConfigToPayload } from '@/screens/canvas/applyNodeUpdate';
@@ -452,9 +452,14 @@ function heldButWithheld(node: Node, server: Node, paths: string[]): boolean {
 
 // ── How the canvas saves ────────────────────────────────────────────────
 
+let tabOrigin: string | null = null;
+
 /** This tab's name for itself on its /v1 edits (`origin`): what the workflow's room hears of its own writes names it,
- *  so it never applies them a second time (its save's answer has them already). */
-export const CANVAS_ORIGIN = `canvas-${crypto.randomUUID()}`;
+ *  so it never applies them a second time (its save's answer has them already). Made on first use, the same after:
+ *  the server build runs on Workers, which refuse random values at module scope. */
+export function canvasOrigin(): string {
+    return (tabOrigin ??= `canvas-${crypto.randomUUID()}`);
+}
 
 let editsClient: NoClick | null = null;
 
@@ -534,7 +539,7 @@ async function sendEdits(
 ): Promise<WorkflowEdit | null> {
     const edit: EditOptions = {
         source: 'canvas',
-        origin: CANVAS_ORIGIN,
+        origin: canvasOrigin(),
         ...(options.ifVersion != null ? { ifVersion: options.ifVersion } : {}),
     };
     // The batch is sent once its function has queued it, so its size decides the options it goes with.
@@ -655,9 +660,32 @@ function fireEditsSave(rec: GraphRecord, closing: boolean): void {
             scheduleSave(rec);
             return;
         }
+        if (e instanceof PermissionDenied) {
+            // The person may no longer change the workflow (its owner made them a viewer): the canvas is read-only
+            // from here, and shows the workflow as stored rather than what this save carried.
+            rec.readOnly = true;
+            rec.dirty = false;
+            void takeStored(rec);
+            return;
+        }
         console.warn(`[liveGraphStore] save rejected for ${rec.workflowId}:`, e);
         saveFailed(rec, e instanceof Error ? e.message : String(e));
     });
+}
+
+/** The workflow as stored, taken whole: nothing the canvas holds is the person's own any more (they may only view it
+ *  now), so the merge takes the server's copy of everything and keeps none of what wasn't saved. */
+async function takeStored(rec: GraphRecord): Promise<void> {
+    try {
+        const read = await standing(GRAPH_SAVES).read(rec.workflowId, editsClient);
+        if (!read.graph) return;
+        rec.base = baseOf(rec.nodes, rec.edges, rec.base?.interface);
+        rec.deletedNodeIds.clear();
+        rebaseFromServer(rec, read.graph, read.version);
+        rec.dirty = false;
+    } catch (e) {
+        console.error(`[liveGraphStore] reading ${rec.workflowId} as stored failed:`, e);
+    }
 }
 
 /** The server's graph read again, for a save that has no base to diff against (one whose load never set it). */
@@ -859,9 +887,10 @@ export function recordDeletedNodes(workflowId: string, ids: string[]): void {
     scheduleSave(rec);
 }
 
-/** Tombstone a collaborator's delete (delivered over the collab channel)
- *  so a CAS-conflict rebase can't re-add the node while their save is
- *  still in flight. Never sent to the server — their save owns the cleanup. */
+/** Tombstone a removal the canvas took from another writer before it was
+ *  stored (a builder run's, which persists after its terminal frame) so a
+ *  CAS-conflict rebase can't re-add the node while that save is still on its
+ *  way. Never sent to the server — that writer's save owns the cleanup. */
 export function recordRemoteDeletedNodes(workflowId: string, ids: string[]): void {
     const rec = graphRecords[workflowId];
     if (!rec) return;
@@ -926,6 +955,13 @@ export function isGraphReadOnly(workflowId: string): boolean {
     return graphRecords[workflowId]?.readOnly ?? false;
 }
 
+/** The viewer may only read this workflow, for a component: it draws again when that changes (an access change heard
+ *  while the canvas is open, a save the server refused for it). */
+export function useGraphReadOnly(workflowId: string | undefined): boolean {
+    const records = useSnapshot(graphRecords);
+    return !!(workflowId && records[workflowId]?.readOnly);
+}
+
 /** The canvas holds this step only in part (the room held some of it back) until it's read whole
  *  (`takeServerStep`), a full read takes it or a load does: it can't be edited meanwhile, and its saves keep the
  *  step's settings as stored, the closing tab's last one included. */
@@ -936,6 +972,15 @@ export function markStepPartial(workflowId: string, nodeId: string): void {
 
 export function isStepPartial(workflowId: string | undefined, nodeId: string | undefined): boolean {
     return !!(workflowId && nodeId && graphRecords[workflowId]?.partialNodeIds[nodeId]);
+}
+
+/** Whether the server holds this step, as far as the canvas knows (its base), for a component: one just added holds
+ *  nothing stored until its save lands. True where the canvas keeps no base for the workflow (it can't tell). */
+export function useStepStored(workflowId: string | undefined, nodeId: string | undefined): boolean {
+    const records = useSnapshot(graphRecords);
+    const base = workflowId ? records[workflowId]?.base : undefined;
+    if (!nodeId || !base) return true;
+    return base.nodes.has(nodeId);
 }
 
 /** The step is held in part, for a component (its panel shows it loading). */
@@ -1005,6 +1050,8 @@ export async function reloadFromServer(workflowId: string): Promise<boolean> {
     try {
         const read = await standing(GRAPH_SAVES).read(workflowId, editsClient);
         if (!read.graph) return false;
+        // A reader who may only look at the workflow never saves it.
+        if (read.access !== undefined && read.access !== null) rec.readOnly = read.access === 'viewer';
         rebaseFromServer(rec, read.graph, read.version);
         rec.dirty = true;
         scheduleSave(rec);
@@ -1090,66 +1137,6 @@ export function hasLiveGraphState(workflowId: string): boolean {
     const rec = graphRecords[workflowId];
     if (!rec) return false;
     return rec.loaded || rec.nodes.length > 0 || rec.edges.length > 0;
-}
-
-// ── Remote-edit application (used by a host's live presence when the
-//    canvas isn't mounted). When the canvas IS mounted, presence routes
-//    remote events through setNodes/setEdges, which then flow into this
-//    store via the canvas's recordGraphSnapshot effect — so these helpers
-//    are background-only and presence skips them while canvasMounted is
-//    true. ────────────────────────────────────────────────────────────
-
-export function applyRemoteNodeAdd(workflowId: string, nodeData: unknown): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const node = nodeData as XYFlowNode;
-    if (!node?.id) return;
-    if (rec.nodes.some(n => n.id === node.id)) return;
-    rec.nodes = [...rec.nodes, node];
-    // Don't mark dirty — remote edits are already persisted by the
-    // origin side. We only need to keep the canvas's view of the graph
-    // current; firing our own save on top would be redundant and risk a
-    // clobber if our snapshot lags theirs.
-}
-
-export function applyRemoteNodeUpdate(workflowId: string, nodeId: string, data: Record<string, unknown>): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const idx = rec.nodes.findIndex(n => n.id === nodeId);
-    if (idx === -1) return;
-    rec.nodes = [
-        ...rec.nodes.slice(0, idx),
-        { ...rec.nodes[idx], data: { ...rec.nodes[idx].data, ...data } },
-        ...rec.nodes.slice(idx + 1),
-    ];
-}
-
-export function applyRemoteNodeRemove(workflowId: string, nodeId: string): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    // Tombstone before the existence check: the removal may race a snapshot
-    // that hasn't listed the node yet, and the rebase guard must still hold.
-    rec.remoteDeletedNodeIds.add(nodeId);
-    if (!rec.nodes.some(n => n.id === nodeId)) return;
-    rec.nodes = rec.nodes.filter(n => n.id !== nodeId);
-    rec.edges = rec.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
-}
-
-export function applyRemoteEdgeAdd(workflowId: string, edgeData: unknown): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    const edge = edgeData as XYFlowEdge;
-    if (!edge?.id) return;
-    if (rec.edges.some(e => e.id === edge.id)) return;
-    rec.edges = [...rec.edges, edge];
-}
-
-export function applyRemoteEdgeRemove(workflowId: string, edgeId: string): void {
-    const rec = graphRecords[workflowId];
-    if (!rec) return;
-    rec.remoteDeletedEdgeIds.add(edgeId);
-    if (!rec.edges.some(e => e.id === edgeId)) return;
-    rec.edges = rec.edges.filter(e => e.id !== edgeId);
 }
 
 // ── Agentic graph_event application ────────────────────────────────────

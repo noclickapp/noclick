@@ -1,17 +1,20 @@
 // @vitest-environment happy-dom
 // The canvas acting as one of the account's keys, as this app serves it: what has moved into the app so far (its
 // graph: the store that saves it, graph/liveGraphStore.ts; its drawing: the steps and connections, nodes/ and edges/;
-// its editing surface with the palette, surface/ and WorkflowCanvas.tsx; its runs and results, runs/; and its Test
-// Run, testRun/) opens a workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws
+// its editing surface with the palette, surface/ and WorkflowCanvas.tsx; its runs and results, runs/; its Test Run,
+// testRun/; and its Setup tab, setup/) opens a workflow, edits it in each way a canvas does, meets another writer's change, closes, and draws
 // what it holds; the canvas on its own adds a step from the palette, connects, moves, copies and pastes, deletes and
 // brings back steps and follows another writer's commit; and it reads its run log, a step's outputs and one run's
-// results, runs it (whole, and one step alone) and stops a run, lists its test runs, adds one and plays it, over
-// fixtures that refuse what only the account's signed-in owner may do (screens/console/ownerOnly.ts)
+// results, runs it (whole, and one step alone) and stops a run, lists its test runs, adds one and plays it, and sets
+// it up (an account chosen and proved, a variable picked from its field's choices and written, the setup check and
+// the staged message read), over fixtures that refuse what only the account's signed-in owner may do
+// (screens/console/ownerOnly.ts)
 // exactly as the API refuses a key, and none of it asks for one. What it calls, as the owner and as a key, is kept in
 // canvasCalls.txt (`npx vitest run -u` writes it again), which NoClick's own tests call on its real API as a key and
 // hold to the table. And what it does with what it reads: every request goes through the app's client (none off its
 // origin), and no secret the account holds is in anything it reads or sends.
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { MotionGlobalConfig } from 'framer-motion';
 import { Position, ReactFlow, ReactFlowProvider, type Edge, type Node } from '@xyflow/react';
 import { NoClick } from 'noclick';
 import { useState, type ReactNode } from 'react';
@@ -42,6 +45,9 @@ import { OutputPanel } from './runs/OutputPanel';
 import type { WorkflowExecutionLog } from './runs/RunLog';
 import { useRunLog } from './runs/useRunLog';
 import { useWorkflowRuns } from './runs/useRun';
+import { declaredVariables, setupFetch, setupGraph, VARIABLE_SECRET } from './setup/fixtures';
+import { SetupView } from './setup/SetupView';
+import { useSavedVariables } from './setup/variables';
 import { GRAPH_SAVES, RUN_READS, RUN_RESULTS, STEP_DRAWING } from './slots';
 import { forgetAuthoring } from './testRun/authoring';
 import { testRunFetch } from './testRun/fixtures';
@@ -79,6 +85,11 @@ beforeAll(async () => {
     unmount();
     // The standards' SDK and the standard's results view load with their first use: once here, too.
     await Promise.all([import('./standardsSdk'), import('./runs/RunSteps'), import('@/screens/resources/CodeView')]);
+    // And what the Setup tab's standards load: the step form, the agent's account pickers, an account's check.
+    await Promise.all([import('./form/NodeConfig'), import('./setup/RuntimeAccounts'), import('@/ui/connectStandards')]);
+    // Each of its steps drawn where its motion ends.
+    MotionGlobalConfig.skipAnimations = true;
+    Element.prototype.scrollIntoView ??= () => undefined;
 });
 
 beforeEach(() => {
@@ -390,6 +401,7 @@ async function runsAndResults(actsAs: 'owner' | 'key'): Promise<Call[]> {
     const panel = render(<OutputPanel selectedNode={node('hook', 'trigger-webhook')} workflowId={WORKFLOW} />, { wrapper });
     await waitFor(() => expect(panel.container.textContent).toContain('2 of 2'));
     panel.unmount();
+    // A step the server doesn't hold yet (one just added) reads no stored outputs, only its type's shape.
     const expected = render(<OutputPanel selectedNode={node('unrun', 'automation-slack', { operation: `send_message_as_${actsAs}` })} workflowId={WORKFLOW} />, { wrapper });
     await waitFor(() => expect(expected.container.textContent).toContain('Expected Output'));
     expected.unmount();
@@ -451,6 +463,80 @@ async function testRun(actsAs: 'owner' | 'key'): Promise<Call[]> {
     return calls;
 }
 
+/** The workflow's Setup tab: its steps derived from the workflow and its step types, the one account of a step's kind
+ *  chosen (the step's `set_connection` edit) and proved by its connection, a variable picked from its bound field's
+ *  choices (a `define_variable` edit), then its last step: the workflow's readiness and the staged message. On real
+ *  timers. */
+async function setupTab(actsAs: 'owner' | 'key'): Promise<Call[]> {
+    const calls: Call[] = [];
+    forgetAuthoring();
+    forgetTestRuns();
+    const client = new NoClick({
+        apiKey: 'nk_test',
+        baseUrl: 'https://api.test',
+        maxRetries: 0,
+        fetch: setupFetch({
+            actsAs,
+            slack: true,
+            variables: { held: declaredVariables() },
+            observe: (method, path, answered, body) => {
+                calls.push({ method, path, body, answer: answered.then((response) => response.clone().text()) });
+            },
+        }),
+    });
+    const held = setupGraph();
+    const first = held.nodes.map((n) => createWorkflowNode(String(n.id), String(n.type), n.position as { x: number; y: number }, n.config as Record<string, unknown>));
+    function Tab() {
+        const [nodes, setNodes] = useState<Node[]>(first);
+        const saved = useSavedVariables(WORKFLOW);
+        return (
+            <SetupView
+                nodes={nodes}
+                edges={held.edges as unknown as Edge[]}
+                workflowId={WORKFLOW}
+                onConfigChange={() => undefined}
+                onOperationChange={() => undefined}
+                onCredentialIdsChange={(id, ids) => setNodes((now) => now.map((n) => (n.id === id ? applyNodeUpdate(n, { credentialIds: ids }) : n)))}
+                onOpenTestRun={() => undefined}
+                variableDefinitions={saved.definitions}
+                onVariableDefinitionsChange={saved.change}
+            />
+        );
+    }
+    const { container, unmount } = render(
+        <ClientProvider client={client}>
+            <Tab />
+        </ClientProvider>
+    );
+    const heading = () => container.querySelector('h2')?.textContent ?? '';
+    const row = async (text: string) => {
+        const expand = container.querySelector('button[aria-label="Expand sidebar"]');
+        if (expand) fireEvent.click(expand);
+        const found = await waitFor(() => {
+            const button = [...container.querySelectorAll('aside nav button')].find((b) => b.textContent?.includes(text));
+            expect(button).toBeTruthy();
+            return button as HTMLButtonElement;
+        });
+        fireEvent.click(found);
+    };
+    // The one Slack account is given to the tool's step, and the tab goes on to the variable its channel is bound to.
+    await waitFor(() => expect(heading()).toBe('Channel'));
+    fireEvent.focus(container.querySelector('input[data-field-key="channel"]')!);
+    const choice = await screen.findByText('#orders');
+    fireEvent.mouseDown(choice);
+    fireEvent.click(choice);
+    await waitFor(() => expect(calls.some((c) => (c.body.ops as Json[] | undefined)?.some((op) => op.op === 'define_variable'))).toBe(true));
+    // The account's step again: what its provider says of it.
+    await row('Connected');
+    await waitFor(() => expect(container.textContent).toContain('#general, #orders'));
+    // Its last step: the setup check and the message a test run stages.
+    await row('Test Run');
+    await waitFor(() => expect(container.textContent).toContain('Tell the CRM hasn’t completed a run yet.'));
+    await waitFor(() => expect(container.textContent).toContain('Sample event'));
+    unmount();
+    return calls;
+}
+
 /** Every key anywhere in `value`. */
 function keysIn(value: unknown): string[] {
     if (Array.isArray(value)) return value.flatMap(keysIn);
@@ -463,7 +549,7 @@ async function holdsNoSecret(calls: Call[]) {
     for (const call of calls) {
         const sent = JSON.stringify(call.body);
         const read = await call.answer;
-        for (const secret of [...Object.values(SECRETS), OUTPUT_SECRET]) {
+        for (const secret of [...Object.values(SECRETS), OUTPUT_SECRET, VARIABLE_SECRET]) {
             expect(sent, `${asLine(call)} sent a secret`).not.toContain(secret);
             expect(read, `${asLine(call)} read a secret`).not.toContain(secret);
         }
@@ -475,7 +561,7 @@ async function holdsNoSecret(calls: Call[]) {
 }
 
 describe('the canvas acting as a key', () => {
-    it('opens, edits, merges, closes, draws, runs and tests a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
+    it('opens, edits, merges, closes, draws, runs, tests and sets up a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
         const called = new Set<string>();
         const refused: string[] = [];
         for (const actsAs of ['owner', 'key'] as const) {
@@ -491,6 +577,8 @@ describe('the canvas acting as a key', () => {
             calls.push(...(await runsAndResults(actsAs)));
             cleanup();
             calls.push(...(await testRun(actsAs)));
+            cleanup();
+            calls.push(...(await setupTab(actsAs)));
             cleanup();
             vi.useFakeTimers();
             await holdsNoSecret(calls);
@@ -541,6 +629,22 @@ describe('the canvas acting as a key', () => {
         ]);
         expect(calls.filter((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/graph`)).toHaveLength(2);
         expect(calls.some((c) => asLine(c) === 'GET /v1/step_types')).toBe(true);
+        for (const call of calls) expect(isOwnerOnly(call.method, call.path), asLine(call)).toBe(false);
+        await holdsNoSecret(calls);
+        expect(offClient).toEqual([]);
+    });
+
+    it('sets a workflow up, choosing an account by its id and writing a variable as its own edit, with no value it wasn’t given', { timeout: 30_000 }, async () => {
+        vi.useRealTimers();
+        const calls = await setupTab('key');
+        vi.useFakeTimers();
+        const edits = calls.filter((c) => asLine(c) === `POST /v1/workflows/${WORKFLOW}/edits`).map((c) => c.body.ops);
+        expect(edits).toEqual([
+            [{ op: 'set_connection', id: 'tools', connection: 'cred_slack', slot: 'slack_oauth' }],
+            [{ op: 'define_variable', name: 'channel', value: 'C02', description: 'Where new orders are announced.', per_user: true }],
+        ]);
+        // The account is proved by the connection that holds it; the check carries nothing.
+        expect(calls.filter((c) => c.path.endsWith('/verify')).map((c) => [asLine(c), c.body])).toEqual([['POST /v1/connections/conn_acme-slack/verify', {}]]);
         for (const call of calls) expect(isOwnerOnly(call.method, call.path), asLine(call)).toBe(false);
         await holdsNoSecret(calls);
         expect(offClient).toEqual([]);

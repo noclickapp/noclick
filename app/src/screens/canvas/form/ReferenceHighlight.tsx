@@ -14,7 +14,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, type RefObject } from 'react';
 import { useReferenceAutocomplete, extractAllReferences } from './ReferenceAutocompleteContext';
 import { REFERENCE_CHIP_CLASSES } from './referenceChip';
-import { scanBlocks, isJsExpression, parsePureAccessor } from '@/screens/canvas/expressionSyntax';
+import { scanBlocks, isEmptyStepReference, isJsExpression, parsePureAccessor } from '@/screens/canvas/expressionSyntax';
 
 export interface TextSegment {
     type: 'text';
@@ -36,6 +36,7 @@ export interface ExpressionSegment {
     content: string;
     inner: string;
     startIndex: number;
+    isValid?: boolean;
 }
 
 export type Segment = TextSegment | ReferenceSegment | ExpressionSegment;
@@ -98,8 +99,13 @@ export function useReferenceSegments(value: string): { segments: Segment[]; hasR
     const autocompleteContext = useReferenceAutocomplete();
 
     const invalidReferences = useMemo(() => {
-        if (!autocompleteContext || !value) return new Set<string>();
         const invalid = new Set<string>();
+        if (!value) return invalid;
+        // A read of no step (`$('')`, an "Add reference" left unpicked) is invalid whatever the graph holds.
+        for (const block of scanBlocks(value)) {
+            if (isEmptyStepReference(block.inner)) invalid.add(value.slice(block.start, block.end));
+        }
+        if (!autocompleteContext) return invalid;
         for (const ref of extractAllReferences(value)) {
             const result = autocompleteContext.validateReference(ref);
             if (!result.valid) invalid.add(`{{${ref}}}`);
@@ -110,9 +116,7 @@ export function useReferenceSegments(value: string): { segments: Segment[]; hasR
     const segments = useMemo<Segment[]>(() => {
         const parsed = parseValueIntoSegments(value);
         return parsed.map((segment) =>
-            segment.type === 'reference'
-                ? { ...segment, isValid: !invalidReferences.has(segment.content) }
-                : segment,
+            segment.type === 'text' ? segment : { ...segment, isValid: !invalidReferences.has(segment.content) },
         );
     }, [value, invalidReferences]);
 
@@ -213,8 +217,8 @@ export function ReferenceHighlightOverlay({
                             </span>
                         );
                     }
-                    if (segment.type === 'expression') {
-                        // Evaluated server-side, so never "invalid" here; distinct violet hue.
+                    if (segment.type === 'expression' && (segment.isValid !== false || isEditing)) {
+                        // Evaluated server-side; distinct violet hue unless it reads no step.
                         return (
                             <span
                                 key={index}
@@ -227,6 +231,9 @@ export function ReferenceHighlightOverlay({
                     }
                     const isInvalid = !segment.isValid && !isEditing;
                     const stateClass = isInvalid ? CHIP_INVALID : CHIP_VALID;
+                    const invalidTitle = segment.type === 'expression'
+                        ? "Empty step reference: pick the step it reads from, or remove it"
+                        : `Invalid reference: ${segment.nodeId}.${segment.path}`;
                     // Visual only (pointer-events: none from the overlay container) so a
                     // click falls through to the textarea and the caret lands where you
                     // clicked, instead of snapping to the end of the reference.
@@ -234,7 +241,7 @@ export function ReferenceHighlightOverlay({
                         <span
                             key={index}
                             className={`text-transparent ${CHIP_BASE} ${stateClass}`}
-                            title={isInvalid ? `Invalid reference: ${segment.nodeId}.${segment.path}` : undefined}
+                            title={isInvalid ? invalidTitle : undefined}
                         >
                             {segment.content}
                         </span>

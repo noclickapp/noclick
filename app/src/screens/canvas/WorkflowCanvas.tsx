@@ -6,8 +6,11 @@
 // workflow run and stopped from its toolbar, each step showing how it stands as a run goes, its run log behind the
 // pill, and one run's results opened from the log. Other writers' changes and a run's moves arrive through the
 // account's change stream (graph/followCommits.ts, runs/useRun.ts), so the canvas renders inside the app's live frames
-// (@/sdk/live). What only a host has (other people editing live, the builder chat, a step's panel) isn't here yet.
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+// (@/sdk/live). What draws over it (a step's panel, the workflow's Setup) is its children's, handed the canvas's hold
+// on the workflow (`CanvasHandle`): the steps as it holds them, the one selected, and changing a step, which the canvas
+// saves as the edit it is. A workflow the key may only look at (its read says `viewer`) opens read-only: nothing moves,
+// connects or is removed, no step is added and it isn't run. What only a host has (other people editing live) isn't here.
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ReactFlowProvider, useNodesInitialized, useReactFlow, type Edge, type Node, type OnSelectionChangeParams } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Loader2, Paintbrush, Plus } from 'lucide-react';
@@ -22,7 +25,7 @@ import { cn } from '@/ui/utils';
 import { applyNodeUpdate, normalizeNodeUpdatePayload } from './applyNodeUpdate';
 import AnimatedWorkflowEdge from './edges/AnimatedWorkflowEdge';
 import { useFollowCommits } from './graph/followCommits';
-import { graphRecords, isStepPartial, markGraphDirty, recordDeletedNodes, setCanvasEditsClient } from './graph/liveGraphStore';
+import { graphRecords, isGraphReadOnly, isStepPartial, markGraphDirty, recordDeletedNodes, setCanvasEditsClient } from './graph/liveGraphStore';
 import { useLiveGraph } from './graph/useLiveGraph';
 import { useOpenGraph } from './graph/useOpenGraph';
 import { useUndoKeepsServerWrites } from './graph/useUndoKeepsServerWrites';
@@ -41,10 +44,29 @@ import { useSurfaceEditing } from './surface/useSurfaceEditing';
 import { useTidyLayout } from './surface/useTidyLayout';
 import { useWorkflowFile } from './surface/useWorkflowFile';
 import { useWorkflowKeyboardShortcuts } from './surface/useWorkflowKeyboardShortcuts';
+import { useLater } from '@/lib/useLater';
 
 const EDGE_TYPES = { animated: AnimatedWorkflowEdge };
 const NO_NODES: Node[] = [];
 const NO_EDGES: Edge[] = [];
+
+/** The canvas's hold on the workflow, for what draws over it. */
+export interface CanvasHandle {
+    /** Whether the workflow has been read. */
+    loaded: boolean;
+    /** The key may only look at the workflow: nothing here changes it. */
+    readOnly: boolean;
+    /** Its steps and connections as the canvas holds them. */
+    nodes: Node[];
+    edges: Edge[];
+    /** The one step selected; null for none, or several. */
+    selected: Node | null;
+    /** Changes a step (its settings as `config`, its `operation`, its accounts as `credentialIds`, its `label`): one
+     *  step back in the canvas's undo, saved as the edit it is. Nothing on a read-only canvas, or a step still being read. */
+    updateStep: (nodeId: string, change: Record<string, unknown>) => void;
+    /** Selects a step and brings it into view; null clears the selection. */
+    select: (nodeId: string | null) => void;
+}
 
 export interface WorkflowCanvasProps {
     workflowId: string;
@@ -52,6 +74,10 @@ export interface WorkflowCanvasProps {
     name?: string;
     /** Hears which step is selected (null: none, or several). */
     onSelect?: (nodeId: string | null) => void;
+    /** Hears, once the workflow is read, whether the key may only look at it. */
+    onAccess?: (readOnly: boolean) => void;
+    /** What draws over the canvas, inside its frame: a step's panel, the workflow's other views. */
+    children?: (canvas: CanvasHandle) => ReactNode;
 }
 
 export function WorkflowCanvas(props: WorkflowCanvasProps) {
@@ -62,7 +88,7 @@ export function WorkflowCanvas(props: WorkflowCanvasProps) {
     );
 }
 
-function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
+function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: WorkflowCanvasProps) {
     const client = useClient();
     useEffect(() => setCanvasEditsClient(client), [client]);
 
@@ -70,6 +96,11 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
     const open = useOpenGraph(workflowId, deleted);
     useFollowCommits(workflowId);
     const loaded = open.state === 'open';
+    // What the read said the key may do, known once it lands.
+    const readOnly = loaded && isGraphReadOnly(workflowId);
+    useEffect(() => {
+        if (loaded) onAccess?.(readOnly);
+    }, [loaded, readOnly, onAccess]);
 
     const { nodes, edges, setNodes, setEdges } = useLiveGraph(workflowId, false);
     const nodesRef = useRef(nodes);
@@ -83,16 +114,17 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
     const roles = useSlot(STEP_ROLES).useRoles();
     const { getInternalNode, getZoom, setCenter, screenToFlowPosition, fitView, getViewport } = useReactFlow();
 
-    const history = useWorkflowUndoRedo(NO_NODES, NO_EDGES, { historyLimit: 50, onNodesChange: setNodes, onEdgesChange: setEdges });
+    const history = useWorkflowUndoRedo(NO_NODES, NO_EDGES, { historyLimit: 50, onNodesChange: setNodes, onEdgesChange: setEdges, frozen: readOnly });
     const { resetBaseline, rebaseHistory, captureState } = history;
     // An edit made outside React Flow's own changes (a menu's, a pick's): the graph as the store holds it after it,
     // one step back, a task later as the surface's edits are recorded.
+    const later = useLater();
     const record = useCallback(() => {
-        setTimeout(() => {
+        later(() => {
             const held = graphRecords[workflowId];
             if (held) captureState(held.nodes as Node[], held.edges as Edge[]);
-        }, 0);
-    }, [workflowId, captureState]);
+        });
+    }, [workflowId, captureState, later]);
     useUndoKeepsServerWrites(workflowId, rebaseHistory, resetBaseline);
     // Undo starts from the workflow as it was opened.
     useEffect(() => {
@@ -126,6 +158,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
         canvasRef,
         panToNode,
         layer: recalculateZIndex,
+        frozen: readOnly,
         on: { removed: stepRemoved },
     });
 
@@ -156,18 +189,20 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
 
     const updateStep = useCallback(
         (nodeId: string, data: Record<string, unknown>) => {
-            // A step held in part (still being read whole) can't be edited: its save keeps it as stored.
-            if (isStepPartial(workflowId, nodeId)) return;
+            // A step held in part (still being read whole) can't be edited: its save keeps it as stored. Nor can any on
+            // a workflow the key may only look at.
+            if (isStepPartial(workflowId, nodeId) || isGraphReadOnly(workflowId)) return;
             const update = normalizeNodeUpdatePayload(data);
             setNodes((current) => {
                 const updated = current.map((n) => (n.id === nodeId ? applyNodeUpdate(n, update) : n));
-                setTimeout(() => captureState(updated, edgesRef.current), 0);
+                later(() => captureState(updated, edgesRef.current));
                 return updated;
             });
         },
-        [workflowId, setNodes, captureState]
+        [workflowId, setNodes, captureState, later]
     );
-    useWorkflowKeyboardShortcuts({ nodes, activeTab: 'canvas', onNodeDataUpdate: updateStep });
+    // The canvas's own keys change steps: off on a workflow the key may only look at (as on any tab that isn't the canvas).
+    useWorkflowKeyboardShortcuts({ nodes, activeTab: readOnly ? 'logs' : 'canvas', onNodeDataUpdate: updateStep });
 
     // The arrow keys walk the steps, selecting the next one and bringing it into view.
     useEffect(() => {
@@ -185,10 +220,13 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
         return () => document.removeEventListener('keydown', onKey, true);
     }, [setNodes, panToNode]);
 
+    const [selectedId, setSelectedId] = useState<string | null>(null);
     const onSelectionChange = useCallback(
         ({ nodes: selected }: OnSelectionChangeParams) => {
             const steps = selected.filter((n) => n.type !== 'stickyNote');
-            onSelect?.(steps.length === 1 ? steps[0].id : null);
+            const only = steps.length === 1 ? steps[0].id : null;
+            setSelectedId(only);
+            onSelect?.(only);
         },
         [onSelect]
     );
@@ -205,6 +243,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
         setEdges,
         palette: { open: palette, show: showPalette, hide: hidePalette },
         panToNode,
+        frozen: readOnly,
         on: {
             added: (_node, { chained }) => {
                 if (!chained) setPalette(false);
@@ -214,7 +253,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
     });
 
     // A copy still being read is drawn, not edited: its keys and menus wait for the workflow to open.
-    const { copySelection, pasteFromClipboard } = useWorkflowCopyPaste({ nodes, edges, active: loaded, setNodes, setEdges, screenToFlowPosition, captureState });
+    const { copySelection, pasteFromClipboard } = useWorkflowCopyPaste({ nodes, edges, active: loaded && !readOnly, setNodes, setEdges, screenToFlowPosition, captureState });
 
     const fit = useCallback(() => void fitView({ duration: 500, padding: 0.22, maxZoom: 1 }), [fitView]);
     const tidy = useTidyLayout({ nodesRef, edgesRef, setNodes, history, fit });
@@ -259,6 +298,16 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
     );
     const runs = useCanvasRuns({ client, workflowId, open: loaded, setNodes, onOpenStep: openStep });
 
+    const select = useCallback(
+        (nodeId: string | null) => {
+            if (nodeId) openStep(nodeId);
+            else setNodes((ns) => (ns.some((n) => n.selected) ? ns.map((n) => (n.selected ? { ...n, selected: false } : n)) : ns));
+        },
+        [openStep, setNodes]
+    );
+    const selected = useMemo(() => (selectedId ? (nodes.find((n) => n.id === selectedId) ?? null) : null), [nodes, selectedId]);
+    const editable = loaded && !readOnly;
+
     return (
         <div ref={canvasRef} data-testid="workflow-canvas" className="relative h-full w-full select-none bg-[hsl(var(--canvas-bg))]">
             <CanvasSurface
@@ -267,10 +316,12 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                 nodeTypes={nodeTypes}
                 edgeTypes={EDGE_TYPES}
                 {...editing}
+                frozen={readOnly}
+                undo={history.undo}
                 onSelectionChange={onSelectionChange}
-                onPaneContextMenu={loaded ? menus.handlePaneContextMenu : undefined}
-                onNodeContextMenu={loaded ? menus.handleNodeContextMenu : undefined}
-                onSelectionContextMenu={loaded ? menus.handleSelectionContextMenu : undefined}
+                onPaneContextMenu={editable ? menus.handlePaneContextMenu : undefined}
+                onNodeContextMenu={editable ? menus.handleNodeContextMenu : undefined}
+                onSelectionContextMenu={editable ? menus.handleSelectionContextMenu : undefined}
                 panActivationKeyCode={panActivationKeyCode}
             >
                 <CanvasBackground />
@@ -288,7 +339,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                 </p>
             )}
             {loaded && runs.element}
-            {loaded && (
+            {editable && (
                 <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
                     {nodes.length > 0 && (
                         <button type="button" className={BUTTON_SECONDARY} onClick={tidy}>
@@ -301,7 +352,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                     {runs.button}
                 </div>
             )}
-            {loaded && palette && (
+            {editable && palette && (
                 <div
                     role="dialog"
                     aria-label="Add a step"
@@ -310,6 +361,7 @@ function CanvasEditor({ workflowId, name, onSelect }: WorkflowCanvasProps) {
                     <Palette onAdd={add} onClose={hidePalette} />
                 </div>
             )}
+            {children?.({ loaded, readOnly, nodes, edges, selected, updateStep, select })}
         </div>
     );
 }

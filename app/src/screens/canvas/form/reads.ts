@@ -108,6 +108,9 @@ export interface StepReads {
 export interface StepScope {
     workflowId?: string;
     nodeId?: string;
+    /** Whoever draws the form saves what it's told of the step (a canvas, whose graph's own edits carry the step's
+     *  accounts): the form's pickers then save nothing themselves. */
+    hostSaves?: boolean;
 }
 
 export const StepContext = createContext<StepScope | null>(null);

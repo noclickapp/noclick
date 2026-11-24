@@ -48,14 +48,9 @@ const nothing = () => undefined;
 const ALONE: Presence = {
     collaborators: [],
     nodeSelections: new Map(),
+    access: null,
     updateLocalCursor: nothing,
     updateLocalSelection: nothing,
-    broadcastNodeDrag: nothing,
-    broadcastNodeAdd: nothing,
-    broadcastNodeRemove: nothing,
-    broadcastNodeUpdate: nothing,
-    broadcastEdgeAdd: nothing,
-    broadcastEdgeRemove: nothing,
     broadcastAiEditingStart: nothing,
     broadcastAiEditingUpdate: nothing,
     broadcastAiEditingEnd: nothing,
@@ -65,7 +60,7 @@ function JustTheSteps({ children }: { children: ReactNode }) {
     return <>{children}</>;
 }
 
-/** No one else drawn on the canvas, and nothing this person does sent anywhere until it's saved. */
+/** No one else drawn on the canvas, and nothing this person does sent anywhere. */
 export const NOBODY_ELSE: CanvasPresence = {
     usePresence: () => ALONE,
     Layer: JustTheSteps,
@@ -211,6 +206,11 @@ export function knownStepType(client: NoClick, name: string): StepType | undefin
  *  until it lands (and for a type the API doesn't describe). `useStepTypesSettled` draws again as each lands. */
 export function readStepType(client: NoClick, name: string): StepType | undefined {
     return knownOf(client, name).type;
+}
+
+/** Whether this session's read of the type has ended (described, or refused), starting it if it hasn't begun. */
+export function stepTypeSettled(client: NoClick, name: string): boolean {
+    return knownOf(client, name).read.status !== 'loading';
 }
 
 /** How many step types have settled for this client so far, drawing again each time another does. */

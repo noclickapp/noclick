@@ -1,7 +1,7 @@
 // The day columns' axis: a few round ticks from $0 up past the period's biggest day, each its own label, whether the
 // biggest day is a fraction of a cent or thousands of dollars.
 import { describe, expect, it } from 'vitest';
-import { niceTicks } from './charts';
+import { niceTicks, seriesColor } from './charts';
 
 describe('niceTicks', () => {
     it.each<[number, number[]]>([
@@ -28,5 +28,13 @@ describe('niceTicks', () => {
             expect(ticks.length, `${max}`).toBeLessThanOrEqual(5);
             for (const tick of ticks) expect(Math.round(tick * 100) / 100, `${max}`).toBe(tick);
         }
+    });
+});
+
+describe('seriesColor', () => {
+    it('gives a handful of parts the usage hues in their order, and the rest past five the rest’s', () => {
+        expect([0, 1, 2, 3, 4, 5, 9].map(seriesColor)).toEqual([
+            'var(--svc-1)', 'var(--svc-2)', 'var(--svc-3)', 'var(--svc-4)', 'var(--svc-5)', 'var(--svc-rest)', 'var(--svc-rest)',
+        ]);
     });
 });
