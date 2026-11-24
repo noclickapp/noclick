@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Builds and tests everything in this repository, as CI does: the Python SDK (its tests and its
 # wheel), the examples (each parses), the workflow builder (its tests, on that SDK), the TypeScript
-# SDK (typecheck, tests, build), then the app (install from its lockfile, typecheck, tests, build).
+# SDK (typecheck, tests, build), then the app (install from its lockfile, typecheck, tests, build, then its build
+# started as a Worker on the Workers runtime, with the wrangler scripts/check-worker.mjs fetches).
 # Needs python3, Node 22.12 or later, and pnpm 10 on the PATH (`corepack enable pnpm` provides the
 # version app/package.json names). The rest goes into a throwaway virtualenv,
 # sdk/typescript/node_modules and app/node_modules.
@@ -51,3 +52,6 @@ pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm test
 pnpm run build
+
+echo "== App as a Worker"
+node "$root/scripts/check-worker.mjs"

@@ -38,6 +38,7 @@
         "live/storage": "Live editing files kept",
         "storage/repo": "Code storage",
         "storage/repo_clone": "Code download",
+        "storage/repo_public_clone": "Public code download",
         "storage/repo_push": "Code upload",
         "storage/repo_import": "Code import",
         "storage/bucket": "File storage",

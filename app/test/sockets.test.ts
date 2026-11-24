@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
+import { SCAN_S } from './limits';
 
 const APP = resolve(import.meta.dirname, '..');
 const SRC = join(APP, 'src');
@@ -97,7 +98,7 @@ describe('the app', () => {
         const modules = appModules();
         expect(Object.keys(modules).filter((file) => file.startsWith('src/screens/console/')).length).toBeGreaterThan(100);
         expect(connections(modules).join('\n')).toBe('');
-    });
+    }, SCAN_S);
 
     it('declares no package that opens one', () => {
         const manifest = JSON.parse(readFileSync(join(APP, 'package.json'), 'utf8')) as Record<string, Record<string, string> | undefined>;
