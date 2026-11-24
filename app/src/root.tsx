@@ -17,7 +17,9 @@ import '@fontsource-variable/outfit/index.css';
 import { isSetupData, SetupScreen } from '@/screens/setup/SetupScreen';
 import { ClientProvider } from '@/sdk/client';
 import { proxiedClient } from '@/sdk/proxied';
+import { ownerAccepts } from '@/server/ownerAccepts.server';
 import { gate, securityHeaders } from '@/server/gate.server';
+import { Toaster } from '@/ui/sonner';
 import { applyTheme, themeInitScript, watchSystemTheme } from '@/ui/theme';
 import { PAGE_TITLE } from '@/ui/titles';
 import './app.css';
@@ -34,9 +36,10 @@ const THEME_INIT_SCRIPT = themeInitScript();
  *  security headers on every answer, the error pages' included. The server's entry has run the same gate first. */
 export const middleware: MiddlewareFunction<Response>[] = [securityHeaders, gate];
 
-/** The page's origin, for the SDK client while the page renders on the server. */
-export function loader({ request }: LoaderFunctionArgs) {
-    return { origin: new URL(request.url).origin };
+/** The page's origin, for the SDK client while the page renders on the server, and whether NoClick gave the app its
+ *  key (the gate's checked config): terms are then the account's owner's to accept. */
+export function loader({ request, context }: LoaderFunctionArgs) {
+    return { origin: new URL(request.url).origin, ownerAccepts: ownerAccepts(context) };
 }
 
 /** The origin the page is served from: the window's in the browser, the request's while rendering on the server. */
@@ -76,12 +79,14 @@ function useTheme(): void {
 
 export default function App() {
     useTheme();
-    const origin = pageOrigin(useLoaderData<typeof loader>() as { origin: string } | undefined);
+    const loaded = useLoaderData<typeof loader>() as { origin: string; ownerAccepts: boolean } | undefined;
+    const origin = pageOrigin(loaded);
     // Screens read NoClick through this client (useClient()): it calls this app's server, which holds the key.
     const client = useMemo(() => proxiedClient(origin), [origin]);
     return (
-        <ClientProvider client={client}>
+        <ClientProvider client={client} ownerAccepts={loaded?.ownerAccepts ?? false}>
             <Outlet />
+            <Toaster />
         </ClientProvider>
     );
 }

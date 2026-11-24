@@ -20,6 +20,7 @@ import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { EVERYTHING, refFor } from '@/lib/agentTools';
@@ -982,6 +983,7 @@ function Grants({ agent }: { agent: Agent }) {
     const key = `agents/${agent.id}/grants`;
     const grants = useV1(key, () => agent.grants());
     const [revoking, setRevoking] = useState<string | null>(null);
+    const reportHeld = useReportHeld(useConsole());
     const rows = grants.data ?? [];
     const ceiling = agent.canRequest;
     if (!ceiling.length && !rows.length) return null;
@@ -992,6 +994,7 @@ function Grants({ agent }: { agent: Agent }) {
             invalidateV1(key);
             toast.success(`${agent.name} no longer uses ${grant.connection}`);
         } catch (err) {
+            if (reportHeld(err, `Take ${grant.connection} from ${agent.name}`, () => invalidateV1(key))) return;
             toast.error(err instanceof Error ? err.message : String(err));
         } finally {
             setRevoking(null);
@@ -1984,6 +1987,7 @@ function MemoryDrawer({
     const [editing, setEditing] = useState(false);
     const [forgetting, setForgetting] = useState(false);
     const [busy, setBusy] = useState(false);
+    const reportHeld = useReportHeld(useConsole());
     const entry = read.data;
     const forget = async () => {
         if (!entry) return;
@@ -1994,6 +1998,7 @@ function MemoryDrawer({
             onChanged(null, entry.name);
             onClose();
         } catch (err) {
+            if (reportHeld(err, `${agent.name} forgets ${entry.name}`, () => onChanged(null, entry.name))) return onClose();
             toast.error(err instanceof Error ? err.message : String(err), { description: err instanceof NoClickError ? (err.nextStep ?? undefined) : undefined });
         } finally {
             setBusy(false);
