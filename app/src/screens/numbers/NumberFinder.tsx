@@ -12,6 +12,7 @@ import { countryName } from '@/lib/countryName';
 import { Skeleton } from '@/ui/skeleton';
 import type { AvailableNumber, NumberFiling, NumberOrder, PhoneNumberPurchase } from '@/screens/numbers/usePhoneNumberPurchase';
 import { cn } from '@/ui/utils';
+import { HeldCallNotice } from '@/ui/HeldCallNotice';
 import { NumberFilters } from './NumberFilters';
 import { NumberRow } from './NumberRow';
 import { documentsAsked, documentsSummary, dueNow, formatNumber, holderNote, placeOf, priceText, reviewNote, textingNote } from './numberDisplay';
@@ -286,6 +287,15 @@ export function NumberFinder({
     return (
         <div className={cn('flex flex-col', compact ? 'gap-3' : 'gap-5')}>
             {purchase.orders.length > 0 && <NumberOrders orders={purchase.orders} onFix={setFixing} compact={compact} />}
+            {purchase.held.map((h) => (
+                <HeldCallNotice
+                    key={h.call.approvalId}
+                    held={h.call}
+                    what={`Buy ${formatNumber(h.phoneNumber)}`}
+                    done={`${formatNumber(h.phoneNumber)} is yours`}
+                    onSettled={(state) => purchase.heldSettled(h, state)}
+                />
+            ))}
             <NumberFilters purchase={purchase} compact={compact} />
             <PurchaseError error={error} fundsHref={purchase.fundsHref} />
             {purchase.notSold && filters ? (

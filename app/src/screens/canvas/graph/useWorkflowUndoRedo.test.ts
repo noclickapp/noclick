@@ -165,3 +165,46 @@ describe('positionless node resilience', () => {
         }).not.toThrow();
     });
 });
+
+describe('the timer an undo or redo starts', () => {
+    const FAKE = { toFake: ['setTimeout', 'clearTimeout'] as const };
+
+    it('takes edits into history again once the applied state is in', () => {
+        vi.useFakeTimers({ toFake: [...FAKE.toFake] });
+        try {
+            const { hook } = setup();
+            act(() => {
+                hook.result.current.captureState([node({})], []);
+                hook.result.current.captureState([], []);
+            });
+            act(() => hook.result.current.undo());
+            // Applying: an edit captured now is the undo's own echo, not a new entry.
+            act(() => hook.result.current.captureState([node({ operation: 'echo' })], []));
+            expect(hook.result.current.canRedo).toBe(true);
+            act(() => vi.runAllTimers());
+            act(() => hook.result.current.captureState([node({}), { ...node({}), id: 'second' }], []));
+            expect(hook.result.current.canRedo).toBe(false);
+            hook.unmount();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('is cleared when the canvas unmounts', () => {
+        vi.useFakeTimers({ toFake: [...FAKE.toFake] });
+        try {
+            const { hook } = setup();
+            act(() => {
+                hook.result.current.captureState([node({})], []);
+                hook.result.current.captureState([], []);
+            });
+            act(() => hook.result.current.undo());
+            act(() => hook.result.current.redo());
+            expect(vi.getTimerCount()).toBe(1);
+            hook.unmount();
+            expect(vi.getTimerCount()).toBe(0);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+});

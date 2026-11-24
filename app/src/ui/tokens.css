@@ -216,8 +216,10 @@
 }
 
 /* The usage page's chart ink (src/screens/usage): five service hues, validated for colour-blind separation in both
-   themes, and the one-ink steps the rest of its marks use. */
-.usage-page {
+   themes, and the one-ink steps the rest of its marks use. `.usage-ink` lends the same ink to a figure of money
+   elsewhere (a deploy's cost breakdown), so every split of dollars wears one palette. */
+.usage-page,
+.usage-ink {
     --svc-1: #2a78d6;
     --svc-2: #eb6834;
     --svc-3: #1baf7a;
@@ -229,7 +231,8 @@
     --ink-faint: hsl(var(--foreground) / 0.16);
     --grid: hsl(var(--foreground) / 0.07);
 }
-.dark .usage-page {
+.dark .usage-page,
+.dark .usage-ink {
     --svc-1: #3987e5;
     --svc-2: #d95926;
     --svc-3: #199e70;

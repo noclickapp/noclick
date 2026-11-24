@@ -3,6 +3,7 @@
 // name, with the price shown first. The registrar is a seam: the hosted
 // service answers through its platform API, and tests pass their own.
 import { useRef, useState } from 'react';
+import { heldCallOf, type HeldCall, type HeldState } from '@/sdk/held';
 import type { KnownRegistrant, RegistrantContact } from '@/lib/domainRegistrant';
 
 export interface DomainOffer {
@@ -75,6 +76,12 @@ export class DomainRegistrarError extends Error {
     }
 }
 
+/** A purchase NoClick holds for the account's owner (src/sdk/held.ts), and what it buys. */
+export interface HeldDomain {
+    call: HeldCall;
+    offer: DomainOffer;
+}
+
 export interface DomainQuery {
     /** The name without its ending: "acme". */
     name: string;
@@ -113,6 +120,7 @@ export function useDomainPurchase({ registrar, onBought }: { registrar: DomainRe
     const [checkout, setCheckout] = useState<DomainCheckout | null>(null);
     const [buying, setBuying] = useState(false);
     const [error, setError] = useState<DomainPurchaseError | null>(null);
+    const [held, setHeld] = useState<HeldDomain[]>([]);
     // Only the latest search may land: an earlier, slower answer never replaces a newer one.
     const latest = useRef(0);
 
@@ -157,11 +165,26 @@ export function useDomainPurchase({ registrar, onBought }: { registrar: DomainRe
             await registrar.buy(picked, details);
             onBought(picked);
         } catch (e) {
+            const call = heldCallOf(e);
+            if (call) {
+                // Held for the account's owner: back to the results, where it's followed until it's bought or not.
+                const offer = picked;
+                setHeld((current) => [...current.filter((h) => h.call.approvalId !== call.approvalId), { call, offer }]);
+                setPicked(null);
+                return;
+            }
             setError(failure(e, `Could not buy ${picked.domain}.`));
         } finally {
             setBuying(false);
         }
     };
 
-    return { searched, result, searching, picked, checkout, buying, busy: searching || buying, error, search, pick, buy };
+    /** Where a held purchase ended: bought, as one made at once is; anything else stays said on its notice. */
+    const heldSettled = (domain: HeldDomain, state: HeldState) => {
+        if (state.phase !== 'done') return;
+        setHeld((current) => current.filter((h) => h.call.approvalId !== domain.call.approvalId));
+        onBought(domain.offer);
+    };
+
+    return { searched, result, searching, picked, checkout, buying, busy: searching || buying, error, search, pick, buy, held, heldSettled };
 }

@@ -1,0 +1,11 @@
+# The image is built from the app and the TypeScript SDK's source, and nothing else here.
+*
+!app
+!sdk/typescript/src
+app/node_modules
+app/build
+app/.react-router
+app/.vite
+app/.env
+app/.env.*
+!app/.env.example

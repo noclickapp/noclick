@@ -26,9 +26,10 @@ export const CATCHING_UP = 'Catching up on the conversation';
 export const TURN_FAILED_LINE = 'Sorry, I hit a problem on my side. Please try that again in a moment.';
 
 /** What a turn that ended says, by its operation's status (the stream's `turn_end` says it): its reply's `text` when
- *  it succeeded, the failure line when it failed, nothing when it was canceled or expired. */
+ *  it succeeded; when it failed, the line the stream gave for a person (why a turn lost with its place was lost) or
+ *  else the failure line; nothing when it was canceled or expired. */
 export function turnEndText(status: string | null, text: string | null | undefined): string {
-    return status === 'succeeded' ? (text ?? '') : status === 'failed' ? TURN_FAILED_LINE : '';
+    return status === 'succeeded' ? (text ?? '') : status === 'failed' ? text || TURN_FAILED_LINE : '';
 }
 
 /** What NoClick's refusal for an account that ran out carries for the card under it (its `out_of_funds`: the line it
