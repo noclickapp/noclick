@@ -626,6 +626,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_builds_create": ["Start Build", "POST", "write"],
     "workflows_connections_lend": ["Lend Connection", "POST", "write"],
     "workflows_connections_lend_delete": ["Withdraw Connection Lend", "DELETE", "write"],
+    "workflows_connections_list": ["Workflow Connection Display Info", "GET", "read"],
     "workflows_create": ["Create Workflow", "POST", "write"],
     "workflows_delete": ["Delete Workflow", "DELETE", "destructive"],
     "workflows_drafts_create": ["Draft Steps", "POST", "write"],
