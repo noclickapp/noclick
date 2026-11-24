@@ -24,7 +24,8 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
-import { ShareLink } from "./agentExtras.ts";
+import { ShareLink, toWorkspaceFile } from "./agentExtras.ts";
+import type { WorkspaceFile } from "./agentExtras.ts";
 import {
   ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, num, paginate, parseTime, readScope, refId,
   str,
@@ -506,6 +507,21 @@ export interface StepConversation {
   agentModel: string | null;
   shared: boolean;
   messages: JsonObject[] | null;
+  raw: JsonObject;
+}
+
+/**
+ * The files on one of an agent step's conversations' workspace (`Step.workspace`), as the app's chat shows them:
+ * `files`, each with a download link good for an hour; `workspace`, where its sandbox mounts it (null for a
+ * conversation that has none); whether it `exists` yet; and for whoever may change the workflow `uploadUrl`, a link
+ * that takes files into it (POST a file's bytes to it with `&path=<name>`).
+ */
+export interface StepWorkspace {
+  files: WorkspaceFile[];
+  workspace: string | null;
+  exists: boolean;
+  truncated: boolean;
+  uploadUrl: string | null;
   raw: JsonObject;
 }
 
@@ -1880,6 +1896,35 @@ export class Step extends ApiObject {
       idempotencyKey: options.idempotencyKey,
     }));
     return Operation._fromPayload<WorkflowRun>(raw.run, { client: this._client, user: null, kind: "workflow.run", reader: toWorkflowRun });
+  }
+
+  /**
+   * The files on one of this agent step's conversations' workspace, as the app's chat shows them: what the step's
+   * sandbox mounts for `conversation` (a wired filesystem step, else the conversation's own `/workspace`). Anyone who
+   * opens the workflow reads it; a conversation with none (`conversation` omitted) lists nothing.
+   */
+  async workspace(conversation?: string): Promise<StepWorkspace> {
+    const raw = asObject(await this._api.request("GET", `${await this._workflow._stepPath(this.id)}/workspace`, {
+      query: { conversation },
+      user: null,
+    }));
+    return {
+      files: (Array.isArray(raw.data) ? raw.data : []).map((f) => toWorkspaceFile(asObject(f))),
+      workspace: str(raw.workspace) ?? null,
+      exists: raw.exists === true,
+      truncated: raw.truncated === true,
+      uploadUrl: str(raw.upload_url) ?? null,
+      raw,
+    };
+  }
+
+  /** Delete one file from a conversation's workspace, as the app's chat does; a missing file does nothing. Takes what
+   *  changing the workflow takes. */
+  async deleteWorkspaceFile(path: string, options: { conversation?: string } = {}): Promise<void> {
+    await this._api.request("DELETE", `${await this._workflow._stepPath(this.id)}/workspace/files`, {
+      query: { path, conversation: options.conversation },
+      user: null,
+    });
   }
 
   /**

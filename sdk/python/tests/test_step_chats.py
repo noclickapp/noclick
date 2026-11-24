@@ -64,3 +64,21 @@ def test_a_steps_chat_page_turns_on_off_and_rotates(api, client):
     assert link.rotate().url == "https://noclick.test/a/l2"
     api.get("/v1/workflows/wf_1/steps/helper/share").respond(404, json={"error": {"type": "not_found", "message": "no"}})
     assert nc.Workflow.from_id("wf_1").step("helper").share_link() is None
+
+
+def test_a_conversations_workspace_and_deleting_a_file(api, client):
+    listed = api.get("/v1/workflows/wf_1/steps/helper/workspace").respond(json={
+        "object": "list", "data": [{"object": "workspace_file", "path": "out/report.md", "size_bytes": 8,
+                                     "modified_at": "2026-11-24T10:00:00+00:00", "url": "https://api.test/f?t=1"}],
+        "next_cursor": None, "truncated": False, "workspace": "/workspace", "exists": True,
+        "upload_url": "https://api.test/u?t=2"})
+    space = nc.Workflow.from_id("wf_1").step("helper").workspace("orders")
+    assert listed.calls.last.request.url.params["conversation"] == "orders"
+    assert ([(f.path, f.size_bytes, f.url) for f in space.files], space.workspace, space.exists, space.upload_url) == (
+        [("out/report.md", 8, "https://api.test/f?t=1")], "/workspace", True, "https://api.test/u?t=2")
+    nc.Workflow.from_id("wf_1").step("helper").workspace()
+    assert "conversation" not in listed.calls.last.request.url.params
+    gone = api.delete("/v1/workflows/wf_1/steps/helper/workspace/files").respond(json={
+        "object": "workspace_file", "path": "out/report.md", "deleted": True})
+    nc.Workflow.from_id("wf_1").step("helper").delete_workspace_file("out/report.md", conversation="orders")
+    assert dict(gone.calls.last.request.url.params) == {"path": "out/report.md", "conversation": "orders"}

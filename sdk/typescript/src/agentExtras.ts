@@ -247,7 +247,8 @@ export interface WorkspaceFile {
   raw: JsonObject;
 }
 
-function toWorkspaceFile(raw: JsonObject): WorkspaceFile {
+/** @internal */
+export function toWorkspaceFile(raw: JsonObject): WorkspaceFile {
   return { path: String(raw.path), sizeBytes: num(raw.size_bytes) ?? 0, modifiedAt: parseTime(raw.modified_at), url: str(raw.url), raw };
 }
 

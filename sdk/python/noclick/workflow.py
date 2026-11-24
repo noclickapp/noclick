@@ -41,7 +41,7 @@ from .operation import Operation, register_result
 from .workflow_approval import WorkflowApproval
 
 if TYPE_CHECKING:
-    from .agent_extras import ShareLink
+    from .agent_extras import ShareLink, WorkspaceFile
 
 
 @dataclass(frozen=True)
@@ -255,6 +255,30 @@ class StepConversation:
         return cls(raw.get("conversation") or "", raw.get("title") or "", raw.get("preview") or "",
                    int(raw.get("turns") or 0), raw.get("last_activity"), raw.get("agent_model"),
                    bool(raw.get("shared")), list(messages) if isinstance(messages, list) else None, raw)
+
+
+@dataclass(frozen=True)
+class StepWorkspace:
+    """The files on one of an agent step's conversations' workspace (``Step.workspace``),
+    as the app's chat shows them: ``files``, each with a download link good for an hour;
+    ``workspace``, where its sandbox mounts it (``None`` for a conversation that has none);
+    whether it ``exists`` yet; and for whoever may change the workflow ``upload_url``, a link
+    that takes files into it (POST a file's bytes to it with ``&path=<name>``)."""
+
+    files: List["WorkspaceFile"]
+    workspace: Optional[str]
+    exists: bool
+    truncated: bool
+    upload_url: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepWorkspace":
+        from .agent_extras import WorkspaceFile
+
+        raw = raw if isinstance(raw, dict) else {}
+        return cls([WorkspaceFile._from(f) for f in raw.get("data") or []], raw.get("workspace"),
+                   bool(raw.get("exists")), bool(raw.get("truncated")), raw.get("upload_url"), raw)
 
 
 @dataclass(frozen=True)
@@ -1536,6 +1560,40 @@ class Step(_Object):
         except NotFound:
             return None
         return ShareLink._new(raw=raw, client=self._client, user=None)
+
+    @synced
+    async def workspace(self, conversation: Optional[str] = None) -> StepWorkspace:
+        """The files on one of this agent step's conversations' workspace, as the app's chat
+        shows them: what the step's sandbox mounts for ``conversation`` (a wired filesystem
+        step, else the conversation's own ``/workspace``). Anyone who opens the workflow reads
+        it; a conversation with none (``conversation`` omitted) lists nothing.
+
+        Returns:
+            The ``StepWorkspace``: its ``files``, and an ``upload_url`` when you may change the
+            workflow.
+
+        Usage::
+
+            helper = noclick.Workflow.from_name("support desk").step("helper")
+            for file in helper.workspace("orders").files:
+                print(file.path, file.url)
+        """
+        raw = await self._api.request("GET", f"{await self._step_path()}/workspace",
+                                      params=compact(conversation=conversation), user=None)
+        return StepWorkspace._from(raw)
+
+    @synced
+    async def delete_workspace_file(self, path: str, *, conversation: Optional[str] = None) -> None:
+        """Delete one file from a conversation's workspace, as the app's chat does; a missing
+        file does nothing. Takes what changing the workflow takes.
+
+        Usage::
+
+            noclick.Workflow.from_name("support desk").step("helper").delete_workspace_file(
+                "out/report.md", conversation="orders")
+        """
+        await self._api.request("DELETE", f"{await self._step_path()}/workspace/files",
+                                params=compact(path=path, conversation=conversation), user=None)
 
     # --- its app (an interface step) ---------------------------------------
 

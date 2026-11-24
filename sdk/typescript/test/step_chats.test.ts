@@ -64,3 +64,18 @@ test("a step's chat page turns on, off and rotates; never shared reads null", as
   api.on("GET", "/v1/workflows/wf_1/steps/helper/share", json({ error: { type: "not_found", message: "no" } }, { status: 404 }));
   assert.equal(await nc.Workflow.fromId("wf_1").step("helper").shareLink(), null);
 });
+
+test("workspace() lists a conversation's files and deleteWorkspaceFile() deletes one", async () => {
+  const { api } = setup();
+  const listed = api.on("GET", "/v1/workflows/wf_1/steps/helper/workspace", json({
+    object: "list", data: [{ object: "workspace_file", path: "out/report.md", size_bytes: 8, modified_at: "2026-11-24T10:00:00+00:00", url: "https://api.test/f?t=1" }],
+    next_cursor: null, truncated: false, workspace: "/workspace", exists: true, upload_url: "https://api.test/u?t=2",
+  }));
+  const space = await nc.Workflow.fromId("wf_1").step("helper").workspace("orders");
+  assert.equal(listed.last.query.get("conversation"), "orders");
+  assert.deepEqual([space.files.map((f) => [f.path, f.sizeBytes]), space.workspace, space.exists, space.uploadUrl],
+    [[["out/report.md", 8]], "/workspace", true, "https://api.test/u?t=2"]);
+  const gone = api.on("DELETE", "/v1/workflows/wf_1/steps/helper/workspace/files", json({ object: "workspace_file", path: "out/report.md", deleted: true }));
+  await nc.Workflow.fromId("wf_1").step("helper").deleteWorkspaceFile("out/report.md", { conversation: "orders" });
+  assert.deepEqual([gone.last.query.get("path"), gone.last.query.get("conversation")], ["out/report.md", "orders"]);
+});
