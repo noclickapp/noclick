@@ -2355,6 +2355,7 @@ walletap
 wallsio
 wati
 wayfront
+wbiztool
 weatherbit
 weaviate
 webcrawlerapi
