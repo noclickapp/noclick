@@ -14,6 +14,7 @@ import { ReferenceHighlightOverlay, useReferenceSegments } from './ReferenceHigh
 import { scanBlocks, pathToExpression, blockAtCursor, referenceAtCursor } from '@/screens/canvas/expressionSyntax';
 import { ExpressionPanel } from './ExpressionPanel';
 import { insertReferenceRegistry, type InsertReferenceRef } from './insertReferenceRegistry';
+import { useLater } from '@/lib/useLater';
 
 interface DroppableTextFieldProps {
     value: string;
@@ -38,9 +39,9 @@ interface ExtendedHTMLElement extends HTMLElement {
 // working for fields that haven't re-registered yet (the "drop does nothing" symptom after a burst of edits).
 
 // Export function to get insertReference for a fieldKey
-export const getInsertReferenceForField = (fieldKey: string): ((reference: string) => void) | undefined => {
+export const getInsertReferenceForField = (fieldKey: string): InsertReferenceRef['fn'] | undefined => {
     const ref = insertReferenceRegistry.get(fieldKey);
-    return ref ? (reference: string) => ref.fn(reference) : undefined;
+    return ref ? (reference, caret) => ref.fn(reference, caret) : undefined;
 };
 
 // Export registration functions so other droppable components (e.g. SearchableEnumField) can share the registry
@@ -104,6 +105,7 @@ export const DroppableTextField = ({
     value = value == null ? '' : String(value);
 
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+    const later = useLater();
     const [cursorPosition, setCursorPosition] = useState<number | null>(null);
     const [isActive, setIsActive] = useState(false);
 
@@ -183,37 +185,37 @@ export const DroppableTextField = ({
             const cursorInQuotes = newCursorPos + 4; // just past " $('"
             onChange(scaffolded);
             setCursorPosition(cursorInQuotes);
-            setTimeout(() => {
+            later(() => {
                 if (inputRef.current) {
                     inputRef.current.focus();
                     inputRef.current.setSelectionRange(cursorInQuotes, cursorInQuotes);
                 }
-            }, 0);
+            });
             return;
         }
 
         onChange(newValue);
         setCursorPosition(newCursorPos);
-    }, [onChange, autocompleteContext, value]);
+    }, [onChange, autocompleteContext, value, later]);
 
-    // Insert a reference at the current cursor position
-    const insertReference = useCallback((reference: string) => {
+    // Insert a reference at the current cursor position, the caret landing `caret` into it (its end by default)
+    const insertReference = useCallback((reference: string, caret: number = reference.length) => {
         const pos = cursorPosition ?? value.length;
         const newValue = value.slice(0, pos) + reference + value.slice(pos);
         onChange(newValue);
 
         // Update cursor position after insertion
-        const newPos = pos + reference.length;
+        const newPos = pos + caret;
         setCursorPosition(newPos);
 
         // Focus and set cursor position
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [cursorPosition, value, onChange]);
+        });
+    }, [cursorPosition, value, onChange, later]);
 
     // Use a ref to hold the insertReference function wrapper
     // This allows us to update the function without removing/re-adding to the registry
