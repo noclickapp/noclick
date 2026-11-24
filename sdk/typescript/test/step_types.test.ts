@@ -82,3 +82,18 @@ test("a type that takes no settings has no schema", async () => {
   assert.equal(run.schema, null);
   assert.deepEqual(run.operations, []);
 });
+
+test("a narrowed stepType() read sends its filters and counts every operation", async () => {
+  const { api } = setup();
+  const route = api.on("GET", "/v1/step_types/automation-slack",
+    json({ ...SLACK, operations: SLACK.operations.slice(0, 1), operations_total: 2, schema: null }));
+  const slack = await nc.stepType("automation-slack", { kind: "trigger", query: "new message", operation: "on_channel_message" });
+  assert.deepEqual([route.calls[0].query.get("kind"), route.calls[0].query.get("q"), route.calls[0].query.get("operation")],
+    ["trigger", "new message", "on_channel_message"]);
+  assert.deepEqual(slack.operations.map((op) => op.name), ["on_channel_message"]);
+  assert.equal(slack.operationsTotal, 2);
+  await nc.stepType("automation-slack", { operation: ["on_channel_message", "send_message_to_channel"] });
+  assert.equal(route.calls[1].query.get("operation"), "on_channel_message,send_message_to_channel");
+  await nc.stepType("automation-slack");
+  assert.deepEqual([...route.calls[2].query.keys()], []); // a plain read sends no filter
+});

@@ -62,12 +62,14 @@ async function serve(env: Record<string, string>): Promise<Served> {
     child.stdout.on('data', (chunk) => output.push(String(chunk)));
     child.stderr.on('data', (chunk) => output.push(String(chunk)));
     const url = `http://127.0.0.1:${port}`;
-    for (let tries = 0; ; tries++) {
+    // Until it answers or ends: a cold start on a loaded machine takes as long as it takes, and the hook's own timeout
+    // bounds a server that never comes up.
+    for (;;) {
         try {
             await fetch(`${url}/login`);
             return { url, port, output, process: child };
         } catch {
-            if (tries > 100 || child.exitCode !== null) throw new Error(`the server didn't start:\n${output.join('')}`);
+            if (child.exitCode !== null) throw new Error(`the server didn't start:\n${output.join('')}`);
             await new Promise((resolve) => setTimeout(resolve, 100));
         }
     }
@@ -99,7 +101,8 @@ beforeAll(async () => {
     api = await startFakeApi();
     const settings = { NOCLICK_API_KEY: KEY, APP_PASSWORD: PASSWORD, SESSION_SECRET: SECRET, NOCLICK_API_URL: api.url };
     [configured, unset] = await Promise.all([serve(settings), serve({ ...settings, SESSION_SECRET: '' })]);
-}, 180_000);
+    // A production build of the whole app: about half a minute alone, several times that beside the rest of the suite.
+}, 300_000);
 
 afterAll(async () => {
     for (const served of [configured, unset]) served?.process.kill();
