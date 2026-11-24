@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { useSlot } from '@/slots';
+import { useStepStored } from '../graph/liveGraphStore';
 import { RUN_READS } from '../slots';
 import type { OutputHistoryEntry } from './reads';
 
@@ -39,6 +40,8 @@ export function useNodeOutputHistory({
     onIndexChange,
 }: UseNodeOutputHistoryOptions): UseNodeOutputHistoryReturn {
     const reads = useSlot(RUN_READS).useRunReads();
+    // A step just added has nothing stored until its save lands: nothing is asked of the server for it till then.
+    const stored = useStepStored(workflowId, nodeId);
     const [historyEntries, setHistoryEntries] = useState<OutputHistoryEntry[]>([]);
     const [historyIndex, setHistoryIndex] = useState(initialHistoryIndex ?? 0);
     // Track the nodeId we last fetched for so we only apply initialHistoryIndex
@@ -46,7 +49,7 @@ export function useNodeOutputHistory({
     const lastFetchedNodeIdRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
-        if (!nodeId || !workflowId) {
+        if (!nodeId || !workflowId || !stored) {
             setHistoryEntries([]);
             setHistoryIndex(0);
             return;
@@ -76,7 +79,7 @@ export function useNodeOutputHistory({
                 console.error('[useNodeOutputHistory] A step’s stored outputs couldn’t be read:', error);
                 setHistoryEntries([]);
             });
-    }, [nodeId, workflowId, limit, refetchTrigger, reads]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [nodeId, workflowId, stored, limit, refetchTrigger, reads]); // eslint-disable-line react-hooks/exhaustive-deps
     // initialHistoryIndex intentionally omitted — only used on mount/node-change, not as a refetch trigger
 
     // Sync selection to parent whenever index or entries change.
