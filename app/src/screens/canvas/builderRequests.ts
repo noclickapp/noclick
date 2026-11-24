@@ -52,6 +52,3 @@ function subscribe(changed: () => void): () => void {
 export function useBuilding(workflowId: string | null | undefined): boolean {
     return useSyncExternalStore(subscribe, () => isBuilding(workflowId), () => false);
 }
-
-/** The most a build's instructions hold (`POST /v1/workflows/{id}/builds`). */
-export const MAX_BUILD_INSTRUCTIONS = 16000;

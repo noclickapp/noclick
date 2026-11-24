@@ -68,9 +68,9 @@ describe('the builder panel', () => {
 
     it('starts a build held for it before it was drawn', async () => {
         const { client, builds, finish } = platform();
-        holdRequest('Import this n8n workflow');
+        holdRequest('Add a Slack step for urgent emails');
         const onOpenChange = panel(client);
-        await vi.waitFor(() => expect(builds).toEqual([{ instructions: 'Import this n8n workflow' }]));
+        await vi.waitFor(() => expect(builds).toEqual([{ instructions: 'Add a Slack step for urgent emails' }]));
         expect(onOpenChange).toHaveBeenCalledWith(true);
         finish();
     });
