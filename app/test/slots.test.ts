@@ -237,6 +237,10 @@ describe('the app', () => {
             'work.reply.markdown',
             'work.teamWorkspace',
             'work.toolServer.signIn',
+            'workflows.arrivals',
+            'workflows.canvas',
+            'workflows.planLimits',
+            'workflows.sharing',
         ]);
         expect(problems(modules).join('\n')).toBe('');
     }, SCAN_S);

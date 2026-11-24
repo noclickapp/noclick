@@ -1,0 +1,197 @@
+/**
+ * Generic edit item popup component.
+ * Used for editing apps, databases, and other items with name/description.
+ *
+ * This component provides a consistent editing experience across the application,
+ * with change detection, validation, and delete functionality.
+ */
+
+import { createContext, useContext, useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import { ShellDialog } from '@/ui/ShellDialog';
+import { BUTTON_GHOST, BUTTON_PRIMARY } from '@/ui/buttons';
+import { FIELD, FIELD_LABEL } from '@/ui/fields';
+import { cn } from '@/ui/utils';
+
+/** ⌘↵ in a dialog's textarea submits its form, as Enter does in its fields. */
+export function submitOnModEnter(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        e.currentTarget.closest('form')?.requestSubmit();
+    }
+}
+
+/** What a field below name and description (`children`) holds to save with them; null while it holds no change. */
+export interface ItemFieldChange {
+    /** False while what's typed can't be saved. */
+    valid: boolean;
+    /** Saves it; throws when it couldn't, the field having said why. */
+    save(): Promise<void>;
+}
+
+const SaveWithItem = createContext<((change: ItemFieldChange | null) => void) | null>(null);
+
+/** Joins a field to its dialog's Save: `change` (memoized) is what it holds, null when unchanged. */
+export function useSaveWithItem(change: ItemFieldChange | null): void {
+    const report = useContext(SaveWithItem);
+    useEffect(() => report?.(change), [report, change]);
+    useEffect(() => () => report?.(null), [report]);
+}
+
+interface EditableItem {
+    id: string;
+    name: string;
+    description?: string;
+}
+
+interface EditItemPopupProps<T extends EditableItem> {
+    /** The item being edited */
+    item: T | null;
+    /** Type of item (e.g., "App", "Database") - used in UI labels */
+    itemType: string;
+    /** Icon component to display in header */
+    Icon: LucideIcon;
+    /** Whether the dialog is open */
+    isOpen: boolean;
+    /** Callback to handle dialog open/close state */
+    onOpenChange: (open: boolean) => void;
+    /** Callback when item is updated */
+    onUpdate: (itemId: string, updates: { name?: string; description?: string }) => void;
+    /** Callback when item deletion is requested */
+    onDelete: (itemId: string) => void;
+    /**
+     * When false, the item isn't owned by the current user: name/description are
+     * read-only, Save is hidden, and the destructive action reads "Remove" (it
+     * drops the user's own access via share:leave rather than deleting). Defaults
+     * to true. Lets the same popup serve shared items without offering edits that
+     * the backend would reject.
+     */
+    canEdit?: boolean;
+    /** Fields below name and description, saved with them (`useSaveWithItem`). */
+    children?: ReactNode;
+}
+
+export function EditItemPopup<T extends EditableItem>({
+    item,
+    itemType,
+    Icon,
+    isOpen,
+    onOpenChange,
+    onUpdate,
+    onDelete,
+    canEdit = true,
+    children,
+}: EditItemPopupProps<T>) {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [originalName, setOriginalName] = useState('');
+    const [originalDescription, setOriginalDescription] = useState('');
+    const [fieldChange, setFieldChange] = useState<ItemFieldChange | null>(null);
+    const [saving, setSaving] = useState(false);
+
+    // Populate form when item changes
+    useEffect(() => {
+        if (item) {
+            const itemName = item.name || '';
+            const itemDescription = item.description || '';
+            setName(itemName);
+            setDescription(itemDescription);
+            setOriginalName(itemName);
+            setOriginalDescription(itemDescription);
+        } else {
+            // Reset form when no item is selected
+            setName('');
+            setDescription('');
+            setOriginalName('');
+            setOriginalDescription('');
+        }
+    }, [item]);
+
+    const renamed = name.trim() !== originalName || description.trim() !== originalDescription;
+    const hasChanges = renamed || fieldChange !== null;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!item || !name.trim() || saving) return;
+        if (fieldChange) {
+            setSaving(true);
+            try {
+                await fieldChange.save();
+            } catch {
+                return;
+            } finally {
+                setSaving(false);
+            }
+        }
+        if (renamed) {
+            onUpdate(item.id, {
+                name: name.trim(),
+                description: description.trim() || ''
+            });
+        } else {
+            onOpenChange(false);
+        }
+    };
+
+    const noun = itemType.toLowerCase();
+
+    return (
+        <ShellDialog
+            open={isOpen}
+            onOpenChange={onOpenChange}
+            mark={<Icon className="h-5 w-5" strokeWidth={1.75} />}
+            title={canEdit ? `Edit ${noun}` : itemType}
+            description={canEdit ? 'Its name and what it’s for.' : `It’s shared with you, so only its owner can change it. You can remove it from your list.`}
+            onSubmit={handleSubmit}
+            footer={
+                <>
+                    <button
+                        type="button"
+                        onClick={() => item && onDelete(item.id)}
+                        className={cn(BUTTON_GHOST, 'mr-auto -ml-3 text-red-600 hover:bg-red-500/10 hover:text-red-600 dark:text-red-400 dark:hover:text-red-400')}
+                    >
+                        {canEdit ? 'Delete' : 'Remove'} {noun}
+                    </button>
+                    <button type="button" onClick={() => onOpenChange(false)} className={BUTTON_GHOST}>
+                        {canEdit ? 'Cancel' : 'Close'}
+                    </button>
+                    {canEdit && (
+                        <button type="submit" disabled={!name.trim() || !hasChanges || saving || fieldChange?.valid === false} className={BUTTON_PRIMARY}>
+                            Save
+                        </button>
+                    )}
+                </>
+            }
+        >
+            <div className="space-y-4 pt-2">
+                <label className="block">
+                    <span className={FIELD_LABEL}>Name</span>
+                    <input
+                        type="text"
+                        required
+                        // eslint-disable-next-line jsx-a11y/no-autofocus -- the dialog opens to rename
+                        autoFocus={canEdit}
+                        disabled={!canEdit}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={cn(FIELD, 'disabled:cursor-not-allowed')}
+                        placeholder={`Name the ${noun}`}
+                    />
+                </label>
+                <label className="block">
+                    <span className={FIELD_LABEL}>Description</span>
+                    <textarea
+                        rows={3}
+                        disabled={!canEdit}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className={cn(FIELD, 'h-auto resize-none py-2.5 leading-relaxed disabled:cursor-not-allowed')}
+                        placeholder="What it does"
+                        onKeyDown={submitOnModEnter}
+                    />
+                </label>
+                <SaveWithItem.Provider value={setFieldChange}>{children}</SaveWithItem.Provider>
+            </div>
+        </ShellDialog>
+    );
+}
