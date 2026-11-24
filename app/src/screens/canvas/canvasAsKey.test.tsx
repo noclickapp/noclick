@@ -401,6 +401,7 @@ async function runsAndResults(actsAs: 'owner' | 'key'): Promise<Call[]> {
     const panel = render(<OutputPanel selectedNode={node('hook', 'trigger-webhook')} workflowId={WORKFLOW} />, { wrapper });
     await waitFor(() => expect(panel.container.textContent).toContain('2 of 2'));
     panel.unmount();
+    // A step the server doesn't hold yet (one just added) reads no stored outputs, only its type's shape.
     const expected = render(<OutputPanel selectedNode={node('unrun', 'automation-slack', { operation: `send_message_as_${actsAs}` })} workflowId={WORKFLOW} />, { wrapper });
     await waitFor(() => expect(expected.container.textContent).toContain('Expected Output'));
     expected.unmount();

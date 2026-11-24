@@ -9,6 +9,7 @@
 import { DomainRegistrarError, type DomainOffer, type DomainRegistrar, type DomainSearch } from '@/screens/domains/useDomainPurchase';
 import type { KnownRegistrant } from '@/lib/domainRegistrant';
 import { formatPrice as formatDollars } from '@/screens/numbers/numberDisplay';
+import { heldCallOf } from '@/sdk/held';
 import { Domain, NoClickError, type DomainOffer as PlatformOffer, type NoClick } from 'noclick';
 
 /** The endings Resources searches, most wanted first. */
@@ -36,6 +37,8 @@ function toOffer(found: PlatformOffer, close: boolean): DomainOffer | null {
 /** The API's refusal in the page's terms: what lifts it (funds, on any plan), or that this deployment sells no domains. */
 function refusal(error: unknown, offer?: DomainOffer): Error {
     if (!(error instanceof NoClickError)) return error instanceof Error ? error : new Error(String(error));
+    // Held for the account's owner: the purchase waits on them, which the page follows (src/sdk/held.ts).
+    if (heldCallOf(error)) return error;
     const said = error.nextStep ? `${error.message} ${error.nextStep}` : error.message;
     switch (error.type) {
         case 'payment_required':
