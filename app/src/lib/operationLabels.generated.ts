@@ -450,6 +450,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "projects_payments_list": ["Payments Status", "GET", "read"],
     "projects_previews_link": ["Preview Link", "POST", "write"],
     "projects_previews_links_revoke": ["Revoke Preview Links", "POST", "write"],
+    "projects_public": ["Make Public", "POST", "write"],
+    "projects_public_delete": ["Make Private", "DELETE", "write"],
     "projects_schedules_create": ["Put Schedule", "POST", "write"],
     "projects_schedules_list": ["List Schedules", "GET", "read"],
     "projects_secrets_delete": ["Delete Secret", "DELETE", "destructive"],
@@ -625,6 +627,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "workflows_runs_get": ["Get Run", "GET", "read"],
     "workflows_runs_list": ["List Runs", "GET", "read"],
     "workflows_runs_stop": ["Stop Run", "POST", "outbound"],
+    "workflows_setup": ["Get Workflow Setup", "GET", "read"],
+    "workflows_setup_request": ["Request Workflow Setup", "POST", "outbound"],
     "workflows_steps_clear_state": ["Clear Step State", "POST", "write"],
     "workflows_steps_expression": ["Preview Expression", "POST", "read"],
     "workflows_steps_options_create": ["List Step Options", "POST", "read"],
@@ -700,6 +704,7 @@ adapty
 addevent
 addressfinder
 addresszen
+adobe-acrobat-sign
 adobe-analytics
 adobe-campaign
 adyen
@@ -784,6 +789,7 @@ attentive
 attio
 audienceful
 audiobookshelf
+aura-1
 auth0
 autotask
 avaza
@@ -793,10 +799,12 @@ award-force
 aweber
 awork
 axonaut
+balldontlie
 bambooci
 bamboohr
 bandsintown
 bannerbear
+bannerbite
 base44
 basedash
 baserow
@@ -819,6 +827,7 @@ bigcommerce
 bigmailer
 bigoven
 bigquery
+bigredcloud
 bika
 bill
 billetweb
@@ -833,6 +842,7 @@ bitwarden
 bizzabo
 bkper
 blackboard
+blink
 blinq
 blitz-api
 blooio
@@ -874,6 +884,7 @@ brilliant-directories
 browseai
 browserbase-tool
 browserless
+browshot
 bsc-designer
 btcpay-server
 bubbles
@@ -896,6 +907,7 @@ cabinpanda
 cakemail
 cal-com
 cal-id
+calendesk
 calendly
 callerapi
 callfire
@@ -943,6 +955,7 @@ clay
 clearblade
 clearout
 clerk-io
+clever
 cleverreach
 clevertap
 clickfunnels
@@ -1003,6 +1016,7 @@ content-snare
 content-studio
 contentstack
 context-dev
+contractor-plus
 contribly
 control-d
 conversion-tools
@@ -1011,6 +1025,7 @@ converted-da-56088
 conveyor
 convolo-ai
 coolify
+cor
 corbit-sms
 corrently
 coveo
@@ -1052,6 +1067,7 @@ dbt-cloud
 dealmachine
 debitura
 debounce
+decisionvault
 deel
 deepgram
 deepimage
@@ -1150,6 +1166,7 @@ enrich-layer
 env0
 eodhd-apis
 epos-now
+epson-connect
 esputnik
 etermin
 etsy
@@ -1268,6 +1285,7 @@ geodatasource
 get-the-referral
 getaccept
 getanyapi
+gettyimages
 giftbit
 giphy
 gitea
@@ -1282,6 +1300,7 @@ glide-apps
 globalping
 glofox
 gmail
+gmass
 go-table
 go-to-connect
 go-to-training
@@ -1420,6 +1439,7 @@ instatus
 intelliprint
 intercom
 intulse
+investment-dominator
 investorbase
 investorlift
 invofox
@@ -1488,6 +1508,7 @@ klicktipp
 knowify
 kobotoolbox
 kommo
+konnektivecrm
 kontent-ai
 koyeb
 krisp
@@ -1711,6 +1732,7 @@ okta
 ollama
 olostep
 omnisend
+on24
 onedesk
 onedrive
 onelake
@@ -1733,6 +1755,7 @@ opsgenie
 opusclip
 oracle-field-service
 oracle-hcm
+orca-scan
 orgo
 orq-ai
 orshot
@@ -1759,6 +1782,7 @@ parseur
 partnerstack
 passkit-membership
 past-dev
+pavlok-wearable-device-da47193
 payaca
 payments
 paypal
@@ -1767,14 +1791,17 @@ paystack
 pdfco
 pdfless
 pdq-connect
+peach
 peaka
 peekalink
 peerdom
+peliqan
 pencil-spaces
 pennylane
 penpot
 people-data-labs
 perfect-venue
+perfex-crm
 perigon
 permit-io
 perplexity
@@ -1796,6 +1823,7 @@ pipedrive
 pipeless
 pipeline-crm
 pitchbox
+pixxi-crm
 placetel
 planable
 planday
@@ -1817,10 +1845,12 @@ porkbun
 portalio
 postal-data-api
 postgres
+postgrid-print-mail
 posthog
 postiz
 postman
 postmark
+postnitro
 postwire
 powerdns
 practice-better
@@ -1833,8 +1863,10 @@ prisma
 process-street
 procore
 productboard
+productify-ai
 productlane
 productplan
+profitwell
 project-broadcast
 projul
 promptlayer
@@ -1871,6 +1903,7 @@ rasa
 rawg-video-games-database
 razorpay
 rbaskets
+reapit-foundations
 rebrandly
 recallai
 reclaim-ai
@@ -1894,6 +1927,7 @@ reloadify
 remote
 remove-bg
 render
+rendi
 rentcast
 rentec-direct
 rentman
@@ -1912,6 +1946,7 @@ returnista
 reviewflowz
 revolut-for-business
 rezdy
+riddle-quiz-maker
 rillet
 ringba
 ringcentral
@@ -1941,7 +1976,9 @@ runpod
 runscope
 runsignup
 safetyculture
+sailpoint
 sakari-sms
+sales-simplify
 salesforce
 salesforge
 salesloft
@@ -1956,6 +1993,7 @@ samsara
 sanity
 sap-concur
 sap-s-4hana-cloud
+sapling-ai
 saucelabs
 savvycal
 scale-ai
@@ -1983,6 +2021,7 @@ semrush
 send-email
 send-pulse
 sendbird
+sendcloud
 sendfox
 sendgrid
 sendit
@@ -2019,6 +2058,7 @@ showpad
 sidetracker
 sierra-interactive
 sigma
+sign-plus
 signable
 signal8
 signalwire
@@ -2049,6 +2089,7 @@ smartemailing
 smarthr
 smartlead
 smartproxy
+smartroutes
 smartsheet
 smily
 smokeball
@@ -2057,6 +2098,7 @@ smoove
 sms77
 smsapi
 smsglobal
+smsmobileapi
 smtp2go
 smtping
 snapchat
@@ -2074,6 +2116,7 @@ sonderplan
 soundcloud
 soundee
 spacebring
+sparkgrid-da106579
 specstream
 speechmatics
 spider
@@ -2107,6 +2150,7 @@ stream-chat
 streamtime
 stripe
 studio-by-ai21-labs
+submittable
 subscriptionflow
 sumo-logic
 sumoquote
@@ -2115,6 +2159,7 @@ supabase
 supadata
 super-dispatch
 supercast
+superdocu
 supermemory
 supernormal
 superset
@@ -2124,12 +2169,14 @@ sure-send
 surecart
 surevoip
 surf
+surveymethods
 svix
 swaggerhub
 swarmsyncai
 swidoc
 sympla
 synap
+syncmate-by-assitro
 syncro
 synthflow-ai
 systemeio
@@ -2137,6 +2184,7 @@ table
 tableau
 taggun
 tailscale
+taleez
 talend
 talenthr
 talentlms
@@ -2196,9 +2244,11 @@ timelink
 timely
 timerex
 timescaledb
+timing
 tinyfish
 tinypages
 tinyurl
+tisane-labs
 tmetric
 todoist
 tomba
@@ -2214,7 +2264,9 @@ trackabi
 trackdesk
 trackingmore
 trackvia
+trail
 trakt
+translate-com
 transloadit
 trekksoft
 trello
@@ -2239,6 +2291,7 @@ typecast
 typeform
 typefully
 uberduck
+uchat
 ulama
 unifi
 unione
@@ -2263,12 +2316,14 @@ vagaro
 valuecase
 vast-ai
 vaultre
+vc-deal-flow-signal
 vcita
 vdocipher
 vectara
 vendasta
 vendschat
 vercel-ai-gateway
+verifone
 vervoe
 veryfi
 vibe
@@ -2278,6 +2333,7 @@ videoupscaler
 vimeo
 viral-loops
 virtualbadgeio
+virtualsms
 virtuous-crm
 virustotal
 visma-eaccounting
@@ -2323,6 +2379,7 @@ whoisfreaks
 whop
 wikimedia
 wild-apricot
+wildberries
 wildjar
 winston-ai
 wisboo
@@ -2332,12 +2389,14 @@ wiza
 wodify-core
 wolfram-alpha-api
 woop-social
+woovi
 word
 wordnik
 wordpress
 workable
 workiz
 workos
+workramp
 workvivo
 wowza
 writer
@@ -2367,6 +2426,7 @@ zenrows
 zenzap
 zep
 zeplin
+ziflow
 zigpoll
 zoho-books
 zoho-cliq

@@ -97,7 +97,10 @@ function toKeyAsk(value: unknown): DeployKeyAsk | null {
 
 /** What a deploy would do, with nothing made: `deploy(source, { dryRun: true })`. */
 export class DeployPlan {
-  /** What it read: `kind` (`url` or `repo`), the `url` or `repo_id`, and the `commit` and `branch`. */
+  /**
+   * What it read: `kind` (`url` or `repo`), the `url` or `repo_id`, and the `commit` and `branch`; `forked_from`
+   * (`{ address }`) names public work on NoClick the deploy copies.
+   */
   readonly source: JsonObject;
   /** The app's name (and its copy's): the one you gave, or the first free one from the repository's. */
   readonly name: string;
@@ -209,7 +212,9 @@ async function sourceOf(source: string | ApiObject, ref: string | undefined): Pr
 
 /**
  * Deploy `source` as a new app of yours: a public git repository's https URL, on any host (copied into a new repo
- * of yours, the one branch it deploys), or one of your own repos (a `Repo`, its id or its name, deployed as it is).
+ * of yours, the one branch it deploys), public work on NoClick by its https address
+ * (`"https://pilot-hub.noclick.site"`: a copy of the code its owner made public), or one of your own repos (a
+ * `Repo`, its id or its name, deployed as it is).
  *
  * It makes the app, sets the secrets its noclick.json says its code reads (NoClick makes the ones marked
  * `generate`; `secrets` brings the rest), gives the app the key to your account it asks for when `accountKey` names
