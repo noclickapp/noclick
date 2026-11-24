@@ -424,3 +424,15 @@ def test_committing_a_folder_sends_only_what_changed(api, client, tmp_path):
     calls = commits.call_count
     assert site.commit(tmp_path / "dist", message="Again", exclude=["*.map"]) is None
     assert commits.call_count == calls
+
+    # A link someone committed is listed as one (no size, no sha) and left as it is: the folder not having a file at
+    # its path deletes nothing, since a commit through the API can't put a link back.
+    files.respond(json=listing(
+        {"path": "index.html", "type": "file", "sha": _sha(b"<h1>Hi</h1>")},
+        {"path": "assets/app.js", "type": "file", "sha": _sha(b"run()")},
+        {"path": "assets/shared", "type": "link", "size": None, "sha": None},
+    ))
+    assert [(f.path, f.type, f.size, f.sha) for f in site.files(recursive=True) if f.type == "link"] == [
+        ("assets/shared", "link", None, None)]
+    assert site.commit(tmp_path / "dist", message="Again", exclude=["*.map"]) is None
+    assert commits.call_count == calls

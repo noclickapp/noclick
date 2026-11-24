@@ -7,6 +7,7 @@
 // session's own event stream.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useReportHeld } from '@/sdk/held';
 import { ChevronDown, ChevronRight, ClipboardCopy, MoreHorizontal, PanelRightClose, RotateCcw, SquarePen } from 'lucide-react';
 import { Operation, type AgentStepDiff, type HarnessRequest } from 'noclick';
 import { RepliedOn } from '@/ui/chat/channels';
@@ -127,6 +128,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
     const viewer = useWorkViewer();
     const nav = useWorkNav();
     const workClient = useWorkClient();
+    const reportHeld = useReportHeld({ client: workClient });
     const inPhone = useInPhoneShell();
     // A phone opens the model and account pickers as sheets over the page.
     const sheets = usePickerSheets(inPhone);
@@ -372,6 +374,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
             else await c.stop();
             toast(b.kind === 'agent' ? `Stopped ${b.agent?.name ?? 'it'}’s task` : b.loop ? 'Stopped the loop' : 'Stopped the turn');
         } catch (error) {
+            if (reportHeld(error, b.kind === 'agent' ? (b.agent?.name ? `Stop ${b.agent.name}’s task` : 'Stop the task') : b.loop ? 'Stop the loop' : 'Stop the turn')) return;
             toast('Couldn’t stop it', { description: error instanceof Error ? error.message : String(error) });
         }
     };

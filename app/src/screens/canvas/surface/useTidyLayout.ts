@@ -4,6 +4,7 @@
 import { useCallback, type RefObject } from 'react';
 import type { Edge, Node } from '@xyflow/react';
 import { toast } from 'sonner';
+import { useNextFrame } from '@/lib/useLater';
 import { autolayout } from './autolayout';
 
 export interface TidyLayoutOptions {
@@ -19,6 +20,7 @@ export interface TidyLayoutOptions {
 
 export function useTidyLayout({ nodesRef, edgesRef, setNodes, history, fit }: TidyLayoutOptions): () => void {
     const { startBatch, endBatch } = history;
+    const nextFrame = useNextFrame();
     return useCallback(() => {
         const nodes = nodesRef.current ?? [];
         const edges = edgesRef.current ?? [];
@@ -34,6 +36,6 @@ export function useTidyLayout({ nodesRef, edgesRef, setNodes, history, fit }: Ti
         } else {
             toast.info('Already laid out', { description: 'Your workflow is already neatly arranged.', duration: 3000 });
         }
-        requestAnimationFrame(fit);
-    }, [nodesRef, edgesRef, setNodes, startBatch, endBatch, fit]);
+        nextFrame(fit);
+    }, [nodesRef, edgesRef, setNodes, startBatch, endBatch, fit, nextFrame]);
 }

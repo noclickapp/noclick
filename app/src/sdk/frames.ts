@@ -98,7 +98,10 @@ export interface PlatformResourceEvent {
         /** Which of the app's popups the account's owner sees was switched (`id` the account's). */
         | 'popups'
         /** A number was linked to the account or unlinked (`id` the account's). */
-        | 'phones';
+        | 'phones'
+        /** An operation that reports itself live moved a stage or ended (`status` the operation's): a repository
+         *  deploy. */
+        | 'operation';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;
