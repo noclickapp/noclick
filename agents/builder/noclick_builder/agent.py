@@ -2,7 +2,7 @@
 
 ``ensure`` makes the account's builder (or returns the one it has); ``build`` hands it one workflow and what to do,
 waits for its reply, then reads the workflow's own facts and sends the builder back when they say the build isn't
-done: a step it left would fail at run time, or nothing was built (``definition.send_back``). NoClick's hosted platform runs the same loop from the same definition.
+done: a step it left would fail at run time, or nothing was built (``definition.send_back``). NoClick's hosted platform runs the same loop from the same definition, and also sends it back for a read of a step's output that gets no value (``unresolved``), which it judges as an edit judges a step's ``references``: a read of a workflow judges none, so this loop can't.
 
     import noclick
     from noclick_builder import agent as builder
