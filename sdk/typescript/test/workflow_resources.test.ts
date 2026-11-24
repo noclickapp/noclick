@@ -94,6 +94,32 @@ test("rows stop at a limit", async () => {
   assert.deepEqual([params(rows.last.query), rows.count], [{ limit: "2" }, 1]);
 });
 
+test("a file is made to upload and read by id; a table is made and its rows added, changed and taken out", async () => {
+  const { api } = setup();
+  const made = api.on("POST", "/v1/workflows/wf_1/files", json({
+    ...FILE, url: null, upload_url: "https://storage.example/put", upload_expires_at: "2026-11-19T11:00:00+00:00",
+    permanent_url: "https://files.example/invoice.pdf",
+  }, { status: 201 }));
+  const invoice = await nc.WorkflowFile.create("wf_1", "invoice.pdf", { sizeBytes: 1024, mimeType: "application/pdf", stepId: "upload" });
+  assert.deepEqual(made.last.body, { name: "invoice.pdf", size_bytes: 1024, mime_type: "application/pdf", step_id: "upload" });
+  assert.equal(made.last.headers.get("noclick-user"), null);
+  assert.deepEqual([invoice.uploadUrl, invoice.permanentUrl], ["https://storage.example/put", "https://files.example/invoice.pdf"]);
+  api.on("GET", "/v1/workflows/files/res_f1", json(FILE));
+  assert.equal((await nc.WorkflowFile.get("res_f1")).url, FILE.url);
+
+  api.on("POST", "/v1/workflows/wf_1/tables", json(TABLE, { status: 201 }));
+  const added = api.on("POST", "/v1/workflows/tables/res_t1/rows", json({ object: "table_rows_added", added: 2, row_count: 5 }, { status: 201 }));
+  const changed = api.on("PATCH", "/v1/workflows/tables/res_t1/rows/row_0", json({ object: "table_row", id: "row_0", data: { n: 9 } }));
+  const removed = api.on("POST", "/v1/workflows/tables/res_t1/rows/remove", json({ object: "table_rows_removed", removed: 1, row_count: 4 }));
+  const orders = await nc.WorkflowTable.create("wf_1", "Orders", { stepId: "table" });
+  assert.equal(await orders.addRows([{ n: 3 }, { n: 4 }]), 2);
+  assert.deepEqual(added.last.body, { rows: [{ n: 3 }, { n: 4 }] });
+  await orders.updateRow("row_0", { n: 9 });
+  assert.deepEqual(changed.last.body, { data: { n: 9 } });
+  assert.equal(await orders.removeRows(["row_1"]), 1);
+  assert.deepEqual(removed.last.body, { row_ids: ["row_1"] });
+});
+
 test("the account's files page by cursor and are deleted as the account", async () => {
   const { api } = setup();
   const made = { object: "attachment", id: "res_1", name: "cake.png", mime_type: "image/png", size_bytes: 900, kind: "image",

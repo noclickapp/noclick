@@ -2,6 +2,8 @@
 transport: what the call sends, how it reads the answer, that a refusal is the API's, and that the values never show
 in the object's repr."""
 
+import json
+
 import httpx
 import pytest
 
@@ -57,3 +59,17 @@ def test_a_workflow_with_none_reads_empty(api, client):
         "object": "workflow_variables", "workflow_id": "wf_1", "version": 1, "definitions": [], "variables": {}})
     read = nc.Workflow.from_id("wf_1").variables()
     assert (read.definitions, read.variables, read.values) == ([], {}, {})
+
+
+def test_what_its_state_step_keeps_is_read_and_set(api, client):
+    kept = {"object": "workflow_state", "workflow_id": "wf_1", "step_id": "state", "values": {"visits": 3}}
+    read = api.get("/v1/workflows/wf_1/state").respond(json=kept)
+    written = api.put("/v1/workflows/wf_1/state/visits").respond(json={**kept, "values": {"visits": 4}})
+    flow = nc.Workflow.from_id("wf_1")
+    state = flow.state(step="state")
+    assert dict(read.calls.last.request.url.params) == {"step_id": "state"}
+    assert isinstance(state, nc.WorkflowState) and (state.step_id, state.values) == ("state", {"visits": 3})
+    assert flow.set_state("visits", 4).values == {"visits": 4}
+    assert json.loads(written.calls.last.request.content) == {"value": 4}
+    flow.set_state("visits", None)
+    assert json.loads(written.calls.last.request.content) == {"value": None}

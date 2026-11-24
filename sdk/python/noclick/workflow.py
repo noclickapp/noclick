@@ -923,6 +923,7 @@ class StepPublication:
     previous_url: Optional[str]
     trash_id: Optional[str]
     restorable_until: Any
+    apps_domain: Optional[str] = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -931,7 +932,41 @@ class StepPublication:
         return cls(raw.get("workflow_id") or "", raw.get("step_id") or "", raw.get("action") or "",
                    raw.get("state") or "", raw.get("url"), raw.get("project_id"), raw.get("subdomain"),
                    raw.get("deployment_id"), raw.get("previous_url"), raw.get("trash_id"),
-                   parse_time(raw.get("restorable_until")), raw)
+                   parse_time(raw.get("restorable_until")), apps_domain=raw.get("apps_domain"), raw=raw)
+
+
+@dataclass(frozen=True)
+class PublishAddress:
+    """What ``Step.check_address`` found: whether the interface step's app may go at
+    ``subdomain`` (``available``), else ``reason``; ``apps_domain`` is the domain it's on."""
+
+    subdomain: str
+    available: bool
+    reason: Optional[str]
+    apps_domain: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "PublishAddress":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("subdomain") or "", bool(raw.get("available")), raw.get("reason"),
+                   raw.get("apps_domain"), raw)
+
+
+@dataclass(frozen=True)
+class WorkflowState:
+    """What a workflow's State step keeps: its ``values`` by key, and the ``step_id``
+    keeping them (``None``, and nothing kept, in a workflow with no State step)."""
+
+    workflow_id: str
+    step_id: Optional[str]
+    values: Dict[str, Any]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowState":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", raw.get("step_id"), dict(raw.get("values") or {}), raw)
 
 
 class Step(_Object):
@@ -1637,6 +1672,43 @@ class Step(_Object):
                                 params=compact(path=path, conversation=conversation), user=None)
 
     # --- its app (an interface step) ---------------------------------------
+
+    @synced
+    async def app(self) -> StepPublication:
+        """Read this interface step's app as it stands. Takes read access to the workflow.
+
+        Returns:
+            The ``StepPublication``: ``state`` ``published`` (at its ``url``), ``unpublished``
+            (in the trash, which ``trash_id`` restores until ``restorable_until``, back at the
+            ``subdomain`` it kept) or ``not_published``, and the ``apps_domain`` a first publish
+            puts it on.
+
+        Usage::
+
+            page = noclick.Workflow.from_name("Morrow Bakehouse site").step("page")
+            print(page.app().state)   # "published"
+        """
+        raw = await self._api.request("GET", f"{await self._step_path()}/app", user=None)
+        return StepPublication._from(raw)
+
+    @synced
+    async def check_address(self, subdomain: str) -> PublishAddress:
+        """Check whether this interface step's app may be published (or renamed) at
+        ``subdomain``: free, or the address it already holds; never one another app holds.
+        Changes nothing.
+
+        Returns:
+            The ``PublishAddress``: ``available``, else the ``reason`` it isn't.
+
+        Usage::
+
+            page = noclick.Workflow.from_name("Morrow Bakehouse site").step("page")
+            if page.check_address("morrow").available:
+                page.publish("morrow")
+        """
+        raw = await self._api.request("GET", f"{await self._step_path()}/app/address",
+                                      params={"subdomain": subdomain}, user=None)
+        return PublishAddress._from(raw)
 
     async def _publication(self, body: Dict[str, Any]) -> StepPublication:
         raw = await self._api.request("POST", f"{await self._step_path()}/publish", json=compact(**body), user=None)
@@ -2831,6 +2903,38 @@ class Workflow(_Object):
                 print(name, "is set" if value else "is empty")
         """
         return WorkflowVariables._from(await self._request("GET", f"{await self._path()}/variables"))
+
+    @synced
+    async def state(self, *, step: Optional[str] = None) -> WorkflowState:
+        """Read what its State step keeps (``step``, else its first), as its interfaces read it.
+
+        Returns:
+            The ``WorkflowState``: ``values`` by key, and the ``step_id`` keeping them.
+
+        Usage::
+
+            counter = noclick.Workflow.from_name("Visit counter")
+            print(counter.state().values.get("visits", 0))
+        """
+        raw = await self._request("GET", f"{await self._path()}/state", params=compact(step_id=step))
+        return WorkflowState._from(raw)
+
+    @synced
+    async def set_state(self, key: str, value: Any, *, step: Optional[str] = None) -> WorkflowState:
+        """Set one key its State step keeps (``step``, else its first), as its interfaces do;
+        ``None`` takes the key out. Takes edit access to the workflow.
+
+        Returns:
+            The ``WorkflowState`` after.
+
+        Usage::
+
+            counter = noclick.Workflow.from_name("Visit counter")
+            counter.set_state("visits", 0)
+        """
+        raw = await self._request("PUT", f"{await self._path()}/state/{path_segment(key)}",
+                                  json={"value": value, **compact(step_id=step)})
+        return WorkflowState._from(raw)
 
     @synced
     async def setup(self) -> WorkflowSetup:

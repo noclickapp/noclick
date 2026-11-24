@@ -1047,6 +1047,7 @@ export type {
   ManualRun,
   NameVersionOptions,
   Position,
+  PublishAddress,
   PublishOptions,
   RunInputs,
   RunStep,
@@ -1086,6 +1087,7 @@ export type {
   WorkflowRunWait,
   WorkflowRunsOptions,
   WorkflowSetup,
+  WorkflowState,
   WorkflowStep,
   WorkflowTemplate,
   WorkflowTestRun,
@@ -1119,6 +1121,7 @@ export {
 } from "./workflowResources.ts";
 export type {
   KeptBy,
+  NewWorkflowFileOptions,
   RowsPage,
   TableRow,
   WorkflowResourceListOptions,

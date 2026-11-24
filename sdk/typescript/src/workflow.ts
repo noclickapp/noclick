@@ -1331,7 +1331,32 @@ export interface StepPublication {
   previousUrl: string | null;
   trashId: string | null;
   restorableUntil: Date | null;
+  /** The domain a first publish puts it on (`Step.app` reads it). */
+  appsDomain: string | null;
   raw: JsonObject;
+}
+
+/** What `Step.checkAddress` found: whether the step's app may go at `subdomain` (`available`), else `reason`. */
+export interface PublishAddress {
+  subdomain: string;
+  available: boolean;
+  reason: string | null;
+  appsDomain: string | null;
+  raw: JsonObject;
+}
+
+/** What a workflow's State step keeps: `values` by key, and the `stepId` keeping them (null, and nothing kept, in a
+ *  workflow with no State step). */
+export interface WorkflowState {
+  workflowId: string;
+  stepId: string | null;
+  values: JsonObject;
+  raw: JsonObject;
+}
+
+function toWorkflowState(value: unknown): WorkflowState {
+  const raw = asObject(value);
+  return { workflowId: str(raw.workflow_id) ?? "", stepId: str(raw.step_id), values: asObject(raw.values), raw };
 }
 
 function toStepPublication(value: unknown): StepPublication {
@@ -1348,6 +1373,7 @@ function toStepPublication(value: unknown): StepPublication {
     previousUrl: str(raw.previous_url),
     trashId: str(raw.trash_id),
     restorableUntil: parseTime(raw.restorable_until),
+    appsDomain: str(raw.apps_domain),
     raw,
   };
 }
@@ -2008,6 +2034,31 @@ export class Step extends ApiObject {
     return toStepValue(await this._request("POST", `${await this._workflow._stepPath(this.id)}/values`, {
       json: compact({ field, settings: options.settings }),
     }));
+  }
+
+  /**
+   * This interface step's app as it stands: `state` `published` (at its `url`), `unpublished` (in the trash, which
+   * `trashId` restores until `restorableUntil`, back at the `subdomain` it kept) or `not_published`, and the
+   * `appsDomain` a first publish puts it on. Takes read access to the workflow.
+   */
+  async app(): Promise<StepPublication> {
+    return toStepPublication(await this._api.request("GET", `${await this._workflow._stepPath(this.id)}/app`, { user: null }));
+  }
+
+  /**
+   * Whether this interface step's app may be published (or renamed) at `subdomain`: free, or the address it already
+   * holds; never one another app holds. Changes nothing.
+   *
+   * @example
+   * const page = Workflow.fromName("Morrow Bakehouse site").step("page");
+   * if ((await page.checkAddress("morrow")).available) await page.publish({ subdomain: "morrow" });
+   */
+  async checkAddress(subdomain: string): Promise<PublishAddress> {
+    const raw = asObject(await this._api.request("GET", `${await this._workflow._stepPath(this.id)}/app/address`, {
+      query: { subdomain },
+      user: null,
+    }));
+    return { subdomain: str(raw.subdomain) ?? "", available: raw.available === true, reason: str(raw.reason), appsDomain: str(raw.apps_domain), raw };
   }
 
   private async publication(body: JsonObject): Promise<StepPublication> {
@@ -2738,6 +2789,25 @@ export class Workflow extends ApiObject {
    */
   async variables(): Promise<WorkflowVariables> {
     return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
+  }
+
+  /** What its State step keeps (`step`, else its first), as its interfaces read it. */
+  async state(options: { step?: string } = {}): Promise<WorkflowState> {
+    return toWorkflowState(await this._request("GET", `${await this.path()}/state`, { query: { step_id: options.step } }));
+  }
+
+  /**
+   * Set one key its State step keeps (`step`, else its first), as its interfaces do; `null` takes the key out. Takes
+   * edit access to the workflow. Answers what the step keeps after.
+   *
+   * @example
+   * const counter = Workflow.fromName("Visit counter");
+   * await counter.setState("visits", 0);
+   */
+  async setState(key: string, value: unknown, options: { step?: string } = {}): Promise<WorkflowState> {
+    return toWorkflowState(await this._request("PUT", `${await this.path()}/state/${encodeURIComponent(key)}`, {
+      json: { value: value === undefined ? null : value, ...(options.step ? { step_id: options.step } : {}) },
+    }));
   }
 
   /**

@@ -13,6 +13,14 @@
  * `organizationId` narrows a list to the workflows in a team workspace of the NoClick app your account belongs to
  * (`"none"`: those in no workspace). A file's `url` reads it for an hour after it's listed (a picture, PDF, sound or
  * video opens in place, anything else downloads); a table's rows read in pages of up to 10,000. Deleting either takes edit access to its workflow and is for good: nothing keeps a copy.
+ *
+ * Making a file or a table, and adding, changing or taking out a table's rows, take edit access to its workflow, as
+ * an interface's own uploads and writes do:
+ *
+ *     const menu = await WorkflowFile.create(intake, "menu.pdf", { sizeBytes: data.byteLength, mimeType: "application/pdf" });
+ *     await fetch(menu.uploadUrl!, { method: "PUT", body: data, headers: { "Content-Type": "application/pdf" } });
+ *     const signups = await WorkflowTable.create(intake, "Signups");
+ *     await signups.addRows([{ email: "ada@example.com" }]);
  */
 
 import { resolveClient } from "./client.ts";
@@ -44,6 +52,19 @@ function keptBy(raw: unknown): KeptBy {
     name: String(found.name ?? ""),
     stepTypes: Array.isArray(found.step_types) ? found.step_types.map(String) : [],
   };
+}
+
+/** What `WorkflowFile.create` takes beside the file's name. */
+export interface NewWorkflowFileOptions {
+  /** Its size in bytes, which the upload must match: at most 100 MB. */
+  sizeBytes: number;
+  /** Its type, which the upload sends as its `Content-Type` (`application/octet-stream` when left out). */
+  mimeType?: string;
+  /** The step that keeps it. */
+  stepId?: string;
+  /** What it holds (`image`, `video`, `audio`, `document`, `file`): read from `mimeType` when left out. */
+  type?: string;
+  client?: NoClick;
 }
 
 /** Which of your workflows' files or tables a list holds. */
@@ -89,6 +110,35 @@ export class WorkflowFile extends ApiObject {
       (raw) => new WorkflowFile({ raw, client: options.client }));
   }
 
+  /** One of your workflows' files by id, as `list` shows it, its `url` good for an hour. */
+  static async get(fileId: string, options: { client?: NoClick } = {}): Promise<WorkflowFile> {
+    const raw = await resolveClient(options.client).request("GET", `/v1/workflows/files/${encodeURIComponent(fileId)}`, { user: null });
+    return new WorkflowFile({ raw: asObject(raw), client: options.client });
+  }
+
+  /**
+   * Make a file of `workflow` to upload: put its bytes to `uploadUrl` in one PUT (`Content-Type` its `mimeType`,
+   * exactly `sizeBytes` long). Once uploaded it reads for good at `permanentUrl`. Takes edit access to the workflow.
+   *
+   * @example
+   * const menu = await WorkflowFile.create(Workflow.fromName("Cafe site"), "menu.pdf", { sizeBytes: data.byteLength, mimeType: "application/pdf" });
+   * await fetch(menu.uploadUrl!, { method: "PUT", body: data, headers: { "Content-Type": "application/pdf" } });
+   */
+  static async create(workflow: Workflow | string, name: string, options: NewWorkflowFileOptions): Promise<WorkflowFile> {
+    const workflowId = await refId(workflow);
+    const raw = await resolveClient(options.client).request("POST", `/v1/workflows/${encodeURIComponent(String(workflowId))}/files`, {
+      json: {
+        name,
+        size_bytes: options.sizeBytes,
+        ...(options.mimeType ? { mime_type: options.mimeType } : {}),
+        ...(options.stepId ? { step_id: options.stepId } : {}),
+        ...(options.type ? { type: options.type } : {}),
+      },
+      user: null,
+    });
+    return new WorkflowFile({ raw: asObject(raw), client: options.client });
+  }
+
   get id(): string {
     return this._field("id");
   }
@@ -128,6 +178,20 @@ export class WorkflowFile extends ApiObject {
   get urlExpiresAt(): Date | null {
     return parseTime(this._field("url_expires_at"));
   }
+  /**
+   * Only on a file `create` made: where its bytes go, in one PUT whose `Content-Type` is its `mimeType` and whose
+   * length is its `sizeBytes`, until `uploadExpiresAt`.
+   */
+  get uploadUrl(): string | null {
+    return (this.raw.upload_url as string | undefined) ?? null;
+  }
+  get uploadExpiresAt(): Date | null {
+    return parseTime(this.raw.upload_expires_at);
+  }
+  /** Only on a file `create` made: where it reads for good once uploaded. Anyone holding it reads the file. */
+  get permanentUrl(): string | null {
+    return (this.raw.permanent_url as string | undefined) ?? null;
+  }
   get createdAt(): Date | null {
     return parseTime(this._field("created_at"));
   }
@@ -136,7 +200,7 @@ export class WorkflowFile extends ApiObject {
   }
 
   protected async _load(): Promise<JsonObject> {
-    throw new Error("A workflow's file comes from WorkflowFile.list().");
+    throw new Error("A workflow's file comes from WorkflowFile.list() or WorkflowFile.get().");
   }
 
   /**
@@ -198,6 +262,22 @@ export class WorkflowTable extends ApiObject {
   static async listPage(options: WorkflowResourceListOptions & PageOptions = {}): Promise<Page<WorkflowTable>> {
     return await listPage({ ...options, path: "/v1/workflows/tables", user: null, query: await filters(options) },
       (raw) => new WorkflowTable({ raw, client: options.client }));
+  }
+
+  /**
+   * Make an empty table of `workflow`, as an interface or a Table step does. Takes edit access to the workflow.
+   *
+   * @example
+   * const signups = await WorkflowTable.create(Workflow.fromName("Signups"), "Signups");
+   * await signups.addRows([{ email: "ada@example.com" }]);
+   */
+  static async create(workflow: Workflow | string, name: string, options: { stepId?: string; client?: NoClick } = {}): Promise<WorkflowTable> {
+    const workflowId = await refId(workflow);
+    const raw = await resolveClient(options.client).request("POST", `/v1/workflows/${encodeURIComponent(String(workflowId))}/tables`, {
+      json: { name, ...(options.stepId ? { step_id: options.stepId } : {}) },
+      user: null,
+    });
+    return new WorkflowTable({ raw: asObject(raw), client: options.client });
   }
 
   get id(): string {
@@ -269,6 +349,34 @@ export class WorkflowTable extends ApiObject {
       }
       cursor = page.nextCursor;
     }
+  }
+
+  /**
+   * Add `rows` at its end, in order, each an object of at most 1 MB as JSON; more than 10,000 go in as several calls.
+   * Takes edit access to its workflow. Answers how many went in.
+   */
+  async addRows(rows: JsonObject[]): Promise<number> {
+    let added = 0;
+    for (let start = 0; start < rows.length; start += MAX_ROWS_PAGE) {
+      const done = asObject(await this._request("POST", this.path("/rows"), { json: { rows: rows.slice(start, start + MAX_ROWS_PAGE) } }));
+      added += typeof done.added === "number" ? done.added : 0;
+    }
+    return added;
+  }
+
+  /** Replace one row's data with `data`. Takes edit access to its workflow. */
+  async updateRow(rowId: string, data: JsonObject): Promise<void> {
+    await this._request("PATCH", this.path(`/rows/${encodeURIComponent(rowId)}`), { json: { data } });
+  }
+
+  /** Take rows out by id, for good; one it doesn't hold is passed by. Answers how many went. */
+  async removeRows(rowIds: string[]): Promise<number> {
+    let removed = 0;
+    for (let start = 0; start < rowIds.length; start += MAX_ROWS_PAGE) {
+      const done = asObject(await this._request("POST", this.path("/rows/remove"), { json: { row_ids: rowIds.slice(start, start + MAX_ROWS_PAGE) } }));
+      removed += typeof done.removed === "number" ? done.removed : 0;
+    }
+    return removed;
   }
 
   /**

@@ -41,3 +41,19 @@ def test_rename_and_unpublish_say_where_it_was_and_how_it_comes_back(api, client
     gone = step.unpublish()
     assert body(route.calls.last.request) == {"action": "unpublish"}
     assert (gone.state, gone.url, gone.trash_id, gone.restorable_until.month) == ("unpublished", None, "trash_9", 12)
+
+
+def test_the_app_reads_as_it_stands_and_an_address_is_checked_before_a_publish(api, client):
+    api.get("/v1/workflows/wf_1/steps/page/app").respond(json={
+        **PUBLISHED, "action": None, "state": "not_published", "url": None, "project_id": None, "subdomain": None,
+        "deployment_id": None, "apps_domain": "noclick.app"})
+    checked = api.get("/v1/workflows/wf_1/steps/page/app/address").respond(json={
+        "object": "publish_address", "subdomain": "morrow", "available": False,
+        "reason": "This address is already taken.", "apps_domain": "noclick.app"})
+    step = nc.Workflow.from_id("wf_1").step("page")
+    app = step.app()
+    assert (app.state, app.url, app.apps_domain) == ("not_published", None, "noclick.app")
+    found = step.check_address("morrow")
+    assert dict(checked.calls.last.request.url.params) == {"subdomain": "morrow"}
+    assert isinstance(found, nc.PublishAddress)
+    assert (found.available, found.reason) == (False, "This address is already taken.")

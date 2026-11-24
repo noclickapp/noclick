@@ -101,6 +101,38 @@ def test_rows_stop_at_a_limit(api, client):
     assert dict(rows.calls.last.request.url.params) == {"limit": "2"} and rows.call_count == 1
 
 
+def test_a_file_is_made_to_upload_and_read_by_id(api, client):
+    made = api.post("/v1/workflows/wf_1/files").respond(201, json={
+        **FILE, "url": None, "upload_url": "https://storage.example/put", "upload_expires_at": "2026-11-19T11:00:00+00:00",
+        "permanent_url": "https://files.example/invoice.pdf"})
+    invoice = nc.WorkflowFile.create("wf_1", "invoice.pdf", size_bytes=1024, mime_type="application/pdf",
+                                     step_id="upload")
+    assert json.loads(made.calls.last.request.content) == {
+        "name": "invoice.pdf", "size_bytes": 1024, "mime_type": "application/pdf", "step_id": "upload"}
+    assert "noclick-user" not in made.calls.last.request.headers
+    assert (invoice.upload_url, invoice.permanent_url) == ("https://storage.example/put",
+                                                          "https://files.example/invoice.pdf")
+    api.get("/v1/workflows/files/res_f1").respond(json=FILE)
+    assert nc.WorkflowFile.get("res_f1").url == FILE["url"]
+
+
+def test_a_table_is_made_and_its_rows_added_changed_and_taken_out(api, client):
+    api.post("/v1/workflows/wf_1/tables").respond(201, json=TABLE)
+    added = api.post("/v1/workflows/tables/res_t1/rows").respond(201, json={
+        "object": "table_rows_added", "table_id": "res_t1", "added": 2, "row_count": 5})
+    changed = api.patch("/v1/workflows/tables/res_t1/rows/row_0").respond(json={
+        "object": "table_row", "id": "row_0", "table_id": "res_t1", "data": {"n": 9}})
+    removed = api.post("/v1/workflows/tables/res_t1/rows/remove").respond(json={
+        "object": "table_rows_removed", "table_id": "res_t1", "removed": 1, "row_count": 4})
+    orders = nc.WorkflowTable.create("wf_1", "Orders", step_id="table")
+    assert orders.add_rows([{"n": 3}, {"n": 4}]) == 2
+    assert json.loads(added.calls.last.request.content) == {"rows": [{"n": 3}, {"n": 4}]}
+    assert orders.update_row("row_0", {"n": 9}) is None
+    assert json.loads(changed.calls.last.request.content) == {"data": {"n": 9}}
+    assert orders.remove_rows(["row_1"]) == 1
+    assert json.loads(removed.calls.last.request.content) == {"row_ids": ["row_1"]}
+
+
 def test_the_accounts_files_page_by_cursor_and_are_deleted_as_the_account(api, client):
     made = {"object": "attachment", "id": "res_1", "name": "cake.png", "mime_type": "image/png", "size_bytes": 900,
             "kind": "image", "voice": False, "url": "https://assets.example/u/account/res_1/cake.png",

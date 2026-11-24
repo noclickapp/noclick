@@ -19,6 +19,14 @@ A file's ``url`` reads it for an hour after it's listed; a picture, PDF, sound
 or video opens in place, anything else downloads. A table's rows read in pages
 of up to 10,000. Deleting either takes edit access to its workflow and is
 for good: nothing keeps a copy, and there's no trash to restore it from.
+
+Making a file or a table, and adding, changing or taking out a table's rows,
+take edit access to its workflow, as an interface's own uploads and writes do::
+
+    menu = noclick.WorkflowFile.create(intake, "menu.pdf", size_bytes=len(data), mime_type="application/pdf")
+    httpx.put(menu.upload_url, content=data, headers={"Content-Type": "application/pdf"})
+    signups = noclick.WorkflowTable.create(intake, "Signups")
+    signups.add_rows([{"email": "ada@example.com"}])
 """
 
 from __future__ import annotations
@@ -28,7 +36,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import Page, _Object, field, list_all, list_page, parse_time, ref_id
+from ._object import Page, _Object, compact, field, list_all, list_page, parse_time, ref_id
 from ._sync import synced
 
 # The most rows one page of a table holds.
@@ -70,12 +78,63 @@ class WorkflowFile(_Object):
         "it's stored: a picture, PDF, sound or video opens in place, anything else downloads. ``None`` for a file "
         "with nothing stored yet."))
     url_expires_at: Any = field("url_expires_at", parse_time)
+    upload_url: Optional[str] = field("upload_url", doc=(
+        "Only on a file ``create`` made: where its bytes go, in one PUT whose ``Content-Type`` is its ``mime_type`` "
+        "and whose length is its ``size_bytes``, until ``upload_expires_at``."))
+    upload_expires_at: Any = field("upload_expires_at", parse_time)
+    permanent_url: Optional[str] = field("permanent_url", doc=(
+        "Only on a file ``create`` made: where it reads for good once uploaded, which a step or a message may "
+        "carry. Anyone holding it reads the file."))
     created_at: Any = field("created_at", parse_time)
     updated_at: Any = field("updated_at", parse_time)
 
     # Workflow routes are account-level.
     def _call_scope(self) -> Any:
         return None
+
+    @synced
+    @classmethod
+    async def get(cls, file_id: str, *, client: Optional[Client] = None) -> "WorkflowFile":
+        """One of your workflows' files by id, as ``list`` shows it.
+
+        Returns:
+            The ``WorkflowFile``, its ``url`` good for an hour.
+
+        Usage::
+
+            menu = noclick.WorkflowFile.get("6f1c...")
+            print(menu.name, menu.url)
+        """
+        raw = await resolve_client(client).request(
+            "GET", f"/v1/workflows/files/{quote(file_id, safe='')}", user=None)
+        return cls._new(raw=raw, client=client, user=None)
+
+    @synced
+    @classmethod
+    async def create(
+        cls, workflow: Any, name: str, *, size_bytes: int, mime_type: Optional[str] = None,
+        step_id: Optional[str] = None, type: Optional[str] = None, client: Optional[Client] = None,
+    ) -> "WorkflowFile":
+        """Make a file of ``workflow`` (a ``Workflow`` or its id) to upload: put its bytes to
+        ``upload_url`` in one PUT. ``size_bytes`` is at most 100 MB; ``type`` (``image``,
+        ``video``, ``audio``, ``document``, ``file``) is read from ``mime_type`` when left out.
+        Takes edit access to the workflow.
+
+        Returns:
+            The ``WorkflowFile`` with its ``upload_url`` and ``permanent_url``.
+
+        Usage::
+
+            data = open("menu.pdf", "rb").read()
+            menu = noclick.WorkflowFile.create(noclick.Workflow.from_name("Cafe site"), "menu.pdf",
+                                               size_bytes=len(data), mime_type="application/pdf")
+            httpx.put(menu.upload_url, content=data, headers={"Content-Type": "application/pdf"})
+        """
+        workflow_id = await ref_id(workflow)
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/workflows/{quote(str(workflow_id), safe='')}/files", user=None,
+            json={"name": name, "size_bytes": size_bytes, **compact(mime_type=mime_type, step_id=step_id, type=type)})
+        return cls._new(raw=raw, client=client, user=None)
 
     @synced
     @classmethod
@@ -198,6 +257,78 @@ class WorkflowTable(_Object):
 
     def _path(self, suffix: str = "") -> str:
         return f"/v1/workflows/tables/{quote(str(self._known('id')), safe='')}{suffix}"
+
+    @synced
+    @classmethod
+    async def create(cls, workflow: Any, name: str, *, step_id: Optional[str] = None,
+                     client: Optional[Client] = None) -> "WorkflowTable":
+        """Make an empty table of ``workflow`` (a ``Workflow`` or its id), as an interface or a
+        Table step does. Takes edit access to the workflow.
+
+        Returns:
+            The new ``WorkflowTable``.
+
+        Usage::
+
+            signups = noclick.WorkflowTable.create(noclick.Workflow.from_name("Signups"), "Signups")
+            signups.add_rows([{"email": "ada@example.com"}])
+        """
+        workflow_id = await ref_id(workflow)
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/workflows/{quote(str(workflow_id), safe='')}/tables", user=None,
+            json={"name": name, **compact(step_id=step_id)})
+        return cls._new(raw=raw, client=client, user=None)
+
+    @synced
+    async def add_rows(self, rows: List[Dict[str, Any]]) -> int:
+        """Add ``rows`` at its end, in order, each an object of at most 1 MB as JSON; more than
+        10,000 go in as several calls. Takes edit access to its workflow.
+
+        Returns:
+            How many rows went in.
+
+        Usage::
+
+            [signups] = noclick.WorkflowTable.list(workflow=noclick.Workflow.from_name("Signups"))
+            signups.add_rows([{"email": "ada@example.com"}, {"email": "grace@example.com"}])
+        """
+        added = 0
+        for start in range(0, len(rows), MAX_ROWS_PAGE):
+            done = await self._request("POST", self._path("/rows"), json={"rows": rows[start:start + MAX_ROWS_PAGE]})
+            added += int((done or {}).get("added") or 0)
+        return added
+
+    @synced
+    async def update_row(self, row_id: str, data: Dict[str, Any]) -> None:
+        """Replace one row's data with ``data``. Takes edit access to its workflow.
+
+        Usage::
+
+            [signups] = noclick.WorkflowTable.list(workflow=noclick.Workflow.from_name("Signups"))
+            first = signups.rows(limit=1)[0]
+            signups.update_row(first.id, {**first.data, "confirmed": True})
+        """
+        await self._request("PATCH", self._path(f"/rows/{quote(row_id, safe='')}"), json={"data": data})
+
+    @synced
+    async def remove_rows(self, row_ids: List[str]) -> int:
+        """Take rows out by id, for good; one it doesn't hold is passed by. Takes edit access to
+        its workflow.
+
+        Returns:
+            How many rows went.
+
+        Usage::
+
+            [signups] = noclick.WorkflowTable.list(workflow=noclick.Workflow.from_name("Signups"))
+            signups.remove_rows([row.id for row in signups.rows() if not row.data.get("email")])
+        """
+        removed = 0
+        for start in range(0, len(row_ids), MAX_ROWS_PAGE):
+            done = await self._request("POST", self._path("/rows/remove"),
+                                       json={"row_ids": row_ids[start:start + MAX_ROWS_PAGE]})
+            removed += int((done or {}).get("removed") or 0)
+        return removed
 
     @synced
     @classmethod
