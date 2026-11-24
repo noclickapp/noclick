@@ -2089,6 +2089,7 @@ smoove
 sms77
 smsapi
 smsglobal
+smsmobileapi
 smtp2go
 smtping
 snapchat
