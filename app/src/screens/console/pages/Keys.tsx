@@ -59,8 +59,8 @@ export const READ_ONLY_SCOPES = ['usage', 'operations'] as const;
 export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: readonly string[] }[] = [
     {
         label: 'Admin',
-        covers: 'Users, usage, policy, brand and the operations your calls started, and linking phone numbers to the account.',
-        scopes: ['users', 'usage', 'policy', 'brand', 'operations', 'account:phones'],
+        covers: 'Users, usage, policy, brand, team workspaces and the operations your calls started, and linking phone numbers to the account.',
+        scopes: ['users', 'usage', 'policy', 'brand', 'operations', 'organizations', 'account:phones'],
     },
     { label: 'Connect', covers: "Ask users to connect services, and use their connections.", scopes: ['credentials:request', 'credentials:use', TOKEN_SCOPE] },
     { label: 'Tools', covers: 'Run integration operations and toolkits, host them as MCP servers, call AI models and draw pictures for replies.', scopes: ['tools', 'mcp_servers', 'ai', 'render'] },

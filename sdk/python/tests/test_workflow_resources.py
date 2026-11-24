@@ -130,6 +130,24 @@ def test_through_mcp_a_deletion_waiting_for_the_owner_raises_as_one(api, client)
         orders.delete()
 
 
+def test_a_team_workspace_is_made_a_teammate_invited_and_the_session_switched(api, client):
+    made = api.post("/v1/organizations").respond(201, json={"object": "organization", "organization": {
+        "id": "org_1", "name": "Acme Ops", "slug": "acme-ops"}})
+    invited = api.post("/v1/organizations/org_1/members").respond(201, json={
+        "object": "organization_invite", "invite": {"id": "inv_1", "email": "sam@example.com", "role": "admin"},
+        "email_sent": True})
+    api.get("/v1/organizations/org_1/members").respond(json={"object": "list", "data": [
+        {"user_id": "u_1", "email": "olu@example.com", "role": "owner"}], "next_cursor": None})
+    switched = api.post("/v1/me/organization").respond(json={"object": "organization_switch"})
+    acme = nc.Organization.create("Acme Ops")
+    assert json.loads(made.calls.last.request.content) == {"name": "Acme Ops"}
+    assert (acme.id, acme.role) == ("org_1", "owner")
+    invite = nc.Organization.invite(acme, "sam@example.com", role="admin")
+    assert (invite["id"], invite["email_sent"]) == ("inv_1", True)
+    assert json.loads(invited.calls.last.request.content) == {"email": "sam@example.com", "role": "admin"}
+    assert [m["role"] for m in nc.Organization.members("org_1")] == ["owner"]
+    nc.Organization.switch_to(None)
+    assert json.loads(switched.calls.last.request.content) == {}
 def test_a_workflow_is_shared_changed_and_unshared_and_a_person_leaves_one(api, client):
     share = {"object": "share", "id": "sh_1", "resource_type": "workflow", "resource_id": "wf_1", "with": "user",
              "user_id": "u_2", "email": "sam@example.com", "organization_id": None, "name": "Sam", "access": "edit",

@@ -113,6 +113,21 @@ test("the account's files page by cursor and are deleted as the account", async 
   await assert.rejects(nc.deleteAttachment({ ...page.data[0], id: null }), TypeError);
 });
 
+test("a team workspace is made, a teammate invited and the session switched", async () => {
+  const { api } = setup();
+  const made = api.on("POST", "/v1/organizations", json({ object: "organization", organization: { id: "org_1", name: "Acme Ops", slug: "acme-ops" } }));
+  const invited = api.on("POST", "/v1/organizations/org_1/members", json({ object: "organization_invite", invite: { id: "inv_1", role: "admin" }, email_sent: false, email_error: "bounced" }));
+  const switched = api.on("POST", "/v1/me/organization", json({ object: "organization_switch" }));
+  const acme = await nc.Organization.create("Acme Ops");
+  assert.deepEqual(made.last.body, { name: "Acme Ops" });
+  assert.deepEqual([acme.id, acme.role], ["org_1", "owner"]);
+  const invite = await nc.Organization.invite(acme, "sam@example.com", { role: "admin" });
+  assert.deepEqual([invite.id, invite.email_sent, invite.email_error], ["inv_1", false, "bounced"]);
+  assert.deepEqual(invited.last.body, { email: "sam@example.com", role: "admin" });
+  await nc.Organization.switchTo(null);
+  assert.deepEqual(switched.last.body, { organization_id: null });
+});
+
 test("a workflow is shared, changed and unshared, and a person leaves one", async () => {
   const { api } = setup();
   const SHARE = { object: "share", id: "sh_1", resource_type: "workflow", resource_id: "wf_1", with: "user", user_id: "u_2",
