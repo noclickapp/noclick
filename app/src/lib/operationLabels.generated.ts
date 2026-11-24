@@ -884,6 +884,7 @@ brilliant-directories
 browseai
 browserbase-tool
 browserless
+browshot
 bsc-designer
 btcpay-server
 bubbles
