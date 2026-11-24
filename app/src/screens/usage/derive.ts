@@ -963,7 +963,7 @@ export function consumerOf(snap: UsageSnapshot, r: UsageRow): { id: string; labe
     const d = snap.directory;
     // The builder and test runs, by the automation they worked on.
     const on = (id: string, label: string) => (m.workflow_id ? { id: `${id}:${m.workflow_id}`, label: `${label} · ${d.workflows[m.workflow_id]?.name ?? 'a deleted automation'}` } : { id, label });
-    // Naming an automation is the builder's call too (workflow_builder_handler's naming charge).
+    // Naming an automation is the builder's call too (the naming charge the AI builder recorded before 2026-11-24).
     if (r.usage_type === 'ai_builder' || r.usage_subtype.startsWith('noclick/builder') || m.surface === 'workflow_name') return on('builder', 'AI Builder');
     if (r.usage_type === 'ai_testing') return on('testing', 'Test runs');
     if (inChat(snap, m)) return { id: CHAT, label: 'Chat with NoClick' };
