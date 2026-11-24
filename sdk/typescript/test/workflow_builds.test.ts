@@ -140,8 +140,13 @@ test("a finished build carries facts beside the builder's words", async () => {
     status: "needs_setup", meaning: "Something is in the way.", warnings: [], unverified: [],
     issues: [{ step: "mail", code: "invalid_config", message: "Email the brief: to is required" }],
   };
+  const read = {
+    step: "mail", field: "body", source: "daily", key: "text", known_keys: ["fired_at"],
+    message: "Email the brief (`mail`): `body` reads `text` from Daily (`daily`), whose output has no `text` "
+      + "(it has fired_at): a run reads nothing there.",
+  };
   const facts = {
-    ...RESULT, built: true, version: 7, readiness, sent_back: 2, unread: [],
+    ...RESULT, built: true, version: 7, readiness, sent_back: 2, unread: [], references: [read],
     verdicts: { daily: { config_valid: true }, mail: { config_valid: false, missing_required: ["to"] } },
   };
   api.on("POST", "/v1/workflows/wf_1/builds", json(building(), { status: 202 }));
@@ -152,10 +157,13 @@ test("a finished build carries facts beside the builder's words", async () => {
   assert.equal(result.readiness?.status, "needs_setup");
   assert.equal(result.readiness?.issues[0]?.step, "mail");
   assert.deepEqual(result.verdicts?.mail, { config_valid: false, missing_required: ["to"] });
+  // The reads that get no value, said: a run that succeeded wouldn't show them.
+  assert.deepEqual(result.references, [read]);
   // A result from before facts were carried says none of them.
   const older = await (await nc.Workflow.fromId("wf_1").build("Again")).wait();
-  assert.deepEqual([older.built, older.version, older.readiness, older.verdicts, older.sentBack, older.unread],
-    [null, null, null, null, 0, []]);
+  assert.deepEqual(
+    [older.built, older.version, older.readiness, older.verdicts, older.references, older.sentBack, older.unread],
+    [null, null, null, null, null, 0, []]);
 });
 
 test("facts that weren't read are null and named", async () => {

@@ -8,6 +8,7 @@ import { builtinModules } from 'node:module';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
+import { SCAN_S } from './limits';
 
 const APP = resolve(import.meta.dirname, '..');
 const REPOSITORY = resolve(APP, '..');
@@ -167,5 +168,5 @@ describe('the app', () => {
             expect.arrayContaining(['src/root.tsx', 'src/routes.ts', 'vite.config.ts']),
         );
         expect(outsideImports(files, packages).join('\n')).toBe('');
-    });
+    }, SCAN_S);
 });

@@ -15,7 +15,7 @@ import { createWorkLive, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { standing } from '@/slots';
 import { addFundsUrl, billingSettingsUrl, NOCLICK_SITE } from '@/screens/console/lib/site';
 import { WORKFLOW } from '../graph/fixtures';
-import { graphRecords, markGraphDirty, recordGraphSnapshot, setCanvasEditsClient, setCanvasMounted, setGraphLoaded } from '../graph/liveGraphStore';
+import { graphRecords, markGraphDirty, recordGraphSnapshot, setCanvasEditsClient, setCanvasMounted, setGraphLoaded, setServerBase } from '../graph/liveGraphStore';
 import { RUN_FIXES, RUN_READS, RUN_RESULTS, SAVED_OUTPUTS } from '../slots';
 import { ErrorActionButton } from './ErrorActionButton';
 import { OUTPUT_SECRET, RUNS, runsFetch, stepsOf, type RunsFetchOptions } from './fixtures';
@@ -221,6 +221,21 @@ describe('a step’s output on the API', () => {
         expect(picked.at(-1)).toEqual(['hook', 1, { body: { order: 'ord_80' }, headers: {} }]);
         expect(view.container.innerHTML).not.toContain(OUTPUT_SECRET);
         expect(JSON.stringify(sent)).not.toContain(OUTPUT_SECRET);
+    });
+
+    it('asks nothing of a step the workflow doesn’t hold yet, and reads it once its save lands', async () => {
+        const { client, lines } = world();
+        // The canvas's base: what the server holds as far as it knows, without the step just added.
+        recordGraphSnapshot(WORKFLOW, false, { nodes: [step('other', 'log')], edges: [] }, false);
+        setServerBase(WORKFLOW, [step('other', 'log')], []);
+        const view = render(<OutputPanel selectedNode={step('hook', 'trigger-webhook')} workflowId={WORKFLOW} />, { wrapper: within(client) });
+        await waitFor(() => expect(view.container.textContent).toContain('No output yet'));
+        await act(() => new Promise<void>((done) => setTimeout(done, 0)));
+        expect(lines().filter((line) => line.includes('/steps/hook/outputs'))).toEqual([]);
+        // Its save lands: the server holds it, and its stored outputs are read.
+        act(() => setServerBase(WORKFLOW, [step('other', 'log'), step('hook', 'trigger-webhook')], []));
+        await waitFor(() => expect(view.container.textContent).toContain('2 of 2'));
+        expect(lines()).toContain(`GET /v1/workflows/${WORKFLOW}/steps/hook/outputs?limit=20`);
     });
 
     it('shows what a step type outputs before the step has run, read once', async () => {

@@ -1,0 +1,4 @@
+# Heroku builds the app (app/) as a container from this repository's Dockerfile; app.json names its settings.
+build:
+  docker:
+    web: Dockerfile
