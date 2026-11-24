@@ -911,6 +911,7 @@ cal-com
 cal-id
 calendesk
 calendly
+call-loop
 callerapi
 callfire
 campaign-cleaner
