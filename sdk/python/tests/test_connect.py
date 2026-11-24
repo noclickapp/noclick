@@ -875,3 +875,45 @@ def test_an_mcp_server_that_takes_a_key_finishes_with_it(api, client):
 
     assert body(finish.calls.last.request) == {"api_key": "sk-typed"}
     assert done.status == "connected" and done.verification is None
+
+
+def test_whatsapps_sign_in_is_a_qr_waited_on_until_the_phone_scans_it(api, client):
+    start = api.post("/v1/connections/sign_ins").respond(json=_waiting(
+        way="qr", user_code=None, verification_url=None, qr_code="iVBORw0KGgo=", interval=0))
+    polls = api.post("/v1/connections/sign_ins/si_w/finish").mock(side_effect=[
+        httpx.Response(200, json=_waiting(way="qr", user_code=None, verification_url=None, qr_code="cm90YXRlZA==",
+                                          interval=0)),
+        httpx.Response(200, json={"object": "sign_in", "id": None, "status": "connected", "provider": "whatsapp",
+                                  "credential": {"id": "c1", "name": "Shop line", "credential_type": "whatsapp_qr"},
+                                  "connection": APP_CONN, "account": {"phone_number": "12025550101"}, "choose": None,
+                                  "waiting": None}),
+    ])
+
+    number = nc.Connection.sign_in("whatsapp", name="Shop line")
+    assert body(start.calls.last.request) == {"provider": "whatsapp", "name": "Shop line"}
+    # Its start waits as long as WhatsApp's linking service may take to show the code.
+    assert start.calls.last.request.extensions["timeout"]["read"] == 150
+    assert (number.way, number.qr_code) == ("qr", "iVBORw0KGgo=")
+    assert number.finish().qr_code == "cm90YXRlZA=="
+    done = number.wait()
+
+    assert polls.call_count == 2
+    assert done.status == "connected" and done.account == {"phone_number": "12025550101"}
+
+
+def test_a_whatsapp_numbers_agent_is_read_and_made(api, client):
+    agent = {"id": "a1", "name": "WhatsApp", "channel_id": "ch1", "channel_name": "whatsapp"}
+    read = api.get("/v1/connections/credential:c1/agent").respond(
+        json={"object": "number_agent", "available": True, "agent": None})
+    made = api.post("/v1/connections/credential:c1/agent").respond(
+        json={"object": "number_agent", "available": True, "agent": agent, "created": True})
+    number = nc.Connection._new(raw=APP_CONN, client=None, user=None)
+
+    nobody = number.number_agent()
+    assert (nobody.available, nobody.agent_id, nobody.name, nobody.created) == (True, None, None, False)
+    assert read.called
+    answered = number.make_number_agent()
+
+    assert made.called
+    assert (answered.agent_id, answered.name, answered.channel_id, answered.channel_name, answered.created) == (
+        "a1", "WhatsApp", "ch1", "whatsapp", True)

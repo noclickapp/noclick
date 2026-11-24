@@ -38,7 +38,7 @@ export { ConnectLink, Connection, ConnectionOperations, SignIn, run } from "./co
 export type {
   ConnectionAccess, ConnectionCreateOptions, ConnectionHealth, ConnectionOrigin, ConnectionShared, ConnectionStatus, InWorkspace, IntegrationEvent, IntegrationInfo, IntegrationKind, IntegrationOperation, LinkOptions, LookupOption,
   LookupOptions, Plan, PlanNextStep, PlanUsage, PlanUsageState, PlanUsageSummary, PlanWindow, SendTo, SignInOptions, Token, ToolRef,
-  Verification,
+  NumberAgent, Verification,
 } from "./connection.ts";
 export { Toolkit } from "./toolkit.ts";
 export type {

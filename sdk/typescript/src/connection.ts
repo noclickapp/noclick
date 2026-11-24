@@ -36,6 +36,33 @@ import type { KindScopedFilters, OperationSummary } from "./operation.ts";
 import { resolveScope, userIdOf } from "./scope.ts";
 import type { UserOption, UserRef } from "./scope.ts";
 
+/** How long WhatsApp's sign-in may take to start: its linking service can take about a minute to show a QR. */
+const QR_START_TIMEOUT_MS = 150_000;
+
+/**
+ * The agent answering a WhatsApp number of your account's (`Connection.numberAgent`): `agentId` and `name`, with the
+ * channel the owner talks to it in, all null while no agent answers it; `available` whether your account can put one
+ * on it (it has agents of its own), and `created` whether `makeNumberAgent` made it just now.
+ */
+export interface NumberAgent {
+  available: boolean;
+  agentId: string | null;
+  name: string | null;
+  channelId: string | null;
+  channelName: string | null;
+  created: boolean;
+  raw: JsonObject;
+}
+
+function toNumberAgent(value: unknown): NumberAgent {
+  const raw = asObject(value);
+  const agent = asObject(raw.agent ?? {});
+  return {
+    available: raw.available === true, agentId: str(agent.id), name: str(agent.name), channelId: str(agent.channel_id),
+    channelName: str(agent.channel_name), created: raw.created === true, raw,
+  };
+}
+
 /** Whether the provider accepted the credential (`reachable` null = cannot judge). */
 export interface Verification {
   reachable: boolean | null;
@@ -507,9 +534,11 @@ export class Connection extends ApiObject {
    * plan's sign-in renews in place. An MCP server's sign-in is `"mcp"`, with an integration's MCP `credentialType`
    * (`"canva_mcp"`) or any server's `serverUrl`, and the `redirectUri` of your page its callback returns to: it waits
    * on that callback (`authorizeUrl`; `finish` with its `code` and `state`), or on a key the server takes instead
-   * (`way` `key`; `finish(null, { apiKey })`). A connect link (`connectLink()`) runs the whole sign-in on NoClick's
-   * page instead, and is how one of your users signs in: this is your account's own. A code the provider refuses
-   * throws `InvalidRequest` in its words.
+   * (`way` `key`; `finish(null, { apiKey })`). WhatsApp's is `"whatsapp"`: a QR (`qrCode`, a PNG in base64) the person
+   * scans with their phone, which `finish()` (or `wait()`) asks about, answering the code WhatsApp rotated to
+   * meanwhile; `reconnect` re-scans into a number whose link ended. A connect link (`connectLink()`) runs the whole
+   * sign-in on NoClick's page instead, and is how one of your users signs in: this is your account's own. A code the
+   * provider refuses throws `InvalidRequest` in its words.
    */
   static async signIn(provider: string, options: SignInOptions = {}): Promise<SignIn> {
     const user = resolveScope(undefined);
@@ -518,7 +547,9 @@ export class Connection extends ApiObject {
       scopes: options.scopes, name: options.name, inputs: options.inputs, client: options.oauthApp,
       reconnect: options.reconnect, credential_type: options.credentialType, server_url: options.serverUrl,
     });
-    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/sign_ins", { json, user }));
+    // WhatsApp's start can wait about a minute for its linking service to show a QR.
+    const timeoutMs = provider === "whatsapp" ? QR_START_TIMEOUT_MS : undefined;
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/sign_ins", { json, user, timeoutMs }));
     return new SignIn(raw, options.client, user);
   }
 
@@ -989,6 +1020,28 @@ export class Connection extends ApiObject {
   }
 
   /**
+   * The agent answering a WhatsApp number your account linked by QR code (a `"whatsapp"` sign-in), and whether your
+   * account can put one on it. Linking a number makes no agent on its own.
+   *
+   *     console.log((await (await Connection.get("credential:...")).numberAgent()).name);
+   */
+  async numberAgent(): Promise<NumberAgent> {
+    return toNumberAgent(await this.act("GET", "/agent"));
+  }
+
+  /**
+   * Put NoClick's WhatsApp agent on a number your account linked by QR code, as the app offers it once a number is
+   * linked: an agent from the WhatsApp template, in a channel of its own that opens asking you whom it answers. One
+   * that already answers the number is kept (`created` false). Your account's owner or one of its own keys does this;
+   * an agent or an MCP client makes one with `Agent.create` and the `whatsapp` template.
+   *
+   *     const made = await (await Connection.get("credential:...")).makeNumberAgent();
+   */
+  async makeNumberAgent(): Promise<NumberAgent> {
+    return toNumberAgent(await this.act("POST", "/agent"));
+  }
+
+  /**
    * Re-check the account against the provider: its things as the provider sees them, who it signs in as, or its
    * refusal in its own words. Each check asks the provider, so an account makes at most 20 a minute
    * (`RateLimited` past them).
@@ -1310,7 +1363,7 @@ export class SignIn {
   private _waiting<T>(key: string): T | null {
     return (asObject(this._raw.waiting ?? {})[key] as T | undefined) ?? null;
   }
-  get way(): "device" | "code" | "redirect" | "key" | null {
+  get way(): "device" | "code" | "redirect" | "key" | "qr" | null {
     return this._waiting("way");
   }
   get userCode(): string | null {
@@ -1327,6 +1380,10 @@ export class SignIn {
   }
   get interval(): number | null {
     return this._waiting("interval");
+  }
+  /** WhatsApp's QR to scan (`way` `qr`): a PNG in base64, which WhatsApp rotates while it waits. */
+  get qrCode(): string | null {
+    return this._waiting("qr_code");
   }
   /** An MCP sign-in's state, which its callback returns with the code. */
   get state(): string | null {
@@ -1364,20 +1421,23 @@ export class SignIn {
   }
 
   /**
-   * Ask, every `interval` seconds, whether the person has entered `userCode`, until they have (a device code's
-   * sign-in), or `timeoutMs` passes (`OperationTimeout`). A refusal (the code expired, the person declined) throws
-   * `InvalidRequest`.
+   * Ask, every `interval` seconds, whether the person has entered `userCode` (a device code's sign-in) or scanned the
+   * QR (WhatsApp's), until they have, or `timeoutMs` passes (`OperationTimeout`). WhatsApp rotates its
+   * QR while it waits: to show the newest, ask with `finish()` instead, which answers it as `qrCode`. A refusal (the
+   * code expired, the person declined) throws `InvalidRequest`.
    */
   async wait(options: { timeoutMs?: number } = {}): Promise<SignIn> {
     const deadline = Date.now() + (options.timeoutMs ?? 900_000);
     let current: SignIn = this;
     while (current.status === "waiting") {
-      if (current.way !== "device") {
+      if (current.way !== "device" && current.way !== "qr") {
         throw new InvalidRequest(current.way === "code"
           ? "This sign-in finishes with the code its page shows: finish(null, { code })."
           : "This sign-in finishes with its callback's code and state, or a key: finish(null, { code, state }) or finish(null, { apiKey }).");
       }
-      if (Date.now() >= deadline) throw new OperationTimeout(`Nobody entered ${current.userCode} in time.`);
+      if (Date.now() >= deadline) {
+        throw new OperationTimeout(current.way === "device" ? `Nobody entered ${current.userCode} in time.` : "Nobody scanned the QR in time.");
+      }
       await new Promise((done) => setTimeout(done, (current.interval ?? 5) * 1000));
       current = await Connection.finishSignIn(current.id as string, null, { client: this._client });
     }

@@ -143,3 +143,38 @@ test("an MCP server that takes a key finishes with it", async () => {
   assert.deepEqual(finish.last.body, { api_key: "sk-typed" });
   assert.deepEqual([done.status, done.verification], ["connected", null]);
 });
+
+test("WhatsApp's sign-in is a QR waited on until the phone scans it", async () => {
+  const { api } = setup();
+  const qr = (code: string) => waitingSignIn({ way: "qr", user_code: null, verification_url: null, qr_code: code, interval: 0 });
+  const start = api.on("POST", "/v1/connections/sign_ins", json(qr("iVBORw0KGgo=")));
+  const polls = api.on("POST", "/v1/connections/sign_ins/si_w/finish", json(qr("cm90YXRlZA==")), json({
+    ...CONNECTED_PLAN, provider: "whatsapp", account: { phone_number: "12025550101" },
+    credential: { id: "c1", name: "Shop line", credential_type: "whatsapp_qr" },
+  }));
+  const number = await nc.Connection.signIn("whatsapp", { name: "Shop line" });
+  assert.deepEqual(start.last.body, { provider: "whatsapp", name: "Shop line" });
+  assert.deepEqual([number.way, number.qrCode], ["qr", "iVBORw0KGgo="]);
+  assert.equal((await number.finish()).qrCode, "cm90YXRlZA==");
+  const done = await number.wait();
+  assert.equal(polls.calls.length, 2);
+  assert.deepEqual([done.status, done.account], ["connected", { phone_number: "12025550101" }]);
+});
+
+test("a WhatsApp number's agent is read and made", async () => {
+  const { api } = setup();
+  const agent = { id: "a1", name: "WhatsApp", channel_id: "ch1", channel_name: "whatsapp" };
+  api.on("GET", "/v1/connections/credential%3Ac1", json(APP_CONNECTION));
+  const read = api.on("GET", "/v1/connections/credential%3Ac1/agent", json({ object: "number_agent", available: true, agent: null }));
+  const made = api.on("POST", "/v1/connections/credential%3Ac1/agent", json({
+    object: "number_agent", available: true, agent, created: true,
+  }));
+  const number = await nc.Connection.get("credential:c1");
+  const nobody = await number.numberAgent();
+  assert.deepEqual([nobody.available, nobody.agentId, nobody.name, nobody.created], [true, null, null, false]);
+  assert.equal(read.calls.length, 1);
+  const answered = await number.makeNumberAgent();
+  assert.equal(made.calls.length, 1);
+  assert.deepEqual([answered.agentId, answered.name, answered.channelId, answered.channelName, answered.created],
+    ["a1", "WhatsApp", "ch1", "whatsapp", true]);
+});

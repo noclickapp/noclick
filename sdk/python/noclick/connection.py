@@ -38,6 +38,9 @@ from .database import Database
 from .operation import _LONG_POLL_S, Operation, OperationSummary, _with_kinds, register_result
 from .repo import RepoCheckout, _folder, _pushable
 
+# How long WhatsApp's sign-in may take to start: its linking service can take about a minute to show a QR.
+_QR_START_TIMEOUT_S = 150
+
 
 @dataclass(frozen=True)
 class Verification:
@@ -64,6 +67,28 @@ class Verification:
         return cls(raw.get("reachable"), list(raw.get("samples") or []), raw.get("message"), raw.get("hint"),
                    raw.get("noun"), raw.get("total"), raw.get("account_label"), raw.get("proves"), raw.get("error"),
                    raw)
+
+
+@dataclass(frozen=True)
+class NumberAgent:
+    """The agent answering a WhatsApp number of your account's (``Connection.number_agent``): ``agent_id`` and
+    ``name``, with the channel the owner talks to it in (``channel_id``, ``channel_name``), all None while no agent
+    answers it; ``available`` whether your account can put one on it (it has agents of its own), and ``created``
+    whether ``make_number_agent`` made it just now."""
+
+    available: bool
+    agent_id: Optional[str]
+    name: Optional[str]
+    channel_id: Optional[str]
+    channel_name: Optional[str]
+    created: bool = False
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "NumberAgent":
+        agent = raw.get("agent") or {}
+        return cls(bool(raw.get("available")), agent.get("id"), agent.get("name"), agent.get("channel_id"),
+                   agent.get("channel_name"), bool(raw.get("created")), raw)
 
 
 @dataclass(frozen=True)
@@ -658,8 +683,11 @@ class Connection(_Object):
         place. An MCP server's sign-in is ``"mcp"``, with an integration's MCP ``credential_type`` (``"canva_mcp"``)
         or any server's ``server_url``, and the ``redirect_uri`` of your page its callback returns to: it waits on
         that callback (``authorize_url``; ``finish`` with its ``code`` and ``state``), or on a key the server takes
-        instead (``way`` ``key``; ``finish(api_key=...)``). A connect link (``connect_link()``) runs the whole sign-in
-        on NoClick's page instead, and is how one of your users signs in: this is your account's own.
+        instead (``way`` ``key``; ``finish(api_key=...)``). WhatsApp's is ``"whatsapp"``: a QR (``qr_code``, a PNG in
+        base64) the person scans with their phone, which ``finish()`` (or ``wait()``) asks about, answering the code
+        WhatsApp rotated to meanwhile; ``reconnect`` re-scans into a number whose link ended. A connect link
+        (``connect_link()``) runs the whole sign-in on NoClick's page instead, and is how one of your users signs in:
+        this is your account's own.
 
         Returns:
             The ``SignIn``: ``connected`` with its ``credential`` (and ``connection``), ``choose`` (a Supabase
@@ -690,7 +718,8 @@ class Connection(_Object):
                        scopes=list(scopes) if isinstance(scopes, (list, tuple)) else scopes, name=name,
                        inputs=inputs, client=oauth_app, reconnect=reconnect, credential_type=credential_type,
                        server_url=server_url)
-        raw = await resolve_client(client).request("POST", "/v1/connections/sign_ins", json=body, user=scope)
+        raw = await resolve_client(client).request("POST", "/v1/connections/sign_ins", json=body, user=scope,
+                                                   timeout=_QR_START_TIMEOUT_S if provider == "whatsapp" else None)
         return SignIn._from(raw, client=client, user=scope)
 
     @synced
@@ -1333,6 +1362,39 @@ class Connection(_Object):
         return PlanUsage._from(raw)
 
     @synced
+    async def number_agent(self) -> NumberAgent:
+        """The agent answering a WhatsApp number your account linked by QR code (a ``"whatsapp"`` sign-in), and
+        whether your account can put one on it. Linking a number makes no agent on its own.
+
+        Returns:
+            The ``NumberAgent``: its ``agent_id``, ``name`` and channel, all None while no agent answers the number,
+            and ``available``.
+
+        Usage::
+
+            number = noclick.Connection.get("credential:...")
+            print(number.number_agent().name)   # WhatsApp, or None while no agent answers it
+        """
+        return NumberAgent._from(await self._act("GET", "/agent") or {})
+
+    @synced
+    async def make_number_agent(self) -> NumberAgent:
+        """Put NoClick's WhatsApp agent on a number your account linked by QR code, as the app offers it once a number
+        is linked: an agent from the WhatsApp template, in a channel of its own that opens asking you whom it answers.
+        One that already answers the number is kept (``created`` False). Your account's owner or one of its own keys
+        does this; an agent or an MCP client makes one with ``noclick.Agent.create`` and the ``whatsapp`` template.
+
+        Returns:
+            The ``NumberAgent`` answering the number, ``created`` when this call made it.
+
+        Usage::
+
+            made = noclick.Connection.get("credential:...").make_number_agent()
+            print(made.name, made.channel_name)   # WhatsApp whatsapp
+        """
+        return NumberAgent._from(await self._act("POST", "/agent") or {})
+
+    @synced
     async def verify(self) -> Optional[Verification]:
         """Re-check the account against the provider. Each check asks the provider, so an
         account makes at most 20 a minute (``noclick.RateLimited`` past them).
@@ -1543,6 +1605,11 @@ class SignIn:
         return self._waiting("interval")
 
     @property
+    def qr_code(self) -> Optional[str]:
+        """WhatsApp's QR to scan (way ``qr``): a PNG in base64, which WhatsApp rotates while it waits."""
+        return self._waiting("qr_code")
+
+    @property
     def state(self) -> Optional[str]:
         """An MCP sign-in's state, which its callback returns with the code."""
         return self._waiting("state")
@@ -1594,8 +1661,10 @@ class SignIn:
 
     @synced
     async def wait(self, *, timeout: float = 900) -> "SignIn":
-        """Ask, every ``interval`` seconds, whether the person has entered ``user_code``, until they have (a device
-        code's sign-in), or ``timeout`` seconds pass (``noclick.OperationTimeout``).
+        """Ask, every ``interval`` seconds, whether the person has entered ``user_code`` (a device code's sign-in) or
+        scanned the QR (WhatsApp's), until they have, or ``timeout`` seconds pass
+        (``noclick.OperationTimeout``). WhatsApp rotates its QR while it waits: to show the newest, ask with
+        ``finish()`` instead, which answers it as ``qr_code``.
 
         Returns:
             The ``SignIn``, ``connected``; a refusal (the code expired, the person declined) raises
@@ -1611,13 +1680,14 @@ class SignIn:
         deadline = loop.time() + timeout
         current = self
         while current.status == "waiting":
-            if current.way != "device":
+            if current.way not in ("device", "qr"):
                 raise InvalidRequest("This sign-in finishes with the code its page shows: finish(code=...)."
                                      if current.way == "code" else
                                      "This sign-in finishes with its callback's code and state, or a key: "
                                      "finish(code=..., state=...) or finish(api_key=...).")
             if loop.time() >= deadline:
-                raise OperationTimeout(f"Nobody entered {current.user_code} within {timeout:.0f}s.")
+                raise OperationTimeout(f"Nobody entered {current.user_code} within {timeout:.0f}s."
+                                       if current.way == "device" else f"Nobody scanned the QR within {timeout:.0f}s.")
             await asyncio.sleep(5 if current.interval is None else current.interval)
             current = await Connection.finish_sign_in.aio(current.id, client=self._client)
         return current

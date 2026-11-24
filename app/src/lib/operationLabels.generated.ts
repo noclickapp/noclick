@@ -215,6 +215,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "checkout_sessions_get": ["Get Checkout Session", "GET", "read"],
     "compute": ["List Compute", "GET", "read"],
     "connected_apps_update": ["Update Connected App", "PATCH", "write"],
+    "connections_agent": ["Number Agent", "GET", "read"],
+    "connections_agent_post": ["Make Number Agent", "POST", "write"],
     "connections_chat_profiles_list": ["Chat Profiles", "GET", "read"],
     "connections_connect_links_create": ["Create Connect Link", "POST", "write"],
     "connections_create": ["Create Connection", "POST", "write"],
