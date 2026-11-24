@@ -4,7 +4,7 @@ import { Folder, Workflow } from 'lucide-react';
 import { DragOverlay } from '@dnd-kit/core';
 import { CarbonGradient } from '@/ui/CarbonGradient';
 import { WorkflowGraphPreview } from '@/ui/WorkflowGraphPreview';
-import { getNodeIconData } from '@/lib/nodeIconRegistry';
+import { useNodeIconData } from '@/lib/nodeIconRegistry';
 import type {
     WorkflowApp,
     FolderInfoLocal,
@@ -32,6 +32,7 @@ export function WorkflowBrowserDragOverlay({
     draggedWorkflowIdsRef,
     draggedFolderIdsRef,
 }: WorkflowBrowserDragOverlayProps) {
+    const nodeIcons = useNodeIconData();
     return (
         <DragOverlay dropAnimation={null}>
             {activeWorkflow && dragSource === 'grid' ? (
@@ -76,7 +77,7 @@ export function WorkflowBrowserDragOverlay({
                             {activeWorkflow.graph_preview ? (
                                 <WorkflowGraphPreview
                                     graph={activeWorkflow.graph_preview}
-                                    nodeIcons={getNodeIconData()}
+                                    nodeIcons={nodeIcons}
                                     className="w-full h-full"
                                 />
                             ) : (

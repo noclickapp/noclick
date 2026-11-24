@@ -11,10 +11,14 @@
 //
 // It's a plain module singleton (not React context) so non-component utilities
 // (credential icons) can read it synchronously too. The data is static
-// (identical for every user), so a shared singleton is correct.
+// (identical for every user), so a shared singleton is correct. A page that can
+// render before it's set (a client navigation into the dashboard loads it after)
+// reads it with useNodeIconData, which draws again once it lands.
+import { useSyncExternalStore } from 'react';
 import type { SerializedNodeMeta } from '@/lib/nodeCatalogTypes';
 
 let _nodeIconData: Record<string, SerializedNodeMeta> = {};
+const listeners = new Set<() => void>();
 
 /** Populate the registry from the host loader's serialized data. Idempotent. */
 export function setNodeIconData(data: Record<string, SerializedNodeMeta>): void {
@@ -22,7 +26,18 @@ export function setNodeIconData(data: Record<string, SerializedNodeMeta>): void 
     // clobbers a fuller one already loaded this session.
     if (data && data !== _nodeIconData) {
         _nodeIconData = Object.keys(_nodeIconData).length ? { ..._nodeIconData, ...data } : data;
+        listeners.forEach((listener) => listener());
     }
+}
+
+function subscribe(listener: () => void): () => void {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+}
+
+/** The icon map, for a component: it draws again when the map is set. */
+export function useNodeIconData(): Readonly<Record<string, SerializedNodeMeta>> {
+    return useSyncExternalStore(subscribe, getNodeIconData, getNodeIconData);
 }
 
 /** Serialized icon metadata for one node type (undefined if not loaded/unknown). */

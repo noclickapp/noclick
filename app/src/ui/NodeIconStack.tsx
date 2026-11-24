@@ -5,7 +5,7 @@
 // stay off the registry's ~4.7MB component graph. Icons render via SerializedIcon
 // (pre-rendered HTML); the public templates/integration pages use the parallel
 // SerializedNodeIconStack fed from their own loaders.
-import { getNodeIconMeta } from '@/lib/nodeIconRegistry';
+import { useNodeIconData } from '@/lib/nodeIconRegistry';
 import { SerializedIcon } from '@/ui/SerializedIcon';
 import { cn } from '@/ui/utils';
 
@@ -56,10 +56,11 @@ export function NodeIconStack({
     bare = false,
     className,
 }: NodeIconStackProps) {
+    const icons = useNodeIconData();
     const entries = nodeTypes
         .filter((t) => (filter ? filter(t) : true))
         .map((type) => {
-            const meta = getNodeIconMeta(type);
+            const meta = icons[type];
             return meta?.iconHtml
                 ? {
                       type,

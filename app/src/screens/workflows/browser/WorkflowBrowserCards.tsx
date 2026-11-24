@@ -19,7 +19,7 @@ import {
 import { cn } from '@/ui/utils';
 import { useDroppableFolder } from '@/screens/workflows/browser/useDroppableFolder';
 import { NodeIconStack } from '@/ui/NodeIconStack';
-import { getNodeIconData } from '@/lib/nodeIconRegistry';
+import { useNodeIconData } from '@/lib/nodeIconRegistry';
 import { relativeShort } from '@/lib/formatters';
 import { useAutomationBudget } from '@/screens/workflows/browser/automationBudget';
 import type {
@@ -294,6 +294,8 @@ export const WorkflowCard = ({
     const isSharedFlow = workflow.is_owner === false && !!workflow.owner_name;
     // An agent's automation leads with its month's spend against its budget instead.
     const budgeted = useAutomationBudget(workflow.id);
+    // The icon map can land after the cards draw (a client navigation into the dashboard): they draw again with it.
+    const nodeIcons = useNodeIconData();
 
     return (
         <Card
@@ -335,7 +337,7 @@ export const WorkflowCard = ({
                     // the schematic.
                     <WorkflowGraphPreview
                         graph={workflow.graph_preview}
-                        nodeIcons={getNodeIconData()}
+                        nodeIcons={nodeIcons}
                         className="w-full h-full"
                     />
                 ) : (

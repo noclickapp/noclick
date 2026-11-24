@@ -1,7 +1,7 @@
 // An agent or workflow drawn at the thread's size: the SVG preview a list of workflows draws, or a richer read-only
 // canvas a host registers (canvasRegistry).
 import { WorkflowGraphPreview } from '@/ui/WorkflowGraphPreview';
-import { getNodeIconData } from '@/lib/nodeIconRegistry';
+import { useNodeIconData } from '@/lib/nodeIconRegistry';
 import { buildGraphPreview } from '@/lib/graphPreview';
 import { cn } from '@/ui/utils';
 import { OpenPill } from '@/ui/OpenPill';
@@ -12,11 +12,12 @@ export { registerCoordinatorCanvas, type CanvasProps } from './canvasRegistry';
 const FRAME = 'h-[232px] min-h-0 rounded-xl';
 
 function GraphCanvas({ blob, className }: CanvasProps) {
+    const nodeIcons = useNodeIconData();
     const graph = buildGraphPreview(blob);
     if (!graph) return null;
     return (
         <div className={cn(FRAME, 'overflow-hidden bg-foreground/[0.03]', className)}>
-            <WorkflowGraphPreview graph={graph} nodeIcons={getNodeIconData()} fit="full-frame" className="h-full w-full" />
+            <WorkflowGraphPreview graph={graph} nodeIcons={nodeIcons} fit="full-frame" className="h-full w-full" />
         </div>
     );
 }
