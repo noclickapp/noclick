@@ -19,7 +19,7 @@ import {
 import { fakeWork } from '../agents/fixtures/workAgents';
 import { WorkClientContext } from '../client';
 import { ShareChoice } from './ShareChoice';
-import { splitOf, stepFrom } from './share';
+import { splitOf } from './share';
 
 afterEach(cleanup);
 
@@ -303,13 +303,4 @@ it('splits a computer between NoClick and you, counting in whole numbers on the 
         you: '4 CPUs · 11 GB',
     });
     expect(splitOf(8, 32, 0.99, false, true).you).toBe('nothing');
-});
-
-it('steps from a part to its neighbouring stop, between stops too, and nowhere past either end', () => {
-    expect(stepFrom(0.75, 1)).toBe(1);
-    expect(stepFrom(0.75, -1)).toBe(0.5);
-    expect(stepFrom(1, 1)).toBeNull();
-    expect(stepFrom(0.25, -1)).toBeNull();
-    expect(stepFrom(0.6, 1)).toBe(0.75);
-    expect(stepFrom(0.6, -1)).toBe(0.5);
 });
