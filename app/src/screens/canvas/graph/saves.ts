@@ -9,7 +9,8 @@
 import type { NoClick } from 'noclick';
 
 /** How a record saves its graph: as the edits that changed it on `/v1` (`edits`), or whole through a host's own save
- *  over its socket (`socket`; NoClick's app has one, decided per workflow). Each record keeps the way it first saved. */
+ *  (`socket`, named for where hosts first sent it; NoClick's app has one, decided per workflow). Each record keeps the
+ *  way it first saved. */
 export type CanvasSaveTransport = 'socket' | 'edits';
 
 /** The server's graph as a read or a conflict's answer carries it: steps and connections as a save sends them, and

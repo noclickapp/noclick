@@ -87,8 +87,9 @@ export interface SavedOutputs {
 }
 
 export interface SavedOutputsHost {
-    /** A step type's saved outputs, for the output panel of a step of it. */
-    useSaved: (nodeType: string) => SavedOutputs;
+    /** A step type's saved outputs, for the output panel of a step of it on the workflow `workflowId` (where they're
+     *  read and saved; none while the panel names no workflow). */
+    useSaved: (nodeType: string, workflowId?: string) => SavedOutputs;
 }
 
 /** What acting on a fix does: something done here, or a page opened in a new tab. */

@@ -36,6 +36,8 @@ class BuilderSkill:
     has_workflow: bool
     body_text: Optional[str]
     body_workflow: Optional[Dict[str, Any]]
+    workflow_version: Optional[int]
+    display_metadata: Optional[Dict[str, Any]]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     raw: Dict[str, Any] = dc_field(repr=False)
@@ -44,11 +46,14 @@ class BuilderSkill:
     def _from(cls, raw: Any) -> "BuilderSkill":
         raw = raw if isinstance(raw, dict) else {}
         workflow = raw.get("body_workflow")
+        version = raw.get("workflow_version")
+        shown = raw.get("display_metadata")
         return cls(str(raw.get("id")), str(raw.get("name") or ""), str(raw.get("description") or ""),
                    "shared" if raw.get("scope") == "shared" else "owned", raw.get("owner_id"),
                    raw.get("enabled") is True, raw.get("muted") is True, raw.get("has_text") is True,
                    raw.get("has_workflow") is True, raw.get("body_text"),
                    workflow if isinstance(workflow, dict) else None,
+                   version if isinstance(version, int) else None, shown if isinstance(shown, dict) else None,
                    parse_time(raw.get("created_at")), parse_time(raw.get("updated_at")), raw)
 
     @synced
@@ -122,6 +127,35 @@ class BuilderSkill:
                        enabled=enabled, muted=muted)
         return type(self)._from(await resolve_client(client).request(
             "PATCH", f"/v1/builder_skills/{quote(self.id, safe='')}", json=body, user=None))
+
+    @synced
+    @classmethod
+    async def save_workflow(cls, skill_id: str, workflow: Dict[str, Any], *, if_version: Optional[int] = None,
+                            display_metadata: Optional[Dict[str, Any]] = None,
+                            deleted_steps: Optional[List[str]] = None, partial_steps: Optional[List[str]] = None,
+                            changes: Optional[Dict[str, List[str]]] = None,
+                            client: Optional[Client] = None) -> Dict[str, Any]:
+        """Save a skill's workflow whole, as NoClick's canvas does (its owner, or a share that may edit it), on the
+        version it was read at (``if_version``, its ``workflow_version``): a save on one the workflow has moved past
+        raises ``noclick.Conflict``, whose ``details`` hold the ``workflow`` and ``version`` as they stand.
+        ``deleted_steps``: steps removed since; ``partial_steps``: steps held only in part, kept as stored;
+        ``changes`` (``steps``, ``edges_added``, ``edges_removed``): on a workflow that moved past ``if_version``,
+        only these land. A save of the workflow as stored changes nothing.
+
+        Returns:
+            ``{"version", "changed"}``: the version it's at after, and whether the save changed it.
+
+        Usage::
+
+            skill = noclick.BuilderSkill.get(skill_id)
+            noclick.BuilderSkill.save_workflow(skill.id, {"nodes": nodes, "edges": edges},
+                                               if_version=skill.workflow_version)
+        """
+        body = _fields(workflow=workflow, if_version=if_version, display_metadata=display_metadata,
+                       deleted_steps=deleted_steps or None, partial_steps=partial_steps or None, changes=changes)
+        raw = await resolve_client(client).request(
+            "PUT", f"/v1/builder_skills/{quote(skill_id, safe='')}/workflow", json=body, user=None)
+        return {"version": int(raw["version"]), "changed": raw.get("changed") is True}
 
     @synced
     async def delete(self, *, client: Optional[Client] = None) -> None:

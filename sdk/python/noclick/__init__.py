@@ -503,6 +503,9 @@ from .sandbox import (
     Sandbox,
     SandboxFiles,
 )
+from .saved_output import (
+    SavedOutput,
+)
 from .secret import (
     Secret,
 )
@@ -1076,6 +1079,7 @@ __all__ = [
     "LinkedPhone",
     "PhoneChallenge",
     "BuilderSkill",
+    "SavedOutput",
     "Error",
     "Offer",
     "InvalidRequest",

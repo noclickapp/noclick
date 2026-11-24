@@ -212,7 +212,7 @@ function buildPayload(rec: GraphRecord): {
     return { deletedNodeIds, partialNodeIds: Object.keys(rec.partialNodeIds), savePayload };
 }
 
-/** The whole graph as a host's own save takes it. A skill's embedded workflow has no version to save on. */
+/** The whole graph as a host's own save takes it, on the version the canvas holds. */
 function wholeSave(
     rec: GraphRecord,
     payload: ReturnType<typeof buildPayload>,
@@ -225,7 +225,7 @@ function wholeSave(
         displayMetadata: rec.displayMetadata,
         deletedNodeIds: payload.deletedNodeIds,
         partialNodeIds: payload.partialNodeIds,
-        ifVersion: rec.isSkill ? null : rec.graphVersion,
+        ifVersion: rec.graphVersion,
         ...(changes ? { changes } : {}),
     };
 }
@@ -729,7 +729,7 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
             rec.dirty = false;
             return;
         }
-        const versioned = !rec.isSkill && rec.graphVersion != null;
+        const versioned = rec.graphVersion != null;
         host.close(wholeSave(rec, payload, versioned ? changesSinceBase(rec, payload.savePayload as SavedGraph) : undefined));
         rec.dirty = false;
         return;

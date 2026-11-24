@@ -58,3 +58,21 @@ test("changing one shared to read rejects with PermissionDenied, and delete name
   await voice.delete();
   assert.equal(removed.calls.length, 1);
 });
+
+test("saveWorkflow saves a skill's workflow on the version it was read at, and a stale one rejects with Conflict", async () => {
+  const { api } = setup();
+  const put = api.on(
+    "PUT",
+    `/v1/builder_skills/${VOICE.id}/workflow`,
+    json({ object: "builder_skill_workflow", skill_id: VOICE.id, version: 3, changed: true }),
+    apiError(409, "conflict", "it changed since it was read", { version: 4, workflow: { nodes: [{ id: "a" }] } })
+  );
+  const saved = await nc.BuilderSkill.saveWorkflow(VOICE.id, { nodes: [], edges: [] }, { ifVersion: 2, changes: { steps: ["b"] } });
+  assert.deepEqual(saved, { version: 3, changed: true });
+  assert.deepEqual(put.last.body, {
+    workflow: { nodes: [], edges: [] }, if_version: 2, changes: { steps: ["b"], edges_added: [], edges_removed: [] },
+  });
+  const stale = await nc.BuilderSkill.saveWorkflow(VOICE.id, { nodes: [] }, { ifVersion: 2 }).catch((err: unknown) => err);
+  assert.ok(stale instanceof nc.Conflict);
+  assert.equal((stale as nc.Conflict).details.version, 4);
+});

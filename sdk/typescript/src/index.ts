@@ -288,6 +288,8 @@ export {
 } from "./builderSkill.ts";
 export type {
   BuilderSkillFields,
+  SkillWorkflowSave,
+  SkillWorkflowSaved,
 } from "./builderSkill.ts";
 export {
   Card,
@@ -822,6 +824,9 @@ export type {
   SandboxCreateOptions,
   SandboxStatusFilter,
 } from "./sandbox.ts";
+export {
+  SavedOutput,
+} from "./savedOutput.ts";
 export {
   ALL_USERS,
   NO_USER,

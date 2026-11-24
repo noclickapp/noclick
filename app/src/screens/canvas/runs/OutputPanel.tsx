@@ -43,7 +43,7 @@ export const OutputPanel = ({
     const nodeConfig = selectedNode?.data || {};
     const nodeOperation = getNodeOperation(nodeConfig);
 
-    const { saved: savedOutputs, save, remove, share, dialogs } = useSlot(SAVED_OUTPUTS).useSaved(nodeType);
+    const { saved: savedOutputs, save, remove, share, dialogs } = useSlot(SAVED_OUTPUTS).useSaved(nodeType, workflowId);
     const marks = useSlot(STEP_MARKS);
 
     // The expected shape and the fields worth referencing (kept by step type and operation: a second read of the same

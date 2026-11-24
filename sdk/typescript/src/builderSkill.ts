@@ -21,6 +21,30 @@ export interface BuilderSkillFields {
   enabled?: boolean;
 }
 
+/** What a skill's workflow is saved with besides itself (`saveWorkflow`). */
+export interface SkillWorkflowSave {
+  /** The `workflowVersion` it was read at: a save on one the workflow has moved past rejects with `Conflict`, whose
+   *  `details` hold the `workflow` and `version` as they stand. Left out, it's written as it is. */
+  ifVersion?: number | null;
+  /** The canvas's viewport and the like. */
+  displayMetadata?: JsonObject | null;
+  /** Steps removed since the version read. */
+  deletedSteps?: string[];
+  /** Steps held only in part: their settings are kept as stored. */
+  partialSteps?: string[];
+  /** What changed since `ifVersion` (a closing page's last save, which reads no answer): on a workflow that moved
+   *  past it, only these land, on it as it stands. */
+  changes?: { steps?: string[]; edgesAdded?: string[]; edgesRemoved?: string[] };
+  /** In a browser, send the save so it outlives the page (a closing tab's last save; `RequestOptions.keepalive`). */
+  keepalive?: boolean;
+}
+
+/** A saved workflow: the version it's at now, and whether the save changed it. */
+export interface SkillWorkflowSaved {
+  version: number;
+  changed: boolean;
+}
+
 /**
  * A skill NoClick's builder loads: a description the builder reads to decide whether it needs it, plus text and,
  * optionally, a workflow to follow. `scope` says whose: `owned` (your account's, or a workspace it's in) or `shared`
@@ -42,6 +66,10 @@ export class BuilderSkill {
   /** Its text and workflow, on one read whole (`get`, and what a change answers); null on a list's. */
   readonly bodyText: string | null;
   readonly bodyWorkflow: JsonObject | null;
+  /** The version its workflow is at, which `saveWorkflow` saves on (a read whole); null on a list's. */
+  readonly workflowVersion: number | null;
+  /** The app canvas's viewport over its workflow (a read whole); null on a list's. */
+  readonly displayMetadata: JsonObject | null;
   readonly createdAt: Date | null;
   readonly updatedAt: Date | null;
   readonly raw: JsonObject;
@@ -58,6 +86,8 @@ export class BuilderSkill {
     this.hasWorkflow = raw.has_workflow === true;
     this.bodyText = str(raw.body_text);
     this.bodyWorkflow = raw.body_workflow && typeof raw.body_workflow === "object" ? asObject(raw.body_workflow) : null;
+    this.workflowVersion = typeof raw.workflow_version === "number" ? raw.workflow_version : null;
+    this.displayMetadata = raw.display_metadata && typeof raw.display_metadata === "object" ? asObject(raw.display_metadata) : null;
     this.createdAt = parseTime(raw.created_at);
     this.updatedAt = parseTime(raw.updated_at);
     this.raw = raw;
@@ -102,6 +132,34 @@ export class BuilderSkill {
       user: null,
     });
     return new BuilderSkill(asObject(raw));
+  }
+
+  /**
+   * Save a skill's workflow whole, as NoClick's canvas does (its owner, or a share that may edit it), on the version
+   * it was read at. Resolves to the version it's at after; a save of the workflow as stored changes nothing.
+   *
+   *     const skill = await BuilderSkill.get(id);
+   *     await BuilderSkill.saveWorkflow(skill.id, { nodes, edges }, { ifVersion: skill.workflowVersion });
+   */
+  static async saveWorkflow(id: string, workflow: JsonObject, save: SkillWorkflowSave = {}, options: { client?: NoClick } = {}): Promise<SkillWorkflowSaved> {
+    const changes = save.changes
+      ? { steps: save.changes.steps ?? [], edges_added: save.changes.edgesAdded ?? [], edges_removed: save.changes.edgesRemoved ?? [] }
+      : undefined;
+    const raw = asObject(
+      await resolveClient(options.client).request("PUT", `/v1/builder_skills/${encodeURIComponent(id)}/workflow`, {
+        json: compact({
+          workflow,
+          if_version: save.ifVersion ?? undefined,
+          display_metadata: save.displayMetadata ?? undefined,
+          deleted_steps: save.deletedSteps?.length ? save.deletedSteps : undefined,
+          partial_steps: save.partialSteps?.length ? save.partialSteps : undefined,
+          changes,
+        }),
+        user: null,
+        keepalive: save.keepalive,
+      })
+    );
+    return { version: Number(raw.version), changed: raw.changed === true };
   }
 
   /** Delete it for good: only the account that made it may. */

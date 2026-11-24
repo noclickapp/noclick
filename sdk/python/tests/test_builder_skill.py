@@ -1,6 +1,7 @@
 """The skills NoClick's builder loads (``noclick.BuilderSkill``): the account's, never a user's, so none sends
 ``NoClick-User`` inside ``as_user``."""
 
+import httpx
 import pytest
 
 import noclick as nc
@@ -53,3 +54,20 @@ def test_changing_one_shared_to_read_raises_permission_denied(api, client):
         "type": "permission_denied", "message": "shared with the account to read"}})
     with pytest.raises(nc.PermissionDenied):
         nc.BuilderSkill._from(TONE).update(enabled=False)
+
+
+def test_save_workflow_saves_on_the_version_it_was_read_at_and_a_stale_one_raises_conflict(api, client):
+    put = api.put(f"/v1/builder_skills/{VOICE['id']}/workflow").mock(side_effect=[
+        httpx.Response(200, json={"object": "builder_skill_workflow", "skill_id": VOICE["id"], "version": 3,
+                                  "changed": True}),
+        httpx.Response(409, json={"error": {"type": "conflict", "message": "it changed since it was read",
+                                            "version": 4, "workflow": {"nodes": [{"id": "a"}]}}}),
+    ])
+    saved = nc.BuilderSkill.save_workflow(VOICE["id"], {"nodes": [], "edges": []}, if_version=2,
+                                          changes={"steps": ["b"]})
+    assert saved == {"version": 3, "changed": True}
+    assert body(put.calls.last.request) == {"workflow": {"nodes": [], "edges": []}, "if_version": 2,
+                                            "changes": {"steps": ["b"]}}
+    with pytest.raises(nc.Conflict) as stale:
+        nc.BuilderSkill.save_workflow(VOICE["id"], {"nodes": []}, if_version=2)
+    assert stale.value.details["version"] == 4
