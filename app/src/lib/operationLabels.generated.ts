@@ -907,6 +907,7 @@ cabinpanda
 cakemail
 cal-com
 cal-id
+calendesk
 calendly
 callerapi
 callfire
