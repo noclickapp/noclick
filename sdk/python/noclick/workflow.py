@@ -1712,12 +1712,32 @@ class WorkflowFolder:
     created_at: Any
     updated_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: ``owner`` for one your account made; ``viewer`` for a teammate's in a team workspace, or one shared with you.
+    access: str = "owner"
+    #: Who shared it with you (``{"name": ...}``); ``None`` for your account's own.
+    owner: Optional[Dict[str, Any]] = None
+    #: When it was shared with you; ``None`` for your account's own.
+    shared_at: Any = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "WorkflowFolder":
-        return cls(raw["id"], raw["name"], raw.get("description"), raw.get("parent_id"), int(raw["depth"]),
+        return cls(raw["id"], raw["name"], raw.get("description"), raw.get("parent_id"), int(raw.get("depth") or 0),
                    int(raw.get("workflow_count") or 0), parse_time(raw.get("created_at")),
-                   parse_time(raw.get("updated_at")), raw)
+                   parse_time(raw.get("updated_at")), raw, raw.get("access") or "owner", raw.get("owner"),
+                   parse_time(raw.get("shared_at")))
+
+
+@dataclass(frozen=True)
+class WorkflowFolderListing:
+    """A folder's workflows as the app's Automations page lists them (``Workflow.in_folder()``)."""
+
+    workflows: List["Workflow"]
+    #: Workflows shared with you that your plan has no room for, left out.
+    hidden_shared_count: int
+
+
+# ``update_folder``'s parent left out: the folder stays where it is (``None`` is the top).
+_KEEP = object()
 
 
 def _folder_id(folder: Union["WorkflowFolder", str, None]) -> Optional[str]:
@@ -2049,6 +2069,13 @@ class Workflow(_Object):
     folder_id: Optional[str] = field("folder_id", doc=(
         "The folder of your account's it's in (``Workflow.folders()``); ``None`` at the top, and for one shared with "
         "you."))
+    owner: Optional[Dict[str, Any]] = field("owner", doc=(
+        "Who owns it, for one shared with you (``{\"name\": ...}``); ``None`` for your account's own. Read on a "
+        "listing."))
+    shared_at: Any = field("shared_at", parse_time, doc="When it was shared with you (``Workflow.shared_with_me()``).")
+    preview: Optional[Dict[str, Any]] = field("preview", doc=(
+        "Its graph as a picture of it needs it, ``{nodes, edges}`` in its saved shape "
+        "(``Workflow.in_folder(..., preview=True)``); ``None`` when not asked for."))
     step_types: List[str] = field("step_types", lambda raw: [str(t) for t in raw or []], doc=(
         "What it's made of, at a glance, in a list too: at most four of its step types, its triggers first, then "
         "its agents (one on a coding harness as ``agent:<harness>``, ``agent:codex``), then the rest, never a note."))
@@ -2080,14 +2107,19 @@ class Workflow(_Object):
     @synced
     @classmethod
     async def create(
-        cls, name: str, *, instructions: Optional[str] = None, description: Optional[str] = None,
-        questions: Optional[str] = None, client: Optional[Client] = None,
+        cls, name: Optional[str] = None, *, instructions: Optional[str] = None, description: Optional[str] = None,
+        questions: Optional[str] = None, folder: Union["WorkflowFolder", str, None] = None,
+        organization_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> "Workflow":
         """A new workflow in your account. With ``instructions`` NoClick's
         builder starts building it: wait on ``latest_build``. A name your
         account already has raises ``noclick.Conflict`` (change that one with
-        ``build``). ``questions="assume"``: the builder asks nothing, as
-        ``build()`` takes it.
+        ``build``); with none it takes the next free ``Untitled`` (``Untitled``,
+        ``Untitled 2``, ...), as the app names a blank one.
+        ``questions="assume"``: the builder asks nothing, as ``build()`` takes
+        it. ``folder`` (a ``WorkflowFolder`` or its id) files it there;
+        ``organization_id`` makes it in a team workspace you're in, billed to
+        whoever pays for it.
 
         Returns:
             The new workflow; ``latest_build`` is its build when ``instructions`` describe it.
@@ -2102,7 +2134,8 @@ class Workflow(_Object):
         """
         api = resolve_client(client)
         raw = await api.request("POST", "/v1/workflows", json=compact(
-            name=name, instructions=instructions, description=description, questions=questions))
+            name=name, instructions=instructions, description=description, questions=questions,
+            folder_id=_folder_id(folder), organization_id=organization_id))
         return cls._new(raw=raw, client=client, user=None)
 
     @property
@@ -2225,10 +2258,14 @@ class Workflow(_Object):
 
     @synced
     @classmethod
-    async def folders(cls, *, client: Optional[Client] = None) -> List[WorkflowFolder]:
+    async def folders(cls, *, organization_id: Optional[str] = None, shared_with_me: bool = False,
+                      client: Optional[Client] = None) -> List[WorkflowFolder]:
         """Your account's workflow folders, as the app's Automations page shows
         them: the ones it made in its own workspace, the shallowest first, then
         by name. A workflow's ``folder_id`` names the one it's in.
+        ``organization_id``: a team workspace your account's person is in, every
+        folder there (a teammate's with ``access`` ``viewer``);
+        ``shared_with_me``: the folders others shared with you.
 
         Returns:
             Each folder, with its ``parent_id`` (``None`` at the top) and its ``workflow_count``.
@@ -2238,14 +2275,87 @@ class Workflow(_Object):
             for folder in noclick.Workflow.folders():
                 print("  " * folder.depth + folder.name, folder.workflow_count)
         """
-        rows = await paginate(resolve_client(client), "/v1/workflows/folders", user=None)
+        params = compact(organization_id=organization_id, shared_with_me="true" if shared_with_me else None)
+        rows = await paginate(resolve_client(client), "/v1/workflows/folders", params=params, user=None)
         return [WorkflowFolder._from(row) for row in rows]
+
+    @synced
+    @classmethod
+    async def in_folder(
+        cls, folder: Union[WorkflowFolder, str, None], *, organization_id: Optional[str] = None,
+        preview: bool = False, client: Optional[Client] = None,
+    ) -> WorkflowFolderListing:
+        """The workflows of one folder (a ``WorkflowFolder``, its id, or
+        ``None`` for the top) as the app's Automations page lists them, most
+        recently changed first, each with its ``owner`` (``None`` for your
+        account's own). ``preview=True`` adds each one's ``preview``. In a team
+        workspace with ``organization_id``.
+
+        Returns:
+            The workflows, and how many shared with you your plan left out.
+
+        Usage::
+
+            for workflow in noclick.Workflow.in_folder(None, preview=True).workflows:
+                print(workflow.name, len(workflow.preview["nodes"]))
+        """
+        params = compact(folder_id=_folder_id(folder) or "top", organization_id=organization_id,
+                         include="preview" if preview else None)
+        raw = await resolve_client(client).request("GET", "/v1/workflows", params=params, user=None) or {}
+        return WorkflowFolderListing(
+            [cls._new(raw=row, client=client, user=None) for row in raw.get("data") or []],
+            int(raw.get("hidden_shared_count") or 0))
+
+    @synced
+    @classmethod
+    async def shared_with_me(cls, *, client: Optional[Client] = None) -> List["Workflow"]:
+        """The workflows others shared with your account's person, newest share
+        first, each with its ``access``, ``owner`` (who shared it) and
+        ``shared_at``.
+
+        Returns:
+            Each workflow shared with you.
+
+        Usage::
+
+            for workflow in noclick.Workflow.shared_with_me():
+                print(workflow.name, workflow.owner["name"], workflow.access)
+        """
+        raw = await resolve_client(client).request("GET", "/v1/workflows", params={"shared_with_me": "true"},
+                                                   user=None) or {}
+        return [cls._new(raw=row, client=client, user=None) for row in raw.get("data") or []]
+
+    @synced
+    @classmethod
+    async def update_folder(
+        cls, folder: Union[WorkflowFolder, str], *, name: Optional[str] = None, description: Optional[str] = None,
+        parent: Union[WorkflowFolder, str, None, object] = _KEEP, organization_id: Optional[str] = None,
+        client: Optional[Client] = None,
+    ) -> WorkflowFolder:
+        """Rename one of your account's folders, change its line, or move it
+        into another of its folders (``parent``: a ``WorkflowFolder``, its id,
+        or ``None`` for the top), as the app's rename and drag do. A folder never
+        goes into itself or one inside it.
+
+        Returns:
+            The folder as it is now.
+
+        Usage::
+
+            noclick.Workflow.update_folder(reports, name="Weekly reports", parent=None)
+        """
+        body = compact(name=name, description=description, organization_id=organization_id)
+        if parent is not _KEEP:
+            body["parent_id"] = _folder_id(parent)  # type: ignore[arg-type]
+        raw = await resolve_client(client).request("PATCH", f"/v1/workflows/folders/{_folder_id(folder)}", json=body,
+                                                   user=None)
+        return WorkflowFolder._from(raw)
 
     @synced
     @classmethod
     async def create_folder(
         cls, name: str, *, description: Optional[str] = None, parent: Union[WorkflowFolder, str, None] = None,
-        client: Optional[Client] = None,
+        organization_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> WorkflowFolder:
         """A new folder in your account's workspace, at the top or in
         ``parent`` (a ``WorkflowFolder`` or its id), as the app makes one. A
@@ -2263,12 +2373,14 @@ class Workflow(_Object):
         """
         raw = await resolve_client(client).request(
             "POST", "/v1/workflows/folders",
-            json=compact(name=name, description=description, parent_id=_folder_id(parent)), user=None)
+            json=compact(name=name, description=description, parent_id=_folder_id(parent),
+                         organization_id=organization_id), user=None)
         return WorkflowFolder._from(raw)
 
     @synced
     @classmethod
-    async def delete_folder(cls, folder: Union[WorkflowFolder, str], *, client: Optional[Client] = None) -> WorkflowFolder:
+    async def delete_folder(cls, folder: Union[WorkflowFolder, str], *, organization_id: Optional[str] = None,
+                            client: Optional[Client] = None) -> WorkflowFolder:
         """Delete one of your account's folders (a ``WorkflowFolder`` or its
         id), as the app does: the workflows in it move to its parent (the top,
         for one at the top) and the folders in it go with it, their workflows
@@ -2283,11 +2395,13 @@ class Workflow(_Object):
                 if folder.workflow_count == 0:
                     noclick.Workflow.delete_folder(folder)
         """
-        raw = await resolve_client(client).request("DELETE", f"/v1/workflows/folders/{_folder_id(folder)}", user=None)
+        raw = await resolve_client(client).request("DELETE", f"/v1/workflows/folders/{_folder_id(folder)}",
+                                                   params=compact(organization_id=organization_id), user=None)
         return WorkflowFolder._from(raw)
 
     @synced
-    async def move_to(self, folder: Union[WorkflowFolder, str, None]) -> "Workflow":
+    async def move_to(self, folder: Union[WorkflowFolder, str, None], *,
+                      organization_id: Optional[str] = None) -> "Workflow":
         """Move it into one of your account's folders (a ``WorkflowFolder`` or
         its id), or out to the top with ``None``, as dragging it does in the app.
         It takes what changing it takes: owning it and paying for it.
@@ -2302,7 +2416,26 @@ class Workflow(_Object):
             brief.move_to(None)   # back to the top
         """
         return self._took(await self._request("POST", f"{await self._path()}/move",
-                                              json={"folder_id": _folder_id(folder)}))
+                                              json={"folder_id": _folder_id(folder),
+                                                    **compact(organization_id=organization_id)}))
+
+    @synced
+    async def fork(self, *, name: Optional[str] = None, organization_id: Optional[str] = None) -> "Workflow":
+        """A copy of it, your account's own, as the app's Copy makes one: none
+        of the accounts its steps used, none of its runs, a ``per_user``
+        variable emptied for you to fill. Named ``name``, else "Copy of" its
+        name; in a team workspace with ``organization_id``.
+
+        Returns:
+            The copy, in full.
+
+        Usage::
+
+            mine = noclick.Workflow.from_name("Their brief").fork(name="My brief")
+        """
+        raw = await self._request("POST", f"{await self._path()}/fork",
+                                  json=compact(name=name, organization_id=organization_id))
+        return type(self)._new(raw=raw, client=self._client, user=None)
 
     async def _load(self) -> Dict[str, Any]:
         raw = await self._read_view()
@@ -3039,6 +3172,45 @@ class Workflow(_Object):
             noclick.Workflow.from_name("Old digest").delete()
         """
         await self._request("DELETE", await self._path())
+
+    @synced
+    async def delete_for_good(self) -> None:
+        """Delete a workflow in your account's trash for good, as the app's
+        Trash does: its runs, files, tables and published apps go with it, and
+        nothing restores it. Move it to the trash with ``delete()`` first.
+
+        Returns:
+            Nothing.
+
+        Usage::
+
+            for workflow in noclick.Workflow.trashed():
+                workflow.delete_for_good()
+        """
+        known = self._known("id")
+        if not known:
+            raise NotFound("A workflow in the trash is deleted by id.",
+                           next_step="Use noclick.Workflow.from_id(...).delete_for_good().")
+        await self._request("DELETE", f"/v1/workflows/{known}/trash")
+
+    @synced
+    @classmethod
+    async def trashed(cls, *, client: Optional[Client] = None) -> List["Workflow"]:
+        """Your account's workflows in the trash, the newest deleted first, as
+        the app's Trash lists them: each one's ``raw`` holds its ``deleted_at``
+        and ``purge_after``, when it's deleted for good unless ``restore()``
+        brings it back first.
+
+        Returns:
+            Each workflow in the trash.
+
+        Usage::
+
+            for workflow in noclick.Workflow.trashed():
+                print(workflow.name, workflow.raw["purge_after"])
+        """
+        raw = await resolve_client(client).request("GET", "/v1/workflows/trash", user=None) or {}
+        return [cls._new(raw=row, client=client, user=None) for row in raw.get("data") or []]
 
     # --- runs ------------------------------------------------------------
 

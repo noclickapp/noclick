@@ -175,7 +175,8 @@ from .workflow import (
     BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepLastRun, StepOption,
     StepOptions,
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuilder, WorkflowBuildResult, WorkflowDraftResult,
-    WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowGraph, WorkflowRehearsal, WorkflowRun, WorkflowRunCounts,
+    WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowFolderListing, WorkflowGraph, WorkflowRehearsal, WorkflowRun,
+    WorkflowRunCounts,
     WorkflowTestRun,
     WorkflowSetup, WorkflowStep, WorkflowVariables, WorkflowVersion,
 )
@@ -251,7 +252,7 @@ __all__ = [
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion", "WorkflowVariables", "WorkflowSetup",
     "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
-    "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "workflow_examples", "workflow_example",
+    "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "WorkflowFolderListing", "workflow_examples", "workflow_example",
     "WorkflowExample",
     "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "StepLastRun", "ExpressionPreview",
     "ClearedStepState",

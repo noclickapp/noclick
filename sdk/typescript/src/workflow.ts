@@ -80,23 +80,53 @@ export interface WorkflowFolder {
   depth: number;
   /** How many workflows are in it (not counting its folders'). */
   workflowCount: number;
+  /** `owner` for one your account made; `viewer` for a teammate's in a team workspace, or one shared with you. */
+  access: string;
+  /** Who shared it with you (`Workflow.folders({ sharedWithMe: true })`); null for your account's own. */
+  owner: { name: string | null } | null;
+  /** When it was shared with you; null for your account's own. */
+  sharedAt: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   raw: JsonObject;
 }
 
 function toFolder(raw: JsonObject): WorkflowFolder {
+  const owner = raw.owner && typeof raw.owner === "object" ? asObject(raw.owner) : null;
   return {
     id: String(raw.id),
     name: String(raw.name),
     description: str(raw.description),
     parentId: str(raw.parent_id),
-    depth: Number(raw.depth),
+    depth: Number(raw.depth ?? 0),
     workflowCount: Number(raw.workflow_count ?? 0),
+    access: String(raw.access ?? "owner"),
+    owner: owner ? { name: str(owner.name) } : null,
+    sharedAt: parseTime(raw.shared_at),
     createdAt: parseTime(raw.created_at),
     updatedAt: parseTime(raw.updated_at),
     raw,
   };
+}
+
+/** Where the Automations page's calls look: your account's own workspace, or a team one your person is in. */
+export interface WorkspaceOption {
+  /** A team workspace your account's person is in; omitted, your account's own. */
+  organizationId?: string;
+  client?: NoClick;
+}
+
+/** A folder's workflows as the app's Automations page lists them (`Workflow.inFolder`). */
+export interface WorkflowFolderListing {
+  workflows: Workflow[];
+  /** Workflows shared with you that your plan has no room for, left out. */
+  hiddenSharedCount: number;
+}
+
+/** A graph as a picture of it needs it, in its saved shape (`Workflow.inFolder(..., { preview: true })`). */
+export interface WorkflowPreview {
+  nodes: JsonObject[];
+  edges: JsonObject[];
 }
 
 function folderIdOf(folder: WorkflowFolder | string | null): string | null {
@@ -2148,6 +2178,22 @@ export class Workflow extends ApiObject {
   get access(): string {
     return this._field("access");
   }
+  /** Who owns it, for one shared with you (`{ name }`); null for your account's own. Read on a listing. */
+  get owner(): { name: string | null } | null {
+    const owner = this._raw?.owner;
+    return owner && typeof owner === "object" ? { name: str(asObject(owner).name) } : null;
+  }
+  /** When it was shared with you (`Workflow.sharedWithMe()`); null otherwise. */
+  get sharedAt(): Date | null {
+    return parseTime(this._raw?.shared_at);
+  }
+  /** Its graph as a picture of it needs it (`Workflow.inFolder(..., { preview: true })`); null when not asked for. */
+  get preview(): WorkflowPreview | null {
+    const preview = this._raw?.preview;
+    if (!preview || typeof preview !== "object") return null;
+    const { nodes, edges } = asObject(preview);
+    return { nodes: Array.isArray(nodes) ? nodes.map(asObject) : [], edges: Array.isArray(edges) ? edges.map(asObject) : [] };
+  }
   /** The folder of your account's it's in (`Workflow.folders()`); null at the top, and for one shared with you. */
   get folderId(): string | null {
     return str(this._field("folder_id"));
@@ -2196,14 +2242,23 @@ export class Workflow extends ApiObject {
   /**
    * A new workflow in your account. With `instructions` NoClick's builder starts building it:
    * wait on `latestBuild`. A name your account already has throws `Conflict` (change that one with
-   * `build`). `questions: "assume"`: the builder asks nothing, as `build()` takes it.
+   * `build`); with none it takes the next free `Untitled` (`Untitled`, `Untitled 2`, ...), as the app names a blank
+   * one. `questions: "assume"`: the builder asks nothing, as `build()` takes it. `folder` (a folder or its id) files it
+   * there; `organizationId` makes it in a team workspace you're in, billed to whoever pays for it.
    */
   static async create(
-    name: string,
-    options: { instructions?: string; description?: string; questions?: BuildQuestions; client?: NoClick } = {},
+    name?: string | null,
+    options: {
+      instructions?: string; description?: string; questions?: BuildQuestions;
+      folder?: WorkflowFolder | string | null;
+    } & WorkspaceOption = {},
   ): Promise<Workflow> {
     const raw = await resolveClient(options.client).request<JsonObject>("POST", "/v1/workflows", {
-      json: compact({ name, instructions: options.instructions, description: options.description, questions: options.questions }),
+      json: compact({
+        name: name ?? undefined, instructions: options.instructions, description: options.description,
+        questions: options.questions, folder_id: folderIdOf(options.folder ?? null) ?? undefined,
+        organization_id: options.organizationId,
+      }),
     });
     return new Workflow({ raw, client: options.client });
   }
@@ -2214,9 +2269,68 @@ export class Workflow extends ApiObject {
    *
    *     for (const folder of await Workflow.folders()) console.log("  ".repeat(folder.depth) + folder.name);
    */
-  static async folders(options: { client?: NoClick } = {}): Promise<WorkflowFolder[]> {
-    const rows = await paginate(resolveClient(options.client), "/v1/workflows/folders", { user: null });
+  static async folders(options: WorkspaceOption & { sharedWithMe?: boolean } = {}): Promise<WorkflowFolder[]> {
+    const rows = await paginate(resolveClient(options.client), "/v1/workflows/folders", {
+      user: null,
+      query: { organization_id: options.organizationId, shared_with_me: options.sharedWithMe ? "true" : undefined },
+    });
     return rows.map(toFolder);
+  }
+
+  /**
+   * The workflows of one folder (a folder, its id, or `null` for the top) as the app's Automations page lists them,
+   * most recently changed first, each with its `owner` (null for your account's own). `preview: true` adds each one's
+   * `preview`, its graph as a picture of it needs it. In a team workspace with `organizationId`.
+   *
+   *     const { workflows } = await Workflow.inFolder(null, { preview: true });
+   */
+  static async inFolder(
+    folder: WorkflowFolder | string | null,
+    options: WorkspaceOption & { preview?: boolean } = {},
+  ): Promise<WorkflowFolderListing> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workflows", {
+      user: null,
+      query: {
+        folder_id: folderIdOf(folder) ?? "top",
+        organization_id: options.organizationId,
+        include: options.preview ? "preview" : undefined,
+      },
+    }));
+    const rows = Array.isArray(raw.data) ? raw.data : [];
+    return {
+      workflows: rows.map((row) => new Workflow({ raw: asObject(row), client: options.client })),
+      hiddenSharedCount: Number(raw.hidden_shared_count ?? 0),
+    };
+  }
+
+  /**
+   * The workflows others shared with your account's person, newest share first, each with its `access`, `owner` (who
+   * shared it) and `sharedAt`.
+   */
+  static async sharedWithMe(options: { client?: NoClick } = {}): Promise<Workflow[]> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workflows", {
+      user: null, query: { shared_with_me: "true" },
+    }));
+    return (Array.isArray(raw.data) ? raw.data : []).map((row) => new Workflow({ raw: asObject(row), client: options.client }));
+  }
+
+  /**
+   * Rename one of your account's folders, change its line, or move it into another of its folders (`parent`: a folder,
+   * its id, or `null` for the top), as the app's rename and drag do. A folder never goes into itself or one inside it.
+   *
+   *     await Workflow.updateFolder(reports, { name: "Weekly reports", parent: null });
+   */
+  static async updateFolder(
+    folder: WorkflowFolder | string,
+    changes: { name?: string; description?: string; parent?: WorkflowFolder | string | null } & WorkspaceOption,
+  ): Promise<WorkflowFolder> {
+    const json: JsonObject = compact({
+      name: changes.name, description: changes.description, organization_id: changes.organizationId,
+    });
+    if (changes.parent !== undefined) json.parent_id = folderIdOf(changes.parent);
+    const raw = await resolveClient(changes.client).request(
+      "PATCH", `/v1/workflows/folders/${encodeURIComponent(folderIdOf(folder) ?? "")}`, { json, user: null });
+    return toFolder(asObject(raw));
   }
 
   /**
@@ -2228,10 +2342,13 @@ export class Workflow extends ApiObject {
    */
   static async createFolder(
     name: string,
-    options: { description?: string; parent?: WorkflowFolder | string; client?: NoClick } = {},
+    options: { description?: string; parent?: WorkflowFolder | string } & WorkspaceOption = {},
   ): Promise<WorkflowFolder> {
     const raw = await resolveClient(options.client).request("POST", "/v1/workflows/folders", {
-      json: compact({ name, description: options.description, parent_id: folderIdOf(options.parent ?? null) }),
+      json: compact({
+        name, description: options.description, parent_id: folderIdOf(options.parent ?? null),
+        organization_id: options.organizationId,
+      }),
       user: null,
     });
     return toFolder(asObject(raw));
@@ -2246,9 +2363,10 @@ export class Workflow extends ApiObject {
    *       if (folder.workflowCount === 0) await Workflow.deleteFolder(folder);
    *     }
    */
-  static async deleteFolder(folder: WorkflowFolder | string, options: { client?: NoClick } = {}): Promise<WorkflowFolder> {
+  static async deleteFolder(folder: WorkflowFolder | string, options: WorkspaceOption = {}): Promise<WorkflowFolder> {
     const raw = await resolveClient(options.client).request(
-      "DELETE", `/v1/workflows/folders/${encodeURIComponent(folderIdOf(folder) ?? "")}`, { user: null });
+      "DELETE", `/v1/workflows/folders/${encodeURIComponent(folderIdOf(folder) ?? "")}`,
+      { user: null, query: { organization_id: options.organizationId } });
     return toFolder(asObject(raw));
   }
 
@@ -2261,10 +2379,24 @@ export class Workflow extends ApiObject {
    *     await brief.moveTo(await Workflow.createFolder("Reports"));
    *     await brief.moveTo(null);   // back to the top
    */
-  async moveTo(folder: WorkflowFolder | string | null): Promise<this> {
+  async moveTo(folder: WorkflowFolder | string | null, options: { organizationId?: string } = {}): Promise<this> {
     return this.took(await this._request<JsonObject>("POST", `${await this.path()}/move`, {
-      json: { folder_id: folderIdOf(folder) },
+      json: { folder_id: folderIdOf(folder), ...compact({ organization_id: options.organizationId }) },
     }));
+  }
+
+  /**
+   * A copy of it, your account's own, as the app's Copy makes one: none of the accounts its steps used, none of its
+   * runs, a `per_user` variable emptied for you to fill. Named `name`, else "Copy of" its name; in a team workspace
+   * with `organizationId`.
+   *
+   *     const mine = await Workflow.fromName("Their brief").fork({ name: "My brief" });
+   */
+  async fork(options: { name?: string; organizationId?: string } = {}): Promise<Workflow> {
+    const raw = await this._request<JsonObject>("POST", `${await this.path()}/fork`, {
+      json: compact({ name: options.name, organization_id: options.organizationId }),
+    });
+    return new Workflow({ raw, client: this._client });
   }
 
   protected async _load(): Promise<JsonObject> {
@@ -2699,6 +2831,28 @@ export class Workflow extends ApiObject {
   /** Move the workflow to the trash: its schedules and webhooks stop now, and `restore()` brings it back within 30 days. */
   async delete(): Promise<void> {
     await this._request("DELETE", await this.path());
+  }
+
+  /**
+   * Delete a workflow in your account's trash for good, as the app's Trash does: its runs, files, tables and published
+   * apps go with it, and nothing restores it. Move it to the trash with `delete()` first; `Workflow.trashed()` lists
+   * what's there.
+   */
+  async deleteForGood(): Promise<void> {
+    const id = this._known("id");
+    if (typeof id !== "string") {
+      throw new NotFound("A workflow in the trash is deleted by id.", { nextStep: "Use Workflow.fromId(...).deleteForGood()." });
+    }
+    await this._request("DELETE", `/v1/workflows/${encodeURIComponent(id)}/trash`);
+  }
+
+  /**
+   * Your account's workflows in the trash, the newest deleted first, as the app's Trash lists them: each one's `raw`
+   * holds its `deleted_at` and `purge_after`, when it's deleted for good unless `restore()` brings it back first.
+   */
+  static async trashed(options: { client?: NoClick } = {}): Promise<Workflow[]> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/workflows/trash", { user: null }));
+    return (Array.isArray(raw.data) ? raw.data : []).map((row) => new Workflow({ raw: asObject(row), client: options.client }));
   }
 
   /**
