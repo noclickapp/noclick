@@ -452,9 +452,14 @@ function heldButWithheld(node: Node, server: Node, paths: string[]): boolean {
 
 // ── How the canvas saves ────────────────────────────────────────────────
 
+let tabOrigin: string | null = null;
+
 /** This tab's name for itself on its /v1 edits (`origin`): what the workflow's room hears of its own writes names it,
- *  so it never applies them a second time (its save's answer has them already). */
-export const CANVAS_ORIGIN = `canvas-${crypto.randomUUID()}`;
+ *  so it never applies them a second time (its save's answer has them already). Made on first use, the same after:
+ *  the server build runs on Workers, which refuse random values at module scope. */
+export function canvasOrigin(): string {
+    return (tabOrigin ??= `canvas-${crypto.randomUUID()}`);
+}
 
 let editsClient: NoClick | null = null;
 
@@ -534,7 +539,7 @@ async function sendEdits(
 ): Promise<WorkflowEdit | null> {
     const edit: EditOptions = {
         source: 'canvas',
-        origin: CANVAS_ORIGIN,
+        origin: canvasOrigin(),
         ...(options.ifVersion != null ? { ifVersion: options.ifVersion } : {}),
     };
     // The batch is sent once its function has queued it, so its size decides the options it goes with.

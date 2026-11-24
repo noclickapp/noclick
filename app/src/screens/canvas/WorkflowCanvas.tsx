@@ -317,6 +317,7 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
                 edgeTypes={EDGE_TYPES}
                 {...editing}
                 frozen={readOnly}
+                undo={history.undo}
                 onSelectionChange={onSelectionChange}
                 onPaneContextMenu={editable ? menus.handlePaneContextMenu : undefined}
                 onNodeContextMenu={editable ? menus.handleNodeContextMenu : undefined}

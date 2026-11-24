@@ -23,6 +23,7 @@ import { CopyLinkButton } from '@/ui/CopyLinkButton';
 import { booleanSelectValue, isBooleanSchema, isListSchema, requireOneOfGroupsOf, schemaInfoOf } from '@/screens/canvas/stepSchema';
 import { evaluateRequireOneOf, isFieldApplicable, runsOnAttachedCredentials } from '@/screens/canvas/stepFields';
 import { evaluateShowIf, judgeConfigForm, type ConfigFormValidation } from '@/screens/canvas/configForm';
+import { holdsEmptyStepReference, STEP_REFERENCE_SCAFFOLD, STEP_REFERENCE_SCAFFOLD_CARET } from '@/screens/canvas/expressionSyntax';
 import { NodeSettings } from './NodeSettings';
 import { FieldRequirementBadge, isFieldFilled } from './FieldRequirementBadge';
 import { StepContext } from './reads';
@@ -1074,7 +1075,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
     if (earlyReturn) return earlyReturn;
 
     // Contextual buttons under a focused field, all in ONE low-key row: "Add
-    // reference" (insert a `{{ $('') }}` expression + open the builder), jump to the
+    // reference" (insert a `{{ $('') }}` expression, caret between the quotes, + open the builder), jump to the
     // Input panel ("Show previous nodes"), the Output panel ("Show output"), and — when
     // the field references an array — "Loop over each item" (injects an iteration node).
     // Each shown only when relevant.
@@ -1096,13 +1097,15 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
         // "Add reference" only for a reference-capable text field: a droppable input is
         // registered for this key (so not an array/widget) AND it isn't an enum,
         // dynamic-options, or non-textarea custom widget. The registry presence is the
-        // exact signal that a DroppableTextField is mounted here.
+        // exact signal that a DroppableTextField is mounted here. Hidden while the field
+        // holds a reference with no step picked yet, so clicks don't stack empty ones.
         const insertRef = getInsertReferenceForField(fieldKey);
         const showAddRefBtn = Boolean(
             refAutocomplete && insertRef
             && !fieldProp?.enum
             && !fieldProp?.['x-dynamic-options']
-            && (!fieldProp?.['ui:widget'] || fieldProp['ui:widget'] === 'textarea'),
+            && (!fieldProp?.['ui:widget'] || fieldProp['ui:widget'] === 'textarea')
+            && !holdsEmptyStepReference(fieldValue),
         );
         if (!showInputBtn && !showOutputBtn && !showLoopBtn && !showAddRefBtn) return null;
         const btnClass =
@@ -1113,7 +1116,7 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                     <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()} // keep the field focused so the builder opens
-                        onClick={() => insertRef("{{ $('') }}")}
+                        onClick={() => insertRef(STEP_REFERENCE_SCAFFOLD, STEP_REFERENCE_SCAFFOLD_CARET)}
                         className={btnClass}
                         title="Insert a reference / expression"
                     >
