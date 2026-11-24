@@ -225,9 +225,11 @@ export async function listKeys(
 export const TOKEN_SCOPE = 'credentials:token';
 
 /** Scopes a key holds only when they're named, never part of full access: those that read a secret (a provider's raw
- *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows), answering a call NoClick
+ *  token, a card's number, a webhook's signing secret, the keys an agent's terminal shows, the values of a
+ *  workflow's variables), answering a call NoClick
  *  holds for the owner's yes, switching what it holds, accepting the machines usage policy for the company, making
- *  keys, and linking a phone number (which signs in to the account). */
+ *  keys, linking a phone number (which signs in to the account), and making an app's code public (which can't be
+ *  recalled once cloned). */
 export const EXPLICIT_SCOPES: readonly string[] = [
     TOKEN_SCOPE,
     'cards:reveal',
@@ -238,6 +240,8 @@ export const EXPLICIT_SCOPES: readonly string[] = [
     'machines:vetting',
     'keys:create',
     'account:phones',
+    'workflows:variables',
+    'projects:publish',
 ];
 
 /** Every scope but those a key holds only by name: the default for a new key. */
