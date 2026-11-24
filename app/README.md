@@ -48,8 +48,8 @@ neither a key nor the network.
 
 To look at the console's pages without touching an account, run `pnpm dev` and open
 `http://localhost:5173/developers-lab` (or `/resources-lab` for Resources, `/work-lab` for Work, `/chat-lab` for
-Chat, `/connections-lab` for Connections, `/usage-lab` for Usage, `/settings-lab` for Settings): the same pages over
-made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
+Chat, `/connections-lab` for Connections, `/usage-lab` for Usage, `/settings-lab` for Settings, `/workflows-lab` for
+Automations): the same pages over made-up data. The app still wants its settings and your sign-in first, though the lab calls nothing. See
 [the lab](#the-lab).
 
 To deploy it, set the four variables in your host's settings and serve it over **https**: away from `localhost` the
@@ -57,6 +57,34 @@ sign-in cookie is `Secure`, so a browser keeps it only over https, and the app t
 https only (`Strict-Transport-Security`, for a year). A proxy you put in front of the app must pass the original
 `Host` header on (with nginx, `proxy_set_header Host $host;`), since signing in checks that the form came from the
 app's own address, and should say which scheme it took the request over (`X-Forwarded-Proto`).
+
+It also runs as a Worker, on Cloudflare Workers or any host of the same runtime: [`worker.js`](worker.js) answers
+with the same server build, and [`wrangler.jsonc`](../wrangler.jsonc) at the repository's root is its config (at the
+root because the app compiles the SDK's source beside it). From the root, `npx wrangler deploy` installs, builds and
+deploys it; its three settings are the Worker's secrets (`npx wrangler secret put NOCLICK_API_KEY`, then the other
+two), which [`.dev.vars.example`](../.dev.vars.example) names for a host that asks for them. Neither file is read by
+`pnpm dev`, `pnpm build` or `pnpm start`.
+
+Vercel needs no file: import the repository with `app` as the project's root directory (the whole repository is
+still cloned, so the SDK's source is there to build with) and set the three settings as environment variables.
+
+**On NoClick's own app hosting, nobody sets the key.** [`noclick.json`](../noclick.json) at the repository's root
+names the API scopes the app's screens call (`account_key`). NoClick asks the account's owner once, saying in plain
+words what a key with those scopes can do, and then gives each production release `NOCLICK_API_KEY` itself: a key
+that works only while that release serves, is listed among the account's keys, and is revoked when the app is
+deleted. Nobody creates, copies or pastes one. Until the owner approves, every page says the app's key isn't ready
+and why, and it opens by itself once the key works, with no new deploy. A preview or a live editing session is given
+none. The list is every scope the screens use, and none that reads a secret or stands in for the account's owner
+(making keys, answering approvals): add to it when a screen you write calls another part of the API. `APP_PASSWORD`
+and `SESSION_SECRET` are still yours to choose, as the app's secrets there.
+
+The repository's root also has a [`Dockerfile`](../Dockerfile): the app as one container, a Node server on `PORT`
+(3000 unless set). Build it from the root, for the same reason, and hand it the settings:
+
+```bash
+docker build -t noclick-app .
+docker run --env-file app/.env -p 3000:3000 noclick-app
+```
 
 ## The developer console
 
@@ -220,6 +248,10 @@ results opened from a row of the log.
 | `canvas.runs.results` | One run's results, opened from the run log | What each step did (`GET /v1/workflows/{id}/runs/{run}`), read again as its steps move, with a note that a run replayed on the canvas and its agents' calls are in NoClick's app |
 | `canvas.testRun` | What a workflow's Test Run reads (`testRun/reads.ts`): the situations it can stage, a run of one, where the workflow's own test runs are kept, what it still needs connected, sharing a finished run | The workflow's test runs (`GET /v1/workflows/{id}/test_runs`), a run as a `workflow.rehearse` operation (`POST .../rehearsals`) whose steps arrive when it ends, the workflow's own test runs in its settings (an `update_workflow` edit), what's unconnected from the workflow's own steps (`GET /v1/workflows/{id}`); nothing is shared |
 | `canvas.frames` | What the frames of a Test Run and of a run's story draw with (`testRun/frameParts.tsx`): a message's or a reply's text from its Markdown, and the mark of work under way | Markdown drawn as a README is; a live dot |
+| `canvas.setup` | What a workflow's Setup tab reads (`setup/reads.ts`): how each step stands (the lens its steps are derived through), proof that a chosen account works, the workflow's setup check, the staged message's marks, what the tab remembers, asking the Test Run for a run | Each step judged against its type (`GET /v1/step_types/{type}`: its settings' schema, whether what it does needs an account); an account proved by its connection (`POST /v1/connections/{ref}/verify`); the check from the workflow's readiness (`GET /v1/workflows/{id}`); marks from the catalog the host loaded, if any |
+| `canvas.setup.runtime` | The Setup tab's step that chooses which agent runs the workflow | The model the agent step names, with the AI account it runs on connected through `connect.model`; never held unmet (whether a model runs on NoClick's key is NoClick's to know); it says that choosing among NoClick's models and coding agents is in NoClick's app |
+| `canvas.setup.mcp` | The Setup tab's last step for a workflow that serves its tools to a coding agent: connecting one | No link is shown (it's a capability the API hands to no app's key): it says the link is in NoClick's app, and opens the workflow there |
+| `canvas.setup.cover` | What covers the page on the way into a workflow's Setup | Nothing: this app opens Setup in place, on a workflow it already holds |
 
 Work's are listed under [Work](#work).
 
@@ -264,6 +296,39 @@ What differs from NoClick's own Resources:
 - A workflow is named, not opened: this app has no canvas.
 - "Ask NoClick" drafts the message in this app's chat, and the ⌘K palette opens any item the page listed, from any
   page of the frame.
+
+## Automations
+
+`/workflows` lists your account's workflows (`src/screens/workflows`), the ones your key can open, under the folders
+your account keeps them in (`Workflow.list`, `Workflow.folders`), and makes a new one by name. Each opens at
+`/workflows/<id>`, one workflow's page:
+
+- **Its canvas** (`src/screens/canvas/WorkflowCanvas.tsx`): its steps and connections, drawn, moved, added from the
+  palette, connected, copied, removed and brought back, each change saved as the edit it is (`POST
+  /v1/workflows/{id}/edits`, on the version the page holds); the workflow run and stopped; its run log behind the pill
+  and one run's results a row away.
+- **A step's panel** (`StepPanel.tsx`), opened by selecting it: its settings form and its accounts (the canvas's step
+  form, with what `GET /v1/step_types/{type}` says of its type). What it changes is the canvas's own edit, saved once.
+- **Setup** (`?tab=setup`): the steps the workflow still needs before it runs for real (an account, a variable, a
+  setting, which agent runs it), then the message a test run stages. See the `canvas.setup` slots. A variable that
+  has a value shows as saved and hidden here: the API reads a variable's value back only to the workflow's owner and
+  the teammates who can edit it (`GET /v1/workflows/{id}/variables`: signed in, or a key that names
+  `workflows:variables`, which this app's key doesn't), so the page never asks. A host whose client is a person's own
+  passes `asOwner` to `WorkflowPage`, and the values show in Setup and in a field bound to one.
+- **Test Run** (`?tab=test`): the workflow played against a simulated world.
+- **Build**: NoClick's builder beside the page (`canvas.builder`; the frame draws it): say what to add or change.
+
+Another writer's change and a run's moves arrive through the account's change stream where the API serves it. A key
+that may only look at a workflow (its read says `viewer`) gets the page read-only: nothing moves, no step is added, it
+isn't run, and a step's panel takes no input. `src/screens/workflows/workflowsAsKey.test.tsx` opens the list and one
+workflow's page whole as a key and fails if one asks for what only the owner may have, reaches anything but the app's
+own client, or reads or sends a secret. `/workflows-lab` is the pages over a made-up account
+(`src/screens/workflows/fixtures.ts`, `lab/`) in development only: `?scene=` picks a view, and `?as=key` answers as
+the API answers a key.
+
+Not here yet: folders are only read (made, renamed and filed in NoClick's app or with the SDK), a workflow is renamed
+and deleted there too, and what only NoClick's app has on its canvas (other people editing live, the Interface tab,
+an agent's chat, sharing) stands as each slot's standard says.
 
 ## Usage
 
@@ -490,7 +555,7 @@ channels':
 
 ## The frame
 
-The home, `/chat`, `/work`, `/connections`, `/resources`, `/settings` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
+The home, `/chat`, `/work`, `/workflows`, `/connections`, `/resources`, `/settings` and `/usage` draw inside one frame (`src/screens/shell/AppFrame.tsx`), the one NoClick's
 own app draws its pages in. A host tells it where its pages are (`places`): this app's layout route
 (`src/routes/shell.tsx`) hands it its routes, NoClick's own app its `?tab=` addresses. On a laptop: a sidebar that
 folds to a rail (`⌘\`) and widens from its edge, with your account's name atop it (back to the home), search, the

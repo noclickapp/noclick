@@ -428,6 +428,30 @@ def test_an_agent_steps_secrets_go_by_name_whatever_names_them(api, client):
         {"op": "update_step", "id": "writer", "settings": {"secrets": ["warehouse"]}}]
 
 
+def test_a_setting_only_the_person_knows_is_left_for_them(api, client):
+    """``left_for_user=`` on a step's update, a batch's add or update and the workflow's add: the settings' names,
+    sent as the edit takes them; one name alone is a list of it. Never beside a made-up value."""
+    left = {"config_valid": False, "left_for_user": ["to_number"]}
+    route = api.post(EDITS).respond(json=edited(5, [{"op": "update_step", "id": "writer", "changed": True}],
+                                               graph=bare(), steps={"writer": left}))
+    workflow = nc.Workflow.from_id(WF)
+    step = workflow.step("writer").update(left_for_user=["to_number"])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "update_step", "id": "writer", "left_for_user": ["to_number"]}]
+    assert step.verdict == left
+    workflow.step("writer").update(settings={"body": "Down."}, left_for_user="to_number")
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "update_step", "id": "writer", "settings": {"body": "Down."}, "left_for_user": ["to_number"]}]
+
+    with workflow.edit() as e:
+        e.add_step("automation-http-request", id="check", operation="send_http_get_request", left_for_user=["url"])
+        e.update_step("writer", left_for_user=["from_number", "to_number"])
+    assert body(route.calls.last.request)["ops"] == [
+        {"op": "add_step", "type": "automation-http-request", "id": "check", "operation": "send_http_get_request",
+         "left_for_user": ["url"]},
+        {"op": "update_step", "id": "writer", "left_for_user": ["from_number", "to_number"]}]
+
+
 # --- refusals ----------------------------------------------------------------------------
 
 def test_a_stale_batch_is_a_conflict_carrying_the_workflow_as_it_stands(api, client):

@@ -375,6 +375,7 @@ function renderKeyValueWidget({ fieldKey, fieldSchema, value, onChange }: Widget
             onChange={(rows) => onChange(fieldKey, rows)}
             keyPlaceholder={isQuery ? 'param' : 'Header-Name'}
             addLabel={isQuery ? 'Add parameter' : 'Add header'}
+            withheldRows={fieldSchema?.['x-withheld-rows']}
         />
     );
 }

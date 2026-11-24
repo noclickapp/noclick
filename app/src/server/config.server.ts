@@ -12,6 +12,9 @@ export interface AppConfig {
     sessionSecret: string;
     /** NoClick's API, without a trailing slash. */
     apiUrl: string;
+    /** Whether NoClick itself gave the app its key (a copy deployed on NoClick's own app hosting): nobody pasted it,
+     *  and it works once the account's owner has approved it (client.server.ts asks where it stands). */
+    keyGiven: boolean;
 }
 
 /** A setting that is missing or unusable: its name, what is wrong and how to fix it. Never its value. */
@@ -19,7 +22,13 @@ export interface ConfigProblem {
     name: string;
     problem: string;
     fix: string;
+    /** The host gives this setting itself, so there is nothing for whoever runs the app to set. */
+    given?: true;
 }
+
+/** How a key NoClick gave the app itself starts: the bearer its app hosting hands each production release of an app
+ *  whose repository asks for one (noclick.json at the repository's root). */
+const GIVEN_KEY_PREFIX = 'nk_app_';
 
 export type ConfigCheck = { ok: true; config: AppConfig } | { ok: false; problems: ConfigProblem[] };
 
@@ -43,7 +52,15 @@ export function checkConfig(env: Environment = environment()): ConfigCheck {
     const problems: ConfigProblem[] = [];
 
     const key = env.NOCLICK_API_KEY ?? '';
-    if (!key.trim()) {
+    if (!key.trim() && hostedOnNoClick(env)) {
+        // NoClick's hosting sets this name itself, and refuses anyone else's value for it: there is nothing to paste.
+        problems.push({
+            name: 'NOCLICK_API_KEY',
+            problem: 'is given to this app by NoClick, and this release has none.',
+            fix: 'NoClick gives each production release its key itself, once the account’s owner approves what the app asks for (noclick.json). A preview or a live editing session is given none: open the app at its production address.',
+            given: true,
+        });
+    } else if (!key.trim()) {
         problems.push({
             name: 'NOCLICK_API_KEY',
             problem: 'is not set.',
@@ -86,7 +103,13 @@ export function checkConfig(env: Environment = environment()): ConfigCheck {
     if (typeof apiUrl !== 'string') problems.push(apiUrl);
 
     if (problems.length > 0 || typeof apiUrl !== 'string') return { ok: false, problems };
-    return { ok: true, config: { password, sessionSecret, apiUrl } };
+    return { ok: true, config: { password, sessionSecret, apiUrl, keyGiven: key.startsWith(GIVEN_KEY_PREFIX) } };
+}
+
+/** Whether this is a release on NoClick's own app hosting, which names the app and gives it a credential of its own
+ *  in every release's environment. */
+function hostedOnNoClick(env: Environment): boolean {
+    return Boolean(env.NOCLICK_PROJECT_ID?.trim() && env.NOCLICK_DEPLOYMENT_TOKEN?.trim());
 }
 
 /** `NOCLICK_API_URL` as the base the proxy forwards to, or why it can't be. */
