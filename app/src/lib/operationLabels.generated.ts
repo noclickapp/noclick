@@ -867,6 +867,7 @@ bookspot
 bookwhen
 botcake-1
 botconversa
+botify
 botmaker
 botpress
 botsonic
