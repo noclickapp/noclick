@@ -8,7 +8,7 @@
 import { useMemo } from 'react';
 import { useReferenceAutocomplete } from './ReferenceAutocompleteContext';
 import { useExpressionPreview } from './useExpressionPreview';
-import type { ScannedBlock } from '@/screens/canvas/expressionSyntax';
+import { isEmptyStepReference, type ScannedBlock } from '@/screens/canvas/expressionSyntax';
 import { SerializedIcon } from '@/ui/SerializedIcon';
 import { getNodeIconMeta } from '@/lib/nodeIconRegistry';
 
@@ -134,7 +134,7 @@ export function ExpressionPanel({ block, value, onChange }: ExpressionPanelProps
 
     // No node chosen yet (empty, or an empty `$('')` placeholder) — show the node picker
     // and don't evaluate (there's nothing to resolve).
-    const needsNode = inner === '' || /\$\(\s*''\s*\)/.test(inner);
+    const needsNode = inner === '' || isEmptyStepReference(inner);
     const preview = useExpressionPreview(needsNode ? '' : inner);
 
     // Replace just this `{{ ... }}` block in the field value, leaving surrounding text.
