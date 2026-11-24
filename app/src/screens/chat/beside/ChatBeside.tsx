@@ -9,6 +9,7 @@
 // nothing needs the person or works for them. The chat's own agent is never one of its helpers.
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useReportHeld } from '@/sdk/held';
 import { useSlot } from '@/slots';
 import { useAgentsAtWork, stopWork } from '../useAgentsAtWork';
 import { coordinatorAgent } from '@/screens/work/coordinatorAgent';
@@ -106,6 +107,7 @@ export function ChatBeside({ client, draft, aside, width, onReserve }: ChatBesid
     const [helper, watch] = useWatching();
     const [rail, setRail] = useState(false);
     const [stopping, setStopping] = useState<BesideItem | null>(null);
+    const reportHeld = useReportHeld({ client });
     // Each Review opens the dialog afresh, on its ask.
     const [review, setReview] = useState<{ on: string; session: number } | null>(null);
     const sessions = useRef(0);
@@ -156,6 +158,7 @@ export function ChatBeside({ client, draft, aside, width, onReserve }: ChatBesid
             await stopWork(client, b.agent.jobId);
             toast(`Stopped ${b.agent.name}’s task`);
         } catch (error) {
+            if (reportHeld(error, b.agent ? `Stop ${b.agent.name}’s task` : 'Stop the loop')) return;
             toast('Couldn’t stop it', { description: error instanceof Error ? error.message : String(error) });
         }
     };

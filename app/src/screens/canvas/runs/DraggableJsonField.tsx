@@ -9,6 +9,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { ChevronRight, ChevronDown, GripVertical, Copy, Check, Type, Hash, ToggleLeft, CircleOff } from 'lucide-react';
 import { useReferenceHover, isPathHighlighted, shouldScrollToPath, shouldExpandPath } from '@/screens/canvas/form/ReferenceHoverContext';
 import { AudioPlayer } from './AudioPlayer';
+import { useLater } from '@/lib/useLater';
 
 // Helper to detect and parse JSON strings
 const tryParseJsonString = (value: string): { isJson: boolean; parsed: any } => {
@@ -344,17 +345,18 @@ const ExpandableStringValue = ({
 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [copied, setCopied] = useState(false);
+    const later = useLater();
 
     const handleCopy = useCallback(async (e: React.MouseEvent) => {
         e.stopPropagation();
         try {
             await navigator.clipboard.writeText(value);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            later(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
         }
-    }, [value]);
+    }, [value, later]);
 
     const toggleExpand = useCallback(() => {
         setIsExpanded(prev => !prev);
