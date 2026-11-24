@@ -15,6 +15,7 @@ GET /v1/workflows/wf_orders/runs
 GET /v1/workflows/wf_orders/runs/counts
 GET /v1/workflows/wf_orders/runs/run_new
 GET /v1/workflows/wf_orders/test_runs
+GET /v1/workflows/wf_orders/variables
 POST /v1/workflows
 POST /v1/workflows/wf_orders/edits
 POST /v1/workflows/wf_orders/runs

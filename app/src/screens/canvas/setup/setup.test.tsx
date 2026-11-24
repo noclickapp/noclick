@@ -9,7 +9,7 @@
 import { cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import type { Edge, Node } from '@xyflow/react';
 import { MotionGlobalConfig } from 'framer-motion';
-import { NoClick } from 'noclick';
+import { NoClick, Workflow } from 'noclick';
 import { useState } from 'react';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
@@ -23,6 +23,7 @@ import { declaredVariables, setupFetch, setupGraph, VARIABLE_SECRET } from './fi
 import { SetupView } from './SetupView';
 import {
     definitionsOfSettings,
+    heldBackValues,
     HIDDEN_VARIABLE_PLACEHOLDER,
     holdsHiddenValue,
     isVariableFilled,
@@ -72,7 +73,7 @@ interface Opened {
 
 /** The tab on the fixtures' workflow, its variables read and written on the API as the app's page does, and what it
  *  hands its host (a step's accounts) applied to the workflow, as a canvas applies it. */
-function open(more: { slack?: boolean; variables?: Json[]; hostHolds?: WorkflowVariableDefinition[] } = {}): Opened {
+function open(more: { slack?: boolean; variables?: Json[]; hostHolds?: WorkflowVariableDefinition[]; asOwner?: boolean } = {}): Opened {
     const shown = graph();
     const calls: Call[] = [];
     const told: string[] = [];
@@ -85,7 +86,7 @@ function open(more: { slack?: boolean; variables?: Json[]; hostHolds?: WorkflowV
     });
     function Tab() {
         const [nodes, setNodes] = useState(shown.nodes);
-        const read = useSavedVariables(more.hostHolds ? undefined : WORKFLOW);
+        const read = useSavedVariables(more.hostHolds ? undefined : WORKFLOW, { asOwner: more.asOwner });
         // A host that holds the variables itself (a canvas that read them with its workflow) and saves the list whole.
         const [held, setHeld] = useState(more.hostHolds ?? []);
         const saved = more.hostHolds
@@ -261,6 +262,39 @@ describe('a workflow’s Setup tab on the platform API', () => {
         expect(JSON.stringify(opened.calls)).not.toContain(VARIABLE_SECRET);
     });
 
+    it('shows the workflow’s owner a held-back value from their own read of it, and writes it only once changed', async () => {
+        const opened = open({ asOwner: true });
+        await waitFor(() => expect(heading(opened.container)).toBe('Slack tools'));
+        await pick(opened, 'Reply to');
+        await waitFor(() => expect(heading(opened.container)).toBe('Reply to'));
+        // Read apart from the graph, once, and shown in the field a key's page leaves hidden.
+        expect(opened.calls.filter((c) => line(c) === `GET /v1/workflows/${WORKFLOW}/variables`)).toHaveLength(1);
+        const input = opened.container.querySelector('input[placeholder="Enter a value"]') as HTMLInputElement;
+        expect(input.value).toBe(VARIABLE_SECRET);
+        expect(railRow(opened, 'Variables')).toContain('1/2');
+        // Left as it was read, by blur or Enter, nothing is written.
+        fireEvent.blur(input);
+        fireEvent.keyDown(input, { key: 'Enter' });
+        const edits = () => opened.calls.filter((c) => line(c) === `POST /v1/workflows/${WORKFLOW}/edits`).map((e) => e.body.ops);
+        expect(edits()).toEqual([]);
+        // Changed, it's written once, and nothing else of the list goes with it.
+        fireEvent.change(input, { target: { value: 'orders@acme.example' } });
+        fireEvent.blur(input);
+        await waitFor(() => expect(opened.variables.held[1].value).toBe('orders@acme.example'));
+        expect(edits()).toEqual([[{ op: 'define_variable', name: 'reply_to', value: 'orders@acme.example' }]]);
+        // Nothing the page sent carries the value it read.
+        expect(JSON.stringify(opened.calls)).not.toContain(VARIABLE_SECRET);
+    });
+
+    it('never asks for the values where its client isn’t the owner’s: each stays hidden', async () => {
+        const opened = open();
+        await waitFor(() => expect(heading(opened.container)).toBe('Slack tools'));
+        await pick(opened, 'Reply to');
+        await waitFor(() => expect(heading(opened.container)).toBe('Reply to'));
+        expect(opened.container.querySelector(`input[placeholder="${HIDDEN_VARIABLE_PLACEHOLDER}"]`)).toBeTruthy();
+        expect(opened.calls.map(line)).not.toContain(`GET /v1/workflows/${WORKFLOW}/variables`);
+    });
+
     it('asks for a variable with no value yet, and writes what’s typed once', async () => {
         // Neither is bound to a field: each is asked in a plain field. One has no value yet, one has.
         const opened = open({ variables: [{ name: 'region', value: '' }, { name: 'reply_to', value: VARIABLE_SECRET }] });
@@ -377,6 +411,50 @@ describe('a workflow’s Setup tab on the platform API', () => {
         ]);
         // A variable held whole is saved as it stands, an emptied value too.
         expect(savedVariableDefinitions([{ name: 'region', value: '', per_user: true }])).toEqual([{ name: 'region', value: '', per_user: true }]);
+
+        // Where the reader's own read of the values answered (the workflow's owner's), a held-back one is shown, by
+        // name: the two reads are apart, so one the values no longer list stays hidden.
+        const values = [{ name: 'newer', value: 'n' }, { name: 'api_base', value: 'https://eu.example' }, { name: 'region', value: 'us' }];
+        const [read, , untouched] = withHiddenValues(rows, ['variable_definitions[0].value'], values);
+        expect(read).toEqual({ name: 'api_base', value: 'https://eu.example', read: { name: 'api_base', value: 'https://eu.example' } });
+        expect(untouched).toEqual({ name: 'team', value: 'eu' });
+        expect(withHiddenValues(rows, ['variable_definitions[0].value'], [{ name: 'other', value: 'x' }])[0]).toEqual(hidden);
+        expect([isVariableFilled(read), holdsHiddenValue(read)]).toEqual([true, false]);
+        // A save names a read value only once its person changed it, or its name (a save keeps a value under the
+        // variable's name); left as read, or typed over and back, it stays the server's. The mark is never saved.
+        const sent = (definition: WorkflowVariableDefinition) => savedVariableDefinitions([definition])[0];
+        expect(sent(read)).toEqual({ name: 'api_base' });
+        expect(sent({ ...read, description: 'Where the API lives', per_user: true })).toEqual({ name: 'api_base', description: 'Where the API lives', per_user: true });
+        expect(sent({ ...read, value: 'https://us.example' })).toEqual({ name: 'api_base', value: 'https://us.example' });
+        expect(sent({ ...read, value: '' })).toEqual({ name: 'api_base', value: '' });
+        expect(sent({ ...read, name: 'api_root' })).toEqual({ name: 'api_root', value: 'https://eu.example' });
+    });
+
+    it('asks for the held-back values only of a workflow its reader owns or can edit that holds some, and takes a refusal as none read', async () => {
+        const asked: string[] = [];
+        const answers = (status: number) =>
+            new NoClick({
+                apiKey: 'nk_test', baseUrl: 'https://api.test', maxRetries: 0,
+                fetch: async (input) => {
+                    asked.push(new URL(String(input instanceof Request ? input.url : input)).pathname);
+                    return status === 200
+                        ? Response.json({ object: 'workflow_variables', workflow_id: WORKFLOW, version: 4, definitions: [{ name: 'reply_to', value: 'x' }], variables: { page: 3 } })
+                        : Response.json({ error: { type: status === 403 ? 'permission_denied' : status === 404 ? 'not_found' : 'invalid_request', message: 'No.' } }, { status });
+                },
+            });
+        const graph = (more: Json) => ({ access: 'owner', settingsWithheld: ['variable_definitions[0].value'], variablesWithheld: [], ...more }) as never;
+        const read = (status: number, more: Json = {}, asOwner = true) => heldBackValues(Workflow.fromId(WORKFLOW, { client: answers(status) }), graph(more), asOwner);
+        expect((await read(200))?.variables).toEqual({ page: 3 });
+        expect((await read(200, { settingsWithheld: [], variablesWithheld: ['page'] }))?.definitions).toEqual([{ name: 'reply_to', value: 'x' }]);
+        // A teammate who can edit the workflow reads them as its owner does.
+        expect((await read(200, { access: 'editor' }))?.variables).toEqual({ page: 3 });
+        expect(asked).toHaveLength(3);
+        // Not asked: a client that isn't a person's own, someone who only views the workflow, one that holds no value.
+        expect([await read(200, {}, false), await read(200, { access: 'editor' }, false), await read(200, { access: 'viewer' }), await read(200, { access: null }), await read(200, { settingsWithheld: ['graph.nodes[0].url'] })]).toEqual([null, null, null, null, null]);
+        expect(asked).toHaveLength(3);
+        // Refused, or an API that doesn't serve the read yet: none read, no error. Any other failure is one.
+        expect([await read(403), await read(404)]).toEqual([null, null]);
+        await expect(read(400)).rejects.toThrow('No.');
     });
 
     it('ends on the Test Run: what isn’t connected, the workflow’s readiness, and the staged message to run', async () => {

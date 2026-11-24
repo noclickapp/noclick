@@ -2,7 +2,9 @@
 // step selected, its run log and a run's results, its Setup tab and its Test Run (`?tab=setup`, `?tab=test`), acting
 // as the app's key through the app's own server. Another writer's change and a run's moves arrive through the
 // account's change stream, where the API serves it. A key that may only look at the workflow gets it read-only. The
-// builder beside it is the frame's (routes/shell.tsx): the page only opens it.
+// builder beside it is the frame's (routes/shell.tsx): the page only opens it. The values of the workflow's variables
+// are read by its owner and its editors as themselves, which the app's key isn't (`asOwner` left out): a variable that
+// has one shows as saved and hidden.
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router';
 import { Workflow } from 'noclick';
