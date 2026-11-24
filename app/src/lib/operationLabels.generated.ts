@@ -1923,6 +1923,7 @@ returnista
 reviewflowz
 revolut-for-business
 rezdy
+riddle-quiz-maker
 rillet
 ringba
 ringcentral
