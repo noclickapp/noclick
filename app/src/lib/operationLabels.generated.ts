@@ -2130,6 +2130,7 @@ spider
 spike
 spiro
 splitwise
+spoonacular
 spotify
 spotio2
 sprig
