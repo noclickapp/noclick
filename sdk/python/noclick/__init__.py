@@ -150,7 +150,8 @@ from .sandbox import ExecResult, Sandbox, SandboxFiles
 from .secret import Secret
 from .session import Session
 from .step_type import (
-    StepOutputShape, StepType, StepTypeConnection, StepTypeOperation, step_output_shape, step_type, step_types,
+    StepOutputShape, StepSettingsCheck, StepType, StepTypeConnection, StepTypeOperation, check_step_settings,
+    step_output_shape, step_type, step_types,
 )
 from .tool_call import ToolCall, ToolCallSummary
 from .trash import TrashItem
@@ -172,7 +173,7 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunStep, Step, StepLastRun, StepOption,
+    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunInputs, RunStep, Step, StepLastRun, StepOption,
     StepOptions,
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuilder, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowFolderListing, WorkflowGraph, WorkflowRehearsal, WorkflowRun,
@@ -251,7 +252,7 @@ __all__ = [
     "WorkflowDraftResult", "WorkflowStep", "WorkflowApproval", "WorkflowRehearsal", "WorkflowTestRun",
     "WorkflowGraph", "Step", "StepOption", "StepOptions", "StepPublication", "StepValue", "EditBatch", "WorkflowEdit",
     "WorkflowVersion", "WorkflowVariables", "WorkflowSetup",
-    "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType",
+    "WorkflowFile", "WorkflowTable", "TableRow", "RowsPage", "step_types", "step_type", "StepType", "check_step_settings", "StepSettingsCheck", "RunInputs",
     "StepTypeOperation", "StepTypeConnection", "WorkflowFolder", "WorkflowFolderListing", "workflow_examples", "workflow_example",
     "WorkflowExample",
     "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "StepLastRun", "ExpressionPreview",

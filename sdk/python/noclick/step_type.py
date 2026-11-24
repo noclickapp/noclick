@@ -182,6 +182,40 @@ async def step_type(name: str, *, kind: Optional[str] = None, query: Optional[st
 
 
 @dataclass(frozen=True)
+class StepSettingsCheck:
+    """Whether settings of a step type would run (``check_step_settings``): ``valid``, the
+    ``errors`` in the way, and the set of settings they meet (``satisfied_set``, ``default``;
+    ``None`` when none)."""
+
+    step_type: str
+    valid: bool
+    errors: List[Any]
+    satisfied_set: Optional[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@synced
+async def check_step_settings(name: str, settings: Dict[str, Any], *,
+                              client: Optional[Client] = None) -> StepSettingsCheck:
+    """Whether ``settings`` of the step type ``name`` would run, as a run judges them (a
+    form's, saved or not): nothing is read or written. Needs the ``workflows`` scope.
+
+    Returns:
+        The ``StepSettingsCheck``.
+
+    Usage::
+
+        check = noclick.check_step_settings("log", {"message": "Hello"})
+        if not check.valid:
+            print(check.errors)
+    """
+    raw = await resolve_client(client).request("POST", f"/v1/step_types/{path_segment(name)}/check",
+                                               json={"settings": settings}, user=None) or {}
+    return StepSettingsCheck(raw.get("step_type") or name, raw.get("valid") is True, list(raw.get("errors") or []),
+                             raw.get("satisfied_set") if isinstance(raw.get("satisfied_set"), str) else None, raw)
+
+
+@dataclass(frozen=True)
 class StepOutputShape:
     """What a step of a type outputs, as your account's own runs and events of it showed it
     (and those of people in a workspace with you), never another account's: ``shape``, its

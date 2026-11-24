@@ -221,7 +221,7 @@ export type {
 export { EditBatch, Step, Workflow, WorkflowBuild, WorkflowGraph } from "./workflow.ts";
 export type {
   AddNoteOptions, AddStepOptions, BuildQuestion, BuildQuestions, ClearedStepState, DraftOptions, DraftStep, EditOptions,
-  ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunStep,
+  ExpressionPreview, GraphEdge, LatestOutputs, NameVersionOptions, Position, PublishOptions, RunInputs, RunStep,
   StepConnection, StepLastRun, StepOption, StepOptions, StepOptionsQuery, StepOutput, StepOutputOptions, StepPublication, StepRef,
   StepTrigger, StepUpdate, StepValue, WorkflowBuilder, WorkflowBuildResult, WorkflowDraftResult, WorkflowEdge, WorkflowEdit,
   WorkflowEndpoint, WorkflowReadiness, WorkflowRehearsal, WorkflowRehearseOptions, WorkflowRun, WorkflowRunCounts,
@@ -229,11 +229,11 @@ export type {
   WorkflowRunOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunWait, WorkflowRunsOptions,
   WorkflowFolder, WorkflowFolderListing, WorkflowPreview, WorkspaceOption, WorkflowStep, WorkflowUpdate, WorkflowUrl, WorkflowVariableDefinition, WorkflowVariables, WorkflowSetup, WorkflowVersion,
 } from "./workflow.ts";
-export { stepOutputShape, stepType, stepTypes } from "./stepType.ts";
+export { checkStepSettings, stepOutputShape, stepType, stepTypes } from "./stepType.ts";
 export { workflowExample, workflowExamples } from "./workflowExample.ts";
 export type { WorkflowExample } from "./workflowExample.ts";
 export type {
-  StepOutputShape, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation, StepTypeOperationKind,
+  StepOutputShape, StepSettingsCheck, StepType, StepTypeConnection, StepTypeKind, StepTypeOperation, StepTypeOperationKind,
 } from "./stepType.ts";
 export { WorkflowApproval } from "./workflowApproval.ts";
 export type {

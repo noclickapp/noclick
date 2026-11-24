@@ -54,12 +54,31 @@ class RunStep:
     error: Optional[str]
     output: Any
     withheld: List[str] = dc_field(default_factory=list)
+    #: Read with ``get_run(id, detail="steps")``: its type and operation in the graph the run ran.
+    type: Optional[str] = None
+    operation: Optional[str] = None
+    #: The fix its error offers (a reconnect, adding funds), where it has one.
+    error_action: Optional[Dict[str, Any]] = None
+    #: An agent step's tool calls in the run, oldest first, as ``/v1/logs`` shows one.
+    tool_calls: List[Dict[str, Any]] = dc_field(default_factory=list)
 
     @classmethod
     def _from(cls, raw: Any) -> "RunStep":
         raw = raw if isinstance(raw, dict) else {}
+        action = raw.get("error_action")
         return cls(raw.get("id") or "", raw.get("name") or "", raw.get("status") or "", raw.get("error"),
-                   raw.get("output"), list(raw.get("withheld") or []))
+                   raw.get("output"), list(raw.get("withheld") or []), raw.get("type"), raw.get("operation"),
+                   action if isinstance(action, dict) else None, list(raw.get("tool_calls") or []))
+
+
+@dataclass(frozen=True)
+class RunInputs:
+    """What came in to a coding harness's reply (``Workflow.run_inputs``): each delivery it
+    answered (``inputs``, the newest 15, each ``{"run_id", "steps"}`` with what its steps
+    output, never a secret), and ``total``, every delivery it answered."""
+
+    inputs: List[Dict[str, Any]]
+    total: int
 
 
 @dataclass(frozen=True)
@@ -239,6 +258,8 @@ class WorkflowRun:
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
     trigger: Optional[str] = None
     waiting_on: Optional[str] = None
+    #: Read with ``get_run(id, detail="steps")``: the graph the run ran, as ``graph()`` reads one (no secret).
+    graph: Optional[Dict[str, Any]] = None
 
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowRun":
@@ -252,6 +273,7 @@ class WorkflowRun:
             started_at=parse_time(raw.get("started_at")), finished_at=parse_time(raw.get("finished_at")),
             steps=[RunStep._from(s) for s in raw.get("steps") or []], raw=raw,
             trigger=raw.get("trigger"), waiting_on=raw.get("waiting_on"),
+            graph=raw["graph"] if isinstance(raw.get("graph"), dict) else None,
         )
 
 
@@ -3387,11 +3409,13 @@ class Workflow(_Object):
         )
 
     @synced
-    async def get_run(self, run_id: str) -> WorkflowRun:
+    async def get_run(self, run_id: str, *, detail: Optional[str] = None) -> WorkflowRun:
         """One run, with what each step did (``steps``: status, error and output, in order).
         While it runs, each step reads as it moves (``running``, then how it ended with its
         output); ``noclick.watch`` says when, with a ``workflow_run`` change naming the run
         (``change`` ``step`` when a step moved, ``run`` when it started or ended).
+        ``detail="steps"`` also reads each step as it ran (its ``type``, ``operation``,
+        ``error_action`` and an agent's ``tool_calls``) and the ``graph`` the run ran.
 
         Returns:
             The ``WorkflowRun``; an unknown id raises ``noclick.NotFound``.
@@ -3403,7 +3427,28 @@ class Workflow(_Object):
             for step in intake.get_run(failed.id).steps:
                 print(step.name, step.status, step.error)
         """
-        return WorkflowRun._from(await self._request("GET", f"{await self._path()}/runs/{run_id}"))
+        return WorkflowRun._from(await self._request("GET", f"{await self._path()}/runs/{run_id}",
+                                                    params={"detail": detail}))
+
+    @synced
+    async def run_inputs(self, run_id: str) -> RunInputs:
+        """What came in to a coding harness's reply, the run that recorded it: such a run
+        never fired its trigger, so each delivery it answered (hidden from ``runs()``) comes
+        with what its steps output, the newest 15, never a secret.
+
+        Returns:
+            The ``RunInputs``: each delivery's ``run_id`` and ``steps`` (``RunStep``), and ``total``.
+
+        Usage::
+
+            intake = noclick.Workflow.from_name("support-agent")
+            came = intake.run_inputs(intake.runs(limit=1)[0].id)
+            for delivery in came.inputs:
+                print(delivery["run_id"], [step.output for step in delivery["steps"]])
+        """
+        raw = await self._request("GET", f"{await self._path()}/runs/{run_id}/inputs") or {}
+        return RunInputs([{"run_id": d.get("run_id"), "steps": [RunStep._from(s) for s in d.get("steps") or []]}
+                          for d in raw.get("data") or []], int(raw.get("total") or 0))
 
     @synced
     async def stop_run(self, run_id: str, *, user: Any = AMBIENT) -> WorkflowRun:

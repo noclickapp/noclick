@@ -145,6 +145,20 @@ export interface RunStep {
   error: string | null;
   output: unknown;
   withheld: string[];
+  /** Read with `getRun(id, { detail: "steps" })`: its type and operation in the graph the run ran, null otherwise. */
+  type: string | null;
+  operation: string | null;
+  /** The fix its error offers (a reconnect, adding funds), where it has one. */
+  errorAction: JsonObject | null;
+  /** An agent step's tool calls in the run, oldest first, as `/v1/logs` shows one. */
+  toolCalls: JsonObject[];
+}
+
+/** What came in to a coding harness's reply (`Workflow.runInputs`): each delivery it answered, the newest 15, with
+ *  what its steps output (never a secret: `withheld`); `total` counts every delivery it answered. */
+export interface RunInputs {
+  inputs: { runId: string; steps: RunStep[] }[];
+  total: number;
 }
 
 /**
@@ -200,6 +214,9 @@ export interface WorkflowRun {
   startedAt: Date | null;
   finishedAt: Date | null;
   steps: RunStep[];
+  /** Read with `getRun(id, { detail: "steps" })`: the graph the run ran, as `graph()` reads one (no secret), else
+   *  null. */
+  graph: JsonObject | null;
   raw: JsonObject;
 }
 
@@ -307,6 +324,7 @@ export function toWorkflowRun(value: unknown): WorkflowRun {
     startedAt: parseTime(raw.started_at),
     finishedAt: parseTime(raw.finished_at),
     steps: Array.isArray(raw.steps) ? raw.steps.map(toRunStep) : [],
+    graph: raw.graph && typeof raw.graph === "object" ? asObject(raw.graph) : null,
     raw,
   };
 }
@@ -320,6 +338,10 @@ function toRunStep(value: unknown): RunStep {
     error: str(raw.error),
     output: raw.output ?? null,
     withheld: asList(raw.withheld).map(String),
+    type: str(raw.type),
+    operation: str(raw.operation),
+    errorAction: raw.error_action && typeof raw.error_action === "object" ? asObject(raw.error_action) : null,
+    toolCalls: asList(raw.tool_calls).map(asObject),
   };
 }
 
@@ -2934,11 +2956,30 @@ export class Workflow extends ApiObject {
 
   /**
    * One run, with what each step did (`steps`: status, error and output, in order); an unknown id throws `NotFound`.
+   * `detail: "steps"` also reads each step as it ran (its `type`, `operation`, `errorAction` and an agent's
+   * `toolCalls`) and the `graph` the run ran.
    * While it runs, each step reads as it moves (`running`, then how it ended with its output); `watch` says when, with a
    * `workflow_run` change naming the run (`change` `step` when a step moved, `run` when it started or ended).
    */
-  async getRun(runId: string): Promise<WorkflowRun> {
-    return toWorkflowRun(await this._request("GET", `${await this.path()}/runs/${runId}`));
+  async getRun(runId: string, options: { detail?: "steps" } = {}): Promise<WorkflowRun> {
+    return toWorkflowRun(await this._request("GET", `${await this.path()}/runs/${runId}`, {
+      query: { detail: options.detail },
+    }));
+  }
+
+  /**
+   * What came in to a coding harness's reply, the run that recorded it: such a run never fired its trigger, so each
+   * delivery it answered (hidden from `runs()`) comes with what its steps output, the newest 15, never a secret.
+   */
+  async runInputs(runId: string): Promise<RunInputs> {
+    const raw = asObject(await this._request("GET", `${await this.path()}/runs/${runId}/inputs`));
+    return {
+      inputs: asList(raw.data).map((item) => {
+        const input = asObject(item);
+        return { runId: str(input.run_id) ?? "", steps: asList(input.steps).map(toRunStep) };
+      }),
+      total: Number(raw.total ?? 0),
+    };
   }
 
   /**

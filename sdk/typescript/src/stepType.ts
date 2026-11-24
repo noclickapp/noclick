@@ -180,6 +180,37 @@ export async function stepType(
   return toStepType(asObject(raw));
 }
 
+/** Whether settings of a step type would run (`checkStepSettings`): `valid`, the `errors` in the way, and the set
+ *  of settings they meet (`satisfiedSet`, `default`; null when none). */
+export interface StepSettingsCheck {
+  stepType: string;
+  valid: boolean;
+  errors: unknown[];
+  satisfiedSet: string | null;
+  raw: JsonObject;
+}
+
+/**
+ * Whether `settings` of the step type `name` would run, as a run judges them (a form's, saved or not): nothing is read
+ * or written. Needs the `workflows` scope.
+ *
+ *     const check = await checkStepSettings("log", { message: "Hello" });
+ *     if (!check.valid) console.log(check.errors);
+ */
+export async function checkStepSettings(
+  name: string,
+  settings: JsonObject,
+  options: { client?: NoClick } = {},
+): Promise<StepSettingsCheck> {
+  const raw = asObject(await resolveClient(options.client).request(
+    "POST", `/v1/step_types/${encodeURIComponent(name)}/check`, { json: { settings }, user: null }));
+  return {
+    stepType: String(raw.step_type ?? name), valid: raw.valid === true,
+    errors: Array.isArray(raw.errors) ? raw.errors : [],
+    satisfiedSet: typeof raw.satisfied_set === "string" ? raw.satisfied_set : null, raw,
+  };
+}
+
 /**
  * What a step of a type outputs, as your account's own runs and events of it showed it (and those of people in a
  * workspace with you), never another account's: `shape`, its fields' names and types, with `suggestedRefs`, the few
