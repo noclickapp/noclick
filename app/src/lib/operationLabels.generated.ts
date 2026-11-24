@@ -1087,6 +1087,7 @@ dialpad
 diffchecker
 digicert
 digistore24
+digitalnz
 digitalocean
 directiq
 directus
