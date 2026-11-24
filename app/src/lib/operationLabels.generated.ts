@@ -1752,6 +1752,7 @@ onesignal
 onlyoffice-docspace
 open-sea
 openalex
+openapi
 opencage
 opendatasoft
 openfigi
