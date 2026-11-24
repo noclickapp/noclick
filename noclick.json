@@ -1,0 +1,35 @@
+{
+    "account_key": {
+        "scopes": [
+            "agents",
+            "apps",
+            "brand",
+            "browsers",
+            "cards",
+            "channels",
+            "credentials:request",
+            "credentials:use",
+            "databases",
+            "dicts",
+            "domains",
+            "domains:buy",
+            "humans",
+            "inbox",
+            "machines",
+            "mcp_servers",
+            "operations",
+            "phone",
+            "policy",
+            "queues",
+            "repos",
+            "sandboxes",
+            "secrets",
+            "storage",
+            "usage",
+            "users",
+            "volumes",
+            "webhooks",
+            "workflows"
+        ]
+    }
+}

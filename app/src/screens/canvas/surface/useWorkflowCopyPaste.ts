@@ -8,6 +8,7 @@ import type { Edge, Node } from '@xyflow/react';
 import { toast } from 'sonner';
 import { useSlot } from '@/slots';
 import { CLIPBOARD } from '../slots';
+import { useLater } from '@/lib/useLater';
 import { parseClipboardContent, type ClipboardParseResult } from './clipboard/parse';
 
 export interface CopyPasteListeners {
@@ -49,6 +50,7 @@ function typing(): boolean {
 
 export function useWorkflowCopyPaste({ nodes, edges, active, setNodes, setEdges, screenToFlowPosition, captureState, claim, on }: CopyPasteOptions): CopyPaste {
     const settingsOf = useSlot(CLIPBOARD).useSettingsOf();
+    const later = useLater();
     const listeners = useRef(on);
     listeners.current = on;
     const claims = useRef(claim);
@@ -139,10 +141,10 @@ export function useWorkflowCopyPaste({ nodes, edges, active, setNodes, setEdges,
                 newEdges = [...existing, ...read.edges];
                 return newEdges;
             });
-            setTimeout(() => captureState(newNodes, newEdges), 0);
+            later(() => captureState(newNodes, newEdges));
             listeners.current?.pasted?.(placed, read.edges, read);
         },
-        [setNodes, setEdges, screenToFlowPosition, captureState]
+        [setNodes, setEdges, screenToFlowPosition, captureState, later]
     );
 
     const pasteFromClipboard = useCallback(

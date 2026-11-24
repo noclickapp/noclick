@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Bell, BellOff, ChevronRight, MessageCircle, MoreHorizontal, Pencil, Settings, Square, Trash2, X } from 'lucide-react';
 import { Agent, Operation, Workspace } from 'noclick';
 import { invalidateV1 } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { HAIRLINE } from '@/ui/primitives';
 import { BUTTON_PRIMARY } from '@/ui/buttons';
 import { MENU_SURFACE } from '@/ui/menus';
@@ -161,6 +162,7 @@ function About({ agent, onOpenMachine, onOpenChannel, onTriggers }: { agent: Age
     const sessions = useSessionControls(agent, agent.id, name, working);
     const conversation = sessions.sessions?.active ?? null;
 
+    const reportHeld = useReportHeld({ client });
     const act = async (what: string, run: () => Promise<unknown>, done?: string) => {
         try {
             await run();
@@ -168,6 +170,7 @@ function About({ agent, onOpenMachine, onOpenChannel, onTriggers }: { agent: Age
             rereadAgent(agent.id);
             invalidateV1(STATES_KEY);
         } catch (error) {
+            if (reportHeld(error, `${what[0].toUpperCase()}${what.slice(1)}`, () => (rereadAgent(agent.id), invalidateV1(STATES_KEY)))) return;
             toast(`Couldn’t ${what}`, { description: error instanceof Error ? error.message : String(error) });
         }
     };

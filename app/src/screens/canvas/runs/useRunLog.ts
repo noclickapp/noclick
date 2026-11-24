@@ -121,6 +121,9 @@ export function useRunLog({
             fetchCounts();
         }, COUNTS_SETTLE_MS);
     }, [fetchCounts]);
+    useEffect(() => () => {
+        if (settleRef.current) clearTimeout(settleRef.current);
+    }, []);
 
     return { counts, hasMore, loading, error, nextCursorRef, fetchPage, onFiltersChange, onLoadMore, countsChanged };
 }
