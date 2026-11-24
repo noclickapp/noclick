@@ -10,7 +10,8 @@
 //     a module that holds a secret;
 //   - only the modules that need them import what hands out a secret from config.server.ts (`noclickApiKey`: the key
 //     proxy and the server client; `appConfigContext`, which holds the password and session secret: the gate, the
-//     proxy, sign-in, the session, and the module that hands a page the API's address and nothing else;
+//     proxy, sign-in, the session, and the modules that hand a page the API's address, or whether NoClick gave the
+//     app its key, and nothing else;
 //     `checkConfig`: the gate), nothing imports config.server.ts whole, and nothing passes any of them on;
 //   - only the browser's client (src/sdk/proxied.ts), the server client and the console lab's client (which answers
 //     from canned data and holds no key) make an SDK client, under any name; nothing uses the SDK's default client
@@ -35,6 +36,7 @@ const SECRET_HOLDERS: Record<string, ReadonlySet<string>> = {
         'src/server/signIn.server.ts',
         'src/server/session.server.ts',
         'src/server/apiUrl.server.ts',
+        'src/server/ownerAccepts.server.ts',
     ]),
     checkConfig: new Set(['src/server/gate.server.ts']),
 };

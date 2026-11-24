@@ -5,6 +5,7 @@
 // Includes auto-expand functionality for nested paths.
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { useLater } from '@/lib/useLater';
 
 interface ReferenceLocation {
     nodeId: string;
@@ -48,6 +49,7 @@ export const ReferenceHoverProvider = ({ children }: { children: ReactNode }) =>
     const [hoveredReference, setHoveredReference] = useState<ReferenceLocation | null>(null);
     const [scrollToReference, setScrollToReference] = useState<ReferenceLocation | null>(null);
     const [pathsToExpand, setPathsToExpand] = useState<Set<string>>(new Set());
+    const later = useLater();
 
     const handleSetHoveredReference = useCallback((ref: ReferenceLocation | null) => {
         setHoveredReference(ref);
@@ -62,12 +64,12 @@ export const ReferenceHoverProvider = ({ children }: { children: ReactNode }) =>
             setPathsToExpand(new Set(parentPaths));
 
             // Auto-clear after a short delay to allow scroll/expand to complete
-            setTimeout(() => {
+            later(() => {
                 setScrollToReference(null);
                 setPathsToExpand(new Set());
             }, 800);
         }
-    }, []);
+    }, [later]);
 
     return (
         <ReferenceHoverContext.Provider value={{

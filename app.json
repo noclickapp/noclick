@@ -1,0 +1,26 @@
+{
+    "name": "NoClick app",
+    "description": "NoClick's app, built on its TypeScript SDK: it signs you in with a password of your own, keeps your NoClick key on its server and opens on your account.",
+    "repository": "https://github.com/noclickapp/noclick",
+    "website": "https://noclick.com",
+    "keywords": ["noclick", "agents", "sdk", "react-router"],
+    "stack": "container",
+    "env": {
+        "NOCLICK_API_KEY": {
+            "description": "The NoClick secret key the app acts with, in your account. Create one in NoClick's developer console: https://noclick.com/dashboard/developers"
+        },
+        "APP_PASSWORD": {
+            "description": "The password you sign in to this app with: at least 12 characters, best random."
+        },
+        "SESSION_SECRET": {
+            "description": "Signs the sign-in cookie. Made for you.",
+            "generator": "secret"
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "basic"
+        }
+    }
+}

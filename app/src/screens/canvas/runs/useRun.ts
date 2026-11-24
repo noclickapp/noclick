@@ -17,6 +17,7 @@ import type { Node } from '@xyflow/react';
 import { NoClickError, OperationCanceled, OperationTimeout, Workflow, type NoClick, type Operation, type RunStep, type WorkflowRun } from 'noclick';
 import { errorText } from '@/screens/console/lib/errorText';
 import { useWorkLive } from '@/sdk/live';
+import { useReportHeld } from '@/sdk/held';
 import { applyNodeUpdate } from '../applyNodeUpdate';
 import { whenGraphSaved } from '../graph/liveGraphStore';
 
@@ -219,6 +220,8 @@ export function useWorkflowRuns({
         [client, workflowId, follow]
     );
 
+    // Stopping a run can wait for the account's owner (a key NoClick gave this app): a toast follows it.
+    const reportHeld = useReportHeld({ client });
     const stop = useCallback(async (): Promise<void> => {
         const workflow = Workflow.fromId(workflowId, { client });
         try {
@@ -226,9 +229,10 @@ export function useWorkflowRuns({
             if (!running.length) await started.current?.cancel();
             await Promise.all(running.map((runId) => workflow.stopRun(runId).then((stopped) => take(stopped.id))));
         } catch (e) {
+            if (reportHeld(e, 'Stop the run')) return;
             if (shown.current === workflowId) setError(errorText(e));
         }
-    }, [client, workflowId, running, take]);
+    }, [client, workflowId, running, take, reportHeld]);
 
     return { running, busy, error, run, stop };
 }
