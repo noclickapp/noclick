@@ -971,6 +971,7 @@ closum
 cloudbeds
 cloudbees
 cloudflare
+cloudmersive
 cloudsmith
 cloudtalk
 cloudzero
