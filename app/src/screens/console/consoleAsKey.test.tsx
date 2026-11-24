@@ -103,12 +103,17 @@ function open(address: string, actsAs: 'owner' | 'key' = 'key', set: FixtureSet 
                     expect(Date.now() - last).toBeGreaterThan(120);
                     expect([...document.querySelectorAll('[aria-busy]')].filter((el) => el.getAttribute('aria-busy') !== 'false').length).toBe(0);
                 },
-                { timeout: 10_000, interval: 30 },
+                { timeout: SETTLE_S, interval: 30 },
             );
             expect(logged.mock.calls.filter(([first]) => String(first).includes('page crashed')).map((call) => String(call[1]))).toEqual([]);
         },
     };
 }
+
+// How long a page may take to settle, and each test with it: a page loads its code lazily, which takes seconds while
+// the rest of the suite shares the machine. The wait is on the page's state; these only bound a page that never settles.
+const SETTLE_S = 20_000;
+const TEST_S = 40_000;
 
 /** Every address the console has: its sections and what's inside them, each kind of resource, and its drawers. */
 const ADDRESSES = [
@@ -128,7 +133,7 @@ const ADDRESSES = [
     'cli?code=ABCD-EFGH',
 ];
 
-describe('a console acting as a key', () => {
+describe('a console acting as a key', { timeout: TEST_S }, () => {
     it.each(ADDRESSES)('asks for nothing only the owner may have at /%s', async (address) => {
         const calls = open(address);
         await calls.settled();
@@ -229,7 +234,7 @@ describe('a console acting as a key', () => {
     });
 });
 
-describe('the owner’s console', () => {
+describe('the owner’s console', { timeout: TEST_S }, () => {
     it('still has what a key’s leaves out', async () => {
         const calls = open('quickstart', 'owner');
         await calls.settled();
