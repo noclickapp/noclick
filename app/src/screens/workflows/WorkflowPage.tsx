@@ -110,7 +110,7 @@ function OverCanvas({
             )}
             {tab === 'test' && (
                 <div className="absolute inset-0 z-40 overflow-y-auto bg-background" data-testid="workflow-test-run">
-                    <TestRunScreen icons={icons} live={{ workflowId }} onClose={() => onTab('canvas')} />
+                    <TestRunScreen icons={icons} live={{ workflowId, readOnly: canvas.readOnly }} onClose={() => onTab('canvas')} />
                 </div>
             )}
         </>

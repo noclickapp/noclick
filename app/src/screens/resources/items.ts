@@ -342,7 +342,7 @@ export function repoReader(r: Repo): RepoReader {
     });
     return {
         branches: async () => (await r.branches()).map((b) => b.name),
-        list: async (dir, ref) => (await r.files(dir, { ref: at(ref) })).map((f) => ({ path: f.path, dir: f.type === 'dir', size: f.size })),
+        list: async (dir, ref) => (await r.files(dir, { ref: at(ref) })).map((f) => ({ path: f.path, dir: f.type === 'dir', size: f.size, link: f.type === 'link' })),
         read: async (path, ref) => (isBinaryPath(path) ? null : decodeText(await r.read(path, { ref: at(ref) }))),
         history: async (ref, cursor, limit) => {
             const page = await r.commitsPage({ branch: at(ref), cursor: cursor ?? undefined, limit });
