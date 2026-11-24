@@ -753,6 +753,7 @@ api-bible
 api-ninjas
 api2cart
 api2convert
+apideck
 apiframe
 apify
 apigee
@@ -764,6 +765,7 @@ apollo
 appcenter
 appcircle
 apphud
+apple
 appointedd
 appsheet
 apptivegrid
@@ -865,6 +867,7 @@ bookspot
 bookwhen
 botcake-1
 botconversa
+botify
 botmaker
 botpress
 botsonic
@@ -909,6 +912,7 @@ cal-com
 cal-id
 calendesk
 calendly
+call-loop
 callerapi
 callfire
 campaign-cleaner
@@ -981,7 +985,7 @@ cloudzero
 clover
 cloze
 club-os
-cmappsa
+clust
 coassemble
 coda
 codacy
@@ -1057,6 +1061,7 @@ dadata-ru
 daily
 dante-ai
 dart
+data
 databox
 databricks
 datadog
@@ -1072,6 +1077,7 @@ decisionvault
 deel
 deepgram
 deepimage
+deepl
 deployhq
 deputy
 dev-cycle
@@ -1083,6 +1089,7 @@ dialpad
 diffchecker
 digicert
 digistore24
+digitalnz
 digitalocean
 directiq
 directus
@@ -1280,6 +1287,7 @@ geekflare
 gender-api
 genderapi-io
 genesiscloud
+genmagic
 geoapify
 geocodio
 geodatasource
@@ -1357,6 +1365,7 @@ hailey-hr
 haku
 halopsa
 handwrytten
+happy-scribe
 harness
 harvey
 hasslefreebooks
@@ -1440,6 +1449,7 @@ instatus
 intelliprint
 intercom
 intulse
+investment-dominator
 investorbase
 investorlift
 invofox
@@ -1503,6 +1513,7 @@ kisi
 kit
 kiwify
 kizeo-forms
+klasio
 klaviyo
 klicktipp
 knowify
@@ -1741,6 +1752,7 @@ onesignal
 onlyoffice-docspace
 open-sea
 openalex
+openapi
 opencage
 opendatasoft
 openfigi
@@ -1782,6 +1794,7 @@ parseur
 partnerstack
 passkit-membership
 past-dev
+pavlok-wearable-device-da47193
 payaca
 payments
 paypal
@@ -1873,6 +1886,7 @@ propertyradar
 proposify
 proworkflow-nexus
 proxiedmail
+pubrio
 pulsetic
 pulumi
 pushcut
@@ -2122,6 +2136,7 @@ spider
 spike
 spiro
 splitwise
+spoonacular
 spotify
 spotio2
 sprig
@@ -2143,6 +2158,7 @@ stigg
 stonly
 stora
 straico
+straker-verify
 strale
 streak
 stream-chat
@@ -2352,8 +2368,10 @@ waiverfile
 walcu-crm
 walletap
 wallsio
+wappalyzer
 wati
 wayfront
+wbiztool
 weatherbit
 weaviate
 webcrawlerapi
@@ -2380,6 +2398,7 @@ wild-apricot
 wildberries
 wildjar
 winston-ai
+wiremock
 wisboo
 wistia
 wix
