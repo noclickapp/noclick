@@ -9,6 +9,7 @@ import { cn } from '@/ui/utils';
 import { Deployment, type Project } from 'noclick';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { ConsoleButton } from '../../ui/Button';
 import { ErrorPanel } from '../../ui/ErrorPanel';
@@ -41,14 +42,15 @@ export function useDeploy(project: Project) {
 function DeploymentActions({ project, deployment, onChanged }: { project: Project; deployment: Deployment; onChanged: (d: Deployment) => void }) {
     const { deploy, busy } = useDeploy(project);
     const [acting, setActing] = useState(false);
-    const act = async (write: () => Promise<unknown>, done: string) => {
+    const reportHeld = useReportHeld(useConsole());
+    const act = async (write: () => Promise<unknown>, done: string, what: string) => {
         setActing(true);
         try {
             await write();
             toast(done);
             invalidateV1('projects');
         } catch (e) {
-            toast(errorText(e));
+            if (!reportHeld(e, what, () => invalidateV1('projects'))) toast(errorText(e));
         } finally {
             setActing(false);
         }
@@ -57,12 +59,12 @@ function DeploymentActions({ project, deployment, onChanged }: { project: Projec
     return (
         <div className="flex flex-wrap items-center gap-2">
             {deployment.status === 'ready' && !deployment.production && (
-                <ConsoleButton size="sm" variant="primary" disabled={acting} onClick={() => void act(() => deployment.promote(), `Promoting ${deployment.branch} to production`)}>
+                <ConsoleButton size="sm" variant="primary" disabled={acting} onClick={() => void act(() => deployment.promote(), `Promoting ${deployment.branch} to production`, `Promote ${deployment.branch}`)}>
                     {deployment.branch === project.productionBranch ? 'Roll back to this' : 'Promote to production'}
                 </ConsoleButton>
             )}
             {live && (
-                <ConsoleButton size="sm" disabled={acting} onClick={() => void act(async () => onChanged(await deployment.cancel()), 'Deployment canceled')}>
+                <ConsoleButton size="sm" disabled={acting} onClick={() => void act(async () => onChanged(await deployment.cancel()), 'Deployment canceled', 'Cancel the deployment')}>
                     Cancel
                 </ConsoleButton>
             )}

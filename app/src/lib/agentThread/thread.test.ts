@@ -191,6 +191,9 @@ describe('the stream saying a turn ended', () => {
         expect(liveTurn(quiet)).toBeNull();
         expect(drawn(play(working, [end('succeeded', 'Deploy 42 is live.')])).at(-1)).toMatchObject({ done: 'Deploy 42 is live.' });
         expect(drawn(play(working, [end('failed')])).at(-1)).toMatchObject({ failed: TURN_FAILED_LINE });
+        // A turn lost with its place says why, as its history will.
+        const lost = 'Sorry, that turn was lost: its container ran out of memory (8 GB) while the turn ran; run less at once or use a bigger machine.';
+        expect(drawn(play(working, [end('failed', lost)])).at(-1)).toMatchObject({ failed: lost });
         expect(drawn(play(working, [end('canceled')])).at(-1)).toMatchObject({ stopped: null });
         expect(drawn(play(working, [end('expired')])).at(-1)).toMatchObject({ stopped: null });
         // Its reply landing after names it, as ever.
