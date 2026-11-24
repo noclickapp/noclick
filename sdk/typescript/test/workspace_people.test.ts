@@ -129,6 +129,30 @@ test("a message to an agent names who sent it", async () => {
   assert.equal(answered.author, null);
 });
 
+test("a channel's turn keeps the posts it delivered beside the text its agent read", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json({ object: "agent", id: "ag_1", name: "scout", workflow_id: "wf_1" }));
+  const delivered = {
+    id: "ch_1", name: "launch", space: { id: "ws_1", name: "Bakery" }, thread: null,
+    posts: [{ id: "m_1", author: { type: "user", id: "login-ana", name: "Ana" }, text: "@scout did it ship?",
+              created_at: "2026-11-24T10:00:00Z", thread_id: null, files: [{ name: "log.txt", mime_type: "text/plain" }] }],
+  };
+  api.on("GET", "/v1/agents/ag_1/conversations/c", json({
+    object: "conversation", id: "c", agent_id: "ag_1", next_cursor: null,
+    messages: [
+      { role: "user", text: "You are @scout in the channel…", created_at: "2026-11-24T10:00:01Z", chat: "channel:ch_1", channel: delivered },
+      { role: "assistant", text: "Yes.", created_at: "2026-11-24T10:00:05Z" },
+    ],
+  }));
+  const [asked, answered] = await nc.Agent.fromId("ag_1").history("c");
+  assert.equal(asked.text, "You are @scout in the channel…");
+  assert.deepEqual(asked.channel?.space, { id: "ws_1", name: "Bakery" });
+  const [post] = asked.channel?.posts ?? [];
+  assert.deepEqual([post.author.name, post.text, post.createdAt?.toISOString(), post.files],
+    ["Ana", "@scout did it ship?", "2026-11-24T10:00:00.000Z", [{ name: "log.txt", mimeType: "text/plain" }]]);
+  assert.equal(answered.channel, null);
+});
+
 test("a resource shared with a workspace, its levels, and the space's Resources tab", async () => {
   const { api } = setup();
   api.on("GET", "/v1/workspaces/ws_1", json(WS));

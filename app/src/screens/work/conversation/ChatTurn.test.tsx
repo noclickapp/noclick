@@ -15,7 +15,8 @@ import { fakeWorkAgent } from './fixtures/workAgent';
 afterEach(cleanup);
 
 const FACE = { id: 'agent-1', kind: 'agent' as const, name: 'WhatsApp', agentId: 'agent-1' };
-const entry = (a: TurnActivity): UserEntry => ({ kind: 'user', key: a.turn.id, id: null, text: '', at: a.turn.startedAt, files: [], operationId: a.turn.id, author: null, via: null, trigger: { kind: 'event', id: 'trg' }, chat: null, command: null, subagent: null, steer: false, pending: false, references: [] });
+const entry = (a: TurnActivity): UserEntry => ({ kind: 'user', key: a.turn.id, id: null, text: '', at: a.turn.startedAt, files: [], operationId: a.turn.id, author: null, via: null, trigger: { kind: 'event', id: 'trg' }, chat: null, command: null, subagent: null, channel: null,
+    steer: false, pending: false, references: [] });
 const items = (name: keyof typeof CHAT_SCENES) => CHAT_SCENES[name]().activity.map((raw) => toTurnActivity(raw));
 
 function show(a: TurnActivity, options: { header?: boolean; fake?: ReturnType<typeof fakeWorkAgent>; turn?: TurnEntry; failureTold?: boolean } = {}) {

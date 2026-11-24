@@ -173,6 +173,7 @@ export function ChatTranscript() {
         mode,
         mine: (e) => wroteIt(e.author, ACCOUNT),
         agentName: 'NoClick',
+        agent: { name: 'NoClick', face: { id: 'noclick', kind: 'agent', name: 'NoClick', noclick: true } },
         onAnswer: (r, d) => void state.answer(r, d),
         renderUser: (e) => {
             const call = callsAt.get(e.key);

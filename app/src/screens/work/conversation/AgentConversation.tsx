@@ -328,6 +328,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
         onTrigger: (e) => nav.openProfile(agentId, { tab: 'triggers', trigger: e.trigger!.id }),
         onProfile: () => nav.openProfile(agentId),
         chats: { activity: c.activity, agent: { name: face.name || 'It', face } },
+        onOpenChannel: (id, thread) => nav.openChannel(id, thread ? { thread } : undefined),
     });
 
     const fact = 'inline-flex h-7 min-w-0 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs max-md:h-10 text-muted-foreground transition-colors hover:bg-foreground/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/70';

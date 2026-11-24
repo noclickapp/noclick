@@ -1035,6 +1035,8 @@ class AgentEvent:
     step_group: Optional["StepGroup"] = None
     #: A ``turn_end``'s turn did as a coding harness ran it (``TurnSummary``).
     summary: Optional["TurnSummary"] = None
+    #: The posts a channel's turn's ``user`` ``message`` delivered (``Message.channel``).
+    channel: Optional[Dict[str, Any]] = None
 
 
 # --- test runs ---------------------------------------------------------------------

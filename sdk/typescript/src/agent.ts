@@ -17,6 +17,7 @@ import type {
 } from "./agentConversations.ts";
 import type { BrowserProfile } from "./browser.ts";
 import type { Card } from "./card.ts";
+import type { ChannelAuthor } from "./channel.ts";
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { ConnectLink, linkBody, modelConnectionRef, toolRefs } from "./connection.ts";
@@ -724,6 +725,7 @@ export function toAgentEvent(type: string, data: JsonObject): AgentEvent {
     messageId: type === "message" ? str(data.id) : null, author: type === "message" ? toAuthor(data.author) : null,
     notification: data.notification === true, space: toSpace(data.space),
     subagent: type === "message" ? toSubagent(data.subagent) : null,
+    channel: type === "message" ? toMessageChannel(data.channel) : null,
     chat: type === "message" ? str(data.chat) : null,
     category: str(data.category) as StepCategory | null,
     label: toStepLabel(data.label),
@@ -768,6 +770,7 @@ export function toMessage(m: JsonObject): Message {
     notification: m.notification === true,
     space: toSpace(m.space),
     subagent: toSubagent(m.subagent),
+    channel: toMessageChannel(m.channel),
     chat: str(m.chat),
     summary: toTurnSummary(m.summary),
     groups: toStepGroups(m.groups),
@@ -850,6 +853,62 @@ export interface MessageSubagent {
   title: string;
 }
 
+/** A post a channel's turn delivered (`MessageChannel.posts`): who wrote it, as the channel names them, its words (cut
+ *  at 2,000 characters), when, the thread it's in, and its files' names. */
+export interface MessageChannelPost {
+  id: string;
+  author: ChannelAuthor;
+  text: string;
+  createdAt: Date | null;
+  threadId: string | null;
+  files: { name: string; mimeType: string | null }[];
+}
+
+/**
+ * What a channel's turn delivered, as the channel has it (`Message.channel`): the channel, its space, the thread the
+ * agent's reply posts in (its first post's author and words; null in the channel itself) and each post. A page draws
+ * these; the message's `text` is what the agent read, with the ids and rules for replying.
+ */
+export interface MessageChannel {
+  id: string;
+  name: string;
+  space: { id: string; name: string } | null;
+  thread: { id: string; author: ChannelAuthor; text: string } | null;
+  posts: MessageChannelPost[];
+}
+
+const toChannelAuthor = (value: unknown): ChannelAuthor => {
+  const a = value && typeof value === "object" ? (value as JsonObject) : {};
+  return { type: str(a.type) ?? "", id: str(a.id), name: str(a.name) };
+};
+
+/** @internal */
+export function toMessageChannel(value: unknown): MessageChannel | null {
+  if (!value || typeof value !== "object") return null;
+  const c = value as JsonObject;
+  if (typeof c.id !== "string" || !Array.isArray(c.posts)) return null;
+  const space = c.space && typeof c.space === "object" ? (c.space as JsonObject) : null;
+  const thread = c.thread && typeof c.thread === "object" ? (c.thread as JsonObject) : null;
+  return {
+    id: c.id,
+    name: str(c.name) ?? "",
+    space: space && typeof space.id === "string" ? { id: space.id, name: str(space.name) ?? "" } : null,
+    thread: thread && typeof thread.id === "string" ? { id: thread.id, author: toChannelAuthor(thread.author), text: str(thread.text) ?? "" } : null,
+    posts: c.posts
+      .filter((p): p is JsonObject => !!p && typeof p === "object" && typeof (p as JsonObject).id === "string")
+      .map((p) => ({
+        id: str(p.id) ?? "",
+        author: toChannelAuthor(p.author),
+        text: str(p.text) ?? "",
+        createdAt: parseTime(p.created_at),
+        threadId: str(p.thread_id),
+        files: Array.isArray(p.files)
+          ? p.files.filter((f): f is JsonObject => !!f && typeof f === "object").map((f) => ({ name: str(f.name) ?? "", mimeType: str(f.mime_type) }))
+          : [],
+      })),
+  };
+}
+
 /** @internal */
 export function toSubagent(value: unknown): MessageSubagent | null {
   if (!value || typeof value !== "object") return null;
@@ -916,6 +975,8 @@ export interface Message {
   space?: MessageSpace | null;
   /** A `user` message written for one of its coding harness's subagents: which one (null otherwise). */
   subagent?: MessageSubagent | null;
+  /** A channel's turn's `user` message: the posts it delivered, as the channel has them (null otherwise). */
+  channel?: MessageChannel | null;
   /**
    * The chat a message of the agent's session came from, where it isn't the session's own: the `conversation` it was
    * sent to (a WhatsApp chat's id, `channel:<id>`, `owner`, a shared page's visitor), which its reply goes back to

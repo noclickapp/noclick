@@ -5,7 +5,7 @@
 // slots: how a person's message draws (one that came by text as that app did), where it came from (its chip), how a
 // note draws, what goes under a turn's reply, and what each row may do (edit from here, open its changes). A page that
 // reads what came in on its triggered turns (Work's) draws one a chat app's message started as its own chat
-// (ChatTurn), its turn inside it.
+// (ChatTurn), its turn inside it; a channel's turn draws as the channel showed it (ChannelTurn) on every page.
 import { useEffect, useState, type ReactNode } from 'react';
 import { Pencil, RotateCcw, SquarePen } from 'lucide-react';
 import type { HarnessRequest, RequestDecision } from 'noclick';
@@ -15,6 +15,7 @@ import type { TurnActivityState } from '../hooks/useTurnActivity';
 import { SystemDivider, type ToolCalls } from './Activity';
 import { AppTestingLine } from './AppTesting';
 import { TurnCardsOf } from './cards';
+import { ChannelTurn } from './ChannelTurn';
 import { ChatTurn, type ChatAgent } from './ChatTurn';
 import { ModelSwitchLine } from './ModelSwitch';
 import { MarkerRow, NoteRow, TriggerRow, TurnView, UserRow } from './Rows';
@@ -85,6 +86,10 @@ export interface TimelineProps {
     /** What came in on its triggered turns: one a chat app's message started draws as that chat, with `agent` its
      *  side of it. */
     chats?: { activity: Pick<TurnActivityState, 'byTurn' | 'chats' | 'waiting'>; agent: ChatAgent };
+    /** The agent as a channel's turn draws its side (else `chats`' agent, else its name alone). */
+    agent?: ChatAgent;
+    /** Opens a channel a channel's turn came from, at the thread its reply posts in. */
+    onOpenChannel?: (channelId: string, thread?: string) => void;
 }
 
 /** The chat a triggered message's turn draws as, and what it read of it: its own, or, while its read is on the way,
@@ -105,7 +110,8 @@ function moverOf(by: Author | null, mine: TimelineProps['mine']): string | null 
     return by.type === 'account' ? 'the account’s owner' : by.name;
 }
 
-export function timelineRows({ thread, mode, mine, onAnswer, renderUser, source, agentName = 'It', renderNote, afterReply, hideTurn, onRewind, onChanges, onReconnect, onTrigger, onProfile, chats }: TimelineProps): ReactNode[] {
+export function timelineRows({ thread, mode, mine, onAnswer, renderUser, source, agentName = 'It', renderNote, afterReply, hideTurn, onRewind, onChanges, onReconnect, onTrigger, onProfile, chats, agent, onOpenChannel }: TimelineProps): ReactNode[] {
+    const side: ChatAgent = agent ?? chats?.agent ?? { name: agentName, face: { id: 'agent', kind: 'agent', name: agentName } };
     const all = Object.values(thread.requests);
     // Requests a turn asked, drawn under it; any whose turn isn't on screen go under the last one.
     const turnOps = new Set(thread.entries.flatMap((e) => (e.kind === 'turn' && e.operationId ? [e.operationId] : [])));
@@ -138,6 +144,37 @@ export function timelineRows({ thread, mode, mine, onAnswer, renderUser, source,
                     {turn && <TurnView turn={turn} mode={mode} requests={requestsOf(turn)} onAnswer={onAnswer} onReconnect={onReconnect} failureTold={told.has(turn.key)} mine={mine} cards={<TurnCardsOf turn={turn} asked={null} />} />}
                 </QuietTurn>
             );
+            return;
+        }
+        if (e.kind === 'user' && e.channel && e.operationId) {
+            const turn = turnsByOp.get(e.operationId) ?? null;
+            const key = `channel:${e.channel.id}:${e.channel.thread?.id ?? ''}`;
+            inChat.add(e.operationId);
+            rows.push(
+                <ChannelTurn
+                    key={e.key}
+                    entry={{ ...e, channel: e.channel }}
+                    turn={turn}
+                    agent={side}
+                    mine={(author) => mine({ author } as UserEntry)}
+                    header={lastChat !== key}
+                    mode={mode}
+                    requests={turn ? requestsOf(turn) : []}
+                    onAnswer={onAnswer}
+                    onReconnect={onReconnect}
+                    failureTold={!!turn && told.has(turn.key)}
+                    onOpen={onOpenChannel}
+                    cards={
+                        turn && (
+                            <>
+                                {afterReply?.(turn)}
+                                <TurnCardsOf turn={turn} asked={null} />
+                            </>
+                        )
+                    }
+                />
+            );
+            lastChat = key;
             return;
         }
         const drawn = e.kind === 'user' ? chatOf(e, chats) : null;

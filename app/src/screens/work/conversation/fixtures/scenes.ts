@@ -55,6 +55,33 @@ export function busyHistory(): Json[] {
         },
         { id: 'm5', role: 'user', text: 'Can you tag me on the pull request? I’d like to review the migration before it ships.', created_at: at(0, 10, 5), operation_id: 'op-t2', author: { type: 'user', id: 'u-priya', name: 'Priya Shah' } },
         { id: 'm6', role: 'assistant', text: 'Will do, Priya. I’ll add you as the reviewer when I open it.', created_at: at(0, 10, 5), operation_id: 'op-t2' },
+        // Posts in #launch that mention it: the card draws them as the channel did, the text it read behind a fold.
+        {
+            id: 'm6a',
+            role: 'user',
+            text: 'You are @Wirefern in the channel "launch" (channel_id ch_launch) of the space "NoClick" (workspace_id ws_noclick). Other members: @Growth (agent), Priya Shah (person).\nNew messages since your last turn:\n\nGrowth: @Wirefern a customer asks whether the webhooks that failed since Friday will be sent again once the fix is out.\nowner: Good question. @Wirefern what’s the plan?\n\nReply with your message to the channel: your reply is posted for you, so never post it yourself too.',
+            created_at: at(0, 10, 6),
+            operation_id: 'op-c1',
+            chat: 'channel:ch_launch',
+            channel: {
+                id: 'ch_launch',
+                name: 'launch',
+                space: { id: 'ws_noclick', name: 'NoClick' },
+                thread: null,
+                posts: [
+                    { id: 'l9', author: { type: 'agent', id: 'a-growth', name: 'Growth' }, text: '@Wirefern a customer asks whether the webhooks that failed since Friday will be sent again once the fix is out.', created_at: at(0, 10, 5), thread_id: null, files: [] },
+                    { id: 'l10', author: { type: 'account', id: null, name: 'owner' }, text: 'Good question. @Wirefern what’s the plan?', created_at: at(0, 10, 6), thread_id: null, files: [] },
+                ],
+            },
+        },
+        {
+            id: 'm6b',
+            role: 'assistant',
+            text: 'Yes. Once the default is back to 5, I’ll re-send the 212 that gave up since Friday, after Rowan’s OK, since it sends to customers’ servers.',
+            created_at: new Date(Date.parse(at(0, 10, 6)) + 14_000).toISOString(),
+            operation_id: 'op-c1',
+            tool_calls: [step('e1', 'command', { command: 'psql -c "select count(*) from deliveries where gave_up_at > \'friday\'"', exit_code: 0, duration_ms: 600, output: ' count \n-------\n   212\n' }, at(0, 10, 6))],
+        },
         { id: 'm7', role: 'user', text: 'Go ahead with 1 and 2.', created_at: new Date(Date.now() - 4 * 60_000).toISOString(), operation_id: 'op-live', author: { type: 'account', id: null, name: 'Rowan Hale' } },
     ];
 }

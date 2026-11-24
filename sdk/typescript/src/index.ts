@@ -63,7 +63,7 @@ export type {
   AgentStep, AgentStepDiff, AgentStepKind, ChangedFile, DiffStat, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
   TurnChanges, TurnSummary,
   AgentToolAccess, AgentToolAction, AgentToolApp, AgentTools, Conversation, ConversationStatus, MessageDelivery,
-  HarnessInfo, HarnessModel, HarnessModelPrice, HarnessModelRoute, HarnessName, JobFilters, Message, MessageSpace, MessageSubagent,
+  HarnessInfo, HarnessModel, HarnessModelPrice, HarnessModelRoute, HarnessName, JobFilters, Message, MessageChannel, MessageChannelPost, MessageSpace, MessageSubagent,
   MessageTrigger, MessageVia,
   ModelUsage,
   ReasoningLine, SpawnOptions,

@@ -10,7 +10,7 @@
  */
 
 import type {
-  Agent, AgentReply, AgentStepKind, DiffStat, HarnessName, MessageSpace, MessageSubagent, MessageTrigger, MessageVia, ModelUsage,
+  Agent, AgentReply, AgentStepKind, DiffStat, HarnessName, MessageChannel, MessageSpace, MessageSubagent, MessageTrigger, MessageVia, ModelUsage,
   ReasoningLine, StepCategory, StepGroup, StepLabel, StepProgress, StepTests, TurnSummary,
 } from "./agent.ts";
 import type { MessageAuthor } from "./agentConversations.ts";
@@ -831,6 +831,8 @@ export interface AgentEvent {
   space?: MessageSpace | null;
   /** The coding harness's subagent a `user` `message` was written for (`Message.subagent`). */
   subagent?: MessageSubagent | null;
+  /** The posts a channel's turn's `user` `message` delivered (`Message.channel`). */
+  channel?: MessageChannel | null;
   /** The chat a `message` of the agent's session came from, where it isn't the session's own (`Message.chat`). */
   chat?: string | null;
   /**

@@ -555,6 +555,10 @@ def _author(value: Any) -> Optional[Dict[str, Any]]:
     return {"type": value["type"], "id": value.get("id"), "name": value.get("name")}
 
 
+def _channel(value: Any) -> Optional[Dict[str, Any]]:
+    return value if isinstance(value, dict) and isinstance(value.get("posts"), list) else None
+
+
 @dataclass(frozen=True)
 class Message:
     """One message of a conversation: its ``role`` is ``user``, ``assistant``,
@@ -612,6 +616,12 @@ class Message:
     summary: Optional[TurnSummary] = None
     #: Its harness steps' folds, in order.
     groups: List[StepGroup] = dc_field(default_factory=list)
+    #: A channel's turn's ``user`` message: what it delivered, as the channel has it: ``{id, name, space, thread,
+    #: posts}``, ``space`` ``{id, name}`` or None, ``thread`` the one its reply posts in (``{id, author, text}``, None
+    #: in the channel itself), each post ``{id, author, text, created_at, thread_id, files}`` with ``author``
+    #: ``{type, id, name}`` as the channel names it and ``files`` each ``{name, mime_type}``. Its ``text`` is what the
+    #: agent read. None otherwise.
+    channel: Optional[Dict[str, Any]] = None
 
     @property
     def steps(self) -> List[AgentStep]:
@@ -628,7 +638,8 @@ class Message:
                    {"name": command.get("name", ""), "arguments": command.get("arguments") or ""}
                    if isinstance(command, dict) else None, raw.get("id"), _author(raw.get("author")),
                    raw.get("notification") is True, raw.get("space") or None, raw.get("subagent") or None,
-                   raw.get("chat"), TurnSummary._from(raw.get("summary")), _groups(raw.get("groups")))
+                   raw.get("chat"), TurnSummary._from(raw.get("summary")), _groups(raw.get("groups")),
+                   _channel(raw.get("channel")))
 
 
 @dataclass(frozen=True)
@@ -764,6 +775,7 @@ def _agent_event(kind: str, data: Dict[str, Any]) -> AgentEvent:
         notification=data.get("notification") is True, space=data.get("space") or None,
         subagent=(data.get("subagent") or None) if kind == "message" else None,
         chat=data.get("chat") if kind == "message" else None,
+        channel=_channel(data.get("channel")) if kind == "message" else None,
         category=data.get("category"), label=StepLabel._from(data.get("label")),
         display_command=data.get("display_command"),
         group=data.get("group") if kind in ("tool_call", "tool_result") else None,

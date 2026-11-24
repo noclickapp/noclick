@@ -11,7 +11,7 @@
 // the account ran out carries what its card draws.
 import { outOfFundsOf, readMessage, turnEndText, type ChatReference } from './messages';
 import type {
-    AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, DiffStat, HarnessRequest, JsonObject, Message, MessageSubagent, MessageTrigger, MessageVia, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
+    AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, DiffStat, HarnessRequest, JsonObject, Message, MessageChannel, MessageSubagent, MessageTrigger, MessageVia, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
     TurnSummary,
 } from 'noclick';
 
@@ -95,6 +95,8 @@ export interface UserEntry {
     command: { name: string; arguments?: string } | null;
     /** Written for one of its harness's subagents, which the main session passes it on to. */
     subagent: MessageSubagent | null;
+    /** A channel's turn: the posts it delivered, as the channel has them; `text` is what the agent read. */
+    channel: MessageChannel | null;
     /** Sent into the turn under way. */
     steer: boolean;
     /** Sent from this page; the conversation hasn't shown it back yet. */
@@ -413,6 +415,7 @@ function userEntry(m: Message, at: number, key: string): UserEntry {
         chat: m.chat ?? null,
         command: m.command,
         subagent: m.subagent ?? null,
+        channel: m.channel ?? null,
         steer: false,
         pending: false,
     };
@@ -639,17 +642,21 @@ function withUserMessage(thread: Thread, event: AgentEvent, at: number): Thread 
         trigger: event.trigger,
         command: raw.command && typeof raw.command === 'object' ? { name: String((raw.command as JsonObject).name), arguments: String((raw.command as JsonObject).arguments ?? '') } : null,
         subagent: event.subagent ?? null,
+        channel: event.channel ?? null,
         chat: event.chat ?? null,
         raw,
     };
     const entry = userEntry(message, at, id ?? `live:user:${event.operationId ?? at}:${entries.length}`);
+    // A channel's posts start their turn as they're shown (their message is kept as it starts): its card says what it's
+    // doing from the first moment, and a turn that ends having drawn nothing is gone again, as history reads it.
+    const begins = entry.channel && event.operationId && !entries.some((e) => e.kind === 'turn' && e.operationId === event.operationId) ? [runningTurn(event.operationId, at)] : [];
     // A message that joined the turn under way sits in it, where the turn's later work follows it.
     const live = liveTurn(thread);
-    if (live && event.operationId && live.operationId !== event.operationId && live.operationId) return { ...thread, entries: [...entries, entry] };
+    if (live && event.operationId && live.operationId !== event.operationId && live.operationId) return { ...thread, entries: [...entries, entry, ...begins] };
     if (live && (!event.operationId || live.operationId === event.operationId)) {
         return replace(thread, { ...live, parts: [...live.parts, { kind: 'user', entry: { ...entry, steer: true } }] });
     }
-    return { ...thread, entries: [...entries, entry] };
+    return { ...thread, entries: [...entries, entry, ...begins] };
 }
 
 /** A reply the conversation showed: its turn settles with it. Steps the live events gathered stay when the reply's
@@ -1015,6 +1022,7 @@ export function sent(
         chat: null,
         command: options.command ?? null,
         subagent: options.subagent ?? null,
+        channel: null,
         steer: !!options.steer,
         pending: true,
         references: options.references ?? [],

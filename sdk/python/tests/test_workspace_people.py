@@ -121,6 +121,24 @@ def test_a_message_to_an_agent_names_who_sent_it(api, client):
     assert asked.author == {"type": "user", "id": "login-ana", "name": "Ana"} and answered.author is None
 
 
+def test_a_channel_turn_keeps_the_posts_it_delivered_beside_the_text_its_agent_read(api, client):
+    api.get("/v1/agents/ag_1").respond(json={"object": "agent", "id": "ag_1", "name": "scout"})
+    delivered = {"id": "ch_1", "name": "launch", "space": {"id": "ws_1", "name": "Bakery"}, "thread": None,
+                 "posts": [{"id": "m_1", "author": {"type": "user", "id": "login-ana", "name": "Ana"},
+                            "text": "@scout did it ship?", "created_at": "2026-11-24T10:00:00Z", "thread_id": None,
+                            "files": []}]}
+    api.get("/v1/agents/ag_1/conversations/c").respond(json={
+        "object": "conversation", "id": "c", "agent_id": "ag_1", "next_cursor": None,
+        "messages": [
+            {"role": "user", "text": "You are @scout in the channel…", "created_at": "2026-11-24T10:00:01Z",
+             "chat": "channel:ch_1", "channel": delivered},
+            {"role": "assistant", "text": "Yes.", "created_at": "2026-11-24T10:00:05Z"},
+        ]})
+    asked, answered = nc.Agent.from_id("ag_1").history("c")
+    assert asked.channel == delivered and asked.text.startswith("You are @scout")
+    assert answered.channel is None
+
+
 SHARED = {"object": "workspace_resource", "id": "wr_1", "workspace_id": "ws_1", "kind": "database", "ref": "db_1",
           "name": "orders", "members_level": "read", "guests_level": "none",
           "levels": ["none", "agents", "read", "write"], "level": "write", "added_at": "2026-11-10T09:00:00Z"}
