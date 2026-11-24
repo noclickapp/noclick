@@ -1747,6 +1747,7 @@ opsgenie
 opusclip
 oracle-field-service
 oracle-hcm
+orca-scan
 orgo
 orq-ai
 orshot
