@@ -22,6 +22,7 @@ import { NextStepHintGroup } from './NextStepHint';
 import { useSnapshot } from 'valtio';
 import { useAwaitingAgentTurn } from '@/screens/canvas/agentRunState';
 import { agentPresenceStore } from '@/screens/canvas/agentPresenceStore';
+import { useCanvasFrozen } from '@/screens/canvas/surface/frozen';
 
 const AFFORDANCE_EXCLUDED_TYPES = new Set(['stickyNote']);
 
@@ -106,7 +107,7 @@ function RunFromHerePill({ nodeId }: { nodeId: string }) {
 }
 
 // Hover-revealed delete button. Uses ReactFlow's deleteElements so the deletion
-// flows through onNodesChange — cron cleanup, broadcast to collaborators,
+// flows through onNodesChange — cron cleanup, the save's tombstones,
 // interface block sync — the same way keyboard Delete or right-click → Remove
 // does. Vertically aligned with RunFromHerePill (same 25×25 / top: -28).
 function DeletePill({ nodeId }: { nodeId: string }) {
@@ -136,8 +137,8 @@ const NODE_TOGGLE_BTN_BASE =
     'w-[25px] h-[25px] rounded-full flex items-center justify-center backdrop-blur-sm border shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-colors duration-200 active:scale-95';
 
 // On-node edits go through the same custom event the inline label editor uses,
-// so they flow through handleNodeDataUpdate (undo capture + collaborator
-// broadcast) rather than a raw setNodes that would be local-only.
+// so they flow through handleNodeDataUpdate (undo capture, and a viewer's
+// refusal) rather than a raw setNodes that would skip both.
 function dispatchNodeDataUpdate(nodeId: string, data: Record<string, unknown>) {
     document.dispatchEvent(
         new CustomEvent('noclick:node:update-data', {
@@ -263,9 +264,13 @@ export function withNodeWrapper<P extends NodeProps>(
         const toggleData = props.data as
             | { disabled?: boolean; mockedOutput?: unknown; output?: unknown }
             | undefined;
+        // A read-only preview's step, or one on a frozen canvas (a replay, a workflow its viewer may only view):
+        // nothing on it changes the workflow.
+        const frozen = useCanvasFrozen();
         const isReadOnly =
+            frozen ||
             (props.data as { isReadOnly?: boolean } | undefined)?.isReadOnly ===
-            true;
+                true;
         const previewHidden =
             (props.data as { _previewHidden?: boolean } | undefined)
                 ?._previewHidden === true;
