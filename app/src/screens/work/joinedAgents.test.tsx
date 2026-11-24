@@ -29,7 +29,7 @@ it("a joined space's Agents list shows its agents, read through your session for
         </WorkClientContext.Provider>
     );
     // In the list (the pane beside it, with no agent open, shows them too).
-    await within(await screen.findByTestId('agents-list', {}, { timeout: 5000 })).findByText('Ops', {}, { timeout: 5000 });
+    await within(await screen.findByTestId('agents-list')).findByText('Ops');
     expect(document.body.textContent).not.toContain('Couldn’t load your agents');
     const read = fake.requests.filter((r) => r.method === 'GET' && r.path === '/v1/agents/states' && r.session);
     expect(read.length).toBeGreaterThan(0);

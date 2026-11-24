@@ -14,8 +14,6 @@ afterEach(cleanup);
 
 const WAKE = '7c1f3e2a-5b4d-4e6f-8a9b-0c1d2e3f4a02';
 const at = (s: number) => new Date(Date.parse('2026-11-14T09:00:00Z') + s * 1000).toISOString();
-// The first reconnection waits a second.
-const RECONNECTED = { timeout: 4000 };
 
 async function open(fake: ReturnType<typeof fakeWorkAgent>) {
     const wrapper = ({ children }: { children: ReactNode }) => <WorkProviders client={fake.client}>{children}</WorkProviders>;
@@ -72,7 +70,7 @@ describe('a dropped stream', () => {
         await waitFor(() => expect(atWork(result.current.thread)).toEqual({ words: 'Running the tests.', output: 'PASS a.test.ts\n' }));
 
         act(() => fake.drop());
-        await waitFor(() => expect(watches(fake)).toHaveLength(2), RECONNECTED);
+        await waitFor(() => expect(watches(fake)).toHaveLength(2));
         await waitFor(() => expect(fake.watching()).toBe(1));
         // What comes next continues the turn, once.
         act(() =>
@@ -90,7 +88,7 @@ describe('a dropped stream', () => {
         const fake = fakeWorkAgent();
         await open(fake);
         act(() => fake.drop());
-        await waitFor(() => expect(watches(fake)).toEqual(['1', null]), RECONNECTED);
+        await waitFor(() => expect(watches(fake)).toEqual(['1', null]));
     });
 
     it('ends a turn no one here started that ended while the stream was down, as its operation says', async () => {
@@ -104,7 +102,7 @@ describe('a dropped stream', () => {
         act(() => fake.drop());
         // It said nothing, so it saved no reply: only its turn_end, sent while no one watched, says it ended.
         fake.settle(WAKE, 'succeeded', { result: { text: '', conversation: 'main', tool_calls: [], operation_id: WAKE } });
-        await waitFor(() => expect(liveTurn(result.current.thread)).toBeNull(), RECONNECTED);
+        await waitFor(() => expect(liveTurn(result.current.thread)).toBeNull());
         expect(result.current.working).toBe(false);
         expect(result.current.thread.entries.at(-1)).toMatchObject({ kind: 'turn', operationId: WAKE, status: 'done' });
     });

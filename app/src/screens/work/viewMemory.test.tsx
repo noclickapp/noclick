@@ -16,7 +16,6 @@ import { Work } from './Work';
 
 const USER = { email: 'rowan@example.com', display_name: 'Rowan Hale' };
 const VIEWS_KEY = 'nc-work-channels';
-const WAIT = { timeout: 5000 };
 
 beforeEach(() => localStorage.clear());
 afterEach(cleanup);
@@ -44,7 +43,7 @@ async function agentRow(agentId: string): Promise<HTMLButtonElement> {
         const row = document.querySelector<HTMLButtonElement>(`li[data-agent="${agentId}"] > button`);
         expect(row).toBeTruthy();
         return row!;
-    }, WAIT);
+    });
 }
 
 /** A DM with Sam in the NoClick space, newer than Priya's. */
@@ -73,8 +72,8 @@ function withSam(fake: FakeWork) {
 it('Agents reopens the agent you picked after a visit to Home', async () => {
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents');
     fireEvent.click(await agentRow('agt_growth'));
-    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'), WAIT);
-    expect(await screen.findByTestId('agent-conversation', {}, WAIT)).toBeTruthy();
+    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
+    expect(await screen.findByTestId('agent-conversation')).toBeTruthy();
 
     view('Home');
     await waitFor(() => expect(work.param('show')).toBeNull());
@@ -82,13 +81,13 @@ it('Agents reopens the agent you picked after a visit to Home', async () => {
 
     view('Agents');
     await waitFor(() => expect(work.at('show', 'agent')).toEqual(['agents', 'agt_growth']));
-    expect(await screen.findByTestId('agent-conversation', {}, WAIT)).toBeTruthy();
+    expect(await screen.findByTestId('agent-conversation')).toBeTruthy();
     expect((await agentRow('agt_growth')).getAttribute('aria-current')).toBe('page');
 });
 
 it('Agents reopens the agent and the profile beside it', async () => {
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents&agent=agt_support&panel=profile');
-    await screen.findByTestId('agent-profile', {}, WAIT);
+    await screen.findByTestId('agent-profile');
 
     view('DMs');
     await waitFor(() => expect(work.param('show')).toBe('dms'));
@@ -96,7 +95,7 @@ it('Agents reopens the agent and the profile beside it', async () => {
 
     view('Agents');
     await waitFor(() => expect(work.at('agent', 'panel')).toEqual(['agt_support', 'profile']));
-    expect(await screen.findByTestId('agent-profile', {}, WAIT)).toBeTruthy();
+    expect(await screen.findByTestId('agent-profile')).toBeTruthy();
 });
 
 it('DMs reopens the DM you last had open, not the newest', async () => {
@@ -104,9 +103,9 @@ it('DMs reopens the DM you last had open, not the newest', async () => {
     withSam(fake);
     const work = showWork(fake, '/dashboard?tab=work&space=ws_noclick&show=dms');
     // With nothing remembered it opens the newest.
-    await waitFor(() => expect(work.param('channel')).toBe('dm_sam'), WAIT);
+    await waitFor(() => expect(work.param('channel')).toBe('dm_sam'));
 
-    fireEvent.click(within(await screen.findByTestId('dms-list', {}, WAIT)).getByText('Priya Shah'));
+    fireEvent.click(within(await screen.findByTestId('dms-list')).getByText('Priya Shah'));
     await waitFor(() => expect(work.param('channel')).toBe('dm_priya'));
 
     view('Home');
@@ -121,7 +120,7 @@ it('each space keeps its own: Agents in one space never reopens another’s agen
     localStorage.setItem(VIEWS_KEY, JSON.stringify({ ws_noclick: { agents: { agent: 'agt_wirefern' } } }));
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents');
     fireEvent.click(await agentRow('agt_growth'));
-    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'), WAIT);
+    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
 
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Spaces' })).getByRole('button', { name: 'NoClick' }));
     await waitFor(() => expect(work.param('space')).toBe('ws_noclick'));
@@ -142,28 +141,28 @@ it('a remembered agent that’s gone opens Agents with nothing open, its agents 
     localStorage.setItem(VIEWS_KEY, JSON.stringify({ home: { agents: { agent: 'agt_deleted' } } }));
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=home');
     // Where its agents stand is read: the rail counts what waits on you in Agents.
-    await within(await screen.findByRole('navigation', { name: 'Views' }, WAIT)).findByText('2', {}, WAIT);
+    await within(await screen.findByRole('navigation', { name: 'Views' })).findByText('2');
 
     view('Agents');
-    const pane = await screen.findByTestId('agents-empty', {}, WAIT);
+    const pane = await screen.findByTestId('agents-empty');
     expect(work.param('agent')).toBeNull();
     // Each of the space's agents, with what it's doing or last did; one opens on a click.
-    const tile = await within(pane).findByTestId('agent-tile-agt_support', {}, WAIT);
+    const tile = await within(pane).findByTestId('agent-tile-agt_support');
     expect(tile.textContent).toContain('Support');
     expect(tile.textContent).toContain('2 things wait on you');
     fireEvent.click(tile);
-    await waitFor(() => expect(work.param('agent')).toBe('agt_support'), WAIT);
-    expect(await screen.findByTestId('agent-conversation', {}, WAIT)).toBeTruthy();
+    await waitFor(() => expect(work.param('agent')).toBe('agt_support'));
+    expect(await screen.findByTestId('agent-conversation')).toBeTruthy();
 });
 
 it('an agent whose profile is beside wins over the one Agents remembers', async () => {
     localStorage.setItem(VIEWS_KEY, JSON.stringify({ ws_noclick: { agents: { agent: 'agt_growth' } } }));
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick&channel=ch_launch&agent=agt_support&panel=profile');
-    await screen.findByTestId('agent-profile', {}, WAIT);
+    await screen.findByTestId('agent-profile');
 
     view('Agents');
     await waitFor(() => expect(work.at('show', 'agent')).toEqual(['agents', 'agt_support']));
-    expect(await screen.findByTestId('agent-conversation', {}, WAIT)).toBeTruthy();
+    expect(await screen.findByTestId('agent-conversation')).toBeTruthy();
 });
 
 it('a phone shows each view’s list, never what was last open in it', async () => {
@@ -175,16 +174,16 @@ it('a phone shows each view’s list, never what was last open in it', async () 
         </PhoneBarSlotProvider>
     ));
     fireEvent.click(await agentRow('agt_growth'));
-    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'), WAIT);
+    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
 
-    fireEvent.click(await within(lead).findByRole('button', { name: 'Agents' }, WAIT));
+    fireEvent.click(await within(lead).findByRole('button', { name: 'Agents' }));
     await waitFor(() => expect(work.param('agent')).toBeNull());
     view('Home');
     await waitFor(() => expect(work.param('show')).toBeNull());
     view('Agents');
     await waitFor(() => expect(work.param('show')).toBe('agents'));
     expect(work.param('agent')).toBeNull();
-    expect(await screen.findByTestId('agents-list', {}, WAIT)).toBeTruthy();
+    expect(await screen.findByTestId('agents-list')).toBeTruthy();
     lead.remove();
 });
 
@@ -192,7 +191,7 @@ it('Agents in a space with none shows an agent’s face and the way to make one'
     const work = showWork(fakeWork({ empty: true, noclick: true }), '/dashboard?tab=work&space=home&show=agents');
     // Grey tiles while its agents are read, then a face (the channels layer's: its initials on a colour, unless a host
     // fills `channels.agent.face`).
-    await screen.findByText('No agents in this space yet', {}, WAIT);
+    await screen.findByText('No agents in this space yet');
     const pane = screen.getByTestId('agents-empty');
     expect(pane.querySelector('[data-agent-initials]')).toBeTruthy();
     fireEvent.click(within(pane).getByRole('button', { name: 'Make an agent' }));
@@ -201,10 +200,10 @@ it('Agents in a space with none shows an agent’s face and the way to make one'
 
 it('DMs with no one else here offers to invite someone', async () => {
     showWork(fakeWork({ empty: true, noclick: true }), '/dashboard?tab=work&space=home&show=dms');
-    const pane = await screen.findByTestId('dms-empty', {}, WAIT);
+    const pane = await screen.findByTestId('dms-empty');
     expect(pane.textContent).toContain('No one else is here yet');
     fireEvent.click(within(pane).getByRole('button', { name: 'Invite people' }));
-    expect(await screen.findByTestId('invite-dialog', {}, WAIT)).toBeTruthy();
+    expect(await screen.findByTestId('invite-dialog')).toBeTruthy();
 });
 
 it('DMs with people but no DM yet starts one from New message', async () => {
@@ -214,17 +213,17 @@ it('DMs with people but no DM yet starts one from New message', async () => {
         1
     );
     const work = showWork(fake, '/dashboard?tab=work&space=ws_noclick&show=dms');
-    const pane = await screen.findByTestId('dms-empty', {}, WAIT);
-    await within(pane).findByText('No messages yet', {}, WAIT);
+    const pane = await screen.findByTestId('dms-empty');
+    await within(pane).findByText('No messages yet');
     fireEvent.keyDown(within(pane).getByRole('button', { name: 'New message' }), { key: 'Enter' });
-    fireEvent.click(await screen.findByRole('menuitem', { name: /Priya Shah/ }, WAIT));
-    await waitFor(() => expect(fake.requests.some((r) => r.method === 'POST' && r.path === '/v1/channels' && (r.body as { kind?: string }).kind === 'dm')).toBe(true), WAIT);
-    await waitFor(() => expect(work.param('channel')).toMatch(/^dm_/), WAIT);
+    fireEvent.click(await screen.findByRole('menuitem', { name: /Priya Shah/ }));
+    await waitFor(() => expect(fake.requests.some((r) => r.method === 'POST' && r.path === '/v1/channels' && (r.body as { kind?: string }).kind === 'dm')).toBe(true));
+    await waitFor(() => expect(work.param('channel')).toMatch(/^dm_/));
 });
 
 it('Home linked to a channel that’s gone shows the space’s channels to open, never a blank pane', async () => {
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick&channel=ch_gone');
-    const pane = await screen.findByTestId('home-empty', {}, WAIT);
+    const pane = await screen.findByTestId('home-empty');
     expect(pane.textContent).toContain('Start a channel');
     fireEvent.click(within(pane).getByRole('button', { name: 'Open #incidents' }));
     await waitFor(() => expect(work.param('channel')).toBe('ch_incidents'));
@@ -234,7 +233,7 @@ it('DMs linked to a DM that’s gone shows the newest to pick up again', async (
     const fake = fakeWork();
     withSam(fake);
     const work = showWork(fake, '/dashboard?tab=work&space=ws_noclick&show=dms&channel=dm_gone');
-    const pane = await screen.findByTestId('dms-empty', {}, WAIT);
+    const pane = await screen.findByTestId('dms-empty');
     const tiles = within(pane).getAllByRole('button', { name: /^Your messages with / });
     expect(tiles.map((t) => t.getAttribute('aria-label'))).toEqual(['Your messages with Sam Rivera', 'Your messages with Priya Shah']);
     fireEvent.click(tiles[1]);

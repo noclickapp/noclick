@@ -53,7 +53,7 @@ async function open(scene: ChatScene, actsAs: 'owner' | 'key') {
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
     cleanup();
     return record.calls;
@@ -74,7 +74,7 @@ describe('the chat acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./chatCalls.txt');
     });
 
-    it('opens a held purchase’s page on NoClick rather than approving it here', { timeout: 30_000 }, async () => {
+    it('opens a held purchase’s page on NoClick rather than approving it here', async () => {
         // At the lab's moment, while the purchase still waits.
         vi.useFakeTimers({ toFake: ['Date'] });
         vi.setSystemTime(new Date(CLOCK));
@@ -87,7 +87,7 @@ describe('the chat acting as a key', () => {
             const link = document.querySelector<HTMLAnchorElement>('[data-testid="platform-approval-open"]');
             expect(link?.textContent).toContain('Review on NoClick');
             return link!;
-        }, { timeout: 8000 });
+        });
         expect(review.getAttribute('href')).toMatch(/^https:\/\/noclick\.test\/approve\//);
         expect([...document.querySelectorAll('button')].some((b) => b.textContent?.trim() === 'Approve')).toBe(false);
         cleanup();

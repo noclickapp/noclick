@@ -561,7 +561,7 @@ async function holdsNoSecret(calls: Call[]) {
 }
 
 describe('the canvas acting as a key', () => {
-    it('opens, edits, merges, closes, draws, runs, tests and sets up a workflow without asking for what only the account’s owner may do', { timeout: 30_000 }, async () => {
+    it('opens, edits, merges, closes, draws, runs, tests and sets up a workflow without asking for what only the account’s owner may do', async () => {
         const called = new Set<string>();
         const refused: string[] = [];
         for (const actsAs of ['owner', 'key'] as const) {
@@ -634,7 +634,7 @@ describe('the canvas acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('sets a workflow up, choosing an account by its id and writing a variable as its own edit, with no value it wasn’t given', { timeout: 30_000 }, async () => {
+    it('sets a workflow up, choosing an account by its id and writing a variable as its own edit, with no value it wasn’t given', async () => {
         vi.useRealTimers();
         const calls = await setupTab('key');
         vi.useFakeTimers();

@@ -51,7 +51,7 @@ it('keeps a tab picked as another channel is drawn', async () => {
 
     const click = clickAsDrawn(() => (screen.queryByRole('heading', { name: '#launch' }) ? tab('Pins') : null));
     pane.open('launch');
-    await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 5000 });
+    await waitFor(() => expect(click.clicked()).toBe(true));
     await waitFor(() => expect(view()).toBe('pins'));
     expect(tab('Pins').getAttribute('aria-selected')).toBe('true');
 });

@@ -54,7 +54,7 @@ function show(fake: ReturnType<typeof fakeWorkAgent>) {
 }
 
 async function openSessionMenu() {
-    const trigger = await screen.findByLabelText('Its session', {}, { timeout: 5000 });
+    const trigger = await screen.findByLabelText('Its session');
     fireEvent.keyDown(trigger, { key: 'Enter' });
 }
 
@@ -63,7 +63,7 @@ it('draws two chats, a group, a channel post and the owner’s message in one ti
     const fake = fakeWorkAgent({ agent: { name: 'WhatsApp' }, histories: { main: history }, activity: { main: activity }, triggers: [WHATSAPP_TRIGGER], channels: [{ object: 'channel', id: CHANNEL, name: 'launch', kind: 'channel', status: 'open', members: [] }] });
     const view = show(fake);
     // Priya twice (one header for the run), then the group, then Mom: each turn as its own chat.
-    await waitFor(() => expect(view.chats()).toHaveLength(4), { timeout: 5000 });
+    await waitFor(() => expect(view.chats()).toHaveLength(4));
     expect(view.chats().map((c) => !!c.querySelector('[data-chat-header]'))).toEqual([true, false, true, true]);
     expect(view.chats()[2].textContent).toContain('Weekend trek');
     expect(view.chats()[3].textContent).toContain('Mom');
@@ -83,7 +83,7 @@ it('draws two chats, a group, a channel post and the owner’s message in one ti
 it('clears for everyone after a confirm, and resumes the earlier session', async () => {
     const fake = fakeWorkAgent({ agent: { name: 'WhatsApp' }, histories: { main: [{ id: 'm1', role: 'user', text: 'Remember the tasting is Thursday.', created_at: ago(30), operation_id: 'op-1', author: { type: 'account', id: null, name: 'Rowan Hale' } }, { id: 'm2', role: 'assistant', text: 'Noted.', created_at: ago(29), operation_id: 'op-1' }] } });
     const view = show(fake);
-    await screen.findByText('Noted.', {}, { timeout: 5000 });
+    await screen.findByText('Noted.');
 
     await openSessionMenu();
     fireEvent.click(await screen.findByRole('menuitem', { name: /Clear for everyone/ }));
@@ -91,7 +91,7 @@ it('clears for everyone after a confirm, and resumes the earlier session', async
     expect(confirm.textContent).toContain('Its files stay. This session is kept under Earlier sessions.');
     fireEvent.click(within(confirm).getByRole('button', { name: 'Clear for everyone' }));
     // The new session opens, empty but for where it picks up.
-    await waitFor(() => expect(view.dividers()).toContain('New session · cleared by you'), { timeout: 5000 });
+    await waitFor(() => expect(view.dividers()).toContain('New session · cleared by you'));
     expect(screen.queryByText('Noted.')).toBeNull();
     expect(fake.requests.some((r) => r.method === 'POST' && r.path === `/v1/agents/${AGENT_ID}/conversations`)).toBe(true);
 
@@ -104,7 +104,7 @@ it('clears for everyone after a confirm, and resumes the earlier session', async
     fireEvent.click(within(list).getByRole('button', { name: /Noted\./ }));
     const back = await screen.findByRole('dialog', { name: 'Switch WhatsApp back to this session for everyone talking to it?' });
     fireEvent.click(within(back).getByRole('button', { name: 'Switch back' }));
-    await screen.findByText('Noted.', {}, { timeout: 5000 });
+    await screen.findByText('Noted.');
     await waitFor(() => expect(view.dividers()).toContain('Resumed this session · by you'));
 });
 
@@ -115,7 +115,7 @@ it('/clear opens the same confirm, and neither runs while a turn does', async ()
         operations: [{ object: 'operation', id: 'op-live', kind: 'agent.message', status: 'running', conversation: 'main', created_at: ago(1) }],
     });
     show(fake);
-    await screen.findByText('Build the report.', {}, { timeout: 5000 });
+    await screen.findByText('Build the report.');
     await openSessionMenu();
     const clear = await screen.findByRole('menuitem', { name: /Clear for everyone/ });
     expect(clear.getAttribute('aria-disabled')).toBe('true');
@@ -124,7 +124,7 @@ it('/clear opens the same confirm, and neither runs while a turn does', async ()
 
     // Settled, /clear asks the same question the menu does.
     fake.reply('op-live', 'Done.');
-    await screen.findByText('Done.', {}, { timeout: 5000 });
+    await screen.findByText('Done.');
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '/clear' } });
     fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
     expect(await screen.findByRole('dialog', { name: 'Start WhatsApp fresh for everyone?' })).toBeTruthy();

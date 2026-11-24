@@ -12,7 +12,6 @@ import { CONNECTED_APPS } from '../../fixtures/pages/a';
 
 afterEach(cleanup);
 
-const WAIT = { timeout: 10_000 };
 
 function openKeys(): string[] {
     const answer = makeFixtureFetch({ set: 'populated', actsAs: 'owner' });
@@ -59,27 +58,27 @@ const revokedClient = CONNECTED_APPS.find((a) => a.revoked_at && !a.restorable)!
 
 it('restores the assistant’s revoked connection from its row, as it was', async () => {
     const made = openKeys();
-    const section = (await screen.findByRole('heading', { name: 'Connected apps' }, WAIT)).closest('section')!;
+    const section = (await screen.findByRole('heading', { name: 'Connected apps' })).closest('section')!;
     // A revoked client a person connected has no actions; a live one revokes.
-    await within(section).findByText(assistant.client.name, {}, WAIT);
+    await within(section).findByText(assistant.client.name);
     expect(within(section).queryByRole('button', { name: `Actions for ${revokedClient.client.name}` })).toBeNull();
     fireEvent.keyDown(within(section).getByRole('button', { name: 'Actions for Claude' }), { key: 'Enter' });
     const menu = await screen.findAllByRole('menuitem');
     expect(menu.map((item) => item.textContent)).toEqual(['Revoke']);
     fireEvent.click(menu[0]);
-    const revoking = await screen.findByRole('dialog', { name: 'Revoke Claude?' }, WAIT);
+    const revoking = await screen.findByRole('dialog', { name: 'Revoke Claude?' });
     expect(revoking.textContent).toContain('To use it again, connect it again and allow it.');
     fireEvent.click(within(revoking).getByRole('button', { name: 'Cancel' }));
-    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull(), WAIT);
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(made.some((call) => call.startsWith('DELETE'))).toBe(false);
 
     fireEvent.keyDown(within(section).getByRole('button', { name: `Actions for ${assistant.client.name}` }), { key: 'Enter' });
     const [restore] = await screen.findAllByRole('menuitem');
     expect(restore.textContent).toBe('Restore');
     fireEvent.click(restore);
-    const dialog = await screen.findByRole('dialog', { name: `Restore ${assistant.client.name}?` }, WAIT);
+    const dialog = await screen.findByRole('dialog', { name: `Restore ${assistant.client.name}?` });
     expect(dialog.textContent).toContain('it can read, build, deploy, spend, delete, with a cap of $25.00 a month');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Restore' }));
-    await waitFor(() => expect(made).toContain(`POST /v1/connected_apps/${assistant.id}/restore`), WAIT);
-    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull(), WAIT);
+    await waitFor(() => expect(made).toContain(`POST /v1/connected_apps/${assistant.id}/restore`));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
 });

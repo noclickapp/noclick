@@ -166,10 +166,10 @@ it('keeps the choice of account a move asks for as the agent is read, the picker
             <Picker />
         </WorkProviders>
     );
-    await screen.findByText('Accounts read', undefined, { timeout: 5000 });
+    await screen.findByText('Accounts read');
     const click = clickAsDrawn(() => screen.queryByRole('button', { name: 'Claude Code' }));
     arrive();
-    await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 5000 });
+    await waitFor(() => expect(click.clicked()).toBe(true));
     expect((await screen.findByTestId('choosing')).textContent).toBe('anthropic-plan, claude-key');
     expect(moves(fake)).toEqual([]);
 });

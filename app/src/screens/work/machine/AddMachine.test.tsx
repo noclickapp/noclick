@@ -60,8 +60,7 @@ const unheld = (name: RegExp) =>
                 within(buy())
                     .getByRole('button', { name })
                     .hasAttribute('disabled')
-            ).toBe(false),
-        { timeout: HOLD_MS + 1000 }
+            ).toBe(false)
     );
 
 describe('the choice', () => {

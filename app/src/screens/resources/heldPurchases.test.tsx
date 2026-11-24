@@ -57,7 +57,7 @@ function open(address: string) {
 describe('buying a number', () => {
     it('says it went to the owner to approve, and the number is yours once they do', async () => {
         const { api, live } = open('?kind=numbers&new=1');
-        const buy = await screen.findByRole('button', { name: 'Buy +1 415 555 0171' }, { timeout: 5000 });
+        const buy = await screen.findByRole('button', { name: 'Buy +1 415 555 0171' });
         fireEvent.click(buy);
         await act(async () => fireEvent.click(await screen.findByRole('button', { name: /^Buy for / })));
 
@@ -76,7 +76,7 @@ describe('buying a number', () => {
 
     it('says it wasn’t bought when the owner declines it', async () => {
         const { api, live } = open('?kind=numbers&new=1');
-        fireEvent.click(await screen.findByRole('button', { name: 'Buy +1 415 555 0171' }, { timeout: 5000 }));
+        fireEvent.click(await screen.findByRole('button', { name: 'Buy +1 415 555 0171' }));
         await act(async () => fireEvent.click(await screen.findByRole('button', { name: /^Buy for / })));
         await screen.findByTestId('held-call');
         act(() => live.deliver('platform:resource', api.decline()));
@@ -88,7 +88,7 @@ describe('buying a number', () => {
 describe('buying a first domain', () => {
     it('leaves the agreement to the owner, says it went to them, and buys it once they approve', async () => {
         const { api, live } = open('?kind=domains&new=1&name=acme');
-        const rows = await screen.findAllByTestId('available-domain', undefined, { timeout: 5000 });
+        const rows = await screen.findAllByTestId('available-domain');
         fireEvent.click(within(rows[0]).getByRole('button', { name: 'Buy' }));
         // No box to tick: the account's owner accepts the agreement approving the purchase.
         await screen.findByTestId('owner-accepts-agreement');

@@ -134,28 +134,27 @@ async function select(container: HTMLElement, id: string) {
 const edits = (calls: Call[]) => calls.filter((c) => asLine(c) === `POST /v1/workflows/${WORKFLOW}/edits`);
 const opsOf = (call: Call) => (call.body.ops as Json[]).map((op) => op.op);
 const tab = (name: string) => screen.getAllByRole('tab').find((t) => t.textContent === name) as HTMLElement;
-const SAVED = { timeout: 8000 };
 
 /** The list, a workflow made, then one workflow's page whole. */
 async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     // The Automations page: the account's workflows and its folder, what's shared with it, a folder opened, and a
     // blank workflow made.
     const list = draw(scene('list'), actsAs);
-    await screen.findByText('Orders', undefined, SAVED);
-    await screen.findByText('Shared intake', undefined, SAVED);
+    await screen.findByText('Orders');
+    await screen.findByText('Shared intake');
     expect(screen.getByText('Shared intake').closest('[data-testid="automations-grid"] > *')?.textContent).toContain('View only');
     expect(screen.queryByText('Morning brief')).toBeNull();
     fireEvent.click(await screen.findByText('Reports'));
-    await screen.findByText('Morning brief', undefined, SAVED);
+    await screen.findByText('Morning brief');
     expect(screen.queryByText('Orders')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /new automation/i }));
     await waitFor(() => expect(list.calls.some((c) => asLine(c) === 'POST /v1/workflows')).toBe(true));
     expect(list.calls.find((c) => asLine(c) === 'POST /v1/workflows')!.body).toEqual({ folder_id: 'fld_reports' });
     // The new workflow's page opens; back, the page lists it in the folder it was made in.
-    await screen.findByTestId('workflow-page', undefined, SAVED);
+    await screen.findByTestId('workflow-page');
     fireEvent.click(screen.getByRole('button', { name: /automations/i }));
-    fireEvent.click(await screen.findByText('Reports', undefined, SAVED));
-    await screen.findByText('Untitled', undefined, SAVED);
+    fireEvent.click(await screen.findByText('Reports'));
+    await screen.findByText('Untitled');
     const calls = [...list.calls];
     list.unmount();
     for (const id of Object.keys(graphRecords)) delete graphRecords[id];
@@ -163,7 +162,7 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     // One workflow's page: its canvas.
     const page = draw(scene('canvas'), actsAs);
     const { container } = page;
-    await waitFor(() => expect(container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull(), SAVED);
+    await waitFor(() => expect(container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull());
     await screen.findByRole('button', { name: 'Run' });
 
     // A step's panel: its settings, one changed.
@@ -173,9 +172,9 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
         const field = panel.querySelector('input[data-field-key="text"], textarea[data-field-key="text"]');
         expect(field).not.toBeNull();
         return field as HTMLInputElement | HTMLTextAreaElement;
-    }, SAVED);
+    });
     fireEvent.change(text, { target: { value: 'A new order came in.' } });
-    await waitFor(() => expect(edits(page.calls).some((e) => opsOf(e).includes('update_step'))).toBe(true), SAVED);
+    await waitFor(() => expect(edits(page.calls).some((e) => opsOf(e).includes('update_step'))).toBe(true));
     // Its accounts: the ones the account holds of its kind.
     fireEvent.click(tab('Account'));
     await waitFor(() => expect(page.calls.some((c) => asLine(c) === 'GET /v1/connections')).toBe(true));
@@ -186,19 +185,19 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     fireEvent.click(screen.getByRole('button', { name: /add step/i }));
     const search = await screen.findByRole('textbox', { name: 'Search steps' });
     fireEvent.change(search, { target: { value: 'sla' } });
-    await waitFor(() => expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual([expect.stringContaining('Slack')]), SAVED);
+    await waitFor(() => expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual([expect.stringContaining('Slack')]));
     fireEvent.keyDown(search, { key: 'Enter' });
-    await waitFor(() => expect(edits(page.calls).some((e) => opsOf(e).includes('add_step'))).toBe(true), SAVED);
+    await waitFor(() => expect(edits(page.calls).some((e) => opsOf(e).includes('add_step'))).toBe(true));
 
     // The workflow run, and its run shown.
     fireEvent.click(screen.getByRole('button', { name: 'Run' }));
-    await waitFor(() => expect(page.calls.some((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/runs/run_new`)).toBe(true), SAVED);
-    await waitFor(() => expect((graphRecords[WORKFLOW].nodes as Node[]).find((n) => n.id === 'slack')?.data._lastRunStatus).toBe('completed'), SAVED);
+    await waitFor(() => expect(page.calls.some((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/runs/run_new`)).toBe(true));
+    await waitFor(() => expect((graphRecords[WORKFLOW].nodes as Node[]).find((n) => n.id === 'slack')?.data._lastRunStatus).toBe('completed'));
 
     // Its Setup tab: the steps it still needs, derived from the workflow.
     fireEvent.click(tab('Setup'));
     const setup = await screen.findByTestId('workflow-setup');
-    await waitFor(() => expect(setup.querySelector('h2')).not.toBeNull(), SAVED);
+    await waitFor(() => expect(setup.querySelector('h2')).not.toBeNull());
     // Its one variable has a value. The owner's page read it apart and shows it; a key's never asked, and says it's
     // saved and hidden.
     const expand = setup.querySelector('button[aria-label="Expand sidebar"]');
@@ -208,13 +207,13 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
             const row = [...setup.querySelectorAll('aside nav button')].find((b) => b.textContent?.includes('Reply to'));
             expect(row).toBeTruthy();
             return row as HTMLButtonElement;
-        }, SAVED)
+        })
     );
     const value = await waitFor(() => {
         const field = setup.querySelector('input[placeholder]');
         expect(setup.querySelector('h2')?.textContent).toBe('Reply to');
         return field as HTMLInputElement;
-    }, SAVED);
+    });
     const asked = page.calls.filter((c) => asLine(c) === `GET /v1/workflows/${WORKFLOW}/variables`).length;
     expect([value.value, value.placeholder, asked]).toEqual(actsAs === 'owner' ? [VARIABLE_SECRET, 'Enter a value', 1] : ['', 'Saved, hidden. Type to replace it.', 0]);
     // Leaving the field as it was writes nothing, whoever reads it.
@@ -224,7 +223,7 @@ async function session(actsAs: 'owner' | 'key'): Promise<Call[]> {
     // Its Test Run: the message it stages.
     fireEvent.click(tab('Test Run'));
     const test = await screen.findByTestId('workflow-test-run');
-    await waitFor(() => expect(test.textContent).toContain('Sample event'), SAVED);
+    await waitFor(() => expect(test.textContent).toContain('Sample event'));
     calls.push(...page.calls);
     page.unmount();
     return calls;
@@ -254,7 +253,7 @@ async function holdsNoSecret(calls: Call[]) {
 }
 
 describe('the workflows pages acting as a key', () => {
-    it('list, make and open workflows, change and add steps, run, set up and test one without asking for what only the account’s owner may do', { timeout: 120_000 }, async () => {
+    it('list, make and open workflows, change and add steps, run, set up and test one without asking for what only the account’s owner may do', async () => {
         const called = new Set<string>();
         const refused: string[] = [];
         for (const actsAs of ['owner', 'key'] as const) {
@@ -279,18 +278,18 @@ describe('the workflows pages acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./workflowsCalls.txt');
     });
 
-    it('save what a step’s panel changes as the canvas’s own edit, once, naming the step and the setting alone', { timeout: 60_000 }, async () => {
+    it('save what a step’s panel changes as the canvas’s own edit, once, naming the step and the setting alone', async () => {
         const page = draw(scene('canvas'), 'key');
-        await waitFor(() => expect(page.container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull(), SAVED);
+        await waitFor(() => expect(page.container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull());
         await select(page.container, 'slack');
         const panel = await screen.findByTestId('step-panel');
         const text = await waitFor(() => {
             const field = panel.querySelector('input[data-field-key="text"], textarea[data-field-key="text"]');
             expect(field).not.toBeNull();
             return field as HTMLInputElement;
-        }, SAVED);
+        });
         fireEvent.change(text, { target: { value: 'Order in.' } });
-        await waitFor(() => expect(edits(page.calls)).toHaveLength(1), SAVED);
+        await waitFor(() => expect(edits(page.calls)).toHaveLength(1));
         expect(edits(page.calls)[0].body).toMatchObject({ if_version: 4, ops: [{ op: 'update_step', id: 'slack', settings: { text: 'Order in.' } }] });
         // The step's own accounts are the canvas's to save too: the panel's pickers write nothing themselves.
         expect(page.calls.filter((c) => c.method === 'POST' && !c.path.endsWith('/options')).map(asLine)).toEqual([`POST /v1/workflows/${WORKFLOW}/edits`]);
@@ -298,9 +297,9 @@ describe('the workflows pages acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('open a workflow the key may only look at read-only: nothing added, run or saved', { timeout: 60_000 }, async () => {
+    it('open a workflow the key may only look at read-only: nothing added, run or saved', async () => {
         const page = draw(scene('viewer'), 'key');
-        await waitFor(() => expect(page.container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull(), SAVED);
+        await waitFor(() => expect(page.container.querySelector('.react-flow__node[data-id="slack"]')).not.toBeNull());
         await screen.findByTestId('workflow-view-only');
         expect(screen.queryByRole('button', { name: /add step/i })).toBeNull();
         expect(screen.queryByRole('button', { name: 'Run' })).toBeNull();

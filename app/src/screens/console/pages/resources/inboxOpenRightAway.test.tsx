@@ -23,7 +23,7 @@ it('opens a message clicked as the inbox’s mail is drawn', async () => {
             </ConsoleProviders>
         </MemoryRouter>
     );
-    await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 4000 });
+    await waitFor(() => expect(click.clicked()).toBe(true));
     // The message, not the inbox's list: its way back to the list.
     expect(await screen.findByRole('button', { name: 'All messages' })).toBeTruthy();
 });

@@ -48,7 +48,7 @@ async function open(scene: LabScene, actsAs: 'owner' | 'key') {
     render(<RouterProvider router={router} />);
     // A scene that clicks through to a menu or a dialog has made its clicks once that's open.
     const last = scene.steps?.at(-1);
-    if (last) await waitFor(() => expect(document.querySelector('item' in last ? '[role="dialog"]' : '[role="menu"]')).toBeTruthy(), { timeout: 8000 });
+    if (last) await waitFor(() => expect(document.querySelector('item' in last ? '[role="dialog"]' : '[role="menu"]')).toBeTruthy());
     // Settled once no new call has appeared for well past the channels' own wait before reading again what a change
     // named (a read, its change, and the read that change asks for come in turn).
     let seen = -1;
@@ -61,7 +61,7 @@ async function open(scene: LabScene, actsAs: 'owner' | 'key') {
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
     cleanup();
     return record.calls;
@@ -82,13 +82,13 @@ describe('Work acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./workCalls.txt');
     });
 
-    it('offers an agent’s sandbox all the same, and says what the API answers a key without its scope', { timeout: 30_000 }, async () => {
+    it('offers an agent’s sandbox all the same, and says what the API answers a key without its scope', async () => {
         const machine = SCENES.find((s) => s.id === 'machine')!;
         const router = createMemoryRouter([{ path: '*', element: <SceneView scene={machine} actsAs="key" site="https://noclick.test" prepare={answerSessions} /> }], {
             initialEntries: [`/work?${new URLSearchParams(machine.place)}`],
         });
         render(<RouterProvider router={router} />);
-        await waitFor(() => expect(document.body.textContent).toContain('Couldn’t list its files: This key hasn’t the agents:terminal scope'), { timeout: 8000 });
+        await waitFor(() => expect(document.body.textContent).toContain('Couldn’t list its files: This key hasn’t the agents:terminal scope'));
         cleanup();
     });
 });

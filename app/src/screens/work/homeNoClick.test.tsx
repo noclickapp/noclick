@@ -53,7 +53,7 @@ const homeNoClicks = (fake: FakeWork) => fake.channels.filter((c) => c.name === 
 it("a new account's first open shows #noclick, made then, and never an empty Home before it", async () => {
     const fake = fakeWork({ empty: true, noclick: true });
     const work = openWork(fake);
-    await waitFor(() => expect(work.listed()).toEqual([NOCLICK_CHANNEL]), { timeout: 5000 });
+    await waitFor(() => expect(work.listed()).toEqual([NOCLICK_CHANNEL]));
     work.stop();
     expect(work.empties).toEqual([]);
     expect(homeNoClicks(fake)).toHaveLength(1);
@@ -72,7 +72,7 @@ it("shows a personal #noclick made with a space's topic as yours, and leaves a s
 it('lists #noclick from the make itself, when the frame after it never arrives', async () => {
     const fake = fakeWork({ empty: true, noclick: true });
     const work = openWork(fake, createWorkLive());
-    await waitFor(() => expect(work.listed()).toEqual([NOCLICK_CHANNEL]), { timeout: 5000 });
+    await waitFor(() => expect(work.listed()).toEqual([NOCLICK_CHANNEL]));
     work.stop();
     expect(work.empties).toEqual([]);
     expect(homeNoClicks(fake)).toHaveLength(1);
@@ -81,13 +81,13 @@ it('lists #noclick from the make itself, when the frame after it never arrives',
 it('a Home that already holds #noclick shows it at once, making none', async () => {
     const fake = fakeWork({ empty: true, noclick: true });
     const first = openWork(fake);
-    await waitFor(() => expect(first.listed()).toEqual([NOCLICK_CHANNEL]), { timeout: 5000 });
+    await waitFor(() => expect(first.listed()).toEqual([NOCLICK_CHANNEL]));
     first.stop();
     cleanup();
     const posts = () => fake.requests.filter((r) => r.method === 'POST' && r.path === '/v1/channels').length;
     const before = posts();
     const again = openWork(fake);
-    await waitFor(() => expect(again.listed()).toEqual([NOCLICK_CHANNEL]), { timeout: 5000 });
+    await waitFor(() => expect(again.listed()).toEqual([NOCLICK_CHANNEL]));
     again.stop();
     expect(again.empties).toEqual([]);
     expect(posts()).toBe(before);
@@ -104,8 +104,7 @@ it("when #noclick can't be made, Home stops waiting and says it has nothing yet"
         () => {
             expect(work.view.container.textContent).toMatch(/No channels here yet/);
             if (triedWhenSaid < 0) triedWhenSaid = made();
-        },
-        { timeout: 5000 }
+        }
     );
     work.stop();
     // Said only once the make had failed: never while it was still on its way.

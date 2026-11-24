@@ -123,10 +123,10 @@ it('reads an app event heard through a named connection as that connection’s a
             <Toaster />
         </WorkProviders>
     );
-    // Read once the account's connections are, which a full parallel run can take over a second to load.
-    expect(await screen.findByText(/^When Stripe says “Payment failed”/, undefined, { timeout: 10_000 })).toBeTruthy();
+    // Read once the account's connections are.
+    expect(await screen.findByText(/^When Stripe says “Payment failed”/)).toBeTruthy();
     expect(screen.queryByText(/When Slack says/)).toBeNull();
-}, 30_000);
+});
 
 it('hears an app event through an account connected in the app by its `credential:` ref, never its name', async () => {
     const fake = fakeWork();

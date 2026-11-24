@@ -65,14 +65,14 @@ async function tipOf(button: HTMLElement): Promise<string | null> {
     if (!said.length) {
         fireEvent.pointerEnter(button, { pointerType: 'mouse' });
         fireEvent.pointerMove(button, { pointerType: 'mouse' });
-        await waitFor(() => expect(tipText().length).toBeGreaterThan(0), { timeout: 800 }).catch(() => undefined);
+        await waitFor(() => expect(tipText().length).toBeGreaterThan(0));
         said = tipText();
     }
     fireEvent.pointerLeave(button, { pointerType: 'mouse' });
     fireEvent.keyDown(button, { key: 'Escape' });
     act(() => button.blur());
     fireEvent.blur(button);
-    await waitFor(() => expect(tipText()).toEqual([]), { timeout: 1500 });
+    await waitFor(() => expect(tipText()).toEqual([]));
     return said.length ? said.join(' / ') : null;
 }
 
@@ -94,13 +94,13 @@ const theList = () => screen.getByRole('navigation', { name: 'The list' });
 
 async function show(view: 'Home' | 'Agents' | 'DMs' | 'Resources', testId: string) {
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Views' })).getByRole('button', { name: new RegExp(`${view}$`) }));
-    await screen.findByTestId(testId, {}, { timeout: 5000 });
+    await screen.findByTestId(testId);
 }
 
 it('every icon-only button in Work’s rails, lists and a channel’s box names itself with a tooltip', async () => {
     openWork();
-    await screen.findByTestId('home-section', {}, { timeout: 5000 });
-    const composer = await screen.findByTestId('channel-composer', {}, { timeout: 5000 });
+    await screen.findByTestId('home-section');
+    const composer = await screen.findByTestId('channel-composer');
     const found = await audit([...rails(), theList(), composer]);
     for (const view of [
         ['Agents', 'agents-list'],
@@ -113,7 +113,7 @@ it('every icon-only button in Work’s rails, lists and a channel’s box names 
     // An agent's box: from its text up to the part that holds its Send.
     await show('Agents', 'agents-list');
     fireEvent.click(within(theList()).getByRole('button', { name: /^Support/ }));
-    let box: HTMLElement = await screen.findByRole('textbox', { name: 'Message Support' }, { timeout: 5000 });
+    let box: HTMLElement = await screen.findByRole('textbox', { name: 'Message Support' });
     while (!box.querySelector('[data-primary]') && box.parentElement) box = box.parentElement;
     Object.assign(found, await audit([box]));
 

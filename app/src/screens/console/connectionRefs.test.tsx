@@ -15,9 +15,6 @@ import { makeFixtureFetch } from './fixtures/fixtureFetch';
 
 type Json = Record<string, unknown>;
 
-// Each wait is on the page's own state; a full parallel run can take longer than a second to load a page's code.
-configure({ asyncUtilTimeout: 10_000 });
-vi.setConfig({ testTimeout: 30_000 });
 afterEach(cleanup);
 
 const BASE = '/developers';

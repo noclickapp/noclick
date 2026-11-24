@@ -51,21 +51,21 @@ it('opens its delete when Delete is clicked as soon as the page is drawn', async
     const click = clickAsDrawn(() => screen.queryByRole('button', { name: 'Delete' }));
     try {
         page(fileAddress(ACCOUNT_FILES[0].id));
-        await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 5000 });
+        await waitFor(() => expect(click.clicked()).toBe(true));
     } finally {
         click.stop();
     }
     expect(screen.getByTestId('removal-panel')).toBeTruthy();
-    await waitFor(() => expect(previewed()).toBe(true), { timeout: 5000 });
-    await screen.findByText("Deletes the file 'Q3 summary.pdf' from the account's files for good.", undefined, { timeout: 5000 });
+    await waitFor(() => expect(previewed()).toBe(true));
+    await screen.findByText("Deletes the file 'Q3 summary.pdf' from the account's files for good.");
 });
 
 it("opens another file's page without the last one's delete", async () => {
     page(fileAddress(ACCOUNT_FILES[0].id));
-    fireEvent.click(await screen.findByRole('button', { name: 'Delete' }, { timeout: 5000 }));
-    await screen.findByText("Deletes the file 'Q3 summary.pdf' from the account's files for good.", undefined, { timeout: 5000 });
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete' }));
+    await screen.findByText("Deletes the file 'Q3 summary.pdf' from the account's files for good.");
     act(() => void navigate(fileAddress(ACCOUNT_FILES[1].id)));
-    await screen.findByRole('heading', { name: ACCOUNT_FILES[1].name }, { timeout: 5000 });
+    await screen.findByRole('heading', { name: ACCOUNT_FILES[1].name });
     expect(screen.queryByTestId('removal-panel')).toBeNull();
     expect(screen.getByRole('button', { name: 'Delete' })).toBeTruthy();
 });

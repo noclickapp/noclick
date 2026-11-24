@@ -35,7 +35,7 @@ it('fails the run on a timer that fires after its environment, naming where it c
     namesTheLeak(output);
     expect(output).toContain('3 passed');
     expect(output).not.toContain('c-clears.fixture.ts left pending');
-}, 70_000);
+});
 
 it('fails it when the leaking file runs last, with nothing after it to keep the run going', () => {
     // Thrown from its own timer, this leak was lost as its worker ended, and the run passed.
@@ -43,4 +43,4 @@ it('fails it when the leaking file runs last, with nothing after it to keep the 
     expect(status, output).toBe(1);
     namesTheLeak(output);
     expect(output).toContain('1 passed');
-}, 70_000);
+});

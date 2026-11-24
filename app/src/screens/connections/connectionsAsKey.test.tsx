@@ -67,7 +67,7 @@ async function open(scene: ConnectionsScene, actsAs: 'owner' | 'key') {
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
     cleanup();
     return record.calls;
@@ -112,12 +112,12 @@ describe('Connections acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./connectionsCalls.txt');
     });
 
-    it('connects an app at NoClick’s connect page in a new tab, sending no secret, and lists it once it lands', { timeout: 30_000 }, async () => {
+    it('connects an app at NoClick’s connect page in a new tab, sending no secret, and lists it once it lands', async () => {
         laptopSizes();
         const tabs = stubTabs();
         const record = recorder();
         draw(scene('catalog'), 'key', record.observe);
-        const [connect] = await screen.findAllByRole('button', { name: 'Connect Airtable' }, { timeout: 8000 });
+        const [connect] = await screen.findAllByRole('button', { name: 'Connect Airtable' });
         await act(async () => fireEvent.click(connect));
         // A named connection of the app, with nothing of the account's in it.
         await waitFor(() => expect(record.calls.filter((c) => c.method === 'POST' && c.path === '/v1/connections').map((c) => c.body)).toEqual([
@@ -131,12 +131,12 @@ describe('Connections acting as a key', () => {
         await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/airtable-/));
         // Once the account lands there, it's listed.
         fireEvent.click(screen.getByRole('tab', { name: /Connected/ }));
-        await waitFor(() => expect(screen.getAllByTestId('connected-account').some((tile) => tile.textContent?.includes('Airtable'))).toBe(true), { timeout: 8000 });
+        await waitFor(() => expect(screen.getAllByTestId('connected-account').some((tile) => tile.textContent?.includes('Airtable'))).toBe(true));
     });
 
-    it('sends a key to NoClick’s own pages to share an account or lift its approvals', { timeout: 30_000 }, async () => {
+    it('sends a key to NoClick’s own pages to share an account or lift its approvals', async () => {
         draw(scene('account'), 'key');
-        await screen.findByTestId('account-page', undefined, { timeout: 8000 });
+        await screen.findByTestId('account-page');
         expect(await screen.findByText(ownerOnlyWhy('connectionSharing'))).toBeTruthy();
         const share = screen.getByRole('link', { name: /Share on NoClick/ });
         expect(share.getAttribute('href')).toBe('https://noclick.test/dashboard?tab=connections&view=connected&account=cred_github');
@@ -146,11 +146,11 @@ describe('Connections acting as a key', () => {
         expect(approvals.getAttribute('target')).toBe('_blank');
     });
 
-    it('reconnects an account connected in the app at its own connect link, in a new tab', { timeout: 30_000 }, async () => {
+    it('reconnects an account connected in the app at its own connect link, in a new tab', async () => {
         const tabs = stubTabs();
         const record = recorder();
         draw(scene('account-revoked'), 'key', record.observe);
-        const reconnect = await screen.findByRole('button', { name: 'Reconnect' }, { timeout: 8000 });
+        const reconnect = await screen.findByRole('button', { name: 'Reconnect' });
         await act(async () => fireEvent.click(reconnect));
         await waitFor(() => expect(tabs[0]?.location.href).toBe('https://noclick.test/connect/reconnect-cred_slack'));
         expect(record.calls.map(asLine)).toContain('POST /v1/connections/credential:cred_slack/connect_links');

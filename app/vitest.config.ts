@@ -16,7 +16,11 @@ export default defineConfig({
         fsModuleCachePath: `${cacheDir}/vitest-modules`,
         include: ['src/**/*.test.{ts,tsx}', 'test/**/*.test.ts'],
         // A timer a DOM test leaves behind fails the run by name (test/pendingTimers.ts).
-        // DOM tests wait up to five seconds (test/domWaits.ts).
+        // DOM tests wait on state for up to thirty seconds (test/domWaits.ts).
         setupFiles: ['./test/domWaits.ts', './test/pendingTimers.ts'],
+        // A test's deadline catches a hang, never a slow machine: a test waits on state, and a loaded machine
+        // (several suites at once) took a page's first draw past vitest's five seconds.
+        testTimeout: 120_000,
+        hookTimeout: 120_000,
     },
 });

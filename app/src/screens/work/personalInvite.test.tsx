@@ -33,11 +33,11 @@ function openDms(fake: FakeWork) {
 const sent = (fake: FakeWork, method: string, path: string) => fake.requests.filter((r) => r.method === method && r.path === path);
 
 /** The DMs list's Invite people (the pane beside it, with no one to message, offers it too). */
-const listInvite = async () => within(await screen.findByTestId('work-list', {}, { timeout: 5000 })).findByRole('button', { name: 'Invite people' }, { timeout: 5000 });
+const listInvite = async () => within(await screen.findByTestId('work-list')).findByRole('button', { name: 'Invite people' });
 
 async function inviteFromDms() {
     fireEvent.click(await listInvite());
-    return await screen.findByTestId('invite-dialog', {}, { timeout: 5000 });
+    return await screen.findByTestId('invite-dialog');
 }
 
 it('Invite people in the personal space invites into it, through the dialog a team space has', async () => {

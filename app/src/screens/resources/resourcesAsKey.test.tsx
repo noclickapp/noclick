@@ -82,7 +82,7 @@ function open(address: string): Calls {
                     expect(Date.now() - last).toBeGreaterThan(150);
                     expect(container.querySelectorAll('.animate-pulse').length).toBe(0);
                 },
-                { timeout: 10_000, interval: 30 }
+                { interval: 30 }
             );
         },
     };
@@ -115,5 +115,5 @@ describe('Resources acting as a key', () => {
             cleanup();
         }
         // Every item's page, each opened afresh: a dozen agents' pages take a few seconds.
-    }, 30_000);
+    });
 });

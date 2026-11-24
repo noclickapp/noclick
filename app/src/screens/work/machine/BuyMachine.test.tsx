@@ -12,7 +12,7 @@ import { WorkProviders } from '../agents/fixtures/providers';
 import { createWorkLive } from '@/sdk/live';
 import { holding } from '@/sdk/heldFixture';
 import { workFixtureClient } from '../fixtures/client';
-import { BuyMachine, HOLD_MS } from './BuyMachine';
+import { BuyMachine } from './BuyMachine';
 
 afterEach(cleanup);
 
@@ -42,7 +42,7 @@ async function toConfirm(size: string, region?: string) {
     if (region) fireEvent.click(row(region));
     fireEvent.click(within(dialog()).getByRole('button', { name: /^Continue/ }));
 }
-const unheld = () => waitFor(() => expect(buyButton().hasAttribute('disabled')).toBe(false), { timeout: HOLD_MS + 1000 });
+const unheld = () => waitFor(() => expect(buyButton().hasAttribute('disabled')).toBe(false));
 
 describe('the sizes', () => {
     it('lists what’s worth buying from its best price and greys a sold-out size, leaving out one another beats', async () => {

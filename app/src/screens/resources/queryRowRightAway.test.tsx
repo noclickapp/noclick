@@ -34,7 +34,7 @@ it('opens a row clicked as another query’s rows replace the last one’s', asy
     fireEvent.change(sql, { target: { value: 'select * from bookings limit 3' } });
     const click = clickAsDrawn(() => (screen.queryByRole('button', { name: 'Open row 3' }) ? screen.getByRole('button', { name: 'Open row 2' }) : null));
     fireEvent.click(screen.getByRole('button', { name: 'Run' }));
-    await waitFor(() => expect(click.clicked()).toBe(true), { timeout: 4000 });
+    await waitFor(() => expect(click.clicked()).toBe(true));
     expect(await screen.findByText('Row 2 of 3')).toBeTruthy();
 });
 
@@ -67,7 +67,7 @@ it('keeps what’s typed in the query box as another database is drawn', async (
         (box) => fireEvent.change(box, { target: { value: 's' } })
     );
     show(other);
-    await waitFor(() => expect(typed.clicked()).toBe(true), { timeout: 4000 });
+    await waitFor(() => expect(typed.clicked()).toBe(true));
     await waitFor(() => expect(screen.getByRole('heading', { name: other.name })).toBeTruthy());
     expect(sql.value).toBe('s');
 });

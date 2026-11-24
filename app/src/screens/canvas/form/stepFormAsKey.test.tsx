@@ -101,7 +101,7 @@ async function settled(record: ReturnType<typeof recorder>) {
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
 }
 
@@ -168,10 +168,10 @@ describe('the step form acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./stepFormCalls.txt');
     });
 
-    it('reads a step type’s schema once a session, and the trigger’s address for the step', { timeout: 30_000 }, async () => {
+    it('reads a step type’s schema once a session, and the trigger’s address for the step', async () => {
         const record = recorder();
         draw(scene('hook'), 'key', record.observe);
-        expect(await screen.findByDisplayValue('https://hooks.example.test/hook', undefined, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByDisplayValue('https://hooks.example.test/hook')).toBeTruthy();
         await settled(record);
         expect(record.calls.map(asLine)).toEqual(['GET /v1/step_types/example-hook', 'POST /v1/workflows/wf_orders/steps/hook/values']);
         expect(record.calls[1].body).toEqual({ field: 'webhook_url', settings: {} });
@@ -179,11 +179,11 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('lists a dropdown’s choices for the step, sending its settings as the form holds them', { timeout: 30_000 }, async () => {
+    it('lists a dropdown’s choices for the step, sending its settings as the form holds them', async () => {
         const record = recorder();
         draw(scene('mail-send'), 'key', record.observe);
         // The saved channel is found among the account's channels.
-        expect(await screen.findByDisplayValue('#orders', undefined, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByDisplayValue('#orders')).toBeTruthy();
         await settled(record);
         const options = record.calls.filter((c) => c.path === '/v1/workflows/wf_orders/steps/mail/options');
         expect(options.length).toBeGreaterThan(0);
@@ -193,10 +193,10 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('previews an expression in a field against what the step references', { timeout: 30_000 }, async () => {
+    it('previews an expression in a field against what the step references', async () => {
         const record = recorder();
         draw(scene('mail-send'), 'key', record.observe);
-        const body = (await screen.findByDisplayValue("New order from {{ $('hook').body.name }}", undefined, { timeout: 8000 })) as HTMLTextAreaElement;
+        const body = (await screen.findByDisplayValue("New order from {{ $('hook').body.name }}")) as HTMLTextAreaElement;
         await settled(record);
         const inside = body.value.indexOf('hook') + 2;
         await act(async () => {
@@ -205,7 +205,7 @@ describe('the step form acting as a key', () => {
             fireEvent.click(body);
             fireEvent.select(body);
         });
-        await waitFor(() => expect(record.calls.some((c) => c.path === '/v1/workflows/wf_orders/steps/mail/expression')).toBe(true), { timeout: 8000 });
+        await waitFor(() => expect(record.calls.some((c) => c.path === '/v1/workflows/wf_orders/steps/mail/expression')).toBe(true));
         const preview = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/steps/mail/expression')!;
         expect(preview.body).toMatchObject({ expression: "$('hook').body.name", samples: { hook: { body: { name: 'Ada' } } } });
         await settled(record);
@@ -213,10 +213,10 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('clears what a step keeps between runs through the API', { timeout: 30_000 }, async () => {
+    it('clears what a step keeps between runs through the API', async () => {
         const record = recorder();
         draw(scene('state'), 'key', record.observe);
-        const clear = await screen.findByRole('button', { name: /Clear State/ }, { timeout: 8000 });
+        const clear = await screen.findByRole('button', { name: /Clear State/ });
         await act(async () => fireEvent.click(clear));
         await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/steps/state/clear_state'));
         await settled(record);
@@ -224,10 +224,10 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('lists the account’s connections for a step and saves a choice as the step’s set_connection edit', { timeout: 30_000 }, async () => {
+    it('lists the account’s connections for a step and saves a choice as the step’s set_connection edit', async () => {
         const record = recorder();
         draw(scene('accounts-picked'), 'key', record.observe);
-        const picker = await screen.findByRole('button', { name: 'Orders mailbox' }, { timeout: 8000 });
+        const picker = await screen.findByRole('button', { name: 'Orders mailbox' });
         // Its check said who it reaches; the revoked one is listed after the working ones.
         expect(screen.getByText('Verified as orders@example.test')).toBeTruthy();
         await settled(record);
@@ -246,11 +246,11 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('connects a step’s first account at NoClick’s connect page in a new tab, sending no secret, then saves it', { timeout: 30_000 }, async () => {
+    it('connects a step’s first account at NoClick’s connect page in a new tab, sending no secret, then saves it', async () => {
         const tabs = stubTabs();
         const record = recorder();
         draw(scene('accounts-optional'), 'key', record.observe);
-        expect(await screen.findByText('Optional. With no account here, NoClick’s own key runs it and bills the usage.', undefined, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByText('Optional. With no account here, NoClick’s own key runs it and bills the usage.')).toBeTruthy();
         await settled(record);
         await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect on NoClick' })));
         // A named connection of the step's app, on its own first way in, with nothing of the account's in it.
@@ -259,7 +259,7 @@ describe('the step form acting as a key', () => {
         ]));
         await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/example_search-/));
         // Once the account lands there, the step takes it by the id of the account its connection holds.
-        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
+        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'));
         const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
         expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'search', connection: expect.stringMatching(/^cred_conn_examplesearch/), slot: 'example_search_api_key' }], include_graph: true });
         await settled(record);
@@ -267,11 +267,11 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('connects an agent’s AI account through connect.model, as the key of the provider its model names', { timeout: 30_000 }, async () => {
+    it('connects an agent’s AI account through connect.model, as the key of the provider its model names', async () => {
         const tabs = stubTabs();
         const record = recorder();
         draw(scene('accounts-agent'), 'key', record.observe);
-        expect(await screen.findByRole('button', { name: 'Team key' }, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByRole('button', { name: 'Team key' })).toBeTruthy();
         await settled(record);
         await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect another account' })));
         await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Connect an AI account' })));
@@ -280,7 +280,7 @@ describe('the step form acting as a key', () => {
             { name: expect.stringMatching(/^openai-/), integration: 'openai', credential_type: 'agent_openai' },
         ]));
         await waitFor(() => expect(tabs[0]?.location.href).toMatch(/^https:\/\/noclick\.test\/connect\/openai-/));
-        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'), { timeout: 8000 });
+        await waitFor(() => expect(record.calls.map(asLine)).toContain('POST /v1/workflows/wf_orders/edits'));
         const edit = record.calls.find((c) => c.path === '/v1/workflows/wf_orders/edits')!;
         expect(edit.body).toEqual({ ops: [{ op: 'set_connection', id: 'agent', connection: expect.stringMatching(/^cred_conn_openai/), slot: 'agent_openai' }], include_graph: true });
         await settled(record);
@@ -288,11 +288,11 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('names the account a step keeps through a named connection, as the step reads after a reload', { timeout: 30_000 }, async () => {
+    it('names the account a step keeps through a named connection, as the step reads after a reload', async () => {
         const record = recorder();
         draw(scene('accounts-named'), 'key', record.observe);
         // The step keeps the account's id; the connection holding it names it, so its picker shows its name.
-        expect(await screen.findByRole('button', { name: 'shipping-mail' }, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByRole('button', { name: 'shipping-mail' })).toBeTruthy();
         expect(screen.queryByText(/isn’t one you can use|no longer exists/)).toBeNull();
         await settled(record);
         expect(record.calls.map(asLine)).toEqual(expect.arrayContaining(['GET /v1/connections']));
@@ -300,10 +300,10 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('says why an account the step points at can’t be used, and offers to connect another', { timeout: 30_000 }, async () => {
+    it('says why an account the step points at can’t be used, and offers to connect another', async () => {
         const record = recorder();
         draw(scene('accounts-revoked'), 'key', record.observe);
-        expect(await screen.findByText('This account was disconnected or revoked, so runs can’t use it. Connect it again below, or choose another.', undefined, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByText('This account was disconnected or revoked, so runs can’t use it. Connect it again below, or choose another.')).toBeTruthy();
         expect(screen.getByRole('button', { name: 'Old mailbox (revoked)' })).toBeTruthy();
         expect(screen.getByRole('button', { name: 'Connect on NoClick' })).toBeTruthy();
         await settled(record);
@@ -311,9 +311,9 @@ describe('the step form acting as a key', () => {
         expect(offClient).toEqual([]);
     });
 
-    it('says why when the API doesn’t know a step’s type', { timeout: 30_000 }, async () => {
+    it('says why when the API doesn’t know a step’s type', async () => {
         const record = recorder();
         draw(scene('unknown'), 'key', record.observe);
-        expect(await screen.findByText(/This step’s settings couldn’t be read: No step type 'example-gone'/, undefined, { timeout: 8000 })).toBeTruthy();
+        expect(await screen.findByText(/This step’s settings couldn’t be read: No step type 'example-gone'/)).toBeTruthy();
     });
 });

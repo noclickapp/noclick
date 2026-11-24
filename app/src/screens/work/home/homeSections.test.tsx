@@ -46,7 +46,7 @@ async function openHome(fake: FakeWork, { phone = false } = {}) {
             work
         )
     );
-    await screen.findByTestId('home-channels', {}, { timeout: 5000 });
+    await screen.findByTestId('home-channels');
     await waitFor(() => expect(fake.requests.some((r) => r.path === '/v1/channels/sections')).toBe(true));
 }
 
@@ -239,7 +239,7 @@ it('on a phone, holding a channel opens its Move menu, without opening the chann
     expect(screen.getByRole('button', { name: 'Ops options' }).className).not.toContain('opacity-0');
 
     fireEvent.pointerDown(row, { pointerType: 'touch', clientX: 20, clientY: 20 });
-    await screen.findByRole('menuitem', { name: 'Ops' }, { timeout: 2000 });
+    await screen.findByRole('menuitem', { name: 'Ops' });
     fireEvent.pointerUp(row, { pointerType: 'touch' });
     fireEvent.click(row.querySelector('button')!);
     expect(screen.queryByTestId('channel-pane')).toBeNull();
@@ -248,7 +248,7 @@ it('on a phone, holding a channel opens its Move menu, without opening the chann
 
     // Held, a channel goes into a section made for it there and then.
     fireEvent.pointerDown(document.querySelector('li[data-channel="ch_launch"]')!, { pointerType: 'touch', clientX: 20, clientY: 20 });
-    fireEvent.click(await screen.findByRole('menuitem', { name: 'New section' }, { timeout: 2000 }));
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'New section' }));
     const name = await screen.findByRole('textbox', { name: 'Section name' });
     fireEvent.change(name, { target: { value: 'Shipping' } });
     fireEvent.keyDown(name, { key: 'Enter' });

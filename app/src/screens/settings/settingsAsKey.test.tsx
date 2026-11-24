@@ -81,7 +81,7 @@ async function open(scene: SettingsScene, actsAs: ActsAs): Promise<Call[]> {
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
     cleanup();
     return calls;
@@ -115,9 +115,9 @@ describe('Settings acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./settingsCalls.txt');
     });
 
-    it('lets a key lower the cap and sends it to NoClick to raise or remove it', { timeout: 30_000 }, async () => {
+    it('lets a key lower the cap and sends it to NoClick to raise or remove it', async () => {
         show('billing-change-cap', 'key');
-        const field = (await screen.findByLabelText('Cap each period', {}, { timeout: 10_000 })) as HTMLInputElement;
+        const field = (await screen.findByLabelText('Cap each period')) as HTMLInputElement;
         expect(screen.queryByRole('button', { name: 'Remove cap' })).toBeNull();
         const elsewhere = screen.getByRole('link', { name: /Raise or remove it on NoClick/ });
         expect(elsewhere.getAttribute('href')).toBe('https://noclick.com/dashboard?tab=settings&section=billing');
@@ -130,21 +130,21 @@ describe('Settings acting as a key', () => {
         cleanup();
     });
 
-    it('offers a key at the cap NoClick’s page to raise it, and the owner the raise itself', { timeout: 30_000 }, async () => {
+    it('offers a key at the cap NoClick’s page to raise it, and the owner the raise itself', async () => {
         show('billing-cap-reached', 'key');
-        const raise = await screen.findByRole('link', { name: /Raise it on NoClick/ }, { timeout: 10_000 });
+        const raise = await screen.findByRole('link', { name: /Raise it on NoClick/ });
         expect(raise.getAttribute('href')).toBe('https://noclick.com/dashboard?tab=settings&section=billing');
         expect(screen.queryByRole('button', { name: 'Raise cap' })).toBeNull();
         cleanup();
         show('billing-cap-reached', 'owner');
-        fireEvent.click(await screen.findByRole('button', { name: 'Raise cap' }, { timeout: 10_000 }));
+        fireEvent.click(await screen.findByRole('button', { name: 'Raise cap' }));
         expect(screen.getByRole('button', { name: 'Remove cap' })).toBeTruthy();
         cleanup();
     });
 
-    it('lets the owner link a number by its code, and never offers a key linking one', { timeout: 30_000 }, async () => {
+    it('lets the owner link a number by its code, and never offers a key linking one', async () => {
         show('phone-none', 'owner');
-        await screen.findByText('Link a number', {}, { timeout: 10_000 });
+        await screen.findByText('Link a number');
         const field = document.querySelector<HTMLInputElement>('input[type="tel"]')!;
         await waitFor(() => expect(field.disabled).toBe(false));
         fireEvent.change(field, { target: { value: '+14155550123' } });
@@ -156,15 +156,15 @@ describe('Settings acting as a key', () => {
         cleanup();
         // A key is never offered Phone: the API links a number only for the owner or a key that names its scope.
         show('phone-none', 'key');
-        expect(await screen.findAllByText('Usage', {}, { timeout: 10_000 })).toBeTruthy();
+        expect(await screen.findAllByText('Usage')).toBeTruthy();
         expect(screen.queryByText('Link a number')).toBeNull();
         expect(screen.queryByRole('button', { name: /^Phone/ })).toBeNull();
         cleanup();
     });
 
-    it('lets a key make a builder skill, open it, and delete one', { timeout: 30_000 }, async () => {
+    it('lets a key make a builder skill, open it, and delete one', async () => {
         show('skills', 'key');
-        fireEvent.change(await screen.findByLabelText('Skill name', {}, { timeout: 10_000 }), { target: { value: 'Pricing rules' } });
+        fireEvent.change(await screen.findByLabelText('Skill name'), { target: { value: 'Pricing rules' } });
         fireEvent.click(screen.getByRole('button', { name: 'Create' }));
         // A new skill opens in its editor at once.
         await waitFor(() => expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe('Pricing rules'));
@@ -176,18 +176,18 @@ describe('Settings acting as a key', () => {
         cleanup();
     });
 
-    it('lets a key turn a dismissed popup back on', { timeout: 30_000 }, async () => {
+    it('lets a key turn a dismissed popup back on', async () => {
         show('popups', 'key');
-        const banner = await screen.findByRole('switch', { name: 'Collaboration invite banner' }, { timeout: 10_000 });
+        const banner = await screen.findByRole('switch', { name: 'Collaboration invite banner' });
         await waitFor(() => expect(banner.getAttribute('aria-checked')).toBe('false'));
         fireEvent.click(banner);
         await waitFor(() => expect(screen.getByRole('switch', { name: 'Collaboration invite banner' }).getAttribute('aria-checked')).toBe('true'));
         cleanup();
     });
 
-    it('reads the plan and the balance as a key does, with NoClick’s pages for changing them', { timeout: 30_000 }, async () => {
+    it('reads the plan and the balance as a key does, with NoClick’s pages for changing them', async () => {
         show('billing', 'key');
-        expect(await screen.findByText('Member', {}, { timeout: 10_000 })).toBeTruthy();
+        expect(await screen.findByText('Member')).toBeTruthy();
         expect(screen.getByText(/\$42\.50 left/)).toBeTruthy();
         expect(screen.getByRole('link', { name: /Add funds on NoClick/ }).getAttribute('href')).toBe('https://noclick.com/dashboard?action=topup');
         await waitFor(() => expect(screen.getByText('$12.40 of $50 spent this period · resets November 1')).toBeTruthy());

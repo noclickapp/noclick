@@ -49,7 +49,7 @@ async function open(scene: UsageScene, actsAs: ActsAs): Promise<{ method: string
             seen = distinct;
             expect(Date.now() - quietSince).toBeGreaterThanOrEqual(QUIET_MS);
         },
-        { timeout: 15_000, interval: 50 }
+        { interval: 50 }
     );
     cleanup();
     return calls;
@@ -70,11 +70,11 @@ describe('Settings → Usage acting as a key', () => {
         await expect([...called].sort().join('\n') + '\n').toMatchFileSnapshot('./usageCalls.txt');
     });
 
-    it('shows a key the balance as read, with NoClick’s page for adding funds', { timeout: 30_000 }, async () => {
+    it('shows a key the balance as read, with NoClick’s page for adding funds', async () => {
         const member = SCENES.find((s) => s.id === 'account-member')!;
         const router = createMemoryRouter([{ path: '*', element: <SceneView scene={member} actsAs="key" /> }], { initialEntries: [`/usage-lab${sceneSearch(member)}`] });
         render(<RouterProvider router={router} />);
-        const add = await screen.findByRole('link', { name: /Add funds/ }, { timeout: 10_000 });
+        const add = await screen.findByRole('link', { name: /Add funds/ });
         expect(add.getAttribute('href')).toMatch(/^https:\/\//);
         await waitFor(() => expect(screen.queryByText(/auto top-up/i)).toBeNull());
         cleanup();

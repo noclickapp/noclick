@@ -47,12 +47,12 @@ const foldControls = () => within(list()).queryAllByRole('button', { name: /^(Hi
 
 async function show(view: 'Home' | 'Agents' | 'DMs', testId: string) {
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Views' })).getByRole('button', { name: new RegExp(`${view}$`) }));
-    await screen.findByTestId(testId, {}, { timeout: 5000 });
+    await screen.findByTestId(testId);
 }
 
 it('Home keeps its list where a narrow pane folds Agents’ and DMs’, and offers no fold', async () => {
     openWork(LIST_ROOM - 200);
-    await screen.findByTestId('home-channels', {}, { timeout: 5000 });
+    await screen.findByTestId('home-channels');
     expect(folded()).toBe(false);
     expect(foldControls()).toEqual([]);
 
@@ -68,7 +68,7 @@ it('Home keeps its list where a narrow pane folds Agents’ and DMs’, and offe
 
 it('a fold chosen in Agents passes over Home, and Agents and DMs are folded again after it', async () => {
     openWork(LIST_OPENS + 400);
-    await screen.findByTestId('home-channels', {}, { timeout: 5000 });
+    await screen.findByTestId('home-channels');
     await show('Agents', 'agents-list');
     expect(folded()).toBe(false);
     fireEvent.click(within(list()).getByRole('button', { name: 'Hide agents' }));
@@ -94,7 +94,7 @@ it('a fold chosen in Agents passes over Home, and Agents and DMs are folded agai
 it('Home opened with a fold remembered on this device keeps its list', async () => {
     localStorage.setItem(FOLDED_KEY, '1');
     openWork(LIST_OPENS + 400);
-    await screen.findByTestId('home-channels', {}, { timeout: 5000 });
+    await screen.findByTestId('home-channels');
     expect(folded()).toBe(false);
     expect(foldControls()).toEqual([]);
     await show('Agents', 'agents-list');
