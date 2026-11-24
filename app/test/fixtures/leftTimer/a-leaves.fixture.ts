@@ -1,8 +1,9 @@
-// Leaves a timer that reads the window after this file's environment is gone (run by test/pendingTimers.test.ts).
+// Leaves an interval that reads the window: fine until this file's environment is gone, then failing, however long the
+// teardown takes (a timeout's one firing could come before it on a loaded box). Run by test/pendingTimers.test.ts.
 import { expect, it } from 'vitest';
 
 function startBlink() {
-    setTimeout(() => window.location.href, 300);
+    setInterval(() => window.location.href, 100);
 }
 
 it('starts a timer and never clears it', () => {

@@ -114,7 +114,7 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
     const roles = useSlot(STEP_ROLES).useRoles();
     const { getInternalNode, getZoom, setCenter, screenToFlowPosition, fitView, getViewport } = useReactFlow();
 
-    const history = useWorkflowUndoRedo(NO_NODES, NO_EDGES, { historyLimit: 50, onNodesChange: setNodes, onEdgesChange: setEdges });
+    const history = useWorkflowUndoRedo(NO_NODES, NO_EDGES, { historyLimit: 50, onNodesChange: setNodes, onEdgesChange: setEdges, frozen: readOnly });
     const { resetBaseline, rebaseHistory, captureState } = history;
     // An edit made outside React Flow's own changes (a menu's, a pick's): the graph as the store holds it after it,
     // one step back, a task later as the surface's edits are recorded.
@@ -243,6 +243,7 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
         setEdges,
         palette: { open: palette, show: showPalette, hide: hidePalette },
         panToNode,
+        frozen: readOnly,
         on: {
             added: (_node, { chained }) => {
                 if (!chained) setPalette(false);
@@ -316,6 +317,7 @@ function CanvasEditor({ workflowId, name, onSelect, onAccess, children }: Workfl
                 edgeTypes={EDGE_TYPES}
                 {...editing}
                 frozen={readOnly}
+                undo={history.undo}
                 onSelectionChange={onSelectionChange}
                 onPaneContextMenu={editable ? menus.handlePaneContextMenu : undefined}
                 onNodeContextMenu={editable ? menus.handleNodeContextMenu : undefined}

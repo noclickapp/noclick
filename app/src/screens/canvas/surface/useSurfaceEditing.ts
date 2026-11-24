@@ -70,7 +70,8 @@ export interface SurfaceEditingOptions {
     layer: (nodes: Node[]) => Node[];
     /** Nodes that aren't steps (another person's pointer drawn as a node): their changes are no edits. */
     ignored?: (nodeId: string) => boolean;
-    /** Nothing connects: a replay of a run. */
+    /** Only looked at (a replay of a run, a workflow its viewer may only view): steps are selected and measured, and
+     *  nothing moves, resizes, connects or is removed. */
     frozen?: boolean;
     on?: SurfaceListeners;
 }
@@ -115,8 +116,14 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
     }, []);
 
     const onNodesChange = useCallback((incoming: NodeChange[]) => {
-        const { workflowId, setNodes, edgesRef, history, syncingRef, draggingRef, canvasRef, panToNode, layer, ignored, on } = latest.current;
+        const { workflowId, setNodes, edgesRef, history, syncingRef, draggingRef, canvasRef, panToNode, layer, ignored, frozen, on } = latest.current;
         let changes = incoming;
+        // A frozen canvas is only looked at: steps are selected and measured, never moved, resized or removed (a step's
+        // delete pill reaches here as React Flow's own removal).
+        if (frozen) {
+            changes = changes.filter((c) => c.type === 'select' || (c.type === 'dimensions' && typeof (c as NodeDimensionChange).resizing !== 'boolean'));
+            if (changes.length === 0) return;
+        }
         // A copy still being read is drawn, not edited.
         if (syncingRef.current) {
             changes = changes.filter((c) => c.type !== 'position' && c.type !== 'dimensions');
@@ -183,8 +190,10 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
         });
     }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode, later]);
 
-    const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-        const { setEdges, nodesRef, history, on } = latest.current;
+    const onEdgesChange = useCallback((incoming: EdgeChange[]) => {
+        const { setEdges, nodesRef, history, frozen, on } = latest.current;
+        const changes = frozen ? incoming.filter((c) => c.type === 'select') : incoming;
+        if (changes.length === 0) return;
         for (const change of changes) {
             if (change.type === 'remove') on?.edgeRemoved?.(change.id);
         }
@@ -196,8 +205,8 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
     }, [setEdges, captureState, on?.edgeRemoved, later]);
 
     const onConnect = useCallback((raw: Connection) => {
-        const { setNodes, setEdges, nodesRef, history, syncingRef, on } = latest.current;
-        if (syncingRef.current) return;
+        const { setNodes, setEdges, nodesRef, history, syncingRef, frozen, on } = latest.current;
+        if (syncingRef.current || frozen) return;
         const params = normalizeConnection(raw);
         setEdges((eds) => {
             const next = addEdge(params, eds);

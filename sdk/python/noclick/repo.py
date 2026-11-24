@@ -326,6 +326,8 @@ class Repo(_Object):
     )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
+    forked_from: Optional[Dict[str, Any]] = field(
+        "forked_from", doc="``{\"address\": ...}``: the public work on NoClick it was copied from; else None.")
 
     def _init(self, **kwargs: Any) -> None:
         self._create_with: Optional[Dict[str, Any]] = None
@@ -377,6 +379,11 @@ class Repo(_Object):
         afterwards. The copy is charged what it uses: its seconds of compute and the
         bytes it stores, at NoClick's vendors' prices. An import always makes a new
         repo, so ``allow_existing`` doesn't apply to it.
+
+        ``from_url`` may also be the address of an app whose code is public on NoClick (``pilot-hub.noclick.site``,
+        a custom domain it serves): its published code is forked inside NoClick (``forked_from``), and the result
+        says what a deploy of it asks for. An address with no public work raises ``noclick.InvalidRequest``
+        (``not_public``).
 
         Returns:
             The new repo, loaded, with no commits yet; with ``from_url``, a

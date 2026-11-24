@@ -1,0 +1,30 @@
+# DigitalOcean App Platform's template for the app (app/): one service built from this repository's Dockerfile.
+# https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main reads this file.
+#
+# Fill in the three settings as you deploy; app/README.md, "Configuration", says what each is. App Platform makes
+# no secrets itself, so SESSION_SECRET is yours to make too (openssl rand -base64 48). Until all three are set the
+# app answers one page naming what is missing.
+spec:
+  name: noclick-app
+  services:
+    - name: app
+      git:
+        repo_clone_url: https://github.com/noclickapp/noclick.git
+        branch: main
+      dockerfile_path: Dockerfile
+      http_port: 3000
+      instance_count: 1
+      instance_size_slug: apps-s-1vcpu-0.5gb
+      envs:
+        # The NoClick secret key the app acts with, in your account (create one in NoClick's developer console).
+        - key: NOCLICK_API_KEY
+          scope: RUN_TIME
+          type: SECRET
+        # The password you sign in to this app with: at least 12 characters, best random.
+        - key: APP_PASSWORD
+          scope: RUN_TIME
+          type: SECRET
+        # Signs the sign-in cookie: at least 32 random characters.
+        - key: SESSION_SECRET
+          scope: RUN_TIME
+          type: SECRET
