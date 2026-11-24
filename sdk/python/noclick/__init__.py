@@ -173,7 +173,7 @@ from ._watch import (
 )
 from .workspace import MyWorkspace, SpaceQuestion, Workspace, WorkspaceInvite, WorkspaceMember, WorkspaceResource
 from .workflow import (
-    BuildQuestion, ClearedStepState, EditBatch, ExpressionPreview, LatestOutputs, RunInputs, RunStep, Step, StepLastRun, StepOption,
+    BuildQuestion, ClearedStepState, StepConversation, EditBatch, ExpressionPreview, LatestOutputs, RunInputs, RunStep, Step, StepLastRun, StepOption,
     StepOptions,
     StepOutput, StepPublication, StepValue, Workflow, WorkflowBuild, WorkflowBuilder, WorkflowBuildResult, WorkflowDraftResult,
     WorkflowEdit, WorkflowEndpoint, WorkflowFolder, WorkflowFolderListing, WorkflowGraph, WorkflowRehearsal, WorkflowRun,
@@ -257,6 +257,7 @@ __all__ = [
     "WorkflowExample",
     "step_output_shape", "StepOutputShape", "WorkflowRunCounts", "LatestOutputs", "StepLastRun", "ExpressionPreview",
     "ClearedStepState",
+    "StepConversation",
     "BuildQuestion", "ExportBundle", "ExportItem",
     "Policy", "PolicyVerdict", "Rule", "Brand", "usage", "Usage", "UsageGroup",
     "deploy", "DeployPlan", "DeployResult", "DeploySecret", "DeployKeyAsk", "RepoDeploy",

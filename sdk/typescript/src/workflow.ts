@@ -490,6 +490,47 @@ export interface ClearedStepState {
   raw: JsonObject;
 }
 
+/**
+ * One of your chats with an agent step, as `Step.conversations` lists them: its `conversation` key (what reads it, and
+ * what `Step.message` names), `title`, `preview`, `turns`, when it was last active, the model it last ran on, and
+ * whether a share link's visitor had it (`shared`). `messages` is set on one read with `Step.conversation`: the thread
+ * as the app's chat stores and draws it, oldest first.
+ */
+export interface StepConversation {
+  conversation: string;
+  title: string;
+  preview: string;
+  turns: number;
+  lastActivity: string | null;
+  agentModel: string | null;
+  shared: boolean;
+  messages: JsonObject[] | null;
+  raw: JsonObject;
+}
+
+/** How `Step.message` says something: which chat, the files it reads with it, the model the turn runs on. */
+export interface StepMessageOptions {
+  conversation?: string;
+  attachments?: JsonObject[];
+  model?: string;
+  idempotencyKey?: string;
+}
+
+function toStepConversation(value: unknown): StepConversation {
+  const raw = asObject(value);
+  return {
+    conversation: str(raw.conversation) ?? "",
+    title: str(raw.title) ?? "",
+    preview: str(raw.preview) ?? "",
+    turns: Number(raw.turns ?? 0),
+    lastActivity: str(raw.last_activity) ?? null,
+    agentModel: str(raw.agent_model) ?? null,
+    shared: raw.shared === true,
+    messages: Array.isArray(raw.messages) ? raw.messages.map((m) => asObject(m)) : null,
+    raw,
+  };
+}
+
 function toRunCounts(value: unknown): WorkflowRunCounts {
   const raw = asObject(value);
   return {
@@ -1787,6 +1828,57 @@ export class Step extends ApiObject {
       conversationsDeleted: Number(raw.conversations_deleted ?? 0),
       raw,
     };
+  }
+
+  private async _conversationPath(conversation: string): Promise<string> {
+    return `${await this._workflow._stepPath(this.id)}/conversations/${encodeURIComponent(conversation)}`;
+  }
+
+  /**
+   * Your chats with this agent step, most recently active first, as the app's chat history lists them (up to `limit`,
+   * 100 at most). Each is the person's who had it: another member's chats with the same step aren't yours to read, and
+   * a key acting for one of your users has none.
+   */
+  async conversations(options: { limit?: number } = {}): Promise<StepConversation[]> {
+    const raw = asObject(await this._api.request("GET", `${await this._workflow._stepPath(this.id)}/conversations`, {
+      query: { limit: options.limit },
+      user: null,
+    }));
+    return (Array.isArray(raw.data) ? raw.data : []).map(toStepConversation);
+  }
+
+  /**
+   * One of your chats with this agent step, with its `messages` as the app's chat stores and draws them (a trigger's
+   * event with its output, a reply with its steps), oldest first. A turn whose run died before saying so is ended
+   * first. One that isn't yours throws `NotFound`.
+   */
+  async conversation(conversation: string): Promise<StepConversation> {
+    return toStepConversation(await this._api.request("GET", await this._conversationPath(conversation), { user: null }));
+  }
+
+  /**
+   * Delete one of your chats with this agent step, for good, as the app's chat history does. Through MCP it's a
+   * deletion that waits for your account's owner (preview it with `POST /v1/delete_previews`).
+   */
+  async deleteConversation(conversation: string): Promise<void> {
+    await this._api.request("DELETE", await this._conversationPath(conversation), { user: null });
+  }
+
+  /**
+   * Say something to this agent step in one of your chats, as the app's chat does: a run from the step (what comes
+   * after it runs too, on the workflow as saved) whose turn is `text`, handed to the agent as written (a `{{ }}` in it
+   * is text). `conversation` names the chat (a new key starts one; omitted, the app's chat's own), `attachments` are
+   * uploaded files it reads with it (each `{resource_id, url, name, mime_type, size_bytes}`) and `model` the model this
+   * turn runs on. Someone the workflow is shared with to view may say something too. Returns the run's operation;
+   * the reply is in the conversation (`conversation()`).
+   */
+  async message(text: string, options: StepMessageOptions = {}): Promise<Operation<WorkflowRun>> {
+    const raw = asObject(await this._api.request("POST", `${await this._workflow._stepPath(this.id)}/messages`, {
+      json: { message: text, ...compact({ conversation: options.conversation, model: options.model, attachments: options.attachments }) },
+      user: null,
+      idempotencyKey: options.idempotencyKey,
+    }));
+    return Operation._fromPayload<WorkflowRun>(raw.run, { client: this._client, user: null, kind: "workflow.run", reader: toWorkflowRun });
   }
 
   /**

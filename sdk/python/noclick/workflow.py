@@ -228,6 +228,33 @@ class ClearedStepState:
 
 
 @dataclass(frozen=True)
+class StepConversation:
+    """One of your chats with an agent step, as ``Step.conversations`` lists them: its
+    ``conversation`` key (what reads it, and what ``Step.message`` names), ``title``,
+    ``preview``, ``turns``, when it was last active, the model it last ran on, and whether a
+    share link's visitor had it (``shared``). ``messages`` is set on one read with
+    ``Step.conversation``: the thread as the app's chat stores and draws it, oldest first."""
+
+    conversation: str
+    title: str
+    preview: str
+    turns: int
+    last_activity: Optional[str]
+    agent_model: Optional[str]
+    shared: bool
+    messages: Optional[List[Dict[str, Any]]] = None
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "StepConversation":
+        raw = raw if isinstance(raw, dict) else {}
+        messages = raw.get("messages")
+        return cls(raw.get("conversation") or "", raw.get("title") or "", raw.get("preview") or "",
+                   int(raw.get("turns") or 0), raw.get("last_activity"), raw.get("agent_model"),
+                   bool(raw.get("shared")), list(messages) if isinstance(messages, list) else None, raw)
+
+
+@dataclass(frozen=True)
 class WorkflowRun:
     """One run of a workflow. ``status`` is ``running`` (a run waiting on an
     approval or a delay too: ``waiting_on`` says on what, ``approval``,
@@ -1377,6 +1404,95 @@ class Step(_Object):
         """
         raw = await self._api.request("POST", f"{await self._step_path()}/clear_state", user=None)
         return ClearedStepState._from(raw)
+
+    # --- an agent step's chats ----------------------------------------------
+
+    def _conversation_path(self, step_path: str, conversation: str) -> str:
+        return f"{step_path}/conversations/{path_segment(conversation)}"
+
+    @synced
+    async def conversations(self, *, limit: int = 100) -> List[StepConversation]:
+        """Your chats with this agent step, most recently active first, as the app's chat
+        history lists them. Each is the person's who had it: another member's chats with the
+        same step aren't yours to read, and a key acting for one of your users has none.
+
+        Returns:
+            Up to ``limit`` ``StepConversation`` (100 at most).
+
+        Usage::
+
+            helper = noclick.Workflow.from_name("support desk").step("helper")
+            for chat in helper.conversations():
+                print(chat.conversation, chat.title)
+        """
+        raw = await self._api.request("GET", f"{await self._step_path()}/conversations",
+                                      params={"limit": limit}, user=None)
+        data = raw.get("data") if isinstance(raw, dict) else None
+        return [StepConversation._from(item) for item in data or []]
+
+    @synced
+    async def conversation(self, conversation: str) -> StepConversation:
+        """One of your chats with this agent step, with its ``messages`` as the app's chat
+        stores and draws them (a trigger's event with its output, a reply with its steps),
+        oldest first. A turn whose run died before saying so is ended first.
+
+        Returns:
+            The ``StepConversation``; one that isn't yours raises ``noclick.NotFound``.
+
+        Usage::
+
+            thread = noclick.Workflow.from_name("support desk").step("helper").conversation("orders")
+            print(thread.messages[-1]["message"])
+        """
+        raw = await self._api.request("GET", self._conversation_path(await self._step_path(), conversation),
+                                      user=None)
+        return StepConversation._from(raw)
+
+    @synced
+    async def delete_conversation(self, conversation: str) -> None:
+        """Delete one of your chats with this agent step, for good, as the app's chat history
+        does. Through MCP it's a deletion that waits for your account's owner (preview it with
+        ``POST /v1/delete_previews``).
+
+        Usage::
+
+            noclick.Workflow.from_name("support desk").step("helper").delete_conversation("orders")
+        """
+        await self._api.request("DELETE", self._conversation_path(await self._step_path(), conversation), user=None)
+
+    @synced
+    async def message(
+        self, text: str = "", *, conversation: Optional[str] = None,
+        attachments: Optional[Sequence[Mapping[str, Any]]] = None, model: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> Operation:
+        """Say something to this agent step in one of your chats, as the app's chat does: a
+        run from the step (what comes after it runs too, on the workflow as saved) whose turn
+        is ``text``, handed to the agent as written (a ``{{ }}`` in it is text). ``conversation``
+        names the chat (a new key starts one; omitted, the app's chat's own), ``attachments``
+        are uploaded files it reads with it (each ``{resource_id, url, name, mime_type,
+        size_bytes}``) and ``model`` the model this turn runs on. Someone the workflow is
+        shared with to view may say something too.
+
+        Returns:
+            The run's operation: ``.wait()`` gives the finished ``WorkflowRun``; the reply is in
+            the conversation (``Step.conversation``).
+
+        Usage::
+
+            helper = noclick.Workflow.from_name("support desk").step("helper")
+            helper.message("Where's order 1042?", conversation="orders").wait()
+            print(helper.conversation("orders").messages[-1]["message"])
+        """
+        raw = await self._api.request(
+            "POST", f"{await self._step_path()}/messages",
+            json={"message": text, **compact(conversation=conversation, model=model,
+                                             attachments=[dict(a) for a in attachments] if attachments else None)},
+            user=None, idempotency_key=idempotency_key,
+        )
+        run = raw.get("run") if isinstance(raw, dict) else None
+        return Operation._from_payload(run or {}, client=self._client, user=None, kind="workflow.run",
+                                       reader=_read_run)
 
     # --- its app (an interface step) ---------------------------------------
 
