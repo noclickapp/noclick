@@ -365,6 +365,35 @@ export interface WorkflowVariables {
   raw: JsonObject;
 }
 
+/**
+ * What a workflow needs from its person before it can run (`Workflow.setup`), derived from it as it stands: `items`,
+ * each with a `kind`: `connect` (an app to connect, once for every step that needs it: `app`, `label`, `steps`,
+ * `reconnect`), `setting` (a value only the person knows: its `step`, the `setting`'s name, `label`, `type`,
+ * `options`) or `secret` (the `keys` an agent step's shell asked for, kept as the secret `name`). `ready` when there's
+ * nothing; `request` the setup request still waiting on the person; `sent` the request `requestSetup` just sent.
+ */
+export interface WorkflowSetup {
+  workflowId: string;
+  ready: boolean;
+  items: JsonObject[];
+  request: JsonObject | null;
+  sent: JsonObject | null;
+  raw: JsonObject;
+}
+
+function toWorkflowSetup(value: unknown): WorkflowSetup {
+  const raw = asObject(value);
+  const objectOrNull = (v: unknown) => (v && typeof v === "object" && !Array.isArray(v) ? (v as JsonObject) : null);
+  return {
+    workflowId: str(raw.workflow_id) ?? "",
+    ready: raw.ready === true,
+    items: asList(raw.items).filter((i): i is JsonObject => !!objectOrNull(i)),
+    request: objectOrNull(raw.request),
+    sent: objectOrNull(raw.sent),
+    raw,
+  };
+}
+
 /** How a step's latest run ended (`LatestOutputs.lastRuns`): its `status` (`succeeded`, `failed`, `skipped`), when. */
 export interface StepLastRun {
   status: string;
@@ -572,10 +601,14 @@ export interface BuildQuestion {
  * Beside the builder's words, facts no model wrote: whether it `built` anything (`false`: the
  * workflow is as it was, whatever `summary` says), the `version` it ended on (what
  * `edit({ ifVersion })` takes), its `readiness` as `Workflow.readiness` reads it, and each step's
- * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user`, as an
- * edit answers them). `sentBack` counts the times the build went back to the builder for settings
- * the run engine rejects (at most 2) before it finished. A fact NoClick couldn't read is `null` and
- * named in `unread`: then nothing says the workflow is ready.
+ * verdict by step id (`verdicts`: `config_valid`, `validation_error`, `missing_required`, `left_for_user` and
+ * `references`, as an edit answers them). `references` lists, across the workflow, each read of another step's
+ * output that gets no value, said in a sentence (`message`): `{step, field, source, key, known_keys, message}` for a
+ * key the `source` step's known output lacks (a run reads nothing there and still succeeds, so a test run never
+ * shows it), or `{step, field, source, reference, missing, near, message}` for a step the workflow doesn't have; a
+ * step whose output nothing has shown isn't judged. `sentBack` counts the times the build went back to the builder
+ * for settings the run engine rejects or reads that get no value (at most 2) before it finished. A fact NoClick
+ * couldn't read is `null` and named in `unread`: then nothing says the workflow is ready.
  */
 export interface WorkflowBuildResult {
   workflowId: string | null;
@@ -587,6 +620,7 @@ export interface WorkflowBuildResult {
   version: number | null;
   readiness: WorkflowReadiness | null;
   verdicts: Record<string, JsonObject> | null;
+  references: JsonObject[] | null;
   sentBack: number;
   unread: string[];
   raw: JsonObject;
@@ -659,6 +693,7 @@ function toBuildResult(value: unknown): WorkflowBuildResult {
     version: typeof raw.version === "number" ? raw.version : null,
     readiness: raw.readiness && typeof raw.readiness === "object" ? toReadiness(raw.readiness) : null,
     verdicts: raw.verdicts && typeof raw.verdicts === "object" ? verdicts : null,
+    references: Array.isArray(raw.references) ? raw.references.map(asObject) : null,
     sentBack: typeof raw.sent_back === "number" ? raw.sent_back : 0,
     unread: Array.isArray(raw.unread) ? raw.unread.filter((name): name is string => typeof name === "string") : [],
     raw,
@@ -895,6 +930,15 @@ export interface StepUpdate {
    * show in a read of the workflow, nor to the agent's model.
    */
   secrets?: SecretRef[];
+  /**
+   * Settings to leave for the step's person to fill in, by name: a value only they know (their own address, number
+   * or URL). Each is cleared and noted on the step, so a required one reads `left_for_user` in the step's `verdict`
+   * and the workflow's readiness, never an invalid setting, until it's given a value; giving it one takes it off the
+   * note. It's how code or an agent that builds a workflow says "this one is yours" without making a value up. A
+   * name that isn't one of the step's settings, or one given a value in the same call, is refused; so is a value
+   * that only stands in for one (`YOUR_PHONE_NUMBER`, `<your website url>`), naming this instead.
+   */
+  leftForUser?: string[];
 }
 
 /** What `addStep` takes beside the step's type. */
@@ -904,6 +948,8 @@ export interface AddStepOptions {
   settings?: JsonObject;
   /** An agent step's secrets, as `StepUpdate.secrets` takes them. */
   secrets?: SecretRef[];
+  /** Settings left for the step's person to fill in, as `StepUpdate.leftForUser` takes them. */
+  leftForUser?: string[];
   /** Its name in the app. */
   name?: string;
   /** Its id; made from its type when left out. */
@@ -999,8 +1045,9 @@ export interface NameVersionOptions {
  * `config_valid`, `validation_error`, `missing_required`, `left_for_user`, `agent_credential_hint`, and `references`:
  * each read of another step's output that won't resolve, as `Step.references` reads them). `graph` is the workflow as
  * written, read as `Workflow.graph()` reads it, when the edit asked for it; `restoredFrom` names the version of its
- * history a restore put back. `warnings` say what an edit did that won't work as it may look (a workspace member's
- * own connection given to a team workflow's step, which its owner's automatic runs can't use). An edit sent with
+ * history a restore put back. `warnings` say what an edit did that won't work as it may look: a read in a touched
+ * step's settings that gets no value (each of its `references`, in a sentence), and a workspace member's own
+ * connection given to a team workflow's step, which its owner's automatic runs can't use. An edit sent with
  * `settle` also says whether what it set going finished in time (`settled`) and, by step, why each trigger it left
  * unregistered can't be registered yet (`unregistered`).
  */
@@ -1023,7 +1070,9 @@ export interface WorkflowEdit {
 /**
  * One version of a workflow's history: its own number (`historyVersion`, what `versionAt` and `restore` take,
  * fixed once given), the workflow's `version` its latest write left, where the change came from (`source`: `api`,
- * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `baseline`, the workflow before its history
+ * `canvas`, `builder`, `mcp`, `coordinator`, `deploy`, `restore`, `noclick`, NoClick's own change such as a schedule
+ * it switched off after it kept failing the same way, `link`, the person's own word through a link NoClick emailed
+ * them, `baseline`, the workflow before its history
  * began, or `checkpoint`, one saved in the app before its history was kept, numbered below 1), who began it
  * (`author`: `{ user_id, key_id }`, `null` for the baseline) and everyone who wrote into it (`authors`, its author
  * first), a `summary` and its `changes`, and for a restore the version of the history it put back (`restoredFrom`).
@@ -1247,13 +1296,14 @@ function addStepOp(type: string, options: AddStepOptions): JsonObject {
     op: "add_step", type, operation: options.operation, settings: stepSettings(options.settings, options.secrets),
     name: options.name, id: options.id ?? newId(type),
     position: options.position ? { x: options.position.x, y: options.position.y } : undefined,
+    left_for_user: options.leftForUser,
   });
 }
 
 function updateStepOp(step: StepRef, update: StepUpdate): JsonObject {
   return compact({
     op: "update_step", id: stepId(step), settings: stepSettings(update.settings, update.secrets), name: update.name,
-    operation: update.operation, enabled: update.enabled,
+    operation: update.operation, enabled: update.enabled, left_for_user: update.leftForUser,
   });
 }
 
@@ -2289,6 +2339,29 @@ export class Workflow extends ApiObject {
    */
   async variables(): Promise<WorkflowVariables> {
     return toWorkflowVariables(await this._request("GET", `${await this.path()}/variables`));
+  }
+
+  /**
+   * Read what the workflow needs from its person before it can run: the accounts to connect, the values only they know
+   * and the variables an agent step's shell asked for, derived from the workflow as it stands. Code that builds without
+   * a person reads this and connects or fills in each item itself; a build's result carries it too (`setup`).
+   */
+  async setup(): Promise<WorkflowSetup> {
+    return toWorkflowSetup(await this._request("GET", `${await this.path()}/setup`));
+  }
+
+  /**
+   * Send what the workflow needs to the account's owner as ONE request: one message and one page, where they connect
+   * each app and fill in each value, each part landing on the workflow as they give it. An app the account holds
+   * exactly one working connection of is connected at once, asking nobody. The same list already waiting isn't sent
+   * again (`sent` null); a different one replaces it. `via`: `"auto"` (the app they last texted NoClick on, else
+   * email), or a list of `web`, `email`, `whatsapp`, `imessage`, `sms`. Needs the `workflows` and `humans` scopes,
+   * acting for the whole account.
+   */
+  async requestSetup(options: { via?: "auto" | string[] } = {}): Promise<WorkflowSetup> {
+    return toWorkflowSetup(
+      await this._request("POST", `${await this.path()}/setup/request`, { json: { via: options.via ?? "auto" } }),
+    );
   }
 
   /**

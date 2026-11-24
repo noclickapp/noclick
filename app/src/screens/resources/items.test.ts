@@ -306,6 +306,30 @@ describe('an app, a database and a repo', () => {
         expect(databaseItem(orphaned)).toMatchObject({ title: 'gone-5e6f7a8b', origin: undefined, tables: [] });
     });
 
+    it('lists a link someone committed as a link, one entry whatever it points to, and reads where it points', async () => {
+        const { client: c, paths } = client(
+            {
+                '/v1/repos': [RECORDED.repo],
+                [`/v1/repos/${RECORDED_REPO_ID}/files`]: [
+                    { object: 'repo_file', path: 'public/assets', type: 'dir', size: null, sha: null },
+                    { object: 'repo_file', path: 'public/index.html', type: 'file', size: 12, sha: 'a1' },
+                    { object: 'repo_file', path: 'public/shared', type: 'link', size: null, sha: null },
+                ],
+            },
+            { 'public/shared': '../shared' }
+        );
+        const [repo] = (await Repo.listPage({ client: c, userFilter: NO_USER })).data;
+        const reader = repoReader(repo);
+        expect(await reader.list('public/', 'main')).toEqual([
+            { path: 'public/assets', dir: true, size: null, link: false },
+            { path: 'public/index.html', dir: false, size: 12, link: false },
+            { path: 'public/shared', dir: false, size: null, link: true },
+        ]);
+        // Opened, it's read as any path is: the answer is where it points, never the folder or file there.
+        expect(await reader.read('public/shared', 'main')).toBe('../shared');
+        expect(paths.at(-1)).toBe(`/v1/repos/${RECORDED_REPO_ID}/files?path=public%2Fshared`);
+    });
+
     it("reads a repo's files at a ref, its default branch unnamed, and never fetches a file that can't be text", async () => {
         const [latest] = RECORDED.featureHistory.data;
         const patch = 'diff --git a/README.md b/README.md\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-# Audit\n+# Audit tools\n';

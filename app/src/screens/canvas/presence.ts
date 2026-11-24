@@ -1,7 +1,7 @@
 // Who else has a workflow open on its canvas, and what each is doing, as the canvas's presence slot (`canvas.presence`
-// in slots.ts) hands it over: their cursors and selections, the steps they move, add, change and remove before any of it
-// is saved, and the builder edits they're making.
-import type { Edge, Node } from '@xyflow/react';
+// in slots.ts) hands it over: their cursors and selections, and the builder edits they're making. Their changes to the
+// workflow reach the canvas once they're saved, as every writer's do, never before: a canvas only ever saves what its
+// own person did.
 
 /** A point on the canvas, in its own coordinates (not the screen's). */
 export interface CollaboratorCursor {
@@ -40,12 +40,6 @@ export interface PresenceOptions {
     nodes?: Array<{ id: string; position: { x: number; y: number }; width?: number; height?: number }>;
     /** Off: no one else is followed (a skill's canvas). */
     enabled?: boolean;
-    onNodeDrag?: (nodeId: string, position: { x: number; y: number }) => void;
-    onNodeAdd?: (node: Node) => void;
-    onNodeRemove?: (nodeId: string) => void;
-    onNodeUpdate?: (nodeId: string, data: Record<string, unknown>) => void;
-    onEdgeAdd?: (edge: Edge) => void;
-    onEdgeRemove?: (edgeId: string) => void;
     /** Back after being offline: the canvas reads the workflow again, so it never saves over what others did meanwhile. */
     onReconnect?: () => void;
     onRemoteAiEditingStart?: (userId: string, nodeIds: string[]) => void;
@@ -53,20 +47,17 @@ export interface PresenceOptions {
     onRemoteAiEditingEnd?: (userId: string) => void;
 }
 
-/** Who else is here, and how the canvas tells them what this person does. */
+/** Who else is here, and how the canvas tells them where this person is. */
 export interface Presence {
     /** Everyone else (never this person). */
     collaborators: Collaborator[];
     /** A step's id to who else has it selected. */
     nodeSelections: Map<string, Collaborator[]>;
+    /** What this person may do with the workflow as presence last heard it (an access change made while the canvas is
+     *  open reaches it here); null while presence knows nothing of it. */
+    access: 'edit' | 'view' | null;
     updateLocalCursor: (cursor: CollaboratorCursor | null) => void;
     updateLocalSelection: (nodeIds: string[]) => void;
-    broadcastNodeDrag: (nodeId: string, position: { x: number; y: number }) => void;
-    broadcastNodeAdd: (node: Node) => void;
-    broadcastNodeRemove: (nodeId: string) => void;
-    broadcastNodeUpdate: (nodeId: string, data: Record<string, unknown>) => void;
-    broadcastEdgeAdd: (edge: Edge) => void;
-    broadcastEdgeRemove: (edgeId: string) => void;
     broadcastAiEditingStart: (nodeIds: string[]) => void;
     broadcastAiEditingUpdate: (nodeId: string, info: AiEditInfo) => void;
     broadcastAiEditingEnd: () => void;
