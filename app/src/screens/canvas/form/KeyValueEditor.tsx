@@ -8,6 +8,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { DroppableTextField } from './DroppableTextField';
 import { Checkbox } from '@/ui/checkbox';
 import { decodeLegacyHtmlEntities } from './legacyConfigParsing';
+import { WITHHELD_PLACEHOLDER } from './withheld';
 
 interface KVRow {
     key: string;
@@ -22,6 +23,8 @@ interface KeyValueEditorProps {
     keyPlaceholder?: string;
     valuePlaceholder?: string;
     addLabel?: string;
+    /** Rows whose value a read held back (a secret header's): set, unread, kept unless something is typed in its place. */
+    withheldRows?: readonly number[];
 }
 
 // Accept the structured list (current shape), a JSON array string, and — for
@@ -63,6 +66,7 @@ export function KeyValueEditor({
     keyPlaceholder = 'Name',
     valuePlaceholder = '{{node.field}} or value',
     addLabel = 'Add',
+    withheldRows,
 }: KeyValueEditorProps) {
     const rows = parseRows(value);
 
@@ -101,7 +105,7 @@ export function KeyValueEditor({
                             fieldKey={`${fieldKey}-val-${index}`}
                             value={row.value}
                             onChange={(v) => updateRow(index, { value: v })}
-                            placeholder={valuePlaceholder}
+                            placeholder={withheldRows?.includes(index) && !row.value ? WITHHELD_PLACEHOLDER : valuePlaceholder}
                             className="text-xs py-1.5"
                         />
                     </div>

@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Clock, Calendar } from 'lucide-react';
+import { useLater } from '@/lib/useLater';
 
 interface NextRunWidgetProps {
     value: string | null;
@@ -82,6 +83,8 @@ export function NextRunWidget({ value, onExpired, timezone }: NextRunWidgetProps
     // (sub-minute schedules, a slow round trip), and the widget then sat on
     // "Running..." for good instead of asking again.
     const lastExpiredCallAt = useRef(0);
+    // Kept across re-runs of the effect below (its `onExpired` is a new function each render), dropped when it goes.
+    const later = useLater();
 
     // Update countdown every second
     useEffect(() => {
@@ -98,14 +101,14 @@ export function NextRunWidget({ value, onExpired, timezone }: NextRunWidgetProps
             if (result.isPast && onExpired && Date.now() - lastExpiredCallAt.current >= 3000) {
                 lastExpiredCallAt.current = Date.now();
                 // Small delay to let the cron actually fire
-                setTimeout(() => onExpired(), 2000);
+                later(onExpired, 2000);
             }
         };
 
         updateCountdown();
         const interval = setInterval(updateCountdown, 1000);
         return () => clearInterval(interval);
-    }, [value, onExpired]);
+    }, [value, onExpired, later]);
 
     if (!value) {
         return (

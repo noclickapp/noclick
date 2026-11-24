@@ -1,0 +1,24 @@
+# Render's blueprint for the app (app/): one web service built from this repository's Dockerfile.
+# https://render.com/deploy?repo=https://github.com/noclickapp/noclick reads this file from the default branch.
+#
+# Render asks whoever deploys for the two settings marked sync: false and makes the third itself.
+# app/README.md, "Configuration", says what each is.
+services:
+  - type: web
+    name: noclick-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    # This service builds from the repository it was deployed from, so a push here would redeploy every copy.
+    autoDeployTrigger: "off"
+    envVars:
+      # The NoClick secret key the app acts with, in your account (create one in NoClick's developer console).
+      - key: NOCLICK_API_KEY
+        sync: false
+      # The password you sign in to this app with: at least 12 characters, best random.
+      - key: APP_PASSWORD
+        sync: false
+      # Signs the sign-in cookie.
+      - key: SESSION_SECRET
+        generateValue: true
