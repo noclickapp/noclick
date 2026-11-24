@@ -1161,6 +1161,7 @@ enrich-layer
 env0
 eodhd-apis
 epos-now
+epson-connect
 esputnik
 etermin
 etsy
@@ -1293,6 +1294,7 @@ glide-apps
 globalping
 glofox
 gmail
+gmass
 go-table
 go-to-connect
 go-to-training
@@ -1499,6 +1501,7 @@ klicktipp
 knowify
 kobotoolbox
 kommo
+konnektivecrm
 kontent-ai
 koyeb
 krisp
@@ -1745,6 +1748,7 @@ opsgenie
 opusclip
 oracle-field-service
 oracle-hcm
+orca-scan
 orgo
 orq-ai
 orshot
@@ -1811,6 +1815,7 @@ pipedrive
 pipeless
 pipeline-crm
 pitchbox
+pixxi-crm
 placetel
 planable
 planday
@@ -2085,6 +2090,7 @@ smoove
 sms77
 smsapi
 smsglobal
+smsmobileapi
 smtp2go
 smtping
 snapchat
@@ -2411,6 +2417,7 @@ zenrows
 zenzap
 zep
 zeplin
+ziflow
 zigpoll
 zoho-books
 zoho-cliq
