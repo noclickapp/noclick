@@ -984,6 +984,7 @@ cloudzero
 clover
 cloze
 club-os
+clust
 coassemble
 coda
 codacy
