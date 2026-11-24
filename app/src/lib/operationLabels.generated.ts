@@ -2368,6 +2368,7 @@ waiverfile
 walcu-crm
 walletap
 wallsio
+wappalyzer
 wati
 wayfront
 wbiztool
