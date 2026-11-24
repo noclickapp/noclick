@@ -23,6 +23,7 @@ import { setGraphDragging } from '../graph/liveGraphStore';
 import { fromHintHandleId } from '../nodes/NextStepHint';
 import { perfState } from '../perfState';
 import { consumePointerDrivenDelete } from '../pointerDelete';
+import { useLater } from '@/lib/useLater';
 import { connectionAllowed, normalizeConnection, type ConnectionRoles } from './connectionRules';
 
 /** The canvas's undo history, as each edit records itself in it. */
@@ -69,7 +70,8 @@ export interface SurfaceEditingOptions {
     layer: (nodes: Node[]) => Node[];
     /** Nodes that aren't steps (another person's pointer drawn as a node): their changes are no edits. */
     ignored?: (nodeId: string) => boolean;
-    /** Nothing connects: a replay of a run. */
+    /** Only looked at (a replay of a run, a workflow its viewer may only view): steps are selected and measured, and
+     *  nothing moves, resizes, connects or is removed. */
     frozen?: boolean;
     on?: SurfaceListeners;
 }
@@ -106,6 +108,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
     const { getInternalNode, screenToFlowPosition } = useReactFlow();
     const { setNodes, setEdges, history, layer, panToNode, frozen, on } = options;
     const { captureState, startBatch, endBatch } = history;
+    const later = useLater();
 
     const isValidConnection = useCallback((connection: Connection | Edge) => {
         const { nodesRef, edgesRef, roles } = latest.current;
@@ -113,8 +116,14 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
     }, []);
 
     const onNodesChange = useCallback((incoming: NodeChange[]) => {
-        const { workflowId, setNodes, edgesRef, history, syncingRef, draggingRef, canvasRef, panToNode, layer, ignored, on } = latest.current;
+        const { workflowId, setNodes, edgesRef, history, syncingRef, draggingRef, canvasRef, panToNode, layer, ignored, frozen, on } = latest.current;
         let changes = incoming;
+        // A frozen canvas is only looked at: steps are selected and measured, never moved, resized or removed (a step's
+        // delete pill reaches here as React Flow's own removal).
+        if (frozen) {
+            changes = changes.filter((c) => c.type === 'select' || (c.type === 'dimensions' && typeof (c as NodeDimensionChange).resizing !== 'boolean'));
+            if (changes.length === 0) return;
+        }
         // A copy still being read is drawn, not edited.
         if (syncingRef.current) {
             changes = changes.filter((c) => c.type !== 'position' && c.type !== 'dimensions');
@@ -164,7 +173,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                     updated = updated.map((n) => ({ ...n, selected: n.id === next.id }));
                     // Deleted with the pointer (the delete pill), the view stays where the pointer is; from the keyboard,
                     // it follows the selection.
-                    if (!consumePointerDrivenDelete()) setTimeout(() => panToNode(next.id), 0);
+                    if (!consumePointerDrivenDelete()) later(() => panToNode(next.id));
                 }
             }
 
@@ -173,36 +182,38 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                 if (workflowId) setGraphDragging(workflowId, false);
                 canvasRef.current?.classList.remove('perf-optimizing');
                 perfState.shouldOptimize = false;
-                setTimeout(() => history.endBatch(updated, edgesRef.current ?? []), 0);
+                later(() => history.endBatch(updated, edgesRef.current ?? []));
             } else if (!draggingRef.current && !dragStart) {
-                setTimeout(() => history.captureState(updated, edgesRef.current ?? []), 0);
+                later(() => history.captureState(updated, edgesRef.current ?? []));
             }
             return updated;
         });
-    }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode]);
+    }, [setNodes, layer, startBatch, endBatch, captureState, on?.dragged, on?.removed, on?.resized, panToNode, later]);
 
-    const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-        const { setEdges, nodesRef, history, on } = latest.current;
+    const onEdgesChange = useCallback((incoming: EdgeChange[]) => {
+        const { setEdges, nodesRef, history, frozen, on } = latest.current;
+        const changes = frozen ? incoming.filter((c) => c.type === 'select') : incoming;
+        if (changes.length === 0) return;
         for (const change of changes) {
             if (change.type === 'remove') on?.edgeRemoved?.(change.id);
         }
         setEdges((eds) => {
             const updated = applyEdgeChanges(changes, eds);
-            setTimeout(() => history.captureState(nodesRef.current ?? [], updated), 0);
+            later(() => history.captureState(nodesRef.current ?? [], updated));
             return updated;
         });
-    }, [setEdges, captureState, on?.edgeRemoved]);
+    }, [setEdges, captureState, on?.edgeRemoved, later]);
 
     const onConnect = useCallback((raw: Connection) => {
-        const { setNodes, setEdges, nodesRef, history, syncingRef, on } = latest.current;
-        if (syncingRef.current) return;
+        const { setNodes, setEdges, nodesRef, history, syncingRef, frozen, on } = latest.current;
+        if (syncingRef.current || frozen) return;
         const params = normalizeConnection(raw);
         setEdges((eds) => {
             const next = addEdge(params, eds);
             const styled = applyEdgeStyle(next[next.length - 1]);
             const edges = [...next.slice(0, -1), styled];
             on?.edgeAdded?.(styled);
-            setTimeout(() => history.captureState(nodesRef.current ?? [], edges), 0);
+            later(() => history.captureState(nodesRef.current ?? [], edges));
             return edges;
         });
 
@@ -228,7 +239,7 @@ export function useSurfaceEditing(options: SurfaceEditingOptions): SurfaceEditin
                 );
             }
         }
-    }, [setNodes, setEdges, captureState, on?.edgeAdded]);
+    }, [setNodes, setEdges, captureState, on?.edgeAdded, later]);
 
     // A connection dragged onto a step's body (or an invalid handle) lands on the nearest handle it can take, so a drop
     // needn't hit the small dot; one dropped on a valid handle connected already (`onConnect`).

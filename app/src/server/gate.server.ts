@@ -2,9 +2,10 @@
 //   - the root route's middleware (`gate`), for every request to a route: pages, their data requests, the key proxy;
 //   - the server entry (src/entry.server.tsx: `gateUnseen`), for what React Router answers before any middleware
 //     runs: a method it doesn't take (405), a path no route matches (404; the `*` route matches every other path).
-// In order: a setting missing or unusable gets the setup page (503); a request another site sent is refused when it
-// would change something or reach the key proxy; without a session, the key proxy answers 401 and anything else goes
-// to /login, which alone is open.
+// In order: a setting missing or unusable gets the setup page (503), and so does a key NoClick itself gave the app
+// that doesn't work yet (a copy deployed on NoClick waits there for the account's owner to approve it); a request
+// another site sent is refused when it would change something or reach the key proxy; without a session, the key
+// proxy answers 401 and anything else goes to /login, which alone is open.
 //
 // Not seen by either: React Router's route manifest (`/__manifest`, which lists the app's routes and their public
 // modules, the same for everyone), the static files in build/client, and the requests the Node server refuses before
@@ -12,11 +13,12 @@
 // test/served.test.ts pins what each of those answers.
 import { createContext, data, redirect, redirectDocument, type MiddlewareFunction } from 'react-router';
 import type { SetupData } from '@/screens/setup/SetupScreen';
+import { givenKeyProblem } from './client.server';
 import { appConfigContext, checkConfig, type AppConfig, type ConfigProblem } from './config.server';
 import { crossSite, servedLocally } from './origin.server';
 import { apiError, isApiPath, plainText } from './responses.server';
 import { signedIn } from './session.server';
-import { SETUP_HOW, setupApiError } from './setup.server';
+import { setupApiError, setupHow } from './setup.server';
 
 export const LOGIN_PATH = '/login';
 const SAFE_METHODS = new Set(['GET', 'HEAD']);
@@ -31,6 +33,8 @@ export type Admission =
 export async function admit(request: Request): Promise<Admission> {
     const check = checkConfig();
     if (!check.ok) return { verdict: 'setup', problems: check.problems };
+    const waiting = await givenKeyProblem(check.config);
+    if (waiting !== null) return { verdict: 'setup', problems: [waiting] };
     const { pathname } = new URL(request.url);
     // The key proxy serves this app's own pages only, so a link or embed from elsewhere is refused too.
     if ((isApiPath(pathname) || !SAFE_METHODS.has(request.method)) && crossSite(request)) return { verdict: 'cross-site' };
@@ -135,6 +139,6 @@ export async function gateUnseen(request: Request, kind: 'document' | 'data'): P
             if (api) return setupApiError(admission.problems);
             if (kind === 'data') return redirectDocument(pageOf(url));
             // Only odd requests get here (a method no page takes, a path no route matches); a page gets the drawn one.
-            return plainText(503, `This app isn’t set up yet: ${admission.problems.map((p) => `${p.name} ${p.problem}`).join(' ')} ${SETUP_HOW}`);
+            return plainText(503, `This app isn’t set up yet: ${admission.problems.map((p) => `${p.name} ${p.problem}`).join(' ')} ${setupHow(admission.problems)}`);
     }
 }
