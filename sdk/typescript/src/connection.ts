@@ -497,6 +497,37 @@ export class Connection extends ApiObject {
   }
 
   /**
+   * Finish signing your account in to an app whose authorize step a page of yours ran: the provider handed its
+   * callback `code` for `redirectUri` (one it has registered for that page), with the PKCE `codeVerifier` the page
+   * made where the provider takes one. The provider's own sign-in runs on it, as the NoClick app's does, and stores
+   * the account's connection (`credential:<id>`); `inputs` carries what its connect form takes beside the code (a
+   * shop, a subdomain, a site), `oauthApp` an OAuth app of your own the sign-in ran on. A connect link
+   * (`connectLink()`) runs the whole sign-in on NoClick's page instead, and is how one of your users signs in: this
+   * is your account's own. A code the provider refuses throws `InvalidRequest` in its words.
+   */
+  static async signIn(provider: string, options: SignInOptions): Promise<SignIn> {
+    const user = resolveScope(undefined);
+    const json = compact({
+      provider, code: options.code, redirect_uri: options.redirectUri, code_verifier: options.codeVerifier,
+      scopes: options.scopes, name: options.name, inputs: options.inputs, client: options.oauthApp,
+    });
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/sign_ins", { json, user }));
+    return new SignIn(raw, options.client, user);
+  }
+
+  /**
+   * Finish a sign-in that asked the person to pick (`SignIn.status` `choose`) by its `id` alone, with the `id` of the
+   * choice they picked: the pick may come back in another request than the one that started it. Within 10 minutes
+   * of the start, once; one finished, lapsed or another account's throws `NotFound`.
+   */
+  static async finishSignIn(signInId: string, choice: string, options: { client?: NoClick } = {}): Promise<SignIn> {
+    const user = resolveScope(undefined);
+    const raw = asObject(await resolveClient(options.client).request(
+      "POST", `/v1/connections/sign_ins/${encodeURIComponent(signInId)}/finish`, { json: { choice }, user }));
+    return new SignIn(raw, options.client, user);
+  }
+
+  /**
    * A lazy reference to the connection called `name` in the current (or
    * given) user. With `createIfMissing` it's created on first use, for
    * `integration`: holding `data` when given (a key you hold), pending with a
@@ -1200,6 +1231,74 @@ export async function run<R = unknown>(
 }
 
 const CONNECT_KINDS = ["credential.connect"] as const;
+
+export interface SignInOptions {
+  /** The code the provider's callback handed back. */
+  code: string;
+  /** The redirect URI the authorize step named. */
+  redirectUri: string;
+  /** The PKCE verifier the authorize step made, for a provider that takes one. */
+  codeVerifier?: string;
+  scopes?: string[] | string;
+  /** The connection's name in the app. */
+  name?: string;
+  /** What the provider's connect form takes beside the code: a shop, a subdomain, a site. */
+  inputs?: JsonObject;
+  /** An OAuth app of your own the sign-in ran on. */
+  oauthApp?: { client_id: string; client_secret: string };
+  client?: NoClick;
+}
+
+/**
+ * A sign-in to an app (`Connection.signIn`): `status` `connected` with its `connection`, or `choose` when the
+ * provider asks the person to pick (`what`: a `project`, an `instagram_account`) from `choices` (each with its `id`),
+ * finished with `finish`. `account` is what the provider says of the account signed in to (an email, a team, a
+ * site); never a token.
+ */
+export class SignIn {
+  private readonly _raw: JsonObject;
+  private readonly _client: NoClick | undefined;
+  private readonly _user: ObjectInit["user"];
+
+  /** @internal */
+  constructor(raw: JsonObject, client: NoClick | undefined, user: ObjectInit["user"]) {
+    this._raw = raw;
+    this._client = client;
+    this._user = user;
+  }
+
+  get id(): string | null {
+    return (this._raw.id as string | null) ?? null;
+  }
+  get status(): "connected" | "choose" {
+    return this._raw.status as "connected" | "choose";
+  }
+  get provider(): string {
+    return String(this._raw.provider);
+  }
+  get connection(): Connection | null {
+    const raw = this._raw.connection;
+    return raw ? Connection._of({ raw: asObject(raw), client: this._client, user: this._user }) : null;
+  }
+  get account(): JsonObject {
+    return { ...asObject(this._raw.account ?? {}) };
+  }
+  get what(): string | null {
+    return (asObject(this._raw.choose ?? {}).what as string | undefined) ?? null;
+  }
+  get choices(): JsonObject[] {
+    return asList(asObject(this._raw.choose ?? {}).choices ?? []).map((choice) => asObject(choice));
+  }
+  get raw(): JsonObject {
+    return { ...this._raw };
+  }
+
+  /** Finish a sign-in that asked for a pick with the `id` of the choice picked; within 10 minutes of it. */
+  async finish(choice: string): Promise<SignIn> {
+    if (!this.id) throw new InvalidRequest("This sign-in asked for no pick.");
+    return await Connection.finishSignIn(this.id, choice, { client: this._client });
+  }
+}
 
 /**
  * A connect page URL that is also the operation tracking it. `wait()` resolves to what it connected: the

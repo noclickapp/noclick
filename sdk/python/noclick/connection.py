@@ -631,6 +631,72 @@ class Connection(_Object):
 
     @synced
     @classmethod
+    async def sign_in(
+        cls,
+        provider: str,
+        *,
+        code: str,
+        redirect_uri: str,
+        code_verifier: Optional[str] = None,
+        scopes: Union[Sequence[str], str, None] = None,
+        name: Optional[str] = None,
+        inputs: Optional[Dict[str, Any]] = None,
+        oauth_app: Optional[Dict[str, str]] = None,
+        client: Optional[Client] = None,
+    ) -> "SignIn":
+        """Finish signing your account in to an app whose authorize step a page of yours ran: the provider handed
+        its callback ``code`` for ``redirect_uri`` (one the provider has registered for that page), with the PKCE
+        ``code_verifier`` the page made where the provider takes one. The provider's own sign-in runs on it, as the
+        NoClick app's does, and stores the account's connection (``credential:<id>``); ``inputs`` carries what its
+        connect form takes beside the code (a shop, a subdomain, a site), ``oauth_app`` an OAuth app of your own the
+        sign-in ran on (``client_id``, ``client_secret``). A connect link (``connect_link()``) runs the whole sign-in
+        on NoClick's page instead, and is how one of your users signs in: this is your account's own.
+
+        Returns:
+            The ``SignIn``: ``connected`` with its ``connection``, or ``choose`` (a Supabase project, an Instagram
+            account) with the ``choices`` to ``finish`` it with. A code the provider refuses raises
+            ``noclick.InvalidRequest`` in its words (Atlassian's names the ``sites`` it signs in to).
+
+        Usage::
+
+            signed_in = noclick.Connection.sign_in("linear", code=code, redirect_uri="https://app.example/oauth/cb")
+            print(signed_in.connection.id, signed_in.account.get("email"))
+
+            supabase = noclick.Connection.sign_in("supabase", code=code, redirect_uri=callback, code_verifier=verifier)
+            if supabase.status == "choose":
+                supabase = supabase.finish(supabase.choices[0]["id"])
+        """
+        scope = resolve_scope(AMBIENT)
+        body = compact(provider=provider, code=code, redirect_uri=redirect_uri, code_verifier=code_verifier,
+                       scopes=list(scopes) if isinstance(scopes, (list, tuple)) else scopes, name=name,
+                       inputs=inputs, client=oauth_app)
+        raw = await resolve_client(client).request("POST", "/v1/connections/sign_ins", json=body, user=scope)
+        return SignIn._from(raw, client=client, user=scope)
+
+    @synced
+    @classmethod
+    async def finish_sign_in(cls, sign_in_id: str, choice: str, *, client: Optional[Client] = None) -> "SignIn":
+        """Finish a sign-in that asked the person to pick (``SignIn.status`` ``choose``) by its ``id`` alone, with
+        the ``id`` of the choice they picked: the pick may come back in another request than the one that started
+        it. Within 10 minutes of the start, once.
+
+        Returns:
+            The ``SignIn``, ``connected`` with its ``connection``; one finished, lapsed or another account's raises
+            ``noclick.NotFound``.
+
+        Usage::
+
+            signed_in = noclick.Connection.finish_sign_in(request.args["sign_in"], request.args["project"])
+            print(signed_in.connection.id)
+        """
+        scope = resolve_scope(AMBIENT)
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/connections/sign_ins/{path_segment(sign_in_id)}/finish", json={"choice": choice},
+            user=scope)
+        return SignIn._from(raw, client=client, user=scope)
+
+    @synced
+    @classmethod
     async def get(
         cls, ref: str, *, organization_id: Optional[str] = None, user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> "Connection":
@@ -1381,6 +1447,72 @@ class Connection(_Object):
             noclick.Connection.from_name("gmail", user="user_42").delete()
         """
         await self._act("DELETE", "", write=True)
+
+
+class SignIn:
+    """A sign-in to an app (``Connection.sign_in``): ``status`` ``connected`` with its ``connection``, or ``choose``
+    when the provider asks the person to pick (``what``: a ``project``, an ``instagram_account``) from ``choices``
+    (each with its ``id``), finished with ``finish``. ``account`` is what the provider says of the account signed in
+    to (an email, a team, a site); never a token."""
+
+    def __init__(self, raw: Dict[str, Any], *, client: Optional[Client], user: Any) -> None:
+        self._raw, self._client, self._user = raw, client, user
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any], *, client: Optional[Client], user: Any) -> "SignIn":
+        return cls(raw, client=client, user=user)
+
+    @property
+    def id(self) -> Optional[str]:
+        return self._raw.get("id")
+
+    @property
+    def status(self) -> str:
+        return self._raw["status"]
+
+    @property
+    def provider(self) -> str:
+        return self._raw["provider"]
+
+    @property
+    def connection(self) -> Optional["Connection"]:
+        raw = self._raw.get("connection")
+        return Connection._new(raw=raw, client=self._client, user=self._user) if raw else None
+
+    @property
+    def account(self) -> Dict[str, Any]:
+        return dict(self._raw.get("account") or {})
+
+    @property
+    def what(self) -> Optional[str]:
+        return (self._raw.get("choose") or {}).get("what")
+
+    @property
+    def choices(self) -> List[Dict[str, Any]]:
+        return list((self._raw.get("choose") or {}).get("choices") or [])
+
+    @property
+    def raw(self) -> Dict[str, Any]:
+        return dict(self._raw)
+
+    @synced
+    async def finish(self, choice: str) -> "SignIn":
+        """Finish a sign-in that asked for a pick with the ``id`` of the choice picked; within 10 minutes of it.
+
+        Returns:
+            The ``SignIn``, ``connected`` with its ``connection``.
+
+        Usage::
+
+            if signed_in.status == "choose":
+                signed_in = signed_in.finish(signed_in.choices[0]["id"])
+        """
+        if not self.id:
+            raise InvalidRequest("This sign-in asked for no pick.")
+        return await Connection.finish_sign_in.aio(self.id, choice, client=self._client)
+
+    def __repr__(self) -> str:
+        return f"SignIn(provider={self.provider!r}, status={self.status!r})"
 
 
 @dataclass(frozen=True)

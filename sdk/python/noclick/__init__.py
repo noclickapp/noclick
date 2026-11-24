@@ -63,7 +63,7 @@ from .channel import (
 from .connection import (
     Connection, ConnectionOperations, ConnectLink, IntegrationEvent, IntegrationInfo, IntegrationOperation, LookupOption,
     LookupOptions, PlanNextStep, Plan, PlanUsage, PlanUsageSummary, PlanWindow, Token, Verification, run,
-    ConnectionHealth, ConnectionShared,
+    ConnectionHealth, ConnectionShared, SignIn,
 )
 from ._attachment import Attachment, attachments, attachments_page, delete_attachment
 from ._feedback import feedback
@@ -193,7 +193,7 @@ __all__ = [
     "User", "PhoneVerification", "Spending", "Session",
     "Operation", "OperationEvent", "OperationSummary", "OperationTransition",
     "ToolCall", "ToolCallSummary", "ApiRequest",
-    "Connection", "run", "ConnectionOperations", "ConnectLink", "Verification", "ConnectionShared",
+    "Connection", "run", "ConnectionOperations", "ConnectLink", "SignIn", "Verification", "ConnectionShared",
     "ConnectionHealth", "Token", "LookupOption", "LookupOptions",
     "Plan", "PlanWindow", "PlanUsage", "PlanUsageSummary", "PlanNextStep",
     "IntegrationInfo", "IntegrationOperation", "IntegrationEvent",

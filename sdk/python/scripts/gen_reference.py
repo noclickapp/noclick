@@ -94,7 +94,7 @@ SENTINELS = {
 # Dataclasses you build yourself (the rest only come back from calls).
 CONSTRUCTIBLE = {"A2AMember", "Cron", "OnWebhook", "OnEvent", "OnPlatformEvent", "DomainContact", "Before", "Every", "Agents", "Platform"}
 # Classes whose constructor is internal (reached another way: ``sb.files``, a raise).
-NO_CONSTRUCTOR = {"SandboxFiles", "MachineFiles", "Error"}
+NO_CONSTRUCTOR = {"SandboxFiles", "MachineFiles", "Error", "SignIn"}
 CONSTANT_DOCS = {"__version__": "This client's version."}
 
 

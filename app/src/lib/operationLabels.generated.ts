@@ -225,6 +225,8 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "connections_operations_run": ["Run Connection Operation", "POST", "outbound"],
     "connections_require_approval": ["Require Approval", "POST", "write"],
     "connections_require_approval_delete": ["Lift Approval", "DELETE", "write"],
+    "connections_sign_ins_create": ["Sign In", "POST", "write"],
+    "connections_sign_ins_finish": ["Finish Sign In", "POST", "write"],
     "connections_test_account": ["Mark Test Account", "POST", "write"],
     "connections_update": ["Rename Connection", "PATCH", "write"],
     "connections_usage": ["Connection Usage", "GET", "read"],

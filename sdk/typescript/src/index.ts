@@ -34,10 +34,11 @@ export { ToolCall } from "./toolCall.ts";
 export type { ToolCallFilters, ToolCallSummary } from "./toolCall.ts";
 export { ApiRequest } from "./apiRequest.ts";
 export type { ApiRequestFilters } from "./apiRequest.ts";
-export { ConnectLink, Connection, ConnectionOperations, run } from "./connection.ts";
+export { ConnectLink, Connection, ConnectionOperations, SignIn, run } from "./connection.ts";
 export type {
   ConnectionAccess, ConnectionCreateOptions, ConnectionHealth, ConnectionOrigin, ConnectionShared, ConnectionStatus, InWorkspace, IntegrationEvent, IntegrationInfo, IntegrationKind, IntegrationOperation, LinkOptions, LookupOption,
-  LookupOptions, Plan, PlanNextStep, PlanUsage, PlanUsageState, PlanUsageSummary, PlanWindow, SendTo, Token, ToolRef, Verification,
+  LookupOptions, Plan, PlanNextStep, PlanUsage, PlanUsageState, PlanUsageSummary, PlanWindow, SendTo, SignInOptions, Token, ToolRef,
+  Verification,
 } from "./connection.ts";
 export { Toolkit } from "./toolkit.ts";
 export type {

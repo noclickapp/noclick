@@ -736,3 +736,57 @@ def test_a_plans_tier_and_usage_read_as_the_api_works_them_out(api, client):
     api.get("/v1/connections/con_1").respond(json=CONN)
     other = nc.Connection.get("con_1")
     assert other.plan is None and other.usage_summary is None
+
+
+# --- signing your account in to an app ------------------------------------------
+
+APP_CONN = {**CONN, "id": "credential:c1", "name": "ada@example.test", "origin": "app", "credential_id": "c1"}
+
+
+def test_sign_in_sends_the_code_and_its_secrets_and_answers_the_connection(api, client):
+    route = api.post("/v1/connections/sign_ins").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "google", "connection": APP_CONN,
+        "account": {"email": "ada@example.test"}, "choose": None})
+
+    signed_in = nc.Connection.sign_in("google", code="g-code", redirect_uri="https://app.test/cb",
+                                      scopes=("email", "profile"), name="Mine", inputs={"region": "eu"},
+                                      oauth_app={"client_id": "own", "client_secret": "own-secret"})
+
+    assert body(route.calls.last.request) == {"provider": "google", "code": "g-code", "redirect_uri": "https://app.test/cb",
+                           "scopes": ["email", "profile"], "name": "Mine", "inputs": {"region": "eu"},
+                           "client": {"client_id": "own", "client_secret": "own-secret"}}
+    assert "NoClick-User" not in route.calls.last.request.headers
+    assert (signed_in.status, signed_in.provider, signed_in.id) == ("connected", "google", None)
+    assert isinstance(signed_in.connection, nc.Connection) and signed_in.connection.id == "credential:c1"
+    assert signed_in.account == {"email": "ada@example.test"} and signed_in.choices == []
+
+
+def test_a_sign_in_that_asks_for_a_pick_is_finished_with_it(api, client):
+    api.post("/v1/connections/sign_ins").respond(json={
+        "object": "sign_in", "id": "si_1", "status": "choose", "provider": "supabase", "connection": None,
+        "account": {}, "choose": {"what": "project", "choices": [{"id": "proj-a", "name": "Alpha"},
+                                                                  {"id": "proj-b", "name": "Beta"}]}})
+    finish = api.post("/v1/connections/sign_ins/si_1/finish").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "supabase", "connection": APP_CONN,
+        "account": {"project_url": "https://proj-b.supabase.co"}, "choose": None})
+
+    signed_in = nc.Connection.sign_in("supabase", code="s", redirect_uri="https://app.test/cb", code_verifier="v")
+    assert (signed_in.status, signed_in.what, [c["id"] for c in signed_in.choices]) == (
+        "choose", "project", ["proj-a", "proj-b"])
+    done = signed_in.finish("proj-b")
+
+    assert body(finish.calls.last.request) == {"choice": "proj-b"}
+    assert done.status == "connected" and done.connection.id == "credential:c1"
+    with pytest.raises(nc.InvalidRequest):
+        done.finish("proj-a")
+
+
+def test_a_pick_is_finished_by_the_sign_ins_id_alone(api, client):
+    finish = api.post("/v1/connections/sign_ins/si_9/finish").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "facebook", "connection": APP_CONN,
+        "account": {"instagram_username": "ada"}, "choose": None})
+
+    done = nc.Connection.finish_sign_in("si_9", "ig-2")
+
+    assert body(finish.calls.last.request) == {"choice": "ig-2"}
+    assert done.status == "connected" and done.account == {"instagram_username": "ada"}
