@@ -89,6 +89,9 @@ export function ModelControl({
                 choice={choice}
                 accounts={accounts}
                 permissionModes={settings?.permissionModes}
+                // The session's settings say what its own model takes; a move not read back yet goes by its harness.
+                efforts={shown ? undefined : settings?.efforts}
+                defaultEffort={shown ? undefined : settings?.defaultEffort}
                 open={open}
                 onOpenChange={(o) => {
                     if (!o) moves.cancel();
