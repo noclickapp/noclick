@@ -21,6 +21,12 @@ export function serviceColor(s: ServiceId | 'rest', ink: Ink): string {
     return slot ? `var(--svc-${slot})` : 'var(--svc-rest)';
 }
 
+/** The hue of the `index`th of a handful of parts in their own order (a deploy's cost lines), past the five hues the
+ *  rest's: inside `.usage-page` or `.usage-ink`, which hold the palette. */
+export function seriesColor(index: number): string {
+    return index < HUED.length ? `var(--svc-${index + 1})` : 'var(--svc-rest)';
+}
+
 /** A day's spend split into the hued services and everything else, in stacking order. */
 export function stackOf(byService: Partial<Record<ServiceId, number>>, ink: Ink): { key: ServiceId | 'rest'; usd: number }[] {
     const total = Object.values(byService).reduce((a, b) => a + (b ?? 0), 0);

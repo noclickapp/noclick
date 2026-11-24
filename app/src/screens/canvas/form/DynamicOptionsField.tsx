@@ -16,6 +16,7 @@ import {
 } from './DroppableTextField';
 import { ReferenceHighlightOverlay } from './ReferenceHighlight';
 import { valueToText } from './valueText';
+import { useLater } from '@/lib/useLater';
 
 // Dynamic options configuration from x-dynamic-options schema metadata
 interface DynamicOptionsConfig {
@@ -121,6 +122,7 @@ export function DynamicOptionsField({
     const lastRequestedSearchRef = useRef<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const later = useLater();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     // Reference autocomplete state
@@ -180,13 +182,13 @@ export function DynamicOptionsField({
         const newPos = pos + reference.length;
         setCursorPosition(newPos);
 
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [cursorPosition, valueText, onChange, fieldKey]);
+        });
+    }, [cursorPosition, valueText, onChange, fieldKey, later]);
 
     // Insert a reference suggestion (replaces partial {{...}})
     const insertSuggestion = useCallback((suggestion: ReferenceSuggestion) => {
@@ -209,13 +211,13 @@ export function DynamicOptionsField({
         const newPos = partialRef.startIndex + fullRef.length;
         setCursorPosition(newPos);
 
-        setTimeout(() => {
+        later(() => {
             if (inputRef.current) {
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(newPos, newPos);
             }
-        }, 0);
-    }, [partialRef, cursorPosition, valueText, onChange, fieldKey]);
+        });
+    }, [partialRef, cursorPosition, valueText, onChange, fieldKey, later]);
 
     // Register insertReference in the shared global registry for drag-and-drop
     const insertRefWrapper = useRef<{ fn: (reference: string) => void } | null>(null);
@@ -631,7 +633,7 @@ export function DynamicOptionsField({
     // Handle input blur - commit custom value if needed
     const handleBlur = () => {
         // Small delay to allow click events on dropdown items to fire first
-        setTimeout(() => {
+        later(() => {
             if (!containerRef.current?.contains(document.activeElement)) {
                 setIsFocused(false);
                 setShowRefAutocomplete(false);
