@@ -27,9 +27,9 @@ would rather know a deadline is approaching than be surprised by it.
 
 ## How a fix reaches this repository
 
-This repository is copied, commit by commit, from a folder of NoClick's main
-repository, so a fix is committed there first and appears here once it lands
-on that repository's main branch. A fix to a package is in the next
+This repository is copied from a folder of NoClick's main repository, one
+commit for each change that lands there, so a fix is committed there first and
+appears here once it lands on that repository's main branch. A fix to a package is in the next
 release of that package on npm or PyPI.
 
 ## Supported versions

@@ -5,9 +5,9 @@ code that shows it) or to discuss a change before you make it; send a pull reque
 
 ## How a change lands
 
-This repository is copied, commit by commit, from a folder of NoClick's main repository, so
-nothing is merged here directly. An accepted pull request is applied in the main repository and
-comes back here as a commit with you as its author. The pull request is then closed as landed,
+This repository is copied from a folder of NoClick's main repository, one commit for each change
+that lands there, so nothing is merged here directly. An accepted pull request is applied in the
+main repository and comes back here as a commit with you as its author. The pull request is then closed as landed,
 not merged with the merge button.
 
 Before you send one, run `scripts/check.sh`: it builds and tests everything, as CI does.
