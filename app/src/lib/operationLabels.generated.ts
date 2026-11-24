@@ -704,6 +704,7 @@ adapty
 addevent
 addressfinder
 addresszen
+adobe-acrobat-sign
 adobe-analytics
 adobe-campaign
 adyen
@@ -743,6 +744,7 @@ amplemarket
 amplience
 anakin-io
 anchor-browser
+anchore
 android-texter
 any-db
 anymail-finder
@@ -752,6 +754,7 @@ api-bible
 api-ninjas
 api2cart
 api2convert
+apideck
 apiframe
 apify
 apigee
@@ -763,6 +766,7 @@ apollo
 appcenter
 appcircle
 apphud
+apple
 appointedd
 appsheet
 apptivegrid
@@ -803,7 +807,9 @@ bambooci
 bamboohr
 bandsintown
 bannerbear
+bannerbite
 base44
+basecamp
 basedash
 baserow
 baseten
@@ -825,6 +831,7 @@ bigcommerce
 bigmailer
 bigoven
 bigquery
+bigredcloud
 bika
 bill
 billetweb
@@ -862,6 +869,7 @@ bookspot
 bookwhen
 botcake-1
 botconversa
+botify
 botmaker
 botpress
 botsonic
@@ -881,6 +889,7 @@ brilliant-directories
 browseai
 browserbase-tool
 browserless
+browshot
 bsc-designer
 btcpay-server
 bubbles
@@ -903,7 +912,9 @@ cabinpanda
 cakemail
 cal-com
 cal-id
+calendesk
 calendly
+call-loop
 callerapi
 callfire
 campaign-cleaner
@@ -950,6 +961,7 @@ clay
 clearblade
 clearout
 clerk-io
+clever
 cleverreach
 clevertap
 clickfunnels
@@ -969,12 +981,15 @@ closum
 cloudbeds
 cloudbees
 cloudflare
+cloudmersive
 cloudsmith
 cloudtalk
 cloudzero
 clover
 cloze
 club-os
+clust
+cmappsa
 coassemble
 coda
 codacy
@@ -1010,6 +1025,7 @@ content-snare
 content-studio
 contentstack
 context-dev
+contractor-plus
 contribly
 control-d
 conversion-tools
@@ -1049,6 +1065,7 @@ dadata-ru
 daily
 dante-ai
 dart
+data
 databox
 databricks
 datadog
@@ -1060,9 +1077,11 @@ dbt-cloud
 dealmachine
 debitura
 debounce
+decisionvault
 deel
 deepgram
 deepimage
+deepl
 deployhq
 deputy
 dev-cycle
@@ -1074,6 +1093,7 @@ dialpad
 diffchecker
 digicert
 digistore24
+digitalnz
 digitalocean
 directiq
 directus
@@ -1158,6 +1178,7 @@ enrich-layer
 env0
 eodhd-apis
 epos-now
+epson-connect
 esputnik
 etermin
 etsy
@@ -1270,12 +1291,14 @@ geekflare
 gender-api
 genderapi-io
 genesiscloud
+genmagic
 geoapify
 geocodio
 geodatasource
 get-the-referral
 getaccept
 getanyapi
+gettyimages
 giftbit
 giphy
 gitea
@@ -1290,6 +1313,7 @@ glide-apps
 globalping
 glofox
 gmail
+gmass
 go-table
 go-to-connect
 go-to-training
@@ -1345,6 +1369,7 @@ hailey-hr
 haku
 halopsa
 handwrytten
+happy-scribe
 harness
 harvey
 hasslefreebooks
@@ -1428,6 +1453,7 @@ instatus
 intelliprint
 intercom
 intulse
+investment-dominator
 investorbase
 investorlift
 invofox
@@ -1448,6 +1474,7 @@ itm-platform
 jackrabbit-class
 jaicob
 jev
+jibble
 jigsawstack
 jina-reader
 jinko
@@ -1491,11 +1518,13 @@ kisi
 kit
 kiwify
 kizeo-forms
+klasio
 klaviyo
 klicktipp
 knowify
 kobotoolbox
 kommo
+konnektivecrm
 kontent-ai
 koyeb
 krisp
@@ -1719,6 +1748,7 @@ okta
 ollama
 olostep
 omnisend
+on24
 onedesk
 onedrive
 onelake
@@ -1727,6 +1757,7 @@ onesignal
 onlyoffice-docspace
 open-sea
 openalex
+openapi
 opencage
 opendatasoft
 openfigi
@@ -1741,6 +1772,7 @@ opsgenie
 opusclip
 oracle-field-service
 oracle-hcm
+orca-scan
 orgo
 orq-ai
 orshot
@@ -1767,6 +1799,7 @@ parseur
 partnerstack
 passkit-membership
 past-dev
+pavlok-wearable-device-da47193
 payaca
 payments
 paypal
@@ -1807,6 +1840,7 @@ pipedrive
 pipeless
 pipeline-crm
 pitchbox
+pixxi-crm
 placetel
 planable
 planday
@@ -1849,6 +1883,7 @@ productboard
 productify-ai
 productlane
 productplan
+profitwell
 project-broadcast
 projul
 promptlayer
@@ -1856,6 +1891,7 @@ propertyradar
 proposify
 proworkflow-nexus
 proxiedmail
+pubrio
 pulsetic
 pulumi
 pushcut
@@ -2080,6 +2116,7 @@ smoove
 sms77
 smsapi
 smsglobal
+smsmobileapi
 smtp2go
 smtping
 snapchat
@@ -2097,12 +2134,14 @@ sonderplan
 soundcloud
 soundee
 spacebring
+sparkgrid-da106579
 specstream
 speechmatics
 spider
 spike
 spiro
 splitwise
+spoonacular
 spotify
 spotio2
 sprig
@@ -2124,12 +2163,14 @@ stigg
 stonly
 stora
 straico
+straker-verify
 strale
 streak
 stream-chat
 streamtime
 stripe
 studio-by-ai21-labs
+submittable
 subscriptionflow
 sumo-logic
 sumoquote
@@ -2332,8 +2373,10 @@ waiverfile
 walcu-crm
 walletap
 wallsio
+wappalyzer
 wati
 wayfront
+wbiztool
 weatherbit
 weaviate
 webcrawlerapi
@@ -2360,6 +2403,7 @@ wild-apricot
 wildberries
 wildjar
 winston-ai
+wiremock
 wisboo
 wistia
 wix
@@ -2404,6 +2448,7 @@ zenrows
 zenzap
 zep
 zeplin
+ziflow
 zigpoll
 zoho-books
 zoho-cliq
@@ -2411,6 +2456,7 @@ zoho-cpaas-formerly-zeptomail
 zoho-creator
 zoho-crm
 zoho-inventory
+zoho-mail
 zoho-projects
 zoho-work-drive
 zoho-writer
