@@ -1500,6 +1500,7 @@ klicktipp
 knowify
 kobotoolbox
 kommo
+konnektivecrm
 kontent-ai
 koyeb
 krisp
