@@ -790,3 +790,48 @@ def test_a_pick_is_finished_by_the_sign_ins_id_alone(api, client):
 
     assert body(finish.calls.last.request) == {"choice": "ig-2"}
     assert done.status == "connected" and done.account == {"instagram_username": "ada"}
+
+
+def _waiting(sign_in_id="si_w", **shown):
+    return {"object": "sign_in", "id": sign_in_id, "status": "waiting", "provider": "codex", "credential": None,
+            "connection": None, "account": {}, "choose": None,
+            "waiting": {"way": "device", "user_code": "ABCD-1234", "verification_url": "https://auth.openai.com/codex/device",
+                        "verification_url_complete": None, "authorize_url": None, "interval": 0,
+                        "expires_at": "2026-11-24T12:00:00+00:00", **shown}}
+
+
+def test_a_device_codes_sign_in_starts_and_is_waited_on_until_the_person_enters_it(api, client):
+    start = api.post("/v1/connections/sign_ins").respond(json=_waiting())
+    polls = api.post("/v1/connections/sign_ins/si_w/finish").mock(side_effect=[
+        httpx.Response(200, json=_waiting()),
+        httpx.Response(200, json={"object": "sign_in", "id": None, "status": "connected", "provider": "codex",
+                                  "credential": {"id": "c1", "name": "ChatGPT (Codex)",
+                                                 "credential_type": "agent_codex_oauth"},
+                                  "connection": APP_CONN, "account": {}, "choose": None, "waiting": None}),
+    ])
+
+    chatgpt = nc.Connection.sign_in("codex", name="ChatGPT")
+    assert body(start.calls.last.request) == {"provider": "codex", "name": "ChatGPT"}
+    assert (chatgpt.status, chatgpt.way, chatgpt.user_code, chatgpt.verification_url, chatgpt.interval) == (
+        "waiting", "device", "ABCD-1234", "https://auth.openai.com/codex/device", 0)
+    done = chatgpt.wait()
+
+    assert polls.call_count == 2 and all(body(call.request) is None or body(call.request) == {} for call in polls.calls)
+    assert done.status == "connected" and done.credential["credential_type"] == "agent_codex_oauth"
+
+
+def test_a_claude_plans_sign_in_finishes_with_the_code_its_page_showed(api, client):
+    api.post("/v1/connections/sign_ins").respond(json=_waiting(
+        way="code", user_code=None, verification_url=None, authorize_url="https://claude.ai/oauth/authorize?x=1"))
+    finish = api.post("/v1/connections/sign_ins/si_w/finish").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "claude_code",
+        "credential": {"id": "c1", "name": "Claude", "credential_type": "agent_claude_code_oauth"},
+        "connection": APP_CONN, "account": {}, "choose": None, "waiting": None})
+
+    claude = nc.Connection.sign_in("claude_code", reconnect="credential:c1")
+    with pytest.raises(nc.InvalidRequest):
+        claude.wait()
+    done = claude.finish(code="pasted#state")
+
+    assert body(finish.calls.last.request) == {"code": "pasted#state"}
+    assert done.status == "connected"

@@ -497,33 +497,40 @@ export class Connection extends ApiObject {
   }
 
   /**
-   * Finish signing your account in to an app whose authorize step a page of yours ran: the provider handed its
-   * callback `code` for `redirectUri` (one it has registered for that page), with the PKCE `codeVerifier` the page
-   * made where the provider takes one. The provider's own sign-in runs on it, as the NoClick app's does, and stores
-   * the account's connection (`credential:<id>`); `inputs` carries what its connect form takes beside the code (a
-   * shop, a subdomain, a site), `oauthApp` an OAuth app of your own the sign-in ran on. A connect link
-   * (`connectLink()`) runs the whole sign-in on NoClick's page instead, and is how one of your users signs in: this
-   * is your account's own. A code the provider refuses throws `InvalidRequest` in its words.
+   * Sign your account in to an app. With `code`: finish a sign-in whose authorize step a page of yours ran, the
+   * provider having handed its callback that code for `redirectUri` (one it has registered for that page), with the
+   * PKCE `codeVerifier` the page made where the provider takes one. Without one: start a sign-in that finishes on the
+   * provider's page, an agent plan's (`"codex"` for ChatGPT, `"claude_code"`, `"github_copilot"`, `"xai"`) or a
+   * provider's device code. The provider's own sign-in runs, as the NoClick app's does, and stores the account's
+   * credential (`credential:<id>`); `inputs` carries what its connect form takes beside the code (a shop, a
+   * subdomain, a site), `oauthApp` an OAuth app of your own the sign-in ran on, `reconnect` a connection a Claude
+   * plan's sign-in renews in place. A connect link (`connectLink()`) runs the whole sign-in on NoClick's page
+   * instead, and is how one of your users signs in: this is your account's own. A code the provider refuses throws
+   * `InvalidRequest` in its words.
    */
-  static async signIn(provider: string, options: SignInOptions): Promise<SignIn> {
+  static async signIn(provider: string, options: SignInOptions = {}): Promise<SignIn> {
     const user = resolveScope(undefined);
     const json = compact({
       provider, code: options.code, redirect_uri: options.redirectUri, code_verifier: options.codeVerifier,
       scopes: options.scopes, name: options.name, inputs: options.inputs, client: options.oauthApp,
+      reconnect: options.reconnect,
     });
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/sign_ins", { json, user }));
     return new SignIn(raw, options.client, user);
   }
 
   /**
-   * Finish a sign-in that asked the person to pick (`SignIn.status` `choose`) by its `id` alone, with the `id` of the
-   * choice they picked: the pick may come back in another request than the one that started it. Within 10 minutes
-   * of the start, once; one finished, lapsed or another account's throws `NotFound`.
+   * Finish a sign-in that waits on the person by its `id` alone, as its answer may come back in another request than
+   * the one that started it: the `id` of the choice they picked (`choose`), the `code` they copied from the
+   * provider's page (a Claude plan), or nothing, to ask whether they've signed in (a device code). One finished,
+   * lapsed or another account's throws `NotFound`.
    */
-  static async finishSignIn(signInId: string, choice: string, options: { client?: NoClick } = {}): Promise<SignIn> {
+  static async finishSignIn(signInId: string, choice?: string | null,
+                            options: { code?: string; client?: NoClick } = {}): Promise<SignIn> {
     const user = resolveScope(undefined);
     const raw = asObject(await resolveClient(options.client).request(
-      "POST", `/v1/connections/sign_ins/${encodeURIComponent(signInId)}/finish`, { json: { choice }, user }));
+      "POST", `/v1/connections/sign_ins/${encodeURIComponent(signInId)}/finish`,
+      { json: compact({ choice: choice ?? undefined, code: options.code }), user }));
     return new SignIn(raw, options.client, user);
   }
 
@@ -1233,10 +1240,10 @@ export async function run<R = unknown>(
 const CONNECT_KINDS = ["credential.connect"] as const;
 
 export interface SignInOptions {
-  /** The code the provider's callback handed back. */
-  code: string;
-  /** The redirect URI the authorize step named. */
-  redirectUri: string;
+  /** The code a redirect sign-in's callback handed back; without one, a sign-in that starts here starts. */
+  code?: string;
+  /** The redirect URI the authorize step named (with a code). */
+  redirectUri?: string;
   /** The PKCE verifier the authorize step made, for a provider that takes one. */
   codeVerifier?: string;
   scopes?: string[] | string;
@@ -1246,14 +1253,18 @@ export interface SignInOptions {
   inputs?: JsonObject;
   /** An OAuth app of your own the sign-in ran on. */
   oauthApp?: { client_id: string; client_secret: string };
+  /** A connection a Claude plan's sign-in renews in place (`credential:<id>`). */
+  reconnect?: string;
   client?: NoClick;
 }
 
 /**
- * A sign-in to an app (`Connection.signIn`): `status` `connected` with its `connection`, or `choose` when the
- * provider asks the person to pick (`what`: a `project`, an `instagram_account`) from `choices` (each with its `id`),
- * finished with `finish`. `account` is what the provider says of the account signed in to (an email, a team, a
- * site); never a token.
+ * A sign-in to an app (`Connection.signIn`): `status` `connected` with the `credential` it stored and the
+ * `connection` it is (none for a plan the platform's agents don't run on: GitHub Copilot, xAI); `choose` when the
+ * provider asks the person to pick (`what`: a `project`, an `instagram_account`) from `choices` (each with its `id`);
+ * or `waiting` while the person signs in on the provider's page (`way` `device`: enter `userCode` at
+ * `verificationUrl`, then `wait`; `code`: open `authorizeUrl` and `finish` with the code it shows). `account` is what
+ * the provider says of the account signed in to (an email, a team, a site); never a token.
  */
 export class SignIn {
   private readonly _raw: JsonObject;
@@ -1270,8 +1281,8 @@ export class SignIn {
   get id(): string | null {
     return (this._raw.id as string | null) ?? null;
   }
-  get status(): "connected" | "choose" {
-    return this._raw.status as "connected" | "choose";
+  get status(): "connected" | "choose" | "waiting" {
+    return this._raw.status as "connected" | "choose" | "waiting";
   }
   get provider(): string {
     return String(this._raw.provider);
@@ -1280,8 +1291,36 @@ export class SignIn {
     const raw = this._raw.connection;
     return raw ? Connection._of({ raw: asObject(raw), client: this._client, user: this._user }) : null;
   }
+  get credential(): JsonObject | null {
+    return this._raw.credential ? { ...asObject(this._raw.credential) } : null;
+  }
   get account(): JsonObject {
     return { ...asObject(this._raw.account ?? {}) };
+  }
+  private _waiting<T>(key: string): T | null {
+    return (asObject(this._raw.waiting ?? {})[key] as T | undefined) ?? null;
+  }
+  get way(): "device" | "code" | null {
+    return this._waiting("way");
+  }
+  get userCode(): string | null {
+    return this._waiting("user_code");
+  }
+  get verificationUrl(): string | null {
+    return this._waiting("verification_url");
+  }
+  get verificationUrlComplete(): string | null {
+    return this._waiting("verification_url_complete");
+  }
+  get authorizeUrl(): string | null {
+    return this._waiting("authorize_url");
+  }
+  get interval(): number | null {
+    return this._waiting("interval");
+  }
+  get expiresAt(): Date | null {
+    const at = this._waiting<string>("expires_at");
+    return at ? new Date(at) : null;
   }
   get what(): string | null {
     return (asObject(this._raw.choose ?? {}).what as string | undefined) ?? null;
@@ -1293,10 +1332,30 @@ export class SignIn {
     return { ...this._raw };
   }
 
-  /** Finish a sign-in that asked for a pick with the `id` of the choice picked; within 10 minutes of it. */
-  async finish(choice: string): Promise<SignIn> {
-    if (!this.id) throw new InvalidRequest("This sign-in asked for no pick.");
-    return await Connection.finishSignIn(this.id, choice, { client: this._client });
+  /**
+   * Finish a sign-in that waits on the person: with the `id` of the choice they picked, the `code` they copied from
+   * the provider's page, or nothing, to ask whether they've signed in.
+   */
+  async finish(choice?: string | null, options: { code?: string } = {}): Promise<SignIn> {
+    if (!this.id) throw new InvalidRequest("This sign-in waits on no one.");
+    return await Connection.finishSignIn(this.id, choice, { code: options.code, client: this._client });
+  }
+
+  /**
+   * Ask, every `interval` seconds, whether the person has entered `userCode`, until they have (a device code's
+   * sign-in), or `timeoutMs` passes (`OperationTimeout`). A refusal (the code expired, the person declined) throws
+   * `InvalidRequest`.
+   */
+  async wait(options: { timeoutMs?: number } = {}): Promise<SignIn> {
+    const deadline = Date.now() + (options.timeoutMs ?? 900_000);
+    let current: SignIn = this;
+    while (current.status === "waiting") {
+      if (current.way !== "device") throw new InvalidRequest("This sign-in finishes with the code its page shows: finish(null, { code }).");
+      if (Date.now() >= deadline) throw new OperationTimeout(`Nobody entered ${current.userCode} in time.`);
+      await new Promise((done) => setTimeout(done, (current.interval ?? 5) * 1000));
+      current = await Connection.finishSignIn(current.id as string, null, { client: this._client });
+    }
+    return current;
   }
 }
 

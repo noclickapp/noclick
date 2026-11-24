@@ -635,27 +635,33 @@ class Connection(_Object):
         cls,
         provider: str,
         *,
-        code: str,
-        redirect_uri: str,
+        code: Optional[str] = None,
+        redirect_uri: Optional[str] = None,
         code_verifier: Optional[str] = None,
         scopes: Union[Sequence[str], str, None] = None,
         name: Optional[str] = None,
         inputs: Optional[Dict[str, Any]] = None,
         oauth_app: Optional[Dict[str, str]] = None,
+        reconnect: Optional[str] = None,
         client: Optional[Client] = None,
     ) -> "SignIn":
-        """Finish signing your account in to an app whose authorize step a page of yours ran: the provider handed
-        its callback ``code`` for ``redirect_uri`` (one the provider has registered for that page), with the PKCE
-        ``code_verifier`` the page made where the provider takes one. The provider's own sign-in runs on it, as the
-        NoClick app's does, and stores the account's connection (``credential:<id>``); ``inputs`` carries what its
-        connect form takes beside the code (a shop, a subdomain, a site), ``oauth_app`` an OAuth app of your own the
-        sign-in ran on (``client_id``, ``client_secret``). A connect link (``connect_link()``) runs the whole sign-in
-        on NoClick's page instead, and is how one of your users signs in: this is your account's own.
+        """Sign your account in to an app. With ``code``: finish a sign-in whose authorize step a page of yours
+        ran, the provider having handed its callback that code for ``redirect_uri`` (one it has registered for that
+        page), with the PKCE ``code_verifier`` the page made where the provider takes one. Without one: start a
+        sign-in that finishes on the provider's page, an agent plan's (``"codex"`` for ChatGPT, ``"claude_code"``,
+        ``"github_copilot"``, ``"xai"``) or a provider's device code. The provider's own sign-in runs, as the NoClick
+        app's does, and stores the account's credential (``credential:<id>``); ``inputs`` carries what its connect
+        form takes beside the code (a shop, a subdomain, a site), ``oauth_app`` an OAuth app of your own the sign-in
+        ran on (``client_id``, ``client_secret``), ``reconnect`` a connection a Claude plan's sign-in renews in
+        place. A connect link (``connect_link()``) runs the whole sign-in on NoClick's page instead, and is how one
+        of your users signs in: this is your account's own.
 
         Returns:
-            The ``SignIn``: ``connected`` with its ``connection``, or ``choose`` (a Supabase project, an Instagram
-            account) with the ``choices`` to ``finish`` it with. A code the provider refuses raises
-            ``noclick.InvalidRequest`` in its words (Atlassian's names the ``sites`` it signs in to).
+            The ``SignIn``: ``connected`` with its ``credential`` (and ``connection``), ``choose`` (a Supabase
+            project, an Instagram account) with the ``choices`` to ``finish`` it with, or ``waiting`` with what the
+            person does (``user_code`` at ``verification_url``, or ``authorize_url`` whose code you ``finish``
+            with). A code the provider refuses raises ``noclick.InvalidRequest`` in its words (Atlassian's names the
+            ``sites`` it signs in to).
 
         Usage::
 
@@ -665,24 +671,33 @@ class Connection(_Object):
             supabase = noclick.Connection.sign_in("supabase", code=code, redirect_uri=callback, code_verifier=verifier)
             if supabase.status == "choose":
                 supabase = supabase.finish(supabase.choices[0]["id"])
+
+            chatgpt = noclick.Connection.sign_in("codex")
+            print(f"Enter {chatgpt.user_code} at {chatgpt.verification_url}")
+            chatgpt = chatgpt.wait()
+
+            claude = noclick.Connection.sign_in("claude_code")
+            print(f"Open {claude.authorize_url} and paste the code it shows")
+            claude = claude.finish(code=input("Code: "))
         """
         scope = resolve_scope(AMBIENT)
         body = compact(provider=provider, code=code, redirect_uri=redirect_uri, code_verifier=code_verifier,
                        scopes=list(scopes) if isinstance(scopes, (list, tuple)) else scopes, name=name,
-                       inputs=inputs, client=oauth_app)
+                       inputs=inputs, client=oauth_app, reconnect=reconnect)
         raw = await resolve_client(client).request("POST", "/v1/connections/sign_ins", json=body, user=scope)
         return SignIn._from(raw, client=client, user=scope)
 
     @synced
     @classmethod
-    async def finish_sign_in(cls, sign_in_id: str, choice: str, *, client: Optional[Client] = None) -> "SignIn":
-        """Finish a sign-in that asked the person to pick (``SignIn.status`` ``choose``) by its ``id`` alone, with
-        the ``id`` of the choice they picked: the pick may come back in another request than the one that started
-        it. Within 10 minutes of the start, once.
+    async def finish_sign_in(cls, sign_in_id: str, choice: Optional[str] = None, *, code: Optional[str] = None,
+                             client: Optional[Client] = None) -> "SignIn":
+        """Finish a sign-in that waits on the person by its ``id`` alone, as its answer may come back in another
+        request than the one that started it: the ``id`` of the choice they picked (``choose``), the code they copied
+        from the provider's page (a Claude plan), or nothing, to ask whether they've signed in (a device code).
 
         Returns:
-            The ``SignIn``, ``connected`` with its ``connection``; one finished, lapsed or another account's raises
-            ``noclick.NotFound``.
+            The ``SignIn``: ``connected``, or still ``waiting`` for the person; one finished, lapsed or another
+            account's raises ``noclick.NotFound``.
 
         Usage::
 
@@ -691,7 +706,7 @@ class Connection(_Object):
         """
         scope = resolve_scope(AMBIENT)
         raw = await resolve_client(client).request(
-            "POST", f"/v1/connections/sign_ins/{path_segment(sign_in_id)}/finish", json={"choice": choice},
+            "POST", f"/v1/connections/sign_ins/{path_segment(sign_in_id)}/finish", json=compact(choice=choice, code=code),
             user=scope)
         return SignIn._from(raw, client=client, user=scope)
 
@@ -1450,10 +1465,13 @@ class Connection(_Object):
 
 
 class SignIn:
-    """A sign-in to an app (``Connection.sign_in``): ``status`` ``connected`` with its ``connection``, or ``choose``
-    when the provider asks the person to pick (``what``: a ``project``, an ``instagram_account``) from ``choices``
-    (each with its ``id``), finished with ``finish``. ``account`` is what the provider says of the account signed in
-    to (an email, a team, a site); never a token."""
+    """A sign-in to an app (``Connection.sign_in``): ``status`` ``connected`` with the ``credential`` it stored and
+    the ``connection`` it is (none for a plan the platform's agents don't run on: GitHub Copilot, xAI); ``choose`` when
+    the provider asks the person to pick (``what``: a ``project``, an ``instagram_account``) from ``choices`` (each
+    with its ``id``); or ``waiting`` while the person signs in on the provider's page (``way`` ``device``: enter
+    ``user_code`` at ``verification_url``, then ``wait``; ``code``: open ``authorize_url`` and ``finish`` with the
+    code it shows). ``account`` is what the provider says of the account signed in to (an email, a team, a site);
+    never a token."""
 
     def __init__(self, raw: Dict[str, Any], *, client: Optional[Client], user: Any) -> None:
         self._raw, self._client, self._user = raw, client, user
@@ -1480,8 +1498,43 @@ class SignIn:
         return Connection._new(raw=raw, client=self._client, user=self._user) if raw else None
 
     @property
+    def credential(self) -> Optional[Dict[str, Any]]:
+        return dict(self._raw["credential"]) if self._raw.get("credential") else None
+
+    @property
     def account(self) -> Dict[str, Any]:
         return dict(self._raw.get("account") or {})
+
+    def _waiting(self, key: str) -> Any:
+        return (self._raw.get("waiting") or {}).get(key)
+
+    @property
+    def way(self) -> Optional[str]:
+        return self._waiting("way")
+
+    @property
+    def user_code(self) -> Optional[str]:
+        return self._waiting("user_code")
+
+    @property
+    def verification_url(self) -> Optional[str]:
+        return self._waiting("verification_url")
+
+    @property
+    def verification_url_complete(self) -> Optional[str]:
+        return self._waiting("verification_url_complete")
+
+    @property
+    def authorize_url(self) -> Optional[str]:
+        return self._waiting("authorize_url")
+
+    @property
+    def interval(self) -> Optional[int]:
+        return self._waiting("interval")
+
+    @property
+    def expires_at(self) -> Any:
+        return parse_time(self._waiting("expires_at"))
 
     @property
     def what(self) -> Optional[str]:
@@ -1496,11 +1549,12 @@ class SignIn:
         return dict(self._raw)
 
     @synced
-    async def finish(self, choice: str) -> "SignIn":
-        """Finish a sign-in that asked for a pick with the ``id`` of the choice picked; within 10 minutes of it.
+    async def finish(self, choice: Optional[str] = None, *, code: Optional[str] = None) -> "SignIn":
+        """Finish a sign-in that waits on the person: with the ``id`` of the choice they picked, the ``code`` they
+        copied from the provider's page, or nothing, to ask whether they've signed in.
 
         Returns:
-            The ``SignIn``, ``connected`` with its ``connection``.
+            The ``SignIn``: ``connected``, or still ``waiting``.
 
         Usage::
 
@@ -1508,8 +1562,35 @@ class SignIn:
                 signed_in = signed_in.finish(signed_in.choices[0]["id"])
         """
         if not self.id:
-            raise InvalidRequest("This sign-in asked for no pick.")
-        return await Connection.finish_sign_in.aio(self.id, choice, client=self._client)
+            raise InvalidRequest("This sign-in waits on no one.")
+        return await Connection.finish_sign_in.aio(self.id, choice, code=code, client=self._client)
+
+    @synced
+    async def wait(self, *, timeout: float = 900) -> "SignIn":
+        """Ask, every ``interval`` seconds, whether the person has entered ``user_code``, until they have (a device
+        code's sign-in), or ``timeout`` seconds pass (``noclick.OperationTimeout``).
+
+        Returns:
+            The ``SignIn``, ``connected``; a refusal (the code expired, the person declined) raises
+            ``noclick.InvalidRequest``.
+
+        Usage::
+
+            chatgpt = noclick.Connection.sign_in("codex")
+            print(f"Enter {chatgpt.user_code} at {chatgpt.verification_url}")
+            chatgpt = chatgpt.wait()
+        """
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        current = self
+        while current.status == "waiting":
+            if current.way != "device":
+                raise InvalidRequest("This sign-in finishes with the code its page shows: finish(code=...).")
+            if loop.time() >= deadline:
+                raise OperationTimeout(f"Nobody entered {current.user_code} within {timeout:.0f}s.")
+            await asyncio.sleep(5 if current.interval is None else current.interval)
+            current = await Connection.finish_sign_in.aio(current.id, client=self._client)
+        return current
 
     def __repr__(self) -> str:
         return f"SignIn(provider={self.provider!r}, status={self.status!r})"

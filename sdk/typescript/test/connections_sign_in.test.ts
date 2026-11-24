@@ -60,3 +60,43 @@ test("a pick is finished by the sign-in's id alone", async () => {
   assert.deepEqual(finish.last.body, { choice: "ig-2" });
   assert.deepEqual([done.status, done.account], ["connected", { instagram_username: "ada" }]);
 });
+
+const waitingSignIn = (shown: Record<string, unknown> = {}) => ({
+  object: "sign_in", id: "si_w", status: "waiting", provider: "codex", credential: null, connection: null, account: {},
+  choose: null, waiting: {
+    way: "device", user_code: "ABCD-1234", verification_url: "https://auth.openai.com/codex/device",
+    verification_url_complete: null, authorize_url: null, interval: 0, expires_at: "2026-11-24T12:00:00+00:00", ...shown,
+  },
+});
+const CONNECTED_PLAN = {
+  object: "sign_in", id: null, status: "connected", provider: "codex",
+  credential: { id: "c1", name: "ChatGPT (Codex)", credential_type: "agent_codex_oauth" },
+  connection: APP_CONNECTION, account: {}, choose: null, waiting: null,
+};
+
+test("a device code's sign-in starts and is waited on until the person enters it", async () => {
+  const { api } = setup();
+  const start = api.on("POST", "/v1/connections/sign_ins", json(waitingSignIn()));
+  const polls = api.on("POST", "/v1/connections/sign_ins/si_w/finish", json(waitingSignIn()), json(CONNECTED_PLAN));
+  const chatgpt = await nc.Connection.signIn("codex", { name: "ChatGPT" });
+  assert.deepEqual(start.last.body, { provider: "codex", name: "ChatGPT" });
+  assert.deepEqual([chatgpt.status, chatgpt.way, chatgpt.userCode, chatgpt.verificationUrl, chatgpt.interval],
+    ["waiting", "device", "ABCD-1234", "https://auth.openai.com/codex/device", 0]);
+  const done = await chatgpt.wait();
+  assert.equal(polls.calls.length, 2);
+  assert.deepEqual([done.status, done.credential?.credential_type], ["connected", "agent_codex_oauth"]);
+});
+
+test("a Claude plan's sign-in finishes with the code its page showed", async () => {
+  const { api } = setup();
+  api.on("POST", "/v1/connections/sign_ins", json(waitingSignIn({
+    way: "code", user_code: null, verification_url: null, authorize_url: "https://claude.ai/oauth/authorize?x=1",
+  })));
+  const finish = api.on("POST", "/v1/connections/sign_ins/si_w/finish", json({ ...CONNECTED_PLAN, provider: "claude_code" }));
+  const claude = await nc.Connection.signIn("claude_code", { reconnect: "credential:c1" });
+  assert.equal(claude.authorizeUrl, "https://claude.ai/oauth/authorize?x=1");
+  await assert.rejects(claude.wait(), nc.InvalidRequest);
+  const done = await claude.finish(null, { code: "pasted#state" });
+  assert.deepEqual(finish.last.body, { code: "pasted#state" });
+  assert.equal(done.status, "connected");
+});
