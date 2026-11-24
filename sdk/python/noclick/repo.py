@@ -142,8 +142,10 @@ class RepoBackup:
 @dataclass(frozen=True)
 class RepoFile:
     """An entry in a repo's tree: its ``path`` from the root, its ``type``
-    (``file`` or ``dir``) and, for a file, its ``size`` in bytes and ``sha``, git's
-    blob id for its content (it changes whenever the content does)."""
+    (``file``, ``dir`` or ``link``) and, for a file, its ``size`` in bytes and ``sha``,
+    git's blob id for its content (it changes whenever the content does). A ``link``
+    is a symbolic link someone committed: listed as the entry it is, with no size
+    or sha, and never followed."""
 
     path: str
     type: str
@@ -324,6 +326,8 @@ class Repo(_Object):
     )
     user_id: Optional[str] = field("user_id")
     created_at: Any = field("created_at", parse_time)
+    forked_from: Optional[Dict[str, Any]] = field(
+        "forked_from", doc="``{\"address\": ...}``: the public work on NoClick it was copied from; else None.")
 
     def _init(self, **kwargs: Any) -> None:
         self._create_with: Optional[Dict[str, Any]] = None
@@ -375,6 +379,11 @@ class Repo(_Object):
         afterwards. The copy is charged what it uses: its seconds of compute and the
         bytes it stores, at NoClick's vendors' prices. An import always makes a new
         repo, so ``allow_existing`` doesn't apply to it.
+
+        ``from_url`` may also be the address of an app whose code is public on NoClick (``pilot-hub.noclick.site``,
+        a custom domain it serves): its published code is forked inside NoClick (``forked_from``), and the result
+        says what a deploy of it asks for. An address with no public work raises ``noclick.InvalidRequest``
+        (``not_public``).
 
         Returns:
             The new repo, loaded, with no commits yet; with ``from_url``, a
@@ -719,7 +728,8 @@ class Repo(_Object):
         files the folder no longer has. A branch that doesn't exist yet starts from the default one."""
         local = _read_folder(folder, exclude)
         ref = branch if branch and branch in {b.name for b in await self.branches.aio()} else None
-        remote = {f.path: f.sha for f in await self.files.aio("", ref=ref, recursive=True)}
+        # A link in the repo is left as it is: a commit through the API writes files, so it can't put one back.
+        remote = {f.path: f.sha for f in await self.files.aio("", ref=ref, recursive=True) if f.type == "file"}
         changes: Dict[str, Optional[bytes]] = {
             path: data for path, data in local.items() if remote.get(path) != _blob_sha(data)
         }
@@ -730,6 +740,7 @@ class Repo(_Object):
     async def read(self, path: str, *, ref: Optional[str] = None) -> bytes:
         """Read one file at ``ref`` (a branch, tag or commit sha; the default
         branch's head when omitted). A missing path raises ``noclick.NotFound``.
+        A link is never followed: its path reads as the path it points to.
 
         Returns:
             The file's bytes exactly as committed; decode text yourself.
@@ -748,6 +759,7 @@ class Repo(_Object):
     async def files(self, prefix: str = "", *, ref: Optional[str] = None, recursive: bool = False) -> List[RepoFile]:
         """What's in the directory ``prefix`` (the root when empty) at ``ref``.
         ``recursive=True`` lists every file below it instead, without the directories.
+        A symbolic link is one entry of ``type`` ``link``, whatever it points to.
 
         Returns:
             Its files and directories, directories first, each by path from the repo's root.

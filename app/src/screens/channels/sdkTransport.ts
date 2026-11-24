@@ -10,6 +10,7 @@ import type { AgentChoice, Channel, ChannelAttachment, ChannelAuthor, ChannelMem
 import { agentMarkType } from '@/ui/primitives';
 import type { PlatformChannelEvent, PlatformChannelTypingEvent } from '@/sdk/frames';
 import { errorText } from '@/screens/console/pages/resources/shared';
+import { heldCallOf } from '@/sdk/held';
 import {
     Agent,
     Channel as PlatformChannel,
@@ -241,11 +242,13 @@ export function sdkTyping(client: NoClick): SendTyping {
     return (channelId, typing) => PlatformChannel.fromId(channelId, { client, user: null }).typing(typing);
 }
 
-/** Run a platform call; its failure becomes an Error whose message is the sentence to show. */
+/** Run a platform call; its failure becomes an Error whose message is the sentence to show, but for a call held for
+ *  the account's owner, which stays itself for the screen to follow (src/sdk/held.ts). */
 async function said<T>(call: () => Promise<T>): Promise<T> {
     try {
         return await call();
     } catch (e) {
+        if (heldCallOf(e)) throw e;
         throw new Error(errorText(e));
     }
 }

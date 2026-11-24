@@ -9,6 +9,7 @@
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import type { Connection, Edge, Node, NodeChange } from '@xyflow/react';
 import { NoClick } from 'noclick';
+import { Toaster } from 'sonner';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
 import { createWorkLive, WorkLiveContext, type WorkLive } from '@/sdk/live';
@@ -136,7 +137,7 @@ const call = (container: HTMLElement, name: string, ...args: unknown[]) =>
         (surface(container)[name] as (...a: unknown[]) => unknown)(...args);
     });
 
-async function key(target: Document | Window, init: KeyboardEventInit) {
+async function key(target: Document | Window | Element, init: KeyboardEventInit) {
     await act(() => {
         fireEvent.keyDown(target, init);
     });
@@ -280,6 +281,73 @@ describe('the canvas on its own', () => {
         await settle(2500);
         expect(ids()).not.toContain('victim');
         expect(edits().flatMap(opsOf).sort()).toEqual(['remove_step', 'update_step']);
+    });
+
+    it('removes steps from the keyboard only while the canvas has it, and puts a removal of several back, saved or not', async () => {
+        const { container } = await draw();
+        render(<Toaster />);
+        const all = ['hook', 'agent', 'slack', 'victim'];
+        const selected = () => ids().filter((id: string) => node(id).selected);
+        const outside = (html: string) => {
+            const el = document.createElement('div');
+            el.innerHTML = html;
+            document.body.appendChild(el);
+            return el;
+        };
+
+        // Cmd/Ctrl+A is no key of the canvas's: it selects no step.
+        await key(document, { key: 'a', metaKey: true });
+        await key(document, { key: 'a', ctrlKey: true });
+        expect(selected()).toEqual([]);
+        await select(container, all);
+        expect(selected()).toEqual(all);
+
+        // A dialog holding the keys: Backspace is the dialog's.
+        const dialog = outside('<div role="dialog"><button>Close</button></div>');
+        dialog.querySelector('button')!.focus();
+        await key(dialog.querySelector('button')!, { key: 'Backspace' });
+        await settle();
+        expect(ids()).toEqual(all);
+
+        // A field typed in, then focus taken from it with no click (a dialog opening, the field drawn again): the next
+        // Backspace was meant for the field, wherever it lands, until the person points at something.
+        const field = outside('<input aria-label="To" />').querySelector('input')!;
+        field.focus();
+        await key(field, { key: 'x' });
+        dialog.querySelector('button')!.focus();
+        dialog.remove();
+        field.parentElement!.remove();
+        await key(document.body, { key: 'Backspace' });
+        await settle();
+        expect(ids()).toEqual(all);
+
+        // A button beside the canvas (a step's panel) holding the keys.
+        const beside = outside('<button>Run step</button>');
+        fireEvent.pointerDown(beside.querySelector('button')!);
+        beside.querySelector('button')!.focus();
+        await key(beside.querySelector('button')!, { key: 'Backspace' });
+        await settle();
+        expect(ids()).toEqual(all);
+        beside.remove();
+
+        // The canvas pointed at: Backspace removes every selected step, and offers them back.
+        fireEvent.pointerDown(container.querySelector('.react-flow__pane')!);
+        await key(document.body, { key: 'Backspace' });
+        await settle();
+        expect(ids()).toEqual([]);
+        expect(screen.getByText('4 steps removed')).toBeTruthy();
+
+        // Saved removed, then put back from the offer with their connections, and saved again.
+        await settle(2500);
+        expect(edits().flatMap(opsOf).filter((op) => op === 'remove_step')).toHaveLength(4);
+        await act(async () => {
+            fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
+        });
+        await settle();
+        expect(ids().sort()).toEqual([...all].sort());
+        expect(rec().edges.map((e: Edge) => e.id).sort()).toEqual(['agent-slack', 'hook-agent']);
+        await settle(2500);
+        expect(edits().flatMap(opsOf).filter((op) => op === 'add_step')).toHaveLength(4);
     });
 
     it('adds a step after another from its “+”, and into a connection from its “+”', async () => {

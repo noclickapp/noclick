@@ -10,6 +10,7 @@ import addFormats from 'ajv-formats';
 import type { SchemaInfo } from './stepSchema';
 import { evaluateRequireOneOf, describeRequireOneOfGroup } from './stepFields';
 import { tikTokDisclosureError } from './tikTokPublishing';
+import { EMPTY_STEP_REFERENCE_MESSAGE, holdsEmptyStepReference } from './expressionSyntax';
 
 export interface ConfigFormError {
     message: string;
@@ -47,6 +48,12 @@ ajv.addFormat('timezone', { type: 'string', validate: isValidTimeZone });
  *  pattern invalid in a `u` regex, a keyword the dialect doesn't allow) throws: every step type's schema must compile. */
 export function compileConfigSchema(schema: object) {
     return ajv.compile(schema);
+}
+
+/** The settings a run hands the step as written, never filling a `{{ }}` in them (the backend's
+ *  `literal_config_fields`): an agent run through the API takes its instructions as text. */
+function asWrittenFields(nodeType: string, config: Record<string, any>): Set<string> {
+    return new Set(nodeType === 'agent' && config.message_per_turn === true ? ['system_prompt'] : []);
 }
 
 /**
@@ -311,6 +318,14 @@ export function judgeConfigForm(
                 validationErrors.push({ message: 'is required', fieldKey: fieldName, fieldLabel: labelOf(fieldName), type: 'field' });
             }
         }
+    }
+
+    // A step reference naming no step (an "Add reference" left unpicked) fails the run there.
+    const asWritten = asWrittenFields(nodeType, config);
+    for (const fieldName of Object.keys(visibleProperties)) {
+        if (fieldsWithErrors.has(fieldName) || asWritten.has(fieldName) || !holdsEmptyStepReference(config[fieldName])) continue;
+        fieldsWithErrors.add(fieldName);
+        validationErrors.push({ message: EMPTY_STEP_REFERENCE_MESSAGE, fieldKey: fieldName, fieldLabel: labelOf(fieldName), type: 'field' });
     }
 
     // Either-or constraints: flag any group with no satisfied alternative.

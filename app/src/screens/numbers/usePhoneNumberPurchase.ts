@@ -7,6 +7,7 @@
 // in text, and the carrier reviews them: its order is in review until the carrier approves it (`orders`), and one it
 // sends back is corrected and resubmitted.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { heldCallOf, type HeldCall, type HeldState } from '@/sdk/held';
 
 /** The kinds of number, as the carriers name them. */
 export type NumberType = 'local' | 'mobile' | 'toll_free' | 'national' | 'shared_cost';
@@ -217,6 +218,12 @@ export const TYPE_LABELS: Record<NumberType, string> = {
 };
 
 /** One step of a purchase as it goes to a transport, named by `event_name` (`phone_number:search`, `:buy`, …). */
+/** A purchase NoClick holds for the account's owner (src/sdk/held.ts), and the number it buys. */
+export interface HeldNumber {
+    call: HeldCall;
+    phoneNumber: string;
+}
+
 export type NumberPurchaseEvent = { event_name: string } & Record<string, unknown>;
 
 /** Where a surface's purchase steps go, each answered with its reply, and what else only its host can do. */
@@ -281,6 +288,7 @@ export function usePhoneNumberPurchase({
     const [documents, setDocuments] = useState<NumberDocument[] | null>(null);
     const [uploading, setUploading] = useState<string | null>(null);
     const [orders, setOrders] = useState<NumberOrder[]>([]);
+    const [held, setHeld] = useState<HeldNumber[]>([]);
     const submitting = useRef(false);
     const transportRef = useRef(transport);
     useEffect(() => {
@@ -500,12 +508,28 @@ export function usePhoneNumberPurchase({
             onCredentialCreated(reply.credential_id, reply.phone_number ?? number.phone_number);
             return true;
         } catch (e) {
+            const call = heldCallOf(e);
+            if (call) {
+                // Held for the account's owner: it's bought once they approve it, so it leaves the list meanwhile.
+                setNumbers((current) => current?.filter((n) => n.phone_number !== number.phone_number) ?? current);
+                setHeld((current) => [...current.filter((h) => h.call.approvalId !== call.approvalId), { call, phoneNumber: number.phone_number }]);
+                return true;
+            }
             setError({ text: e instanceof Error ? e.message : 'Could not buy that number.' });
             return false;
         } finally {
             submitting.current = false;
             setBuying(null);
         }
+    };
+
+    /** Where a held purchase ended: bought, as a purchase made at once is; anything else stays said on its notice. */
+    const heldSettled = (number: HeldNumber, state: HeldState) => {
+        if (state.phase !== 'done') return;
+        const bought = (state.response ?? {}) as { id?: unknown; number?: unknown };
+        setHeld((current) => current.filter((h) => h.call.approvalId !== number.call.approvalId));
+        transportRef.current.onPurchased?.();
+        onCredentialCreated(typeof bought.id === 'string' ? bought.id : '', typeof bought.number === 'string' ? bought.number : number.phoneNumber);
     };
 
     const confirm = async (filing: NumberFiling = {}) => {
@@ -608,6 +632,9 @@ export function usePhoneNumberPurchase({
         removeDocument,
         orders,
         resubmit,
+        /** Purchases waiting on the account's owner, each followed where it's shown until it's bought or not. */
+        held,
+        heldSettled,
     };
 }
 
