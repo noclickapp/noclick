@@ -2722,6 +2722,22 @@ export class Workflow extends ApiObject {
   }
 
   /**
+   * Let this workflow's automatic runs, which go as its owner, use a connection of your account's own
+   * (`credential:<id>`) that its owner's runs can't, as the app does when a member of its team workspace picks their
+   * own account on a step: it reaches this workflow alone, and no one else reads its secret, but anyone who can edit
+   * the workflow can make it act as you. Answers `lent`, with what to tell the person (`notice`), or false when there
+   * was nothing to lend. Your own workflow's steps need no lend.
+   */
+  async lendConnection(connection: string): Promise<JsonObject> {
+    return asObject(await this._request("POST", `${await this.path()}/connections/${encodeURIComponent(connection)}/lend`));
+  }
+
+  /** Take back a connection of yours lent to this workflow's runs (`lendConnection`): `withdrawn`, whether it was. */
+  async takeBackConnection(connection: string): Promise<JsonObject> {
+    return asObject(await this._request("DELETE", `${await this.path()}/connections/${encodeURIComponent(connection)}/lend`));
+  }
+
+  /**
    * Send what the workflow needs to the account's owner as ONE request: one message and one page, where they connect
    * each app and fill in each value, each part landing on the workflow as they give it. An app the account holds
    * exactly one working connection of is connected at once, asking nobody. The same list already waiting isn't sent

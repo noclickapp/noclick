@@ -39,3 +39,15 @@ def test_a_ready_workflow_reads_ready_with_nothing_sent(api, client):
     api.post("/v1/workflows/wf_1/setup/request").respond(json={**SETUP, "ready": True, "items": [], "sent": None})
     done = nc.Workflow.from_id("wf_1").request_setup()
     assert done.ready and done.items == [] and done.sent is None
+
+
+def test_a_members_own_connection_is_lent_to_the_workflows_runs_and_taken_back(api, client):
+    path = "/v1/workflows/wf_1/connections/credential:c1/lend"
+    lent = api.post(path).respond(json={"object": "workflow_lend", "workflow_id": "wf_1", "connection": "credential:c1",
+                                        "lent": True, "notice": {"title": "Shared", "detail": "It acts as you."}})
+    taken = api.delete(path).respond(json={"object": "workflow_lend", "workflow_id": "wf_1",
+                                           "connection": "credential:c1", "lent": False, "notice": None,
+                                           "withdrawn": True})
+    digest = nc.Workflow.from_id("wf_1")
+    assert digest.lend_connection("credential:c1")["notice"]["title"] == "Shared" and lent.called
+    assert digest.take_back_connection("credential:c1")["withdrawn"] is True and taken.called

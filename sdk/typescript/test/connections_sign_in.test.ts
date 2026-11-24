@@ -178,3 +178,14 @@ test("a WhatsApp number's agent is read and made", async () => {
   assert.deepEqual([answered.agentId, answered.name, answered.channelId, answered.channelName, answered.created],
     ["a1", "WhatsApp", "ch1", "whatsapp", true]);
 });
+
+test("a connection's API access is checked", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/connections/credential%3Ac1", json(APP_CONNECTION));
+  const route = api.on("POST", "/v1/connections/credential%3Ac1/access", json({
+    object: "connection_access", valid: false, error: "No quota for the API.", help_url: "https://example.com/q",
+  }));
+  const linear = await nc.Connection.get("credential:c1");
+  assert.deepEqual(await linear.checkAccess(), { valid: false, error: "No quota for the API.", helpUrl: "https://example.com/q" });
+  assert.equal(route.calls.length, 1);
+});

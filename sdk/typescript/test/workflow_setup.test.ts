@@ -34,3 +34,19 @@ test("requestSetup() sends one request, how it was asked", async () => {
   await nc.Workflow.fromId("wf_1").requestSetup();
   assert.deepEqual(route.last.body, { via: "auto" });
 });
+
+test("a member's own connection is lent to the workflow's runs and taken back", async () => {
+  const { api } = setup();
+  const path = "/v1/workflows/wf_1/connections/credential%3Ac1/lend";
+  const lent = api.on("POST", path, json({
+    object: "workflow_lend", workflow_id: "wf_1", connection: "credential:c1", lent: true,
+    notice: { title: "Shared", detail: "It acts as you." },
+  }));
+  const taken = api.on("DELETE", path, json({
+    object: "workflow_lend", workflow_id: "wf_1", connection: "credential:c1", lent: false, notice: null, withdrawn: true,
+  }));
+  const digest = nc.Workflow.fromId("wf_1");
+  assert.equal(((await digest.lendConnection("credential:c1")).notice as { title: string }).title, "Shared");
+  assert.equal((await digest.takeBackConnection("credential:c1")).withdrawn, true);
+  assert.deepEqual([lent.calls.length, taken.calls.length], [1, 1]);
+});

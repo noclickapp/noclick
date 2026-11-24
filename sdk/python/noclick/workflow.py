@@ -2812,6 +2812,38 @@ class Workflow(_Object):
         return WorkflowSetup._from(await self._request("GET", f"{await self._path()}/setup"))
 
     @synced
+    async def lend_connection(self, connection: str) -> Dict[str, Any]:
+        """Let this workflow's automatic runs, which go as its owner, use a connection of your account's own
+        (``credential:<id>``) that its owner's runs can't, as the app does when a member of its team workspace picks
+        their own account on a step: it reaches this workflow alone, and no one else reads its secret, but anyone who
+        can edit the workflow can make it act as you. Your own workflow's steps need no lend.
+
+        Returns:
+            ``lent``, with what to tell the person (``notice``: ``title``, ``detail``), or false when there was
+            nothing to lend (yours already, lent before, or one its owner's runs reach).
+
+        Usage::
+
+            shared = noclick.Workflow.from_name("Team digest").lend_connection("credential:...")
+            print(shared["lent"], (shared["notice"] or {}).get("title"))
+        """
+        return await self._request("POST", f"{await self._path()}/connections/{path_segment(connection)}/lend") or {}
+
+    @synced
+    async def take_back_connection(self, connection: str) -> Dict[str, Any]:
+        """Take back a connection of yours lent to this workflow's runs (``lend_connection``): they can't use it from
+        now on.
+
+        Returns:
+            ``withdrawn``: whether it was lent.
+
+        Usage::
+
+            noclick.Workflow.from_name("Team digest").take_back_connection("credential:...")
+        """
+        return await self._request("DELETE", f"{await self._path()}/connections/{path_segment(connection)}/lend") or {}
+
+    @synced
     async def request_setup(self, *, via: Any = "auto") -> WorkflowSetup:
         """Send what the workflow needs to the account's owner as ONE request: one message
         and one page, where they connect each app and fill in each value, each part landing

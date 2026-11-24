@@ -1020,6 +1020,16 @@ export class Connection extends ApiObject {
   }
 
   /**
+   * Whether the account may use the provider's API at all, where a provider can refuse it after a sign-in (Google
+   * Business Profile gives a new project no quota): `valid` (null where the provider couldn't say), the provider's
+   * `error` and where to fix it (`helpUrl`). An integration with no such check answers valid.
+   */
+  async checkAccess(): Promise<{ valid: boolean | null; error: string | null; helpUrl: string | null }> {
+    const answer = asObject(await this.act("POST", "/access"));
+    return { valid: typeof answer.valid === "boolean" ? answer.valid : null, error: str(answer.error), helpUrl: str(answer.help_url) };
+  }
+
+  /**
    * The agent answering a WhatsApp number your account linked by QR code (a `"whatsapp"` sign-in), and whether your
    * account can put one on it. Linking a number makes no agent on its own.
    *

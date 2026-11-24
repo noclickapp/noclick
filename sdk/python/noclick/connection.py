@@ -1362,6 +1362,24 @@ class Connection(_Object):
         return PlanUsage._from(raw)
 
     @synced
+    async def check_access(self) -> Dict[str, Any]:
+        """Whether the account may use the provider's API at all, where a provider can refuse it after a sign-in
+        (Google Business Profile gives a new project no quota). An integration with no such check answers valid.
+
+        Returns:
+            ``valid`` (None where the provider couldn't say), the provider's ``error`` and where to fix it
+            (``help_url``).
+
+        Usage::
+
+            access = noclick.Connection.get("credential:...").check_access()
+            if access["valid"] is False:
+                print(access["error"], access["help_url"])
+        """
+        answer = await self._act("POST", "/access") or {}
+        return {key: answer.get(key) for key in ("valid", "error", "help_url")}
+
+    @synced
     async def number_agent(self) -> NumberAgent:
         """The agent answering a WhatsApp number your account linked by QR code (a ``"whatsapp"`` sign-in), and
         whether your account can put one on it. Linking a number makes no agent on its own.

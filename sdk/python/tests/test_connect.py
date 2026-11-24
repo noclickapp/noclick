@@ -917,3 +917,12 @@ def test_a_whatsapp_numbers_agent_is_read_and_made(api, client):
     assert made.called
     assert (answered.agent_id, answered.name, answered.channel_id, answered.channel_name, answered.created) == (
         "a1", "WhatsApp", "ch1", "whatsapp", True)
+
+
+def test_a_connections_api_access_is_checked(api, client):
+    route = api.post("/v1/connections/credential:c1/access").respond(json={
+        "object": "connection_access", "valid": False, "error": "No quota for the API.", "help_url": "https://example.com/q"})
+    number = nc.Connection._new(raw=APP_CONN, client=None, user=None)
+
+    assert number.check_access() == {"valid": False, "error": "No quota for the API.", "help_url": "https://example.com/q"}
+    assert route.called
