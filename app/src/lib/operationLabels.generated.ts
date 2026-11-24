@@ -1776,6 +1776,7 @@ peach
 peaka
 peekalink
 peerdom
+peliqan
 pencil-spaces
 pennylane
 penpot
