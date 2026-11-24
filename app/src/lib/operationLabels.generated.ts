@@ -788,6 +788,7 @@ attentive
 attio
 audienceful
 audiobookshelf
+aura-1
 auth0
 autotask
 avaza
@@ -797,6 +798,7 @@ award-force
 aweber
 awork
 axonaut
+balldontlie
 bambooci
 bamboohr
 bandsintown
@@ -837,6 +839,7 @@ bitwarden
 bizzabo
 bkper
 blackboard
+blink
 blinq
 blitz-api
 blooio
@@ -1015,6 +1018,7 @@ converted-da-56088
 conveyor
 convolo-ai
 coolify
+cor
 corbit-sms
 corrently
 coveo
@@ -1775,11 +1779,13 @@ peach
 peaka
 peekalink
 peerdom
+peliqan
 pencil-spaces
 pennylane
 penpot
 people-data-labs
 perfect-venue
+perfex-crm
 perigon
 permit-io
 perplexity
@@ -1822,6 +1828,7 @@ porkbun
 portalio
 postal-data-api
 postgres
+postgrid-print-mail
 posthog
 postiz
 postman
@@ -1921,6 +1928,7 @@ returnista
 reviewflowz
 revolut-for-business
 rezdy
+riddle-quiz-maker
 rillet
 ringba
 ringcentral
@@ -1995,6 +2003,7 @@ semrush
 send-email
 send-pulse
 sendbird
+sendcloud
 sendfox
 sendgrid
 sendit
@@ -2214,6 +2223,7 @@ timelink
 timely
 timerex
 timescaledb
+timing
 tinyfish
 tinypages
 tinyurl
@@ -2233,6 +2243,7 @@ trackabi
 trackdesk
 trackingmore
 trackvia
+trail
 trakt
 translate-com
 transloadit
@@ -2363,6 +2374,7 @@ wordpress
 workable
 workiz
 workos
+workramp
 workvivo
 wowza
 writer
