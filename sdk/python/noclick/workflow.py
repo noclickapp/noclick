@@ -258,6 +258,31 @@ class StepConversation:
 
 
 @dataclass(frozen=True)
+class WorkflowTemplate:
+    """A workflow's place in NoClick's template library (``Workflow.template``): whether it's
+    ``published``, its ``title``, ``slug``, ``description`` and page (``public_url``) when it is,
+    and the ``draft_title`` and ``draft_description`` saved for it before it's published."""
+
+    published: bool
+    title: Optional[str]
+    slug: Optional[str]
+    description: Optional[str]
+    public_url: Optional[str]
+    draft_title: Optional[str]
+    draft_description: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowTemplate":
+        raw = raw if isinstance(raw, dict) else {}
+        template = raw.get("template") if isinstance(raw.get("template"), dict) else {}
+        draft = raw.get("draft") if isinstance(raw.get("draft"), dict) else {}
+        return cls(bool(raw.get("published")), template.get("title"), template.get("slug"),
+                   template.get("description"), template.get("public_url"), draft.get("title"),
+                   draft.get("description"), raw)
+
+
+@dataclass(frozen=True)
 class StepWorkspace:
     """The files on one of an agent step's conversations' workspace (``Step.workspace``),
     as the app's chat shows them: ``files``, each with a download link good for an hour;
@@ -1486,6 +1511,22 @@ class Step(_Object):
             noclick.Workflow.from_name("support desk").step("helper").delete_conversation("orders")
         """
         await self._api.request("DELETE", self._conversation_path(await self._step_path(), conversation), user=None)
+
+    @synced
+    async def decide_proposal(self, conversation: str, proposal_id: str, decision: str) -> None:
+        """Answer a change this agent step proposed to its own workflow in one of your chats
+        (the card its ``prompt_builder`` tool shows): ``"approved"`` or ``"dismissed"``. The
+        verdict is kept in the conversation and the agent hears it on its next turn; approving
+        takes edit access to the workflow (the change itself is a build you start).
+
+        Usage::
+
+            helper = noclick.Workflow.from_name("support desk").step("helper")
+            helper.decide_proposal("__interface_chat__", "a1b2c3d4e5f6", "dismissed")
+        """
+        await self._api.request(
+            "POST", f"{self._conversation_path(await self._step_path(), conversation)}/decisions",
+            json={"proposal_id": proposal_id, "decision": decision}, user=None)
 
     @synced
     async def message(
@@ -3732,6 +3773,36 @@ class Workflow(_Object):
         """
         raw = await self._api.request("POST", f"{await self._path()}/runs/{run_id}/stop", user=resolve_scope(user))
         return WorkflowRun._from(raw)
+
+    @synced
+    async def warm_sandboxes(self) -> Dict[str, int]:
+        """How many of your sandboxes are up for each of this workflow's agent steps (one per
+        conversation whose sandbox is warm), as the app's canvas badges them.
+
+        Returns:
+            Each agent step's id with a sandbox up, to its count.
+
+        Usage::
+
+            print(noclick.Workflow.from_name("support desk").warm_sandboxes())   # {"helper": 2}
+        """
+        raw = await self._api.request("GET", f"{await self._path()}/sandboxes", user=None) or {}
+        return {str(step): int(n) for step, n in (raw.get("steps") or {}).items()}
+
+    @synced
+    async def template(self) -> WorkflowTemplate:
+        """This workflow's place in NoClick's template library: whether it's published, its
+        page, and the draft saved for it before it is.
+
+        Returns:
+            The ``WorkflowTemplate``.
+
+        Usage::
+
+            listing = noclick.Workflow.from_name("order-intake").template()
+            print(listing.public_url if listing.published else listing.draft_title)
+        """
+        return WorkflowTemplate._from(await self._api.request("GET", f"{await self._path()}/template", user=None))
 
     @synced
     async def run_counts(self, *, user_filter: Any = None, user: Any = AMBIENT) -> WorkflowRunCounts:

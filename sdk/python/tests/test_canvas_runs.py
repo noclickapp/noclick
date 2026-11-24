@@ -118,3 +118,21 @@ def test_a_step_types_output_shape_is_the_accounts_own(api, client):
         "automation-hubspot", "get_contact", {"id": "integer"}, None)
     nc.step_output_shape("automation-hubspot")
     assert "operation" not in route.calls.last.request.url.params
+
+
+def test_warm_sandboxes_template_and_a_proposals_verdict_read_and_send_what_the_canvas_does(api, client):
+    api.get("/v1/workflows/wf_1/sandboxes").respond(json={
+        "object": "workflow_sandboxes", "workflow_id": "wf_1", "steps": {"helper": 2}})
+    api.get("/v1/workflows/wf_1/template").respond(json={
+        "object": "workflow_template", "workflow_id": "wf_1", "published": False, "template": None,
+        "draft": {"title": "Order intake", "description": "Files each order."}})
+    decide = api.post("/v1/workflows/wf_1/steps/helper/conversations/__interface_chat__/decisions").respond(json={
+        "object": "step_proposal_decision", "conversation": "__interface_chat__", "proposal_id": "p1",
+        "decision": "dismissed"})
+    intake = nc.Workflow.from_id("wf_1")
+    assert intake.warm_sandboxes() == {"helper": 2}
+    listing = intake.template()
+    assert isinstance(listing, nc.WorkflowTemplate)
+    assert (listing.published, listing.public_url, listing.draft_title) == (False, None, "Order intake")
+    intake.step("helper").decide_proposal("__interface_chat__", "p1", "dismissed")
+    assert json.loads(decide.calls.last.request.content) == {"proposal_id": "p1", "decision": "dismissed"}

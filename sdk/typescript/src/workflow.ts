@@ -378,6 +378,22 @@ export interface StepOutputOptions extends CallOptions {
 }
 
 /**
+ * A workflow's place in NoClick's template library (`Workflow.template`): whether it's `published`, its `title`,
+ * `slug`, `description` and page (`publicUrl`) when it is, and the `draftTitle` and `draftDescription` saved for it
+ * before it's published.
+ */
+export interface WorkflowTemplate {
+  published: boolean;
+  title: string | null;
+  slug: string | null;
+  description: string | null;
+  publicUrl: string | null;
+  draftTitle: string | null;
+  draftDescription: string | null;
+  raw: JsonObject;
+}
+
+/**
  * How many runs `Workflow.runs` lists (`Workflow.runCounts`): the `total`, `byStatus` (`running`, `succeeded`,
  * `failed`, each there even at 0), `waiting` (how many of the running ones wait on an approval, a delay or an agent's
  * turn), `bySource` (`api`, `endpoint`, `schedule`, `trigger`, `app`: only those with runs) and `byTrigger` (the kinds
@@ -1882,6 +1898,18 @@ export class Step extends ApiObject {
   }
 
   /**
+   * Answer a change this agent step proposed to its own workflow in one of your chats (the card its `prompt_builder`
+   * tool shows): `"approved"` or `"dismissed"`. The verdict is kept in the conversation and the agent hears it on its
+   * next turn; approving takes edit access to the workflow (the change itself is a build you start).
+   */
+  async decideProposal(conversation: string, proposalId: string, decision: "approved" | "dismissed"): Promise<void> {
+    await this._api.request("POST", `${await this._conversationPath(conversation)}/decisions`, {
+      json: { proposal_id: proposalId, decision },
+      user: null,
+    });
+  }
+
+  /**
    * Say something to this agent step in one of your chats, as the app's chat does: a run from the step (what comes
    * after it runs too, on the workflow as saved) whose turn is `text`, handed to the agent as written (a `{{ }}` in it
    * is text). `conversation` names the chat (a new key starts one; omitted, the app's chat's own), `attachments` are
@@ -3200,6 +3228,32 @@ export class Workflow extends ApiObject {
       user: options.user,
     });
     return toWorkflowRun(raw);
+  }
+
+  /**
+   * How many of your sandboxes are up for each of this workflow's agent steps (one per conversation whose sandbox is
+   * warm), as the app's canvas badges them: each agent step's id with a sandbox up, to its count.
+   */
+  async warmSandboxes(options: { client?: NoClick } = {}): Promise<Record<string, number>> {
+    const raw = asObject(await (options.client ?? this._api).request("GET", `${await this.path()}/sandboxes`, { user: null }));
+    return Object.fromEntries(Object.entries(asObject(raw.steps)).map(([step, n]) => [step, Number(n)]));
+  }
+
+  /** This workflow's place in NoClick's template library: whether it's published, its page, and the draft saved for it. */
+  async template(options: { client?: NoClick } = {}): Promise<WorkflowTemplate> {
+    const raw = asObject(await (options.client ?? this._api).request("GET", `${await this.path()}/template`, { user: null }));
+    const template = asObject(raw.template);
+    const draft = asObject(raw.draft);
+    return {
+      published: raw.published === true,
+      title: str(template.title),
+      slug: str(template.slug),
+      description: str(template.description),
+      publicUrl: str(template.public_url),
+      draftTitle: str(draft.title),
+      draftDescription: str(draft.description),
+      raw,
+    };
   }
 
   /**

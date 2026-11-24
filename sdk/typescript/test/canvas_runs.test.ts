@@ -120,3 +120,20 @@ test("stepOutputShape() reads the account's own shape of a type", async () => {
   await nc.stepOutputShape("automation-hubspot");
   assert.equal(route.last.query.get("operation"), null);
 });
+
+test("warmSandboxes(), template() and Step.decideProposal() read and send what the canvas's badge, Share and chat card do", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/workflows/wf_1/sandboxes", json({ object: "workflow_sandboxes", workflow_id: "wf_1", steps: { helper: 2 } }));
+  api.on("GET", "/v1/workflows/wf_1/template", json({
+    object: "workflow_template", workflow_id: "wf_1", published: false, template: null,
+    draft: { title: "Order intake", description: "Files each order." },
+  }));
+  const decide = api.on("POST", "/v1/workflows/wf_1/steps/helper/conversations/__interface_chat__/decisions",
+    json({ object: "step_proposal_decision", conversation: "__interface_chat__", proposal_id: "p1", decision: "dismissed" }));
+  const intake = nc.Workflow.fromId("wf_1");
+  assert.deepEqual(await intake.warmSandboxes(), { helper: 2 });
+  const listing = await intake.template();
+  assert.deepEqual([listing.published, listing.publicUrl, listing.draftTitle], [false, null, "Order intake"]);
+  await intake.step("helper").decideProposal("__interface_chat__", "p1", "dismissed");
+  assert.deepEqual(decide.last.body, { proposal_id: "p1", decision: "dismissed" });
+});

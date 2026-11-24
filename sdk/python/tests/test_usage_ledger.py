@@ -69,3 +69,17 @@ def test_the_money_behind_it_or_none(api, client):
     assert money.recurring[0]["id"] == "r1" and money.auto_top_up is None
     route.respond(json={"object": "usage_billing", "billing": None})
     assert nc.Usage.billing() is None
+
+
+def test_credits_read_the_meters_pool_a_team_workspaces_by_its_id(api, client):
+    route = api.get("/v1/usage/credits").respond(json={
+        "object": "credit_usage", "used": 1.5, "limit": 4, "period": "day", "monthly_used": 3, "monthly_cap": 20,
+        "topup_credits": 0, "effective_tier": "free", "is_org_credits": True, "organization_id": "org_1",
+        "pool_user_id": "user_owner", "balance_usd": 2.5})
+    meter = nc.Usage.credits(organization_id="org_1")
+    assert route.calls.last.request.url.params["organization_id"] == "org_1"
+    assert isinstance(meter, nc.UsageCredits)
+    assert (meter.used, meter.limit, meter.period, meter.balance_usd, meter.pool_user_id, meter.is_org_credits) == (
+        1.5, 4, "day", 2.5, "user_owner", True)
+    nc.Usage.credits()
+    assert "organization_id" not in route.calls.last.request.url.params

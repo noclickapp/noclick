@@ -67,3 +67,18 @@ test("the money behind it, or null", async () => {
   assert.deepEqual([money.recurring[0].id, money.autoTopUp], ["r1", null]);
   assert.equal(await nc.Usage.billing(), null);
 });
+
+test("Usage.credits() reads the meter's pool, a team workspace's by its id", async () => {
+  const { api } = setup();
+  const body = {
+    object: "credit_usage", used: 1.5, limit: 4, period: "day", monthly_used: 3, monthly_cap: 20, topup_credits: 0,
+    effective_tier: "free", is_org_credits: true, organization_id: "org_1", pool_user_id: "user_owner", balance_usd: 2.5,
+  };
+  const route = api.on("GET", "/v1/usage/credits", json(body), json(body));
+  const meter = await nc.Usage.credits({ organizationId: "org_1" });
+  assert.equal(route.last.query.get("organization_id"), "org_1");
+  assert.deepEqual([meter.used, meter.limit, meter.period, meter.balanceUsd, meter.poolUserId, meter.isOrgCredits],
+    [1.5, 4, "day", 2.5, "user_owner", true]);
+  await nc.Usage.credits();
+  assert.equal(route.last.query.get("organization_id"), null);
+});

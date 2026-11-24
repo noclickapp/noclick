@@ -260,6 +260,25 @@ class UsageBilling:
     raw: Dict[str, Any] = dc_field(repr=False)
 
 
+@dataclass(frozen=True)
+class UsageCredits:
+    """The pool a workspace's work draws on, as NoClick's balance meter reads it, in credits: the included usage
+    ``used`` against ``limit`` in the ``period`` (``day`` where the plan counts by day, else ``month``), the month's
+    ``monthly_used`` against ``monthly_cap``, and the dollar balance drawn after it. ``pool_user_id`` is whose pool it
+    is; ``is_org_credits`` when that's the owner of a team workspace you're in, not you."""
+
+    used: float
+    limit: Optional[float]
+    period: str
+    monthly_used: Optional[float]
+    monthly_cap: Optional[float]
+    balance_usd: Optional[float]
+    tier: Optional[str]
+    pool_user_id: str
+    is_org_credits: bool
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
 def _ledger_group(raw: Dict[str, Any], fields: List[str]) -> LedgerGroup:
     return LedgerGroup(
         key=raw["k"], current=raw.get("current") is True, day=raw["day"], usage_type=raw["usage_type"],
@@ -481,6 +500,29 @@ class Usage:
             domains=list(billing.get("domains") or []),
             auto_top_up=billing.get("autoTopUp"),
             raw=billing,
+        )
+
+    @synced
+    @staticmethod
+    async def credits(*, organization_id: Optional[str] = None, client: Optional[Client] = None) -> UsageCredits:
+        """What NoClick's balance meter shows: the included usage used and its cap, the balance, and whose pool it
+        is. ``organization_id`` names a team workspace you're in, whose work draws on its owner's pool.
+
+        Returns:
+            The ``UsageCredits``.
+
+        Usage::
+
+            meter = noclick.Usage.credits()
+            print(meter.used, meter.limit, meter.period, meter.balance_usd)
+        """
+        raw = await resolve_client(client).request("GET", "/v1/usage/credits",
+                                                   params=compact(organization_id=organization_id), user=None) or {}
+        return UsageCredits(
+            used=float(num(raw, "used")), limit=raw.get("limit"), period=raw.get("period") or "month",
+            monthly_used=raw.get("monthly_used"), monthly_cap=raw.get("monthly_cap"),
+            balance_usd=raw.get("balance_usd"), tier=raw.get("effective_tier"), pool_user_id=raw["pool_user_id"],
+            is_org_credits=raw.get("is_org_credits") is True, raw=raw,
         )
 
     @synced

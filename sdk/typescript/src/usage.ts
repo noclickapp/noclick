@@ -283,6 +283,25 @@ export interface UsageBilling {
   raw: JsonObject;
 }
 
+/**
+ * The pool a workspace's work draws on, as NoClick's balance meter reads it, in credits: the included usage `used`
+ * against `limit` in the `period` (`day` where the plan counts by day, else `month`), the month's `monthlyUsed`
+ * against `monthlyCap`, and the dollar balance drawn after it. `poolUserId` is whose pool it is; `isOrgCredits` when
+ * that's the owner of a team workspace you're in, not you.
+ */
+export interface UsageCredits {
+  used: number;
+  limit: number | null;
+  period: string;
+  monthlyUsed: number | null;
+  monthlyCap: number | null;
+  balanceUsd: number | null;
+  tier: string | null;
+  poolUserId: string;
+  isOrgCredits: boolean;
+  raw: JsonObject;
+}
+
 function rows(value: unknown): JsonObject[] {
   return Array.isArray(value) ? (value as JsonObject[]) : [];
 }
@@ -493,6 +512,29 @@ export class Usage {
       domains: rows(billing.domains),
       autoTopUp: billing.autoTopUp ? asObject(billing.autoTopUp) : null,
       raw: billing,
+    };
+  }
+
+  /**
+   * What NoClick's balance meter shows: the included usage used and its cap, the balance, and whose pool it is.
+   * `organizationId` names a team workspace you're in, whose work draws on its owner's pool.
+   */
+  static async credits(options: { organizationId?: string; client?: NoClick } = {}): Promise<UsageCredits> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/credits", {
+      query: { organization_id: options.organizationId },
+      user: null,
+    }));
+    return {
+      used: requiredNumber(raw, "used"),
+      limit: num(raw.limit),
+      period: str(raw.period) ?? "month",
+      monthlyUsed: num(raw.monthly_used),
+      monthlyCap: num(raw.monthly_cap),
+      balanceUsd: num(raw.balance_usd),
+      tier: str(raw.effective_tier),
+      poolUserId: String(raw.pool_user_id),
+      isOrgCredits: raw.is_org_credits === true,
+      raw,
     };
   }
 
