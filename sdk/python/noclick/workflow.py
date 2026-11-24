@@ -346,11 +346,17 @@ class WorkflowBuildResult:
     its ``readiness`` as ``Workflow.readiness`` reads it (``status``,
     ``meaning``, ``issues``, ``warnings``, ``unverified``), and each step's
     verdict by step id (``verdicts``: ``config_valid``, ``validation_error``,
-    ``missing_required``, ``left_for_user``, as an edit answers them). ``sent_back`` counts the
-    times the build went back to the builder for settings the run engine
-    rejects (at most 2) before it finished. A fact NoClick couldn't read is
-    ``None`` and named in ``unread``: then nothing says the workflow is
-    ready."""
+    ``missing_required``, ``left_for_user`` and ``references``, as an edit answers them).
+    ``references`` lists, across the workflow, each read of another step's output
+    that gets no value, said in a sentence (``message``): ``{step, field, source,
+    key, known_keys, message}`` for a key the ``source`` step's known output lacks
+    (a run reads nothing there and still succeeds, so a test run never shows it), or
+    ``{step, field, source, reference, missing, near, message}`` for a step the
+    workflow doesn't have; a step whose output nothing has shown isn't judged.
+    ``sent_back`` counts the times the build went back to the builder for settings
+    the run engine rejects or reads that get no value (at most 2) before it
+    finished. A fact NoClick couldn't read is ``None`` and named in ``unread``:
+    then nothing says the workflow is ready."""
 
     workflow_id: Optional[str]
     summary: Optional[str]
@@ -361,6 +367,7 @@ class WorkflowBuildResult:
     version: Optional[int] = None
     readiness: Optional[Dict[str, Any]] = None
     verdicts: Optional[Dict[str, Dict[str, Any]]] = None
+    references: Optional[List[Dict[str, Any]]] = None
     sent_back: int = 0
     unread: List[str] = dc_field(default_factory=list)
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
@@ -368,11 +375,12 @@ class WorkflowBuildResult:
     @classmethod
     def _from(cls, raw: Any) -> "WorkflowBuildResult":
         raw = raw if isinstance(raw, dict) else {}
-        readiness, verdicts = raw.get("readiness"), raw.get("verdicts")
+        readiness, verdicts, references = raw.get("readiness"), raw.get("verdicts"), raw.get("references")
         return cls(raw.get("workflow_id"), raw.get("summary"), [WorkflowStep._from(s) for s in raw.get("steps") or []],
                    raw.get("app_url"), raw.get("published"), built=raw.get("built"), version=raw.get("version"),
                    readiness=dict(readiness) if isinstance(readiness, dict) else None,
                    verdicts=dict(verdicts) if isinstance(verdicts, dict) else None,
+                   references=[dict(r) for r in references] if isinstance(references, list) else None,
                    sent_back=int(raw.get("sent_back") or 0), unread=list(raw.get("unread") or []), raw=raw)
 
 
@@ -1516,6 +1524,32 @@ class WorkflowVariables:
         return f"WorkflowVariables(workflow_id={self.workflow_id!r}, version={self.version!r}, names={names!r})"
 
 
+@dataclass
+class WorkflowSetup:
+    """What a workflow needs from its person before it can run (``Workflow.setup()``), derived
+    from it as it stands: ``items``, each a dict whose ``kind`` is ``connect`` (an app to
+    connect, once for every step that needs it: ``app``, ``label``, ``steps``, ``reconnect``),
+    ``setting`` (a value only the person knows: its ``step``, the ``setting``'s name, ``label``,
+    ``type`` and ``options``) or ``secret`` (the ``keys`` an agent step's shell asked for, kept
+    as the secret ``name``). ``ready`` is true when there's nothing. ``request`` is the setup
+    request still waiting on the person (its ``id``, ``operation_id`` and each part's
+    ``status``), else None; ``sent`` the request ``request_setup()`` just sent, else None."""
+
+    workflow_id: str
+    ready: bool
+    items: List[Dict[str, Any]]
+    request: Optional[Dict[str, Any]]
+    sent: Optional[Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "WorkflowSetup":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("workflow_id") or "", bool(raw.get("ready")),
+                   [dict(i) for i in raw.get("items") or [] if isinstance(i, dict)], raw.get("request"),
+                   raw.get("sent"), raw)
+
+
 def _definition(raw: Mapping[str, Any], workflow: "Workflow") -> Optional[WorkflowGraph]:
     """The definition an answer carries beside its graph (``GET .../graph``, an edit with ``include_graph``, one
     version), or None when it carries none."""
@@ -1543,8 +1577,9 @@ class WorkflowEdit:
     won't resolve, as ``Step.references`` reads them). ``graph`` is the workflow as written, read as
     ``Workflow.graph()`` reads it, when the edit asked for it; ``restored_from`` names
     the version of its history a restore put back. ``warnings`` say what an edit did that
-    won't work as it may look (a workspace member's own connection given to a team
-    workflow's step, which its owner's automatic runs can't use). An edit sent with
+    won't work as it may look: a read in a touched step's settings that gets no value
+    (each of its ``references``, in a sentence), and a workspace member's own connection
+    given to a team workflow's step, which its owner's automatic runs can't use. An edit sent with
     ``settle`` also says whether what it set going finished in time (``settled``) and, by
     step, why each trigger it left unregistered can't be registered yet (``unregistered``)."""
 
@@ -2003,7 +2038,7 @@ class Workflow(_Object):
     paused: bool = field("paused", lambda raw: bool(raw), doc="Whether a pause switched its triggers off.")
     readiness: Dict[str, Any] = field("readiness", lambda raw: dict(raw or {}), doc=(
         "Whether it's set up to run: ``status`` (``needs_setup``, ``waiting_for_input``, ``input_observed``, "
-        "``configured``, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
+        "``configured``, ``paused`` when its triggers are all switched off, ...), what that status ``meaning`` is in a sentence, the ``issues`` in the way (a step "
         "whose last run failed among them), the ``warnings`` that don't stop it running (an agent's tool with "
         "no account connected), and ``unverified``, the steps no run has completed yet, each "
         "``{step, code, message}``. An issue's ``code`` says whose move it is: ``missing_credentials`` waits on "
@@ -2358,6 +2393,53 @@ class Workflow(_Object):
                 print(name, "is set" if value else "is empty")
         """
         return WorkflowVariables._from(await self._request("GET", f"{await self._path()}/variables"))
+
+    @synced
+    async def setup(self) -> WorkflowSetup:
+        """Read what the workflow needs from its person before it can run: the accounts to
+        connect, the values only they know and the variables an agent step's shell asked
+        for, derived from the workflow as it stands. Code that builds without a person reads
+        this and connects or fills in each item itself; a build's result carries it too
+        (``setup``).
+
+        Returns:
+            The ``WorkflowSetup``: its ``items``, whether it's ``ready``, and the setup
+            ``request`` still waiting on the person.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            for item in brief.setup().items:
+                print(item["kind"], item["label"])
+        """
+        return WorkflowSetup._from(await self._request("GET", f"{await self._path()}/setup"))
+
+    @synced
+    async def request_setup(self, *, via: Any = "auto") -> WorkflowSetup:
+        """Send what the workflow needs to the account's owner as ONE request: one message
+        and one page, where they connect each app and fill in each value, each part landing
+        on the workflow as they give it. An app the account holds exactly one working
+        connection of is connected at once, asking nobody. The same list already waiting
+        isn't sent again (``sent`` is None); a different one replaces it. Needs the
+        ``workflows`` and ``humans`` scopes, acting for the whole account.
+
+        Args:
+            via: How it reaches the owner: ``"auto"`` (the app they last texted NoClick on,
+                else email), or a list of ``web``, ``email``, ``whatsapp``, ``imessage``,
+                ``sms``.
+
+        Returns:
+            The ``WorkflowSetup`` as ``setup()`` reads it, with ``sent``: the request's
+            operation (its ``request`` naming ``delivered_via``), or None.
+
+        Usage::
+
+            brief = noclick.Workflow.from_name("Morning brief")
+            done = brief.request_setup()
+            print("sent" if done.sent else "nothing new to ask", [i["label"] for i in done.items])
+        """
+        return WorkflowSetup._from(await self._request("POST", f"{await self._path()}/setup/request",
+                                                       json={"via": via}))
 
     def step(self, step_id: str) -> Step:
         """A handle to one of its steps by id. Nothing is sent: an edit through it names the

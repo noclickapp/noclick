@@ -2,7 +2,8 @@
 // own, so one still pending when the file's environment is torn down fires afterwards, against a window that's gone, and
 // the run fails on a bare "window is not defined" that names no test, every test having passed. This records each timer
 // a DOM file schedules (the file, the test and the repo frames that scheduled it); one still pending after the file's
-// last test that throws when it fires is rethrown naming them, so the leak is found where it was made.
+// last test that throws when it fires is reported naming them, so the leak is found where it was made: written to the
+// run's report as it's caught, which fails the run once every file has run (test/pendingTimersReport.ts).
 //
 // It judges timers that fire after their environment and fail, not every timer pending at a test's end: today most DOM
 // files leave a rendered tree, an unanswered request's timeout or a stream's reconnect pending past their tests, which
@@ -10,10 +11,19 @@
 // app's tests and the app built on it run under it.
 // `NOCLICK_PENDING_TIMERS=report` lists, at each DOM file's end, every timer and animation frame still pending after
 // whatever it rendered is unmounted (and clears them): the audit to find the rest.
-import { afterAll, expect } from 'vitest';
+import { appendFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { threadId } from 'node:worker_threads';
+import { afterAll, expect, inject } from 'vitest';
+import { LEAKS, type Line } from './pendingTimersKey';
 
-type Pending = { kind: string; ms: number; file?: string; test?: string; from: string[]; orphaned: boolean };
-type Guard = { active: boolean; pending: Map<unknown, Pending> };
+type Pending = { kind: string; ms: number; file?: string; test?: string; from: string[]; orphaned: boolean; id?: string };
+type Guard = {
+    active: boolean;
+    pending: Map<unknown, Pending>;
+    orphan: (entry: Pending) => void;
+    settle: (entry: Pending, leak?: string) => void;
+};
 
 const KEY = Symbol.for('noclick.tests.pendingTimers');
 const REPORT = process.env.NOCLICK_PENDING_TIMERS === 'report';
@@ -41,7 +51,18 @@ function describe({ kind, ms, test, from }: Pending): string {
 
 // Once per process: a worker that runs file after file keeps it, and a timer outlives the file that made it.
 function install(): Guard {
-    const guard: Guard = { active: false, pending: new Map() };
+    const folder = inject(LEAKS);
+    if (!folder) throw new Error('test/pendingTimers.ts reports through test/pendingTimersReport.ts: name it in globalSetup.');
+    // This worker's lines in the run's report, each written as it happens (synchronously: the worker may end next).
+    const mine = join(folder, `${process.pid}-${threadId}.jsonl`);
+    const say = (line: Line) => appendFileSync(mine, JSON.stringify(line) + '\n');
+    process.on('exit', () => say({ exited: true }));
+    let orphans = 0;
+    const guard: Guard = { active: false, pending: new Map(), orphan: (entry) => {
+        entry.orphaned = true;
+        entry.id = String(++orphans);
+        say({ orphaned: entry.id });
+    }, settle: (entry, leak) => say({ settled: entry.id!, ...(leak ? { leak } : {}) }) };
     const g = globalThis as unknown as Record<string, (...args: unknown[]) => unknown>;
     const real = { setTimeout: g.setTimeout, clearTimeout: g.clearTimeout, setInterval: g.setInterval, clearInterval: g.clearInterval };
 
@@ -61,18 +82,21 @@ function install(): Guard {
             function (this: unknown, ...a: unknown[]) {
                 if (kind === 'setTimeout') guard.pending.delete(handle);
                 if (!entry.orphaned) return (callback as (...x: unknown[]) => unknown).apply(this, a);
+                let result: unknown;
                 try {
-                    return (callback as (...x: unknown[]) => unknown).apply(this, a);
+                    result = (callback as (...x: unknown[]) => unknown).apply(this, a);
                 } catch (error) {
-                    guard.pending.delete(handle);
                     real.clearTimeout.call(globalThis, handle);
-                    throw new Error(
+                    guard.pending.delete(handle);
+                    guard.settle(entry,
                         `A timer ${entry.file ?? 'a test file'} left pending fired after that file's test environment was ` +
                             `torn down, and failed: ${(error as Error)?.message ?? error}\n  ${describe(entry)}\n` +
-                            `Clear it when its component unmounts (an effect's cleanup), or, in a test, before the test ends.`,
-                        { cause: error }
-                    );
+                            `Clear it when its component unmounts (an effect's cleanup), or, in a test, before the test ends.`);
+                    return undefined;
                 }
+                // A timeout that did nothing harmful is done; an interval may yet fail on a later tick.
+                if (kind === 'setTimeout') guard.settle(entry);
+                return result;
             },
             ms,
             ...args
@@ -81,6 +105,8 @@ function install(): Guard {
         return handle;
     };
     const clear = function (this: unknown, handle: unknown) {
+        const entry = guard.pending.get(handle);
+        if (entry?.orphaned) guard.settle(entry);
         guard.pending.delete(handle);
         // Node's clearTimeout clears an interval too, and the reverse.
         return real.clearTimeout.call(this, handle);
@@ -132,7 +158,7 @@ if (typeof document !== 'undefined') {
         }
         guard.active = false;
         const left = [...guard.pending.entries()].filter(([, entry]) => entry.file === file && !entry.orphaned);
-        left.forEach(([, entry]) => (entry.orphaned = true));
+        left.forEach(([, entry]) => guard.orphan(entry));
         if (!REPORT) return;
         left.forEach(([handle]) => clear(handle));
         const all = [...left.map(([, entry]) => entry), ...frames.values()];
@@ -147,8 +173,7 @@ if (typeof document !== 'undefined') {
     });
 
     function clear(handle: unknown) {
-        guard.pending.delete(handle);
-        clearTimeout(handle as ReturnType<typeof setTimeout>);
+        clearTimeout(handle as ReturnType<typeof setTimeout>); // the guard's own clear: settles it
     }
 }
 

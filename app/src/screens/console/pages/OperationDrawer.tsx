@@ -17,6 +17,7 @@ import { getToken, type AgentHandle, type ParsedQuery, type QueryError } from '@
 import { userPath } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { Drawer } from '../ui/Drawer';
 import { StatusPill } from '../ui/StatusPill';
@@ -401,6 +402,7 @@ export function OperationDetail({ id, state }: { id: string; state: V1State<Oper
     const calls = useV1(isTurn ? `operations/${id}/tool_calls?${op!.status}` : null, () => Operation.fromId(id, { client, user: null }).toolCalls());
     const [focus, setFocus] = useState<string | null>(null);
     const [canceling, setCanceling] = useState(false);
+    const reportHeld = useReportHeld(useConsole());
 
     const tabs: TabDef[] = [
         { id: 'output', label: 'Output' },
@@ -453,6 +455,7 @@ export function OperationDetail({ id, state }: { id: string; state: V1State<Oper
             invalidateV1('operations/summary');
             toast.success('Operation canceled');
         } catch (err) {
+            if (reportHeld(err, 'Cancel the operation', () => (invalidateV1('operations?'), invalidateV1('operations/summary'), state.refresh()))) return;
             toast.error(err instanceof Error ? err.message : String(err), { description: err instanceof NoClickError ? (err.nextStep ?? undefined) : undefined });
         } finally {
             setCanceling(false);
