@@ -99,8 +99,8 @@ export interface CanvasPresence {
     Avatars: ComponentType<{ collaborators: Collaborator[] }>;
 }
 
-/** Other people editing the workflow as it's edited: their pointers, selections and unsaved moves. The standard draws
- *  nobody else (another person's changes reach the canvas once they're saved). */
+/** Other people with the workflow open: their pointers, selections and builder edits. Another person's changes reach
+ *  the canvas once they're saved, whoever fills this; the standard draws nobody else. */
 export const PRESENCE = slot<CanvasPresence>('canvas.presence', NOBODY_ELSE);
 
 // ── the Interface tab ───────────────────────────────────────────────────────

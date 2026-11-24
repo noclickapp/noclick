@@ -64,8 +64,13 @@ export interface StepType {
   kinds: StepTypeKind[];
   /** Whether a step of it starts runs whatever its operation (a trigger step: a schedule, a webhook, a form). */
   trigger: boolean;
-  /** Each operation once, in the order the app lists them; empty for a type that has none (`trigger-run`). */
+  /**
+   * Each operation once, its triggers first, in the order the app lists them; empty for a type that has none
+   * (`trigger-run`). A read narrowed by `kind`, `query` or `operation` holds only those it kept.
+   */
   operations: StepTypeOperation[];
+  /** How many operations the type has in all, whatever a read kept; null in a listing. */
+  operationsTotal: number | null;
   /** The accounts it connects to; null for a type whose settings take none. */
   connection: StepTypeConnection | null;
   /**
@@ -113,6 +118,7 @@ function toStepType(raw: JsonObject): StepType {
     kinds: asList(raw.kinds) as StepTypeKind[],
     trigger: raw.trigger === true,
     operations: asList(raw.operations).map((op) => toOperation(asObject(op))),
+    operationsTotal: typeof raw.operations_total === "number" ? raw.operations_total : null,
     connection: toConnection(raw.connection),
     retired: raw.retired ? asObject(raw.retired) : null,
     schema: raw.schema ? asObject(raw.schema) : null,
@@ -144,19 +150,32 @@ export async function stepTypes(
   return rows.map(toStepType);
 }
 
+/** What one of a type's operations is: one that starts a workflow, or one a run does. */
+export type StepTypeOperationKind = "trigger" | "action";
+
 /**
- * One step type, each operation with its `description`, and its `schema`: what a step's `settings` take, as the
- * app's canvas draws its form from it (null for a type that takes no settings). `name` is the type as a workflow's
- * graph names it (`automation-gmail`, `agent`); an unknown one throws `NotFound` naming the nearest. Needs the
+ * One step type, each operation with its `description` (its triggers first), and its `schema`: what a step's
+ * `settings` take, as the app's canvas draws its form from it (null for a type that takes no settings). `name` is the
+ * type as a workflow's graph names it (`automation-gmail`, `agent`); an unknown one throws `NotFound` naming the
+ * nearest. A type can be large (Stripe holds 491 operations): `kind`, `query` (the operations its words fit, the best
+ * first) and `operation` (one name, or several) keep only some, and the `schema` only their settings;
+ * `operationsTotal` still counts them all. An operation the type doesn't have throws `InvalidRequest`. Needs the
  * `workflows` scope.
  *
  *     const gmail = await stepType("automation-gmail");
  *     const send = gmail.operations.find((op) => op.name === "send_email_message");
  *     console.log(send?.description, gmail.connection?.credentialTypes);
+ *
+ *     const stripe = await stepType("automation-stripe", { kind: "trigger", query: "payment failed" });
+ *     const failed = await stepType("automation-stripe", { operation: stripe.operations[0].name });
  */
-export async function stepType(name: string, options: { client?: NoClick } = {}): Promise<StepType> {
+export async function stepType(
+  name: string,
+  options: { kind?: StepTypeOperationKind; query?: string; operation?: string | string[]; client?: NoClick } = {},
+): Promise<StepType> {
+  const operation = Array.isArray(options.operation) ? options.operation.join(",") : options.operation;
   const raw = await resolveClient(options.client).request("GET", `/v1/step_types/${encodeURIComponent(name)}`, {
-    user: null,
+    query: { kind: options.kind, q: options.query, operation: operation || undefined }, user: null,
   });
   return toStepType(asObject(raw));
 }

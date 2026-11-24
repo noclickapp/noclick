@@ -58,6 +58,34 @@ https only (`Strict-Transport-Security`, for a year). A proxy you put in front o
 `Host` header on (with nginx, `proxy_set_header Host $host;`), since signing in checks that the form came from the
 app's own address, and should say which scheme it took the request over (`X-Forwarded-Proto`).
 
+It also runs as a Worker, on Cloudflare Workers or any host of the same runtime: [`worker.js`](worker.js) answers
+with the same server build, and [`wrangler.jsonc`](../wrangler.jsonc) at the repository's root is its config (at the
+root because the app compiles the SDK's source beside it). From the root, `npx wrangler deploy` installs, builds and
+deploys it; its three settings are the Worker's secrets (`npx wrangler secret put NOCLICK_API_KEY`, then the other
+two), which [`.dev.vars.example`](../.dev.vars.example) names for a host that asks for them. Neither file is read by
+`pnpm dev`, `pnpm build` or `pnpm start`.
+
+Vercel needs no file: import the repository with `app` as the project's root directory (the whole repository is
+still cloned, so the SDK's source is there to build with) and set the three settings as environment variables.
+
+**On NoClick's own app hosting, nobody sets the key.** [`noclick.json`](../noclick.json) at the repository's root
+names the API scopes the app's screens call (`account_key`). NoClick asks the account's owner once, saying in plain
+words what a key with those scopes can do, and then gives each production release `NOCLICK_API_KEY` itself: a key
+that works only while that release serves, is listed among the account's keys, and is revoked when the app is
+deleted. Nobody creates, copies or pastes one. Until the owner approves, every page says the app's key isn't ready
+and why, and it opens by itself once the key works, with no new deploy. A preview or a live editing session is given
+none. The list is every scope the screens use, and none that reads a secret or stands in for the account's owner
+(making keys, answering approvals): add to it when a screen you write calls another part of the API. `APP_PASSWORD`
+and `SESSION_SECRET` are still yours to choose, as the app's secrets there.
+
+The repository's root also has a [`Dockerfile`](../Dockerfile): the app as one container, a Node server on `PORT`
+(3000 unless set). Build it from the root, for the same reason, and hand it the settings:
+
+```bash
+docker build -t noclick-app .
+docker run --env-file app/.env -p 3000:3000 noclick-app
+```
+
 ## The developer console
 
 `/developers` is NoClick's developer console (`src/screens/console`): the account's agents, users and resources
@@ -282,7 +310,11 @@ your account keeps them in (`Workflow.list`, `Workflow.folders`), and makes a ne
 - **A step's panel** (`StepPanel.tsx`), opened by selecting it: its settings form and its accounts (the canvas's step
   form, with what `GET /v1/step_types/{type}` says of its type). What it changes is the canvas's own edit, saved once.
 - **Setup** (`?tab=setup`): the steps the workflow still needs before it runs for real (an account, a variable, a
-  setting, which agent runs it), then the message a test run stages. See the `canvas.setup` slots.
+  setting, which agent runs it), then the message a test run stages. See the `canvas.setup` slots. A variable that
+  has a value shows as saved and hidden here: the API reads a variable's value back only to the workflow's owner and
+  the teammates who can edit it (`GET /v1/workflows/{id}/variables`: signed in, or a key that names
+  `workflows:variables`, which this app's key doesn't), so the page never asks. A host whose client is a person's own
+  passes `asOwner` to `WorkflowPage`, and the values show in Setup and in a field bound to one.
 - **Test Run** (`?tab=test`): the workflow played against a simulated world.
 - **Build**: NoClick's builder beside the page (`canvas.builder`; the frame draws it): say what to add or change.
 

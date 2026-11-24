@@ -140,6 +140,14 @@ export const OWNER_ONLY = {
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
         ],
     },
+    /** The values of a workflow's variables, which its page shows its owner and the teammates who can edit it, in
+     *  Setup and in a field bound to one. A page acting as a key never asks for them: a variable that has one shows as
+     *  saved and hidden. */
+    workflowVariables: {
+        what: 'A workflow’s variable values',
+        why: 'A key reads the values of a workflow’s variables only with the workflows:variables scope, which an account’s key with every scope (*) doesn’t hold and this app’s key doesn’t carry.',
+        operations: ['GET /v1/workflows/{workflow_id}/variables'],
+    },
     /** Approving or declining a purchase or a deletion NoClick holds for the owner's yes: on its card in the chat, and in
      *  the chat's Beside. */
     approvals: {
@@ -169,6 +177,13 @@ export const OWNER_ONLY = {
         what: 'Lifting a connected account’s approvals',
         why: 'Lifting one takes the owner, their word through an agent, or a key they gave the approvals:policy scope, which this app’s key doesn’t carry.',
         operations: ['DELETE /v1/connections/{ref}/require_approval'],
+    },
+    /** Making an app's code public, on its page and its repo's under Resources. */
+    publishCode: {
+        what: 'Making an app’s code public',
+        scope: 'projects:publish',
+        why: 'A key makes an app’s code public only with the projects:publish scope, which an account’s key with every scope (*) doesn’t hold: a copy someone cloned can’t be recalled.',
+        operations: ['POST /v1/projects/{project_id}/public'],
     },
 } as const satisfies Record<string, OwnerOnlyRow>;
 
