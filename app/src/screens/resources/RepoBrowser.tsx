@@ -10,7 +10,7 @@
 // A new reader (the repo read again, as when a push moves it) reads it all again.
 import { Link, useSearchParams } from 'react-router';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { ChevronRight, Ellipsis, File, FileText, Folder, GitBranch, GitCommitHorizontal, History } from 'lucide-react';
+import { ChevronRight, Ellipsis, File, FileText, Folder, GitBranch, GitCommitHorizontal, History, Link2 } from 'lucide-react';
 import { dateLabel, fmtBytes, relTime } from '@/ui/primitives';
 import { CopyButton } from '@/ui/CopyButton';
 import { Skeleton } from '@/ui/skeleton';
@@ -29,6 +29,8 @@ export interface RepoEntry {
     path: string;
     dir: boolean;
     size: number | null;
+    /** A symbolic link someone committed: one entry, whatever it points to, and never followed. */
+    link?: boolean;
 }
 
 export interface RepoCommit {
@@ -226,8 +228,15 @@ function Listing({ entries, onOpen }: { entries: RepoEntry[]; onOpen: (path: str
                             onClick={() => onOpen(entry.dir ? `${entry.path}/` : entry.path)}
                             className="group flex w-full items-center gap-2.5 px-4 py-2.5 text-left transition-colors hover:bg-foreground/[0.025] focus-visible:bg-foreground/[0.04] focus-visible:outline-none"
                         >
-                            {entry.dir ? <Folder className="h-4 w-4 shrink-0 fill-sky-500/25 text-sky-600 dark:fill-sky-400/20 dark:text-sky-400" strokeWidth={1.75} /> : <FileIcon name={name} />}
+                            {entry.dir ? (
+                                <Folder className="h-4 w-4 shrink-0 fill-sky-500/25 text-sky-600 dark:fill-sky-400/20 dark:text-sky-400" strokeWidth={1.75} />
+                            ) : entry.link ? (
+                                <Link2 className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} aria-hidden />
+                            ) : (
+                                <FileIcon name={name} />
+                            )}
                             <span className="min-w-0 flex-1 truncate text-[14px] text-foreground group-hover:underline group-hover:decoration-foreground/40 group-hover:underline-offset-[3px]">{name}</span>
+                            {entry.link && <span className="shrink-0 text-[13px] text-muted-foreground">Link</span>}
                             {!entry.dir && entry.size != null && <span className="shrink-0 text-[13px] tabular-nums text-muted-foreground">{fmtBytes(entry.size)}</span>}
                         </button>
                     </li>
@@ -239,6 +248,25 @@ function Listing({ entries, onOpen }: { entries: RepoEntry[]; onOpen: (path: str
 
 function Unshown({ children }: { children: string }) {
     return <p className="px-4 py-10 text-center text-[13.5px] text-muted-foreground">{children}</p>;
+}
+
+/** A link, opened: where it points, as the repo holds it. Nothing is read through it. */
+function LinkView({ target }: { target: string | null }) {
+    const shown = target?.trim() ?? '';
+    return (
+        <div className="px-4 py-10 text-center text-[13.5px] text-muted-foreground">
+            <p>{shown ? 'A link to' : 'A link. Clone the repo to see where it points.'}</p>
+            {shown && (
+                <p className="mt-2 inline-flex max-w-full items-center gap-2">
+                    <code className="min-w-0 break-all font-mono text-[13px] text-foreground">{shown}</code>
+                    <span title="Copy where it points">
+                        <CopyButton value={shown} />
+                    </span>
+                </p>
+            )}
+            {shown && <p className="mt-2">It isn’t followed here: open that path to see what’s there.</p>}
+        </div>
+    );
 }
 
 function FileView({ path, text }: { path: string; text: string | null }) {
@@ -707,7 +735,8 @@ export function RepoBrowser({ reader, name, summary, now }: { reader: RepoReader
     const branches = useLoaded(`${name}:branches`, () => reader.branches());
     const commits = useLoaded(`${name}:history:${refName}`, () => reader.history(refName, null, FIRST_PAGE));
     const listing = useLoaded(inCode ? `${name}:list:${refName}:${folder}` : null, () => reader.list(folder, refName));
-    const size = dir === null ? (listing.data?.find((e) => e.path === path)?.size ?? null) : null;
+    const opened = dir === null ? listing.data?.find((e) => e.path === path) : undefined;
+    const size = opened?.size ?? null;
     const tooBig = size !== null && size > MAX_SHOWN_BYTES ? size : null;
     const file = useLoaded(inCode && dir === null && listing.data && tooBig === null ? `${name}:file:${refName}:${path}` : null, () => reader.read(path, refName));
     useRereadOn(reader, [branches, commits, listing, file]);
@@ -799,6 +828,8 @@ export function RepoBrowser({ reader, name, summary, now }: { reader: RepoReader
                         <Failed error={file.error} onRetry={file.reload} />
                     ) : file.data === undefined ? (
                         <Rows count={6} />
+                    ) : opened?.link ? (
+                        <LinkView target={file.data} />
                     ) : (
                         <FileView key={path} path={path} text={file.data} />
                     )}

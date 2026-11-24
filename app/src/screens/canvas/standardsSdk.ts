@@ -2,5 +2,5 @@
 // accountStandards.tsx, graph/saves.ts, runs/standards.tsx), loaded with their first call. Every reader of a canvas slot imports the
 // standards through slots.ts, a host that fills every slot it draws included (a page's preview of a workflow), so they
 // import none of the SDK themselves.
-export { Connection, stepOutputShape, stepType, Workflow } from 'noclick';
+export { Connection, NotFound, PermissionDenied, stepOutputShape, stepType, Workflow } from 'noclick';
 export { errorText } from '@/screens/console/lib/errorText';

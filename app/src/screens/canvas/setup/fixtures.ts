@@ -147,7 +147,11 @@ export function setupFetch(options: SetupFetchOptions = {}): typeof fetch {
         if (method === 'GET' && path === `${workflow}/graph`) {
             const read = (await (await rest(input, init)).json()) as Json;
             const { rows, withheld } = shownVariables();
-            return Response.json({ ...read, settings: { ...(read.settings as Json), variable_definitions: rows }, settings_withheld: withheld, graph: { ...setupGraph(), withheld: {} } });
+            return Response.json({ ...read, access: 'owner', settings: { ...(read.settings as Json), variable_definitions: rows }, settings_withheld: withheld, graph: { ...setupGraph(), withheld: {} } });
+        }
+        // The values themselves: the workflow's owner's own read (a key is refused it above).
+        if (method === 'GET' && path === `${workflow}/variables`) {
+            return Response.json({ object: 'workflow_variables', workflow_id: WORKFLOW, version: 4, definitions: variables.held, variables: {} });
         }
         if (method === 'POST' && path === `${workflow}/edits`) {
             const ops = (body.ops ?? []) as Json[];
