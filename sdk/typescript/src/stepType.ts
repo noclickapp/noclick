@@ -246,3 +246,61 @@ export async function stepOutputShape(
     raw,
   };
 }
+
+/** One of a step type's choices (`stepTypeOptions`): what the setting takes, its label and the service's metadata. */
+export interface StepTypeOption {
+  value: unknown;
+  label: unknown;
+  metadata: JsonObject | null;
+}
+
+/** A page of a step type's choices for one field (`stepTypeOptions`); pass `nextPageToken` back as `pageToken`. */
+export interface StepTypeOptions {
+  type: string;
+  field: string;
+  options: StepTypeOption[];
+  nextPageToken: string | null;
+  /** By path, a choice or a part of one left out because it held a secret. */
+  withheld: string[];
+  raw: JsonObject;
+}
+
+/**
+ * The choices a step of type `name` lists for `field` (the name its loader takes, a setting's
+ * `x-dynamic-options.field_name`), for no step of a workflow: a picker outside a step's form. Read through
+ * `connection`, an account you may use (its ref or credential id), with `settings` what the list depends on;
+ * `workflowId` names the workflow the choices are for, which a loader may read. A step's own dropdown is
+ * `Step.options`. Needs the `workflows` scope.
+ *
+ *     const page = await stepTypeOptions("automation-slack", "channel", { connection: "credential:7c1…" });
+ *     console.log(page.options.map((o) => o.label));
+ */
+export async function stepTypeOptions(
+  name: string,
+  field: string,
+  options: {
+    connection?: string; settings?: JsonObject; workflowId?: string; search?: string; pageToken?: string;
+    client?: NoClick;
+  } = {},
+): Promise<StepTypeOptions> {
+  const json: JsonObject = { field };
+  if (options.connection !== undefined) json.connection = options.connection;
+  if (options.settings !== undefined) json.settings = options.settings;
+  if (options.workflowId !== undefined) json.workflow_id = options.workflowId;
+  if (options.search !== undefined) json.search = options.search;
+  if (options.pageToken !== undefined) json.page_token = options.pageToken;
+  const raw = asObject(await resolveClient(options.client).request(
+    "POST", `/v1/step_types/${encodeURIComponent(name)}/options`, { json, user: null },
+  ));
+  return {
+    type: String(raw.type),
+    field: String(raw.field),
+    options: asList(raw.options).map((option) => {
+      const found = asObject(option);
+      return { value: found.value ?? null, label: found.label ?? null, metadata: found.metadata ? asObject(found.metadata) : null };
+    }),
+    nextPageToken: str(raw.next_page_token),
+    withheld: asList(raw.withheld).map(String),
+    raw,
+  };
+}

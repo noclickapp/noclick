@@ -121,6 +121,44 @@ test("stepOutputShape() reads the account's own shape of a type", async () => {
   assert.equal(route.last.query.get("operation"), null);
 });
 
+test("stepTypeOptions() lists a type's choices for no step, through the connection it names", async () => {
+  const { api } = setup();
+  const body = {
+    object: "step_type_options", type: "automation-slack", field: "channel",
+    options: [{ value: "C1", label: "#general", metadata: null }], next_page_token: "2", withheld: [],
+  };
+  const route = api.on("POST", "/v1/step_types/automation-slack/options", json(body));
+  const page = await nc.stepTypeOptions("automation-slack", "channel", {
+    connection: "credential:c1", settings: { team: "T1" }, workflowId: "wf_1", search: "gen",
+  });
+  assert.deepEqual(route.last.body, {
+    field: "channel", connection: "credential:c1", settings: { team: "T1" }, workflow_id: "wf_1", search: "gen",
+  });
+  assert.deepEqual([page.field, page.options.map((o) => o.label), page.nextPageToken], ["channel", ["#general"], "2"]);
+});
+
+test("checkReadiness() reads the setup check's evidence; getStep() reads one step alone; list narrows by a credential", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/workflows/wf_1/readiness", json({
+    object: "workflow_readiness", workflow_id: "wf_1", status: "input_observed", meaning: "Seen.", issues: [],
+    warnings: [], unverified: [], observations: [{ step: "hook", at: "2026-11-21T10:00:00Z", trigger: "webhook", run_status: "succeeded" }],
+    registered_steps: ["hook"], deadline_watches: [], alarm_steps: [], destinations: [],
+  }));
+  const check = await nc.Workflow.fromId("wf_1").checkReadiness();
+  assert.deepEqual([check.status, check.observations[0].runStatus, check.registeredSteps], ["input_observed", "succeeded", ["hook"]]);
+
+  api.on("GET", "/v1/workflows/wf_1/steps/hook", json({
+    object: "workflow_step", workflow_id: "wf_1", version: 3,
+    step: { id: "hook", type: "trigger-webhook", config: { label: "Hook" } }, withheld: ["secret"],
+  }));
+  const step = await nc.Workflow.fromId("wf_1").getStep("hook");
+  assert.deepEqual([step.type, step.withheld], ["trigger-webhook", ["secret"]]);
+
+  const listed = api.on("GET", "/v1/workflows", json({ object: "list", data: [], next_cursor: null }));
+  await nc.Workflow.list({ credentialId: "cred_1" });
+  assert.equal(listed.last.query.get("credential_id"), "cred_1");
+});
+
 test("warmSandboxes(), template() and Step.decideProposal() read and send what the canvas's badge, Share and chat card do", async () => {
   const { api } = setup();
   api.on("GET", "/v1/workflows/wf_1/sandboxes", json({ object: "workflow_sandboxes", workflow_id: "wf_1", steps: { helper: 2 } }));

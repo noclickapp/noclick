@@ -995,6 +995,42 @@ class WorkflowState:
         return cls(raw.get("workflow_id") or "", raw.get("step_id"), dict(raw.get("values") or {}), raw)
 
 
+@dataclass(frozen=True)
+class WorkflowReadinessCheck:
+    """A workflow's readiness with the evidence it's judged on
+    (``Workflow.check_readiness``): its ``status``, what that ``meaning`` is,
+    the ``issues`` in the way, ``warnings`` and ``unverified`` steps (each
+    ``{step, code, message}``), then each trigger's latest real input
+    (``observations``: ``step``, ``at``, ``trigger``, ``run_status``), the
+    triggers registered where their events come from (``registered_steps``),
+    each missing-update check's deadline (``deadline_watches``) with the alarm
+    steps that keep them (``alarm_steps``), and the recipients an agent's tools
+    are held to (``destinations``). An input observed is history: it doesn't
+    show the next one will arrive."""
+
+    status: str
+    meaning: str
+    issues: List[Dict[str, Any]]
+    warnings: List[Dict[str, Any]]
+    unverified: List[Dict[str, Any]]
+    observations: List[Dict[str, Any]]
+    registered_steps: List[str]
+    deadline_watches: List[Dict[str, Any]]
+    alarm_steps: List[str]
+    destinations: List[Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "WorkflowReadinessCheck":
+        def rows(key: str) -> List[Dict[str, Any]]:
+            return [dict(r) for r in raw.get(key) or []]
+
+        return cls(raw.get("status") or "", raw.get("meaning") or "", rows("issues"), rows("warnings"),
+                   rows("unverified"), rows("observations"), [str(s) for s in raw.get("registered_steps") or []],
+                   rows("deadline_watches"), [str(s) for s in raw.get("alarm_steps") or []], rows("destinations"),
+                   raw)
+
+
 class Step(_Object):
     """One step of a workflow's graph: its trigger, an app's operation, an agent, a
     note. ``Workflow.graph()`` reads them all; ``Workflow.step(id)`` is a handle to
@@ -2614,11 +2650,12 @@ class Workflow(_Object):
     @classmethod
     async def list(
         cls, *, q: Optional[str] = None, search: Optional[str] = None, limit: Optional[int] = None,
-        client: Optional[Client] = None,
+        credential_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> List["Workflow"]:
         """Your account's workflows, most recently changed first. ``q`` is a
         case-insensitive prefix of the name; ``search``, text its name or
-        description holds, in any case.
+        description holds, in any case; ``credential_id`` keeps those whose
+        steps use that connected account (``Connection.credential_id``).
 
         Returns:
             Every matching workflow, fetched page by page (or the first ``limit``).
@@ -2630,14 +2667,14 @@ class Workflow(_Object):
         """
         return await list_all(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q, "search": search}, user=None, limit=limit, client=client,
+            params={"q": q, "search": search, "credential_id": credential_id}, user=None, limit=limit, client=client,
         )
 
     @synced
     @classmethod
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, q: Optional[str] = None,
-        search: Optional[str] = None, client: Optional[Client] = None,
+        search: Optional[str] = None, credential_id: Optional[str] = None, client: Optional[Client] = None,
     ) -> Page:
         """One page of workflows; pass ``next_cursor`` back as ``cursor``.
 
@@ -2652,7 +2689,8 @@ class Workflow(_Object):
         """
         return await list_page(
             "/v1/workflows", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
-            params={"q": q, "search": search}, user=None, cursor=cursor, limit=limit, client=client,
+            params={"q": q, "search": search, "credential_id": credential_id}, user=None, cursor=cursor, limit=limit,
+            client=client,
         )
 
     @synced
@@ -3924,6 +3962,42 @@ class Workflow(_Object):
         """
         raw = await self._api.request("POST", f"{await self._path()}/runs/{run_id}/stop", user=resolve_scope(user))
         return WorkflowRun._from(raw)
+
+    @synced
+    async def get_step(self, step_id: str) -> "Step":
+        """One of its steps read alone, whole (``GET /v1/workflows/{id}/steps/{step_id}``),
+        as ``graph()`` reads every step: its settings as stored, never a secret
+        (``withheld`` names, by path, what was left out). No step by that id
+        raises ``noclick.NotFound``.
+
+        Returns:
+            The ``Step``, loaded.
+
+        Usage::
+
+            hook = noclick.Workflow.from_name("order-intake").get_step("hook")
+            print(hook.type, hook.settings, hook.withheld)
+        """
+        raw = await self._api.request("GET", f"{await self._path()}/steps/{path_segment(step_id)}", user=None)
+        return Step._of(self, step_id, dict(raw.get("step") or {}), [str(p) for p in raw.get("withheld") or []])
+
+    @synced
+    async def check_readiness(self) -> "WorkflowReadinessCheck":
+        """Whether it's set up to run, with the evidence that's judged on, as the
+        app's setup check shows it: what ``readiness`` says, then the inputs its
+        triggers last received, which are registered, the deadlines its alarm
+        steps watch and the recipients its agents' tools are held to.
+
+        Returns:
+            The ``WorkflowReadinessCheck``.
+
+        Usage::
+
+            check = noclick.Workflow.from_name("order-intake").check_readiness()
+            print(check.status, [o["step"] for o in check.observations])
+        """
+        raw = await self._api.request("GET", f"{await self._path()}/readiness", user=None)
+        return WorkflowReadinessCheck._from(raw)
 
     @synced
     async def warm_sandboxes(self) -> Dict[str, int]:

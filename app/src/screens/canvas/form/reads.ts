@@ -1,7 +1,7 @@
 // What the step form reads beside a step's settings: a dropdown's options, a widget's value (a trigger's address, an
 // alarm list), the server's verdict on the settings, an expression's preview, and clearing what a step keeps between
 // runs. The shapes are the form's own (the fields it reads); whoever renders the form answers them, through the
-// `canvas.step.reads` slot: this app on /v1 (slotStandards.tsx), NoClick's app on its own socket.
+// `canvas.step.reads` slot: this app on /v1 (slotStandards.tsx), and a host its own way.
 import { createContext, useContext } from 'react';
 
 /** One choice a dropdown lists: the value it stores, its label, and what the service says beside it (an icon, a

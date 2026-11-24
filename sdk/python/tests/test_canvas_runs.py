@@ -120,6 +120,36 @@ def test_a_step_types_output_shape_is_the_accounts_own(api, client):
     assert "operation" not in route.calls.last.request.url.params
 
 
+def test_a_step_types_choices_are_listed_for_no_step_through_the_named_connection(api, client):
+    body = {"object": "step_type_options", "type": "automation-slack", "field": "channel",
+            "options": [{"value": "C1", "label": "#general", "metadata": None}], "next_page_token": "2",
+            "withheld": []}
+    route = api.post("/v1/step_types/automation-slack/options").respond(json=body)
+    page = nc.step_type_options("automation-slack", "channel", connection="credential:c1", workflow_id="wf_1")
+    assert json.loads(route.calls.last.request.content) == {
+        "field": "channel", "connection": "credential:c1", "workflow_id": "wf_1"}
+    assert (page.field, [o["label"] for o in page.options], page.next_page_token) == ("channel", ["#general"], "2")
+
+
+def test_readiness_evidence_a_step_read_alone_and_workflows_by_credential(api, client):
+    api.get("/v1/workflows/wf_1/readiness").respond(json={
+        "object": "workflow_readiness", "workflow_id": "wf_1", "status": "input_observed", "meaning": "Seen.",
+        "issues": [], "warnings": [], "unverified": [], "registered_steps": ["hook"], "deadline_watches": [],
+        "alarm_steps": [], "destinations": [],
+        "observations": [{"step": "hook", "at": "2026-11-21T10:00:00Z", "trigger": "webhook", "run_status": "succeeded"}]})
+    check = nc.Workflow.from_id("wf_1").check_readiness()
+    assert (check.status, check.observations[0]["run_status"], check.registered_steps) == (
+        "input_observed", "succeeded", ["hook"])
+    api.get("/v1/workflows/wf_1/steps/hook").respond(json={
+        "object": "workflow_step", "workflow_id": "wf_1", "version": 3,
+        "step": {"id": "hook", "type": "trigger-webhook", "config": {"label": "Hook"}}, "withheld": ["secret"]})
+    step = nc.Workflow.from_id("wf_1").get_step("hook")
+    assert (step.type, step.withheld) == ("trigger-webhook", ["secret"])
+    listed = api.get("/v1/workflows").respond(json={"object": "list", "data": [], "next_cursor": None})
+    nc.Workflow.list(credential_id="cred_1")
+    assert listed.calls.last.request.url.params["credential_id"] == "cred_1"
+
+
 def test_warm_sandboxes_template_and_a_proposals_verdict_read_and_send_what_the_canvas_does(api, client):
     api.get("/v1/workflows/wf_1/sandboxes").respond(json={
         "object": "workflow_sandboxes", "workflow_id": "wf_1", "steps": {"helper": 2}})

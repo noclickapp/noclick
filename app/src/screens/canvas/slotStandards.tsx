@@ -266,8 +266,23 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
     };
     return {
         options,
-        // The API lists these as the step's own choices too, by the loader's field.
-        lookup: options,
+        // Choices that are no setting of a stored step: the type's, by its loader's field, through the account named.
+        lookup: async (request) => {
+            const { stepTypeOptions } = await import('./standardsSdk');
+            const page = await stepTypeOptions(request.node_type, request.field_name, {
+                connection: request.credential_id || undefined,
+                settings: request.context ?? undefined,
+                workflowId: scope?.workflowId,
+                search: request.search ?? undefined,
+                pageToken: request.page_token ?? undefined,
+                client,
+            });
+            return {
+                success: true,
+                options: page.options.map((o) => ({ value: String(o.value ?? ''), label: String(o.label ?? o.value ?? ''), metadata: o.metadata })),
+                next_page_token: page.nextPageToken,
+            };
+        },
         value: async (request) => {
             const loaded = await (await step()).value(request.field_name, { settings: request.context });
             return { success: true, value: loaded.value ?? undefined, values: loaded.values ?? undefined };

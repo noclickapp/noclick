@@ -706,6 +706,65 @@ export interface WorkflowReadiness {
   unverified: { step: string | null; code: string; message: string }[];
 }
 
+/**
+ * A workflow's readiness with the evidence it's judged on (`Workflow.checkReadiness`), as the app's setup check shows
+ * it: `WorkflowReadiness`, then each trigger's latest real input (`observations`), the triggers registered where their
+ * events come from (`registeredSteps`), each missing-update check's deadline (`deadlineWatches`) and the alarm steps
+ * that keep them (`alarmSteps`), and the recipients an agent's tools are held to (`destinations`). An input observed
+ * is history: it doesn't show the next one will arrive.
+ */
+export interface WorkflowReadinessCheck extends WorkflowReadiness {
+  observations: { step: string; at: string | null; trigger: string | null; runStatus: string | null }[];
+  registeredSteps: string[];
+  deadlineWatches: {
+    step: string; key: string | null; status: string | null; deadline: string | null; lastSeenAt: string | null;
+    firedAt: string | null;
+  }[];
+  alarmSteps: string[];
+  destinations: { step: string; operation: string; recipients: string[] }[];
+  raw: JsonObject;
+}
+
+/** What `Workflow.list` narrows by. */
+export interface WorkflowListQuery {
+  /** A prefix of the name. */
+  q?: string;
+  /** Text its name or description holds, in any case. */
+  search?: string;
+  /** Only those whose steps use this connected account: its credential id (`Connection.credentialId`). */
+  credentialId?: string;
+}
+
+function workflowListQuery(options: WorkflowListQuery): Record<string, string | undefined> {
+  return { q: options.q, search: options.search, credential_id: options.credentialId };
+}
+
+function toReadinessCheck(value: unknown): WorkflowReadinessCheck {
+  const raw = asObject(value);
+  const strs = (list: unknown) => asList(list).map(String);
+  return {
+    ...toReadiness(raw),
+    observations: asList(raw.observations).map((o) => {
+      const found = asObject(o);
+      return { step: String(found.step), at: str(found.at), trigger: str(found.trigger), runStatus: str(found.run_status) };
+    }),
+    registeredSteps: strs(raw.registered_steps),
+    deadlineWatches: asList(raw.deadline_watches).map((w) => {
+      const found = asObject(w);
+      return {
+        step: String(found.step), key: str(found.key), status: str(found.status), deadline: str(found.deadline),
+        lastSeenAt: str(found.last_seen_at), firedAt: str(found.fired_at),
+      };
+    }),
+    alarmSteps: strs(raw.alarm_steps),
+    destinations: asList(raw.destinations).map((d) => {
+      const found = asObject(d);
+      return { step: String(found.step), operation: String(found.operation), recipients: strs(found.recipients) };
+    }),
+    raw,
+  };
+}
+
 /** A URL a workflow answers at: its `endpoint`, its published `app`, or a hosted `mcp` server. */
 export interface WorkflowUrl {
   kind: string;
@@ -2473,16 +2532,17 @@ export class Workflow extends ApiObject {
 
   /**
    * The workflows your account can open (its own and those shared with it), most recently changed first; `q` is a
-   * prefix of the name, `search` text its name or description holds (in any case).
+   * prefix of the name, `search` text its name or description holds (in any case), `credentialId` keeps those whose
+   * steps use that connected account (`Connection.credentialId`).
    */
-  static async list(options: { q?: string; search?: string; limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
-    return await listAll({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+  static async list(options: WorkflowListQuery & { limit?: number; client?: NoClick } = {}): Promise<Workflow[]> {
+    return await listAll({ ...options, path: "/v1/workflows", user: null, query: workflowListQuery(options) },
       (raw) => new Workflow({ raw, client: options.client }));
   }
 
   /** One page of workflows; pass `nextCursor` back as `cursor`. */
-  static async listPage(options: PageOptions & { q?: string; search?: string; client?: NoClick } = {}): Promise<Page<Workflow>> {
-    return await listPage({ ...options, path: "/v1/workflows", user: null, query: { q: options.q, search: options.search } },
+  static async listPage(options: PageOptions & WorkflowListQuery & { client?: NoClick } = {}): Promise<Page<Workflow>> {
+    return await listPage({ ...options, path: "/v1/workflows", user: null, query: workflowListQuery(options) },
       (raw) => new Workflow({ raw, client: options.client }));
   }
 
@@ -3346,6 +3406,25 @@ export class Workflow extends ApiObject {
       user: options.user,
     });
     return toWorkflowRun(raw);
+  }
+
+  /**
+   * One of its steps read alone, whole (`GET /v1/workflows/{id}/steps/{step_id}`), as `graph()` reads every step:
+   * its settings as stored, never a secret (`withheld` names, by path, what was left out). No step by that id throws
+   * `NotFound`.
+   */
+  async getStep(stepId: string): Promise<Step> {
+    const raw = asObject(await this._api.request("GET", await this._stepPath(stepId), { user: null }));
+    return Step._of(this, stepId, asObject(raw.step), asList(raw.withheld).map(String));
+  }
+
+  /**
+   * Whether it's set up to run, with the evidence that's judged on, as the app's setup check shows it: what
+   * `readiness` says, then the inputs its triggers last received, which ones are registered, the deadlines its alarm
+   * steps watch and the recipients its agents' tools are held to.
+   */
+  async checkReadiness(): Promise<WorkflowReadinessCheck> {
+    return toReadinessCheck(await this._api.request("GET", `${await this.path()}/readiness`, { user: null }));
   }
 
   /**

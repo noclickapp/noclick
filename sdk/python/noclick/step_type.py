@@ -253,3 +253,51 @@ async def step_output_shape(name: str, *, operation: Optional[str] = None,
     raw = await resolve_client(client).request(
         "GET", f"/v1/step_types/{path_segment(name)}/output_shape", params={"operation": operation}, user=None)
     return StepOutputShape._from(raw)
+
+
+@dataclass(frozen=True)
+class StepTypeOptions:
+    """A page of a step type's choices for one field (``step_type_options``):
+    each of ``options`` is ``{value, label, metadata}``; pass
+    ``next_page_token`` back as ``page_token``. ``withheld`` names, by path, a
+    choice or a part of one left out because it held a secret."""
+
+    type: str
+    field: str
+    options: List[Dict[str, Any]]
+    next_page_token: Optional[str]
+    withheld: List[str]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "StepTypeOptions":
+        return cls(raw["type"], raw["field"], [dict(o) for o in raw.get("options") or []],
+                   raw.get("next_page_token"), [str(p) for p in raw.get("withheld") or []], raw)
+
+
+@synced
+async def step_type_options(name: str, field: str, *, connection: Optional[str] = None,
+                            settings: Optional[Dict[str, Any]] = None, workflow_id: Optional[str] = None,
+                            search: Optional[str] = None, page_token: Optional[str] = None,
+                            client: Optional[Client] = None) -> StepTypeOptions:
+    """The choices a step of type ``name`` lists for ``field`` (the name its
+    loader takes, a setting's ``x-dynamic-options.field_name``), for no step of
+    a workflow: a picker outside a step's form. Read through ``connection``, an
+    account you may use (its ref or credential id), with ``settings`` what the
+    list depends on; ``workflow_id`` names the workflow the choices are for. A
+    step's own dropdown is ``Step.options``. Needs the ``workflows`` scope.
+
+    Returns:
+        The ``StepTypeOptions``: one page.
+
+    Usage::
+
+        page = noclick.step_type_options("automation-slack", "channel", connection="credential:7c1...")
+        print([o["label"] for o in page.options])
+    """
+    body = {"field": field, "connection": connection, "settings": settings, "workflow_id": workflow_id,
+            "search": search, "page_token": page_token}
+    raw = await resolve_client(client).request(
+        "POST", f"/v1/step_types/{path_segment(name)}/options",
+        json={k: v for k, v in body.items() if v is not None}, user=None)
+    return StepTypeOptions._from(raw)

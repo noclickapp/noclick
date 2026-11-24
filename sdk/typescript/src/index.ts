@@ -876,6 +876,7 @@ export {
   checkStepSettings,
   stepOutputShape,
   stepType,
+  stepTypeOptions,
   stepTypes,
 } from "./stepType.ts";
 export type {
@@ -886,6 +887,8 @@ export type {
   StepTypeKind,
   StepTypeOperation,
   StepTypeOperationKind,
+  StepTypeOption,
+  StepTypeOptions,
 } from "./stepType.ts";
 export {
   TERMINAL_CLOSED_FOR_GOOD,
@@ -1077,8 +1080,10 @@ export type {
   WorkflowEndpoint,
   WorkflowFolder,
   WorkflowFolderListing,
+  WorkflowListQuery,
   WorkflowPreview,
   WorkflowReadiness,
+  WorkflowReadinessCheck,
   WorkflowRehearsal,
   WorkflowRehearseOptions,
   WorkflowRun,
