@@ -24,6 +24,7 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import type { Connection } from "./connection.ts";
 import { AnswerRequired, Conflict, NotFound, OperationTimeout } from "./errors.ts";
+import { ShareLink } from "./agentExtras.ts";
 import {
   ApiObject, asList, asObject, compact, csv, givesFields, listAll, listPage, num, paginate, parseTime, readScope, refId,
   str,
@@ -1879,6 +1880,27 @@ export class Step extends ApiObject {
       idempotencyKey: options.idempotencyKey,
     }));
     return Operation._fromPayload<WorkflowRun>(raw.run, { client: this._client, user: null, kind: "workflow.run", reader: toWorkflowRun });
+  }
+
+  /**
+   * Turn on this agent step's public chat page, or read it if it's on, as the app's Share does: anyone with the link
+   * chats with the step, no account needed, each visitor in their own conversations, on your credits. Only the
+   * workflow's owner may. Its `disable()` and `rotate()` turn it off or change its URL.
+   */
+  async share(): Promise<ShareLink> {
+    const raw = asObject(await this._api.request("POST", `${await this._workflow._stepPath(this.id)}/share`, { user: null }));
+    return ShareLink._from(raw, { client: this._client, user: null });
+  }
+
+  /** This agent step's chat page as it is, without turning it on (`share()` does that); null if it was never shared. */
+  async shareLink(): Promise<ShareLink | null> {
+    try {
+      const raw = asObject(await this._api.request("GET", `${await this._workflow._stepPath(this.id)}/share`, { user: null }));
+      return ShareLink._from(raw, { client: this._client, user: null });
+    } catch (err) {
+      if (err instanceof NotFound) return null;
+      throw err;
+    }
   }
 
   /**

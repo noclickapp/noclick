@@ -49,3 +49,18 @@ test("message() says something as a run from the step", async () => {
   await nc.Workflow.fromId("wf_1").step("helper").message("hi");
   assert.deepEqual(route.last.body, { message: "hi" });
 });
+
+test("a step's chat page turns on, off and rotates; never shared reads null", async () => {
+  const { api } = setup();
+  const share = { object: "share_link", url: "https://noclick.test/a/l1", enabled: true, workflow_id: "wf_1", step_id: "helper", created_at: "2026-11-24T09:00:00+00:00" };
+  api.on("POST", "/v1/workflows/wf_1/steps/helper/share", json(share));
+  const link = await nc.Workflow.fromId("wf_1").step("helper").share();
+  assert.deepEqual([link.url, link.enabled, link.stepId, link.agentId], [share.url, true, "helper", null]);
+  const off = api.on("PATCH", "/v1/workflows/wf_1/steps/helper/share", json({ ...share, enabled: false }));
+  assert.equal((await link.disable()).enabled, false);
+  assert.deepEqual(off.last.body, { enabled: false });
+  api.on("POST", "/v1/workflows/wf_1/steps/helper/share/rotate", json({ ...share, url: "https://noclick.test/a/l2" }));
+  assert.equal((await link.rotate()).url, "https://noclick.test/a/l2");
+  api.on("GET", "/v1/workflows/wf_1/steps/helper/share", json({ error: { type: "not_found", message: "no" } }, { status: 404 }));
+  assert.equal(await nc.Workflow.fromId("wf_1").step("helper").shareLink(), null);
+});

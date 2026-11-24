@@ -28,7 +28,7 @@ import asyncio
 import time
 import uuid
 from dataclasses import dataclass, field as dc_field
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from ._client import Client, path_segment, resolve_client
 from ._object import (
@@ -39,6 +39,9 @@ from ._scope import AMBIENT, resolve_scope
 from .exceptions import AnswerRequired, Conflict, NotFound
 from .operation import Operation, register_result
 from .workflow_approval import WorkflowApproval
+
+if TYPE_CHECKING:
+    from .agent_extras import ShareLink
 
 
 @dataclass(frozen=True)
@@ -1493,6 +1496,46 @@ class Step(_Object):
         run = raw.get("run") if isinstance(raw, dict) else None
         return Operation._from_payload(run or {}, client=self._client, user=None, kind="workflow.run",
                                        reader=_read_run)
+
+    @synced
+    async def share(self) -> "ShareLink":
+        """Turn on this agent step's public chat page, or read it if it's on, as the app's
+        Share does: anyone with the link chats with the step, no account needed, each visitor
+        in their own conversations, on your credits. Only the workflow's owner may.
+
+        Returns:
+            The ``ShareLink``: its ``url``, and ``disable()`` and ``rotate()`` to turn it off or
+            change it.
+
+        Usage::
+
+            link = noclick.Workflow.from_name("support desk").step("helper").share()
+            print(link.url)   # https://noclick.com/a/...
+        """
+        from .agent_extras import ShareLink
+
+        raw = await self._api.request("POST", f"{await self._step_path()}/share", user=None)
+        return ShareLink._new(raw=raw, client=self._client, user=None)
+
+    @synced
+    async def share_link(self) -> Optional["ShareLink"]:
+        """This agent step's chat page as it is, without turning it on (``share()`` does that).
+
+        Returns:
+            The ``ShareLink``, ``enabled`` or not, or ``None`` if the step has never been shared.
+
+        Usage::
+
+            link = noclick.Workflow.from_name("support desk").step("helper").share_link()
+            print(link.url if link and link.enabled else "Not shared")
+        """
+        from .agent_extras import ShareLink
+
+        try:
+            raw = await self._api.request("GET", f"{await self._step_path()}/share", user=None)
+        except NotFound:
+            return None
+        return ShareLink._new(raw=raw, client=self._client, user=None)
 
     # --- its app (an interface step) ---------------------------------------
 

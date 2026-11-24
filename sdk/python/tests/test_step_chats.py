@@ -47,3 +47,20 @@ def test_saying_something_is_a_run_from_the_step(api, client):
     assert (op.id, op.kind) == ("op_1", "workflow.run")
     nc.Workflow.from_id("wf_1").step("helper").message("hi")
     assert json.loads(route.calls.last.request.content) == {"message": "hi"}
+
+
+SHARE = {"object": "share_link", "url": "https://noclick.test/a/l1", "enabled": True, "workflow_id": "wf_1",
+         "step_id": "helper", "created_at": "2026-11-24T09:00:00+00:00"}
+
+
+def test_a_steps_chat_page_turns_on_off_and_rotates(api, client):
+    on = api.post("/v1/workflows/wf_1/steps/helper/share").respond(json=SHARE)
+    link = nc.Workflow.from_id("wf_1").step("helper").share()
+    assert on.called and (link.url, link.enabled, link.step_id, link.agent_id) == (SHARE["url"], True, "helper", None)
+    off = api.patch("/v1/workflows/wf_1/steps/helper/share").respond(json={**SHARE, "enabled": False})
+    assert link.disable().enabled is False
+    assert json.loads(off.calls.last.request.content) == {"enabled": False}
+    api.post("/v1/workflows/wf_1/steps/helper/share/rotate").respond(json={**SHARE, "url": "https://noclick.test/a/l2"})
+    assert link.rotate().url == "https://noclick.test/a/l2"
+    api.get("/v1/workflows/wf_1/steps/helper/share").respond(404, json={"error": {"type": "not_found", "message": "no"}})
+    assert nc.Workflow.from_id("wf_1").step("helper").share_link() is None

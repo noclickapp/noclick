@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 from urllib.parse import quote
 
 from ._attachment import Attachment
+from ._client import path_segment
 from ._object import Page, _Object, compact, field, paginate, parse_time
 from ._sync import synced
 from ._scope import AMBIENT
@@ -848,19 +849,26 @@ class CodingAgents:
 
 
 class ShareLink(_Object):
-    """An agent's public chat page. Anyone with ``url`` can talk to the agent,
-    no sign-in: each visitor in conversations of their own, billed to you. Your
-    brand dresses the page. ``created_at`` is when it was first shared."""
+    """An agent's public chat page, or a workflow's agent step's (``Step.share``:
+    ``workflow_id`` and ``step_id`` name it, ``agent_id`` is ``None``). Anyone with
+    ``url`` can talk to the agent, no sign-in: each visitor in conversations of
+    their own, billed to you. Your brand dresses an agent's page. ``created_at`` is
+    when it was first shared."""
 
     _repr_keys = ("url", "enabled")
 
     url: str = field("url")
     enabled: bool = field("enabled")
-    agent_id: str = field("agent_id")
+    agent_id: Optional[str] = field("agent_id")
+    workflow_id: Optional[str] = field("workflow_id", doc="A step's page: its workflow.")
+    step_id: Optional[str] = field("step_id", doc="A step's page: its step.")
     created_at: Any = field("created_at", parse_time)
     rotated_at: Any = field("rotated_at", parse_time, doc="When the URL last changed (None if it never has).")
 
     def _path(self) -> str:
+        if self._known("step_id"):
+            return (f"/v1/workflows/{path_segment(self._known('workflow_id'))}/steps/"
+                    f"{path_segment(self._known('step_id'))}/share")
         return f"/v1/agents/{self._known('agent_id')}/share"
 
     async def _load(self) -> Dict[str, Any]:

@@ -672,8 +672,8 @@ export class ShareLink extends ApiObject {
   }
 
   /** @internal */
-  static _from(raw: JsonObject, init: { agentId: string; client?: NoClick; user?: UserOption }): ShareLink {
-    return new ShareLink({ raw, hints: { agent_id: init.agentId }, client: init.client, user: init.user });
+  static _from(raw: JsonObject, init: { agentId?: string; client?: NoClick; user?: UserOption }): ShareLink {
+    return new ShareLink({ raw, hints: init.agentId ? { agent_id: init.agentId } : {}, client: init.client, user: init.user });
   }
 
   get url(): string {
@@ -682,8 +682,17 @@ export class ShareLink extends ApiObject {
   get enabled(): boolean {
     return Boolean(this._field("enabled"));
   }
-  get agentId(): string {
-    return this._field("agent_id");
+  /** The agent whose page it is; null for a workflow's agent step's page (`Step.share`). */
+  get agentId(): string | null {
+    return (this._known("agent_id") as string | undefined) ?? null;
+  }
+  /** A step's page: its workflow. */
+  get workflowId(): string | null {
+    return (this._known("workflow_id") as string | undefined) ?? null;
+  }
+  /** A step's page: its step. */
+  get stepId(): string | null {
+    return (this._known("step_id") as string | undefined) ?? null;
   }
   get createdAt(): Date | null {
     return parseTime(this._field("created_at"));
@@ -694,6 +703,9 @@ export class ShareLink extends ApiObject {
   }
 
   private get path(): string {
+    if (this._known("step_id")) {
+      return `/v1/workflows/${encodeURIComponent(String(this._known("workflow_id")))}/steps/${encodeURIComponent(String(this._known("step_id")))}/share`;
+    }
     return `/v1/agents/${this._known("agent_id")}/share`;
   }
 
