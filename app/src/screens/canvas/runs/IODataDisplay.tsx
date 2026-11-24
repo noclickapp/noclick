@@ -8,6 +8,7 @@ import { DraggableJsonField } from './DraggableJsonField';
 import { TableView } from './TableView';
 import { SuggestedRefsTab, type SuggestedRef } from './SuggestedRefsTab';
 import { useIOViewPreference, setIOViewPreference } from './useIOViewPreference';
+import { useLater } from '@/lib/useLater';
 
 // Hysteresis thresholds for compact mode to prevent ResizeObserver feedback loops.
 // When non-compact, collapse at COMPACT_ENTER. When compact, only expand at COMPACT_LEAVE.
@@ -62,6 +63,7 @@ interface IODataDisplayProps {
 
 export const IODataDisplay = ({ data, label, nodeId, draggable = false, isSchema = false, suggestedRefs }: IODataDisplayProps) => {
     const [copied, setCopied] = useState(false);
+    const later = useLater();
     // 'suggested' (Fields) and 'json' are the two persistent tab modes —
     // their preference is shared across every IODataDisplay on screen and
     // persisted in localStorage. 'table' is ad-hoc per card and doesn't touch
@@ -114,11 +116,11 @@ export const IODataDisplay = ({ data, label, nodeId, draggable = false, isSchema
             const textToCopy = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
             await navigator.clipboard.writeText(textToCopy);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            later(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
         }
-    }, [data]);
+    }, [data, later]);
 
     // Check if data is a non-primitive (object/array) that should use tree view
     const isStructuredData = useMemo(() => {
