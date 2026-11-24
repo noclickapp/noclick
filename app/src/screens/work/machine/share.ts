@@ -16,16 +16,6 @@ export const shareLabel = (share: number) =>
     SHARES.find((s) => s.value === share)?.label ??
     `${Math.round(share * 100)}%`;
 
-/** The stop one step from `share` the way `dir` goes (a part between stops steps to its neighbour), or null past
- *  either end. */
-export function stepFrom(share: number, dir: 1 | -1): number | null {
-    const next =
-        dir > 0
-            ? SHARES.find((s) => s.value > share)
-            : [...SHARES].reverse().find((s) => s.value < share);
-    return next ? next.value : null;
-}
-
 const amount = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
 
 /** A computer's CPUs and memory split between NoClick and you, as a person reads it: "6 CPUs · 24 GB", and what you

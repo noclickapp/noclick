@@ -54,8 +54,9 @@ export interface WholeGraphSaves {
     close: (save: WholeGraphSave) => void;
 }
 
-/** The server's graph read again: what it holds and its version, else why nothing was read. */
-export type ServerGraphRead = { graph: ServerGraphData; version: number | null } | { graph: null; error?: string };
+/** The server's graph read again: what it holds, its version and, where the read says so, what the reader may do with
+ *  the workflow (`viewer`: only look), else why nothing was read. */
+export type ServerGraphRead = { graph: ServerGraphData; version: number | null; access?: 'owner' | 'editor' | 'viewer' | null } | { graph: null; error?: string };
 
 export interface GraphSaves {
     /** Which way a record saves, asked at its first save. */
@@ -77,7 +78,7 @@ export const V1_GRAPH_SAVES: GraphSaves = {
         if (!client) return { graph: null, error: 'no client to read the workflow with (setCanvasEditsClient)' };
         const { Workflow } = await import('../standardsSdk');
         const graph = await Workflow.fromId(workflowId, { client }).graph();
-        return { graph: graph.raw, version: graph.version };
+        return { graph: graph.raw, version: graph.version, access: graph.access };
     },
     paused: () => false,
 };

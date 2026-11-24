@@ -73,13 +73,17 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
     { label: 'Webhooks', covers: 'Webhook endpoints and the event log, and reading an endpoint\'s signing secret.', scopes: ['webhooks', 'webhooks:reveal'] },
     // Designed, not built yet: listed only where the account's scopes include them (the lab).
     { label: 'Acting', covers: 'Browsers and their logged-in profiles, and virtual cards.', scopes: ['browsers', 'cards', 'cards:reveal'] },
-    { label: 'Build', covers: 'Apps, code repos and domains.', scopes: ['apps', 'repos', 'domains', 'domains:buy'] },
+    {
+        label: 'Build',
+        covers: 'Apps, code repos and domains, and making an app’s code public.',
+        scopes: ['apps', 'repos', 'domains', 'domains:buy', 'projects:publish'],
+    },
     {
         label: 'Data',
         covers: 'Databases, buckets, volumes, dicts, queues and secrets.',
         scopes: ['databases', 'storage', 'volumes', 'dicts', 'queues', 'secrets'],
     },
-    { label: 'Platform', covers: 'Workflows.', scopes: ['workflows'] },
+    { label: 'Platform', covers: 'Workflows, and reading the values of a workflow’s variables.', scopes: ['workflows', 'workflows:variables'] },
 ];
 
 /** What each scope a key holds only when it's named does, offered beside Full access or Read-only. */
@@ -93,6 +97,8 @@ const NAMED_SCOPE_HINTS: Record<string, string> = {
     'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
     'keys:create': 'makes keys no wider than itself, which go when it’s revoked',
     'account:phones': 'links phone numbers to the account, each of which signs in to it',
+    'workflows:variables': 'reads the values of a workflow’s variables, which hold what its steps are given as secrets',
+    'projects:publish': 'makes an app’s code public, for anyone to clone, which can’t be recalled once cloned',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built

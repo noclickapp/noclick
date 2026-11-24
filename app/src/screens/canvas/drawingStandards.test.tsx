@@ -150,6 +150,9 @@ describe('a step with no drawing of its own', () => {
     });
 
     it('draws a note’s text as a README is drawn', async () => {
+        // The README renderer loads with the first note (Prism's languages: seconds on a slow disk), so wait for that
+        // load itself rather than for find's one second.
+        await import('@/screens/resources/CodeView');
         const Note = buildLazyNodeTypes().stickyNote;
         render(
             <ClientProvider client={clientAsking([])}>
@@ -159,7 +162,7 @@ describe('a step with no drawing of its own', () => {
             </ClientProvider>
         );
         expect((await screen.findByText('daily')).tagName).toBe('STRONG');
-    });
+    }, 30_000); // that load, about 2s alone, ran past vitest's 5s beside a full run of everything else
 });
 
 describe('a build working on a step', () => {

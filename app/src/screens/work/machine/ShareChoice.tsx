@@ -3,14 +3,7 @@
 // reported its size, and saves when let go (after keys, a moment after the last press). In Add your computer it's set
 // before the command runs (a Mac's VM is made that size); on the computer's page after, where a Mac's VM keeps it.
 import { Check, Lock } from 'lucide-react';
-import {
-    useEffect,
-    useId,
-    useRef,
-    useState,
-    type KeyboardEvent,
-    type PointerEvent,
-} from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { invalidateV1 } from '@/sdk/useV1';
 import { NoClickError } from 'noclick';
 import {
@@ -18,63 +11,21 @@ import {
     type OwnComputer,
 } from '@/screens/resources/knowledge';
 import { Section } from '@/screens/resources/ui';
+import { reducedMotion, RollText, StopSlider, type SliderStop } from '@/ui/StopSlider';
 import { cn } from '@/ui/utils';
 import { useWorkClient } from '../client';
-import { DEFAULT_SHARE, SHARES, shareLabel, splitOf, stepFrom } from './share';
+import { DEFAULT_SHARE, SHARES, shareLabel, splitOf } from './share';
 
 const TITLE = 'What NoClick uses';
-/** The thumb's radius: the end stop sits this far in from the track's end. */
-const R = 16;
-const SPRING = 'ease-[cubic-bezier(.25,1.25,.5,1)]';
-const STEP_KEYS: Record<string, 1 | -1> = {
-    ArrowRight: 1,
-    ArrowUp: 1,
-    PageUp: 1,
-    ArrowLeft: -1,
-    ArrowDown: -1,
-    PageDown: -1,
-};
-
-const still = () =>
-    typeof window !== 'undefined' &&
-    !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-const clamp = (n: number, lo: number, hi: number) =>
-    Math.max(lo, Math.min(hi, n));
-const centerOf = (share: number, width: number) =>
-    clamp(share * width, R, width - R);
-const nearest = (px: number, centers: number[]) =>
-    centers.reduce(
-        (best, c, i) =>
-            Math.abs(c - px) < Math.abs(centers[best] - px) ? i : best,
-        0
-    );
-
-/** Under a hand the thumb leans into the nearest stop and gives a little past either end, so stops feel caught. */
-function shape(raw: number, centers: number[]) {
-    const lo = centers[0];
-    const hi = centers[centers.length - 1];
-    const give = (over: number) => 8 * (1 - 1 / (over / 28 + 1));
-    if (raw < lo) return lo - give(lo - raw);
-    if (raw > hi) return hi + give(raw - hi);
-    const c = centers[nearest(raw, centers)];
-    const off = raw - c;
-    return Math.abs(off) < 16 ? c + (off * Math.abs(off)) / 16 : raw;
-}
-
-function shake(el: HTMLElement | null, xs: number[], duration: number) {
-    if (!el || still()) return;
-    el.animate(
-        xs.map((x) => ({ transform: `translateX(${x}px)` })),
-        { duration, easing: 'ease-out' }
-    );
-}
+/** Each part sits at its share of the track, so the white is NoClick's part of the whole. */
+const STOPS: readonly SliderStop<number>[] = SHARES.map((s) => ({ value: s.value, at: s.value }));
 
 /** A share shown on its way to `target`, so the CPUs and memory count rather than jump. */
 function useCount(target: number) {
     const [shown, setShown] = useState(target);
     const at = useRef(target);
     useEffect(() => {
-        if (still()) {
+        if (reducedMotion()) {
             at.current = target;
             setShown(target);
             return;
@@ -91,58 +42,6 @@ function useCount(target: number) {
         return () => cancelAnimationFrame(frame);
     }, [target]);
     return shown;
-}
-
-/** The stop's name, rolling to the next one the way the thumb went. */
-function Roll({ value }: { value: number }) {
-    const [now, setNow] = useState(value);
-    const [gone, setGone] = useState<{ value: number; up: boolean } | null>(
-        null
-    );
-    if (value !== now) {
-        setGone(still() ? null : { value: now, up: value > now });
-        setNow(value);
-    }
-    useEffect(() => {
-        if (!gone) return;
-        const t = setTimeout(() => setGone(null), 240);
-        return () => clearTimeout(t);
-    }, [gone]);
-    const up = gone?.up ?? true;
-    return (
-        <span className="inline-grid overflow-hidden align-bottom font-medium">
-            {gone && (
-                <span
-                    key={`gone-${gone.value}`}
-                    aria-hidden
-                    className={cn(
-                        'whitespace-nowrap duration-[170ms] ease-in animate-out fade-out fill-mode-forwards [grid-area:1/1]',
-                        up
-                            ? 'slide-out-to-top-[70%]'
-                            : 'slide-out-to-bottom-[70%]'
-                    )}
-                >
-                    {shareLabel(gone.value)}
-                </span>
-            )}
-            <span
-                key={now}
-                data-testid="share-stop"
-                className={cn(
-                    'whitespace-nowrap [grid-area:1/1]',
-                    gone &&
-                        cn(
-                            'duration-[230ms] ease-out animate-in fade-in',
-                            up
-                                ? 'slide-in-from-bottom-[70%]'
-                                : 'slide-in-from-top-[70%]'
-                        )
-                )}
-            >
-                {shareLabel(now)}
-            </span>
-        </span>
-    );
 }
 
 const STATUS =
@@ -234,57 +133,6 @@ export function ShareChoice({
         return () => clearTimeout(t);
     }, [flash]);
 
-    const track = useRef<HTMLDivElement>(null);
-    const thumb = useRef<HTMLDivElement>(null);
-    const knob = useRef<HTMLSpanElement>(null);
-    const dots = useRef<(HTMLSpanElement | null)[]>([]);
-    const [width, setWidth] = useState(0);
-    const [resizing, setResizing] = useState(false);
-    const [drag, setDrag] = useState<number | null>(null);
-    const [pressed, setPressed] = useState(false);
-    const [hover, setHover] = useState<number | null>(null);
-    // The stop the hand or keys are on right now, read by handlers that can run before a render.
-    const live = useRef(pick);
-    const hand = useRef({
-        down: false,
-        moved: false,
-        startX: 0,
-        left: 0,
-        grab: 0,
-        tapAt: null as number | null,
-        centers: [] as number[],
-    });
-    const keyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    useEffect(() => {
-        if (!hand.current.down && keyTimer.current === null)
-            live.current = pick;
-    }, [pick]);
-
-    // Positions follow the track's width, without a spring when it's the width that moved.
-    useEffect(() => {
-        const el = track.current;
-        if (!el) return;
-        setWidth(el.getBoundingClientRect().width);
-        const observer = new ResizeObserver(() => {
-            if (hand.current.down) return;
-            setResizing(true);
-            setWidth(el.getBoundingClientRect().width);
-            requestAnimationFrame(() =>
-                requestAnimationFrame(() => setResizing(false))
-            );
-        });
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
-    const centers = SHARES.map((s) => centerOf(s.value, width));
-    // Before the track is measured (first paint), where a part sits in CSS terms.
-    const at = (share: number) =>
-        width
-            ? `${centerOf(share, width)}px`
-            : `clamp(${R}px, ${share * 100}%, calc(100% - ${R}px))`;
-    const thumbAt = drag !== null ? `${drag}px` : at(pick);
-    const thumbPx = drag ?? centerOf(pick, width);
-
     const count = useCount(pick);
     const vm = computer.pairing?.vm ?? null;
     const size =
@@ -301,7 +149,6 @@ export function ShareChoice({
 
     const commit = async (value: number) => {
         setPreview(null);
-        live.current = value;
         if (fixed || value === (chosen ?? has)) return;
         const prior = chosen;
         const t = ++token.current;
@@ -329,138 +176,6 @@ export function ShareChoice({
         }
     };
 
-    // The key timer saves with the render it fires in, not the one it was set in.
-    const commitLatest = useRef(commit);
-    useEffect(() => {
-        commitLatest.current = commit;
-    });
-
-    const choose = (value: number) => {
-        if (value === live.current) return;
-        const i = SHARES.findIndex((s) => s.value === value);
-        if (!still())
-            dots.current[i]?.animate(
-                [{ transform: 'scale(2.2)' }, { transform: 'scale(1)' }],
-                { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' }
-            );
-        live.current = value;
-        setPreview(value);
-    };
-
-    const refuse = () => {
-        shake(knob.current, [0, -4, 4, -2, 0], 320);
-        setFlash(true);
-    };
-
-    const measure = () => {
-        const rect = track.current!.getBoundingClientRect();
-        setWidth(rect.width);
-        return rect;
-    };
-
-    const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
-        const rect = measure();
-        if (fixed) {
-            refuse();
-            return;
-        }
-        const h = hand.current;
-        const cs = SHARES.map((s) => centerOf(s.value, rect.width));
-        const p = e.clientX - rect.left;
-        const x = centerOf(live.current, rect.width);
-        Object.assign(h, {
-            down: true,
-            moved: false,
-            startX: e.clientX,
-            left: rect.left,
-            tapAt: null,
-            centers: cs,
-        });
-        e.currentTarget.setPointerCapture(e.pointerId);
-        setPressed(true);
-        if (keyTimer.current !== null) clearTimeout(keyTimer.current);
-        keyTimer.current = null;
-        if (e.pointerType === 'mouse') e.preventDefault();
-        if (thumb.current!.contains(e.target as Node) || Math.abs(p - x) <= R) {
-            h.grab = p - x;
-        } else {
-            h.grab = 0;
-            // A finger waits to lift or slide, so a scroll that starts on the track changes nothing.
-            if (e.pointerType === 'touch') h.tapAt = p;
-            else choose(SHARES[nearest(p, cs)].value);
-        }
-        if (e.pointerType !== 'touch')
-            thumb.current!.focus({ preventScroll: true });
-    };
-
-    const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
-        const h = hand.current;
-        if (!h.down) {
-            if (e.pointerType === 'mouse' && !fixed && width)
-                setHover(
-                    nearest(
-                        e.clientX - track.current!.getBoundingClientRect().left,
-                        centers
-                    )
-                );
-            return;
-        }
-        if (!h.moved) {
-            if (Math.abs(e.clientX - h.startX) < 4) return;
-            h.moved = true;
-            h.tapAt = null;
-            setHover(null);
-        }
-        const raw = e.clientX - h.left - h.grab;
-        const cs = h.centers;
-        setDrag(shape(raw, cs));
-        choose(SHARES[nearest(clamp(raw, cs[0], cs[cs.length - 1]), cs)].value);
-    };
-
-    const onPointerEnd = (e: PointerEvent<HTMLDivElement>) => {
-        const h = hand.current;
-        if (!h.down) return;
-        h.down = false;
-        setPressed(false);
-        setDrag(null);
-        if (e.currentTarget.hasPointerCapture(e.pointerId))
-            e.currentTarget.releasePointerCapture(e.pointerId);
-        if (!h.moved && h.tapAt !== null && e.type !== 'pointercancel')
-            choose(SHARES[nearest(h.tapAt, h.centers)].value);
-        h.tapAt = null;
-        void commit(live.current);
-    };
-
-    const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-        const from = live.current;
-        const next =
-            e.key in STEP_KEYS
-                ? stepFrom(from, STEP_KEYS[e.key])
-                : e.key === 'Home'
-                  ? SHARES[0].value
-                  : e.key === 'End'
-                    ? SHARES[SHARES.length - 1].value
-                    : undefined;
-        if (next === undefined) return;
-        e.preventDefault();
-        if (fixed) {
-            refuse();
-            return;
-        }
-        if (next === null) {
-            const dir = STEP_KEYS[e.key];
-            shake(knob.current, [0, 4 * dir, 0], 260);
-            return;
-        }
-        choose(next);
-        if (keyTimer.current !== null) clearTimeout(keyTimer.current);
-        keyTimer.current = setTimeout(() => {
-            keyTimer.current = null;
-            void commitLatest.current(live.current);
-        }, 450);
-    };
-
     const noteId = useId();
     const note = fixed
         ? 'NoClick’s VM on this Mac was made this size and keeps it: to change it, remove NoClick from the Mac and add it again.'
@@ -471,7 +186,6 @@ export function ShareChoice({
             : mac
               ? 'On a Mac, NoClick’s VM is made this size when you run the command, and keeps it.'
               : 'A server just for NoClick: all of it. A computer you use: half or less, so it stays quick for you.';
-    const springs = drag === null && !resizing;
     const status = <SaveStatus saving={saving} saved={saved} />;
 
     const body = (
@@ -481,7 +195,7 @@ export function ShareChoice({
         >
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 px-0.5 text-[13px] tabular-nums">
                 <span className="inline-flex items-baseline whitespace-nowrap text-foreground">
-                    <Roll value={pick} />
+                    <RollText order={pick} text={shareLabel(pick)} testId="share-stop" />
                     {split && (
                         <>
                             <span aria-hidden>&nbsp;·&nbsp;</span>
@@ -500,90 +214,30 @@ export function ShareChoice({
                     </span>
                 )}
             </div>
-            <div
-                ref={track}
-                data-testid="share-track"
-                onPointerDown={onPointerDown}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerEnd}
-                onPointerCancel={onPointerEnd}
-                onLostPointerCapture={onPointerEnd}
-                onPointerLeave={() => setHover(null)}
-                className={cn(
-                    'relative h-11 touch-pan-y select-none [-webkit-tap-highlight-color:transparent]',
-                    fixed ? 'cursor-not-allowed' : 'cursor-pointer'
-                )}
-            >
-                <div
-                    className={cn(
-                        'absolute inset-x-0 top-3 h-5 overflow-hidden rounded-full bg-foreground/[0.08] shadow-[inset_0_0_0_1px_hsl(var(--foreground)/0.06)]',
-                        fixed && 'opacity-[.45]'
-                    )}
-                >
-                    <div
-                        className={cn(
-                            'absolute inset-y-0 left-0 rounded-full bg-foreground',
-                            springs &&
-                                `transition-[width] duration-[420ms] motion-reduce:transition-none ${SPRING}`
-                        )}
-                        style={{ width: thumbAt }}
-                    />
-                </div>
-                {SHARES.map((s, i) => (
-                    <span
-                        key={s.value}
-                        ref={(el) => {
-                            dots.current[i] = el;
-                        }}
-                        aria-hidden
-                        className={cn(
-                            'pointer-events-none absolute top-[19.5px] -ml-[2.5px] h-[5px] w-[5px] rounded-full [transition:background-color_.15s,transform_.25s_cubic-bezier(.25,1.25,.5,1)] motion-reduce:transition-none',
-                            (width ? centers[i] < thumbPx - 2 : s.value < pick)
-                                ? 'bg-background/[0.42]'
-                                : 'bg-foreground/30',
-                            hover === i && s.value !== pick && 'scale-[1.7]',
-                            fixed && 'opacity-[.45]'
-                        )}
-                        style={{ left: at(s.value) }}
-                    />
-                ))}
-                <div
-                    ref={thumb}
-                    role="slider"
-                    tabIndex={0}
-                    aria-label={TITLE}
-                    aria-describedby={note ? noteId : undefined}
-                    aria-valuemin={SHARES[0].value}
-                    aria-valuemax={SHARES[SHARES.length - 1].value}
-                    aria-valuenow={pick}
-                    aria-valuetext={`${shareLabel(pick)}${exact ? `, ${exact.noclick.replace(' · ', ' and ')}` : ''}`}
-                    aria-disabled={fixed}
-                    onKeyDown={onKeyDown}
-                    className={cn(
-                        'absolute top-1.5 -ml-4 h-8 w-8 rounded-full outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                        springs &&
-                            `transition-[left] duration-[420ms] motion-reduce:transition-none ${SPRING}`
-                    )}
-                    style={{ left: thumbAt }}
-                >
-                    <span
-                        ref={knob}
-                        className={cn(
-                            'grid h-full w-full place-items-center rounded-full bg-card text-foreground shadow-[0_1px_2px_hsl(var(--foreground)/0.22),0_0_0_1px_hsl(var(--foreground)/0.06),0_3px_8px_hsl(var(--foreground)/0.12)] transition-transform duration-200 motion-reduce:transition-none dark:bg-foreground dark:text-background dark:shadow-[0_1px_2px_hsl(var(--background)/0.55),0_3px_10px_hsl(var(--background)/0.35)]',
-                            SPRING,
-                            pressed && 'scale-110'
-                        )}
-                    >
-                        {fixed && (
-                            <Lock
-                                data-testid="share-locked"
-                                className="h-3.5 w-3.5"
-                                strokeWidth={2}
-                            />
-                        )}
-                    </span>
-                </div>
-            </div>
+            <StopSlider
+                asShare
+                stops={STOPS}
+                value={pick}
+                at={pick}
+                onPreview={setPreview}
+                onCommit={(value) => void commit(value)}
+                label={TITLE}
+                valueText={`${shareLabel(pick)}${exact ? `, ${exact.noclick.replace(' · ', ' and ')}` : ''}`}
+                amount={(share) => share}
+                describedBy={note ? noteId : undefined}
+                locked={fixed}
+                onRefused={() => setFlash(true)}
+                knob={
+                    fixed && (
+                        <Lock
+                            data-testid="share-locked"
+                            className="h-3.5 w-3.5"
+                            strokeWidth={2}
+                        />
+                    )
+                }
+                testId="share-track"
+            />
             {split && computer.conversationsAtOnce ? (
                 // The API's count is for the part it has; it fades while another is picked.
                 <p

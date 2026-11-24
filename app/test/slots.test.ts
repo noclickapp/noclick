@@ -8,6 +8,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
+import { SCAN_S } from './limits';
 
 const APP = resolve(import.meta.dirname, '..');
 const SRC = join(APP, 'src');
@@ -146,6 +147,10 @@ describe('the app', () => {
             'canvas.runs.reads',
             'canvas.runs.results',
             'canvas.runs.saved',
+            'canvas.setup',
+            'canvas.setup.cover',
+            'canvas.setup.mcp',
+            'canvas.setup.runtime',
             'canvas.share',
             'canvas.step.accounts',
             'canvas.step.connection',
@@ -233,5 +238,5 @@ describe('the app', () => {
             'work.toolServer.signIn',
         ]);
         expect(problems(modules).join('\n')).toBe('');
-    });
+    }, SCAN_S);
 });

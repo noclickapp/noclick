@@ -62,12 +62,14 @@ async function serve(env: Record<string, string>): Promise<Served> {
     child.stdout.on('data', (chunk) => output.push(String(chunk)));
     child.stderr.on('data', (chunk) => output.push(String(chunk)));
     const url = `http://127.0.0.1:${port}`;
-    for (let tries = 0; ; tries++) {
+    // Until it answers or ends: a cold start on a loaded machine takes as long as it takes, and the hook's own timeout
+    // bounds a server that never comes up.
+    for (;;) {
         try {
             await fetch(`${url}/login`);
             return { url, port, output, process: child };
         } catch {
-            if (tries > 100 || child.exitCode !== null) throw new Error(`the server didn't start:\n${output.join('')}`);
+            if (child.exitCode !== null) throw new Error(`the server didn't start:\n${output.join('')}`);
             await new Promise((resolve) => setTimeout(resolve, 100));
         }
     }
@@ -99,7 +101,8 @@ beforeAll(async () => {
     api = await startFakeApi();
     const settings = { NOCLICK_API_KEY: KEY, APP_PASSWORD: PASSWORD, SESSION_SECRET: SECRET, NOCLICK_API_URL: api.url };
     [configured, unset] = await Promise.all([serve(settings), serve({ ...settings, SESSION_SECRET: '' })]);
-}, 180_000);
+    // A production build of the whole app: about half a minute alone, several times that beside the rest of the suite.
+}, 300_000);
 
 afterAll(async () => {
     for (const served of [configured, unset]) served?.process.kill();
@@ -242,9 +245,21 @@ describe('the developer console, under the production server', () => {
         }
     });
 
-    it('draws the home, the chat, Work, Connections, Resources and Settings in the app’s frame, and the console in it with its own sidebar', async () => {
+    it('serves the workflows and one workflow’s page to the owner, behind the sign-in', async () => {
+        expect((await get(configured, '/workflows')).headers.get('location')).toBe('/login?next=%2Fworkflows');
+        expect((await get(configured, '/workflows/wf_1?tab=setup')).headers.get('location')).toBe('/login?next=%2Fworkflows%2Fwf_1%3Ftab%3Dsetup');
         const cookie = await signedInCookie();
-        for (const path of ['/', '/chat', '/work', '/connections', '/resources?kind=domains', '/settings']) {
+        for (const [path, title] of [['/workflows', 'Automations'], ['/workflows/wf_1', 'Workflow'], ['/workflows/wf_1?tab=test', 'Workflow']] as const) {
+            const page = await get(configured, path, { headers: { cookie } });
+            expect(page.status, path).toBe(200);
+            expect(page.body, path).toContain(`<title>${title} · NoClick</title>`);
+            expect(page.headers.get('x-frame-options'), path).toBe('DENY');
+        }
+    });
+
+    it('draws the home, the chat, Work, Automations, Connections, Resources and Settings in the app’s frame, and the console in it with its own sidebar', async () => {
+        const cookie = await signedInCookie();
+        for (const path of ['/', '/chat', '/work', '/workflows', '/workflows/wf_1', '/connections', '/resources?kind=domains', '/settings']) {
             const page = await get(configured, path, { headers: { cookie } });
             expect(page.status, path).toBe(200);
             expect(page.body, path).toContain('data-testid="app-sidebar"');
@@ -259,14 +274,15 @@ describe('the developer console, under the production server', () => {
 
     it('has no lab: its address answers 404, and the build carries none of its made-up data', async () => {
         const cookie = await signedInCookie();
-        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key', '/settings-lab', '/settings-lab?scene=billing&as=key', '/step-form-lab', '/step-form-lab?scene=mail-send&as=key']) {
+        for (const path of ['/developers-lab', '/developers-lab/usage?fixture=populated', '/resources-lab', '/work-lab', '/work-lab?scene=home&as=key', '/chat-lab', '/chat-lab?scene=start&as=key', '/connections-lab', '/connections-lab?scene=account&as=key', '/settings-lab', '/settings-lab?scene=billing&as=key', '/workflows-lab', '/workflows-lab?scene=canvas&as=key', '/step-form-lab', '/step-form-lab?scene=mail-send&as=key']) {
             expect((await get(configured, path, { headers: { cookie } })).status, path).toBe(404);
         }
         const files = builtFiles();
         expect(files.length).toBeGreaterThan(20);
         // The console lab's own note, a value only its fixtures hold (the moment they are set at), a made-up agent of
-        // Work's fixtures, the chat's fixtures' NoClick, and a made-up bot of Connections' fixtures.
-        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05|agt_wirefern|8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01|northwind-release-bot/.test(readFileSync(file, 'utf8')));
+        // Work's fixtures, the chat's fixtures' NoClick, a made-up bot of Connections' fixtures, and a made-up folder
+        // of the workflows' fixtures.
+        const carrying = files.filter((file) => /\.(?:js|mjs|css|html|json)$/.test(file)).filter((file) => /Lab: made-up data|2026-09-26T16:20:05|agt_wirefern|8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01|northwind-release-bot|fld_reports/.test(readFileSync(file, 'utf8')));
         expect(carrying.map((file) => file.slice(APP.length + 1))).toEqual([]);
     });
 });
