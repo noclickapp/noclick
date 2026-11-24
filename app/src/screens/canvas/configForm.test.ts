@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { compileConfigSchema, evaluateShowIf, isValidTimeZone, judgeConfigForm } from './configForm';
+import { EMPTY_STEP_REFERENCE_MESSAGE } from './expressionSyntax';
 import { schemaInfoOf } from './stepSchema';
 import { describeRequireOneOfGroup, evaluateRequireOneOf, hasDefaultValue, isFieldEmpty, isFieldRequired } from './stepFields';
 
@@ -57,6 +58,21 @@ describe('judgeConfigForm', () => {
             { message: 'must be one of: plain, advanced', fieldKey: 'mode', fieldLabel: 'mode', type: 'field' },
             { message: 'must be a valid timezone', fieldKey: 'zone', fieldLabel: 'zone', type: 'field' },
         ]);
+    });
+
+    it('names a field holding a step reference with no step picked, wherever in it', () => {
+        expect(judge({ channel: 'c', text: "Reply to {{ $('') }} soon", recipients: ['{{ $("").to }}'] }, 'send').errors).toEqual([
+            { message: EMPTY_STEP_REFERENCE_MESSAGE, fieldKey: 'recipients', fieldLabel: 'recipients', type: 'field' },
+            { message: EMPTY_STEP_REFERENCE_MESSAGE, fieldKey: 'text', fieldLabel: 'Text', type: 'field' },
+        ]);
+        expect(judge({ channel: 'c', text: "Reply to {{ $('trigger').from }} {{ $json }}" }, 'send')).toEqual({ valid: true, errors: [] });
+    });
+
+    it("leaves an API agent's instructions alone: a run hands them over as written", () => {
+        const agent = schemaInfoOf({ properties: { system_prompt: { type: 'string', title: 'System Prompt' }, message: { type: 'string', title: 'Message' } } });
+        const quoting = { system_prompt: "Explain {{ $('') }}.", message: "Go {{ $('') }}" };
+        expect(judgeConfigForm(agent, 'agent', quoting, undefined).errors.map((e) => e.fieldKey)).toEqual(['system_prompt', 'message']);
+        expect(judgeConfigForm(agent, 'agent', { ...quoting, message_per_turn: true }, undefined).errors.map((e) => e.fieldKey)).toEqual(['message']);
     });
 
     it("holds TikTok's disclosure rule for a direct post", () => {

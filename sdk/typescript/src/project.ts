@@ -342,6 +342,106 @@ function toPreviewLink(value: unknown): PreviewLink {
 }
 
 /**
+ * An app's code made public: anyone clones it from `cloneUrl` (the app's own address: `git clone
+ * https://booking.noclick.site`) and deploys their own copy from that address alone. What's public is a copy of the
+ * production commit's files, with none of its earlier history or other branches, checked for secrets before each
+ * publish. `public` is false once it's private again (`blocked` when NoClick took it down).
+ */
+export interface PublicCode {
+  public: boolean;
+  cloneUrl: string | null;
+  /** The same code at NoClick's API, which any git client clones too; it doesn't change when the app is renamed. */
+  originUrl: string | null;
+  /** The public copy's newest commit, and the production commit it holds. */
+  commitSha: string | null;
+  sourceCommit: string | null;
+  publishedAt: Date | null;
+  files: number | null;
+  /** The licence its LICENSE file names (an SPDX id, `other`), null without one. */
+  license: string | null;
+  forks: number;
+  /** The most anonymous clones cost you a month, in dollars at the store's price: past it they pause. */
+  transferCapUsd: number | null;
+  blocked: boolean;
+  /** A dry run's: whether it would publish, and each file whose name or content looks like a secret. */
+  wouldPublish: boolean | null;
+  findings: { path: string; why: string }[];
+  /** What it makes public, in words a person reads; or, made private, that copies already made stay. */
+  summary: string | null;
+  raw: JsonObject;
+}
+
+function toPublicCode(value: unknown): PublicCode {
+  const raw = asObject(value);
+  const commit = raw.commit && typeof raw.commit === "object" ? asObject(raw.commit) : {};
+  const scanned = asObject(raw.scanned);
+  return {
+    public: raw.public === true, cloneUrl: str(raw.clone_url) ?? str(raw.address), originUrl: str(raw.origin_url),
+    commitSha: str(commit.sha) ?? str(raw.commit), sourceCommit: str(commit.source_commit),
+    publishedAt: parseTime(commit.published_at), files: num(raw.files), license: str(raw.license),
+    forks: num(raw.forks) ?? 0, transferCapUsd: num(raw.transfer_cap_usd), blocked: raw.blocked === true,
+    wouldPublish: typeof raw.would_publish === "boolean" ? raw.would_publish : null,
+    findings: Array.isArray(scanned.findings) ? (scanned.findings as { path: string; why: string }[]) : [],
+    summary: str(raw.summary) ?? str(raw.note), raw,
+  };
+}
+
+/**
+ * What anyone may know of an address (`PublicApp.lookup`): whether NoClick has public work there and, when it does,
+ * what a clone and a deploy of it need. Anything else (a private app, none, a malformed address) is only
+ * `public: false`.
+ */
+export class PublicApp {
+  readonly address: string;
+  readonly public: boolean;
+  readonly name: string | null;
+  readonly title: string | null;
+  readonly cloneUrl: string | null;
+  readonly originUrl: string | null;
+  readonly defaultBranch: string | null;
+  readonly commitSha: string | null;
+  readonly publishedAt: Date | null;
+  readonly forks: number;
+  readonly license: string | null;
+  /**
+   * What a deploy of it asks for, read from its `noclick.json`, as a deploy's dry run shows it: `account_key_scopes`,
+   * `build_env`, and `secrets` (`generated`, what NoClick makes; `asked`, what its owner sets).
+   */
+  readonly deploy: JsonObject;
+  /** Where to report public work that's harmful. */
+  readonly report: string | null;
+  readonly raw: JsonObject;
+
+  /** @internal */
+  constructor(raw: JsonObject) {
+    const commit = asObject(raw.commit);
+    this.address = str(raw.address) ?? "";
+    this.public = raw.public === true;
+    this.name = str(raw.name);
+    this.title = str(raw.title);
+    this.cloneUrl = str(raw.clone_url);
+    this.originUrl = str(raw.origin_url);
+    this.defaultBranch = str(raw.default_branch);
+    this.commitSha = str(commit.sha);
+    this.publishedAt = parseTime(commit.published_at);
+    this.forks = num(raw.forks) ?? 0;
+    this.license = str(raw.license);
+    this.deploy = asObject(raw.deploy);
+    this.report = str(raw.report);
+    this.raw = raw;
+  }
+
+  /**
+   * What's public at `address`: an app's address (`pilot-hub.noclick.site`, a custom domain), its clone URL, or a
+   * Deploy on NoClick link. Needs no key of the address's owner.
+   */
+  static async lookup(address: string, options: { client?: NoClick } = {}): Promise<PublicApp> {
+    const raw = await resolveClient(options.client).request("GET", "/v1/public/apps", { query: { address } });
+    return new PublicApp(asObject(raw));
+  }
+}
+
+/**
  * How each instance of an app runs in a container, by name, as `Project.create` and `update` take it: each one left
  * out is the default (in `update`, keeps its value). `minInstances` applies at once, the rest from the app's next
  * release.
@@ -1227,6 +1327,19 @@ export class ProjectSecrets {
   }
 
   /**
+   * The password NoClick made for `name` (`{"generate": "password"}` in the repository's noclick.json), once:
+   * NoClick keeps a sealed copy only until it's read, for 7 days, or until the secret is set or deleted. A second call
+   * throws `NotFound`; set a new value to replace a lost one. No model or agent can read it.
+   *
+   *     const app = Project.fromName("console");
+   *     console.log(await app.secrets.reveal("APP_PASSWORD"));   // this once
+   */
+  async reveal(name: string): Promise<string> {
+    const raw = asObject(await this.project._request("POST", `${await this.path(name)}/reveal`));
+    return String(raw.value);
+  }
+
+  /**
    * What `name` held before each change or deletion of the last 30 days, newest first, in
    * `environment` (`all` by default), never the values.
    */
@@ -1287,6 +1400,169 @@ export class ProjectSettings {
   async restore(name: string, version: Version | string): Promise<string> {
     const raw = asObject(await this.project._request("POST", `${await this.path(name)}/versions/${versionId(version)}/restore`));
     return str(raw.value) ?? "";
+  }
+}
+
+// --- its key to the account ----------------------------------------------------
+
+/** One scope an app's key to the account holds or asks for, with what it lets the app do in plain words. */
+export interface AccountKeyScope {
+  scope: string;
+  /** What a key holding it can do, as the account's owner reads it before they agree. */
+  can: string;
+  /** Whether it reads a secret (a raw token, a sandbox's keys): said apart when the owner is asked. */
+  readsSecrets: boolean;
+}
+
+/** Where an app's key stands: see `AccountKey.status`. */
+export type AccountKeyStatus =
+  | "granted" | "waiting" | "declined" | "expired" | "revoked" | "denied" | "unsent" | "not_asked" | "none";
+
+/** The request to the account's owner an app's key waits on, or waited on last. */
+export interface AccountKeyRequest {
+  /**
+   * `waiting`, `approved` (its key is being made), `declined`, `expired` (nobody answered: the next deploy asks
+   * again), `canceled`, `revoked`, `denied` (the account's approval settings give no app a key) or `unsent` (it
+   * reached nobody).
+   */
+  status: string;
+  scopes: string[];
+  askedAt: Date | null;
+  /** The held call the owner answers and the operation to wait on; null where the account's settings decided. */
+  approvalId: string | null;
+  operationId: string | null;
+}
+
+/**
+ * An app's key to the account it's deployed in (`app.accountKey.get()`).
+ *
+ * An app whose repository asks for one, in `noclick.json` at its root
+ * (`{"account_key": {"scopes": ["agents", "channels"]}}`), reads it as `NOCLICK_API_KEY`: NoClick gives each
+ * production release a bearer of its own, which works while that release serves and the app holds its key. No key is
+ * ever shown, pasted or answered by the API. A preview gets none.
+ */
+export interface AccountKey {
+  /**
+   * `granted`; `waiting` (the owner was asked); `declined`; `expired`; `revoked`; `denied`; `unsent`; `not_asked` (its
+   * repository asks for one and nobody was asked yet: before its first production deploy); or `none` (its repository
+   * asks for none).
+   */
+  status: AccountKeyStatus;
+  granted: boolean;
+  /** The name its code reads the key from: `NOCLICK_API_KEY`. */
+  variable: string;
+  /** The scopes its repository asks for, each in plain words; empty when it asks for none. */
+  asks: AccountKeyScope[];
+  /** The commit that asks for them (its production branch's head, else the release production serves). */
+  commit: string | null;
+  /** The key it holds, one of the account's keys (`Key`); null while it holds none. */
+  keyId: string | null;
+  /** What the key it holds may do; empty while it holds none. */
+  scopes: string[];
+  spendCapUsdPerMonth: number | null;
+  grantedAt: Date | null;
+  lastUsedAt: Date | null;
+  /** Scopes its repository asks for that its key doesn't hold yet: its code acts without them meanwhile. */
+  missingScopes: string[];
+  request: AccountKeyRequest | null;
+  /** What the key can never do, whatever it holds. */
+  cannot: string[];
+  raw: JsonObject;
+}
+
+function toAccountKey(value: unknown): AccountKey {
+  const raw = asObject(value);
+  const asks = asObject(raw.asks);
+  const key = asObject(raw.key);
+  const request = raw.request === null || raw.request === undefined ? null : asObject(raw.request);
+  const status = (str(raw.status) ?? "none") as AccountKeyStatus;
+  const strings = (items: unknown): string[] => (Array.isArray(items) ? items.map(String) : []);
+  return {
+    status, granted: status === "granted", variable: str(raw.variable) ?? "NOCLICK_API_KEY",
+    asks: (Array.isArray(asks.can) ? asks.can : []).map(asObject).map((line) => ({
+      scope: str(line.scope) ?? "", can: str(line.can) ?? "", readsSecrets: line.reads_secrets === true,
+    })),
+    commit: str(asks.commit), keyId: str(key.id), scopes: strings(key.scopes),
+    spendCapUsdPerMonth: num(key.spend_cap_usd_per_month), grantedAt: parseTime(key.granted_at),
+    lastUsedAt: parseTime(key.last_used_at), missingScopes: strings(raw.missing_scopes),
+    request: request && {
+      status: str(request.status) ?? "", scopes: strings(request.scopes), askedAt: parseTime(request.asked_at),
+      approvalId: str(request.approval_id), operationId: str(request.operation_id),
+    },
+    cannot: strings(raw.cannot), raw,
+  };
+}
+
+/**
+ * `app.accountKey`: the key to the account an app's own code acts with, given by NoClick.
+ *
+ * The app's repository says which scopes its code needs, in `noclick.json` at its root:
+ * `{"account_key": {"scopes": ["agents", "channels"]}}`. Its first production deploy then asks the account's owner
+ * once, from a link NoClick sends them, saying what the key can do. Once they agree the app's code reads the key as
+ * `NOCLICK_API_KEY` (the name the SDK reads by itself), with no deploy between. Nobody creates, copies or pastes a
+ * key, and none is ever shown: each production release holds a bearer of its own that works only while that release
+ * serves, and the key is revoked when the app is deleted. Whoever can change the app's code acts with the key, so an
+ * app asks only for the scopes it uses.
+ */
+export class ProjectAccountKey {
+  private readonly project: Project;
+
+  constructor(project: Project) {
+    this.project = project;
+  }
+
+  private async path(action?: string): Promise<string> {
+    return await this.project._projectPath("account_key", ...(action === undefined ? [] : [action]));
+  }
+
+  /**
+   * Where the app's key stands: what its repository asks for in plain words, the key it holds, and the request to
+   * the owner it waits on.
+   */
+  async get(): Promise<AccountKey> {
+    return toAccountKey(await this.project._request("GET", await this.path()));
+  }
+
+  /**
+   * Give the app its key, or change what the one it holds may do, without waiting for a deploy to ask.
+   *
+   * `scopes` are exactly what the app's repository asks for now (left out, they're read from `get()`); anything else
+   * throws `Conflict` naming what it asks for. It works at once: the release production serves already holds its
+   * bearer.
+   *
+   * Who may: the account's owner, signed in; one of the account's own keys that holds `keys:create`, for scopes it
+   * holds itself; an agent or a connected app, whose call waits for the owner (`ApprovalRequired`) unless the
+   * account's `app_key` approval setting allows it. Any other key throws `PermissionDenied`: deploy the app, and
+   * NoClick asks its owner.
+   *
+   * `spendCapUsdPerMonth`: the most the key may spend in a calendar month (null: no cap of its own). Left out, a key
+   * it holds keeps its cap.
+   */
+  async give(scopes?: readonly string[], options: { spendCapUsdPerMonth?: number | null } = {}): Promise<AccountKey> {
+    const wanted = scopes ?? (await this.get()).asks.map((line) => line.scope);
+    const body: JsonObject = { scopes: [...wanted] };
+    if (options.spendCapUsdPerMonth !== undefined) body.spend_cap_usd_per_month = options.spendCapUsdPerMonth;
+    return toAccountKey(await this.project._request("PUT", await this.path(), { json: body }));
+  }
+
+  /**
+   * Take the app's key away: its code is refused from now on, and a request it waited on is called off. The owner
+   * isn't asked again for the same scopes at the app's next deploy.
+   */
+  async revoke(): Promise<AccountKey> {
+    return toAccountKey(await this.project._request("POST", await this.path("revoke")));
+  }
+
+  /**
+   * Replace the bearer the app's code holds: every one NoClick gave it before stops at once, and the release
+   * production serves is released again with a new one (the promote this answers; the app's key is refused until
+   * it settles). The key, its scopes and its cap stay. Every deploy does the same by itself.
+   */
+  async rotate(): Promise<Operation<Deployment>> {
+    const payload = await this.project._request("POST", await this.path("rotate"));
+    return Operation._fromPayload<Deployment>(payload, {
+      client: this.project._client, user: this.project._callScope(), kind: "deployment.promote", reader: readDeployment,
+    });
   }
 }
 
@@ -1708,6 +1984,15 @@ export class Project extends ApiObject {
     const raw = this._field<JsonObject | null>("production");
     return raw ? Deployment._fromRaw(raw, { client: this._client, user: this._callScope() }) : null;
   }
+  /** Its repo was copied from someone's public work on NoClick: `{address}`, the address it came from; null otherwise. */
+  get forkedFrom(): { address: string } | null {
+    return this._field<{ address: string } | null>("forked_from") ?? null;
+  }
+  /** Its code, while its owner keeps it public (`makePublic()`); null while it's private. */
+  get public(): PublicCode | null {
+    const raw = this._field<JsonObject | null>("public");
+    return raw ? toPublicCode(raw) : null;
+  }
   /** The repo it deploys from (null for an app NoClick publishes). */
   get repo(): Repo | null {
     const repoId = this.repoId;
@@ -1719,6 +2004,10 @@ export class Project extends ApiObject {
   /** Its plain settings: `project.settings.set("PUBLIC_BASE_URL", "...")`. */
   get settings(): ProjectSettings {
     return new ProjectSettings(this);
+  }
+  /** The key to the account its own code acts with, which NoClick gives it: `app.accountKey.get()`. */
+  get accountKey(): ProjectAccountKey {
+    return new ProjectAccountKey(this);
   }
   get email(): ProjectEmail {
     return new ProjectEmail(this);
@@ -1881,6 +2170,26 @@ export class Project extends ApiObject {
     return toPreviewLink(await this._request("POST", await this._projectPath("previews", "link"), {
       json: compact({ branch: options.branch, expires_in: options.expiresIn }),
     }));
+  }
+
+  /**
+   * Make the app's code public: anyone can clone it from the app's own address and deploy their own copy with NoClick
+   * from that address alone. What's public is a copy of the production commit's files, never its earlier history or
+   * other branches; every file is checked for secrets first, and one finding refuses it all, naming each
+   * (`InvalidRequest`, reason `secrets_found`). Called again, it publishes the production commit as it is now.
+   * `dryRun` answers what would be published, changing nothing; `transferCapUsd` bounds what people's clones cost you
+   * a month ($5 unless set). A clone can't be recalled, so through MCP a first publish waits for the account's owner;
+   * a key needs the scope `projects:publish`, which `*` holds only when it's named.
+   */
+  async makePublic(options: { dryRun?: boolean; transferCapUsd?: number } = {}): Promise<PublicCode> {
+    return toPublicCode(await this._request("POST", await this._projectPath("public"), {
+      json: compact({ dry_run: options.dryRun || undefined, transfer_cap_usd: options.transferCapUsd }),
+    }));
+  }
+
+  /** Nobody can clone the app's code from now on. Copies people already cloned or deployed stay theirs. */
+  async makePrivate(): Promise<PublicCode> {
+    return toPublicCode(await this._request("DELETE", await this._projectPath("public")));
   }
 
   /**
