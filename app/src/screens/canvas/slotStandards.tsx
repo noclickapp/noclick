@@ -48,14 +48,9 @@ const nothing = () => undefined;
 const ALONE: Presence = {
     collaborators: [],
     nodeSelections: new Map(),
+    access: null,
     updateLocalCursor: nothing,
     updateLocalSelection: nothing,
-    broadcastNodeDrag: nothing,
-    broadcastNodeAdd: nothing,
-    broadcastNodeRemove: nothing,
-    broadcastNodeUpdate: nothing,
-    broadcastEdgeAdd: nothing,
-    broadcastEdgeRemove: nothing,
     broadcastAiEditingStart: nothing,
     broadcastAiEditingUpdate: nothing,
     broadcastAiEditingEnd: nothing,
@@ -65,7 +60,7 @@ function JustTheSteps({ children }: { children: ReactNode }) {
     return <>{children}</>;
 }
 
-/** No one else drawn on the canvas, and nothing this person does sent anywhere until it's saved. */
+/** No one else drawn on the canvas, and nothing this person does sent anywhere. */
 export const NOBODY_ELSE: CanvasPresence = {
     usePresence: () => ALONE,
     Layer: JustTheSteps,

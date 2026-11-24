@@ -19,6 +19,7 @@ import { userPath } from '@/screens/console/lib/userFilter';
 import { snippetTabs, userCodeSnippet } from '@/screens/console/lib/snippets';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import type { ConsolePageProps } from '../sections';
@@ -604,6 +605,7 @@ function DeleteUserDialog({ user, open, onOpenChange }: { user: User; open: bool
     const [typed, setTyped] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
+    const reportHeld = useReportHeld(useConsole());
     const remove = async () => {
         setBusy(true);
         try {
@@ -613,7 +615,9 @@ function DeleteUserDialog({ user, open, onOpenChange }: { user: User; open: bool
             onOpenChange(false);
             navigate(href('users'));
         } catch (e) {
-            setError(formError(e).message);
+            // Held for the account's owner: the dialog's done, and a toast follows it until it's done or not.
+            if (reportHeld(e, `Delete ${user.id}`, () => invalidateV1('users'))) onOpenChange(false);
+            else setError(formError(e).message);
         } finally {
             setBusy(false);
         }
