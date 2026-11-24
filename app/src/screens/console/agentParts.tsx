@@ -187,7 +187,7 @@ function providersText(names: readonly string[], catalog: readonly IntegrationIn
  */
 export function keepsModelConnection(ref: string, harness: HarnessInfo, connections: readonly Connection[] | undefined): boolean {
     const connection = connections?.find((c) => refFor(c) === ref);
-    return harness.modelConnection === 'required' && !!connection && harness.integrations.includes(connection.integration);
+    return harness.modelConnection === 'required' && !!connection && harness.integrations.includes(connection.integration ?? '');
 }
 
 /**
@@ -219,7 +219,7 @@ export function ModelConnectionField({
     const [made, setMade] = useState<Connection | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
-    const listed = (connections.data ?? []).filter((c) => harness.integrations.includes(c.integration));
+    const listed = (connections.data ?? []).filter((c) => harness.integrations.includes(c.integration ?? ''));
     // The one just made is offered at once, before the scope's list is read again.
     const options = made && !listed.some((c) => c.id === made.id) ? [...listed, made] : listed;
     const labelOf = (n: string) => catalog.data?.find((i) => i.name === n)?.label ?? n;
@@ -254,7 +254,7 @@ export function ModelConnectionField({
                     {/* Each by the ref an agent names it by: a key connected in the app by `credential:<id>`, never its name. */}
                     {options.map((c) => (
                         <option key={c.id} value={refFor(c)}>
-                            {c.name} · {labelOf(c.integration)}
+                            {c.name} · {labelOf(c.integration ?? '')}
                             {c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}
                         </option>
                     ))}
@@ -417,8 +417,8 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
     const needle = search.trim().toLowerCase();
     // A model provider's connection is what an agent thinks with, never a tool: the catalog says which they are.
     const models = modelIntegrationNames(catalog.data);
-    const tooling = connections.data && models ? connections.data.filter((c) => !models.has(c.integration)) : undefined;
-    const shown = (tooling ?? []).filter((c) => !needle || c.name.includes(needle) || c.integration.includes(needle));
+    const tooling = connections.data && models ? connections.data.filter((c) => !models.has(c.integration ?? '')) : undefined;
+    const shown = (tooling ?? []).filter((c) => !needle || c.name.includes(needle) || (c.integration ?? '').includes(needle));
     const shownDatabases = (databases.data ?? []).filter((d) => !needle || d.name.includes(needle));
     // A name the scope gives a connection means that connection, so its integration isn't offered here. An account
     // connected in the app takes no name: its ref is its id.
@@ -429,7 +429,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                   i.kind === 'app' && i.accountFreeOperationCount > 0 && !scopeNames.has(i.name) && (!needle || i.name.includes(needle) || !!i.label?.toLowerCase().includes(needle))
           )
         : [];
-    const shownOthers = sharing && models ? (others.data ?? []).filter((c) => !models.has(c.integration) && (!needle || c.name.includes(needle) || c.integration.includes(needle))) : [];
+    const shownOthers = sharing && models ? (others.data ?? []).filter((c) => !models.has(c.integration ?? '') && (!needle || c.name.includes(needle) || (c.integration ?? '').includes(needle))) : [];
     const sharedIds = new Set(value.flatMap((ref) => sharedConnectionOf(ref)?.id ?? []));
     const toggleShared = (id: string) => onChange(sharedIds.has(id) ? value.filter((ref) => sharedConnectionOf(ref)?.id !== id) : [...value, sharedConnectionRef(id)]);
     /** A connection's tools are named after it, so an agent can't hold two of one name. */

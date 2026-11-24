@@ -44,7 +44,7 @@ export const enterOpens = (onOpen: () => void) => (event: KeyboardEvent) => {
 export function markOf(t: Thing, connection?: Connection, className = 'h-4 w-4'): ReactNode {
     if (t.kind === 'connections') {
         if (!connection) return <Plug className={cn(className, 'text-foreground/70')} strokeWidth={1.75} />;
-        const { Icon, iconColor } = standing(CONNECTION_MARK).accountGlyph({ credential_type: connection.credentialType ?? connection.integration, metadata: {} });
+        const { Icon, iconColor } = standing(CONNECTION_MARK).accountGlyph({ credential_type: connection.credentialType ?? connection.integration ?? '', metadata: {} });
         return <BrandIcon Icon={Icon} iconColor={iconColor} className={className} />;
     }
     if (t.kind === 'skills' || t.kind === 'memories') {

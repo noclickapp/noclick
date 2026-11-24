@@ -614,7 +614,7 @@ function ToolList({ agent }: { agent: Agent }) {
                   tools.flatMap((t) => {
                       if (CAPABILITY_REFS.has(t)) return [];
                       const { connection, free } = refOf(t);
-                      return connection ? [connection.integration] : free ? [free.name] : [];
+                      return connection?.integration ? [connection.integration] : free ? [free.name] : [];
                   })
               ),
           ]
@@ -1548,7 +1548,7 @@ function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: 
     const catalog = useIntegrations();
     // A model provider's connection has no app events, so the API refuses a trigger on one: the catalog says which they are.
     const models = modelIntegrationNames(catalog.data);
-    const hearing = connections.data && models ? connections.data.filter((c) => !models.has(c.integration)) : undefined;
+    const hearing = connections.data && models ? connections.data.filter((c) => !models.has(c.integration ?? '')) : undefined;
     const [kind, setKind] = useState<TriggerKindChoice>('cron');
     const [cron, setCron] = useState('0 8 * * 1-5');
     const [tz, setTz] = useState('UTC');

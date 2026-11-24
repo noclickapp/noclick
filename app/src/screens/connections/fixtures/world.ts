@@ -16,11 +16,12 @@ export const TEAM = 'org_northwind';
 
 const ADDED = '2026-11-03T09:30:00Z';
 
-/** Each account's integration and its app as the API names it, by the account's id. */
-const INTEGRATIONS = new Map<string, { integration: string; app: string }>();
+/** Each account's integration and its app as the API names it, by the account's id: no integration for what the app
+ *  keeps that is no app's account. */
+const INTEGRATIONS = new Map<string, { integration: string | null; app: string }>();
 
 /** An account as the connect form names it when you don't (its app and the day), unless `fields` names it. */
-function account(id: string, credential_type: string, integration: string, app: string, fields: Partial<AccountCredential> = {}): AccountCredential {
+function account(id: string, credential_type: string, integration: string | null, app: string, fields: Partial<AccountCredential> = {}): AccountCredential {
     INTEGRATIONS.set(id, { integration, app });
     return { id, name: `${app} - 11/3/2026`, credential_type, metadata: {}, created_at: ADDED, updated_at: ADDED, access_type: 'owner', ...fields };
 }
@@ -53,6 +54,9 @@ export const ACCOUNTS = {
     }),
     hubspot: account('cred_hubspot', 'hubspot_oauth', 'hubspot', 'HubSpot', { access_type: 'shared_org', organization_id: TEAM, metadata: { email: 'sales@northwind.test' } }),
     sheets: account('cred_sheets', 'google_sheets_oauth', 'google_sheets', 'Google Sheets', { access_type: 'shared_org', organization_id: TEAM, metadata: { email: 'finance@northwind.test' } }),
+    // What the app keeps that is no app's account: an agent's environment variables, an MCP server's key.
+    env: account('cred_env', 'agent_env', null, 'Environment variables', { name: 'Deploy variables', metadata: { var_names: ['STRIPE_KEY', 'SENTRY_DSN', 'DATABASE_URL', 'POSTHOG_KEY'] } }),
+    mcp: account('cred_mcp', 'mcp_api_key', null, 'MCP server', { name: 'MCP server linear', metadata: { server_url: 'https://mcp.linear.app/mcp' } }),
 } satisfies Record<string, AccountCredential>;
 
 export type AccountId = keyof typeof ACCOUNTS;
@@ -149,9 +153,16 @@ export function listed(world: ConnectionsWorld): AccountCredential[] | 'waiting'
 }
 
 /** What the account goes by, as the API reads it off its credential: its login, email, who a check verified it as, else
- *  the number it links as people write it. */
+ *  the number it links as people write it; an agent's environment variables by their names, an MCP server's key by its
+ *  server's host. */
 function accountLine(credential: AccountCredential): string | null {
     const meta = credential.metadata ?? {};
+    if (credential.credential_type === 'agent_env') {
+        const names = Array.isArray(meta.var_names) ? meta.var_names.filter((n): n is string => typeof n === 'string') : [];
+        if (!names.length) return 'No variables yet';
+        return names.slice(0, 3).join(', ') + (names.length > 3 ? ` +${names.length - 3}` : '');
+    }
+    if (credential.credential_type.startsWith('mcp_')) return typeof meta.server_url === 'string' ? new URL(meta.server_url).hostname : null;
     for (const key of ['login', 'email', 'verified_as']) {
         const value = meta[key];
         if (typeof value === 'string' && value.trim() && value.trim() !== 'unknown') return value.trim();
@@ -164,8 +175,9 @@ function accountLine(credential: AccountCredential): string | null {
 export interface ApiWorld {
     /** The accounts listed in the workspace read, or none yet. */
     accounts: () => AccountCredential[] | 'waiting';
-    /** Its integration and its app as the API names it ("Slack"). */
-    integrationOf: (credential: AccountCredential) => { integration: string; app: string };
+    /** Its integration and its app as the API names it ("Slack"); no integration for what the app keeps that is no
+     *  app's account. */
+    integrationOf: (credential: AccountCredential) => { integration: string | null; app: string };
     /** The team workspace read, where one is. */
     team: string | null;
     usedBy: (accountId: string) => WorkflowRef[];
@@ -190,6 +202,7 @@ export function connectionView(credential: AccountCredential, world: Pick<ApiWor
             ? { reason: 'revoked', message: `This ${app} account was disconnected.`, provider_said: null, since: credential.revoked_at, next_step: 'Reconnect it in the NoClick app.' }
             : null,
         origin: 'app',
+        in_app_only: name === null,
         access: shared ? 'view' : 'owner',
         shared: shared ? { with: shared, by: { name: credential.shared_by_name ?? null, email: credential.shared_by_email ?? null } } : null,
         organization_id: world.team,
@@ -258,7 +271,10 @@ export function connectionsFetch(world: ApiWorld, { actsAs = 'owner', observe }:
         if (method === 'GET' && path === '/v1/connections') {
             const accounts = current();
             if (accounts === 'waiting') return never();
-            return Response.json({ object: 'list', data: [...accounts.map(view), ...made.values()], next_cursor: null });
+            // What the app keeps that is no app's account is listed only when asked for.
+            const every = url.searchParams.get('include_in_app_only') === 'true';
+            const listed = accounts.filter((c) => every || world.integrationOf(c).integration !== null);
+            return Response.json({ object: 'list', data: [...listed.map(view), ...made.values()], next_cursor: null });
         }
         if (method === 'POST' && path === '/v1/connections') {
             const name = String(body.name);
@@ -281,6 +297,7 @@ export function connectionsFetch(world: ApiWorld, { actsAs = 'owner', observe }:
         const credential = one && accounts !== 'waiting' ? accounts.find((c) => c.id === one[1]) : undefined;
         if (!one || !credential) return refused(404, 'not_found', `The fixtures have no ${method} ${path}.`);
         if (one[2] === '/verify' && method === 'POST') {
+            if (world.integrationOf(credential).integration === null) return refused(400, 'invalid_request', `'${credential.name}' is kept in the NoClick app for its steps, not an app's account, so there's nothing of it to check.`);
             const probe = world.probe(credential.id);
             if (probe === 'waiting') return never();
             if (probe === 'failed') return refused(429, 'rate_limited', 'Too many checks in a minute. Try again shortly.');

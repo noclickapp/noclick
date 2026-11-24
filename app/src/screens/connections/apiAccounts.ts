@@ -117,8 +117,8 @@ export interface AccountMaking {
 }
 
 /** One account the API lists, as the page shows it. It's checked only where its app is known (the provider is asked
- *  through that app's evidence), and renamed only when connected in the app: a named connection's name is how code
- *  finds it. */
+ *  through that app's evidence) and it's an app's account, never what the app keeps besides (`inAppOnly`), and renamed
+ *  only when connected in the app: a named connection's name is how code finds it. */
 export function accountOf(connection: Connection, { service, names, reconnect }: AccountMaking): ConnectedAccount {
     const disconnected = disconnectedOf(connection);
     const health = connection.health;
@@ -133,7 +133,7 @@ export function accountOf(connection: Connection, { service, names, reconnect }:
         problem: disconnected?.message ?? (health && !health.healthy ? health.hint || 'The connection dropped' : undefined),
         connection,
         usedBy: workflowsOf(connection),
-        check: service ? verifyAsk(connection) : undefined,
+        check: service && !connection.inAppOnly ? verifyAsk(connection) : undefined,
         rename: connection.origin === 'app' ? (name) => renameThrough(connection, name) : undefined,
         deletes: deletesThrough(connection),
         reconnect,

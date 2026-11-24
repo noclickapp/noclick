@@ -21,10 +21,10 @@ export function standardCredentialLabel(credentialType: string, nodeType?: strin
 /** A plug in the ink around it, for any account. */
 export const plainGlyph = (): Glyph => ({ Icon: Plug, iconColor: 'text-muted-foreground' });
 
-/** An account named after its integration: the account it reaches, else the name it was given where that isn't its
- *  app's, else when it was connected. */
+/** An account named after its integration (what the app keeps that is no app's account, after its kind): the account
+ *  it reaches, else the name it was given where that isn't its app's, else when it was connected. */
 export function standardAccountNames({ credentialType, integration, name, account, connectedAt }: AccountFacts): AccountNames {
-    const app = standardCredentialLabel(credentialType, `automation-${integration.replace(/_/g, '-')}`);
+    const app = standardCredentialLabel(credentialType, integration ? `automation-${integration.replace(/_/g, '-')}` : null);
     const own = name.trim();
     const line = account ?? (own && own.toLowerCase() !== app.toLowerCase() ? own : connectedAt ? addedLabel(connectedAt) : app);
     return { app, line, aliases: [] };

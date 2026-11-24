@@ -55,7 +55,7 @@ export function useAppConnections() {
     const connections = useConnections();
     return useMemo(() => {
         const by = new Map<string, Connection>();
-        for (const c of connections.data ?? []) if (!by.has(c.integration) || (c.connected && !by.get(c.integration)!.connected)) by.set(c.integration, c);
+        for (const c of connections.data ?? []) if (c.integration && (!by.has(c.integration) || (c.connected && !by.get(c.integration)!.connected))) by.set(c.integration, c);
         return by;
     }, [connections.data]);
 }

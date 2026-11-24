@@ -418,11 +418,16 @@ class Connection(_Object):
 
     id: str = field("id")
     name: str = field("name")
-    integration: str = field("integration")
+    integration: Optional[str] = field("integration", doc=(
+        "Its integration (``gmail``); ``None`` for what the app keeps that is no app's account (``in_app_only``)."))
     credential_type: Optional[str] = field("credential_type")
     user_id: Optional[str] = field("user_id")
     status: str = field("status")
     origin: str = field("origin", doc="``api`` for a named connection, ``app`` for an account connected in the app.")
+    in_app_only: bool = field("in_app_only", bool, doc=(
+        "Kept in the NoClick app for its steps, never a connection: an agent's environment variables, an MCP server's "
+        "key, a plan shared with your account. It's listed, read, renamed and deleted, but never runs, is never "
+        "checked, and names nothing as an agent's or a step's connection."))
     access: str = field("access", doc="Your account's access: ``owner``, or ``edit``/``view`` on one shared with it.")
     organization_id: Optional[str] = field("organization_id", doc=(
         "The team workspace it was read in (``organization_id=``), where it runs; ``None`` in your account's own."))
@@ -433,7 +438,8 @@ class Connection(_Object):
     )
     account: Optional[str] = field("account", doc=(
         "The account it reaches, as the app's Connections list names it: its login, else its email, else who a "
-        "check verified it as, else the number it links; ``None`` when none is known."))
+        "check verified it as, else the number it links; an agent's environment variables by their names, an MCP "
+        "server's key by its server's host; ``None`` when none is known."))
     credential_id: Optional[str] = field("credential_id", doc=(
         "The id of the account it holds, as a workflow step's ``connections`` names it, so a step's account is "
         "matched to its connection; ``None`` while none is connected."))
@@ -773,11 +779,14 @@ class Connection(_Object):
     @classmethod
     async def list(
         cls, *, integration: Any = None, origin: Optional[str] = None, organization_id: Optional[str] = None,
-        limit: Optional[int] = None, user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
+        include_in_app_only: bool = False, limit: Optional[int] = None, user_filter: Any = None, user: Any = AMBIENT,
+        client: Optional[Client] = None,
     ) -> List["Connection"]:
         """The current user's connections (the account's own outside
         ``as_user``), or those ``user_filter`` covers: named ones newest first,
         then, in the account's own scope, the accounts connected in the app.
+        ``include_in_app_only`` adds everything else the app keeps there
+        (``in_app_only``), as its Connections page lists them.
         ``origin`` keeps only ``"api"`` or ``"app"`` ones; ``organization_id``
         reads in a team workspace you're in, where those shared with that team
         are listed too (and each runs there).
@@ -794,11 +803,13 @@ class Connection(_Object):
             every_gmail = noclick.Connection.list(integration="gmail", user_filter=noclick.ALL_USERS)
             from_the_app = noclick.Connection.list(origin="app")
             the_teams = noclick.Connection.list(organization_id="5c0d9e4a-7b1f-4e2a-9c3d-8f6b2a1e4d70")
+            everything = noclick.Connection.list(origin="app", include_in_app_only=True)
         """
         return await list_all(
             "/v1/connections", lambda raw, scope: cls._new(raw=raw, client=client, user=scope),
             params={"integration": _integration_name(integration), "origin": origin,
-                    "organization_id": organization_id}, user=user,
+                    "organization_id": organization_id, "include_in_app_only": include_in_app_only or None},
+            user=user,
             user_filter=user_filter, limit=limit, client=client,
         )
 
@@ -806,8 +817,8 @@ class Connection(_Object):
     @classmethod
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, integration: Any = None,
-        origin: Optional[str] = None, organization_id: Optional[str] = None, user_filter: Any = None,
-        user: Any = AMBIENT, client: Optional[Client] = None,
+        origin: Optional[str] = None, organization_id: Optional[str] = None, include_in_app_only: bool = False,
+        user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> Page:
         """One page of connections; pass ``next_cursor`` back as ``cursor``.
 
@@ -827,8 +838,8 @@ class Connection(_Object):
         return await list_page(
             "/v1/connections", lambda raw, scope: cls._new(raw=raw, client=client, user=scope),
             params={"integration": _integration_name(integration), "origin": origin,
-                    "organization_id": organization_id}, user=user,
-            user_filter=user_filter, cursor=cursor, limit=limit, client=client,
+                    "organization_id": organization_id, "include_in_app_only": include_in_app_only or None},
+            user=user, user_filter=user_filter, cursor=cursor, limit=limit, client=client,
         )
 
     @synced

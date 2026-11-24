@@ -354,6 +354,14 @@ test("an account connected in the app: who shared it, its live health, the check
   api.on("GET", "/v1/connections/con_1", json({ ...CONNECTION, shared: null, health: null }));
   const named = await nc.Connection.get("con_1");
   assert.deepEqual([named.shared, named.health], [null, null]);
+  // What the app keeps that is no connection: no integration's, named by its variables.
+  api.on("GET", "/v1/connections/credential%3Acred_env", json({
+    ...APP, id: "credential:cred_env", integration: null, credential_type: "agent_env", in_app_only: true,
+    account: "STRIPE_KEY, SENTRY_DSN",
+  }));
+  const variables = await nc.Connection.get("credential:cred_env");
+  assert.deepEqual([variables.inAppOnly, variables.integration, variables.account, account.inAppOnly],
+    [true, null, "STRIPE_KEY, SENTRY_DSN", false]);
 });
 
 test("create with data, list, get, verify, token, import, delete", async () => {
@@ -372,6 +380,9 @@ test("create with data, list, get, verify, token, import, delete", async () => {
 
   const [listed] = await nc.Connection.list({ integration: "gmail" });
   assert.equal(list.last.query.get("integration"), "gmail");
+  assert.equal(list.last.query.get("include_in_app_only"), null);
+  await nc.Connection.list({ includeInAppOnly: true });
+  assert.equal(list.last.query.get("include_in_app_only"), "true");
   // an owned connection acts for its user even outside asUser
   const verification = await listed.verify();
   assert.equal(verification?.reachable, false);

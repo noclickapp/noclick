@@ -75,7 +75,7 @@ function pageSubtitle(t: Thing, pane: Pane): string {
     switch (t.kind) {
         case 'connections': {
             const c = pane.connections.get(t.ref);
-            return ['Connection', c?.account ?? (c ? appName(c.integration) : null)].filter(Boolean).join(' · ');
+            return ['Connection', c?.account ?? (c ? appName(c.integration ?? c.credentialType ?? '') : null)].filter(Boolean).join(' · ');
         }
         case 'channels':
             return 'Channel';
@@ -218,7 +218,7 @@ function InSpaceSection({ pane, t }: { pane: Pane; t: Thing }) {
 
 function connectionState(c: Connection | undefined): { dot: string; words: string; note: string } {
     if (!c) return { dot: 'bg-muted-foreground/50', words: 'Not read', note: 'Its account couldn’t be read.' };
-    if (c.status === 'disconnected') return { dot: 'bg-red-500', words: `${appName(c.integration)} turned it down`, note: 'Its agents’ tools from it stop until it’s reconnected.' };
+    if (c.status === 'disconnected') return { dot: 'bg-red-500', words: `${appName(c.integration ?? c.credentialType ?? '')} turned it down`, note: 'Its agents’ tools from it stop until it’s reconnected.' };
     if (c.status === 'pending') return { dot: 'bg-muted-foreground/50', words: 'Waiting to be connected', note: 'Its sign-in hasn’t finished.' };
     return { dot: 'bg-emerald-500', words: 'Working', note: c.account ? `Signed in as ${c.account}.` : 'Connected.' };
 }

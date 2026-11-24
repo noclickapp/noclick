@@ -95,7 +95,7 @@ export function AddTrigger({ agent, name, phone, seed, actions, onCancel, onAdde
     useEffect(() => {
         if (!seed.connection || draft.integration) return;
         const known = [...connections.values()].find((c) => refFor(c) === seed.connection);
-        if (known) setDraft((d) => ({ ...d, integration: known.integration }));
+        if (known?.integration) setDraft((d) => ({ ...d, integration: known.integration ?? undefined }));
     }, [seed.connection, connections, draft.integration]);
     const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
     const pick = (patch: Partial<Draft>) => setDraft({ ...empty(), ...patch });

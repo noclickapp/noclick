@@ -27,11 +27,12 @@ const sentence = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const words = (name: string) => sentence(name.replace(/[_-]+/g, ' ').trim());
 
 /** Every connection the platform API lists in the workspace the page shows, both those connected in the NoClick app and
- *  the named ones code made (one still waiting for its account is left out); read again when one is connected here. */
+ *  the named ones code made (one still waiting for its account is left out), and everything else the app keeps there (an
+ *  agent's environment variables, an MCP server's key); read again when one is connected here. */
 export function ApiReads({ children }: { children: ReactNode }) {
     const client = useClient();
     const team = useConnectionsContext().teamWorkspace ?? undefined;
-    const { data: connections, error, refresh } = useV1(`${CONNECTIONS_READ}&team=${team ?? ''}`, () => Connection.list({ client, organizationId: team }), { client });
+    const { data: connections, error, refresh } = useV1(`${CONNECTIONS_READ}&team=${team ?? ''}`, () => Connection.list({ client, organizationId: team, includeInAppOnly: true }), { client });
     const make = useAccountMaker();
     const { subscribe } = useSlot(CONNECT_APP);
     useEffect(() => subscribe?.(() => invalidateV1(CONNECTIONS_READ)), [subscribe]);

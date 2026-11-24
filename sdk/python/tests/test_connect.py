@@ -604,17 +604,24 @@ FROM_THE_APP = {**CONN, "id": APP_ID, "name": "Gmail (ana@gmail.com)", "user_id"
 
 
 def test_accounts_connected_in_the_app_list_load_and_run_by_their_credential_ref(api, client):
+    env = {**FROM_THE_APP, "id": "credential:4e1f", "name": "Deploy variables", "integration": None,
+           "credential_type": "agent_env", "in_app_only": True, "account": "STRIPE_KEY, SENTRY_DSN"}
     lst = api.get("/v1/connections").respond(json=listing({**CONN, "origin": "api", "access": "owner",
-                                                           "approval_operations": []}, FROM_THE_APP))
+                                                           "approval_operations": []}, FROM_THE_APP, env))
     api.get(f"/v1/connections/{APP_ID}").respond(json=FROM_THE_APP)
     run = api.post(f"/v1/connections/{APP_ID}/operations/send_email/run").respond(
         json={"object": "operation_result", "connection": APP_ID, "result": {"id": "msg_1"}})
     direct = api.post("/v1/run").respond(json={"object": "operation_result", "ref": f"{APP_ID}.send_email",
                                                "connection": APP_ID, "result": {"id": "msg_2"}})
-    named, app = nc.Connection.list()
+    named, app, variables = nc.Connection.list(include_in_app_only=True)
+    assert lst.calls.last.request.url.params["include_in_app_only"] == "true"
     assert (named.origin, app.origin, app.id, app.access) == ("api", "app", APP_ID, "owner")
+    # What the app keeps that is no connection is listed beside them, as no integration's.
+    assert (app.in_app_only, variables.in_app_only, variables.integration, variables.account) == (
+        None, True, None, "STRIPE_KEY, SENTRY_DSN")
     nc.Connection.list(origin="app")
     assert lst.calls.last.request.url.params["origin"] == "app"
+    assert "include_in_app_only" not in lst.calls.last.request.url.params
     gmail = nc.Connection.from_id(APP_ID)
     assert gmail.name == "Gmail (ana@gmail.com)" and gmail.approval_operations == []
     assert gmail.run("send_email", {"to": "a@b.c"}) == {"id": "msg_1"}

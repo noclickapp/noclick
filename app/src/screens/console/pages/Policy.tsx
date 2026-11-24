@@ -331,7 +331,7 @@ function useAgentTools() {
                 const shared = sharedConnectionOf(ref);
                 const [name, op] = ref.split('.');
                 const connection = shared ? byId.get(shared.id) : byRef.get(`${agent.userId ?? ''}/${name}`);
-                if (connection) whole.add(connection.integration);
+                if (connection) whole.add(connection.integration ?? '');
                 else if (!shared) unnamed.push({ name, op: op ?? null });
             }
         }

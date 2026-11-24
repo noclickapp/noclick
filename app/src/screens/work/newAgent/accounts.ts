@@ -93,10 +93,10 @@ const PLAN_HARNESSES: Record<'claude_plan' | 'chatgpt_plan', HarnessName[]> = { 
  *  that, never by the name it was saved under. */
 export function accountsOf(connections: readonly Connection[], models: ReadonlySet<string>, labels: ReadonlyMap<string, string> = new Map()): ModelAccount[] {
     const kinded = connections
-        .filter((c) => models.has(c.integration))
-        .map((c) => ({ c, kind: KIND_OF_TYPE.get(c.credentialType ?? '') ?? KIND_OF_INTEGRATION[c.integration] ?? ('key' as AccountKind) }));
-    return kinded.map(({ c, kind }) => {
-        const same = kinded.filter((k) => k.kind === kind && k.c.integration === c.integration);
+        .flatMap((c) => (c.integration && models.has(c.integration) ? [{ c, integration: c.integration }] : []))
+        .map(({ c, integration }) => ({ c, integration, kind: KIND_OF_TYPE.get(c.credentialType ?? '') ?? KIND_OF_INTEGRATION[integration] ?? ('key' as AccountKind) }));
+    return kinded.map(({ c, integration, kind }) => {
+        const same = kinded.filter((k) => k.kind === kind && k.integration === integration);
         const who = c.account ?? null;
         const status = c.status ?? (c.connected ? 'connected' : 'pending');
         const down = downOf((c.raw as JsonObject).disconnected);
@@ -106,8 +106,8 @@ export function accountsOf(connections: readonly Connection[], models: ReadonlyS
         return {
             id: c.origin === 'app' ? c.id : c.name,
             kind,
-            integration: c.integration,
-            providerLabel: labels.get(c.integration) ?? null,
+            integration,
+            providerLabel: labels.get(integration) ?? null,
             name,
             // Who it is goes under it, unless its name says so already.
             note: c.connected ? (who && who !== name ? who : working) : status === 'disconnected' ? (down?.message || 'Signed out') : 'Waiting for its key',

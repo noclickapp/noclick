@@ -439,6 +439,9 @@ export type ConnectionAccess = "owner" | "edit" | "view";
 interface ConnectionFilters {
   integration?: string | { name: string };
   origin?: ConnectionOrigin;
+  /** Adds everything else the app keeps (`inAppOnly`: an agent's environment variables, an MCP server's key, a plan
+   *  shared with your account), as its Connections page lists them. */
+  includeInAppOnly?: boolean;
   /** A team workspace you're in (its id): read there, where those shared with that team are listed too. */
   organizationId?: string;
 }
@@ -449,7 +452,10 @@ export interface InWorkspace {
 }
 
 function connectionQuery(options: ConnectionFilters): Record<string, string | undefined> {
-  return { integration: integrationName(options.integration), origin: options.origin, organization_id: options.organizationId };
+  return {
+    integration: integrationName(options.integration), origin: options.origin, organization_id: options.organizationId,
+    include_in_app_only: options.includeInAppOnly ? "true" : undefined,
+  };
 }
 
 export interface ConnectionCreateOptions extends LinkOptions, CallOptions {
@@ -614,7 +620,8 @@ export class Connection extends ApiObject {
 
   /**
    * The current user's connections (the account's own outside `asUser`), or those `userFilter` covers:
-   * named ones newest first, then, in the account's own scope, the accounts connected in the app.
+   * named ones newest first, then, in the account's own scope, the accounts connected in the app; `includeInAppOnly`
+   * adds everything else the app keeps there (`inAppOnly`), as its Connections page lists them.
    * `origin` keeps only `"api"` or `"app"` ones; `organizationId` reads in a team workspace you're in, where those
    * shared with that team are listed too (and each runs there).
    *
@@ -665,8 +672,9 @@ export class Connection extends ApiObject {
   get name(): string {
     return this._field("name");
   }
-  get integration(): string {
-    return this._field("integration");
+  /** Its integration (`"gmail"`); `null` for what the app keeps that is no app's account (`inAppOnly`). */
+  get integration(): string | null {
+    return this._field<string | null | undefined>("integration") ?? null;
   }
   get credentialType(): string | null {
     return this._field("credential_type");
@@ -682,6 +690,14 @@ export class Connection extends ApiObject {
   }
   get origin(): ConnectionOrigin {
     return this._field("origin");
+  }
+  /**
+   * Kept in the NoClick app for its steps, never a connection: an agent's environment variables, an MCP server's key,
+   * a plan shared with your account. It's listed, read, renamed and deleted, but never runs, is never checked, and
+   * names nothing as an agent's or a step's connection.
+   */
+  get inAppOnly(): boolean {
+    return this._field<unknown>("in_app_only") === true;
   }
   get access(): ConnectionAccess {
     return this._field("access");
@@ -708,7 +724,8 @@ export class Connection extends ApiObject {
   }
   /**
    * The account it reaches, as the app's Connections list names it: its login, else its email, else who a
-   * check verified it as, else the number it links; `null` when none is known.
+   * check verified it as, else the number it links; an agent's environment variables by their names, an MCP server's
+   * key by its server's host; `null` when none is known.
    */
   get account(): string | null {
     return this._field("account");

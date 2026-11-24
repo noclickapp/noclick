@@ -34,7 +34,7 @@ export function nameProblem(name: string): string | null {
 }
 
 export const integrationNodeType = (integration: string) => `automation-${integration}`;
-export const nodeTypeOf = (c: Connection) => integrationNodeType(c.integration);
+export const nodeTypeOf = (c: Connection) => integrationNodeType(c.integration ?? '');
 
 /** The connections of one scope (a user's id, or null for the account's own). */
 export function useScopeConnections(user: string | null) {

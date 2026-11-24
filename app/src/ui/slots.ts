@@ -19,8 +19,9 @@ export interface Glyph {
 /** What a list of accounts knows of one (a connection as the platform API reads it). */
 export interface AccountFacts {
     credentialType: string;
-    /** The integration it's a connection to (`google_sheets`). */
-    integration: string;
+    /** The integration it's a connection to (`google_sheets`); null for what the app keeps that is no app's account
+     *  (an agent's environment variables, an MCP server's key). */
+    integration: string | null;
     name: string;
     /** The account it reaches, as the platform names it (its login, email, who a check verified it as, its number). */
     account: string | null;
