@@ -100,3 +100,46 @@ test("a Claude plan's sign-in finishes with the code its page showed", async () 
   assert.deepEqual(finish.last.body, { code: "pasted#state" });
   assert.equal(done.status, "connected");
 });
+
+test("an MCP server's sign-in waits on its callback and finishes with its code and state", async () => {
+  const { api } = setup();
+  const start = api.on("POST", "/v1/connections/sign_ins", json(waitingSignIn({
+    way: "redirect", user_code: null, verification_url: null, interval: null,
+    authorize_url: "https://auth.example.com/authorize?x=1", state: "st_1", name: "Example Auth",
+  })));
+  const finish = api.on("POST", "/v1/connections/sign_ins/si_w/finish", json({
+    object: "sign_in", id: null, status: "connected", provider: "mcp",
+    credential: { id: "c1", name: "Example", credential_type: "mcp_oauth" }, connection: null, account: {},
+    choose: null, waiting: null, verification: { reachable: true, proves: "account", samples: [{ label: "search" }] },
+  }));
+  const server = await nc.Connection.signIn("mcp", {
+    serverUrl: "https://mcp.example.com/mcp", redirectUri: "https://app.example.com/callback", name: "Example",
+  });
+  assert.deepEqual(start.last.body, {
+    provider: "mcp", server_url: "https://mcp.example.com/mcp", redirect_uri: "https://app.example.com/callback",
+    name: "Example",
+  });
+  assert.deepEqual([server.way, server.authorizeUrl, server.state, server.serverName],
+    ["redirect", "https://auth.example.com/authorize?x=1", "st_1", "Example Auth"]);
+  await assert.rejects(server.wait(), /callback's code and state/);
+  const done = await server.finish(null, { code: "the-code", state: server.state ?? undefined });
+  assert.deepEqual(finish.last.body, { code: "the-code", state: "st_1" });
+  assert.deepEqual([done.status, done.verification?.reachable], ["connected", true]);
+});
+
+test("an MCP server that takes a key finishes with it", async () => {
+  const { api } = setup();
+  const start = api.on("POST", "/v1/connections/sign_ins", json(waitingSignIn({
+    way: "key", user_code: null, verification_url: null, interval: null,
+  })));
+  const finish = api.on("POST", "/v1/connections/sign_ins/si_w/finish", json({
+    object: "sign_in", id: null, status: "connected", provider: "mcp",
+    credential: { id: "c1", name: "Canva", credential_type: "canva_mcp" }, connection: null, account: {},
+    choose: null, waiting: null, verification: null,
+  }));
+  const canva = await nc.Connection.signIn("mcp", { credentialType: "canva_mcp", redirectUri: "https://app.example.com/callback" });
+  assert.deepEqual([(start.last.body as Record<string, unknown>).credential_type, canva.way], ["canva_mcp", "key"]);
+  const done = await canva.finish(null, { apiKey: "sk-typed" });
+  assert.deepEqual(finish.last.body, { api_key: "sk-typed" });
+  assert.deepEqual([done.status, done.verification], ["connected", null]);
+});

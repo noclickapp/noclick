@@ -504,16 +504,19 @@ export class Connection extends ApiObject {
    * provider's device code. The provider's own sign-in runs, as the NoClick app's does, and stores the account's
    * credential (`credential:<id>`); `inputs` carries what its connect form takes beside the code (a shop, a
    * subdomain, a site), `oauthApp` an OAuth app of your own the sign-in ran on, `reconnect` a connection a Claude
-   * plan's sign-in renews in place. A connect link (`connectLink()`) runs the whole sign-in on NoClick's page
-   * instead, and is how one of your users signs in: this is your account's own. A code the provider refuses throws
-   * `InvalidRequest` in its words.
+   * plan's sign-in renews in place. An MCP server's sign-in is `"mcp"`, with an integration's MCP `credentialType`
+   * (`"canva_mcp"`) or any server's `serverUrl`, and the `redirectUri` of your page its callback returns to: it waits
+   * on that callback (`authorizeUrl`; `finish` with its `code` and `state`), or on a key the server takes instead
+   * (`way` `key`; `finish(null, { apiKey })`). A connect link (`connectLink()`) runs the whole sign-in on NoClick's
+   * page instead, and is how one of your users signs in: this is your account's own. A code the provider refuses
+   * throws `InvalidRequest` in its words.
    */
   static async signIn(provider: string, options: SignInOptions = {}): Promise<SignIn> {
     const user = resolveScope(undefined);
     const json = compact({
       provider, code: options.code, redirect_uri: options.redirectUri, code_verifier: options.codeVerifier,
       scopes: options.scopes, name: options.name, inputs: options.inputs, client: options.oauthApp,
-      reconnect: options.reconnect,
+      reconnect: options.reconnect, credential_type: options.credentialType, server_url: options.serverUrl,
     });
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/sign_ins", { json, user }));
     return new SignIn(raw, options.client, user);
@@ -522,15 +525,16 @@ export class Connection extends ApiObject {
   /**
    * Finish a sign-in that waits on the person by its `id` alone, as its answer may come back in another request than
    * the one that started it: the `id` of the choice they picked (`choose`), the `code` they copied from the
-   * provider's page (a Claude plan), or nothing, to ask whether they've signed in (a device code). One finished,
-   * lapsed or another account's throws `NotFound`.
+   * provider's page (a Claude plan) or the `code` and `state` an MCP sign-in's callback got, the `apiKey` an MCP server
+   * takes in place of a sign-in, or nothing, to ask whether they've signed in (a device code). One finished, lapsed
+   * or another account's throws `NotFound`.
    */
   static async finishSignIn(signInId: string, choice?: string | null,
-                            options: { code?: string; client?: NoClick } = {}): Promise<SignIn> {
+                            options: { code?: string; state?: string; apiKey?: string; client?: NoClick } = {}): Promise<SignIn> {
     const user = resolveScope(undefined);
     const raw = asObject(await resolveClient(options.client).request(
       "POST", `/v1/connections/sign_ins/${encodeURIComponent(signInId)}/finish`,
-      { json: compact({ choice: choice ?? undefined, code: options.code }), user }));
+      { json: compact({ choice: choice ?? undefined, code: options.code, state: options.state, api_key: options.apiKey }), user }));
     return new SignIn(raw, options.client, user);
   }
 
@@ -1255,6 +1259,10 @@ export interface SignInOptions {
   oauthApp?: { client_id: string; client_secret: string };
   /** A connection a Claude plan's sign-in renews in place (`credential:<id>`). */
   reconnect?: string;
+  /** An MCP sign-in (`"mcp"`): the integration's MCP credential type (`"canva_mcp"`); omitted with `serverUrl`. */
+  credentialType?: string;
+  /** An MCP sign-in (`"mcp"`) to any server: its URL. */
+  serverUrl?: string;
   client?: NoClick;
 }
 
@@ -1263,8 +1271,10 @@ export interface SignInOptions {
  * `connection` it is (none for a plan the platform's agents don't run on: GitHub Copilot, xAI); `choose` when the
  * provider asks the person to pick (`what`: a `project`, an `instagram_account`) from `choices` (each with its `id`);
  * or `waiting` while the person signs in on the provider's page (`way` `device`: enter `userCode` at
- * `verificationUrl`, then `wait`; `code`: open `authorizeUrl` and `finish` with the code it shows). `account` is what
- * the provider says of the account signed in to (an email, a team, a site); never a token.
+ * `verificationUrl`, then `wait`; `code`: open `authorizeUrl` and `finish` with the code it shows; an MCP server's
+ * `redirect`: open `authorizeUrl` and `finish` with the `code` and `state` your callback got, or `key`: `finish` with
+ * the key it takes). `account` is what the provider says of the account signed in to (an email, a team, a site);
+ * never a token.
  */
 export class SignIn {
   private readonly _raw: JsonObject;
@@ -1300,7 +1310,7 @@ export class SignIn {
   private _waiting<T>(key: string): T | null {
     return (asObject(this._raw.waiting ?? {})[key] as T | undefined) ?? null;
   }
-  get way(): "device" | "code" | null {
+  get way(): "device" | "code" | "redirect" | "key" | null {
     return this._waiting("way");
   }
   get userCode(): string | null {
@@ -1317,6 +1327,18 @@ export class SignIn {
   }
   get interval(): number | null {
     return this._waiting("interval");
+  }
+  /** An MCP sign-in's state, which its callback returns with the code. */
+  get state(): string | null {
+    return this._waiting("state");
+  }
+  /** Who an MCP server says signs it in. */
+  get serverName(): string | null {
+    return this._waiting("name");
+  }
+  /** An MCP server's proof of the account it signed in to (the tools it lists for it). */
+  get verification(): Verification | null {
+    return toVerification(this._raw.verification);
   }
   get expiresAt(): Date | null {
     const at = this._waiting<string>("expires_at");
@@ -1336,9 +1358,9 @@ export class SignIn {
    * Finish a sign-in that waits on the person: with the `id` of the choice they picked, the `code` they copied from
    * the provider's page, or nothing, to ask whether they've signed in.
    */
-  async finish(choice?: string | null, options: { code?: string } = {}): Promise<SignIn> {
+  async finish(choice?: string | null, options: { code?: string; state?: string; apiKey?: string } = {}): Promise<SignIn> {
     if (!this.id) throw new InvalidRequest("This sign-in waits on no one.");
-    return await Connection.finishSignIn(this.id, choice, { code: options.code, client: this._client });
+    return await Connection.finishSignIn(this.id, choice, { ...options, client: this._client });
   }
 
   /**
@@ -1350,7 +1372,11 @@ export class SignIn {
     const deadline = Date.now() + (options.timeoutMs ?? 900_000);
     let current: SignIn = this;
     while (current.status === "waiting") {
-      if (current.way !== "device") throw new InvalidRequest("This sign-in finishes with the code its page shows: finish(null, { code }).");
+      if (current.way !== "device") {
+        throw new InvalidRequest(current.way === "code"
+          ? "This sign-in finishes with the code its page shows: finish(null, { code })."
+          : "This sign-in finishes with its callback's code and state, or a key: finish(null, { code, state }) or finish(null, { apiKey }).");
+      }
       if (Date.now() >= deadline) throw new OperationTimeout(`Nobody entered ${current.userCode} in time.`);
       await new Promise((done) => setTimeout(done, (current.interval ?? 5) * 1000));
       current = await Connection.finishSignIn(current.id as string, null, { client: this._client });

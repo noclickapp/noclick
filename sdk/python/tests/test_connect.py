@@ -835,3 +835,43 @@ def test_a_claude_plans_sign_in_finishes_with_the_code_its_page_showed(api, clie
 
     assert body(finish.calls.last.request) == {"code": "pasted#state"}
     assert done.status == "connected"
+
+
+def test_an_mcp_servers_sign_in_waits_on_its_callback_and_finishes_with_its_code_and_state(api, client):
+    start = api.post("/v1/connections/sign_ins").respond(json=_waiting(
+        way="redirect", user_code=None, verification_url=None, interval=None,
+        authorize_url="https://auth.example.com/authorize?x=1", state="st_1", name="Example Auth"))
+    finish = api.post("/v1/connections/sign_ins/si_w/finish").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "mcp",
+        "credential": {"id": "c1", "name": "Example", "credential_type": "mcp_oauth"}, "connection": None,
+        "account": {}, "choose": None, "waiting": None,
+        "verification": {"reachable": True, "proves": "account", "samples": [{"label": "search"}]}})
+
+    server = nc.Connection.sign_in("mcp", server_url="https://mcp.example.com/mcp",
+                                   redirect_uri="https://app.example.com/callback", name="Example")
+    assert body(start.calls.last.request) == {"provider": "mcp", "server_url": "https://mcp.example.com/mcp",
+                                              "redirect_uri": "https://app.example.com/callback", "name": "Example"}
+    assert (server.way, server.authorize_url, server.state, server.server_name) == (
+        "redirect", "https://auth.example.com/authorize?x=1", "st_1", "Example Auth")
+    with pytest.raises(nc.InvalidRequest, match="callback's code and state"):
+        server.wait()
+    done = server.finish(code="the-code", state=server.state)
+
+    assert body(finish.calls.last.request) == {"code": "the-code", "state": "st_1"}
+    assert done.status == "connected" and done.verification.reachable is True
+
+
+def test_an_mcp_server_that_takes_a_key_finishes_with_it(api, client):
+    start = api.post("/v1/connections/sign_ins").respond(json=_waiting(
+        way="key", user_code=None, verification_url=None, interval=None))
+    finish = api.post("/v1/connections/sign_ins/si_w/finish").respond(json={
+        "object": "sign_in", "id": None, "status": "connected", "provider": "mcp",
+        "credential": {"id": "c1", "name": "Canva", "credential_type": "canva_mcp"}, "connection": None,
+        "account": {}, "choose": None, "waiting": None, "verification": None})
+
+    canva = nc.Connection.sign_in("mcp", credential_type="canva_mcp", redirect_uri="https://app.example.com/callback")
+    assert body(start.calls.last.request)["credential_type"] == "canva_mcp" and canva.way == "key"
+    done = canva.finish(api_key="sk-typed")
+
+    assert body(finish.calls.last.request) == {"api_key": "sk-typed"}
+    assert done.status == "connected" and done.verification is None

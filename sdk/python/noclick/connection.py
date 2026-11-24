@@ -643,6 +643,8 @@ class Connection(_Object):
         inputs: Optional[Dict[str, Any]] = None,
         oauth_app: Optional[Dict[str, str]] = None,
         reconnect: Optional[str] = None,
+        credential_type: Optional[str] = None,
+        server_url: Optional[str] = None,
         client: Optional[Client] = None,
     ) -> "SignIn":
         """Sign your account in to an app. With ``code``: finish a sign-in whose authorize step a page of yours
@@ -653,8 +655,11 @@ class Connection(_Object):
         app's does, and stores the account's credential (``credential:<id>``); ``inputs`` carries what its connect
         form takes beside the code (a shop, a subdomain, a site), ``oauth_app`` an OAuth app of your own the sign-in
         ran on (``client_id``, ``client_secret``), ``reconnect`` a connection a Claude plan's sign-in renews in
-        place. A connect link (``connect_link()``) runs the whole sign-in on NoClick's page instead, and is how one
-        of your users signs in: this is your account's own.
+        place. An MCP server's sign-in is ``"mcp"``, with an integration's MCP ``credential_type`` (``"canva_mcp"``)
+        or any server's ``server_url``, and the ``redirect_uri`` of your page its callback returns to: it waits on
+        that callback (``authorize_url``; ``finish`` with its ``code`` and ``state``), or on a key the server takes
+        instead (``way`` ``key``; ``finish(api_key=...)``). A connect link (``connect_link()``) runs the whole sign-in
+        on NoClick's page instead, and is how one of your users signs in: this is your account's own.
 
         Returns:
             The ``SignIn``: ``connected`` with its ``credential`` (and ``connection``), ``choose`` (a Supabase
@@ -683,17 +688,21 @@ class Connection(_Object):
         scope = resolve_scope(AMBIENT)
         body = compact(provider=provider, code=code, redirect_uri=redirect_uri, code_verifier=code_verifier,
                        scopes=list(scopes) if isinstance(scopes, (list, tuple)) else scopes, name=name,
-                       inputs=inputs, client=oauth_app, reconnect=reconnect)
+                       inputs=inputs, client=oauth_app, reconnect=reconnect, credential_type=credential_type,
+                       server_url=server_url)
         raw = await resolve_client(client).request("POST", "/v1/connections/sign_ins", json=body, user=scope)
         return SignIn._from(raw, client=client, user=scope)
 
     @synced
     @classmethod
     async def finish_sign_in(cls, sign_in_id: str, choice: Optional[str] = None, *, code: Optional[str] = None,
+                             state: Optional[str] = None, api_key: Optional[str] = None,
                              client: Optional[Client] = None) -> "SignIn":
         """Finish a sign-in that waits on the person by its ``id`` alone, as its answer may come back in another
         request than the one that started it: the ``id`` of the choice they picked (``choose``), the code they copied
-        from the provider's page (a Claude plan), or nothing, to ask whether they've signed in (a device code).
+        from the provider's page (a Claude plan) or the ``code`` and ``state`` an MCP sign-in's callback got, the
+        ``api_key`` an MCP server takes in place of a sign-in, or nothing, to ask whether they've signed in (a device
+        code).
 
         Returns:
             The ``SignIn``: ``connected``, or still ``waiting`` for the person; one finished, lapsed or another
@@ -706,8 +715,8 @@ class Connection(_Object):
         """
         scope = resolve_scope(AMBIENT)
         raw = await resolve_client(client).request(
-            "POST", f"/v1/connections/sign_ins/{path_segment(sign_in_id)}/finish", json=compact(choice=choice, code=code),
-            user=scope)
+            "POST", f"/v1/connections/sign_ins/{path_segment(sign_in_id)}/finish",
+            json=compact(choice=choice, code=code, state=state, api_key=api_key), user=scope)
         return SignIn._from(raw, client=client, user=scope)
 
     @synced
@@ -1470,7 +1479,8 @@ class SignIn:
     the provider asks the person to pick (``what``: a ``project``, an ``instagram_account``) from ``choices`` (each
     with its ``id``); or ``waiting`` while the person signs in on the provider's page (``way`` ``device``: enter
     ``user_code`` at ``verification_url``, then ``wait``; ``code``: open ``authorize_url`` and ``finish`` with the
-    code it shows). ``account`` is what the provider says of the account signed in to (an email, a team, a site);
+    code it shows; an MCP server's ``redirect``: open ``authorize_url`` and ``finish`` with the ``code`` and ``state``
+    your callback got, or ``key``: ``finish`` with the key it takes). ``account`` is what the provider says of the account signed in to (an email, a team, a site);
     never a token."""
 
     def __init__(self, raw: Dict[str, Any], *, client: Optional[Client], user: Any) -> None:
@@ -1533,6 +1543,21 @@ class SignIn:
         return self._waiting("interval")
 
     @property
+    def state(self) -> Optional[str]:
+        """An MCP sign-in's state, which its callback returns with the code."""
+        return self._waiting("state")
+
+    @property
+    def server_name(self) -> Optional[str]:
+        """Who an MCP server says signs it in."""
+        return self._waiting("name")
+
+    @property
+    def verification(self) -> Optional["Verification"]:
+        """An MCP server's proof of the account it signed in to (the tools it lists for it)."""
+        return Verification._from(self._raw.get("verification"))
+
+    @property
     def expires_at(self) -> Any:
         return parse_time(self._waiting("expires_at"))
 
@@ -1549,7 +1574,8 @@ class SignIn:
         return dict(self._raw)
 
     @synced
-    async def finish(self, choice: Optional[str] = None, *, code: Optional[str] = None) -> "SignIn":
+    async def finish(self, choice: Optional[str] = None, *, code: Optional[str] = None, state: Optional[str] = None,
+                     api_key: Optional[str] = None) -> "SignIn":
         """Finish a sign-in that waits on the person: with the ``id`` of the choice they picked, the ``code`` they
         copied from the provider's page, or nothing, to ask whether they've signed in.
 
@@ -1563,7 +1589,8 @@ class SignIn:
         """
         if not self.id:
             raise InvalidRequest("This sign-in waits on no one.")
-        return await Connection.finish_sign_in.aio(self.id, choice, code=code, client=self._client)
+        return await Connection.finish_sign_in.aio(self.id, choice, code=code, state=state, api_key=api_key,
+                                                   client=self._client)
 
     @synced
     async def wait(self, *, timeout: float = 900) -> "SignIn":
@@ -1585,7 +1612,10 @@ class SignIn:
         current = self
         while current.status == "waiting":
             if current.way != "device":
-                raise InvalidRequest("This sign-in finishes with the code its page shows: finish(code=...).")
+                raise InvalidRequest("This sign-in finishes with the code its page shows: finish(code=...)."
+                                     if current.way == "code" else
+                                     "This sign-in finishes with its callback's code and state, or a key: "
+                                     "finish(code=..., state=...) or finish(api_key=...).")
             if loop.time() >= deadline:
                 raise OperationTimeout(f"Nobody entered {current.user_code} within {timeout:.0f}s.")
             await asyncio.sleep(5 if current.interval is None else current.interval)
