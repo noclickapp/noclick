@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Agent, APIConnectionError, NoClickError, NotFound, Operation, OperationFailed, OperationTimeout, PaymentRequired, RequestTimeout, ServerError, UpstreamError, type AgentCommands, type AgentEvent, type AgentStep, type Attachment, type ConversationChanges, type ConversationSettings, type HarnessRequest, type Message, type MessageSubagent, type NoClick, type RequestDecision } from 'noclick';
 import { peekV1, readV1 } from '@/sdk/useV1';
+import { useReportHeld } from '@/sdk/held';
 import { operationFollower, PushedOperations } from '@/sdk/useFollowedOperations';
 import type { ThreadJobs } from '@/lib/threadJobs';
 import type { ChatReference } from '@/lib/agentThread/messages';
@@ -196,6 +197,8 @@ export function useAgentThread(caller: Agent, conversation: string | null, { key
     const [ready, setReady] = useState(() => !!seed());
     const [loadError, setLoadError] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    // Stopping a turn can wait for the account's owner (a key NoClick gave this app): a toast follows it.
+    const reportHeld = useReportHeld({ client });
     const [attempt, setAttempt] = useState(0);
     const [queued, setQueued] = useState<Queued[]>([]);
     const [commands, setCommands] = useState<AgentCommands | null>(() => seed()?.commands ?? null);
@@ -386,9 +389,9 @@ export function useAgentThread(caller: Agent, conversation: string | null, { key
             await Operation.fromId(id, { client }).cancel();
             setThread((t) => ended(t, id, { status: 'stopped', at: Date.now() }));
         } catch (e) {
-            setError(reasonOf(e));
+            if (!reportHeld(e, 'Stop the turn')) setError(reasonOf(e));
         }
-    }, [client]);
+    }, [client, reportHeld]);
 
     /** Takes a queued message back (cancelling its operation): it never runs. */
     const unqueue = useCallback(
@@ -400,12 +403,12 @@ export function useAgentThread(caller: Agent, conversation: string | null, { key
                 try {
                     await Operation.fromId(item.operationId, { client }).cancel();
                 } catch (e) {
-                    setError(reasonOf(e));
+                    if (!reportHeld(e, 'Take the message back')) setError(reasonOf(e));
                 }
             }
             return item;
         },
-        [client, queued]
+        [client, queued, reportHeld]
     );
 
     const answer = useCallback(

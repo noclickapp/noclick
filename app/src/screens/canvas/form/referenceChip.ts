@@ -17,7 +17,7 @@ const CHIP_VALID = 'bg-foreground/[0.08] ring-1 ring-inset ring-foreground/[0.12
 const CHIP_INVALID = 'bg-red-500/20 ring-1 ring-inset ring-red-500/40 hover:bg-red-500/30 hover:ring-red-500/50';
 // JS expression ({{ $('node').x.split(',') }}) — a slightly brighter neutral than a
 // plain reference so it reads as "computed" without an off-theme accent color.
-// Evaluated server-side, so never flagged invalid.
+// Evaluated server-side, so flagged invalid only when it reads no step (`$('')`).
 const CHIP_EXPRESSION = 'bg-foreground/[0.14] ring-1 ring-inset ring-foreground/25 hover:bg-foreground/[0.2] hover:ring-foreground/35';
 
 export const REFERENCE_CHIP_CLASSES = {
