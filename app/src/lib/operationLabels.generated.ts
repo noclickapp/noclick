@@ -753,6 +753,7 @@ api-bible
 api-ninjas
 api2cart
 api2convert
+apideck
 apiframe
 apify
 apigee
