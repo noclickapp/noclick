@@ -303,7 +303,12 @@ test("committing a folder sends only what changed", async () => {
       { path: "index.html", type: "file", sha: sha("<h1>Hi</h1>") }, { path: "old.html", type: "file", sha: "x" },
       { path: "keep.map", type: "file", sha: "y" },
     ])),
-    json(listing([{ path: "index.html", type: "file", sha: sha("<h1>Hi</h1>") }, { path: "assets/app.js", type: "file", sha: sha("run()") }])));
+    json(listing([{ path: "index.html", type: "file", sha: sha("<h1>Hi</h1>") }, { path: "assets/app.js", type: "file", sha: sha("run()") }])),
+    // A link someone committed: listed as one, with no size or sha.
+    json(listing([
+      { path: "index.html", type: "file", sha: sha("<h1>Hi</h1>") }, { path: "assets/app.js", type: "file", sha: sha("run()") },
+      { path: "assets/shared", type: "link", size: null, sha: null },
+    ])));
   const commits = api.on("POST", "/v1/repos/rp_1/commits", json({ sha: "def", message: "Rebuild" }));
   const site = nc.Repo.fromId("rp_1");
 
@@ -315,6 +320,12 @@ test("committing a folder sends only what changed", async () => {
     "assets/app.js": { path: "assets/app.js", content: "cnVuKCk=", encoding: "base64" },
     "old.html": { path: "old.html", delete: true },
   });
+  assert.equal(await site.commit(dist, { message: "Again", exclude: ["*.map"] }), null);
+  assert.equal(commits.count, 1);
+  // The link is left as it is: the folder having no file at its path deletes nothing, since a commit through the API
+  // can't put a link back.
+  assert.deepEqual((await site.files("", { recursive: true })).filter((f) => f.type === "link").map((f) => [f.path, f.size, f.sha]),
+    [["assets/shared", null, null]]);
   assert.equal(await site.commit(dist, { message: "Again", exclude: ["*.map"] }), null);
   assert.equal(commits.count, 1);
 });

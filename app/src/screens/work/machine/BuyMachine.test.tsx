@@ -10,6 +10,8 @@ import type { Machine } from 'noclick';
 import { fakeWork } from '../agents/fixtures/workAgents';
 import { WorkProviders } from '../agents/fixtures/providers';
 import { createWorkLive } from '@/sdk/live';
+import { holding } from '@/sdk/heldFixture';
+import { workFixtureClient } from '../fixtures/client';
 import { BuyMachine, HOLD_MS } from './BuyMachine';
 
 afterEach(cleanup);
@@ -197,5 +199,54 @@ describe('the quote', () => {
         await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('The account’s company isn’t vetted yet.'));
         expect(screen.getByText('Buy Small in Europe?')).toBeTruthy();
         expect(buyButton().hasAttribute('disabled')).toBe(false);
+    });
+});
+
+describe('held for the account’s owner', () => {
+    // A copy of the app on its own key: NoClick holds the purchase for the owner, and the dialog follows it.
+    function openHeld() {
+        const fake = fakeWork({ machineHosts: 'two' });
+        const api = holding(fake.fetch, [{ method: 'POST', path: '/v1/machines' }]);
+        const onBought = vi.fn<(machine: Machine) => void>();
+        const live = createWorkLive();
+        render(
+            <WorkProviders client={workFixtureClient(api.fetch)} live={live}>
+                <BuyMachine agent={{ name: 'Atlas', made: true }} onBought={onBought} onClose={() => undefined} />
+            </WorkProviders>
+        );
+        return { fake, api, onBought, live };
+    }
+
+    it('says it went to the owner and where, never an error, and is bought once they approve it', async () => {
+        const { fake, api, onBought, live } = openHeld();
+        await toConfirm('Large');
+        await unheld();
+        await act(async () => fireEvent.click(buyButton()));
+        const notice = await screen.findByTestId('held-call');
+        expect(notice.textContent).toContain('Rent Large in Europe: waiting for approval');
+        expect(notice.textContent).toContain('Sent to the account’s owner to approve, by email.');
+        expect(screen.queryByRole('alert')).toBeNull();
+        // Nothing was bought, and the link went to the owner, not this page.
+        expect(fake.machines.filter((m) => m.name === 'atlas-box')).toEqual([]);
+        expect(notice.querySelector('a')).toBeNull();
+        expect(onBought).not.toHaveBeenCalled();
+
+        const frame = await api.approve();
+        act(() => live.deliver('platform:resource', frame));
+        await waitFor(() => expect(onBought).toHaveBeenCalled());
+        expect(onBought.mock.calls[0][0].name).toBe('atlas-box');
+        expect(screen.getByText('Bought Large in Europe')).toBeTruthy();
+    });
+
+    it('says it wasn’t bought when the owner declines it', async () => {
+        const { api, onBought, live } = openHeld();
+        await toConfirm('Large');
+        await unheld();
+        await act(async () => fireEvent.click(buyButton()));
+        await screen.findByTestId('held-call');
+        act(() => live.deliver('platform:resource', api.decline()));
+        await waitFor(() => expect(screen.getByTestId('held-call').getAttribute('data-phase')).toBe('declined'));
+        expect(screen.getByTestId('held-call').textContent).toBe('Rent Large in Europe: not doneThe person declined it.');
+        expect(onBought).not.toHaveBeenCalled();
     });
 });
