@@ -2,6 +2,7 @@
 // agent's memory on the platform API, or another chat's own). Request generations keep a slower search or selection
 // from replacing the user's newer view.
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useReportHeld } from '@/sdk/held';
 
 /** A memory as the panel writes it: a new one, or a change to `memory_id` at the version it read. */
 export interface MemoryWrite {
@@ -58,6 +59,8 @@ export function useMemories(transport: MemoryTransport, enabled = true) {
     const [editorRevision, setEditorRevision] = useState(0);
     const [selected, setSelected] = useState<MemoryEntry | 'new' | null>(null);
     const selection = useRef(0);
+    // Forgetting can't be undone, so a key NoClick gave this app has it wait for the account's owner: a toast follows it.
+    const reportHeld = useReportHeld();
 
     useEffect(() => {
         if (!enabled) return;
@@ -126,6 +129,11 @@ export function useMemories(transport: MemoryTransport, enabled = true) {
             setNotice('Memory saved');
             refresh((value) => value + 1);
         } catch (cause) {
+            // Renamed: saved under its new name, and taking the old one away waits for the owner.
+            if (reportHeld(cause, `Forget ${input.memory_id ?? input.name}`, () => refresh((value) => value + 1))) {
+                refresh((value) => value + 1);
+                return;
+            }
             setError(message(cause));
         } finally {
             setBusy(false);
@@ -143,6 +151,7 @@ export function useMemories(transport: MemoryTransport, enabled = true) {
             setOffset(0);
             refresh((value) => value + 1);
         } catch (cause) {
+            if (reportHeld(cause, `Forget ${entry.name}`, () => refresh((value) => value + 1))) return setSelected(null);
             setError(message(cause));
         } finally {
             setBusy(false);

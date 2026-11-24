@@ -178,6 +178,13 @@ export const OWNER_ONLY = {
         why: 'Lifting one takes the owner, their word through an agent, or a key they gave the approvals:policy scope, which this app’s key doesn’t carry.',
         operations: ['DELETE /v1/connections/{ref}/require_approval'],
     },
+    /** Making an app's code public, on its page and its repo's under Resources. */
+    publishCode: {
+        what: 'Making an app’s code public',
+        scope: 'projects:publish',
+        why: 'A key makes an app’s code public only with the projects:publish scope, which an account’s key with every scope (*) doesn’t hold: a copy someone cloned can’t be recalled.',
+        operations: ['POST /v1/projects/{project_id}/public'],
+    },
 } as const satisfies Record<string, OwnerOnlyRow>;
 
 export type OwnerOnly = keyof typeof OWNER_ONLY;
