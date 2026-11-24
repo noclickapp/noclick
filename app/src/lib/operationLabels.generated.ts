@@ -1782,6 +1782,7 @@ pennylane
 penpot
 people-data-labs
 perfect-venue
+perfex-crm
 perigon
 permit-io
 perplexity
