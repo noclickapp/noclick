@@ -2170,6 +2170,7 @@ sprig
 spruce
 spydra
 squadcast
+square
 squarespace-commerce
 stack-exchange
 stack-overflow-for-teams
