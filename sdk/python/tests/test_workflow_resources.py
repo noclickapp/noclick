@@ -1,6 +1,8 @@
 """What workflows keep (their files and tables, a table's rows) and the account's own files, against the mocked
 transport: the routes, query parameters and headers each call sends, and what it parses."""
 
+import json
+
 import httpx
 import pytest
 
@@ -126,6 +128,29 @@ def test_through_mcp_a_deletion_waiting_for_the_owner_raises_as_one(api, client)
     [orders] = nc.WorkflowTable.list()
     with pytest.raises(nc.ApprovalRequired):
         orders.delete()
+
+
+def test_a_workflow_is_shared_changed_and_unshared_and_a_person_leaves_one(api, client):
+    share = {"object": "share", "id": "sh_1", "resource_type": "workflow", "resource_id": "wf_1", "with": "user",
+             "user_id": "u_2", "email": "sam@example.com", "organization_id": None, "name": "Sam", "access": "edit",
+             "pending": False, "url": None, "created_at": "2026-11-24T10:00:00+00:00"}
+    made = api.post("/v1/shares").respond(201, json=share)
+    api.get("/v1/shares").respond(json={"object": "list", "data": [share], "next_cursor": None})
+    changed = api.patch("/v1/shares/sh_1").respond(json={**share, "access": "view"})
+    gone = api.delete("/v1/shares/sh_1").respond(json={"object": "share", "id": "sh_1", "deleted": True})
+    left = api.post("/v1/shares/leave").respond(json={"object": "share_leave", "left": True})
+    created = nc.Share.create(nc.Workflow.from_id("wf_1"), email="sam@example.com", access="edit")
+    assert json.loads(made.calls.last.request.content) == {
+        "resource_type": "workflow", "resource_id": "wf_1", "access": "edit", "with": "user",
+        "email": "sam@example.com"}
+    assert (created.with_, created.name, created.access) == ("user", "Sam", "edit")
+    [listed] = nc.Share.list("wf_1", resource_type="workflow")
+    assert listed.update("view").access == "view"
+    assert json.loads(changed.calls.last.request.content) == {"access": "view"}
+    listed.delete()
+    assert gone.called
+    assert nc.Share.leave("db_1", resource_type="database") is True
+    assert json.loads(left.calls.last.request.content) == {"resource_type": "database", "resource_id": "db_1"}
 
 
 def test_an_agent_steps_workspaces_list_as_resources_lists_them_each_reading_its_files(api, client):

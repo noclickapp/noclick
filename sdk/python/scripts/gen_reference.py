@@ -44,11 +44,11 @@ PAGE_OF_MODULE = {
     "agent_move": "AgentMove", "estimate": "estimate", "deploy": "deploy", "workflow_resources": "Workflow", "_watch": "watch",
     "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "connected_app": "ConnectedApp",
     "popups": "Popups", "account_phones": "AccountPhones", "builder_skill": "BuilderSkill",
-    "workflow_approval": "Workflow", "workflow_example": "Workflow",
+    "workflow_approval": "Workflow", "workflow_example": "Workflow", "share": "Workflow",
 }
 # Module docstrings that describe internals rather than the page's names.
 NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "agent_conversations", "app_services", "cron", "live",
-            "workflow_resources", "step_type", "workflow_example"}
+            "workflow_resources", "step_type", "workflow_example", "share"}
 
 # The index page's sections, like the reference's table of contents.
 GROUPS: List[Tuple[str, List[str]]] = [

@@ -113,6 +113,28 @@ test("the account's files page by cursor and are deleted as the account", async 
   await assert.rejects(nc.deleteAttachment({ ...page.data[0], id: null }), TypeError);
 });
 
+test("a workflow is shared, changed and unshared, and a person leaves one", async () => {
+  const { api } = setup();
+  const SHARE = { object: "share", id: "sh_1", resource_type: "workflow", resource_id: "wf_1", with: "user", user_id: "u_2",
+    email: "sam@example.com", organization_id: null, name: "Sam", access: "edit", pending: false, url: null,
+    created_at: "2026-11-24T10:00:00+00:00" };
+  const made = api.on("POST", "/v1/shares", json(SHARE));
+  api.on("GET", "/v1/shares", json(listing([SHARE])));
+  const changed = api.on("PATCH", "/v1/shares/sh_1", json({ ...SHARE, access: "view" }));
+  const gone = api.on("DELETE", "/v1/shares/sh_1", json({ object: "share", id: "sh_1", deleted: true }));
+  const left = api.on("POST", "/v1/shares/leave", json({ object: "share_leave", left: true }));
+  const created = await nc.Share.create(nc.Workflow.fromId("wf_1"), { email: "sam@example.com", access: "edit" });
+  assert.deepEqual(made.last.body, { resource_type: "workflow", resource_id: "wf_1", access: "edit", with: "user", email: "sam@example.com" });
+  assert.deepEqual([created.with, created.name, created.access], ["user", "Sam", "edit"]);
+  const [listed] = await nc.Share.list("wf_1", { resourceType: "workflow" });
+  assert.equal((await listed.update("view")).access, "view");
+  assert.deepEqual(changed.last.body, { access: "view" });
+  await listed.delete();
+  assert.equal(gone.calls.length, 1);
+  assert.equal(await nc.Share.leave("db_1", { resourceType: "database" }), true);
+  assert.deepEqual(left.last.body, { resource_type: "database", resource_id: "db_1" });
+});
+
 test("an agent step's workspaces list as Resources lists them, each reading its files", async () => {
   const { api } = setup();
   const PLACE = { object: "step_workspace", workflow: { id: "wf_1", name: "Intake", step_types: ["agent"] },
