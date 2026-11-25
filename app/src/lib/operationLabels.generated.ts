@@ -2505,6 +2505,7 @@ zoho-creator
 zoho-crm
 zoho-inventory
 zoho-mail
+zoho-people
 zoho-projects
 zoho-work-drive
 zoho-writer
