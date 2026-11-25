@@ -309,7 +309,7 @@ def test_logout_revokes_the_key_then_forgets_it(home, monkeypatch, api, capsys):
 def test_logout_forgets_a_key_already_revoked_but_keeps_one_it_could_not_revoke(home, monkeypatch, api, capsys):
     signed_in_with_login(home, monkeypatch)
     api.delete("/v1/keys/current").respond(403, json={"error": {"type": "permission_denied", "message": "No."}})
-    assert run("logout") == 1
+    assert run("logout") == cli.exits.REFUSED
     assert home.keychain.saved  # kept, so you can retry
     api.delete("/v1/keys/current").respond(401, json={"error": {"type": "unauthenticated", "message": "Revoked."}})
     assert run("logout") == 0
@@ -411,7 +411,7 @@ def test_ops_wait_exit_codes(home, api, capsys):
     assert "error: The build failed." in capsys.readouterr().err
 
     api.get("/v1/operations/op_r").respond(json=operation("op_r", status="running"))
-    assert run("ops", "wait", "op_r", "--timeout", "0") == 124
+    assert run("ops", "wait", "op_r", "--timeout", "0") == cli.exits.TIMED_OUT
 
 
 # --- databases and storage ------------------------------------------------------------
@@ -803,7 +803,7 @@ def test_domains_buy_for_the_account_uses_its_default_registrant(home, api, caps
 def test_domains_buy_refused_above_the_ceiling(home, api, capsys):
     api.post("/v1/domains").respond(402, json={"error": {
         "type": "price_exceeded", "message": "acmebooking.com costs $89.00, above your $15.00 ceiling."}})
-    assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == 1
+    assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.REFUSED
     assert "above your $15.00 ceiling" in capsys.readouterr().err
 
 
@@ -1138,30 +1138,30 @@ def test_logs_build_prints_a_build_log_and_a_missing_app_is_an_app(home, api, ca
     assert "next step: Create it with its first deploy: noclick deploy nccli-worker --create" in err
 
 
-@pytest.mark.parametrize("argv, route, answer, said", [
-    # A write through a read: the flag that allows it, not the SDK method.
+@pytest.mark.parametrize("argv, route, answer, said, code", [
+    # A write through a read (the API refused the call's arguments: usage): the flag that allows it, not the SDK method.
     (["db", "query", "booking-db", "delete from bookings"], ("POST", "/v1/databases/db_1/query"),
      httpx.Response(400, json={"error": {"type": "invalid_request", "message": "query runs read-only.",
                                          "next_step": "Run statements that write with execute (or batch)."}}),
-     "next step: Run it again with --write."),
-    (["db", "query", "nope", "select 1"], None, None, "next step: Create it with: noclick db create nope"),
+     "next step: Run it again with --write.", 2),
+    (["db", "query", "nope", "select 1"], None, None, "next step: Create it with: noclick db create nope", 1),
     (["bucket", "cp", "uploads:missing.pdf", "."], ("GET", "/v1/buckets/bkt_1/objects"),
      httpx.Response(404, json={"error": {"type": "not_found", "message": "No file at 'missing.pdf'.",
                                          "next_step": "List the bucket's files with GET .../objects."}}),
-     "next step: List its files with: noclick bucket ls uploads"),
+     "next step: List its files with: noclick bucket ls uploads", 1),
     (["ops", "wait", "op_f"], ("GET", "/v1/operations/op_f/wait"),
      httpx.Response(200, json=operation("op_f", kind="project.deploy", status="failed", error={
          "type": "operation_failed", "message": "The build failed.",
          "next_step": "Read its build log: GET /v1/deployments/dep_9/logs?kind=build."})),
-     "next step: Read its build log: noclick logs --build --deployment dep_9"),
+     "next step: Read its build log: noclick logs --build --deployment dep_9", 1),
 ])
-def test_a_next_step_names_the_command_that_takes_it(home, api, capsys, argv, route, answer, said):
+def test_a_next_step_names_the_command_that_takes_it(home, api, capsys, argv, route, answer, said, code):
     api.get("/v1/databases").respond(json=listing(DB))
     api.get("/v1/databases", params={"name": "nope"}).respond(json=listing())
     api.get("/v1/buckets").respond(json=listing(BUCKET))
     if route:
         api.request(*route).mock(return_value=answer)
-    assert run(*argv) == 1
+    assert run(*argv) == code
     assert said in capsys.readouterr().err
 
 
@@ -1258,3 +1258,18 @@ def test_estimate_kinds_says_what_a_variant_is_in_a_few_words(home, api, capsys)
     assert run("estimate", "--kinds") == 0
     row = capsys.readouterr().out.splitlines()[1]
     assert "container, us-east" in row and "{" not in row
+
+
+def test_an_exit_status_says_whether_it_failed_waits_on_a_person_or_was_refused(home, api, capsys):
+    """An agent acts on the status without reading the words: 3 waiting on a person (with where), 4 refused by a
+    limit, a price or a policy, 1 anything else that failed."""
+    api.post("/v1/domains").respond(402, json={"error": {
+        "type": "approval_required", "message": "The purchase waits for the account's owner.",
+        "approve_url": "https://noclick.test/approve/ap_1"}})
+    assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.WAITING
+    err = capsys.readouterr().err
+    assert "waiting on a person: The purchase waits" in err and "open: https://noclick.test/approve/ap_1" in err
+    api.post("/v1/domains").respond(402, json={"error": {"type": "spend_cap_exceeded", "message": "Cap used up."}})
+    assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.REFUSED
+    api.post("/v1/domains").respond(500, json={"error": {"type": "server_error", "message": "Broke."}})
+    assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.FAILED

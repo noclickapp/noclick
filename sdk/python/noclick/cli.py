@@ -49,13 +49,17 @@ from .bucket import Bucket
 from .database import Database
 from .domain import Domain, DomainContact
 from .estimate import Estimate, estimate
-from .exceptions import Conflict, Error, InvalidRequest, NotFound, OperationFailed, OperationTimeout, Unauthenticated
+from .exceptions import Conflict, Error, InvalidRequest, NotFound, OperationFailed, Unauthenticated
 from .machine import Machine
 from .operation import Operation
 from .project import Deployment, Project
 from .repo import Repo
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
+from ._cli import commands as generated, exits, kit as cli_kit, output
+from ._cli.output import cell as _cell, note as _note, plain as _plain, plural as _plural, print_json as _print_json
+from ._cli.output import size as _size, table as _table, usd as _usd
+from ._cli.spec import load as load_spec
 
 PROFILE_ENV = "NOCLICK_PROFILE"
 CONFIG_DIR_ENV = "NOCLICK_CONFIG_DIR"
@@ -71,11 +75,6 @@ class CommandError(Error):
     """A problem the CLI found on your machine (not an API refusal)."""
 
     type = "command_error"
-
-
-def _note(message: str) -> None:
-    """Progress and hints go to stderr, so stdout stays clean for pipes."""
-    print(message, file=sys.stderr)
 
 
 # --- the command line's own words ----------------------------------------------
@@ -270,58 +269,7 @@ def _mask(key: str) -> str:
     return f"{key[:12]}…"
 
 
-# --- output ------------------------------------------------------------------
-
-
-def _cell(value: Any) -> str:
-    if value is None:
-        return "-"
-    if isinstance(value, bool):
-        return "yes" if value else "no"
-    if isinstance(value, datetime):
-        return value.astimezone().strftime("%Y-%m-%d %H:%M")
-    return str(value)
-
-
-def _table(headers: Sequence[str], rows: Iterable[Sequence[Any]], *, empty: str) -> None:
-    cells = [[_cell(v) for v in row] for row in rows]
-    if not cells:
-        _note(empty)
-        return
-    widths = [max(len(h), *(len(row[i]) for row in cells)) for i, h in enumerate(headers)]
-    for row in [list(headers), *cells]:
-        print("  ".join(c.ljust(w) for c, w in zip(row, widths)).rstrip())
-
-
-def _plain(item: Any) -> Any:
-    """Objects and records as JSON-ready data: each one's server JSON when it has one."""
-    if isinstance(item, list):
-        return [_plain(i) for i in item]
-    raw = getattr(item, "raw", None)
-    if isinstance(raw, dict):
-        return raw
-    if is_dataclass(item) and not isinstance(item, type):
-        return asdict(item)
-    return item
-
-
-def _print_json(data: Any) -> None:
-    print(json.dumps(_plain(data), indent=2, default=str))
-
-
-def _size(n: Optional[int]) -> str:
-    if n is None:
-        return "-"
-    size = float(n)
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if size < 1000 or unit == "TB":
-            return f"{size:.0f} {unit}" if unit == "B" else f"{size:.1f} {unit}"
-        size /= 1000
-    return str(n)
-
-
-def _usd(value: Optional[float]) -> str:
-    return "-" if value is None else f"${value:,.2f}"
+# --- what the command line reads -----------------------------------------------
 
 
 def _since(text: str) -> datetime:
@@ -584,8 +532,6 @@ def cmd_ops_wait(args: argparse.Namespace) -> int:
 # --- databases and storage -------------------------------------------------------
 
 
-def _plural(n: int, word: str) -> str:
-    return f"{n} {word}{'' if n == 1 else 's'}"
 
 
 # A statement that defines the schema: what the engine counts as rows written for it is its own catalog's.
@@ -1489,11 +1435,15 @@ def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
 # --- the parser --------------------------------------------------------------
 
 
-def build_parser() -> argparse.ArgumentParser:
+def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.ArgumentParser:
+    """The parser; an area of the API's operations named in ``argv`` gets its commands (``_cli.commands``), and
+    ``areas=False`` leaves them all out (the curated commands alone, as the manifest lists them)."""
     parser = argparse.ArgumentParser(
         prog="noclick",
         description="The NoClick platform from your terminal.",
-        epilog="Docs: https://noclick.com/docs/guide/cli",
+        epilog="Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
+               "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C. "
+               "Docs: https://noclick.com/docs/guide/cli",
     )
     parser.add_argument("--version", action="version", version=f"noclick {__version__}")
     parser.add_argument(
@@ -1514,9 +1464,12 @@ def build_parser() -> argparse.ArgumentParser:
         sub.set_defaults(run=run, auth=auth)
         return sub
 
+    groups: Dict[str, Any] = {}
+
     def group(name: str, summary: str) -> Any:
         sub = commands.add_parser(name, help=summary, description=summary)
-        return sub.add_subparsers(dest="subcommand", metavar="<subcommand>", required=True)
+        groups[name] = sub.add_subparsers(dest="subcommand", metavar="<subcommand>", required=True)
+        return groups[name]
 
     login = command(commands, "login", cmd_login, "Sign in from a browser and keep the key in your OS keychain "
                                                   "(or a file only you can read where there's none).",
@@ -1760,21 +1713,22 @@ def build_parser() -> argparse.ArgumentParser:
     wait.epilog = "A deploy or promote that went live but failed its check (its result's warning) exits 1."
     wait.add_argument("operation_id")
     wait.add_argument("--timeout", type=float, metavar="SECONDS", help="Give up after this long (exit 124).")
+
+    # The parts (noclick._cli.parts), each adding its own commands, then the built-ins and the generated ones,
+    # which never take a name a command above has.
+    built = cli_kit.Kit(commands=commands, command=command, group=group, as_json=as_json, user=user, groups=groups)
+    for part in cli_kit.parts():
+        part.register(built)
+    generated.add_builtins(commands, [as_json])
+    if areas:
+        generated.add_areas(commands, [as_json, user], argv)
     return parser
-
-
-def _report(err: Error) -> None:
-    message, step = _for_the_terminal(err)
-    _note(f"error: {message}")
-    if step:
-        _note(f"  next step: {step}")
-    if err.request_id:
-        _note(f"  request id: {err.request_id}")
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the ``noclick`` command; returns its exit status."""
-    args = build_parser().parse_args(argv)
+    argv = list(sys.argv[1:] if argv is None else argv)
+    args = build_parser(argv).parse_args(argv)
     try:
         if getattr(args, "token", None):
             configure(api_key=args.token, base_url=os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL)
@@ -1786,13 +1740,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return args.run(args)
     except KeyboardInterrupt:
         _note("")
-        return 130
+        return exits.INTERRUPTED
+    except BrokenPipeError:  # the reader (`| head`) stopped reading: nothing more to say, to anyone
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        return exits.OK
     except Error as err:
-        _report(err)
-        return 124 if isinstance(err, OperationTimeout) else 1
+        return output.report(err, as_json=getattr(args, "json", False), said=_for_the_terminal(err),
+                             commands=generated.commands_for(load_spec()))
     except OSError as err:  # a local file the command couldn't read or write
-        _note(f"error: {err}")
-        return 1
+        return output.report(CommandError(str(err)), as_json=getattr(args, "json", False))
 
 
 if __name__ == "__main__":

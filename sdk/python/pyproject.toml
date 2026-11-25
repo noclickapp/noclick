@@ -40,6 +40,10 @@ noclick = "noclick.cli:main"
 [tool.setuptools.packages.find]
 include = ["noclick*"]
 
+[tool.setuptools.package-data]
+# The CLI's command spec: its curated commands and one per /v1 operation.
+"noclick._cli" = ["spec/*.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]

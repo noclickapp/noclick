@@ -1,0 +1,1565 @@
+{
+ "format": 1,
+ "globals": [
+  {
+   "flag": "--version",
+   "dest": "version",
+   "type": "string",
+   "help": "show program's version number and exit"
+  },
+  {
+   "flag": "--profile",
+   "dest": "profile",
+   "type": "string",
+   "help": "Which stored login to use (default: NOCLICK_PROFILE or 'default')."
+  }
+ ],
+ "commands": [
+  {
+   "path": [
+    "login"
+   ],
+   "summary": "Sign in from a browser and keep the key in your OS keychain (or a file only you can read where there's none).",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--store",
+     "dest": "store",
+     "type": "string",
+     "choices": [
+      "auto",
+      "keychain",
+      "file"
+     ],
+     "help": "Where to keep the key: the OS keychain, or a file only you can read (default: the keychain where this machine has one, else the file)."
+    },
+    {
+     "flag": "--no-browser",
+     "dest": "no_browser",
+     "type": "bool",
+     "help": "Print the link without opening a browser."
+    }
+   ]
+  },
+  {
+   "path": [
+    "whoami"
+   ],
+   "summary": "Show the account the next command acts in, the key it will use and where that came from.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ],
+   "examples": [
+    "noclick whoami --json"
+   ]
+  },
+  {
+   "path": [
+    "logout"
+   ],
+   "summary": "Revoke this profile's key and forget it.",
+   "auth": false,
+   "args": [],
+   "flags": []
+  },
+  {
+   "path": [
+    "agents",
+    "list"
+   ],
+   "summary": "List agents: yours and the current user's.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--all-users",
+     "dest": "all_users",
+     "type": "bool",
+     "help": "Every user's agents, and the account's."
+    },
+    {
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "Show at most this many (default 50; 0 for all)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "chat"
+   ],
+   "summary": "Talk to an agent; each line you type is one turn.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "The agent's name."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--conversation",
+     "dest": "conversation",
+     "type": "string",
+     "help": "Continue this conversation (a reply's id, or your own)."
+    },
+    {
+     "flag": "--message",
+     "dest": "message",
+     "type": "string",
+     "short": "-m",
+     "help": "Send one message, print the reply and exit."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "redeem"
+   ],
+   "summary": "Redeem the move code for the move's own key.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--code",
+     "dest": "code",
+     "type": "string",
+     "required": true,
+     "help": "The code your prompt gave (nc_move_...)."
+    },
+    {
+     "flag": "--host",
+     "dest": "host",
+     "type": "string",
+     "help": "This machine's name (default: its hostname)."
+    },
+    {
+     "flag": "--api-url",
+     "dest": "api_url",
+     "type": "string",
+     "help": "The NoClick API, when the prompt names another."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "status"
+   ],
+   "summary": "Where the move lands and what has arrived.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "source"
+   ],
+   "summary": "Say where the session moves from.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--harness",
+     "dest": "harness",
+     "type": "string",
+     "choices": [
+      "claude_code",
+      "codex",
+      "opencode",
+      "hermes",
+      "openclaw"
+     ],
+     "required": true
+    },
+    {
+     "flag": "--cwd",
+     "dest": "cwd",
+     "type": "string",
+     "help": "The folder the session works in (default: here)."
+    },
+    {
+     "flag": "--host",
+     "dest": "host",
+     "type": "string"
+    },
+    {
+     "flag": "--session-id",
+     "dest": "session_id",
+     "type": "string"
+    },
+    {
+     "flag": "--cli-version",
+     "dest": "cli_version",
+     "type": "string"
+    },
+    {
+     "flag": "--title",
+     "dest": "title",
+     "type": "string",
+     "help": "A few words on what the session is about."
+    },
+    {
+     "flag": "--model",
+     "dest": "model",
+     "type": "string",
+     "help": "The model the session runs."
+    },
+    {
+     "flag": "--effort",
+     "dest": "effort",
+     "type": "string",
+     "help": "The reasoning effort it runs at, as the harness says it (xhigh)."
+    },
+    {
+     "flag": "--speed",
+     "dest": "speed",
+     "type": "string",
+     "help": "fast where it runs in its harness's fast mode."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "session"
+   ],
+   "summary": "Upload the session's own files.",
+   "auth": false,
+   "args": [
+    {
+     "name": "files",
+     "many": true,
+     "help": "The session's files, relative to --home."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--harness",
+     "dest": "harness",
+     "type": "string",
+     "choices": [
+      "claude_code",
+      "codex",
+      "opencode",
+      "hermes",
+      "openclaw"
+     ],
+     "required": true
+    },
+    {
+     "flag": "--home",
+     "dest": "home",
+     "type": "string",
+     "required": true,
+     "help": "The harness's home: ~/.claude, ~/.codex, ~/.local/share ..."
+    },
+    {
+     "flag": "--cwd",
+     "dest": "cwd",
+     "type": "string",
+     "required": true,
+     "help": "The folder the session works in, as the harness keys it."
+    },
+    {
+     "flag": "--session-id",
+     "dest": "session_id",
+     "type": "string"
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "repo"
+   ],
+   "summary": "Push the code and its uncommitted work to a NoClick repo.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--path",
+     "dest": "path",
+     "type": "string",
+     "help": "A folder in the git repository (default: here)."
+    },
+    {
+     "flag": "--name",
+     "dest": "name",
+     "type": "string",
+     "help": "The repo's name (default: the folder's)."
+    },
+    {
+     "flag": "--branch",
+     "dest": "branch",
+     "type": "string",
+     "help": "The work branch (default: laptop/<host>-<date>)."
+    },
+    {
+     "flag": "--host",
+     "dest": "host",
+     "type": "string"
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "file"
+   ],
+   "summary": "Carry one file from outside the repo.",
+   "auth": false,
+   "args": [
+    {
+     "name": "path",
+     "help": "The file on this machine."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--to",
+     "dest": "to",
+     "type": "string",
+     "help": "Where it goes under /workspace (default: its name)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "consent"
+   ],
+   "summary": "Record the secrets the person said yes to carrying.",
+   "auth": false,
+   "args": [
+    {
+     "name": "secrets",
+     "many": true,
+     "help": "Each as the person read it, never a value."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--yes",
+     "dest": "yes",
+     "type": "bool",
+     "help": "The person said yes in the session."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "secret"
+   ],
+   "summary": "Carry one secret, sealed (its value never printed).",
+   "auth": false,
+   "args": [
+    {
+     "name": "name"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--from-env",
+     "dest": "from_env",
+     "type": "string",
+     "metavar": "VAR",
+     "help": "This shell's variable holding it."
+    },
+    {
+     "flag": "--from-dotenv",
+     "dest": "from_dotenv",
+     "type": "string",
+     "metavar": "VAR",
+     "help": "A variable in the project's dotenv file (--dotenv)."
+    },
+    {
+     "flag": "--from-file",
+     "dest": "from_file",
+     "type": "string",
+     "metavar": "PATH",
+     "help": "A file holding it (a CLI's config)."
+    },
+    {
+     "flag": "--dotenv",
+     "dest": "dotenv",
+     "type": "string",
+     "help": "The dotenv file --from-dotenv reads (default: .env)."
+    },
+    {
+     "flag": "--to-env",
+     "dest": "to_env",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "An environment variable in the copy."
+    },
+    {
+     "flag": "--to-file",
+     "dest": "to_file",
+     "type": "string",
+     "metavar": "PATH",
+     "help": "A file in the copy (absolute, or under ~/)."
+    },
+    {
+     "flag": "--to-model",
+     "dest": "to_model",
+     "type": "string",
+     "metavar": "PROVIDER",
+     "help": "The model key the copy runs on (e.g. anthropic)."
+    },
+    {
+     "flag": "--mode",
+     "dest": "mode",
+     "type": "string",
+     "help": "The file's mode (default: 600)."
+    }
+   ],
+   "one_of": [
+    {
+     "dests": [
+      "from_env",
+      "from_dotenv",
+      "from_file"
+     ],
+     "required": true
+    },
+    {
+     "dests": [
+      "to_env",
+      "to_file",
+      "to_model"
+     ],
+     "required": false
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "setup"
+   ],
+   "summary": "Set what the copy's sandbox runs as it starts.",
+   "auth": false,
+   "args": [
+    {
+     "name": "commands",
+     "many": true
+    }
+   ],
+   "flags": []
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "checkout"
+   ],
+   "summary": "Check the session's own git remote out in the copy.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--url",
+     "dest": "url",
+     "type": "string",
+     "required": true,
+     "help": "The remote's https URL (no login in it)."
+    },
+    {
+     "flag": "--branch",
+     "dest": "branch",
+     "type": "string",
+     "required": true,
+     "help": "The branch the session pushed its work to."
+    },
+    {
+     "flag": "--path",
+     "dest": "path",
+     "type": "string",
+     "help": "Its folder under /workspace (default: the repository's name)."
+    },
+    {
+     "flag": "--secret",
+     "dest": "secret",
+     "type": "string",
+     "help": "The carried secret that signs the clone in."
+    },
+    {
+     "flag": "--username",
+     "dest": "username",
+     "type": "string",
+     "help": "git's username with that secret (default: x-access-token)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "plan-link"
+   ],
+   "summary": "Print the person's one-tap plan sign-in link.",
+   "auth": false,
+   "args": [],
+   "flags": []
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "mcp"
+   ],
+   "summary": "Carry a remote MCP server.",
+   "auth": false,
+   "args": [
+    {
+     "name": "name"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--url",
+     "dest": "url",
+     "type": "string",
+     "required": true,
+     "help": "Its public https URL."
+    },
+    {
+     "flag": "--transport",
+     "dest": "transport",
+     "type": "string",
+     "choices": [
+      "http",
+      "sse"
+     ]
+    },
+    {
+     "flag": "--headers-file",
+     "dest": "headers_file",
+     "type": "string",
+     "metavar": "FILE",
+     "help": "A JSON object of its headers: text, or {\"secret\": name} for a carried secret's."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "skill"
+   ],
+   "summary": "Carry a skill's folder.",
+   "auth": false,
+   "args": [
+    {
+     "name": "folder",
+     "help": "The skill's folder, holding SKILL.md."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--name",
+     "dest": "name",
+     "type": "string",
+     "help": "Its name (default: the folder's)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "memory"
+   ],
+   "summary": "Carry something it learned.",
+   "auth": false,
+   "args": [
+    {
+     "name": "name",
+     "help": "1-64 of a-z 0-9 . _ -."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--file",
+     "dest": "file",
+     "type": "string",
+     "required": true,
+     "help": "Its text (Markdown), or - for stdin."
+    },
+    {
+     "flag": "--description",
+     "dest": "description",
+     "type": "string",
+     "required": true,
+     "help": "One line on what it's about."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "note"
+   ],
+   "summary": "Carry the handoff note.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--file",
+     "dest": "file",
+     "type": "string",
+     "required": true,
+     "help": "The note (Markdown), or - for stdin."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "instructions"
+   ],
+   "summary": "Carry its instructions.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--file",
+     "dest": "file",
+     "type": "string",
+     "required": true,
+     "help": "A user-level CLAUDE.md or AGENTS.md, or - for stdin."
+    }
+   ]
+  },
+  {
+   "path": [
+    "agents",
+    "move",
+    "finish"
+   ],
+   "summary": "Make the agent from what arrived.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--name",
+     "dest": "name",
+     "type": "string"
+    },
+    {
+     "flag": "--harness",
+     "dest": "harness",
+     "type": "string",
+     "help": "The harness it runs on, when the Draft screen named none."
+    },
+    {
+     "flag": "--none",
+     "dest": "none",
+     "type": "list",
+     "choices": [
+      "mcp_servers",
+      "skills"
+     ],
+     "help": "What the session has none of, said outright (repeat for both)."
+    },
+    {
+     "flag": "--model",
+     "dest": "model",
+     "type": "string"
+    },
+    {
+     "flag": "--model-connection",
+     "dest": "model_connection",
+     "type": "string"
+    }
+   ]
+  },
+  {
+   "path": [
+    "machines",
+    "ssh"
+   ],
+   "summary": "Open a shell on a machine NoClick runs, in this terminal: no SSH keys or server needed.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "The machine's name."
+    }
+   ],
+   "flags": []
+  },
+  {
+   "path": [
+    "users",
+    "list"
+   ],
+   "summary": "List users, newest first.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--q",
+     "dest": "q",
+     "type": "string",
+     "help": "A prefix of the id, name or email."
+    },
+    {
+     "flag": "--status",
+     "dest": "status",
+     "type": "string",
+     "choices": [
+      "active",
+      "suspended"
+     ]
+    },
+    {
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "Show at most this many."
+    }
+   ]
+  },
+  {
+   "path": [
+    "users",
+    "create"
+   ],
+   "summary": "Create a user: a person or company your product acts for.",
+   "auth": true,
+   "args": [
+    {
+     "name": "id",
+     "help": "Your own id for the user."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--name",
+     "dest": "name",
+     "type": "string"
+    },
+    {
+     "flag": "--email",
+     "dest": "email",
+     "type": "string"
+    },
+    {
+     "flag": "--phone",
+     "dest": "phone",
+     "type": "string",
+     "help": "E.164, like +14155550100."
+    },
+    {
+     "flag": "--spend-cap",
+     "dest": "spend_cap",
+     "type": "number",
+     "metavar": "USD",
+     "help": "Monthly spend cap in dollars."
+    }
+   ]
+  },
+  {
+   "path": [
+    "db",
+    "query"
+   ],
+   "summary": "Run one SQL statement and print its rows.",
+   "auth": true,
+   "args": [
+    {
+     "name": "database",
+     "help": "The database's name."
+    },
+    {
+     "name": "sql",
+     "help": "The statement; use ? for each --param."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--param",
+     "dest": "param",
+     "type": "list",
+     "short": "-p",
+     "metavar": "VALUE",
+     "help": "A value for the next ?, as JSON when it parses (42, null) or else text."
+    },
+    {
+     "flag": "--write",
+     "dest": "write",
+     "type": "bool",
+     "help": "Allow a statement that changes data (read-only otherwise)."
+    }
+   ],
+   "examples": [
+    "noclick db query booking-db 'select count(*) from bookings'"
+   ]
+  },
+  {
+   "path": [
+    "db",
+    "create"
+   ],
+   "summary": "Create a database.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "Its name: 1-64 letters, digits and . _ -."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--engine",
+     "dest": "engine",
+     "type": "string",
+     "choices": [
+      "sqlite",
+      "postgres"
+     ],
+     "help": "Default: sqlite."
+    },
+    {
+     "flag": "--region",
+     "dest": "region",
+     "type": "string",
+     "help": "Where its data is kept, for good (default: your account's default region)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "db",
+    "shell"
+   ],
+   "summary": "An interactive SQL prompt.",
+   "auth": true,
+   "args": [
+    {
+     "name": "database",
+     "help": "The database's name."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--write",
+     "dest": "write",
+     "type": "bool",
+     "help": "Allow statements that change data (read-only otherwise)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "bucket",
+    "ls"
+   ],
+   "summary": "List buckets, or the files in one.",
+   "auth": true,
+   "args": [
+    {
+     "name": "path",
+     "optional": true,
+     "help": "A bucket, optionally with a key prefix."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--recursive",
+     "dest": "recursive",
+     "type": "bool",
+     "short": "-r",
+     "help": "Every key under the prefix, not one level."
+    }
+   ]
+  },
+  {
+   "path": [
+    "bucket",
+    "create"
+   ],
+   "summary": "Create a bucket.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "Its name: 1-64 letters, digits and . _ -."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--public",
+     "dest": "public",
+     "type": "bool",
+     "help": "Serve every file at a plain URL."
+    },
+    {
+     "flag": "--region",
+     "dest": "region",
+     "type": "string",
+     "help": "Where its files are kept (default: your account's default region)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "bucket",
+    "cp"
+   ],
+   "summary": "Copy files between your machine and a bucket, written bucket:key.",
+   "auth": true,
+   "args": [
+    {
+     "name": "src",
+     "help": "A local path, - for stdin, or bucket:key."
+    },
+    {
+     "name": "dst",
+     "help": "A local path, - for stdout, or bucket:key (a trailing / keeps the file name)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--recursive",
+     "dest": "recursive",
+     "type": "bool",
+     "short": "-r",
+     "help": "Copy a folder (never its .git), or every key under a prefix."
+    },
+    {
+     "flag": "--content-type",
+     "dest": "content_type",
+     "type": "string",
+     "metavar": "TYPE",
+     "help": "The upload's content type (guessed from the name otherwise)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "deploy"
+   ],
+   "summary": "Push the commit you're on and deploy it.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app to deploy (default: the checkout's folder name)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app to deploy, as a flag: the same as the argument."
+    },
+    {
+     "flag": "--branch",
+     "dest": "branch",
+     "type": "string",
+     "help": "The branch to push and deploy (default: your current one)."
+    },
+    {
+     "flag": "--create",
+     "dest": "create",
+     "type": "bool",
+     "help": "Create the repo and app on the first deploy."
+    },
+    {
+     "flag": "--budget",
+     "dest": "budget",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The app's monthly budget in dollars: what it may spend on hosting, its data, email, AI and agents (set, or changed, with this deploy)."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    },
+    {
+     "flag": "--token",
+     "dest": "token",
+     "type": "string",
+     "help": "A deploy token, as NoClick's MCP server hands an agent with the command (it reaches one repo and its apps), instead of your key."
+    }
+   ],
+   "notes": "Once live, its home page and the app's check paths are loaded. When they fail (an error page, a redirect to another site, scripts that don't load), it prints the URL, the warning and what to fix, and exits 1: the deployment stays live.",
+   "examples": [
+    "noclick deploy --create",
+    "noclick deploy booking --no-wait"
+   ]
+  },
+  {
+   "path": [
+    "logs"
+   ],
+   "summary": "Print an app's logs, or a deployment's build log.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app's name."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--build",
+     "dest": "build",
+     "type": "bool",
+     "help": "Print a build log: the app's newest deployment's, or --deployment's."
+    },
+    {
+     "flag": "--deployment",
+     "dest": "deployment",
+     "type": "string",
+     "metavar": "ID",
+     "help": "With --build: this deployment's build log."
+    },
+    {
+     "flag": "--follow",
+     "dest": "follow",
+     "type": "bool",
+     "short": "-f",
+     "help": "Keep printing new lines until Ctrl-C."
+    },
+    {
+     "flag": "--since",
+     "dest": "since",
+     "type": "string",
+     "help": "How far back: 15m, 2h, 1d, or an ISO time (default: the latest lines)."
+    },
+    {
+     "flag": "--level",
+     "dest": "level",
+     "type": "string",
+     "choices": [
+      "warn",
+      "error"
+     ],
+     "help": "Only warnings and errors, or only errors."
+    },
+    {
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "At most this many lines per read (default 100)."
+    }
+   ],
+   "examples": [
+    "noclick logs booking --since 10m --level error"
+   ]
+  },
+  {
+   "path": [
+    "settings",
+    "list"
+   ],
+   "summary": "List an app's settings and their values.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "help": "The app's name."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    }
+   ]
+  },
+  {
+   "path": [
+    "settings",
+    "set"
+   ],
+   "summary": "Set one (it reaches the app at its next deploy).",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "help": "The app's name."
+    },
+    {
+     "name": "name",
+     "help": "Letters, digits and _, starting with a letter."
+    },
+    {
+     "name": "value",
+     "help": "At most 4 KB; put anything sensitive in the app's secrets instead."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    }
+   ]
+  },
+  {
+   "path": [
+    "settings",
+    "delete"
+   ],
+   "summary": "Delete one (from the app's next deploy).",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "help": "The app's name."
+    },
+    {
+     "name": "name"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    }
+   ]
+  },
+  {
+   "path": [
+    "domains",
+    "search"
+   ],
+   "summary": "Check which names are available, and their prices.",
+   "auth": true,
+   "args": [
+    {
+     "name": "query",
+     "help": "A name, with or without a TLD."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--tld",
+     "dest": "tld",
+     "type": "list",
+     "help": "Only this TLD (repeat for more)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "domains",
+    "buy"
+   ],
+   "summary": "Buy a domain, charged to your account, up to a ceiling.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "The full domain, like acmebooking.com."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--max-price",
+     "dest": "max_price",
+     "type": "number",
+     "required": true,
+     "metavar": "USD",
+     "help": "The most the purchase may cost, in US dollars; a higher price is refused."
+    },
+    {
+     "flag": "--years",
+     "dest": "years",
+     "type": "integer",
+     "help": "How many years to register it for (the TLD's minimum by default)."
+    },
+    {
+     "flag": "--registrant",
+     "dest": "registrant",
+     "type": "string",
+     "metavar": "FILE",
+     "help": "A JSON file of the person it's registered to: name, email, phone, address, city, region, postal_code, country, agreement_accepted_at (when they accepted the registration agreement), and optionally organization. Without it the registrant on file is used: your account's default, or with --user that user's registrant profile."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    }
+   ]
+  },
+  {
+   "path": [
+    "estimate"
+   ],
+   "summary": "What apps, databases, buckets and repos would cost a month, before you make them.",
+   "auth": true,
+   "args": [
+    {
+     "name": "file",
+     "optional": true,
+     "help": "A JSON file of the items (- for stdin), like [{\"kind\": \"project\", \"usage\": {\"requests\": 100000}}, {\"kind\": \"database\"}]."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--kinds",
+     "dest": "kinds",
+     "type": "bool",
+     "help": "List what can be estimated: each kind's charges, unit prices and usage defaults."
+    },
+    {
+     "flag": "--region",
+     "dest": "region",
+     "type": "string",
+     "help": "With --kinds: price a container app in this region."
+    }
+   ]
+  },
+  {
+   "path": [
+    "webhooks",
+    "listen"
+   ],
+   "summary": "Forward events, signed, to a local URL.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--forward-to",
+     "dest": "forward_to",
+     "type": "string",
+     "required": true,
+     "metavar": "URL",
+     "help": "Where to POST each event."
+    },
+    {
+     "flag": "--events",
+     "dest": "events",
+     "type": "string",
+     "help": "Only these event types, comma-separated (patterns like domain.* work)."
+    },
+    {
+     "flag": "--secret",
+     "dest": "secret",
+     "type": "string",
+     "help": "Sign with this secret instead of a new one per session."
+    },
+    {
+     "flag": "--user",
+     "dest": "events_user",
+     "type": "string",
+     "help": "Only this user's events (default: your account's and every user's)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "ops",
+    "wait"
+   ],
+   "summary": "Wait for an operation to finish and print its result.",
+   "auth": true,
+   "args": [
+    {
+     "name": "operation_id"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Give up after this long (exit 124)."
+    }
+   ],
+   "notes": "A deploy or promote that went live but failed its check (its result's warning) exits 1.",
+   "examples": [
+    "noclick ops wait op_123 --timeout 300"
+   ]
+  },
+  {
+   "path": [
+    "api"
+   ],
+   "summary": "Call any /v1 route: the raw escape hatch.",
+   "auth": true,
+   "args": [
+    {
+     "name": "method",
+     "choices": [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE"
+     ]
+    },
+    {
+     "name": "path",
+     "help": "The path, like /v1/agents or /v1/agents/support?limit=5."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--data",
+     "dest": "data",
+     "type": "string",
+     "metavar": "JSON|@FILE|-",
+     "help": "The JSON body: JSON, @file or - for stdin."
+    },
+    {
+     "flag": "--query",
+     "dest": "query",
+     "type": "list",
+     "short": "-q",
+     "metavar": "KEY=VALUE",
+     "help": "A query parameter (repeat for more)."
+    }
+   ],
+   "examples": [
+    "noclick api GET /v1/agents -q limit=5",
+    "noclick api POST /v1/secrets --data @secret.json --json"
+   ]
+  },
+  {
+   "path": [
+    "describe"
+   ],
+   "summary": "An API operation's fields, risk and an example.",
+   "auth": false,
+   "args": [
+    {
+     "name": "words",
+     "many": true
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ],
+   "examples": [
+    "noclick describe agents create",
+    "noclick describe POST /v1/agents"
+   ]
+  },
+  {
+   "path": [
+    "help"
+   ],
+   "summary": "Every command, its arguments and flags (--json for all of it).",
+   "auth": false,
+   "args": [
+    {
+     "name": "words",
+     "optional": true,
+     "many": true,
+     "help": "Only this command or area."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ],
+   "examples": [
+    "noclick help --json",
+    "noclick help agents"
+   ]
+  }
+ ]
+}

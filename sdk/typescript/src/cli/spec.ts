@@ -1,0 +1,155 @@
+/**
+ * The `noclick` command surface as data, the same files the Python CLI runs from (`noclick/_cli/spec/` in the
+ * Python package; this CLI's build bundles them): the curated commands (`manifest.json`, written by hand, each one's
+ * arguments, flags and examples) and one command per `/v1` operation (`operations.json`, generated from the API's own
+ * description).
+ */
+
+import manifestJson from "../../../python/noclick/_cli/spec/manifest.json" with { type: "json" };
+import operationsJson from "../../../python/noclick/_cli/spec/operations.json" with { type: "json" };
+
+export interface Param {
+  name: string;
+  in: "path" | "query" | "body";
+  type: "string" | "integer" | "number" | "boolean" | "list" | "json";
+  required?: boolean;
+  secret?: boolean;
+  choices?: (string | number)[];
+  default?: unknown;
+  description?: string;
+}
+
+export interface Op {
+  name: string;
+  area: string;
+  command: string;
+  method: string;
+  path: string;
+  risk: string;
+  summary: string;
+  body: "merge" | "wrap" | null;
+  params: Param[];
+}
+
+export interface Flag {
+  flag: string;
+  dest: string;
+  type: "bool" | "list" | "integer" | "number" | "string";
+  short?: string;
+  choices?: unknown[];
+  required?: boolean;
+  metavar?: string;
+  help?: string;
+}
+
+export interface Arg {
+  name: string;
+  optional?: boolean;
+  many?: boolean;
+  choices?: unknown[];
+  help?: string;
+}
+
+export interface Command {
+  path: string[];
+  summary: string;
+  auth: boolean;
+  args: Arg[];
+  flags: Flag[];
+  one_of?: { dests: string[]; required: boolean }[];
+  notes?: string;
+  examples?: string[];
+}
+
+export interface Manifest {
+  format: number;
+  globals: Flag[];
+  commands: Command[];
+}
+
+export class Spec {
+  readonly manifest: Manifest;
+  readonly operations: Op[];
+  readonly #byCommand = new Map<string, Op>();
+  readonly #byName = new Map<string, Op>();
+
+  constructor(manifest: Manifest, operations: { operations: Op[] }) {
+    this.manifest = manifest;
+    this.operations = operations.operations;
+    for (const op of this.operations) {
+      this.#byCommand.set(`${op.area} ${op.command}`, op);
+      this.#byName.set(op.name, op);
+    }
+  }
+
+  get commands(): Command[] {
+    return this.manifest.commands;
+  }
+
+  areas(): Map<string, Op[]> {
+    const found = new Map<string, Op[]>();
+    for (const op of this.operations) {
+      const list = found.get(op.area) ?? [];
+      list.push(op);
+      found.set(op.area, list);
+    }
+    return found;
+  }
+
+  find(area: string, command: string): Op | null {
+    return this.#byCommand.get(`${area} ${command}`) ?? null;
+  }
+
+  named(name: string): Op | null {
+    return this.#byName.get(name) ?? null;
+  }
+
+  curated(path: string[]): Command | null {
+    return this.commands.find((c) => c.path.length === path.length && c.path.every((w, i) => w === path[i])) ?? null;
+  }
+
+  /** The operation a `METHOD /v1/...` call makes: its template, or a concrete path it matches. */
+  forCall(method: string, path: string): Op | null {
+    const verb = method.toUpperCase();
+    const given = path.split("?")[0]!.replace(/^\/|\/$/g, "").split("/");
+    let best: [number, Op] | null = null;
+    for (const op of this.operations) {
+      const template = op.path.replace(/^\/|\/$/g, "").split("/");
+      if (op.method !== verb || template.length !== given.length) continue;
+      let literal = 0;
+      let matches = true;
+      for (let i = 0; i < template.length; i++) {
+        if (template[i]!.startsWith("{")) continue;
+        if (template[i] !== given[i]) {
+          matches = false;
+          break;
+        }
+        literal++;
+      }
+      if (matches && (!best || literal > best[0])) best = [literal, op];
+    }
+    return best ? best[1] : null;
+  }
+
+  /** An operation by `<area> <command>`, its name, or `METHOD /v1/...`. */
+  lookup(words: string[]): Op | null {
+    if (words.length === 2 && ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(words[0]!.toUpperCase())) {
+      return this.forCall(words[0]!, words[1]!);
+    }
+    if (words.length === 2) return this.find(words[0]!, words[1]!);
+    if (words.length === 1) return this.named(words[0]!.replace(/-/g, "_"));
+    return null;
+  }
+
+  /** Whether a curated command has the operation's name: that name runs the curated one. */
+  shadowed(op: Op): boolean {
+    return this.curated([op.area, op.command]) !== null;
+  }
+}
+
+let loaded: Spec | null = null;
+
+export function load(): Spec {
+  loaded ??= new Spec(manifestJson as Manifest, operationsJson as { operations: Op[] });
+  return loaded;
+}
