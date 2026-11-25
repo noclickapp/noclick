@@ -1208,6 +1208,7 @@ elevenlabs
 elmah
 eloqua
 email-on-acid
+emailable
 emaillistverify
 emailoctopus
 emailvalidation
