@@ -1051,7 +1051,7 @@ def test_estimate_lists_the_kinds_or_says_what_it_needs(home, api, tmp_path, cap
     assert capsys.readouterr().out.splitlines()[1].split() == ["bucket", "storage", "$0.015", "GB-month",
                                                                "storage_gb", "(1)"]
     assert run("estimate") == 1
-    assert "Name a JSON file" in capsys.readouterr().err
+    assert "Name what to estimate" in capsys.readouterr().err
     path = tmp_path / "bad.json"
     path.write_text("{not json")
     assert run("estimate", str(path)) == 1
@@ -1166,6 +1166,8 @@ def test_a_next_step_names_the_command_that_takes_it(home, api, capsys, argv, ro
 
 
 def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home, api, capsys):
+    priced = api.post("/v1/estimates").respond(json={"object": "estimate", "monthly_usd": 0.5, "lines": [],
+                                                     "items": []})
     made = api.post("/v1/databases").respond(201, json=DB)
     assert run("db", "create", "booking-db", "--engine", "postgres") == 0
     assert body(made.calls.last.request) == {"name": "booking-db", "engine": "postgres"}
@@ -1173,6 +1175,11 @@ def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home,
     bucket = api.post("/v1/buckets").respond(201, json=BUCKET)
     assert run("bucket", "create", "uploads", "--public") == 0
     assert body(bucket.calls.last.request) == {"name": "uploads", "public": True}
+    assert body(priced.calls[0].request)["items"] == [{"kind": "database", "options": {"engine": "postgres"}}]
+    assert "A bucket costs about $0.50 a month at the usage NoClick assumes." in capsys.readouterr().err
+    # What it would cost is said first, and a ceiling under it makes nothing.
+    assert run("bucket", "create", "uploads", "--max-usd", "0.1") == cli.exits.REFUSED
+    assert bucket.call_count == 1
 
     api.get("/v1/databases").respond(json=listing(DB))
     api.post("/v1/databases/db_1/query").respond(json={"columns": [], "rows": [], "rows_written": 2,

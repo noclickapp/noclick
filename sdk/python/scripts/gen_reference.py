@@ -35,7 +35,8 @@ PAGE_OF_MODULE = {
     "sandbox": "Sandbox", "session": "Session", "tool_call": "ToolCall", "toolkit": "Toolkit", "user": "User",
     # Designed, not built yet (``@designed`` in the package).
     "agent_extras": "Agent", "agent_conversations": "Agent", "ai": "AI", "app_services": "Project", "browser": "Browser", "bucket": "Bucket",
-    "card": "Card", "cron": "Triggers", "database": "Database", "domain": "Domain", "export": "ExportBundle",
+    "card": "Card", "cron": "Triggers", "database": "Database", "docs": "Docs", "domain": "Domain",
+    "export": "ExportBundle",
     "mcp_server": "McpServer", "project": "Project", "repo": "Repo", "trigger": "Triggers", "webhook": "Webhook",
     "workflow": "Workflow", "volume": "Volume", "dicts": "Dict", "queues": "Queue", "secret": "Secret",
     "coordination": "Agent", "workspace": "Channel", "machine": "Machine",

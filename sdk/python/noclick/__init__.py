@@ -300,6 +300,11 @@ from .dicts import (
     DictChange,
     DictItem,
 )
+from .docs import (
+    Doc,
+    DocHit,
+    Docs,
+)
 from .domain import (
     DnsRecord,
     Domain,
@@ -961,6 +966,9 @@ __all__ = [
     "Secret",
     "Version",
     "TrashItem",
+    "Docs",
+    "Doc",
+    "DocHit",
     "Domain",
     "DomainOffer",
     "DomainContact",

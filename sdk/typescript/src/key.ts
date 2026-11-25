@@ -66,4 +66,21 @@ export class Key {
     const raw = await resolveClient(options.client).request("POST", "/v1/keys", { json: body, user: null });
     return new Key(asObject(raw));
   }
+
+  /**
+   * Redeem a one-time setup code (`nc_setup_...`, which the console's quickstart hands a coding agent) for a key of
+   * the account, once, with no key of your own: its `secret` shown this once, with its `id` and `name`
+   * (`raw.email` is the account's). Keep it out of anything you print.
+   *
+   *     const key = await Key.redeemSetupCode("nc_setup_...");
+   *     const client = new NoClick({ apiKey: key.secret! });
+   */
+  static async redeemSetupCode(code: string, options: { client?: NoClick } = {}): Promise<Key> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/setup", {
+      body: new URLSearchParams({ code }).toString(), contentType: "application/x-www-form-urlencoded", user: null,
+      anonymous: true,
+    }));
+    const { key, ...rest } = raw;
+    return new Key({ ...rest, id: raw.key_id, name: raw.key_name, raw_key: key } as JsonObject);
+  }
 }

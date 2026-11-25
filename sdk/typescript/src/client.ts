@@ -64,6 +64,8 @@ export interface RequestOptions {
    * needs. The browser caps such a body at 64 KB.
    */
   keepalive?: boolean;
+  /** Send no key: for the routes anyone may call (the docs, redeeming a setup code). */
+  anonymous?: boolean;
 }
 
 /** The runtime's `process.env`, where it has one (never in a browser; on Cloudflare Workers, with `nodejs_compat`). */
@@ -242,7 +244,7 @@ export class NoClick {
    * `Idempotency-Key` reused on every retry, so a retried POST can't do the work twice.
    */
   async request<T = unknown>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
-    if (!this.apiKey) throw missingCredential("key");
+    if (!options.anonymous && !this.apiKey) throw missingCredential("key");
     const verb = method.toUpperCase();
     const headers: Record<string, string> = {
       Accept: "application/json",
@@ -279,10 +281,11 @@ export class NoClick {
       options.signal?.addEventListener("abort", onAbort, { once: true });
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
-        const authorization = `Bearer ${await this.bearer(controller.signal, options.signal, timeoutMs)}`;
+        const authorization: Record<string, string> = options.anonymous
+          ? {} : { Authorization: `Bearer ${await this.bearer(controller.signal, options.signal, timeoutMs)}` };
         try {
           response = await fetchFn(url.toString(), {
-            method: verb, headers: { Authorization: authorization, ...headers }, body, signal: controller.signal,
+            method: verb, headers: { ...authorization, ...headers }, body, signal: controller.signal,
             ...(options.keepalive ? { keepalive: true } : {}),
           });
         } catch (err) {

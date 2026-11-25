@@ -6,7 +6,9 @@ from dataclasses import dataclass, field as dc_field
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
-from ._client import Client, resolve_client
+import httpx
+
+from ._client import API_URL_ENV, DEFAULT_BASE_URL, Client, resolve_client
 from ._object import parse_time
 from ._sync import synced
 
@@ -67,3 +69,27 @@ class Key:
         if user_id is not None:
             body["user_id"] = user_id
         return cls._from(await resolve_client(client).request("POST", "/v1/keys", json=body, user=None))
+
+    @staticmethod
+    def redeem_setup_code(code: str, *, base_url: Optional[str] = None) -> "Key":
+        """Redeem a one-time setup code (``nc_setup_...``, which the console's quickstart hands a coding agent) for a
+        key of the account, once, with no key of your own. Keep it out of anything you print: ``noclick setup`` keeps
+        it where ``noclick login`` would.
+
+        Returns:
+            The key, its ``secret`` shown this once, with its ``id`` and ``name`` (``raw["email"]`` is the
+            account's).
+
+        Usage::
+
+            key = noclick.Key.redeem_setup_code("nc_setup_...")
+            client = noclick.Client(api_key=key.secret)
+        """
+        import os
+
+        api_url = (base_url or os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL).rstrip("/")
+        response = httpx.post(f"{api_url}/v1/setup", data={"code": code}, headers={"Accept": "application/json"},
+                              timeout=30)
+        body = Client._decode(response) or {}
+        return Key._from({"id": body.get("key_id"), "name": body.get("key_name"), "raw_key": body.get("key"),
+                          **{k: v for k, v in body.items() if k != "key"}})

@@ -912,7 +912,17 @@
      "dest": "region",
      "type": "string",
      "help": "Where its data is kept, for good (default: your account's default region)."
+    },
+    {
+     "flag": "--max-usd",
+     "dest": "max_usd",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The most it (a month, at the usage NoClick assumes) may cost, in US dollars: it's priced first and refused above it."
     }
+   ],
+   "examples": [
+    "noclick db create booking-db --max-usd 5"
    ]
   },
   {
@@ -1010,7 +1020,17 @@
      "dest": "region",
      "type": "string",
      "help": "Where its files are kept (default: your account's default region)."
+    },
+    {
+     "flag": "--max-usd",
+     "dest": "max_usd",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The most it (a month, at the usage NoClick assumes) may cost, in US dollars: it's priced first and refused above it."
     }
+   ],
+   "examples": [
+    "noclick bucket create uploads --public"
    ]
   },
   {
@@ -1155,7 +1175,7 @@
      "dest": "follow",
      "type": "bool",
      "short": "-f",
-     "help": "Keep printing new lines until Ctrl-C."
+     "help": "Keep printing new lines until Ctrl-C (or --timeout)."
     },
     {
      "flag": "--since",
@@ -1174,14 +1194,37 @@
      "help": "Only warnings and errors, or only errors."
     },
     {
+     "flag": "--grep",
+     "dest": "grep",
+     "type": "string",
+     "metavar": "TEXT",
+     "help": "Only lines holding this text (any case)."
+    },
+    {
      "flag": "--limit",
      "dest": "limit",
      "type": "integer",
      "help": "At most this many lines per read (default 100)."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "With -f: stop following after this long."
+    },
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "One JSON object a line: at, level, message, deployment_id, environment, request_id, status."
     }
    ],
    "examples": [
-    "noclick logs booking --since 10m --level error"
+    "noclick logs booking --since 10m --level error",
+    "noclick logs booking --since 15m --level error",
+    "noclick logs --grep \"POST /book\" --json",
+    "noclick logs booking -f --timeout 60"
    ]
   },
   {
@@ -1360,7 +1403,7 @@
     {
      "name": "file",
      "optional": true,
-     "help": "A JSON file of the items (- for stdin), like [{\"kind\": \"project\", \"usage\": {\"requests\": 100000}}, {\"kind\": \"database\"}]."
+     "help": "A kind (database, live_editing, ... from --kinds), or a JSON file of items (- for stdin), like [{\"kind\": \"project\", \"usage\": {\"requests\": 100000}}, {\"kind\": \"database\"}]."
     }
    ],
    "flags": [
@@ -1377,6 +1420,20 @@
      "help": "Act for this user: your id for them."
     },
     {
+     "flag": "--usage",
+     "dest": "usage",
+     "type": "list",
+     "metavar": "NAME=N",
+     "help": "With a kind: its usage a month, like requests=100000 (repeat for more)."
+    },
+    {
+     "flag": "--option",
+     "dest": "option",
+     "type": "list",
+     "metavar": "NAME=VALUE",
+     "help": "With a kind: one of its options, like runtime=container (repeat for more)."
+    },
+    {
      "flag": "--kinds",
      "dest": "kinds",
      "type": "bool",
@@ -1388,6 +1445,10 @@
      "type": "string",
      "help": "With --kinds: price a container app in this region."
     }
+   ],
+   "examples": [
+    "noclick estimate live_editing --usage hours=40",
+    "noclick estimate --kinds"
    ]
   },
   {
@@ -1457,6 +1518,429 @@
    "notes": "A deploy or promote that went live but failed its check (its result's warning) exits 1.",
    "examples": [
     "noclick ops wait op_123 --timeout 300"
+   ]
+  },
+  {
+   "path": [
+    "live",
+    "start"
+   ],
+   "summary": "Start the session (what plain noclick live does) and print its link.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app (default: the folder's linked one)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--hours",
+     "dest": "hours",
+     "type": "number",
+     "help": "End it after this long at most (default 1)."
+    },
+    {
+     "flag": "--max-usd",
+     "dest": "max_usd",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The most the session may cost, in US dollars: it's priced first and refused above it."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "How long to wait for it to start (default 300)."
+    }
+   ],
+   "examples": [
+    "noclick live start booking --hours 2 --max-usd 1"
+   ]
+  },
+  {
+   "path": [
+    "live",
+    "status"
+   ],
+   "summary": "The session's state, edits and branch.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app (default: the folder's linked one)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    }
+   ],
+   "examples": [
+    "noclick live status --json"
+   ]
+  },
+  {
+   "path": [
+    "live",
+    "push"
+   ],
+   "summary": "Push the commit you're on to noclick-live: it shows in the session at once.",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app (default: the folder's linked one)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    }
+   ],
+   "examples": [
+    "git commit -am \"Bigger buttons\" && noclick live push"
+   ]
+  },
+  {
+   "path": [
+    "live",
+    "end"
+   ],
+   "summary": "End it: build, check and deploy what was edited (production stays on a failure).",
+   "auth": true,
+   "args": [
+    {
+     "name": "project",
+     "optional": true,
+     "help": "The app (default: the folder's linked one)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--no-deploy",
+     "dest": "no_deploy",
+     "type": "bool",
+     "help": "Stop it without deploying."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Give up waiting after this long (exit 124)."
+    }
+   ],
+   "examples": [
+    "noclick live end",
+    "noclick live end --no-deploy"
+   ]
+  },
+  {
+   "path": [
+    "wait"
+   ],
+   "summary": "Wait for an operation and print its result; exits 3 when it waits on a person.",
+   "auth": true,
+   "args": [
+    {
+     "name": "operation_id"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Give up after this long (exit 124)."
+    },
+    {
+     "flag": "--people",
+     "dest": "people",
+     "type": "bool",
+     "help": "Wait through a person's answer too, instead of exiting 3."
+    }
+   ],
+   "notes": "Exit 0 done, 1 failed, 3 waiting on a person (it prints where they act), 4 refused, 124 --timeout ran out (the work goes on).",
+   "examples": [
+    "noclick wait 3b9d6f2e-1c4a-4e8b-9f7d-2a6c5e8b1d40 --timeout 60 --json"
+   ]
+  },
+  {
+   "path": [
+    "setup"
+   ],
+   "summary": "Redeem a setup code (nc_setup_..., from the console's quickstart) for a key, no browser.",
+   "auth": false,
+   "args": [
+    {
+     "name": "code",
+     "help": "The one-time setup code."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--store",
+     "dest": "store",
+     "type": "string",
+     "choices": [
+      "auto",
+      "keychain",
+      "file"
+     ],
+     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file)."
+    }
+   ],
+   "examples": [
+    "noclick setup nc_setup_..."
+   ]
+  },
+  {
+   "path": [
+    "init"
+   ],
+   "summary": "Make a folder an app: from a template, or drafted from what you describe. Links the folder.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "optional": true,
+     "help": "The app's name (default: the folder's)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--template",
+     "dest": "template",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "Start from a template: static (A site of files: HTML and CSS, served as they are.), worker (A Worker in front of a folder of files: an API route and the site, on the edge.), python (A Python web server in a container, on the standard library alone.)"
+    },
+    {
+     "flag": "--describe",
+     "dest": "describe",
+     "type": "string",
+     "metavar": "TEXT",
+     "help": "What the app should be: its coding agent drafts it."
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "The folder (default: here)."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "With --describe: print the draft's operation id."
+    },
+    {
+     "flag": "--fetch",
+     "dest": "fetch",
+     "type": "bool",
+     "help": "Check out the coding agent's draft of the linked app here (after --no-wait)."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "With --describe: how long to wait for the draft (default 900)."
+    }
+   ],
+   "examples": [
+    "noclick init booking --template worker",
+    "noclick init booking --describe \"a page that takes table bookings\""
+   ]
+  },
+  {
+   "path": [
+    "docs"
+   ],
+   "summary": "Print a guide as Markdown (no key needed), list them, or search every doc.",
+   "auth": false,
+   "args": [
+    {
+     "name": "topic",
+     "optional": true,
+     "help": "A doc's id or a guide's name (apps, databases, cli...)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--search",
+     "dest": "search",
+     "type": "string",
+     "metavar": "WORDS",
+     "help": "Search the guides, skills, reference and API."
+    },
+    {
+     "flag": "--kind",
+     "dest": "kind",
+     "type": "string",
+     "choices": [
+      "guide",
+      "skill",
+      "reference",
+      "example",
+      "event",
+      "api"
+     ],
+     "help": "Only this kind of doc."
+    },
+    {
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "With --search: at most this many (default 10)."
+    }
+   ],
+   "examples": [
+    "noclick docs apps",
+    "noclick docs --search \"send email from an agent\""
+   ]
+  },
+  {
+   "path": [
+    "skill"
+   ],
+   "summary": "Print a skill, a task's playbook, as Markdown (no key needed), or list them.",
+   "auth": false,
+   "args": [
+    {
+     "name": "name",
+     "optional": true,
+     "help": "The skill's name, like ship-an-app."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ],
+   "examples": [
+    "noclick skill",
+    "noclick skill ship-an-app"
+   ]
+  },
+  {
+   "path": [
+    "mcp"
+   ],
+   "summary": "Print, or --install, NoClick's MCP server for a coding agent's harness.",
+   "auth": false,
+   "args": [
+    {
+     "name": "harness",
+     "optional": true,
+     "choices": [
+      "claude",
+      "codex",
+      "cursor"
+     ],
+     "help": "Claude Code (.mcp.json here), Codex (~/.codex/config.toml) or Cursor (.cursor/mcp.json here); none prints the server's URL and how it signs in."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--install",
+     "dest": "install",
+     "type": "bool",
+     "help": "Write it into the harness's config."
+    },
+    {
+     "flag": "--oauth",
+     "dest": "oauth",
+     "type": "bool",
+     "help": "Sign in from the harness in a browser, instead of with a key from the environment."
+    },
+    {
+     "flag": "--key-env",
+     "dest": "key_env",
+     "type": "string",
+     "metavar": "VAR",
+     "help": "The environment variable holding the key (default NOCLICK_API_KEY)."
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "The project folder (default: here)."
+    }
+   ],
+   "examples": [
+    "noclick mcp claude --install",
+    "noclick mcp codex --install",
+    "noclick mcp cursor --install --oauth"
    ]
   },
   {

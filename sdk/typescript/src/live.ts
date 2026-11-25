@@ -13,6 +13,7 @@
 import { ProjectService } from "./appServices.ts";
 import { asList, asObject, compact, num, parseTime, str } from "./object.ts";
 import type { JsonObject } from "./object.ts";
+import type { AgentReply } from "./agent.ts";
 import { Operation, registerResult } from "./operation.ts";
 
 /** How long a call that may wait on the session waits for its answer: the API answers within 100 seconds. */
@@ -440,6 +441,25 @@ export class ProjectLive extends ProjectService {
    */
   async enterLink(): Promise<LiveEnterLink> {
     return toEnterLink(await this._call("POST", ["enter_links"]));
+  }
+
+  /**
+   * Hand a change to the app's code to its coding agent, in your words: one per app, made the first time, on the
+   * harness and model your account's own model keys pick (else NoClick's key, at its cost). It works in the app's live
+   * session, else in its own sandbox on a branch of its own; it commits and pushes, and never deploys: ending the
+   * session deploys what passes its check, and a job in its own sandbox that pushed ends with a preview of its branch
+   * deploying. `wait()` resolves to its reply.
+   *
+   * ```ts
+   * const reply = await (await app.live.change("Add a dark mode toggle to the header")).wait();
+   * ```
+   */
+  async change(text: string, options: { title?: string; workstream?: string } = {}): Promise<Operation<AgentReply>> {
+    const payload = await this._call("POST", ["changes"], { json: compact({ text, title: options.title,
+      workstream: options.workstream }) });
+    return Operation._fromPayload<AgentReply>(payload, {
+      client: this._project._client, user: this._project._callScope(), kind: "agent.message",
+    });
   }
 
   /**

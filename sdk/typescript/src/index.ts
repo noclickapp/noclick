@@ -464,6 +464,13 @@ export type {
   DictWriteOptions,
 } from "./dict.ts";
 export {
+  Docs,
+} from "./docs.ts";
+export type {
+  Doc,
+  DocHit,
+} from "./docs.ts";
+export {
   Domain,
   DomainDns,
   DomainPurchase,

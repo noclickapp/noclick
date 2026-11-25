@@ -56,7 +56,7 @@ from .project import Deployment, Project
 from .repo import Repo
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
-from ._cli import commands as generated, exits, kit as cli_kit, output
+from ._cli import commands as generated, exits, kit as cli_kit, link as cli_link, output, spend as cli_spend
 from ._cli.output import cell as _cell, note as _note, plain as _plain, plural as _plural, print_json as _print_json
 from ._cli.output import size as _size, table as _table, usd as _usd
 from ._cli.spec import load as load_spec
@@ -66,9 +66,12 @@ CONFIG_DIR_ENV = "NOCLICK_CONFIG_DIR"
 KEYCHAIN_SERVICE = "noclick"
 USER_AGENT = f"noclick-cli/{__version__}"
 
-# Polling cadence for `logs --follow` and `webhooks listen`; tests replace _sleep.
+# Polling cadence for `logs --follow` and `webhooks listen`; tests replace _sleep and _clock.
 POLL_S = 2.0
 _sleep: Callable[[float], None] = time.sleep
+_clock: Callable[[], float] = time.monotonic
+# The most lines one read of an app's logs answers, which a --grep reads to filter.
+MAX_LOG_READ = 1000
 
 
 class CommandError(Error):
@@ -319,24 +322,33 @@ def cmd_login(args: argparse.Namespace) -> int:
             if poll.get("status") == "approved":
                 break
             interval = poll.get("interval_s") or interval
+    keep_key(args.profile, args.store, store, api_url, poll)
+    return 0
+
+
+def keep_key(profile: str, store_name: str, store: Any, api_url: str, got: Dict[str, Any]) -> None:
+    """Keep a key ``noclick login`` or ``noclick setup`` got (``got``: its ``key``, ``key_id``, ``key_name`` and the
+    account's ``email``) for ``profile``, in ``store`` (with ``auto``, the file when the keychain refuses), and say
+    where it went."""
     try:
-        store.write(args.profile, poll["key"])
+        store.write(profile, got["key"])
     except CommandError as refused:
-        if args.store != "auto":
+        if store_name != "auto":
             raise
         _note(f"{refused.message.rstrip('.')}. Keeping the key in a file only you can read instead.")
         store = FileStore()
-        store.write(args.profile, poll["key"])
+        store.write(profile, got["key"])
     config = _read_config()
-    config.setdefault("profiles", {})[args.profile] = {
-        "api_url": api_url, "store": store.name, "key_id": poll.get("key_id"), "key_name": poll.get("key_name"),
-        "key_prefix": poll["key"][:12], "email": poll.get("email"),
+    config.setdefault("profiles", {})[profile] = {
+        "api_url": api_url, "store": store.name, "key_id": got.get("key_id"), "key_name": got.get("key_name"),
+        "key_prefix": got["key"][:12], "email": got.get("email"),
     }
     _write_config(config)
     where = "the OS keychain" if store.name == "keychain" else f"{FileStore().path} (only you can read it)"
-    print(f"Signed in as {poll.get('email') or 'your account'}.", flush=True)
-    _note(f"The key \"{poll.get('key_name')}\" is in {where}. noclick logout revokes it.")
-    return 0
+    print(f"Signed in as {got.get('email') or 'your account'}.", flush=True)
+    _note(f"The key \"{got.get('key_name')}\" is in {where}. noclick logout revokes it.")
+    if os.environ.get(API_KEY_ENV):
+        _note(f"{API_KEY_ENV} is set in this shell, and wins over the stored key: unset it to use this one.")
 
 
 def _signed_in_as(account: Dict[str, Any]) -> Tuple[str, str]:
@@ -564,6 +576,8 @@ def cmd_db_query(args: argparse.Namespace) -> int:
 
 
 def cmd_db_create(args: argparse.Namespace) -> int:
+    cli_spend.check([{"kind": "database", "options": {"engine": args.engine}}], args.max_usd,
+                    what=f"A {args.engine} database", per="a month at the usage NoClick assumes")
     db = Database.create(args.name, engine=args.engine, region=args.region)
     print(db.name)
     _note(f"Created the {db.engine} database {db.name}. Query it with: noclick db query {db.name} \"select 1\"")
@@ -657,6 +671,7 @@ def _local_files(root: Path) -> Iterator[Path]:
 
 
 def cmd_bucket_create(args: argparse.Namespace) -> int:
+    cli_spend.check([{"kind": "bucket"}], args.max_usd, what="A bucket", per="a month at the usage NoClick assumes")
     bucket = Bucket.create(args.name, public=args.public, region=args.region)
     print(bucket.name)
     _note(f"Created the {'public ' if args.public else ''}bucket {bucket.name}. Copy a file in with: "
@@ -897,39 +912,62 @@ def cmd_logs(args: argparse.Namespace) -> int:
         for line in deployment.logs(kind="build"):
             print(f"{(line.level or '').upper():<5}  {_cli_words(line.message)}", flush=True)
         return 0
-    if not args.project:
-        raise CommandError("Name the app whose logs to print.", next_step="noclick logs <app>")
-    project = _app(args.project)
+    project = _app(cli_link.app_name(args.project))
     since = args.since
     seen: set = set()
+    grep = args.grep.lower() if args.grep else None
+    # Filtered here, so a read with --grep reads the most the API answers and shows at most --limit of what matches.
+    read_limit = MAX_LOG_READ if grep else args.limit
+    ends = None if args.timeout is None else _clock() + args.timeout
 
-    def show() -> Tuple[Optional[datetime], int]:
-        lines = project.logs(since=since, level=args.level, limit=args.limit)  # oldest first
-        shown = 0
+    def show() -> Tuple[Optional[datetime], int, int]:
+        lines = project.logs(since=since, level=args.level, limit=read_limit)  # oldest first
+        fresh, new = [], 0
         for line in lines:
             mark = (line.at, line.deployment_id, line.message)
             if mark in seen:
                 continue
             seen.add(mark)
-            shown += 1
-            at = line.at.astimezone().strftime("%H:%M:%S") if isinstance(line.at, datetime) else line.at
+            new += 1
+            if grep is None or grep in (line.message or "").lower():
+                fresh.append(line)
+        # The latest of them when it's the first read of the latest lines, else the first after since.
+        shown = fresh[-args.limit:] if since is None else fresh[:args.limit]
+        for line in shown:
             # Flushed: piped (| grep, > file), each line as it comes, and none lost to Ctrl-C.
-            print(f"{at}  {(line.level or '').upper():<5}  {line.message}", flush=True)
-        if not lines and not args.follow and lines.delay_s:
-            _note(f"No lines{' since then' if since else ''}. A line takes up to {lines.delay_s}s to show after its "
-                  "request: read again in a moment, or follow them with -f.")
-        return (lines[-1].at if lines else since), shown
+            if args.json:
+                output.line(json.dumps({"at": line.at.isoformat() if isinstance(line.at, datetime) else line.at,
+                                     "level": line.level, "message": line.message,
+                                     "deployment_id": line.deployment_id, **{k: line.raw.get(k) for k in (
+                                         "environment", "request_id", "status") if line.raw.get(k) is not None}}))
+            else:
+                at = line.at.astimezone().strftime("%H:%M:%S") if isinstance(line.at, datetime) else line.at
+                output.line(f"{at}  {(line.level or '').upper():<5}  {line.message}")
+        if not args.follow:
+            if len(fresh) > len(shown):
+                _note(f"Showing {len(shown)} of {len(fresh)} lines{' that match' if grep else ''}: raise --limit, or "
+                      "narrow it with --since, --level or --grep.")
+            elif len(lines) >= read_limit:
+                _note(f"Showing the {'first' if since else 'last'} {len(shown)} lines read: there may be more "
+                      f"({'a later --since' if since else '--since'} reads {'on' if since else 'further back'}).")
+            elif not lines and lines.delay_s:
+                _note(f"No lines{' since then' if since else ''}. A line takes up to {lines.delay_s}s to show after "
+                      "its request: read again in a moment, or follow them with -f.")
+            elif lines and not shown:
+                _note(f"No lines match {args.grep!r}.")
+        return (lines[-1].at if lines else since), new, len(shown)
 
-    since, shown = show()
+    since, read, _ = show()
     if not args.follow:
         return 0
     try:
-        while True:
-            if shown < args.limit:  # a full read may have stopped short of the newest lines: read on at once
+        while ends is None or _clock() < ends:
+            if read < read_limit:  # a read full of new lines may have stopped short of the newest: read on at once
                 _sleep(POLL_S)
-            since, shown = show()
+            since, read, _ = show()
     except KeyboardInterrupt:
         return 0
+    return 0
 
 
 # --- settings ----------------------------------------------------------------
@@ -1011,6 +1049,20 @@ def _estimate_items(path: str) -> List[Dict[str, Any]]:
     return items
 
 
+def _pairs(given: Sequence[str], *, number: bool = False) -> Dict[str, Any]:
+    """``NAME=VALUE`` from the command line, each value a number when ``number``."""
+    found: Dict[str, Any] = {}
+    for pair in given:
+        name, sep, value = pair.partition("=")
+        if not sep or not name:
+            raise CommandError(f"{pair!r} isn't NAME=VALUE.", next_step="Like --usage hours=40")
+        try:
+            found[name] = float(value) if number else value
+        except ValueError:
+            raise CommandError(f"{name}'s usage is a number, not {value!r}.") from None
+    return found
+
+
 def _options(options: Dict[str, Any]) -> str:
     """What a kind's variant is priced as, in a few words: its plain options (a runtime, a region, an engine); the
     rest, such as a size's every field, only in --json."""
@@ -1029,9 +1081,15 @@ def cmd_estimate(args: argparse.Namespace) -> int:
                 for k in kinds for p in k.prices], empty="Nothing to estimate.")
         return 0
     if not args.file:
-        raise CommandError("Name a JSON file of the items to estimate, or - to read them from stdin.",
-                           next_step="Run noclick estimate --kinds to see what each kind takes.")
-    est = estimate(_estimate_items(args.file))
+        raise CommandError("Name what to estimate: a kind (noclick estimate database), or a JSON file of items (- for "
+                           "stdin).", next_step="Run noclick estimate --kinds to see what each kind takes.")
+    if args.file != "-" and not Path(args.file).exists() and re.fullmatch(r"[a-z_]+", args.file):
+        # One item by its kind, its usage and options from the command line.
+        items = [{"kind": args.file, **({"usage": _pairs(args.usage, number=True)} if args.usage else {}),
+                  **({"options": _pairs(args.option)} if args.option else {})}]
+    else:
+        items = _estimate_items(args.file)
+    est = estimate(items)
     if args.json:
         _print_json(est)
         return 0
@@ -1612,6 +1670,7 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     made.add_argument("name", help="Its name: 1-64 letters, digits and . _ -.")
     made.add_argument("--engine", choices=("sqlite", "postgres"), default="sqlite", help="Default: sqlite.")
     made.add_argument("--region", help="Where its data is kept, for good (default: your account's default region).")
+    cli_spend.add_flag(made, what="it (a month, at the usage NoClick assumes)")
     shell = command(db, "shell", cmd_db_shell, "An interactive SQL prompt.", parents=[user])
     shell.add_argument("database", help="The database's name.")
     shell.add_argument("--write", action="store_true", help="Allow statements that change data (read-only otherwise).")
@@ -1624,6 +1683,7 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     mb.add_argument("name", help="Its name: 1-64 letters, digits and . _ -.")
     mb.add_argument("--public", action="store_true", help="Serve every file at a plain URL.")
     mb.add_argument("--region", help="Where its files are kept (default: your account's default region).")
+    cli_spend.add_flag(mb, what="it (a month, at the usage NoClick assumes)")
     cp = command(bucket, "cp", cmd_bucket_cp, "Copy files between your machine and a bucket, written bucket:key.",
                  parents=[user])
     cp.add_argument("src", help="A local path, - for stdin, or bucket:key.")
@@ -1652,10 +1712,14 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     logs.add_argument("--build", action="store_true", help="Print a build log: the app's newest deployment's, or "
                                                           "--deployment's.")
     logs.add_argument("--deployment", metavar="ID", help="With --build: this deployment's build log.")
-    logs.add_argument("-f", "--follow", action="store_true", help="Keep printing new lines until Ctrl-C.")
+    logs.add_argument("-f", "--follow", action="store_true", help="Keep printing new lines until Ctrl-C (or --timeout).")
     logs.add_argument("--since", type=_since, help="How far back: 15m, 2h, 1d, or an ISO time (default: the latest lines).")
     logs.add_argument("--level", choices=("warn", "error"), help="Only warnings and errors, or only errors.")
+    logs.add_argument("--grep", metavar="TEXT", help="Only lines holding this text (any case).")
     logs.add_argument("--limit", type=int, default=100, help="At most this many lines per read (default 100).")
+    logs.add_argument("--timeout", type=float, metavar="SECONDS", help="With -f: stop following after this long.")
+    logs.add_argument("--json", action="store_true", help="One JSON object a line: at, level, message, deployment_id, "
+                                                          "environment, request_id, status.")
 
     settings = group("settings", "An app's plain settings, which it reads from its environment.")
     listed = command(settings, "list", cmd_settings_list, "List an app's settings and their values.",
@@ -1692,8 +1756,13 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     priced = command(commands, "estimate", cmd_estimate,
                      "What apps, databases, buckets and repos would cost a month, before you make them.",
                      parents=[as_json, user])
-    priced.add_argument("file", nargs="?", help='A JSON file of the items (- for stdin), like [{"kind": "project", '
-                                                '"usage": {"requests": 100000}}, {"kind": "database"}].')
+    priced.add_argument("file", nargs="?", metavar="KIND|FILE",
+                        help='A kind (database, live_editing, ... from --kinds), or a JSON file of items (- for '
+                             'stdin), like [{"kind": "project", "usage": {"requests": 100000}}, {"kind": "database"}].')
+    priced.add_argument("--usage", action="append", default=[], metavar="NAME=N",
+                        help="With a kind: its usage a month, like requests=100000 (repeat for more).")
+    priced.add_argument("--option", action="append", default=[], metavar="NAME=VALUE",
+                        help="With a kind: one of its options, like runtime=container (repeat for more).")
     priced.add_argument("--kinds", action="store_true",
                         help="List what can be estimated: each kind's charges, unit prices and usage defaults.")
     priced.add_argument("--region", help="With --kinds: price a container app in this region.")

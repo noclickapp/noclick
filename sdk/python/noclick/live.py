@@ -467,6 +467,28 @@ class ProjectLive(_Service):
         return LiveEnterLink._from(await self._request("POST", "enter_links"))
 
     @synced
+    async def change(self, text: str, *, title: Optional[str] = None, workstream: Optional[str] = None) -> Operation:
+        """Hand a change to the app's code to its coding agent, in your words: one per app, made the first time, on
+        the harness and model your account's own model keys pick (else NoClick's key, at its cost). It works in the
+        app's live session (each edit shows in the pages open on it), else in its own sandbox on a branch of its own;
+        it commits and pushes, and never deploys: ending the session deploys what passes its check, and a job in its
+        own sandbox that pushed ends with a preview of its branch deploying (its reply's ``code`` names it). Another
+        change while it works joins the job under way.
+
+        Returns:
+            The job's ``agent.message`` operation: ``.wait()`` gives its reply.
+
+        Usage::
+
+            app = noclick.Project.from_name("larkspur")
+            reply = app.live.change("Add a dark mode toggle to the header").wait()
+            print(reply.text)
+        """
+        payload = await self._request("POST", "changes", json=compact(text=text, title=title, workstream=workstream))
+        return Operation._from_payload(payload, client=self._project._client, user=self._project._call_scope(),
+                                       kind="agent.message")
+
+    @synced
     async def end(self, *, deploy: bool = True) -> Operation:
         """End the app's live session now (it also ends on its own, about 11 minutes after the last page closed
         and the last command ran). What it edited is committed, built and checked where production serves, and
