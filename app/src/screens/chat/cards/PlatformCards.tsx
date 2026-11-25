@@ -27,7 +27,7 @@ import { openAgentInWork } from '@/screens/work/place';
 import { ProgressMotion } from '@/ui/chat/motion';
 import { useNow } from '@/lib/clock';
 import { isActiveJob, type CoordinatorJob } from '@/lib/threadJobs';
-import { continuedBy, heldOperationOf } from '@/sdk/useFollowedOperations';
+import { continuedBy, GONE, heldOperationOf } from '@/sdk/useFollowedOperations';
 import { list, obj, str, type CoordinatorToolCall, type JsonObject } from '@/lib/toolCalls';
 import { cn } from '@/ui/utils';
 import { impactRows } from '@/screens/resources/platform';
@@ -99,7 +99,9 @@ function WhatGoes({ impact }: { impact: ApprovalImpact }) {
 /** Once it's approved: whether it has run, from the held call's operation, which the approval runs, and through the
  *  work its run started (a domain registering) when it started some. */
 function AfterApproval({ action, used, operationId }: { action: string; used: boolean; operationId?: string }) {
-    const { job } = useCoordinatorJob(operationId);
+    const { job: followed } = useCoordinatorJob(operationId);
+    // A held call this tab can't read says nothing of how it went: the approval's own line stands.
+    const job = str(followed, 'error') === GONE ? undefined : followed;
     const status = str(job, 'status');
     const next = continuedBy(job);
     if (status === 'completed' && next) {
