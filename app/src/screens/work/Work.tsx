@@ -33,7 +33,7 @@ import { HomeList } from './home/HomeList';
 import { threadsKey, ThreadsPane, useFollowedThreads } from './home/ThreadsPane';
 import { useWorkFrames } from '@/sdk/live';
 import { WorkNavContext, type WorkNav } from './nav';
-import { AgentConversation, AgentProfile, AgentsList, MachinePage, NewAgent, prefetchConversation, SpaceResourcesNav, SpaceResourcesPane, useFollowSessions, useSessions } from './parts';
+import { AgentConversation, AgentOpening, AgentProfile, AgentsList, MachinePage, NewAgent, prefetchConversation, SpaceResourcesNav, SpaceResourcesPane, useFollowSessions, useSessions } from './parts';
 import { InviteDialog } from './people/InviteDialog';
 import { peopleKey, readPeople, useSpacePeople } from './people/members';
 import { MembersPanel, presenceOf, roleLabel } from './people/MembersPanel';
@@ -557,6 +557,9 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
                 <AgentConversation key={`${agentOpen}:${session}`} agentId={agentOpen} conversation={session} onOpenProfile={() => nav.openProfile(agentOpen)} onOpenMachine={() => nav.openMachine(agentOpen)} />
             ) : agentOpen && sessions.error ? (
                 <WorkNotice title="Couldn’t open its session" body={errorText(sessions.error)} action={{ label: 'Try again', onClick: () => void sessions.refresh() }} />
+            ) : agentOpen ? (
+                // Its screen at once while Work reads which session it's in (the conversation then takes its place).
+                <AgentOpening agentId={agentOpen} />
             ) : place.agent ? null : (
                 <AgentsEmpty spaceId={space.workspaceId} onOpen={(id) => nav.openAgent(id)} onNew={nav.newAgent} />
             )

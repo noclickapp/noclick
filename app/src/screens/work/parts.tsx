@@ -2,6 +2,7 @@
 // session, profile, machine and draft, and a space's resources.
 export { AgentsList } from './agents/AgentsList';
 export { AgentConversation } from './conversation/AgentConversation';
+export { AgentOpening } from './conversation/AgentOpening';
 export { prefetchConversation } from './conversation/useConversation';
 export { useFollowSessions, useSessions } from './conversation/sessions';
 export { AgentProfile } from './profile/AgentProfile';
