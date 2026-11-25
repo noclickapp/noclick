@@ -1,0 +1,237 @@
+/** The curated commands `npx noclick` runs, through `main` as a terminal or an agent drives it, over the fetch double:
+ *  sign-in kept where the Python CLI reads it, a folder shipped as a commit with its secrets refused, a secret's value
+ *  never printed, a purchase only under a ceiling. */
+
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { beforeEach, test } from "node:test";
+
+import { main } from "../src/cli/main.ts";
+import { host } from "../src/cli/host.ts";
+import { FAILED, OK, REFUSED, USAGE, WAITING } from "../src/cli/exits.ts";
+import type { Io } from "../src/cli/output.ts";
+import { load } from "../src/cli/spec.ts";
+import { RUNNERS } from "../src/cli/runners/index.ts";
+import { BASE, apiError, json, listing, operation, setup } from "./helpers.ts";
+
+const KEY = "nk_live_cli_secret_key_0123456789";
+const SECRET = "sk_test_value_never_printed_42";
+const APP_ID = "5c2e8a1f-0000-4000-8000-000000000001";
+const PROJECT = {
+  object: "project", id: APP_ID, name: "shop", url: "https://shop.noclick.site", repo_id: "repo_1",
+  runtime: "edge", production_branch: "main", production: null, user_id: null, budget_usd_per_month: 10,
+};
+const signedIn = { signIn: () => {} };
+
+function captured(): Io & { stdout: string[]; stderr: string[]; all(): string } {
+  const stdout: string[] = [];
+  const stderr: string[] = [];
+  return { stdout, stderr, out: (l) => stdout.push(l), err: (l) => stderr.push(l), all: () => [...stdout, ...stderr].join("\n") };
+}
+
+let config = "";
+let folder = "";
+
+beforeEach(() => {
+  const home = mkdtempSync(join(tmpdir(), "noclick-cli-"));
+  config = join(home, "config");
+  folder = mkdtempSync(join(tmpdir(), "noclick-app-"));
+  host.env = { NOCLICK_CONFIG_DIR: config, NOCLICK_API_URL: BASE, HOME: home, PATH: process.env.PATH };
+  host.cwd = () => folder;
+  host.sleep = async () => {};
+  host.stdinIsTty = () => false;
+});
+
+test("every curated command npx noclick runs is one the manifest lists", () => {
+  for (const path of Object.keys(RUNNERS)) assert.ok(load().curated(path.split(" ")), path);
+});
+
+test("setup keeps the key where the Python CLI reads it, readable only by you, and never prints it", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  const redeem = api.on("POST", "/v1/setup", json({ key: KEY, key_id: "key_1", key_name: "Setup key", email: "ana@example.com" }));
+  api.on("GET", "/v1/status", json({ account: { id: "acct_1", name: "Ana", email: "ana@example.com" } }));
+  const io = captured();
+  assert.equal(await main(["setup", "nc_setup_abc"], io), OK);
+  assert.equal(redeem.last.headers.get("authorization"), null);
+  assert.equal(io.all().includes(KEY), false);
+  assert.equal(JSON.parse(readFileSync(join(config, "credentials.json"), "utf8")).default, KEY);
+  assert.equal(statSync(join(config, "credentials.json")).mode & 0o777, 0o600);
+  assert.equal(JSON.parse(readFileSync(join(config, "config.json"), "utf8")).profiles.default.store, "file");
+  // A keychain is asked for by name, and refused before anything is redeemed.
+  assert.equal(await main(["setup", "nc_setup_abc", "--store", "keychain"], captured()), FAILED);
+  assert.equal(redeem.count, 1);
+});
+
+test("login prints the link first, and a run cut short is picked up by the next", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  const start = api.on("POST", "/v1/cli/logins", json({
+    device_code: "dev_1", user_code: "ABCD-EFGH", verification_url: "https://noclick.com/cli",
+    verification_url_complete: "https://noclick.com/cli?code=ABCD-EFGH", interval_s: 5, expires_at: "2999-01-01T00:00:00Z",
+  }));
+  api.on("POST", "/v1/cli/logins/token", apiError(409, "conflict", "Busy."),
+    json({ status: "approved", key: KEY, key_id: "key_1", key_name: "noclick-cli", email: "ana@example.com" }));
+  const cut = captured();
+  assert.equal(await main(["login"], cut), FAILED);
+  assert.equal(cut.stdout[0], "Open https://noclick.com/cli?code=ABCD-EFGH and enter the code ABCD-EFGH");
+  const done = captured();
+  assert.equal(await main(["login"], done), OK);
+  assert.equal(start.count, 1);
+  assert.equal(done.all().includes(KEY), false);
+  assert.equal(JSON.parse(readFileSync(join(config, "credentials.json"), "utf8")).default, KEY);
+});
+
+test("a secret's value comes from the environment, reaches the API and is never printed", async () => {
+  const { api } = setup();
+  host.env.STRIPE = SECRET;
+  api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  const put = api.on("PUT", "/v1/projects/" + APP_ID + "/secrets/STRIPE_KEY", json({ name: "STRIPE_KEY" }));
+  const io = captured();
+  assert.equal(await main(["secret", "set", "STRIPE_KEY", "--from-env", "STRIPE", "--app", "shop"], io, signedIn), OK, io.all());
+  assert.equal(JSON.stringify(put.last.body).includes(SECRET), true);
+  assert.equal(io.all().includes(SECRET), false);
+  // Exactly one source: a value typed as an argument, or none at all, is a usage error.
+  assert.equal(await main(["secret", "set", "STRIPE_KEY", SECRET, "--app", "shop"], captured(), signedIn), USAGE);
+  assert.equal(await main(["secret", "set", "STRIPE_KEY", "--app", "shop"], captured(), signedIn), USAGE);
+});
+
+test("a domain is bought only under a ceiling; a person to pay is 3, a cap 4", async () => {
+  const { api } = setup();
+  const buy = api.on("POST", "/v1/domains", apiError(402, "payment_required", "Add funds to buy this."));
+  assert.equal(await main(["domains", "buy", "acme.com"], captured(), signedIn), USAGE);
+  assert.equal(buy.count, 0);
+  assert.equal(await main(["domains", "buy", "acme.com", "--max-price", "15"], captured(), signedIn), WAITING);
+  assert.equal((buy.last.body as { max_price_usd: number }).max_price_usd, 15);
+  api.on("POST", "/v1/domains", apiError(402, "spend_cap_exceeded", "Over your cap."));
+  assert.equal(await main(["domains", "buy", "acme.com", "--max-price", "15"], captured(), signedIn), REFUSED);
+});
+
+function deployRoutes(api: ReturnType<typeof setup>["api"], exists = true) {
+  if (exists) api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  else api.on("GET", "/v1/projects", json(listing([])), json(listing([PROJECT])));
+  api.on("GET", "/v1/repos", json(listing([])));
+  api.on("POST", "/v1/repos", json({ object: "repo", id: "repo_1", name: "shop", default_branch: "main" }));
+  api.on("POST", "/v1/projects", json(PROJECT));
+  api.on("GET", "/v1/projects/" + APP_ID, json(PROJECT));
+  api.on("GET", "/v1/repos/repo_1/branches", json(listing([{ name: "main", head: "aaa" }])));
+  api.on("GET", "/v1/repos/repo_1/files", json(listing([])));
+  const commit = api.on("POST", "/v1/repos/repo_1/commits", json({ sha: "abc1234def", message: "m", branch: "main" }));
+  const deploy = api.on("POST", "/v1/projects/" + APP_ID + "/deployments", json(operation({ id: "op_d", kind: "project.deploy", status: "running" }), { status: 202 }));
+  api.on("GET", "/v1/operations/op_d/wait", json(operation({
+    id: "op_d", kind: "project.deploy", status: "succeeded",
+    result: { object: "deployment", id: "dep_1", url: "https://shop.noclick.site", production: true, status: "ready" },
+  })));
+  return { commit, deploy };
+}
+
+test("deploy makes a folder's app, ships what isn't ignored as a commit, links it, and prints the URL last", async () => {
+  folder = join(folder, "Shop");
+  mkdirSync(join(folder, "node_modules"), { recursive: true });
+  writeFileSync(join(folder, "index.html"), "<h1>shop</h1>");
+  writeFileSync(join(folder, "node_modules", "big.js"), "x");
+  writeFileSync(join(folder, "notes.log"), "x");
+  writeFileSync(join(folder, ".gitignore"), "*.log\n");
+  const { api } = setup();
+  const { commit, deploy } = deployRoutes(api, false);
+  const io = captured();
+  assert.equal(await main(["deploy"], io, signedIn), OK, io.all());
+  assert.deepEqual((commit.last.body as { files: Array<{ path: string }> }).files.map((f) => f.path).sort(), [".gitignore", "index.html"]);
+  assert.deepEqual(deploy.last.body, { branch: "main", commit: "abc1234def" });
+  assert.equal(io.stdout.at(-1), "https://shop.noclick.site");
+  const link = JSON.parse(readFileSync(join(folder, ".noclick", "project.json"), "utf8"));
+  assert.deepEqual([link.app, link.app_id], ["shop", APP_ID]);
+});
+
+test("a file that looks like a secret refuses the deploy before anything is made", async () => {
+  writeFileSync(join(folder, "index.html"), "<h1>shop</h1>");
+  writeFileSync(join(folder, ".env"), `STRIPE=${SECRET}\n`);
+  writeFileSync(join(folder, ".env.example"), "STRIPE=\n");
+  const { api } = setup();
+  const { commit } = deployRoutes(api);
+  const io = captured();
+  assert.equal(await main(["deploy", "--json"], io, signedIn), FAILED);
+  const { error } = JSON.parse(io.stdout.join("\n"));
+  assert.deepEqual(error.details.files, [".env"]);
+  assert.equal(commit.count, 0);
+  assert.equal(io.all().includes(SECRET), false);
+});
+
+test("a checkout with untracked files ships them as a commit; --only-committed refuses", async () => {
+  const run = (...args: string[]) => execFileSync("git", args, {
+    cwd: folder, env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@example.com", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@example.com" },
+  });
+  run("init", "-q", "-b", "main");
+  writeFileSync(join(folder, "app.js"), "1");
+  writeFileSync(join(folder, ".gitignore"), "dist/\n");
+  run("add", "-A");
+  run("commit", "-qm", "first");
+  writeFileSync(join(folder, "new.js"), "2");
+  mkdirSync(join(folder, "dist"));
+  writeFileSync(join(folder, "dist", "out.js"), "built");
+  const { api } = setup();
+  const { commit } = deployRoutes(api);
+  assert.equal(await main(["deploy", "--app", "shop", "--only-committed"], captured(), signedIn), FAILED);
+  const io = captured();
+  assert.equal(await main(["deploy", "--app", "shop", "--no-wait", "--json"], io, signedIn), OK, io.all());
+  assert.deepEqual((commit.last.body as { files: Array<{ path: string }> }).files.map((f) => f.path).sort(), [".gitignore", "app.js", "new.js"]);
+  assert.equal(JSON.parse(io.stdout.join("\n")).operation_id, "op_d");
+});
+
+test("rollback serves the release before the live one, and --preview takes no value", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  api.on("GET", "/v1/projects/" + APP_ID + "/deployments", json(listing([
+    { object: "deployment", id: "dep_2", status: "ready", production: true, branch: "main", commit: "bbbbbbb", url: "https://shop.noclick.site" },
+    { object: "deployment", id: "dep_1", status: "ready", production: false, branch: "main", commit: "aaaaaaa", url: "https://x.noclick.site" },
+  ])));
+  const back = api.on("POST", "/v1/deployments/dep_1/promote", json(operation({
+    id: "op_r", kind: "project.rollback", status: "succeeded",
+    result: { object: "deployment", id: "dep_1", url: "https://shop.noclick.site", production: true, status: "ready" },
+  })));
+  api.on("GET", "/v1/operations/op_r/wait", json(operation({ id: "op_r", kind: "project.rollback", status: "succeeded",
+    result: { object: "deployment", id: "dep_1", url: "https://shop.noclick.site", production: true, status: "ready" } })));
+  const io = captured();
+  assert.equal(await main(["rollback", "--app", "shop"], io, signedIn), OK, io.all());
+  assert.equal(back.count, 1); // dep_1, the ready release before the live one
+  assert.equal(io.stdout.at(-1), "https://shop.noclick.site");
+  // `--preview` alone is the newest preview (argparse's nargs="?"): it isn't missing its value.
+  assert.equal(await main(["open", "--app", "shop", "--preview"], captured(), signedIn), 1);
+});
+
+test("a setting is written on the app it names, its value in the body", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  const put = api.on("PUT", `/v1/projects/${APP_ID}/settings/PORT`, json({ name: "PORT" }));
+  assert.equal(await main(["settings", "set", "shop", "PORT", "8080"], captured(), signedIn), OK);
+  assert.deepEqual(put.last.body, { value: "8080" });
+});
+
+test("a clean checkout pushes the commit it is on, deploys exactly it, and prints the URL last", async () => {
+  const run = (...args: string[]) => execFileSync("git", args, {
+    cwd: folder, env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@example.com", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@example.com" },
+  });
+  const remote = mkdtempSync(join(tmpdir(), "noclick-remote-"));
+  execFileSync("git", ["init", "-q", "--bare", "-b", "main", remote]);
+  run("init", "-q", "-b", "main");
+  writeFileSync(join(folder, "app.js"), "1");
+  run("add", "-A");
+  run("commit", "-qm", "first");
+  const sha = String(run("rev-parse", "HEAD")).trim();
+  const { api } = setup();
+  api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  api.on("POST", "/v1/repos/repo_1/clone_url", json({ url: `file://${remote}`, expires_at: "2999-01-01T00:00:00Z" }));
+  const deploy = api.on("POST", `/v1/projects/${APP_ID}/deployments`, json(operation({ id: "op_d", kind: "project.deploy", status: "running" }), { status: 202 }));
+  api.on("GET", "/v1/operations/op_d/wait", json(operation({
+    id: "op_d", kind: "project.deploy", status: "succeeded",
+    result: { object: "deployment", id: "dep_1", url: "https://shop.noclick.site", production: true, status: "ready" },
+  })));
+  const io = captured();
+  assert.equal(await main(["deploy", "--app", "shop"], io, signedIn), OK, io.all());
+  assert.deepEqual(deploy.last.body, { branch: "main", commit: sha });
+  assert.equal(String(execFileSync("git", ["rev-parse", "main"], { cwd: remote })).trim(), sha);
+  assert.equal(io.stdout.at(-1), "https://shop.noclick.site");
+});

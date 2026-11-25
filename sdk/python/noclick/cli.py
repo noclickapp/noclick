@@ -39,7 +39,6 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Sequ
 import httpx
 
 from ._client import API_KEY_ENV, API_URL_ENV, DEFAULT_BASE_URL, Client, configure
-from ._object import UNSET
 from ._sync import run_sync
 from ._scope import ALL_USERS, as_user
 from ._version import __version__
@@ -49,11 +48,10 @@ from .bucket import Bucket
 from .database import Database
 from .domain import Domain, DomainContact
 from .estimate import Estimate, estimate
-from .exceptions import Conflict, Error, InvalidRequest, NotFound, OperationFailed, Unauthenticated
+from .exceptions import Conflict, Error, InvalidRequest, NotFound, Unauthenticated
 from .machine import Machine
 from .operation import Operation
 from .project import Deployment, Project
-from .repo import Repo
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
 from ._cli import commands as generated, exits, kit as cli_kit, link as cli_link, output, spend as cli_spend
@@ -786,91 +784,6 @@ def _app(name: str) -> Project:
     """The app ``name``, which the command's words name (``_CONTEXT``)."""
     _CONTEXT["app"] = name
     return Project.from_name(name)
-
-
-def _untracked(root: str) -> None:
-    """Say which files a deploy leaves out because git doesn't track them (and doesn't ignore them either)."""
-    left = [line for line in _git("ls-files", "--others", "--exclude-standard", cwd=root).splitlines() if line]
-    if not left:
-        return
-    shown = ", ".join(left[:8]) + (f" and {len(left) - 8} more" if len(left) > 8 else "")
-    _note(f"Not deployed, as git doesn't track {'it' if len(left) == 1 else 'them'}: {shown}. To include "
-          f"{'it' if len(left) == 1 else 'them'}: git add, git commit, then deploy again (or list "
-          f"{'it' if len(left) == 1 else 'them'} in .gitignore to stop this note).")
-
-
-def cmd_deploy(args: argparse.Namespace) -> int:
-    try:
-        root = _git("rev-parse", "--show-toplevel")
-    except CommandError as err:
-        if "stderr" not in err.details:  # git itself is missing
-            raise
-        raise CommandError(
-            "This isn't a git checkout.", next_step="Run noclick deploy inside your app's git repository.",
-        ) from None
-    if _git("status", "--porcelain", "--untracked-files=no", cwd=root):
-        raise CommandError(
-            "Your checkout has uncommitted changes.",
-            next_step="Commit or stash them: deploy ships the commit you're on, never the working tree.",
-        )
-    branch = args.branch
-    if branch is None:
-        try:
-            branch = _git("symbolic-ref", "--quiet", "--short", "HEAD", cwd=root)
-        except CommandError as err:
-            if "stderr" not in err.details:
-                raise
-            raise CommandError("You're not on a branch.", next_step="Pass --branch to name the one to deploy.") from None
-    sha = _git("rev-parse", "HEAD", cwd=root)
-    _untracked(root)
-    if args.app and args.project and args.app != args.project:
-        raise CommandError(f"Two apps named: {args.project} and --app {args.app}.", next_step="Name the app once.")
-    name = args.app or args.project or Path(root).name
-    _CONTEXT["app"] = name
-    if args.create:
-        repo = Repo.from_name(name, create_if_missing=True)
-        budget = UNSET if args.budget is None else args.budget
-        project = Project.from_name(name, repo=repo, budget_usd_per_month=budget, create_if_missing=True)
-    else:
-        project = Project.from_name(name)
-        try:
-            repo = project.repo
-        except NotFound as err:
-            if err.details.get("name") != name:  # another NotFound than the name lookup's
-                raise
-            raise NotFound(
-                f"No app is named {name!r}.",
-                next_step="Pass --create to create it and its repo with this deploy, or name one: noclick deploy <app>.",
-            ) from None
-        if args.budget is not None:
-            project.update(budget_usd_per_month=args.budget)
-        serving = project.production
-        if serving is not None and serving.commit == sha and serving.branch == branch:
-            _note(f"Production already serves {sha[:7]}: nothing changed since, so this builds it again.")
-    _push(root, repo.clone_url(write=True, ttl_s=600), branch)
-    _note(f"Pushed {sha[:7]} to {branch}.")
-    op = project.deploy(branch=branch, commit=sha)  # exactly what was pushed, even if the branch moves on
-    if args.no_wait:
-        print(op.id)
-        _note(f"Deploying. Wait for it with: noclick ops wait {op.id}")
-        return 0
-    _note("Building…")
-    try:
-        deployment = op.wait()
-    except OperationFailed as failed:
-        deployment_id = failed.details.get("deployment_id")
-        if deployment_id:  # its end, less a last line that's the error printed after it
-            _build_log(Deployment.from_id(deployment_id), last=20, leave_out=failed.message)
-        raise
-    print(deployment.url)
-    if deployment.raw.get("preview_link"):
-        _note(f"The preview is private: it opens with {deployment.raw['preview_link']}")
-    where = "production" if deployment.production else "a preview of " + branch
-    if _said_deployment(deployment.raw):
-        _note(f"Live, but not working: {where} stays deployed (nothing was rolled back).")
-        return 1
-    _note(f"Ready: {where}.")
-    return 0
 
 
 def _said_deployment(result: Dict[str, Any]) -> bool:
@@ -1692,21 +1605,6 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
                     help="Copy a folder (never its .git), or every key under a prefix.")
     cp.add_argument("--content-type", metavar="TYPE", help="The upload's content type (guessed from the name otherwise).")
 
-    deploy = command(commands, "deploy", cmd_deploy, "Push the commit you're on and deploy it.",
-                     parents=[user])
-    deploy.epilog = ("Once live, its home page and the app's check paths are loaded. When they fail (an error page, a "
-                     "redirect to another site, scripts that don't load), it prints the URL, the warning and what to "
-                     "fix, and exits 1: the deployment stays live.")
-    deploy.add_argument("project", nargs="?", help="The app to deploy (default: the checkout's folder name).")
-    deploy.add_argument("--app", help="The app to deploy, as a flag: the same as the argument.")
-    deploy.add_argument("--branch", help="The branch to push and deploy (default: your current one).")
-    deploy.add_argument("--create", action="store_true", help="Create the repo and app on the first deploy.")
-    deploy.add_argument("--budget", type=float, metavar="USD",
-                        help="The app's monthly budget in dollars: what it may spend on hosting, its data, email, AI "
-                             "and agents (set, or changed, with this deploy).")
-    deploy.add_argument("--no-wait", action="store_true", help="Print the operation id instead of waiting.")
-    deploy.add_argument("--token", help="A deploy token, as NoClick's MCP server hands an agent with the command "
-                                        "(it reaches one repo and its apps), instead of your key.")
     logs = command(commands, "logs", cmd_logs, "Print an app's logs, or a deployment's build log.", parents=[user])
     logs.add_argument("project", nargs="?", help="The app's name.")
     logs.add_argument("--build", action="store_true", help="Print a build log: the app's newest deployment's, or "

@@ -16,6 +16,7 @@ through MCP it waits for a person.
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
@@ -131,6 +132,33 @@ class TrashItem(_Object):
                 item.purge()
         """
         await self._request("DELETE", self._path())
+
+
+@dataclass(frozen=True)
+class DeletePreview:
+    """What a deletion would do, in words a person reads before agreeing: what it ``deletes``, what stops working
+    (``depends_on_it``), the data that goes (``data_lost``), what stops being billed (``stops_billing``), and whether
+    it's ``reversible`` and how (``undo``). Nothing is deleted by asking. ``confirm_token`` is what a call through
+    MCP sends to confirm it, within ``expires_in_s``."""
+
+    deletes: str
+    depends_on_it: List[str]
+    data_lost: List[str]
+    stops_billing: List[str]
+    reversible: bool
+    undo: Optional[str]
+    confirm_token: Optional[str]
+    expires_in_s: Optional[int]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "DeletePreview":
+        raw = raw if isinstance(raw, dict) else {}
+        impact = raw.get("impact") or {}
+        return cls(impact.get("deletes") or "", list(impact.get("depends_on_it") or []),
+                   list(impact.get("data_lost") or []), list(impact.get("stops_billing") or []),
+                   bool(impact.get("reversible")), impact.get("undo"), raw.get("confirm_token"),
+                   raw.get("expires_in_s"), raw)
 
 
 def trashed(raw: Dict[str, Any], *, client: Optional[Client], user: Any) -> TrashItem:

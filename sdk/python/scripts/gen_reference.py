@@ -43,7 +43,7 @@ PAGE_OF_MODULE = {
     "region": "Region", "_attachment": "Agent", "_feedback": "feedback", "trash": "TrashItem", "versions": "Secret",
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "deploy": "deploy", "workflow_resources": "Workflow", "_watch": "watch",
-    "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "connected_app": "ConnectedApp",
+    "step_type": "Workflow", "notifications": "Notifications", "key": "Key", "cli_login": "CliLogin", "connected_app": "ConnectedApp",
     "popups": "Popups", "account_phones": "AccountPhones", "builder_skill": "BuilderSkill",
     "saved_output": "Workflow",
     "workflow_approval": "Workflow", "workflow_example": "Workflow", "organization": "Organization",
@@ -55,7 +55,7 @@ NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "ag
 
 # The index page's sections, like the reference's table of contents.
 GROUPS: List[Tuple[str, List[str]]] = [
-    ("Configuration", ["Client", "configure", "default_client", "Page", "Key", "regions", "Region"]),
+    ("Configuration", ["Client", "configure", "default_client", "Page", "Key", "CliLogin", "regions", "Region"]),
     ("Your users", ["User", "Spending", "as_user", "Session", "Brand"]),
     ("Their accounts", ["Connection", "run", "ConnectLink", "IntegrationInfo", "IntegrationOperation", "IntegrationEvent"]),
     ("Hosted agents", ["Agent", "HarnessInfo", "ModelUsage", "AgentGrant", "Cron", "OnWebhook", "OnEvent", "OnPlatformEvent", "OnQueue", "AgentTrigger", "AgentMemory", "Memory", "Skill",

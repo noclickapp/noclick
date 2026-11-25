@@ -42,7 +42,7 @@ from .export import ExportBundle
 from .live import ProjectLive
 from .operation import Operation, register_result
 from .repo import Repo
-from .trash import TrashItem, trashed
+from .trash import DeletePreview, TrashItem, trashed
 from .versions import Version, version_id, versions_of
 from .webhook import verify_signature
 
@@ -3279,6 +3279,26 @@ class Project(_Object):
             "DELETE", await self._project_path(), params={"delete_data": "true" if delete_data else None},
         )
         return trashed(raw, client=self._client, user=self._call_scope())
+
+    @synced
+    async def preview_delete(self, *, delete_data: bool = False) -> DeletePreview:
+        """What ``delete(delete_data=...)`` would do, before you do it: the addresses that stop serving, what goes
+        to the trash with it, what stays, and how it's undone. Nothing is deleted.
+
+        Returns:
+            A ``noclick.DeletePreview``.
+
+        Usage:
+            Say what goes, then delete it::
+
+                app = noclick.Project.from_name("scratch")
+                preview = app.preview_delete(delete_data=True)
+                print(preview.deletes, preview.depends_on_it, preview.undo)
+                app.delete(delete_data=True)
+        """
+        path = await self._project_path() + ("?delete_data=true" if delete_data else "")
+        return DeletePreview._from(await self._request("POST", "/v1/delete_previews",
+                                                       json={"method": "DELETE", "path": path}))
 
     @synced
     async def unpublish(self) -> TrashItem:

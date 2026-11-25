@@ -101,6 +101,38 @@ export class TrashItem extends ApiObject {
   }
 }
 
+/**
+ * What a deletion would do, in words a person reads before agreeing: what it `deletes`, what stops working
+ * (`dependsOnIt`), the data that goes (`dataLost`), what stops being billed (`stopsBilling`), and whether it's
+ * `reversible` and how (`undo`). Nothing is deleted by asking. `confirmToken` is what a call through MCP sends to
+ * confirm it, within `expiresInS`.
+ */
+export interface DeletePreview {
+  deletes: string;
+  dependsOnIt: string[];
+  dataLost: string[];
+  stopsBilling: string[];
+  reversible: boolean;
+  undo: string | null;
+  confirmToken: string | null;
+  expiresInS: number | null;
+  raw: JsonObject;
+}
+
+/** @internal A `POST /v1/delete_previews` answer as a `DeletePreview`. */
+export function toDeletePreview(value: unknown): DeletePreview {
+  const raw = (value && typeof value === "object" ? value : {}) as JsonObject;
+  const impact = (raw.impact && typeof raw.impact === "object" ? raw.impact : {}) as JsonObject;
+  const strings = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : []);
+  return {
+    deletes: typeof impact.deletes === "string" ? impact.deletes : "", dependsOnIt: strings(impact.depends_on_it),
+    dataLost: strings(impact.data_lost), stopsBilling: strings(impact.stops_billing), reversible: impact.reversible === true,
+    undo: typeof impact.undo === "string" ? impact.undo : null,
+    confirmToken: typeof raw.confirm_token === "string" ? raw.confirm_token : null,
+    expiresInS: typeof raw.expires_in_s === "number" ? raw.expires_in_s : null, raw,
+  };
+}
+
 /** @internal The `TrashItem` a delete answered with, acting as the object that was deleted. */
 export function trashed(raw: unknown, from: ApiObject): TrashItem {
   return TrashItem._fromDeleted(raw as JsonObject, { client: from._client, user: from._callScope() });

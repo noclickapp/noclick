@@ -40,6 +40,8 @@ export interface Flag {
   required?: boolean;
   metavar?: string;
   help?: string;
+  /** A flag whose value is optional: what it is given alone (`--preview` is `--preview ""`). */
+  const?: string | null;
 }
 
 export interface Arg {

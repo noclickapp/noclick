@@ -70,6 +70,17 @@ class Key:
             body["user_id"] = user_id
         return cls._from(await resolve_client(client).request("POST", "/v1/keys", json=body, user=None))
 
+    @synced
+    @staticmethod
+    async def revoke_current(*, client: Optional[Client] = None) -> None:
+        """Revoke the key the client signs in with (a sign-out): every later call with it is refused.
+
+        Usage::
+
+            noclick.Key.revoke_current()
+        """
+        await resolve_client(client).request("DELETE", "/v1/keys/current", user=None)
+
     @staticmethod
     def redeem_setup_code(code: str, *, base_url: Optional[str] = None) -> "Key":
         """Redeem a one-time setup code (``nc_setup_...``, which the console's quickstart hands a coding agent) for a

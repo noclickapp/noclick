@@ -67,6 +67,11 @@ export class Key {
     return new Key(asObject(raw));
   }
 
+  /** Revoke the key the client signs in with (a sign-out): every later call with it is refused. */
+  static async revokeCurrent(options: { client?: NoClick } = {}): Promise<void> {
+    await resolveClient(options.client).request("DELETE", "/v1/keys/current", { user: null });
+  }
+
   /**
    * Redeem a one-time setup code (`nc_setup_...`, which the console's quickstart hands a coding agent) for a key of
    * the account, once, with no key of your own: its `secret` shown this once, with its `id` and `name`

@@ -41,8 +41,8 @@ import { Repo } from "./repo.ts";
 import { Secret } from "./secret.ts";
 import { resolveScope } from "./scope.ts";
 import type { UserOption } from "./scope.ts";
-import { trashed } from "./trash.ts";
-import type { TrashItem } from "./trash.ts";
+import { toDeletePreview, trashed } from "./trash.ts";
+import type { DeletePreview, TrashItem } from "./trash.ts";
 import { OnEvent } from "./trigger.ts";
 import { verifySignature } from "./webhook.ts";
 import type { WebhookHeaders } from "./webhook.ts";
@@ -2475,6 +2475,22 @@ export class Project extends ApiObject {
   async export(): Promise<Operation<ExportBundle>> {
     const payload = await this._request("POST", await this._projectPath("export"), { json: {} });
     return Operation._fromPayload<ExportBundle>(payload, { ...this.scope, kind: "project.export", reader: toExportBundle });
+  }
+
+  /**
+   * What `delete({ deleteData })` would do, before you do it: the addresses that stop serving, what goes to the trash
+   * with it, what stays, and how it's undone. Nothing is deleted.
+   *
+   * ```ts
+   * const app = Project.fromName("scratch");
+   * const preview = await app.previewDelete({ deleteData: true });
+   * console.log(preview.deletes, preview.dependsOnIt, preview.undo);
+   * await app.delete({ deleteData: true });
+   * ```
+   */
+  async previewDelete(options: { deleteData?: boolean } = {}): Promise<DeletePreview> {
+    const path = (await this._projectPath()) + (options.deleteData ? "?delete_data=true" : "");
+    return toDeletePreview(await this._request("POST", "/v1/delete_previews", { json: { method: "DELETE", path } }));
   }
 
   /**

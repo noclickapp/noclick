@@ -236,6 +236,12 @@ from .channel import (
     Subscription,
     SubscriptionDelivery,
 )
+from .cli_login import (
+    CliLogin,
+    CliLoginPoll,
+    CliLoginStart,
+    account_status,
+)
 from .compute import (
     ComputeItem,
     ComputeRun,
@@ -557,6 +563,7 @@ from .toolkit import (
     Toolkit,
 )
 from .trash import (
+    DeletePreview,
     TrashItem,
 )
 from .trigger import (
@@ -886,6 +893,7 @@ __all__ = [
     "CardMerchantCategory",
     "Project",
     "Deployment",
+    "DeletePreview",
     "Schedule",
     "DurableObjectClass",
     "DurableObjectClasses",
@@ -1094,6 +1102,10 @@ __all__ = [
     "CapChange",
     "Notifications",
     "Key",
+    "CliLogin",
+    "CliLoginStart",
+    "CliLoginPoll",
+    "account_status",
     "ConnectedApp",
     "Popups",
     "AccountPhones",

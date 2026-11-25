@@ -1075,70 +1075,6 @@
   },
   {
    "path": [
-    "deploy"
-   ],
-   "summary": "Push the commit you're on and deploy it.",
-   "auth": true,
-   "args": [
-    {
-     "name": "project",
-     "optional": true,
-     "help": "The app to deploy (default: the checkout's folder name)."
-    }
-   ],
-   "flags": [
-    {
-     "flag": "--user",
-     "dest": "user",
-     "type": "string",
-     "help": "Act for this user: your id for them."
-    },
-    {
-     "flag": "--app",
-     "dest": "app",
-     "type": "string",
-     "help": "The app to deploy, as a flag: the same as the argument."
-    },
-    {
-     "flag": "--branch",
-     "dest": "branch",
-     "type": "string",
-     "help": "The branch to push and deploy (default: your current one)."
-    },
-    {
-     "flag": "--create",
-     "dest": "create",
-     "type": "bool",
-     "help": "Create the repo and app on the first deploy."
-    },
-    {
-     "flag": "--budget",
-     "dest": "budget",
-     "type": "number",
-     "metavar": "USD",
-     "help": "The app's monthly budget in dollars: what it may spend on hosting, its data, email, AI and agents (set, or changed, with this deploy)."
-    },
-    {
-     "flag": "--no-wait",
-     "dest": "no_wait",
-     "type": "bool",
-     "help": "Print the operation id instead of waiting."
-    },
-    {
-     "flag": "--token",
-     "dest": "token",
-     "type": "string",
-     "help": "A deploy token, as NoClick's MCP server hands an agent with the command (it reaches one repo and its apps), instead of your key."
-    }
-   ],
-   "notes": "Once live, its home page and the app's check paths are loaded. When they fail (an error page, a redirect to another site, scripts that don't load), it prints the URL, the warning and what to fix, and exits 1: the deployment stays live.",
-   "examples": [
-    "noclick deploy --create",
-    "noclick deploy booking --no-wait"
-   ]
-  },
-  {
-   "path": [
     "logs"
    ],
    "summary": "Print an app's logs, or a deployment's build log.",
@@ -1391,6 +1327,75 @@
      "type": "bool",
      "help": "Print the operation id instead of waiting."
     }
+   ]
+  },
+  {
+   "path": [
+    "domains",
+    "add"
+   ],
+   "summary": "Serve the app at a domain, and print the DNS records to set.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name",
+     "help": "The domain, like book.acme.com."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick domains add book.acme.com"
+   ]
+  },
+  {
+   "path": [
+    "domains",
+    "ls"
+   ],
+   "summary": "List the domains serving the app.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick domains ls"
    ]
   },
   {
@@ -1723,6 +1728,821 @@
    "notes": "Exit 0 done, 1 failed, 3 waiting on a person (it prints where they act), 4 refused, 124 --timeout ran out (the work goes on).",
    "examples": [
     "noclick wait 3b9d6f2e-1c4a-4e8b-9f7d-2a6c5e8b1d40 --timeout 60 --json"
+   ]
+  },
+  {
+   "path": [
+    "deploy"
+   ],
+   "summary": "Ship this folder to its app and print the live URL.",
+   "auth": true,
+   "args": [
+    {
+     "name": "app_ref",
+     "optional": true,
+     "help": "The app (default: this folder's)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "The app's folder (default: this one)."
+    },
+    {
+     "flag": "--branch",
+     "dest": "branch",
+     "type": "string",
+     "help": "Ship as this branch: the production branch goes live, any other is a preview."
+    },
+    {
+     "flag": "--prod",
+     "dest": "prod",
+     "type": "bool",
+     "help": "Ship to the app's production branch."
+    },
+    {
+     "flag": "--preview",
+     "dest": "preview",
+     "type": "string",
+     "const": "",
+     "metavar": "NAME",
+     "help": "Ship as a preview (named NAME, else after your branch, else 'preview')."
+    },
+    {
+     "flag": "--only-committed",
+     "dest": "only_committed",
+     "type": "bool",
+     "help": "Ship the commit you're on alone; refuse uncommitted or untracked files."
+    },
+    {
+     "flag": "--no-git",
+     "dest": "no_git",
+     "type": "bool",
+     "help": "Ship the folder through the API even in a checkout."
+    },
+    {
+     "flag": "--create",
+     "dest": "create",
+     "type": "bool",
+     "help": "With an app named that doesn't exist: make it."
+    },
+    {
+     "flag": "--budget",
+     "dest": "budget",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The app's monthly budget in dollars: what it may spend on hosting, its data, email, AI and agents (set, or changed, with this deploy)."
+    },
+    {
+     "flag": "--token",
+     "dest": "token",
+     "type": "string",
+     "help": "A deploy token, as NoClick's MCP server hands an agent with the command (it reaches one repo and its apps), instead of your key."
+    }
+   ],
+   "one_of": [
+    {
+     "dests": [
+      "branch",
+      "prod",
+      "preview"
+     ],
+     "required": false
+    }
+   ],
+   "notes": "In a git checkout it ships the commit you're on; with uncommitted or untracked files, a snapshot of the folder as a commit of its own on top (your checkout never changes), naming each file. Outside git it commits the folder through the API. Files that look like secrets (.env, keys) are refused. The folder's first deploy makes its app (named after it) and links it. noclick.json's bindings, env and crons are given to the app first, and a wrangler config's vars, D1, KV, R2 and crons are written into noclick.json. Once live, its home page and the app's check paths are loaded: when they fail it prints the warning and what to fix, and exits 1 (the deployment stays live).",
+   "examples": [
+    "noclick deploy --create",
+    "noclick deploy booking --no-wait",
+    "noclick deploy",
+    "noclick deploy --preview --json",
+    "noclick deploy --app booking --create --budget 25"
+   ]
+  },
+  {
+   "path": [
+    "link"
+   ],
+   "summary": "Tie this folder to an app, so commands here act on it.",
+   "auth": true,
+   "args": [
+    {
+     "name": "app_ref",
+     "optional": true,
+     "help": "The app, by name or id."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string"
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "The folder (default: this one)."
+    },
+    {
+     "flag": "--create",
+     "dest": "create",
+     "type": "bool",
+     "help": "Make the app (and its repo) when there's none by that name."
+    },
+    {
+     "flag": "--budget",
+     "dest": "budget",
+     "type": "number",
+     "metavar": "USD",
+     "help": "With --create: its monthly budget in dollars."
+    }
+   ],
+   "examples": [
+    "noclick link booking",
+    "noclick link booking --create"
+   ]
+  },
+  {
+   "path": [
+    "unlink"
+   ],
+   "summary": "Untie this folder from its app (the app is unchanged).",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "The folder (default: this one)."
+    }
+   ],
+   "examples": [
+    "noclick unlink"
+   ]
+  },
+  {
+   "path": [
+    "status"
+   ],
+   "summary": "Everything about the app on one screen: URLs, the live release and its health, errors, bindings, secrets, settings and spend.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick status",
+    "noclick status --json"
+   ]
+  },
+  {
+   "path": [
+    "open"
+   ],
+   "summary": "Print the app's URL, and open it at a terminal.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--preview",
+     "dest": "preview",
+     "type": "string",
+     "const": "",
+     "metavar": "BRANCH",
+     "help": "A preview's URL instead."
+    },
+    {
+     "flag": "--no-browser",
+     "dest": "no_browser",
+     "type": "bool",
+     "help": "Print it only."
+    }
+   ],
+   "examples": [
+    "noclick open --no-browser",
+    "noclick open --preview new-form"
+   ]
+  },
+  {
+   "path": [
+    "releases"
+   ],
+   "summary": "List the app's releases, newest first.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--all",
+     "dest": "all",
+     "type": "bool",
+     "help": "Previews too."
+    },
+    {
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "At most this many (default 10)."
+    }
+   ],
+   "examples": [
+    "noclick releases",
+    "noclick releases --all --limit 20"
+   ]
+  },
+  {
+   "path": [
+    "rollback"
+   ],
+   "summary": "Serve an earlier release again, without rebuilding (default: the one before the live one).",
+   "auth": true,
+   "args": [
+    {
+     "name": "release",
+     "optional": true,
+     "help": "Its id, or its commit (7+ characters)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+    }
+   ],
+   "examples": [
+    "noclick rollback",
+    "noclick rollback 3f2a1c9"
+   ]
+  },
+  {
+   "path": [
+    "promote"
+   ],
+   "summary": "Put a preview live in production, after its checks.",
+   "auth": true,
+   "args": [
+    {
+     "name": "preview",
+     "help": "The preview: its branch, URL or deployment id."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--no-wait",
+     "dest": "no_wait",
+     "type": "bool",
+     "help": "Print the operation id instead of waiting."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+    },
+    {
+     "flag": "--force",
+     "dest": "force",
+     "type": "bool",
+     "help": "Promote it without the app's checks."
+    }
+   ],
+   "examples": [
+    "noclick promote new-form"
+   ]
+  },
+  {
+   "path": [
+    "delete"
+   ],
+   "summary": "Delete the app to the trash: says what goes first, and deletes only with --yes.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--yes",
+     "dest": "yes",
+     "type": "bool",
+     "help": "Delete it (without it, nothing is deleted)."
+    },
+    {
+     "flag": "--delete-data",
+     "dest": "delete_data",
+     "type": "bool",
+     "help": "Its repo, and each database and bucket no other app binds, go to the trash too."
+    }
+   ],
+   "examples": [
+    "noclick delete",
+    "noclick delete --yes"
+   ]
+  },
+  {
+   "path": [
+    "secret",
+    "set"
+   ],
+   "summary": "Set a secret from a variable of this shell, or stdin.",
+   "auth": true,
+   "args": [
+    {
+     "name": "name"
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--env",
+     "dest": "env",
+     "type": "string",
+     "choices": [
+      "all",
+      "production",
+      "preview"
+     ],
+     "help": "Which deploys see it (default: all)."
+    },
+    {
+     "flag": "--from-env",
+     "dest": "from_env",
+     "type": "string",
+     "metavar": "VAR",
+     "help": "This shell's variable holding the value."
+    },
+    {
+     "flag": "--stdin",
+     "dest": "stdin",
+     "type": "bool",
+     "help": "Read the value from stdin (a trailing newline dropped)."
+    }
+   ],
+   "one_of": [
+    {
+     "dests": [
+      "from_env",
+      "stdin"
+     ],
+     "required": true
+    }
+   ],
+   "examples": [
+    "noclick secret set STRIPE_KEY --from-env STRIPE_KEY --env production",
+    "printf %s \"$KEY\" | noclick secret set MAPS_KEY --stdin"
+   ]
+  },
+  {
+   "path": [
+    "secret",
+    "ls"
+   ],
+   "summary": "List the secrets' names (never their values).",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--env",
+     "dest": "env",
+     "type": "string",
+     "choices": [
+      "all",
+      "production",
+      "preview"
+     ],
+     "help": "Which deploys see it (default: all)."
+    }
+   ],
+   "examples": [
+    "noclick secret ls"
+   ]
+  },
+  {
+   "path": [
+    "secret",
+    "rm"
+   ],
+   "summary": "Delete secrets.",
+   "auth": true,
+   "args": [
+    {
+     "name": "names",
+     "many": true
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--env",
+     "dest": "env",
+     "type": "string",
+     "choices": [
+      "all",
+      "production",
+      "preview"
+     ],
+     "help": "Which deploys see it (default: all)."
+    }
+   ],
+   "examples": [
+    "noclick secret rm MAPS_KEY"
+   ]
+  },
+  {
+   "path": [
+    "env",
+    "set"
+   ],
+   "summary": "Set settings, each KEY=value.",
+   "auth": true,
+   "args": [
+    {
+     "name": "pairs",
+     "many": true
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick env set PUBLIC_BASE_URL=https://book.acme.com"
+   ]
+  },
+  {
+   "path": [
+    "env",
+    "ls"
+   ],
+   "summary": "List the settings and their values.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick env ls --json"
+   ]
+  },
+  {
+   "path": [
+    "env",
+    "rm"
+   ],
+   "summary": "Delete settings.",
+   "auth": true,
+   "args": [
+    {
+     "name": "names",
+     "many": true
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    }
+   ],
+   "examples": [
+    "noclick env rm PUBLIC_BASE_URL"
+   ]
+  },
+  {
+   "path": [
+    "bind"
+   ],
+   "summary": "Give the app a database, bucket, dict, queue or Durable Object class, made if it's missing.",
+   "auth": true,
+   "args": [
+    {
+     "name": "kind",
+     "choices": [
+      "bucket",
+      "database",
+      "db",
+      "dict",
+      "objects",
+      "queue"
+     ],
+     "help": "db, bucket, dict, queue, or objects (a Durable Object class, declared in the wrangler config)."
+    },
+    {
+     "name": "resource",
+     "help": "The resource's name (for objects, the class's)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--user",
+     "dest": "user",
+     "type": "string",
+     "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, by name or id (default: the one this folder is linked to)."
+    },
+    {
+     "flag": "--as",
+     "dest": "as_",
+     "type": "string",
+     "metavar": "BINDING",
+     "help": "The name the code reads it by (default: NAME in capitals, booking-db → BOOKING_DB)."
+    },
+    {
+     "flag": "--engine",
+     "dest": "engine",
+     "type": "string",
+     "choices": [
+      "sqlite",
+      "postgres"
+     ],
+     "help": "A new database's engine (default sqlite)."
+    },
+    {
+     "flag": "--public",
+     "dest": "public",
+     "type": "bool",
+     "help": "A new bucket's files are public."
+    },
+    {
+     "flag": "--dir",
+     "dest": "dir",
+     "type": "string",
+     "help": "For objects: the app's folder (default: this one)."
+    }
+   ],
+   "examples": [
+    "noclick bind db booking-db --as DB",
+    "noclick bind bucket uploads --public",
+    "noclick bind objects ChatRoom"
    ]
   },
   {

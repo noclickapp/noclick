@@ -215,8 +215,11 @@ class Client:
         idempotency_key: Optional[str] = None,
         timeout: Optional[float] = None,
         binary: bool = False,
+        content_type: Optional[str] = None,
+        anonymous: bool = False,
     ) -> Any:
-        """Send one API call. ``content`` sends raw bytes instead of JSON.
+        """Send one API call. ``content`` sends raw bytes instead of JSON (as ``content_type``, else
+        ``application/octet-stream``); ``anonymous`` sends no key, for the calls made before there is one.
 
         Writes carry an ``Idempotency-Key`` (generated unless given) that is
         reused on every retry, so a retried POST can't do the work twice.
@@ -239,13 +242,13 @@ class Client:
                     "POST", "/v1/users", json={"id": "user_42"}, user=None, idempotency_key="signup-user_42",
                 )
         """
-        if not self.api_key:
+        if not self.api_key and not anonymous:
             raise _missing_credential("key")
         method = method.upper()
         scope = resolve_scope(user)
         headers = await self._headers(method, "*/*" if binary else "application/json", scope, idempotency_key)
         if content is not None:
-            headers["Content-Type"] = "application/octet-stream"
+            headers["Content-Type"] = content_type or "application/octet-stream"
         if params:
             params = {k: v for k, v in params.items() if v is not None}
 
@@ -253,7 +256,7 @@ class Client:
         attempt = 0
         try:
             while True:
-                authorization = {"Authorization": f"Bearer {await self._bearer(timeout)}"}
+                authorization = {} if anonymous else {"Authorization": f"Bearer {await self._bearer(timeout)}"}
                 try:
                     response = await self._http().request(
                         method, path, json=json, content=content, params=params or None,

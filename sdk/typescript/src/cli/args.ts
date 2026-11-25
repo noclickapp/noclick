@@ -6,6 +6,10 @@ export interface FlagSpec {
   type: "bool" | "list" | "integer" | "number" | "string";
   short?: string;
   choices?: unknown[];
+  /** Must be given (argparse's `required=True`). */
+  required?: boolean;
+  /** Given alone (no value after it, or another flag next), the flag is this, as argparse's `nargs="?"`. */
+  const?: string | null;
 }
 
 export interface ArgSpec {
@@ -43,7 +47,10 @@ function convert(spec: FlagSpec, raw: string): unknown {
 
 /** `argv` read by `flags` and `args`; `-h`/`--help` sets `help`. Unknown flags and missing arguments are usage
  *  errors naming the command. */
-export function parse(argv: string[], flags: FlagSpec[], args: ArgSpec[], usage: string): Values {
+export function parse(
+  argv: string[], flags: FlagSpec[], args: ArgSpec[], usage: string,
+  oneOf: { dests: string[]; required: boolean }[] = [],
+): Values {
   const values: Values = {};
   const byFlag = new Map<string, FlagSpec>();
   for (const spec of flags) {
@@ -79,6 +86,10 @@ export function parse(argv: string[], flags: FlagSpec[], args: ArgSpec[], usage:
       values[spec.dest] = true;
       continue;
     }
+    if (inline === undefined && spec.const !== undefined && (argv[i + 1] === undefined || argv[i + 1]!.startsWith("-"))) {
+      values[spec.dest] = spec.const;
+      continue;
+    }
     const raw = inline ?? argv[++i];
     if (raw === undefined) throw new UsageError(`${spec.flag} takes a value.`, `${usage} --help`);
     const value = convert(spec, raw);
@@ -103,6 +114,16 @@ export function parse(argv: string[], flags: FlagSpec[], args: ArgSpec[], usage:
     values[spec.name] = value;
   }
   if (positionals.length) throw new UsageError(`${usage}: unexpected ${positionals.join(" ")}.`, `${usage} --help`);
+  const missing = flags.filter((f) => f.required && values[f.dest] === undefined).map((f) => f.flag);
+  if (missing.length) throw new UsageError(`${usage} needs ${missing.join(", ")}.`, `${usage} --help`);
+  for (const group of oneOf) {
+    const named = (dest: string) => flags.find((f) => f.dest === dest)?.flag ?? dest;
+    const given = group.dests.filter((d) => values[d] !== undefined && values[d] !== false);
+    if (given.length > 1) throw new UsageError(`${usage}: ${given.map(named).join(" and ")} can't go together.`, `${usage} --help`);
+    if (group.required && !given.length) {
+      throw new UsageError(`${usage} needs one of ${group.dests.map(named).join(", ")}.`, `${usage} --help`);
+    }
+  }
   return values;
 }
 

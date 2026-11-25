@@ -307,9 +307,9 @@ def run_describe(args: argparse.Namespace) -> int:
 
 
 def shadowed(op: Dict[str, Any]) -> bool:
-    """Whether a curated command has the operation's name (``domains search``): the name runs the curated one, and the
-    operation is made with ``noclick api``."""
-    return any(c["path"] == [op["area"], op["command"]] for c in load().commands)
+    """Whether a curated command has the operation's name (``domains search``), or its area's (``status``, a command of
+    its own): the name runs the curated one, and the operation is made with ``noclick api``."""
+    return any(c["path"] in ([op["area"], op["command"]], [op["area"]]) for c in load().commands)
 
 
 def example(op: Dict[str, Any]) -> str:

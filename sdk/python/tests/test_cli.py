@@ -90,7 +90,7 @@ def test_help_lists_every_command_as_working(capsys):
     assert done.value.code == 0
     text = " ".join(capsys.readouterr().out.split())
     for command in ("login Sign in", "logout Revoke", "whoami Show", "agents List", "users List", "bucket List",
-                    "ops Wait", "webhooks Receive", "db Query", "deploy Push", "logs Print", "domains Search"):
+                    "ops Wait", "webhooks Receive", "db Query", "deploy Ship", "link Tie", "status Everything", "logs Print", "domains Search"):
         assert command in text, command
     assert "designed" not in text and "not_available" not in text
 
@@ -106,10 +106,6 @@ def test_help_lists_every_command_as_working(capsys):
      {"database": "booking-db", "sql": "select ?", "param": ["2", "x"], "write": True}),
     (["bucket", "cp", "-r", "./dist", "public-assets:"], cli.cmd_bucket_cp,
      {"src": "./dist", "dst": "public-assets:", "recursive": True}),
-    (["deploy", "--branch", "new-form", "--no-wait"], cli.cmd_deploy,
-     {"project": None, "app": None, "branch": "new-form", "no_wait": True, "create": False, "token": None}),
-    (["deploy", "--app", "booking", "--create", "--token", "nk_mcp_t"], cli.cmd_deploy,
-     {"project": None, "app": "booking", "create": True, "token": "nk_mcp_t", "auth": True}),
     (["logs", "booking", "-f", "--level", "error"], cli.cmd_logs, {"project": "booking", "follow": True, "level": "error"}),
     (["domains", "buy", "acmebooking.com", "--max-price", "15"], cli.cmd_domains_buy,
      {"name": "acmebooking.com", "max_price": 15.0, "years": None}),
@@ -554,55 +550,13 @@ class FakeGit:
         return ""
 
 
-def _deploy_routes(api, deploy_status="succeeded", **op):
-    api.get("/v1/projects").respond(json=listing(PROJECT))
-    clone = api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://x:tok_9@git.noclick.test/booking.git"})
-    deploy = api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
-        "op_d", kind="project.deploy", status=deploy_status, result=DEPLOYMENT if deploy_status == "succeeded" else None,
-        **op))
-    return clone, deploy
-
-
-def test_deploy_pushes_the_commit_then_deploys_it(home, api, monkeypatch, capsys):
-    git = FakeGit()
-    monkeypatch.setattr(cli, "_git", git)
-    clone, deploy = _deploy_routes(api)
-    assert run("deploy") == 0  # the app named after the checkout's folder
-    assert body(clone.calls.last.request) == {"write": True, "ttl_s": 600}
-    [(push_args, push_env)] = [(a, e) for a, e in git.calls if a[0] == "push"]
-    assert push_args == ("push", "noclick-deploy", "HEAD:refs/heads/main")
-    assert push_env["GIT_CONFIG_VALUE_0"] == "https://x:tok_9@git.noclick.test/booking.git"  # never in argv
-    assert body(deploy.calls.last.request) == {"branch": "main", "commit": SHA}
-    out = capsys.readouterr()
-    assert out.out == "https://booking.noclick.site\n"
-    assert "Pushed 3f2a1c9 to main." in out.err and "Ready: production." in out.err
-
-
 WARNED = {**DEPLOYMENT, "warning": "It's live, but https://booking.noclick.site/ answered 404: there's no home page.",
           "next_step": "Publish the folder holding index.html, then deploy again."}
 
 
-def test_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home, api, monkeypatch, capsys):
+def test_a_wait_on_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home, api, capsys):
     """The CLI once printed the URL and "Ready" and exited 0 for a site whose / answered 404 (2026-11-19)."""
-    monkeypatch.setattr(cli, "_git", FakeGit())
-    api.get("/v1/projects").respond(json=listing(PROJECT))
-    api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://x:tok_9@git.noclick.test/booking.git"})
-    deploy = api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
-        "op_d", kind="project.deploy", status="succeeded", result=WARNED))
-    assert run("deploy") == 1
-    out = capsys.readouterr()
-    assert out.out == "https://booking.noclick.site\n"  # it's live: its URL still goes to stdout
-    assert f"warning: {WARNED['warning']}" in out.err and f"next step: {WARNED['next_step']}" in out.err
-    assert "Live, but not working: production stays deployed" in out.err and "Ready" not in out.err
-
-    # Its code never ran: said, and not a failure.
-    unchecked = {**DEPLOYMENT, "code_unchecked": "Static files answered every path asked."}
-    deploy.respond(202, json=operation("op_e", kind="project.deploy", status="succeeded", result=unchecked))
-    assert run("deploy") == 0
-    err = capsys.readouterr().err
-    assert "note: Static files answered every path asked." in err and "Ready: production." in err
-
-    # Waited on later, the same.
+    # A deploy waited on later says its check as the deploy does.
     api.get("/v1/operations/op_d/wait").respond(json=operation(
         "op_d", kind="project.deploy", status="succeeded", result=WARNED))
     assert run("ops", "wait", "op_d") == 1
@@ -615,55 +569,6 @@ def test_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home
         "op_p", kind="deployment.promote", status="succeeded", result=WARNED))
     assert run("ops", "wait", "op_p") == 1
     assert f"warning: {WARNED['warning']}" in capsys.readouterr().err
-
-
-def test_deploy_with_a_deploy_token_signs_in_with_it_alone(home, api, monkeypatch, capsys):
-    monkeypatch.delenv("NOCLICK_API_KEY")  # an agent's shell: no key, no login
-    monkeypatch.setattr(cli, "_git", FakeGit())
-    clone, deploy = _deploy_routes(api)
-    assert run("deploy", "--app", "booking", "--token", "nk_mcp_deploy") == 0
-    for route in (clone, deploy):
-        assert route.calls.last.request.headers["authorization"] == "Bearer nk_mcp_deploy"
-    assert capsys.readouterr().out == "https://booking.noclick.site\n"
-    assert run("deploy", "other", "--app", "booking", "--token", "nk_mcp_deploy") == 1
-    assert "Two apps named" in capsys.readouterr().err
-
-
-def test_deploy_sets_the_app_budget(home, api, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "_git", FakeGit())
-    _, deploy = _deploy_routes(api)
-    patch = api.patch("/v1/projects/prj_1").respond(json={**PROJECT, "budget_usd_per_month": 25})
-    assert run("deploy", "--budget", "25") == 0
-    assert body(patch.calls.last.request) == {"budget_usd_per_month": 25.0}
-    assert deploy.call_count == 1
-    assert run("deploy") == 0 and patch.call_count == 1  # left out, the budget stays as it is
-
-
-def test_deploy_refuses_a_dirty_checkout_or_a_detached_head(home, api, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "_git", FakeGit(dirty=" M src/app.ts"))
-    assert run("deploy") == 1
-    assert "uncommitted changes" in capsys.readouterr().err
-
-    detached = FakeGit()
-
-    def no_branch(*args, cwd=None, env=None):
-        if args[0] == "symbolic-ref":
-            raise cli.CommandError("fatal: ref HEAD is not a symbolic ref", details={"stderr": "fatal: ..."})
-        return detached(*args, cwd=cwd, env=env)
-
-    monkeypatch.setattr(cli, "_git", no_branch)
-    assert run("deploy") == 1
-    assert "Pass --branch" in capsys.readouterr().err
-
-
-def test_deploy_fetches_what_a_rejected_push_was_missing(home, api, monkeypatch, capsys):
-    git = FakeGit(push_stderr=" ! [rejected]        HEAD -> main (fetch first)\n")
-    monkeypatch.setattr(cli, "_git", git)
-    _, deploy = _deploy_routes(api)
-    assert run("deploy", "--branch", "main") == 1
-    assert ("fetch", "noclick-deploy", "+refs/heads/main:refs/remotes/noclick/main") in [a for a, _ in git.calls]
-    assert "git merge noclick/main" in capsys.readouterr().err
-    assert deploy.call_count == 0
 
 
 @pytest.mark.skipif(subprocess.run(["git", "--version"], capture_output=True).returncode != 0, reason="needs git")
@@ -693,41 +598,6 @@ def test_a_push_to_a_git_endpoint_that_sends_nothing_gives_up_saying_so(tmp_path
     assert time.monotonic() - started < 30
     assert gave_up.value.message == "The repo's git endpoint sent nothing for 2 seconds, so the push gave up."
     assert gave_up.value.next_step == "Deploy again."
-
-
-def test_deploy_names_a_missing_app_and_can_create_it(home, api, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "_git", FakeGit(branch="new-form"))
-    api.get("/v1/projects").respond(json=listing())
-    assert run("deploy") == 1
-    assert "Pass --create" in capsys.readouterr().err
-
-    api.get("/v1/repos").respond(json=listing())
-    make_repo = api.post("/v1/repos").respond(201, json={"object": "repo", "id": "repo_1", "name": "booking"})
-    make_app = api.post("/v1/projects").respond(201, json=PROJECT)
-    api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://git.noclick.test/booking.git"})
-    deploy = api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
-        "op_d", kind="project.deploy", status="succeeded",
-        result={**DEPLOYMENT, "branch": "new-form", "production": False, "url": "https://new-form--booking.noclick.site"}))
-    assert run("deploy", "--create", "--budget", "10") == 0
-    assert body(make_repo.calls.last.request)["name"] == "booking"
-    assert body(make_app.calls.last.request) == {"name": "booking", "repo_id": "repo_1", "budget_usd_per_month": 10.0}
-    assert body(deploy.calls.last.request) == {"branch": "new-form", "commit": SHA}
-    out = capsys.readouterr()
-    assert out.out == "https://new-form--booking.noclick.site\n" and "a preview of new-form" in out.err
-
-
-def test_a_failed_deploy_shows_the_end_of_its_build_log(home, api, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "_git", FakeGit())
-    _deploy_routes(api, deploy_status="failed", error={
-        "type": "operation_failed", "message": "The build failed.", "deployment_id": "dep_9"})
-    build = api.get("/v1/deployments/dep_9/logs").respond(json=listing(
-        {"at": "2026-09-28T10:00:00Z", "level": "info", "message": "npm run build"},
-        {"at": "2026-09-28T10:00:04Z", "level": "error", "message": "Cannot find module './form'"}))
-    assert run("deploy", "--no-wait") == 0 and capsys.readouterr().out == "op_d\n"
-    assert run("deploy") == 1
-    assert build.calls.last.request.url.params["kind"] == "build"
-    err = capsys.readouterr().err
-    assert "  Cannot find module './form'" in err and "error: The build failed." in err
 
 
 def test_logs_follows_from_the_last_line(home, api, monkeypatch, capsys):
@@ -1200,32 +1070,6 @@ def test_settings_set_list_and_delete(home, api, capsys):
     assert run("settings", "list", "booking") == 0
     assert capsys.readouterr().out.splitlines()[1].split() == ["API_URL", "https://a.test"]
     assert run("settings", "delete", "booking", "API_URL") == 0 and gone.call_count == 1
-
-
-def test_a_deploy_names_what_git_leaves_out_and_a_commit_already_live(home, api, monkeypatch, capsys):
-    git = FakeGit()
-    git.outputs["ls-files"] = "worker.js\nassets/logo.png"
-    monkeypatch.setattr(cli, "_git", git)
-    api.get("/v1/projects").respond(json=listing({**PROJECT, "production": DEPLOYMENT}))
-    api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://git.noclick.test/booking.git"})
-    api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
-        "op_d", kind="project.deploy", status="succeeded", result=DEPLOYMENT))
-    assert run("deploy") == 0
-    err = capsys.readouterr().err
-    assert "Not deployed, as git doesn't track them: worker.js, assets/logo.png. To include them: git add" in err
-    assert "Production already serves 3f2a1c9: nothing changed since, so this builds it again." in err
-
-
-def test_a_failed_deploy_says_its_error_once(home, api, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "_git", FakeGit())
-    _deploy_routes(api, deploy_status="failed", error={
-        "type": "operation_failed", "message": "The build failed: no index.html.", "deployment_id": "dep_9"})
-    api.get("/v1/deployments/dep_9/logs").respond(json=listing(
-        {"at": "2026-09-28T10:00:00Z", "level": "info", "message": "npm run build"},
-        {"at": "2026-09-28T10:00:04Z", "level": "error", "message": "The build failed: no index.html."}))
-    assert run("deploy") == 1
-    err = capsys.readouterr().err
-    assert "  npm run build" in err and err.count("The build failed: no index.html.") == 1
 
 
 def test_bucket_cp_of_a_checkout_leaves_its_git_history_out(home, api, tmp_path, capsys):

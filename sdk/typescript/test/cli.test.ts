@@ -106,8 +106,8 @@ test("a next step naming a route, an operation or a command is the command that 
 
 test("a curated command npx noclick doesn't run yet says how to run it", async () => {
   const io = captured();
-  assert.equal(await main(["deploy"], io, signedIn), USAGE);
-  assert.ok(io.stderr.includes("  next step: pip install noclick, then noclick deploy"));
+  assert.equal(await main(["db", "shell", "notes"], io, signedIn), USAGE);
+  assert.ok(io.stderr.includes("  next step: pip install noclick, then noclick db shell"));
 });
 
 test("a wait that runs out exits 124 and names the command that picks it up", async () => {

@@ -574,6 +574,15 @@ test("domains, logs, usage, export and delete", async () => {
   const bundle = await (await app.export()).wait();
   assert.equal(bundle.contents[0].name, "booking-db");
 
+  const previewed = api.on("POST", "/v1/delete_previews", json({ object: "delete_preview", confirm_token: "nk_cfm_1",
+    expires_in_s: 600, impact: { deletes: "Moves booking to the trash.", depends_on_it: ["It stops at book.acme.com."],
+      data_lost: [], stops_billing: [], reversible: true, undo: "Restorable for 30 days." } }));
+  const preview = await app.previewDelete({ deleteData: true });
+  assert.deepEqual(previewed.last.body, { method: "DELETE", path: "/v1/projects/prj_1?delete_data=true" });
+  assert.deepEqual([preview.deletes, preview.dependsOnIt, preview.reversible, preview.undo, preview.confirmToken],
+    ["Moves booking to the trash.", ["It stops at book.acme.com."], true, "Restorable for 30 days.", "nk_cfm_1"]);
+  assert.equal(remove.count, 0);  // nothing deleted by asking
+
   const item = await app.delete();
   assert.equal(remove.last.query.has("delete_data"), false);
   assert.deepEqual([item instanceof nc.TrashItem, item.kind, item.resourceId], [true, "project", "prj_1"]);

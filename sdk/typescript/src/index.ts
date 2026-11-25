@@ -343,6 +343,14 @@ export type {
   SubscriptionWake,
 } from "./channel.ts";
 export {
+  CliLogin,
+  accountStatus,
+} from "./cliLogin.ts";
+export type {
+  CliLoginPoll,
+  CliLoginStart,
+} from "./cliLogin.ts";
+export {
   CONSOLE_BASE_URL,
   DEFAULT_BASE_URL,
   NoClick,
@@ -934,6 +942,7 @@ export {
   TrashItem,
 } from "./trash.ts";
 export type {
+  DeletePreview,
   TrashKind,
   TrashListOptions,
 } from "./trash.ts";

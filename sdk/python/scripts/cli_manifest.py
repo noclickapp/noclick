@@ -48,6 +48,8 @@ def _option(action: argparse.Action) -> Dict[str, Any]:
         found["choices"] = list(action.choices)
     if action.required:
         found["required"] = True
+    if action.nargs == "?":  # a value is optional: given alone, the flag is this (``--preview`` for ``--preview ""``)
+        found["const"] = action.const
     if action.metavar and not isinstance(action.metavar, tuple):
         found["metavar"] = action.metavar
     if action.help and action.help != argparse.SUPPRESS:
