@@ -357,9 +357,20 @@ noclick.User.list(spending="paused")
 
 ## The `noclick` command
 
-`pip install noclick`, then `noclick login` (a browser approves it, and the key stays in your OS keychain, or in a
-file only you can read where there's none),
-`noclick agents chat`, `noclick bucket cp`, `noclick webhooks listen` and more: [The CLI](https://noclick.com/docs/guide/cli).
+The package installs the `noclick` CLI, made for a coding agent driving a shell: it never stops to ask, `--json`
+prints the whole answer, the value you want next (a URL, an id) is the last line, the exit status says what
+happened (0 done, 1 failed, 2 usage, 3 waiting on a person, 4 refused by a limit, 124 a wait ran out), and an error
+names the command that fixes it. From any folder:
+
+```bash
+noclick setup nc_setup_...     # the console's Quickstart hands a coding agent this code; or noclick login
+noclick deploy                 # ships the folder, its last line the live URL
+noclick status
+noclick logs --level error
+noclick help --json            # every command, every API operation among them
+```
+
+Every command: [The CLI](https://noclick.com/docs/guide/cli).
 
 ## Invite-only beta
 

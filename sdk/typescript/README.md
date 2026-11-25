@@ -332,7 +332,21 @@ calls included.
 
 ## The CLI
 
-[The `noclick` command](https://noclick.com/docs/guide/cli) comes with the Python package (`pip install noclick`).
+`npx noclick` is the `noclick` command, made for a coding agent driving a shell: it never stops to ask, `--json`
+prints the whole answer, the value you want next (a URL, an id) is the last line, the exit status says what
+happened (0 done, 1 failed, 2 usage, 3 waiting on a person, 4 refused by a limit, 124 a wait ran out), and an error
+names the command that fixes it. From any folder, with Node.js 20 or later:
+
+```bash
+npx noclick setup nc_setup_...     # the console's Quickstart hands a coding agent this code; or npx noclick login
+npx noclick deploy                 # ships the folder, its last line the live URL
+npx noclick status
+npx noclick help --json            # every command, every API operation among them
+```
+
+It runs the commands that sign in, ship, configure and operate an app, and every API operation; a few more
+(`live`, `init`, `docs`, `agents chat`, `machines ssh`, ...) come with the Python package's (`pip install noclick`).
+Every command: [The CLI](https://noclick.com/docs/guide/cli).
 
 ## Custom interface components: `noclick/embed`
 
