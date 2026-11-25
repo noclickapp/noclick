@@ -37,7 +37,8 @@ export function PhoneBarActions({ children }: { children: ReactNode }) {
 /**
  * The phone bar's way back from a page one level down: a chevron and the open
  * thing's name (`title`), or with no title the chevron and where it goes back
- * to (`label`), the way iOS labels its back button. Nothing on a laptop.
+ * to (`label`), the way iOS labels its back button. A swipe across the page presses it (`data-phone-back`). Nothing
+ * on a laptop.
  */
 export function PhoneBarBack({ label, title, onBack }: { label: string; title?: ReactNode; onBack: () => void }) {
     const bar = useContext(PhoneBarContext);
@@ -51,7 +52,7 @@ export function PhoneBarBack({ label, title, onBack }: { label: string; title?: 
     return createPortal(
         title ? (
             <>
-                <button type="button" onClick={onBack} aria-label={label} className={SIDEBAR_ICON_BUTTON}>
+                <button type="button" onClick={onBack} aria-label={label} data-phone-back className={SIDEBAR_ICON_BUTTON}>
                     <ChevronLeft className="h-5 w-5" strokeWidth={1.75} />
                 </button>
                 <span className="flex min-w-0 flex-1 items-center gap-1 text-[15px] font-semibold tracking-[-0.01em] text-foreground">{title}</span>
@@ -60,6 +61,7 @@ export function PhoneBarBack({ label, title, onBack }: { label: string; title?: 
             <button
                 type="button"
                 onClick={onBack}
+                data-phone-back
                 className="-ml-0.5 inline-flex h-10 min-w-0 items-center gap-0.5 rounded-lg pl-1 pr-2.5 text-[15px] text-foreground/85 transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
             >
                 <ChevronLeft className="h-5 w-5 shrink-0" strokeWidth={1.75} />

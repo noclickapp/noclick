@@ -1,17 +1,18 @@
 // The app's frame. On a laptop: the sidebar, then (beside an open canvas) the builder chat, then the page. On a phone:
-// a slim bar with the menu, the page's name and the page's own actions over the page, the sidebar as a sheet, and the
-// builder over the canvas while it's open. The builder is mounted once either way. What the sidebar holds is the
-// host's: the frame draws it as a column on a laptop and in the sheet on a phone. A strip across the top of the page is
-// the shell's `shell.banner` slot.
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
+// a slim bar with the menu, the page's name and the page's own actions over the page, the sidebar as a drawer a swipe
+// across the page opens (on a page one level down the swipe goes back instead: PhoneDrawer), and the builder over the
+// canvas while it's open. The builder is mounted once either way. What the sidebar holds is the host's: the frame draws
+// it as a column on a laptop and in the drawer on a phone. A strip across the top of the page is the shell's
+// `shell.banner` slot.
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Menu } from 'lucide-react';
 import { useSlot } from '@/slots';
 import { BuilderMark } from '@/ui/glyphs';
 import { PhoneBarContext } from '@/ui/phoneBar';
-import { SIDEBAR_ICON_BUTTON, SIDEBAR_SHEET, SIDEBAR_SHEET_OVERLAY, SheetClose, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
+import { SIDEBAR_ICON_BUTTON, SheetClose, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
 import { sidebarWidthFor, useSidebarResizing, useSidebarWidth } from '@/ui/sidebarPanel';
 import { cn } from '@/ui/utils';
+import { PhoneDrawer } from './PhoneDrawer';
 import { BANNER } from './slots';
 
 /** Where the sidebar's content is drawn: the laptop column (folded to a rail or not) or the phone's sheet. */
@@ -87,6 +88,12 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
     const builderLeads = builderShown && builderLeadTaken;
     const taken = builderLeads || leadTaken;
     const close = () => setMenuOpen(false);
+    const trigger = useRef<HTMLButtonElement>(null);
+    // The bar's way back where a page one level down (or the builder's history) put one, for the swipe to press.
+    const backControl = useCallback(() => {
+        const holder = builderLeads ? builderLead : leadTaken ? lead : null;
+        return holder?.querySelector<HTMLElement>('[data-phone-back]') ?? null;
+    }, [builderLeads, builderLead, leadTaken, lead]);
     // Anything in the menu that moves to another page (the balance meter opens Usage) closes it.
     useEffect(() => {
         const onSwitch = () => setMenuOpen(false);
@@ -96,22 +103,24 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
     return (
         // Clear of the notch and the home indicator, so every page's foot (a message box, a view bar) is where a thumb
         // reaches it without each page keeping clear itself.
-        <div className="fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
+        <div inert={menuOpen} className="fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
             {Banner && <Banner />}
             <header className="flex h-12 shrink-0 items-center gap-1 px-2">
-                <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
-                    <Dialog.Trigger aria-label="Open menu" className={cn(SIDEBAR_ICON_BUTTON, taken && 'hidden')}>
-                        <Menu className="h-5 w-5" strokeWidth={1.75} />
-                    </Dialog.Trigger>
-                    <Dialog.Portal>
-                        <Dialog.Overlay className={SIDEBAR_SHEET_OVERLAY} />
-                        <Dialog.Content className={SIDEBAR_SHEET}>
-                            <Dialog.Title className="sr-only">Menu</Dialog.Title>
-                            <Dialog.Description className="sr-only">Pages and your account</Dialog.Description>
-                            {sidebar({ collapsed: false, headerEnd: <SheetClose onClose={close} />, onNavigate: close })}
-                        </Dialog.Content>
-                    </Dialog.Portal>
-                </Dialog.Root>
+                <button
+                    ref={trigger}
+                    type="button"
+                    aria-label="Open menu"
+                    aria-haspopup="dialog"
+                    aria-expanded={menuOpen}
+                    aria-controls="phone-menu"
+                    onClick={() => setMenuOpen(true)}
+                    className={cn(SIDEBAR_ICON_BUTTON, taken && 'hidden')}
+                >
+                    <Menu className="h-5 w-5" strokeWidth={1.75} />
+                </button>
+                <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger}>
+                    {sidebar({ collapsed: false, headerEnd: <SheetClose onClose={close} />, onNavigate: close })}
+                </PhoneDrawer>
                 <span className={cn('min-w-0 flex-1 truncate px-1 text-[15px] font-semibold tracking-[-0.01em] text-foreground', taken && 'hidden')}>{title}</span>
                 <div ref={setLead} className={leadTaken && !builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
                 <div ref={setBuilderLead} className={builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
