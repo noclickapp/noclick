@@ -72,5 +72,6 @@ describe("a running turn's pace, from its progress moments", () => {
 
     it('counts tokens as the CLI does', () => {
         expect([tokenCount(988), tokenCount(1200), tokenCount(1000), tokenCount(34_567)]).toEqual(['988', '1.2k', '1k', '35k']);
+        expect([tokenCount(999_499), tokenCount(999_500), tokenCount(64_273_000)], 'millions read as M, never 64273k').toEqual(['999k', '1M', '64.3M']);
     });
 });

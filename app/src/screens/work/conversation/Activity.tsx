@@ -82,11 +82,12 @@ export function Elapsed({ from }: { from: number }) {
     );
 }
 
-/** "988", "1.2k", "34k": tokens as Claude Code's CLI counts them. */
+/** "988", "1.2k", "34k", "64.3M": tokens as Claude Code's CLI counts them. */
 export function tokenCount(n: number): string {
     if (n < 1000) return String(n);
     if (n < 10_000) return `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k`;
-    return `${Math.round(n / 1000)}k`;
+    if (n < 999_500) return `${Math.round(n / 1000)}k`;
+    return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
 }
 
 /** What a running turn has come to, after its clock: "↑ 12k ↓ 988 tokens · thought for 10s" ("thinking 4s" while it
@@ -107,8 +108,10 @@ export function Shine({ children, className }: { children: ReactNode; className?
     return <span className={cn('work-shine', className)}>{children}</span>;
 }
 
-/** Claude Code's CLI spinner: its glyph turning out and back from ✻, which it stays at where motion is reduced. */
-const SPINNER = ['✻', '✽', '✻', '✶', '✳', '✢', '·', '✢', '✳', '✶'];
+/** Claude Code's CLI spinner: its glyph turning out and back from ✻, which it stays at where motion is reduced. ✳ is
+ *  also an emoji, which an iPhone draws as a green square unless told to draw it as text (U+FE0E). */
+const ASTERISK = '\u2733\uFE0E';
+const SPINNER = ['✻', '✽', '✻', '✶', ASTERISK, '✢', '·', '✢', ASTERISK, '✶'];
 const SPINNER_MS = 120;
 
 function Spinner() {
@@ -147,10 +150,11 @@ export function WorkingLine({ from, compacting, downloading, pace }: { from: num
         );
     }
     return (
-        <p className="flex h-6 items-baseline gap-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite">
+        // On a narrow screen the line wraps between its parts (each kept whole), never over the step under it.
+        <p className="flex min-h-6 flex-wrap items-baseline gap-x-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite">
             {compacting ? <Minimize2 className="h-3.5 w-3.5 self-center" strokeWidth={2} /> : <Spinner />}
             <Shine>{compacting ? 'Compacting' : 'Working'}</Shine>
-            <span className="tabular-nums" suppressHydrationWarning>
+            <span className="whitespace-nowrap tabular-nums" suppressHydrationWarning>
                 · {spent(now - (compacting ?? from))}
             </span>
             {!compacting && pace && paceLine(pace, now) && (
