@@ -1441,6 +1441,7 @@ hiver
 hjarni
 hlr-lookup
 holded
+home-assistant
 homebase
 honeybadger
 honeycomb
