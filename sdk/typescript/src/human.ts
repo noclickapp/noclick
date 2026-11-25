@@ -142,6 +142,10 @@ export interface OwnerEmailAddress {
   fromAnyone: boolean;
 }
 
+function ownerAddress(raw: Record<string, unknown>): OwnerEmailAddress {
+  return { address: str(raw.address) ?? "", paused: raw.paused === true, fromAnyone: raw.from_anyone === true };
+}
+
 /** `"auto"` or the channels to use, e.g. `["email", "web"]`. */
 export type Via = "auto" | string | string[];
 
@@ -466,11 +470,10 @@ export class Human {
     if (!this.to.owner) throw new TypeError("Only Human.owner() texts NoClick's own numbers.");
     const raw = asObject(await resolveClient(this.client).request("GET", "/v1/humans/owner/reach", { user: null }));
     const lines = Array.isArray(raw.lines) ? raw.lines.map(asObject) : [];
-    const email = raw.email ? asObject(raw.email) : null;
     return {
       lines: lines.map((line) => ({ app: str(line.app) ?? "", number: str(line.number) ?? "" })),
       phoneLinked: Boolean(raw.phone_linked),
-      email: email && { address: str(email.address) ?? "", paused: email.paused === true, fromAnyone: email.from_anyone === true },
+      email: raw.email ? ownerAddress(asObject(raw.email)) : null,
     };
   }
 
@@ -484,6 +487,35 @@ export class Human {
   async setTimezone(timezone: string): Promise<void> {
     if (!this.to.owner) throw new TypeError("Only Human.owner() says where the owner is.");
     await resolveClient(this.client).request("PUT", "/v1/humans/owner/timezone", { json: { timezone }, user: null });
+  }
+
+  /**
+   * The address the owner emails their assistant at (`reach().email`), claiming a readable one, from their own
+   * address, the first time it's wanted; null where NoClick takes no mail. The signed-in owner's alone: a key rejects
+   * with `PermissionDenied`.
+   *
+   *     const mail = await Human.owner().claimEmailAddress();
+   *     console.log(mail ? `Email your assistant at ${mail.address}` : "No email here");
+   */
+  async claimEmailAddress(): Promise<OwnerEmailAddress | null> {
+    if (!this.to.owner) throw new TypeError("Only Human.owner() has an address to email their assistant at.");
+    const raw = asObject(await resolveClient(this.client).request("POST", "/v1/humans/owner/reach/email", { user: null }));
+    return str(raw.address) ? ownerAddress(raw) : null;
+  }
+
+  /**
+   * Renames the address the owner emails their assistant at to `name` (the part before the @) on its domain, keeping
+   * whether its mail is taken; claimed at that name where it had none. Mail to the old address no longer reaches the
+   * assistant. Rejects with `Conflict` when the name is someone else's and `InvalidRequest` for a name no address
+   * takes. The signed-in owner's alone.
+   *
+   *     const mail = await Human.owner().renameEmailAddress("bakery-desk");
+   *     console.log(mail.address); // bakery-desk@noclick.email
+   */
+  async renameEmailAddress(name: string): Promise<OwnerEmailAddress> {
+    if (!this.to.owner) throw new TypeError("Only Human.owner() has an address to email their assistant at.");
+    const raw = asObject(await resolveClient(this.client).request("PATCH", "/v1/humans/owner/reach/email", { json: { name }, user: null }));
+    return ownerAddress(raw);
   }
 
   /**

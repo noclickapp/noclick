@@ -57,6 +57,30 @@ def test_reach_reads_noclicks_numbers_and_whether_a_phone_is_linked_as_the_accou
         nc.Human(email="ana@example.com").reach()
 
 
+def test_the_owner_claims_and_renames_the_address_they_email_their_assistant_at(api, client):
+    claim = api.post("/v1/humans/owner/reach/email").respond(json={
+        "object": "owner_email_address", "address": "maya@noclick.email", "paused": False, "from_anyone": True})
+    owner = nc.Human.owner()
+    with nc.as_user(USER_ID):  # the owner's address is the account's, never a user's
+        assert owner.claim_email_address() == nc.OwnerEmailAddress(address="maya@noclick.email", paused=False,
+                                                                   from_anyone=True)
+    assert "NoClick-User" not in claim.calls.last.request.headers
+    api.post("/v1/humans/owner/reach/email").respond(json={
+        "object": "owner_email_address", "address": None, "paused": False, "from_anyone": False})
+    assert owner.claim_email_address() is None  # where NoClick takes no mail
+    rename = api.patch("/v1/humans/owner/reach/email").respond(json={
+        "object": "owner_email_address", "address": "bakery-desk@noclick.email", "paused": True, "from_anyone": True})
+    assert owner.rename_email_address("bakery-desk") == nc.OwnerEmailAddress(
+        address="bakery-desk@noclick.email", paused=True, from_anyone=True)
+    assert body(rename.calls.last.request) == {"name": "bakery-desk"}
+    api.patch("/v1/humans/owner/reach/email").respond(409, json={"error": {
+        "type": "conflict", "message": "taken-name@noclick.email is taken; pick another name.", "field": "name"}})
+    with pytest.raises(nc.Conflict, match="taken"):
+        owner.rename_email_address("taken-name")
+    with pytest.raises(ValueError):
+        nc.Human(email="ana@example.com").claim_email_address()
+
+
 def test_the_owner_adds_an_email_by_code(api, client):
     sent = api.post("/v1/humans/owner/email").respond(json={"object": "owner_email", "status": "code_sent",
                                                            "email": "maya@morrowbakery.com", "expires_in_minutes": 15})

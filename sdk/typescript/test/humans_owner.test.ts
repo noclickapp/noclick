@@ -59,6 +59,29 @@ test("reach reads NoClick's numbers and whether a phone is linked, as the accoun
   await assert.rejects(new nc.Human({ email: "ana@example.com" }).reach(), TypeError);
 });
 
+test("the owner claims and renames the address they email their assistant at", async () => {
+  const { api } = setup();
+  const claim = api.on("POST", "/v1/humans/owner/reach/email", json({
+    object: "owner_email_address", address: "maya@noclick.email", paused: false, from_anyone: true,
+  }));
+  const owner = nc.Human.owner();
+  assert.deepEqual(await nc.asUser(USER_ID, () => owner.claimEmailAddress()), {
+    address: "maya@noclick.email", paused: false, fromAnyone: true,
+  });
+  assert.equal(claim.last.headers.get("NoClick-User"), null); // the owner's address is the account's, never a user's
+  api.on("POST", "/v1/humans/owner/reach/email", json({ object: "owner_email_address", address: null, paused: false, from_anyone: false }));
+  assert.equal(await owner.claimEmailAddress(), null); // where NoClick takes no mail
+  const rename = api.on("PATCH", "/v1/humans/owner/reach/email", json({
+    object: "owner_email_address", address: "bakery-desk@noclick.email", paused: true, from_anyone: true,
+  }));
+  assert.deepEqual(await owner.renameEmailAddress("bakery-desk"), { address: "bakery-desk@noclick.email", paused: true, fromAnyone: true });
+  assert.deepEqual(rename.last.body, { name: "bakery-desk" });
+  api.on("PATCH", "/v1/humans/owner/reach/email", json(
+    { error: { type: "conflict", message: "taken-name@noclick.email is taken; pick another name.", field: "name" } }, { status: 409 }));
+  await assert.rejects(owner.renameEmailAddress("taken-name"), nc.Conflict);
+  await assert.rejects(new nc.Human({ email: "ana@example.com" }).claimEmailAddress(), TypeError);
+});
+
 test("the owner adds an email by code", async () => {
   const { api } = setup();
   const sent = api.on("POST", "/v1/humans/owner/email", json({ object: "owner_email", status: "code_sent", email: "maya@morrowbakery.com" }));

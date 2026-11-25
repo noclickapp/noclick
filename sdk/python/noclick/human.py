@@ -71,6 +71,11 @@ class OwnerEmailAddress:
     from_anyone: bool
 
 
+def _owner_address(raw: Dict[str, Any]) -> OwnerEmailAddress:
+    return OwnerEmailAddress(address=raw["address"], paused=bool(raw.get("paused")),
+                             from_anyone=bool(raw.get("from_anyone")))
+
+
 @dataclass(frozen=True)
 class OwnerReach:
     """Where the owner texts NoClick (``Human.reach``): NoClick's own numbers, one for each app
@@ -564,9 +569,8 @@ class Human:
         raw = await resolve_client(self._client).request("GET", "/v1/humans/owner/reach", user=None) or {}
         lines = [OwnerLine(app=line["app"], number=line["number"]) for line in raw.get("lines") or []]
         mail = raw.get("email")
-        email = OwnerEmailAddress(address=mail["address"], paused=bool(mail.get("paused")),
-                                  from_anyone=bool(mail.get("from_anyone"))) if mail else None
-        return OwnerReach(lines=lines, phone_linked=bool(raw.get("phone_linked")), email=email)
+        return OwnerReach(lines=lines, phone_linked=bool(raw.get("phone_linked")),
+                          email=_owner_address(mail) if mail else None)
 
     @synced
     async def set_timezone(self, timezone: str) -> None:
@@ -583,6 +587,47 @@ class Human:
             raise ValueError("Only noclick.Human.owner() says where the owner is.")
         await resolve_client(self._client).request("PUT", "/v1/humans/owner/timezone", json={"timezone": timezone},
                                                    user=None)
+
+    @synced
+    async def claim_email_address(self) -> Optional[OwnerEmailAddress]:
+        """The address the owner emails their assistant at (``reach().email``), claiming a
+        readable one, from their own address, the first time it's wanted; ``None`` where NoClick
+        takes no mail. The signed-in owner's alone: a key raises ``noclick.PermissionDenied``.
+
+        Returns:
+            The ``noclick.OwnerEmailAddress``, or ``None``.
+
+        Usage::
+
+            mail = noclick.Human.owner().claim_email_address()
+            print(f"Email your assistant at {mail.address}" if mail else "No email here")
+        """
+        if self._to != {"owner": True}:
+            raise ValueError("Only noclick.Human.owner() has an address to email their assistant at.")
+        raw = await resolve_client(self._client).request("POST", "/v1/humans/owner/reach/email", user=None) or {}
+        return _owner_address(raw) if raw.get("address") else None
+
+    @synced
+    async def rename_email_address(self, name: str) -> OwnerEmailAddress:
+        """Renames the address the owner emails their assistant at to ``name`` (the part before
+        the @) on its domain, keeping whether its mail is taken; claimed at that name where it had
+        none. Mail to the old address no longer reaches the assistant. Raises
+        ``noclick.Conflict`` when the name is someone else's and ``noclick.InvalidRequest`` for a
+        name no address takes. The signed-in owner's alone.
+
+        Returns:
+            The ``noclick.OwnerEmailAddress`` at its new name.
+
+        Usage::
+
+            mail = noclick.Human.owner().rename_email_address("bakery-desk")
+            print(mail.address)  # bakery-desk@noclick.email
+        """
+        if self._to != {"owner": True}:
+            raise ValueError("Only noclick.Human.owner() has an address to email their assistant at.")
+        raw = await resolve_client(self._client).request("PATCH", "/v1/humans/owner/reach/email",
+                                                         json={"name": name}, user=None) or {}
+        return _owner_address(raw)
 
     @synced
     async def add_email(self, email: str) -> None:
