@@ -2506,6 +2506,7 @@ workvivo
 wowza
 wrike
 writer
+wufoo
 xama-hub
 xata
 xero
