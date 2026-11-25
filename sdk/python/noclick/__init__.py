@@ -161,6 +161,10 @@ from .agent_extras import (
     ShareLink,
     WorkspaceFile,
 )
+from .agent_link import (
+    AgentLink,
+    AgentLinkThread,
+)
 from .agent_move import (
     AgentMove,
 )
@@ -212,6 +216,11 @@ from .browser import (
     BrowserWatchedStep,
     PageState,
     SiteLogin,
+)
+from .browser_link import (
+    BrowserLink,
+    BrowserLinkBrand,
+    BrowserLinkPage,
 )
 from .bucket import (
     Bucket,
@@ -405,6 +414,10 @@ from .human import (
     OwnerLine,
     OwnerReach,
 )
+from .human_request_link import (
+    HumanRequestLink,
+    HumanRequestPage,
+)
 from .inbox import (
     Inbox,
     InboxMessage,
@@ -541,6 +554,12 @@ from .repo import (
     RepoFile,
     RepoImport,
 )
+from .room import (
+    Room,
+    RoomEvent,
+    RoomMember,
+    RoomToken,
+)
 from .sandbox import (
     ExecResult,
     Sandbox,
@@ -641,6 +660,7 @@ from .workflow import (
     StepPublication,
     StepValue,
     StepWorkspace,
+    TemplateVote,
     Workflow,
     WorkflowBuild,
     WorkflowBuildResult,
@@ -663,6 +683,8 @@ from .workflow import (
     WorkflowTestRun,
     WorkflowVariables,
     WorkflowVersion,
+    template_vote,
+    vote_on_template,
 )
 from .workflow_approval import (
     WorkflowApproval,
@@ -849,6 +871,10 @@ __all__ = [
     "Platform",
     "Attachment",
     "Terminal",
+    "AgentLink",
+    "AgentLinkThread",
+    "HumanRequestLink",
+    "HumanRequestPage",
     "AgentMove",
     "McpServer",
     "McpClient",
@@ -933,6 +959,9 @@ __all__ = [
     "SiteLogin",
     "BrowserWatchedStep",
     "BrowserWaitingOn",
+    "BrowserLink",
+    "BrowserLinkPage",
+    "BrowserLinkBrand",
     "Card",
     "CardTransaction",
     "CardDetails",
@@ -1097,6 +1126,9 @@ __all__ = [
     "StepSettingsCheck",
     "RunInputs",
     "WorkflowTemplate",
+    "TemplateVote",
+    "template_vote",
+    "vote_on_template",
     "StepTypeOperation",
     "StepTypeConnection",
     "WorkflowFolder",
@@ -1166,6 +1198,10 @@ __all__ = [
     "account_status",
     "ConnectedApp",
     "Popups",
+    "Room",
+    "RoomEvent",
+    "RoomMember",
+    "RoomToken",
     "AccountPhones",
     "LinkedPhone",
     "PhoneChallenge",

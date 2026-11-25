@@ -168,6 +168,12 @@ export type {
   WorkspaceFile,
 } from "./agentExtras.ts";
 export {
+  AgentLink,
+} from "./agentLink.ts";
+export type {
+  AgentLinkThread,
+} from "./agentLink.ts";
+export {
   AgentMove,
 } from "./agentMove.ts";
 export type {
@@ -278,6 +284,15 @@ export type {
   PageState,
   SiteLogin,
 } from "./browser.ts";
+export {
+  BrowserLink,
+} from "./browserLink.ts";
+export type {
+  BrowserLinkBrand,
+  BrowserLinkPage,
+  BrowserLinkPurpose,
+  BrowserLinkStatus,
+} from "./browserLink.ts";
 export {
   BROWSER_VIEW_CLOSE,
   BrowserLiveView,
@@ -616,6 +631,12 @@ export type {
   Via,
 } from "./human.ts";
 export {
+  HumanRequestLink,
+} from "./humanRequestLink.ts";
+export type {
+  HumanRequestPage,
+} from "./humanRequestLink.ts";
+export {
   Inbox,
   InboxMessage,
 } from "./inbox.ts";
@@ -876,6 +897,22 @@ export type {
   RepoImportOptions,
 } from "./repo.ts";
 export {
+  Room,
+  RoomRefused,
+} from "./room.ts";
+export type {
+  BroadcastHandler,
+  RoomAccess,
+  RoomEvent,
+  RoomJoinOptions,
+  RoomMember,
+  RoomRun,
+  RoomStatus,
+  RoomToken,
+  RoomTokenOptions,
+  RoomUser,
+} from "./room.ts";
+export {
   Sandbox,
   SandboxFiles,
 } from "./sandbox.ts";
@@ -1098,6 +1135,8 @@ export {
   Workflow,
   WorkflowBuild,
   WorkflowGraph,
+  templateVote,
+  voteOnTemplate,
 } from "./workflow.ts";
 export type {
   AddNoteOptions,
@@ -1134,6 +1173,7 @@ export type {
   StepUpdate,
   StepValue,
   StepWorkspace,
+  TemplateVote,
   WorkflowBuildResult,
   WorkflowBuilder,
   WorkflowConnectionInfo,

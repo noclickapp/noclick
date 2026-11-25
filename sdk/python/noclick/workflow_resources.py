@@ -92,6 +92,20 @@ class WorkflowFile(_Object):
     def _call_scope(self) -> Any:
         return None
 
+    @classmethod
+    def from_id(cls, file_id: str, *, client: Optional[Client] = None) -> "WorkflowFile":
+        """A handle to one of your workflows' files by id: nothing is read (``delete()`` it, or
+        ``get`` it to read it).
+
+        Returns:
+            The ``WorkflowFile``, its fields read only by ``get``.
+
+        Usage::
+
+            noclick.WorkflowFile.from_id("6f1c...").delete()
+        """
+        return cls._new(hints={"id": file_id}, client=client, user=None)
+
     @synced
     @classmethod
     async def get(cls, file_id: str, *, client: Optional[Client] = None) -> "WorkflowFile":
@@ -257,6 +271,20 @@ class WorkflowTable(_Object):
 
     def _path(self, suffix: str = "") -> str:
         return f"/v1/workflows/tables/{quote(str(self._known('id')), safe='')}{suffix}"
+
+    @classmethod
+    def from_id(cls, table_id: str, *, client: Optional[Client] = None) -> "WorkflowTable":
+        """A handle to one of your workflows' tables by id: nothing is read (its rows, or
+        ``delete()`` it).
+
+        Returns:
+            The ``WorkflowTable``.
+
+        Usage::
+
+            noclick.WorkflowTable.from_id("8a2e...").delete()
+        """
+        return cls._new(hints={"id": table_id}, client=client, user=None)
 
     @synced
     @classmethod

@@ -16,6 +16,12 @@ export type Kind =
     | 'dev-only'
     | 'staff'
     | 'lab'
+    /** A keyless page its link opens, on that link's own routes: the link is the capability, so there's no key to
+     *  hold, and what it does is NoClick's own for the link's maker (a card's reveal, a signature, a payment). */
+    | 'link-page'
+    /** A public page every visitor gets from the edge cache: it reads NoClick's public catalog (and runs its anonymous
+     *  test runs) with no key and no account, so nothing is the visitor's to hold. */
+    | 'marketing-page'
     | 'pending';
 
 export interface Allowed {

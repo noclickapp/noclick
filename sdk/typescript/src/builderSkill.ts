@@ -7,6 +7,8 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { asList, asObject, compact, parseTime, str } from "./object.ts";
 import type { JsonObject } from "./object.ts";
+import { toExpressionPreview } from "./workflow.ts";
+import type { ExpressionPreview } from "./workflow.ts";
 
 /** What a builder skill says, set when it's made or changed. */
 export interface BuilderSkillFields {
@@ -160,6 +162,23 @@ export class BuilderSkill {
       })
     );
     return { version: Number(raw.version), changed: raw.changed === true };
+  }
+
+  /**
+   * What an expression in a setting of the skill's workflow gives, evaluated as a run evaluates it, against `samples`
+   * (each step's output by step id, `vars` the variables; a skill's workflow never runs), with `primaryInput` as
+   * `$json`. Changes nothing; an expression that fails resolves with `ok` false and its `error`.
+   */
+  static async previewExpression(
+    id: string,
+    expression: string,
+    options: { samples?: JsonObject; primaryInput?: unknown; client?: NoClick } = {},
+  ): Promise<ExpressionPreview> {
+    const raw = await resolveClient(options.client).request("POST", `/v1/builder_skills/${encodeURIComponent(id)}/expression`, {
+      json: compact({ expression, samples: options.samples, primary_input: options.primaryInput }),
+      user: null,
+    });
+    return toExpressionPreview(raw);
   }
 
   /** Delete it for good: only the account that made it may. */

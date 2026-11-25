@@ -108,7 +108,8 @@ const CODING_CHANGES = new Set<PlatformCodingAgentEvent['change']>(['turn', 'pla
 const RESOURCE_KINDS = new Set<PlatformResourceEvent['kind']>([
     'domain', 'deployment', 'repo', 'mcp_server', 'live_session', 'phone_call', 'workflow', 'workflow_run', 'durable_object_class', 'skill',
     'memory', 'machine', 'sandbox', 'agent_move', 'connection', 'plan_usage', 'workspace_resource', 'space_question',
-    'trigger', 'approval', 'browser', 'spend_cap', 'notifications', 'workstream', 'popups', 'phones',
+    'trigger', 'approval', 'browser', 'spend_cap', 'notifications', 'workstream', 'popups', 'phones', 'operation', 'share',
+    'hosted_mcp',
 ]);
 
 const one = <T extends string>(set: ReadonlySet<T>, value: string | null): value is T => value !== null && set.has(value as T);

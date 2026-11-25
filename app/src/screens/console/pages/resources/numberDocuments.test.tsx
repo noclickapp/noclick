@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 // Buy a number whose country asks for documents, over the SDK (the console's and the open app's Resources transport):
 // the document goes to the carrier through PhoneNumber.uploadDocument, the purchase carries the typed answers and the
-// document's id, and a number the carrier reviews first comes back as its order. The page reads no kept orders or
-// documents (the API has none to read yet) and offers no removal.
+// document's id, and a number the carrier reviews first comes back as its order. The documents and orders the account
+// keeps are read through the API, and a kept document can be removed.
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import type { ReactNode } from 'react';
@@ -30,6 +30,8 @@ describe('buying a number that needs documents, over the SDK', () => {
             calls.push({ method: init.method ?? 'GET', path: url.pathname, body });
             const json = (value: unknown) => new Response(JSON.stringify(value), { headers: { 'content-type': 'application/json' } });
             if (url.pathname === '/v1/phone_numbers/coverage') return json({ data: [] });
+            if (url.pathname === '/v1/phone_numbers/documents' && (init.method ?? 'GET') === 'GET') return json({ object: 'list', data: [] });
+            if (url.pathname === '/v1/phone_numbers/orders') return json({ object: 'list', data: [] });
             if (url.pathname === '/v1/phone_numbers/documents') {
                 return json({ object: 'phone_number_document', id: 'doc_1', requirement_id: 'req_id', requirement_name: 'Proof of address',
                     filename: 'lease.pdf', uploaded_at: '2026-11-25T10:00:00Z' });
@@ -45,8 +47,9 @@ describe('buying a number that needs documents, over the SDK', () => {
         }), { wrapper });
 
         await act(async () => result.current.loadDocuments());
-        expect(result.current.documents).toEqual([]); // nothing kept is read: the API has no such read yet
-        expect(result.current.removeDocument).toBeNull();
+        expect(result.current.documents).toEqual([]); // the account keeps none yet
+        expect(result.current.removeDocument).toBeTypeOf('function');
+        expect(calls.some((c) => c.method === 'GET' && c.path === '/v1/phone_numbers/documents')).toBe(true);
 
         const file = new File(['%PDF'], 'lease.pdf', { type: 'application/pdf' });
         let uploaded: Awaited<ReturnType<typeof result.current.uploadDocument>> = null;
@@ -54,7 +57,7 @@ describe('buying a number that needs documents, over the SDK', () => {
             uploaded = await result.current.uploadDocument(NUMBER, NUMBER.requirements!.items[0]!, file);
         });
         expect(uploaded).toMatchObject({ id: 'doc_1', requirement_id: 'req_id', filename: 'lease.pdf' });
-        expect(calls.find((c) => c.path === '/v1/phone_numbers/documents')?.body).toMatchObject({ country: 'NL', requirement_id: 'req_id', filename: 'lease.pdf' });
+        expect(calls.find((c) => c.method === 'POST' && c.path === '/v1/phone_numbers/documents')?.body).toMatchObject({ country: 'NL', requirement_id: 'req_id', filename: 'lease.pdf' });
 
         await act(async () => {
             await result.current.buy(NUMBER, { answers: { req_id: 'doc_1', req_vat: 'NL123' } });
@@ -63,6 +66,6 @@ describe('buying a number that needs documents, over the SDK', () => {
             requirements: { req_id: 'doc_1', req_vat: 'NL123' },
         });
         await waitFor(() => expect(ordered).toHaveBeenCalledWith({ order_id: 'ord_1', phone_number: '+31201234567' }));
-        expect(calls.some((c) => c.path === '/v1/phone_numbers/orders')).toBe(false);
+        expect(calls.some((c) => c.path === '/v1/phone_numbers/orders')).toBe(true);
     });
 });

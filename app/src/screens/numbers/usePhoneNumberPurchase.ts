@@ -541,10 +541,11 @@ export function usePhoneNumberPurchase({
     /** Where a held purchase ended: bought, as a purchase made at once is; anything else stays said on its notice. */
     const heldSettled = (number: HeldNumber, state: HeldState) => {
         if (state.phase !== 'done') return;
-        const bought = (state.response ?? {}) as { id?: unknown; number?: unknown };
+        // The number as /v1 answered it: the account a Phone step holds it by is its `credential_id`.
+        const bought = (state.response ?? {}) as { credential_id?: unknown; number?: unknown };
         setHeld((current) => current.filter((h) => h.call.approvalId !== number.call.approvalId));
         transportRef.current.onPurchased?.();
-        onCredentialCreated(typeof bought.id === 'string' ? bought.id : '', typeof bought.number === 'string' ? bought.number : number.phoneNumber);
+        onCredentialCreated(typeof bought.credential_id === 'string' ? bought.credential_id : '', typeof bought.number === 'string' ? bought.number : number.phoneNumber);
     };
 
     const confirm = async (filing: NumberFiling = {}) => {

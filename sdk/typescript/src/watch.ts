@@ -32,7 +32,7 @@ export type WatchedObject =
   | "durable_object_class" | "skill" | "memory" | "machine" | "sandbox" | "agent_move" | "connection" | "plan_usage"
   | "agent_trigger" | "approval" | "browser" | "agent" | "coding_agent" | "channel" | "workspace"
   | "workspace_resource" | "channel_sections" | "space_question" | "usage" | "spend_cap" | "notifications"
-  | "workstream" | "popups" | "phones" | "operation";
+  | "workstream" | "popups" | "phones" | "operation" | "share" | "hosted_mcp";
 
 /** The socket is open: `resumed` when it carried on from the last change you got, so nothing was missed. */
 export interface WatchReady {

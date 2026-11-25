@@ -1,15 +1,27 @@
-// The number finder's transport over ``/v1`` (the SDK's ``PhoneNumber``): the console's Buy a number and the open app's
-// Resources, beside the finder it serves.
-import { PhoneNumber, type AvailableNumber, type NoClick, type PhoneNumberType } from 'noclick';
-import type { NumberHolder, NumberPurchaseTransport } from '@/screens/numbers/usePhoneNumberPurchase';
+// The number purchase flow (usePhoneNumberPurchase) over /v1 through the SDK's `PhoneNumber` and `PhoneNumberOrder`:
+// prices are the API's own dollars, a purchase's ceilings exactly the prices the row showed, a country's documents
+// uploaded and named in its requirements, and a number its carrier reviews followed as an order. The console and the
+// hosted app's number pages (Resources' Buy a number, the Phone step's form) buy through it.
+import { PaymentRequired, PhoneNumber, PhoneNumberOrder, PriceExceeded } from 'noclick';
+import type { AvailableNumber, NoClick, PhoneNumberType } from 'noclick';
+import type { NumberDocument, NumberHolder, NumberOrder, NumberPurchaseTransport } from './usePhoneNumberPurchase';
 
-/** The shared number purchase flow (``usePhoneNumberPurchase``) over ``/v1``: prices are the API's own dollars, and a
- *  purchase's ceilings are exactly the prices the row showed. `buyer` is read as each purchase is made (whose the number
- *  is, and what the code calls it). It reads no kept orders or documents: the API has none to read yet. */
-export function sdkNumberTransport(client: NoClick, buyer: () => { user: string | null; name: string }, fundsHref?: string): NumberPurchaseTransport {
+/** Who a purchase is for: one of the account's users (null: the account), and what its code calls the number. */
+export interface NumberBuyer {
+    user: string | null;
+    name: string;
+}
+
+/** The flow's transport over `client` (asked for at each step), buying for `buyer()` as it stands then. */
+export function sdkNumberTransport(
+    client: () => Promise<NoClick>,
+    buyer: () => NumberBuyer,
+    { fundsHref, onPurchased }: { fundsHref?: string; onPurchased?: () => void } = {}
+): NumberPurchaseTransport {
     const send: NumberPurchaseTransport['send'] = async (event) => {
+        const api = await client();
         if (event.event_name === 'phone_number:coverage') {
-            const countries = await PhoneNumber.coverage({ client, user: null });
+            const countries = await PhoneNumber.coverage({ client: api, user: null });
             return {
                 countries: countries.map((c) => ({
                     country: c.country,
@@ -18,14 +30,15 @@ export function sdkNumberTransport(client: NoClick, buyer: () => { user: string 
                     documents_types: c.documentsTypes,
                     steps_types: c.stepsTypes,
                 })),
+                contact_phone: null,
             };
         }
         if (event.event_name === 'phone_number:places') {
-            return { places: await PhoneNumber.places(event.country as string, { client, user: null, type: event.number_type as PhoneNumberType }) };
+            return { places: await PhoneNumber.places(event.country as string, { client: api, user: null, type: event.number_type as PhoneNumberType }) };
         }
         if (event.event_name === 'phone_number:search') {
             const found = await PhoneNumber.available({
-                client,
+                client: api,
                 user: null,
                 country: event.country as string,
                 type: event.number_type as PhoneNumberType,
@@ -39,47 +52,102 @@ export function sdkNumberTransport(client: NoClick, buyer: () => { user: string 
             return { numbers: found.map(offerOf) };
         }
         if (event.event_name === 'phone_number:buy') {
-            const holder = event.holder as NumberHolder | undefined;
             const { user, name } = buyer();
-            const number = await PhoneNumber.buy(event.phone_number as string, {
-                client,
-                user,
-                country: event.country as string,
-                type: event.number_type as PhoneNumberType,
-                maxMonthlyUsd: event.monthly_usd as number,
-                maxUpfrontUsd: event.upfront_usd as number,
-                address: holder && {
-                    name: holder.name,
-                    businessName: holder.business_name ?? undefined,
-                    street: holder.street,
-                    street2: holder.street2 ?? undefined,
-                    city: holder.city,
-                    region: holder.region ?? undefined,
-                    postalCode: holder.postal_code,
-                    country: holder.country,
-                    phone: holder.phone ?? undefined,
-                },
-                requirements: (event.answers as Record<string, string> | undefined) ?? undefined,
-                name: name.trim() || undefined,
-            });
-            // A number whose documents the carrier reviews first is an order until the review completes.
+            let number: PhoneNumber | PhoneNumberOrder;
+            try {
+                number = await PhoneNumber.buy(event.phone_number as string, {
+                    client: api,
+                    user,
+                    country: event.country as string,
+                    type: event.number_type as PhoneNumberType,
+                    maxMonthlyUsd: event.monthly_usd as number,
+                    maxUpfrontUsd: event.upfront_usd as number,
+                    address: holderOf(event.holder as NumberHolder | undefined),
+                    requirements: event.answers as Record<string, string> | undefined,
+                    name: name.trim() || undefined,
+                });
+            } catch (error) {
+                // Its price moved since the row showed it: the refusal names both prices as they stand, which the
+                // flow shows in the row; buying again agrees to them.
+                if (error instanceof PriceExceeded) {
+                    const { monthly_usd, upfront_usd } = error.details;
+                    return { error: 'This number’s price changed since it was shown. Review the new price and buy it again.', kind: 'price', monthly_usd, upfront_usd };
+                }
+                // Short of the funds a number needs: the flow offers the way to add some.
+                if (error instanceof PaymentRequired) return { error: error.message, kind: 'credits' };
+                throw error;
+            }
+            // A number whose country asks for documents waits on the carrier's review: nothing is held until then.
             if (!(number instanceof PhoneNumber)) return { order_id: number.id, phone_number: number.number };
-            return { credential_id: number.id, phone_number: number.number };
+            if (!number.credentialId) throw new Error(`${number.number} was bought, but no account holds it for a Phone step.`);
+            return { credential_id: number.credentialId, phone_number: number.number };
         }
-        throw new Error(`No /v1 call answers ${event.event_name}.`);
+        if (event.event_name === 'phone_number:orders') {
+            return { orders: (await PhoneNumberOrder.list({ client: api, user: buyer().user })).map(orderOf) };
+        }
+        if (event.event_name === 'phone_number:resubmit') {
+            const order = await PhoneNumberOrder.retrieve(event.order_id as string, { client: api, user: buyer().user });
+            await order.resubmit({
+                address: holderOf(event.holder as NumberHolder | undefined),
+                requirements: event.answers as Record<string, string> | undefined,
+            });
+            return { order: orderOf(order), status: order.status };
+        }
+        if (event.event_name === 'phone_number:documents') {
+            return { documents: (await PhoneNumber.documents({ client: api, user: null })).map((d) => d.raw as unknown as NumberDocument) };
+        }
+        if (event.event_name === 'phone_number:document_upload') {
+            // The upload itself is the SDK's (`upload` below): what it's for travels as the step's "path".
+            return { upload_url_path: JSON.stringify({ country: event.country, type: event.number_type, requirement: event.requirement_id }) };
+        }
+        if (event.event_name === 'phone_number:document_remove') {
+            return { kept_by_carrier: (await PhoneNumber.removeDocument(event.document_id as string, { client: api, user: null })).keptByCarrier };
+        }
+        throw new Error(`Numbers bought over /v1 have no step ${event.event_name}.`);
     };
-    // A document goes to the carrier in one call.
-    const uploadDocument: NonNullable<NumberPurchaseTransport['uploadDocument']> = async (subject, requirement, file) => {
-        const filed = await PhoneNumber.uploadDocument(file, {
-            client, user: buyer().user, requirement: requirement.id, country: subject.country,
-            type: subject.number_type as PhoneNumberType, filename: file.name,
-        });
-        return {
-            id: filed.id, requirement_id: filed.requirementId, requirement_name: filed.requirementName, filename: filed.filename,
-            uploaded_at: filed.uploadedAt?.toISOString() ?? new Date().toISOString(),
-        };
+    const upload: NonNullable<NumberPurchaseTransport['upload']> = async (path, file) => {
+        const subject = JSON.parse(path) as { country: string; type: PhoneNumberType; requirement: string };
+        try {
+            const document = await PhoneNumber.uploadDocument(file, { client: await client(), user: null, filename: file.name, ...subject });
+            return { document: document.raw as unknown as NumberDocument };
+        } catch (error) {
+            return { error: error instanceof Error ? error.message : 'Could not upload that file.' };
+        }
     };
-    return { send, uploadDocument, readsKept: false, fundsHref };
+    return { send, upload, fundsHref, onPurchased };
+}
+
+/** The holder a purchase files, in the SDK's words. */
+function holderOf(holder: NumberHolder | undefined) {
+    return holder && {
+        name: holder.name,
+        businessName: holder.business_name ?? undefined,
+        street: holder.street,
+        street2: holder.street2 ?? undefined,
+        city: holder.city,
+        region: holder.region ?? undefined,
+        postalCode: holder.postal_code,
+        country: holder.country,
+        phone: holder.phone ?? undefined,
+    };
+}
+
+/** An order as the purchase flow lists it. */
+function orderOf(order: PhoneNumberOrder): NumberOrder {
+    return {
+        id: order.id,
+        phone_number: order.number,
+        country: order.country ?? '',
+        number_type: (order.type ?? 'local') as NumberOrder['number_type'],
+        status: order.status,
+        reason: order.reason,
+        deadline: order.deadline?.toISOString() ?? null,
+        monthly_usd: order.monthlyUsd ?? 0,
+        upfront_usd: order.upfrontUsd ?? 0,
+        credential_id: order.phoneNumberId,
+        created_at: order.createdAt?.toISOString() ?? '',
+        requirements: (order.requirements ?? undefined) as NumberOrder['requirements'],
+    };
 }
 
 function offerOf(n: AvailableNumber) {
@@ -96,4 +164,3 @@ function offerOf(n: AvailableNumber) {
         texting: n.texting,
     };
 }
-

@@ -17,7 +17,7 @@ from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
-from ._client import Client, resolve_client
+from ._client import Client, path_segment, resolve_client
 from ._object import parse_time, ref_id
 from ._sync import synced
 
@@ -64,12 +64,34 @@ class Share:
     url: Optional[str]
     created_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    #: The resource's name and who shared it, on a share read alone (``retrieve``).
+    resource_name: Optional[str] = None
+    shared_by_name: Optional[str] = None
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "Share":
         return cls(raw["id"], raw["resource_type"], raw["resource_id"], raw["with"], raw["access"], raw.get("name"),
                    raw.get("email"), raw.get("user_id"), raw.get("organization_id"), bool(raw.get("pending")),
-                   raw.get("url"), parse_time(raw.get("created_at")), raw)
+                   raw.get("url"), parse_time(raw.get("created_at")), raw, raw.get("resource_name"),
+                   raw.get("shared_by_name"))
+
+    @synced
+    @staticmethod
+    async def retrieve(share_id: str, *, client: Optional[Client] = None) -> "Share":
+        """One share, for the person it's with (``watch``'s ``share`` change says something was shared with
+        you) or someone who manages the resource's shares: with the resource's ``resource_name`` and who
+        shared it, ``shared_by_name``.
+
+        Returns:
+            The ``Share``.
+
+        Usage::
+
+            share = noclick.Share.retrieve(share_id)
+            print(f"{share.shared_by_name} shared {share.resource_name} ({share.access})")
+        """
+        return Share._from(await resolve_client(client).request(
+            "GET", f"/v1/shares/{path_segment(share_id)}", user=None))
 
     @synced
     @staticmethod

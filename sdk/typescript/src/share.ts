@@ -59,6 +59,9 @@ export class Share {
   readonly pending: boolean;
   /** A public share's page. */
   readonly url: string | null;
+  /** The resource's name and who shared it, on a share read alone (`retrieve`). */
+  readonly resourceName: string | null;
+  readonly sharedByName: string | null;
   readonly createdAt: Date | null;
   readonly raw: JsonObject;
   readonly #client: NoClick | undefined;
@@ -75,9 +78,20 @@ export class Share {
     this.organizationId = (raw.organization_id as string | null) ?? null;
     this.pending = raw.pending === true;
     this.url = (raw.url as string | null) ?? null;
+    this.resourceName = (raw.resource_name as string | null) ?? null;
+    this.sharedByName = (raw.shared_by_name as string | null) ?? null;
     this.createdAt = parseTime(raw.created_at);
     this.raw = raw;
     this.#client = client;
+  }
+
+  /**
+   * One share, for the person it's with (`watch()`'s `share` change says something was shared with you) or someone
+   * who manages the resource's shares: with the resource's `resourceName` and who shared it, `sharedByName`.
+   */
+  static async retrieve(id: string, options: { client?: NoClick } = {}): Promise<Share> {
+    const raw = asObject(await resolveClient(options.client).request("GET", `/v1/shares/${encodeURIComponent(id)}`, { user: null }));
+    return new Share(raw, options.client);
   }
 
   /** Who `shared` (a `Workflow`, or an id with `resourceType`) is shared with. Only someone who manages its shares reads them. */

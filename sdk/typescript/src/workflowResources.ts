@@ -110,6 +110,11 @@ export class WorkflowFile extends ApiObject {
       (raw) => new WorkflowFile({ raw, client: options.client }));
   }
 
+  /** A handle to one of your workflows' files by id, reading nothing (`delete()` it, or `get` it to read it). */
+  static fromId(fileId: string, options: { client?: NoClick } = {}): WorkflowFile {
+    return new WorkflowFile({ hints: { id: fileId }, client: options.client });
+  }
+
   /** One of your workflows' files by id, as `list` shows it, its `url` good for an hour. */
   static async get(fileId: string, options: { client?: NoClick } = {}): Promise<WorkflowFile> {
     const raw = await resolveClient(options.client).request("GET", `/v1/workflows/files/${encodeURIComponent(fileId)}`, { user: null });
@@ -262,6 +267,11 @@ export class WorkflowTable extends ApiObject {
   static async listPage(options: WorkflowResourceListOptions & PageOptions = {}): Promise<Page<WorkflowTable>> {
     return await listPage({ ...options, path: "/v1/workflows/tables", user: null, query: await filters(options) },
       (raw) => new WorkflowTable({ raw, client: options.client }));
+  }
+
+  /** A handle to one of your workflows' tables by id, reading nothing: its rows, or `delete()` it. */
+  static fromId(tableId: string, options: { client?: NoClick } = {}): WorkflowTable {
+    return new WorkflowTable({ hints: { id: tableId }, client: options.client });
   }
 
   /**

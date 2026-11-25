@@ -100,8 +100,13 @@ export interface PlatformResourceEvent {
         /** A number was linked to the account or unlinked (`id` the account's). */
         | 'phones'
         /** An operation that reports itself live moved a stage or ended (`status` the operation's): a repository
-         *  deploy. */
-        | 'operation';
+         *  deploy, a connect link's sign-in. */
+        | 'operation'
+        /** Something was shared with the account's person (`status` the access, `parent_id` the resource; GET
+         *  /v1/shares/{id}). */
+        | 'share'
+        /** A client reached a workflow step's hosted MCP link (`id` the step, `parent_id` its workflow). */
+        | 'hosted_mcp';
     id: string;
     /** Its status as its API view now gives it (one that has none: active); none once it's gone. */
     status?: string | null;

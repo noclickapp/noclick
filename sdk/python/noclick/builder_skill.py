@@ -5,12 +5,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
 from ._object import parse_time
 from ._sync import synced
+
+if TYPE_CHECKING:
+    from .workflow import ExpressionPreview
 
 
 def _fields(**given: Any) -> Dict[str, Any]:
@@ -156,6 +159,28 @@ class BuilderSkill:
         raw = await resolve_client(client).request(
             "PUT", f"/v1/builder_skills/{quote(skill_id, safe='')}/workflow", json=body, user=None)
         return {"version": int(raw["version"]), "changed": raw.get("changed") is True}
+
+    @synced
+    @classmethod
+    async def preview_expression(cls, skill_id: str, expression: str, *, samples: Optional[Dict[str, Any]] = None,
+                                 primary_input: Any = None, client: Optional[Client] = None) -> "ExpressionPreview":
+        """What an expression in a setting of the skill's workflow gives, evaluated as a run evaluates it, against
+        ``samples`` (each step's output by step id, ``vars`` the variables; a skill's workflow never runs), with
+        ``primary_input`` as ``$json``. Changes nothing.
+
+        Returns:
+            The ``ExpressionPreview``; an expression that fails has ``ok`` False and its ``error``.
+
+        Usage::
+
+            noclick.BuilderSkill.preview_expression(skill_id, "$('Fetch').total", samples={"fetch": {"total": 2}})
+        """
+        from .workflow import ExpressionPreview
+
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/builder_skills/{quote(skill_id, safe='')}/expression",
+            json=_fields(expression=expression, samples=samples, primary_input=primary_input), user=None)
+        return ExpressionPreview._from(raw)
 
     @synced
     async def delete(self, *, client: Optional[Client] = None) -> None:

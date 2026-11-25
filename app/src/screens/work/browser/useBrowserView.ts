@@ -11,7 +11,7 @@
 // only while the page is visible (a background tab watches nothing), it reconnects after a dropped connection, and it
 // stops for good when the browser or the link does (closed, finished, expired), which is when `onEnded` runs.
 import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
-import type { Browser } from 'noclick';
+import type { Browser, BrowserViewConnectOptions } from 'noclick';
 
 /** The SDK view's close for a driving view whose browser was handed back, and for a token it wasn't given (0). */
 const RELEASED = 4409;
@@ -64,16 +64,20 @@ export interface Connection {
     close: () => void;
 }
 
-/** The SDK's view of a browser read through the platform client: it asks for a token for each socket itself. */
-function browserConnection(browser: Browser, control: boolean, thumb: boolean, heard: Heard): Connection {
-    const view = browser.view({
-        control,
-        thumb: control ? false : thumb,
+/** An SDK view's callbacks, telling `heard` what it shows (each picture a JPEG blob); a host's link connection over the
+ *  SDK's view of the link passes them on too. */
+export function viewOptionsFor(heard: Heard): BrowserViewConnectOptions {
+    return {
         onViewport: heard.viewport,
         onPicture: (jpeg) => heard.picture(new Blob([jpeg as BlobPart], { type: 'image/jpeg' })),
         onState: (state) => state === 'connecting' && heard.dropped(),
         onEnd: ({ code }) => heard.ended(code),
-    });
+    };
+}
+
+/** The SDK's view of a browser read through the platform client: it asks for a token for each socket itself. */
+function browserConnection(browser: Browser, control: boolean, thumb: boolean, heard: Heard): Connection {
+    const view = browser.view({ control, thumb: control ? false : thumb, ...viewOptionsFor(heard) });
     return { control, send: (input) => view.send(input), close: () => view.close() };
 }
 

@@ -516,6 +516,25 @@ export class Usage {
   }
 
   /**
+   * Change auto top-up, as the app's billing settings do (the signed-in owner's alone: it charges their saved method):
+   * refill `amountUsd` when the balance falls below `thresholdUsd`, at most `monthlyCapUsd` a month, all whole dollars
+   * within the funds checkout's rules; `enabled` turns it on (only with a method saved during a payment made with Refill
+   * automatically) or off, and left out keeps it as it is. Resolves with it as it stands.
+   */
+  static async setAutoTopUp(
+    settings: { enabled?: boolean; thresholdUsd: number; amountUsd: number; monthlyCapUsd: number },
+    options: { client?: NoClick } = {},
+  ): Promise<JsonObject> {
+    return asObject(await resolveClient(options.client).request("PUT", "/v1/usage/billing/auto_topup", {
+      json: compact({
+        enabled: settings.enabled, threshold_usd: settings.thresholdUsd, amount_usd: settings.amountUsd,
+        monthly_cap_usd: settings.monthlyCapUsd,
+      }),
+      user: null,
+    }));
+  }
+
+  /**
    * What NoClick's balance meter shows: the included usage used and its cap, the balance, and whose pool it is.
    * `organizationId` names a team workspace you're in, whose work draws on its owner's pool.
    */

@@ -11,10 +11,12 @@ KINDS = ("bug", "idea", "general")
 
 
 @synced
-async def feedback(message: str, *, kind: str = "general", client: Optional[Client] = None) -> None:
+async def feedback(message: str, *, kind: str = "general", page_url: Optional[str] = None,
+                   user_agent: Optional[str] = None, client: Optional[Client] = None) -> None:
     """Tell the NoClick team something: a ``bug``, an ``idea``, or anything (``general``).
     It reaches them as the app's feedback button does, from any key, an agent's
-    included; an account sends up to 20 a day (``RateLimited`` past that).
+    included; an account sends up to 20 a day (``RateLimited`` past that). ``page_url``
+    and ``user_agent`` say where it was sent from.
 
     Usage::
 
@@ -22,4 +24,6 @@ async def feedback(message: str, *, kind: str = "general", client: Optional[Clie
     """
     if kind not in KINDS:
         raise ValueError(f"kind is one of {KINDS}, not {kind!r}")
-    await resolve_client(client).request("POST", "/v1/feedback", json={"message": message, "kind": kind}, user=None)
+    body = {"message": message, "kind": kind}
+    body.update({k: v for k, v in (("page_url", page_url), ("user_agent", user_agent)) if v is not None})
+    await resolve_client(client).request("POST", "/v1/feedback", json=body, user=None)

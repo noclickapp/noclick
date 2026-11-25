@@ -472,6 +472,28 @@ class Usage:
 
     @synced
     @staticmethod
+    async def set_auto_top_up(*, threshold_usd: float, amount_usd: float, monthly_cap_usd: float,
+                              enabled: Optional[bool] = None, client: Optional[Client] = None) -> Dict[str, Any]:
+        """Change auto top-up, as the app's billing settings do (the signed-in owner's alone: it charges
+        their saved method): refill ``amount_usd`` when the balance falls below ``threshold_usd``, at most
+        ``monthly_cap_usd`` a month, all whole dollars within the funds checkout's rules. ``enabled`` turns
+        it on (only with a method saved during a payment made with Refill automatically) or off; None keeps
+        it as it is.
+
+        Returns:
+            Auto top-up as it stands.
+
+        Usage::
+
+            noclick.Usage.set_auto_top_up(threshold_usd=10, amount_usd=50, monthly_cap_usd=200)
+        """
+        body = {"threshold_usd": threshold_usd, "amount_usd": amount_usd, "monthly_cap_usd": monthly_cap_usd}
+        if enabled is not None:
+            body["enabled"] = enabled
+        return await resolve_client(client).request("PUT", "/v1/usage/billing/auto_topup", json=body, user=None)
+
+    @synced
+    @staticmethod
     async def billing(*, client: Optional[Client] = None) -> Optional[UsageBilling]:
         """The money behind the ledger, as the credit gate reads it: the plan and its pools, the balance, funds
         added and what's scheduled to be charged. One of the account's own keys reads those; the signed-in owner

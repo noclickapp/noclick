@@ -83,7 +83,9 @@ export interface BrowserViewConnectOptions {
   WebSocket?: typeof WebSocket;
 }
 
-type Token = { url: string; token: string };
+/** What opens one socket: its address, and the token sent as its first message (none for a socket its address
+ *  already admits, as a browser link's does). */
+type Token = { url: string; token: string | null };
 
 /** An open view; `close()` it when the page stops showing it. */
 export class BrowserViewConnection {
@@ -103,7 +105,7 @@ export class BrowserViewConnection {
   private readonly options: BrowserViewConnectOptions;
   private readonly reopens: boolean;
 
-  /** @internal `token` gives each socket its token; `reopens`: it opens again by itself, with a new one. */
+  /** @internal `token` gives each socket its address and token; `reopens`: it opens again by itself, with a new one. */
   constructor(token: () => Promise<Token>, control: boolean, options: BrowserViewConnectOptions, reopens: boolean) {
     const Socket = options.WebSocket ?? globalThis.WebSocket;
     if (!Socket) throw new TypeError("No WebSocket here: pass options.WebSocket");
@@ -165,7 +167,7 @@ export class BrowserViewConnection {
     ws.binaryType = "arraybuffer";
     this.socket = ws;
     let pictured = false;
-    ws.onopen = () => ws.send(JSON.stringify({ type: "auth", token: token.token }));
+    if (token.token !== null) ws.onopen = () => ws.send(JSON.stringify({ type: "auth", token: token.token }));
     ws.onmessage = (event: MessageEvent) => {
       if (typeof event.data === "string") {
         const message = JSON.parse(event.data) as JsonObject;

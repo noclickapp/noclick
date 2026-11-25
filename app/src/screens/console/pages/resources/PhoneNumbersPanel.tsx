@@ -7,7 +7,7 @@
 // provider are connected (PhoneNumbersBring; Disconnect instead of Release). In
 // the lab (designed): texting the caller, and porting numbers in with the port requests (a
 // connected number is disconnected first).
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
@@ -552,12 +552,16 @@ function NumberDrawer({
     );
 }
 
-/** The console's: over its client, the funds link NoClick's top-up, as every surface that sells numbers links it. */
+/** The shared number purchase flow (``usePhoneNumberPurchase``) over ``/v1`` (``sdkNumberTransport``), buying for
+ *  ``buyer``; an account short of funds adds some at NoClick's top-up. */
 export function useConsoleNumberTransport(client: ReturnType<typeof useConsole>['client'], buyer: { user: string | null; name: string }): NumberPurchaseTransport {
     const { site } = useConsole();
     const latest = useRef(buyer);
     latest.current = buyer;
-    return useMemo(() => sdkNumberTransport(client, () => latest.current, addFundsUrl(site)), [client, site]);
+    return useMemo(
+        () => sdkNumberTransport(async () => client, () => latest.current, { fundsHref: addFundsUrl(site) }),
+        [client, site]
+    );
 }
 
 function BuyNumberFlow({ defaultUser, onBought }: { defaultUser: string | null; onBought: (number: string) => void }) {

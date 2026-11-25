@@ -411,6 +411,61 @@ export interface WorkflowTemplate {
   raw: JsonObject;
 }
 
+function toWorkflowTemplate(value: unknown): WorkflowTemplate {
+  const raw = asObject(value);
+  const template = asObject(raw.template);
+  const draft = asObject(raw.draft);
+  return {
+    published: raw.published === true,
+    title: str(template.title),
+    slug: str(template.slug),
+    description: str(template.description),
+    publicUrl: str(template.public_url),
+    draftTitle: str(draft.title),
+    draftDescription: str(draft.description),
+    raw,
+  };
+}
+
+/**
+ * A person's vote on a published template (`templateVote`, `voteOnTemplate`): theirs (`vote`: 1, -1 or null) and the
+ * template's counts.
+ */
+export interface TemplateVote {
+  slug: string;
+  vote: 1 | -1 | null;
+  upvoteCount: number;
+  downvoteCount: number;
+  raw: JsonObject;
+}
+
+function toTemplateVote(value: unknown): TemplateVote {
+  const raw = asObject(value);
+  const vote = raw.vote === 1 || raw.vote === -1 ? raw.vote : null;
+  return { slug: str(raw.slug) ?? "", vote, upvoteCount: Number(raw.upvote_count ?? 0),
+    downvoteCount: Number(raw.downvote_count ?? 0), raw };
+}
+
+/** Your vote on the published template at `slug`, and its counts. */
+export async function templateVote(slug: string, options: { client?: NoClick } = {}): Promise<TemplateVote> {
+  return toTemplateVote(await resolveClient(options.client).request("GET", `/v1/templates/${encodeURIComponent(slug)}/vote`));
+}
+
+/**
+ * Vote on the published template at `slug`: 1 up, -1 down, or null to take your vote back. A person's own: a call
+ * acting for one of your users has none.
+ *
+ * ```ts
+ * const counts = await voteOnTemplate("daily-digest", 1);
+ * console.log(counts.upvoteCount);
+ * ```
+ */
+export async function voteOnTemplate(slug: string, vote: 1 | -1 | null, options: { client?: NoClick } = {}): Promise<TemplateVote> {
+  return toTemplateVote(await resolveClient(options.client).request("PUT", `/v1/templates/${encodeURIComponent(slug)}/vote`, {
+    json: { vote },
+  }));
+}
+
 /**
  * How many runs `Workflow.runs` lists (`Workflow.runCounts`): the `total`, `byStatus` (`running`, `succeeded`,
  * `failed`, each there even at 0), `waiting` (how many of the running ones wait on an approval, a delay or an agent's
@@ -651,7 +706,8 @@ function toLatestOutputs(value: unknown): LatestOutputs {
   };
 }
 
-function toExpressionPreview(value: unknown): ExpressionPreview {
+/** An expression preview from its wire form (`ExpressionPreview`). */
+export function toExpressionPreview(value: unknown): ExpressionPreview {
   const raw = asObject(value);
   return {
     ok: raw.ok === true,
@@ -1355,6 +1411,8 @@ export interface WorkflowVersion {
   note: string | null;
   labeledBy: { user_id: string } | null;
   labeledAt: Date | null;
+  /** How many steps it holds (notes aside), on a version `versions({ recent: true })` lists; null otherwise. */
+  stepCount: number | null;
   raw: JsonObject;
 }
 
@@ -1664,6 +1722,7 @@ function toWorkflowVersion(value: unknown, workflow: Workflow): WorkflowVersion 
     note: str(raw.note),
     labeledBy: raw.labeled_by && typeof raw.labeled_by === "object" ? { user_id: String(asObject(raw.labeled_by).user_id) } : null,
     labeledAt: parseTime(raw.labeled_at),
+    stepCount: numberOrNull(raw.step_count),
     raw,
   };
 }
@@ -3105,12 +3164,14 @@ export class Workflow extends ApiObject {
 
   /**
    * Its versions, newest first, kept 90 days (a named one for good): the first `limit` (20 by default; `null` for
-   * all), fetched page by page. `named: true` lists only the named ones, its checkpoints.
+   * all), fetched page by page. `named: true` lists only the named ones, its checkpoints; `recent: true` only its
+   * latest unnamed ones to go back to (never the one it's at), each with its `stepCount`, as the app's Versions list
+   * offers them beside its checkpoints.
    */
-  async versions(options: { limit?: number | null; named?: boolean } = {}): Promise<WorkflowVersion[]> {
+  async versions(options: { limit?: number | null; named?: boolean; recent?: boolean } = {}): Promise<WorkflowVersion[]> {
     const path = `${await this.path()}/versions`;
     const limit = options.limit === undefined ? 20 : (options.limit ?? undefined);
-    const query = options.named ? { named: "true" } : undefined;
+    const query = options.recent ? { recent: "true" } : options.named ? { named: "true" } : undefined;
     return await listAll({ path, user: null, client: this._client, limit, query }, (raw) => toWorkflowVersion(raw, this));
   }
 
@@ -3487,19 +3548,75 @@ export class Workflow extends ApiObject {
 
   /** This workflow's place in NoClick's template library: whether it's published, its page, and the draft saved for it. */
   async template(options: { client?: NoClick } = {}): Promise<WorkflowTemplate> {
-    const raw = asObject(await (options.client ?? this._api).request("GET", `${await this.path()}/template`, { user: null }));
-    const template = asObject(raw.template);
-    const draft = asObject(raw.draft);
-    return {
-      published: raw.published === true,
-      title: str(template.title),
-      slug: str(template.slug),
-      description: str(template.description),
-      publicUrl: str(template.public_url),
-      draftTitle: str(draft.title),
-      draftDescription: str(draft.description),
-      raw,
-    };
+    return toWorkflowTemplate(await (options.client ?? this._api).request("GET", `${await this.path()}/template`, { user: null }));
+  }
+
+  /**
+   * Keep a draft `title` and `description` for this workflow's template, before (or between) publishing it. Takes what
+   * pausing it takes: the account owns and pays for it.
+   *
+   * ```ts
+   * await workflow.saveTemplate({ title: "Daily digest", description: "Mails the day's news at 8am." });
+   * ```
+   */
+  async saveTemplate(options: { title?: string; description?: string; client?: NoClick }): Promise<WorkflowTemplate> {
+    return toWorkflowTemplate(await (options.client ?? this._api).request("PUT", `${await this.path()}/template`, {
+      json: compact({ title: options.title, description: options.description }), user: null,
+    }));
+  }
+
+  /**
+   * Put this workflow in NoClick's template library under `title` (its page at `/workflow/<slug>`), or change its
+   * title and description there. It must be shared publicly first (`Share.create`): a template's page is that share's.
+   *
+   * ```ts
+   * const listed = await workflow.publishTemplate({ title: "Daily digest" });
+   * console.log(listed.publicUrl);
+   * ```
+   */
+  async publishTemplate(options: { title: string; description?: string; client?: NoClick }): Promise<WorkflowTemplate> {
+    return toWorkflowTemplate(await (options.client ?? this._api).request("POST", `${await this.path()}/template/publish`, {
+      json: compact({ title: options.title, description: options.description }), user: null,
+    }));
+  }
+
+  /** Take this workflow out of the template library; its public share stays as it is. */
+  async unpublishTemplate(options: { client?: NoClick } = {}): Promise<WorkflowTemplate> {
+    return toWorkflowTemplate(await (options.client ?? this._api).request("DELETE", `${await this.path()}/template`, { user: null }));
+  }
+
+  /**
+   * Share a finished Test Run as a read-only page anyone with its `url` reads, as the app's Test Run screen's Share
+   * does: `snapshot` is what the screen showed of the run (its `scenario`, `rows`, `reply` and the like; only those
+   * display fields are kept). Nothing runs or bills through the page. Takes what pausing the workflow takes.
+   */
+  async shareTestRun(
+    snapshot: JsonObject,
+    options: { title?: string; client?: NoClick } = {},
+  ): Promise<{ id: string; url: string }> {
+    const raw = asObject(await (options.client ?? this._api).request("POST", `${await this.path()}/test_runs/shares`, {
+      json: compact({ title: options.title, snapshot }),
+      user: null,
+    }));
+    return { id: str(raw.id) ?? "", url: str(raw.url) ?? "" };
+  }
+
+  /**
+   * What an expression gives outside any one step (an interface block's, say), evaluated as a run evaluates it:
+   * against `samples` (each step's output by step id, `vars` the workflow's variables), else against what every step
+   * last stored (never a secret), with `primaryInput` as `$json`. Changes nothing; an expression that fails resolves
+   * with `ok` false and its `error`. A step's own setting previews with `Step.previewExpression`.
+   */
+  async previewExpression(
+    expression: string,
+    options: CallOptions & { samples?: JsonObject; primaryInput?: unknown } = {},
+  ): Promise<ExpressionPreview> {
+    const { samples, primaryInput, client, user } = options;
+    const raw = await (client ?? this._api).request("POST", `${await this.path()}/expression`, {
+      json: { expression, ...compact({ samples, primary_input: primaryInput }) },
+      user,
+    });
+    return toExpressionPreview(raw);
   }
 
   /**

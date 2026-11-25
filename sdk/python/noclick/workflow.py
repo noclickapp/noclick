@@ -309,6 +309,56 @@ class WorkflowTemplate:
 
 
 @dataclass(frozen=True)
+class TemplateVote:
+    """A person's vote on a published template (``template_vote``, ``vote_on_template``): theirs
+    (``vote``: 1, -1 or ``None``) and the template's counts."""
+
+    slug: str
+    vote: Optional[int]
+    upvote_count: int
+    downvote_count: int
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "TemplateVote":
+        raw = raw if isinstance(raw, dict) else {}
+        vote = raw.get("vote") if raw.get("vote") in (1, -1) else None
+        return cls(raw.get("slug") or "", vote, int(raw.get("upvote_count") or 0), int(raw.get("downvote_count") or 0),
+                   raw)
+
+
+@synced
+async def template_vote(slug: str, *, client: Optional[Client] = None) -> TemplateVote:
+    """Your vote on the published template at ``slug``, and its counts.
+
+    Returns:
+        Your vote (``None`` for none) and the template's up and down counts.
+
+    Usage::
+
+        print(noclick.template_vote("daily-digest").upvote_count)
+    """
+    return TemplateVote._from(await resolve_client(client).request("GET", f"/v1/templates/{path_segment(slug)}/vote",
+                                                                   user=None))
+
+
+@synced
+async def vote_on_template(slug: str, vote: Optional[int], *, client: Optional[Client] = None) -> TemplateVote:
+    """Vote on the published template at ``slug``: 1 up, -1 down, or ``None`` to take your vote
+    back. A person's own: a call acting for one of your users has none.
+
+    Returns:
+        Your vote as it stands now, and the template's counts with it.
+
+    Usage::
+
+        noclick.vote_on_template("daily-digest", 1)
+    """
+    return TemplateVote._from(await resolve_client(client).request(
+        "PUT", f"/v1/templates/{path_segment(slug)}/vote", json={"vote": vote}, user=None))
+
+
+@dataclass(frozen=True)
 class StepWorkspace:
     """The files on one of an agent step's conversations' workspace (``Step.workspace``),
     as the app's chat shows them: ``files``, each with a download link good for an hour;
@@ -2113,6 +2163,8 @@ class WorkflowVersion:
     labeled_by: Optional[Dict[str, Any]] = None
     labeled_at: Any = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+    #: How many steps it holds (notes aside), on a version ``versions(recent=True)`` lists; None otherwise.
+    step_count: Optional[int] = None
 
     @classmethod
     def _from(cls, raw: Any, workflow: "Workflow") -> "WorkflowVersion":
@@ -2125,7 +2177,7 @@ class WorkflowVersion:
             restored_from=raw.get("restored_from"), created_at=parse_time(raw.get("created_at")),
             updated_at=parse_time(raw.get("updated_at")), graph=_definition(raw, workflow),
             label=raw.get("label"), note=raw.get("note"), labeled_by=raw.get("labeled_by"),
-            labeled_at=parse_time(raw.get("labeled_at")), raw=raw,
+            labeled_at=parse_time(raw.get("labeled_at")), raw=raw, step_count=raw.get("step_count"),
         )
 
 
@@ -3355,10 +3407,12 @@ class Workflow(_Object):
         return await self._send([], include_graph=include_graph, settle=True)
 
     @synced
-    async def versions(self, *, limit: Optional[int] = 20, named: bool = False) -> List[WorkflowVersion]:
+    async def versions(self, *, limit: Optional[int] = 20, named: bool = False,
+                       recent: bool = False) -> List[WorkflowVersion]:
         """Its versions, newest first, kept 90 days (a named one for good): each one's number,
         where it came from, who made it and what changed. ``named=True`` lists only the named
-        ones, its checkpoints.
+        ones, its checkpoints; ``recent=True`` only its latest unnamed ones to go back to (never
+        the one it's at), each with its ``step_count``, as the app's Versions list offers them.
 
         Returns:
             The first ``limit`` versions (20 by default; ``None`` for all of them), fetched page by page.
@@ -3371,7 +3425,8 @@ class Workflow(_Object):
         """
         return await list_all(
             f"{await self._path()}/versions", lambda raw, _scope: WorkflowVersion._from(raw, self),
-            user=None, limit=limit, client=self._client, params=compact(named="true" if named else None),
+            user=None, limit=limit, client=self._client,
+            params=compact(recent="true" if recent else None, named="true" if named and not recent else None),
         )
 
     @synced
@@ -4099,6 +4154,99 @@ class Workflow(_Object):
             print(listing.public_url if listing.published else listing.draft_title)
         """
         return WorkflowTemplate._from(await self._api.request("GET", f"{await self._path()}/template", user=None))
+
+    @synced
+    async def save_template(self, *, title: Optional[str] = None, description: Optional[str] = None
+                            ) -> WorkflowTemplate:
+        """Keep a draft ``title`` and ``description`` for this workflow's template, before (or between)
+        publishing it. Takes what pausing it takes: the account owns and pays for it.
+
+        Returns:
+            The ``WorkflowTemplate``, with the draft.
+
+        Usage::
+
+            noclick.Workflow.from_name("daily-digest").save_template(title="Daily digest")
+        """
+        body = {k: v for k, v in (("title", title), ("description", description)) if v is not None}
+        return WorkflowTemplate._from(await self._api.request("PUT", f"{await self._path()}/template", json=body,
+                                                              user=None))
+
+    @synced
+    async def publish_template(self, *, title: str, description: Optional[str] = None) -> WorkflowTemplate:
+        """Put this workflow in NoClick's template library under ``title`` (its page at
+        ``/workflow/<slug>``), or change its title and description there. It must be shared
+        publicly first (``noclick.Share.create``): a template's page is that share's.
+
+        Returns:
+            The ``WorkflowTemplate``, ``published``, with its ``public_url``.
+
+        Usage::
+
+            listed = noclick.Workflow.from_name("daily-digest").publish_template(title="Daily digest")
+            print(listed.public_url)
+        """
+        body = {"title": title, **({"description": description} if description is not None else {})}
+        return WorkflowTemplate._from(await self._api.request("POST", f"{await self._path()}/template/publish",
+                                                              json=body, user=None))
+
+    @synced
+    async def unpublish_template(self) -> WorkflowTemplate:
+        """Take this workflow out of the template library; its public share stays as it is.
+
+        Returns:
+            The template as it stands now, unpublished.
+
+        Usage::
+
+            noclick.Workflow.from_name("daily-digest").unpublish_template()
+        """
+        return WorkflowTemplate._from(await self._api.request("DELETE", f"{await self._path()}/template", user=None))
+
+    @synced
+    async def share_test_run(self, snapshot: Dict[str, Any], *, title: Optional[str] = None) -> Dict[str, str]:
+        """Share a finished Test Run as a read-only page anyone with its ``url`` reads, as the
+        app's Test Run screen's Share does: ``snapshot`` is what the screen showed of the run (its
+        ``scenario``, ``rows``, ``reply`` and the like; only those display fields are kept).
+        Nothing runs or bills through the page. Takes what pausing the workflow takes.
+
+        Returns:
+            ``{"id", "url"}``: the page's id and address.
+
+        Usage::
+
+            page = noclick.Workflow.from_name("lead-flow").share_test_run(snapshot, title="Direct lead")
+            print(page["url"])
+        """
+        raw = await self._api.request("POST", f"{await self._path()}/test_runs/shares",
+                                      json={"snapshot": snapshot, **compact(title=title)}, user=None)
+        return {"id": str(raw["id"]), "url": str(raw["url"])}
+
+    @synced
+    async def preview_expression(
+        self, expression: str, *, samples: Optional[Dict[str, Any]] = None, primary_input: Any = None,
+        user: Any = AMBIENT,
+    ) -> ExpressionPreview:
+        """What an expression gives outside any one step (an interface block's, say), evaluated
+        as a run evaluates it: against ``samples`` (each step's output by step id, ``vars`` the
+        workflow's variables), else against what every step last stored (never a secret), with
+        ``primary_input`` as ``$json``. Changes nothing. A step's own setting previews with
+        ``Step.preview_expression``.
+
+        Returns:
+            The ``ExpressionPreview``; an expression that fails has ``ok`` False and its ``error``.
+
+        Usage::
+
+            flow = noclick.Workflow.from_name("order-intake")
+            print(flow.preview_expression("$('hook').items.length").preview)   # 2
+        """
+        raw = await self._api.request(
+            "POST", f"{await self._path()}/expression",
+            json={"expression": expression, **compact(samples=samples, primary_input=primary_input)},
+            user=resolve_scope(user),
+        )
+        return ExpressionPreview._from(raw)
 
     @synced
     async def run_counts(self, *, user_filter: Any = None, user: Any = AMBIENT) -> WorkflowRunCounts:

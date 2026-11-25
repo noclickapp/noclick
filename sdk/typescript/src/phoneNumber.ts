@@ -994,6 +994,29 @@ export class PhoneNumber extends ApiObject {
   }
 
   /**
+   * Your account's documents a purchase's `requirements` can name: filed with a number before, or uploaded recently
+   * enough to file. Newest first.
+   */
+  static async documents(options: CallOptions = {}): Promise<NumberDocument[]> {
+    const page = asObject(await resolveClient(options.client).request("GET", "/v1/phone_numbers/documents", {
+      user: resolveScope(options.user),
+    }));
+    return (asList(page.data) as JsonObject[]).map(toDocument);
+  }
+
+  /**
+   * Forget a document and delete it at its carrier. `keptByCarrier`: the carrier keeps its copy, since a number it
+   * holds was filed with it.
+   */
+  static async removeDocument(document: string | NumberDocument, options: CallOptions = {}): Promise<{ keptByCarrier: boolean }> {
+    const id = typeof document === "string" ? document : document.id;
+    const raw = asObject(await resolveClient(options.client).request("DELETE", `/v1/phone_numbers/documents/${encodeURIComponent(id)}`, {
+      user: resolveScope(options.user),
+    }));
+    return { keptByCarrier: raw.kept_by_carrier === true };
+  }
+
+  /**
    * The numbers (up to 1,000) in your phone provider account that `connection` (a `Connection` or its
    * name, connected with the account's own credentials; one holding a restricted API key throws
    * `InvalidRequest` naming `connection`) can route, each with its `label`, whether its calls go
@@ -1144,6 +1167,10 @@ export class PhoneNumber extends ApiObject {
   /** The phone provider connection a connected number runs through (its name; null otherwise). */
   get connection(): string | null {
     return this._field("connection") ?? null;
+  }
+  /** The account a workflow's Phone step holds the number by (in its `credentialIds`); null for a connected one. */
+  get credentialId(): string | null {
+    return this._field("credential_id") ?? null;
   }
   /** Where the answering agent's `transfer_call` tool sends a call (null: no such tool). */
   get transferTo(): string | null {
@@ -1364,6 +1391,17 @@ export class PhoneNumberOrder extends ApiObject {
   /** @internal From the order a purchase returned. */
   static _fromRaw(raw: JsonObject, init: { client?: NoClick; user?: UserOption }): PhoneNumberOrder {
     return new PhoneNumberOrder({ raw, client: init.client, user: init.user });
+  }
+
+  /**
+   * The orders still open (`in_review`, or `rejected` awaiting corrections), newest first: those ordered through the
+   * API in your scope and, for the account, those its NoClick app ordered.
+   */
+  static async list(options: CallOptions = {}): Promise<PhoneNumberOrder[]> {
+    const page = asObject(await resolveClient(options.client).request("GET", "/v1/phone_numbers/orders", {
+      user: resolveScope(options.user),
+    }));
+    return (asList(page.data) as JsonObject[]).map((raw) => PhoneNumberOrder._fromRaw(raw, options));
   }
 
   /** Load an order by id now; an unknown id throws `NotFound`. */

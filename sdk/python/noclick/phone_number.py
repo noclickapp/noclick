@@ -31,7 +31,7 @@ import os
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Mapping, Optional, Union
 
-from ._client import Client, resolve_client
+from ._client import Client, path_segment, resolve_client
 from ._designed import designed, designed_params
 from ._object import (
     UNSET, Page, _Object, check_unchanged, compact, field, iso_time, list_all, list_page, paginate, parse_time, ref_id,
@@ -764,6 +764,10 @@ class PhoneNumber(_Object):
     connection: Optional[str] = field(
         "connection", doc="The phone provider connection a connected number runs through, by name (None otherwise).",
     )
+    credential_id: Optional[str] = field(
+        "credential_id", doc="The account a workflow's Phone step holds the number by (in its ``credentialIds``); "
+                             "None for a connected one.",
+    )
     agent_id: Optional[str] = field("agent_id", doc="The agent that answers inbound calls (None if none).")
     transfer_to: Optional[str] = field(
         "transfer_to", doc="Where the answering agent's ``transfer_call`` tool sends a call (None: no such tool).",
@@ -1041,6 +1045,42 @@ class PhoneNumber(_Object):
             "PUT", "/v1/phone_numbers/holder", user=user,
             json=compact(holder=holder._wire(), requirements=_requirements_wire(requirements),
                          accepted_at=iso_time(accepted_at))))
+
+    @synced
+    @staticmethod
+    async def documents(*, user: Any = AMBIENT, client: Optional[Client] = None) -> List[NumberDocument]:
+        """Your account's documents a purchase's ``requirements`` can name: filed with a number
+        before, or uploaded recently enough to file. Newest first.
+
+        Returns:
+            The ``noclick.NumberDocument`` list.
+
+        Usage::
+
+            for document in noclick.PhoneNumber.documents():
+                print(document.filename, document.requirement_name)
+        """
+        page = await resolve_client(client).request("GET", "/v1/phone_numbers/documents", user=resolve_scope(user))
+        return [NumberDocument._from(raw) for raw in page.get("data") or []]
+
+    @synced
+    @staticmethod
+    async def remove_document(document: Union[str, NumberDocument], *, user: Any = AMBIENT,
+                              client: Optional[Client] = None) -> bool:
+        """Forget a document and delete it at its carrier.
+
+        Returns:
+            Whether the carrier keeps its copy (``kept_by_carrier``), since a number it holds was filed with it.
+
+        Usage::
+
+            [old] = noclick.PhoneNumber.documents()
+            noclick.PhoneNumber.remove_document(old)
+        """
+        document_id = document if isinstance(document, str) else document.id
+        raw = await resolve_client(client).request(
+            "DELETE", f"/v1/phone_numbers/documents/{path_segment(document_id)}", user=resolve_scope(user))
+        return raw.get("kept_by_carrier") is True
 
     @synced
     @staticmethod
@@ -1775,6 +1815,25 @@ class PhoneNumberOrder(_Object):
         "requirements", doc="While it's open: what its country asks, which a ``resubmit`` answers.")
     created_at: Any = field("created_at", parse_time)
     updated_at: Any = field("updated_at", parse_time)
+
+    @synced
+    @classmethod
+    async def list(cls, *, user: Any = AMBIENT, client: Optional[Client] = None) -> List["PhoneNumberOrder"]:
+        """The orders still open (``in_review``, or ``rejected`` awaiting corrections), newest first:
+        those ordered through the API in your scope and, for the account, those its NoClick app
+        ordered.
+
+        Returns:
+            The ``PhoneNumberOrder`` list.
+
+        Usage::
+
+            for order in noclick.PhoneNumberOrder.list():
+                print(order.number, order.status, order.reason)
+        """
+        scope = resolve_scope(user)
+        page = await resolve_client(client).request("GET", "/v1/phone_numbers/orders", user=scope)
+        return [cls._new(raw=raw, client=client, user=scope) for raw in page.get("data") or []]
 
     @synced
     @classmethod
