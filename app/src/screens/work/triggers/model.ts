@@ -110,6 +110,15 @@ export const PLATFORM_EVENTS: { type: string; when: string; detail: string }[] =
     { type: 'spend.cap_reached', when: 'your spending cap is reached', detail: 'The account’s monthly cap' },
 ];
 
+/** Events NoClick sets its own assistant to hear (an app's live editing), never offered to pick, read the same way. */
+const NOCLICKS_EVENTS: typeof PLATFORM_EVENTS = [
+    { type: 'live.deploy_failed', when: 'a live edit’s deploy fails', detail: 'An app edited live that didn’t deploy' },
+    { type: 'live.session_failed', when: 'a live editing session fails', detail: 'An app’s live editing that stopped with an error' },
+];
+
+/** A NoClick event in words, where there are any for it. */
+export const platformEvent = (type: string) => PLATFORM_EVENTS.find((p) => p.type === type) ?? NOCLICKS_EVENTS.find((p) => p.type === type);
+
 const clock = (d: Date) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 const sameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 
@@ -155,7 +164,7 @@ export function whenOf(item: TriggerItem, names: Names): string {
         case 'webhook':
             return `When something posts to my “${text(s, 'name')}” webhook`;
         case 'platform':
-            return `When ${PLATFORM_EVENTS.find((p) => p.type === text(s, 'type'))?.when ?? text(s, 'type')}`;
+            return `When ${platformEvent(text(s, 'type'))?.when ?? text(s, 'type')}`;
         case 'queue':
             return `When something lands on my “${text(s, 'queue')}” queue`;
         case 'email':

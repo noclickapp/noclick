@@ -25,6 +25,7 @@ import {
     Loader2,
 } from 'lucide-react';
 import { useIsMobile } from '@/ui/useIsMobile';
+import { PHONE_SEARCH } from '@/ui/fields';
 import { cn } from '@/ui/utils';
 import { fuzzyFilter } from '@/lib/fuzzySearch';
 import { isTextEntryTarget } from '@/lib/keyboard';
@@ -1531,7 +1532,7 @@ export function WorkflowBrowser({
                                                 }
                                                 onKeyDown={handleSearchKeyDown}
                                                 placeholder="Search automations and folders"
-                                                className="h-10 w-full rounded-xl border border-border bg-transparent pl-9 pr-3 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1] dark:focus:border-foreground/25"
+                                                className={`h-10 w-full rounded-xl border border-border bg-transparent pl-9 pr-3 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1] dark:focus:border-foreground/25 ${PHONE_SEARCH}`}
                                             />
                                         </div>
 

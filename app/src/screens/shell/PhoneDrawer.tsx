@@ -130,11 +130,30 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
     }, [drawn, open]);
 
     // Opened, focus moves into the drawer itself (not a field, which would raise the keyboard); closed with focus
-    // inside it, focus goes back to the menu button.
+    // inside it, focus goes back to the menu button for someone on a keyboard, and nowhere for a finger: a focused
+    // button draws its focus ring, which a tap shouldn't leave behind.
     const wasOpen = useRef(open);
+    const byKeyboard = useRef(false);
+    useEffect(() => {
+        const onKey = () => {
+            byKeyboard.current = true;
+        };
+        const onPointer = () => {
+            byKeyboard.current = false;
+        };
+        document.addEventListener('keydown', onKey, true);
+        document.addEventListener('pointerdown', onPointer, true);
+        return () => {
+            document.removeEventListener('keydown', onKey, true);
+            document.removeEventListener('pointerdown', onPointer, true);
+        };
+    }, []);
     useEffect(() => {
         if (open && !wasOpen.current) sheet.current?.focus({ preventScroll: true });
-        if (!open && wasOpen.current && sheet.current?.contains(document.activeElement)) trigger.current?.focus({ preventScroll: true });
+        if (!open && wasOpen.current && sheet.current?.contains(document.activeElement)) {
+            if (byKeyboard.current) trigger.current?.focus({ preventScroll: true });
+            else (document.activeElement as HTMLElement | null)?.blur();
+        }
         wasOpen.current = open;
     }, [open, trigger]);
 

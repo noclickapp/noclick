@@ -3,6 +3,7 @@
 // remembered on this device), a close button, and a choice's mark. A page's head is the shell's (`PageHead`).
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from 'react';
 import { AtSign, Check, Plus, Search, X } from 'lucide-react';
+import { PHONE_SEARCH_BOX } from '@/ui/fields';
 import { HAIRLINE } from '@/ui/primitives';
 import { SearchClearButton } from '@/ui/SearchClearButton';
 import { createPanelWidth } from '@/ui/panelWidth';
@@ -42,8 +43,9 @@ export const LIST_TOP = 'sticky top-0 z-10 -mx-2 bg-background px-2 pb-2 max-md:
 /** A column's search pill (a field, or Home's button to the palette). On a phone it keeps the 16px edge and grows to a
  *  finger's height; on a laptop its glyph centres on the rows' faces below it. */
 export const FIND_PILL = cn(
-    'mb-2 flex h-9 w-full items-center gap-2 rounded-full border pl-3 text-muted-foreground transition-colors hover:bg-foreground/[0.03] sm:pl-[15px] max-md:mx-2 max-md:h-10 max-md:w-[calc(100%-16px)]',
-    HAIRLINE
+    'mb-2 flex h-9 w-full items-center gap-2 rounded-full border pl-3 text-muted-foreground transition-colors [@media(hover:hover)]:hover:bg-foreground/[0.03] sm:pl-[15px] max-md:mx-2 max-md:w-[calc(100%-16px)]',
+    HAIRLINE,
+    PHONE_SEARCH_BOX
 );
 
 /** A list's action (New agent, Invite people): a soft card, a round tile holding its glyph, then its label. The glyph's

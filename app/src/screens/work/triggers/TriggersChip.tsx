@@ -2,7 +2,8 @@
 // first, with a red dot), then what stopped or when it next runs; "Running now" while a turn one started runs; "Only when
 // messaged" with none. It opens a popover (a phone's bottom sheet) of the same compact rows as the profile's Triggers
 // tab, each opening there, with "All in its profile" and "Add a trigger".
-import { useState, type ReactNode } from 'react';
+import { useContext, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { BellOff, ChevronDown, ChevronRight, Plus, Zap } from 'lucide-react';
 import type { Agent } from 'noclick';
 import { useInPhoneShell } from '@/ui/phoneBar';
@@ -14,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip';
 import { cn } from '@/ui/utils';
 import { useWorkNav } from '../nav';
 import { WorkMotion } from '../agents/AgentRing';
+import { PickerSheetHost } from '../newAgent/ModelPicker';
 import { nameOf, useSpaceNoClicks } from '../agents/reads';
 import { KindIcon, useTriggerActions, useTriggerFrames, useTriggerItems, useTriggerNames } from './data';
 import { byAttention, nextRun, shortWhen, whenOf, type TriggerItem } from './model';
@@ -26,6 +28,9 @@ const FOOT =
  *  marks it as the row's item (`data-fold`), `folded` shows its marks alone and says the rest in its tooltip. */
 export function TriggersChip({ agent, className, fold, folded = false }: { agent: Agent; className?: string; fold?: number; folded?: boolean }) {
     const phone = useInPhoneShell();
+    // Its sheet opens on the page's layer for sheets: drawn inside the footer, whose line scrolls sideways under a
+    // faded edge, it was cut down to that line.
+    const sheetHost = useContext(PickerSheetHost);
     const nav = useWorkNav();
     const { items, loading, error } = useTriggerItems(agent.id, agent.paused);
     useTriggerFrames(agent.id);
@@ -111,15 +116,17 @@ export function TriggersChip({ agent, className, fold, folded = false }: { agent
         return (
             <span className={className} data-fold={fold} data-folded={folded || undefined}>
                 {tipped(chip)}
-                {open && (
-                    <div className="fixed inset-0 z-50 flex flex-col justify-end">
-                        <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/40" />
-                        <div role="dialog" aria-label="What triggers it" className="relative flex max-h-[78vh] flex-col overflow-hidden rounded-t-[26px] bg-background pb-4 ring-1 ring-border dark:ring-foreground/[0.1]">
-                            <span aria-hidden className="mx-auto mb-1 mt-2 h-1 w-9 shrink-0 rounded-full bg-foreground/20" />
-                            {body}
-                        </div>
-                    </div>
-                )}
+                {open &&
+                    createPortal(
+                        <div className={cn('inset-0 z-50 flex flex-col justify-end', sheetHost ? 'absolute' : 'fixed')}>
+                            <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/50" />
+                            <div role="dialog" aria-label="What triggers it" className="relative flex max-h-[78vh] flex-col overflow-hidden rounded-t-[26px] bg-composer pb-[max(env(safe-area-inset-bottom),16px)] ring-1 ring-border dark:ring-foreground/[0.1]">
+                                <span aria-hidden className="mx-auto mb-1 mt-2 h-1 w-9 shrink-0 rounded-full bg-foreground/20" />
+                                {body}
+                            </div>
+                        </div>,
+                        sheetHost ?? document.body
+                    )}
             </span>
         );
     return (

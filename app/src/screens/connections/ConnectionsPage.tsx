@@ -10,6 +10,7 @@ import { scoreFields } from '@/lib/fuzzyRank';
 import { useClient } from '@/sdk/client';
 import { MCP_URL } from '@/screens/console/lib/mcpUrl';
 import { BrandIcon } from '@/ui/BrandIcon';
+import { PHONE_SEARCH } from '@/ui/fields';
 import { MCPSetupModal, mcpClientGuides } from '@/ui/MCPSetupModal';
 import { PageFrame } from '@/ui/PageFrame';
 import { SearchClearButton } from '@/ui/SearchClearButton';
@@ -324,7 +325,7 @@ export function ConnectionsContent() {
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder={searchLabel}
                         aria-label={searchLabel}
-                        className="h-9 w-full rounded-full border border-border bg-transparent pl-9 pr-9 text-[13.5px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
+                        className={`h-9 w-full rounded-full border border-border bg-transparent pl-9 pr-9 text-[13.5px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1] ${PHONE_SEARCH}`}
                     />
                     <SearchClearButton value={query} onClear={() => setQuery('')} inputRef={searchRef} className="absolute right-1 top-1/2 -translate-y-1/2" />
                 </label>

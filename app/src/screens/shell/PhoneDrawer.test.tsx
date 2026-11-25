@@ -191,7 +191,7 @@ describe('swiping on a phone', () => {
         expect(document.documentElement.style.touchAction, 'other pages zoom as before').toBe('');
     });
 
-    it('opens from the menu button with focus inside, and Escape puts focus back on the button', async () => {
+    it('opens from the menu button with focus inside, and puts focus back on the button after a key, not a tap', async () => {
         shell();
         const button = screen.getByRole('button', { name: 'Open menu' });
         await act(async () => fireEvent.click(button));
@@ -201,6 +201,13 @@ describe('swiping on a phone', () => {
         await act(async () => fireEvent.keyDown(document, { key: 'Escape' }));
         expect(isOpen()).toBe(false);
         expect(document.activeElement).toBe(button);
+
+        await act(async () => fireEvent.click(button));
+        const page = document.querySelector('[aria-hidden][data-open="true"].fixed.right-0')!;
+        fireEvent.pointerDown(page);
+        await act(async () => fireEvent.click(page));
+        expect(isOpen()).toBe(false);
+        expect(document.activeElement, 'a tap leaves no focus ring on the menu button').not.toBe(button);
     });
 });
 

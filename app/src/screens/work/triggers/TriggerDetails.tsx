@@ -7,7 +7,7 @@ import { CircleAlert, Pause, Play, Trash2, Workflow } from 'lucide-react';
 import { Cron, type JsonObject, type TriggerChanges } from 'noclick';
 import { BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { cn } from '@/ui/utils';
-import { eventLabel, PLATFORM_EVENTS, readSchedule, sentenceOf, whenOf, type Names, type TriggerItem } from './model';
+import { eventLabel, platformEvent, readSchedule, sentenceOf, whenOf, type Names, type TriggerItem } from './model';
 import { useEventDetails, useIntegrationOf, type TriggerActions } from './data';
 import { Copyable, LABEL, NOTE, Pills, ScheduleField, ThenField, localZone } from './parts';
 
@@ -135,7 +135,7 @@ export function TriggerDetails({ item, names, actions, agentName }: { item: Trig
                     <p className={NOTE}>It’s #{str(s.name)}’s own setting, so it applies to every agent there. Changing it needs the right to manage the channel.</p>
                 </div>
             )}
-            {item.kind === 'platform' && <p className="text-[12.5px] text-muted-foreground">{PLATFORM_EVENTS.find((p) => p.type === str(s.type))?.detail ?? str(s.type)}</p>}
+            {item.kind === 'platform' && <p className="text-[12.5px] text-muted-foreground">{platformEvent(str(s.type))?.detail ?? str(s.type)}</p>}
             {item.kind === 'app' && <p className="text-[12.5px] text-muted-foreground">It’s a step of an automation. Change it there.</p>}
             {(item.kind === 'routine' || item.kind === 'wakeup') && (
                 <p className="text-[12.5px] text-muted-foreground">
