@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from ._client import Client, resolve_client
-from ._object import paginate, parse_time
+from ._object import Page, fetch_page, paginate, parse_time
 from ._sync import synced
 
 
@@ -68,6 +68,23 @@ class ConnectedApp:
         """
         rows = await paginate(resolve_client(client), "/v1/connected_apps", user=None, limit=limit)
         return [cls._from(row) for row in rows]
+
+    @synced
+    @classmethod
+    async def list_page(cls, *, cursor: Optional[str] = None, limit: Optional[int] = None,
+                        client: Optional[Client] = None) -> Page:
+        """One page of ``list()``, newest first; pass ``next_cursor`` back as ``cursor``. The signed-in owner's alone.
+
+        Returns:
+            A page whose ``data`` holds the connections.
+
+        Usage::
+
+            page = noclick.ConnectedApp.list_page(limit=20)
+            print([app.client_name for app in page.data], page.next_cursor)
+        """
+        page = await fetch_page(resolve_client(client), "/v1/connected_apps", user=None, cursor=cursor, limit=limit)
+        return Page([cls._from(row) for row in page.data], page.next_cursor)
 
     @synced
     @classmethod

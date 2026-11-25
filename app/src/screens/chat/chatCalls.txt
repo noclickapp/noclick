@@ -65,6 +65,8 @@ GET /v1/operations/f3a4b5c6-d7e8-4f9a-8b1c-2d3e4f5a6b7c
 GET /v1/operations/f3a4b5c6-d7e8-4f9a-8b1c-2d3e4f5a6b7c/wait
 GET /v1/operations/op-build-markets
 GET /v1/operations/op-build-markets/wait
+GET /v1/operations/op-held-6d1c2b8e
+GET /v1/operations/op-held-9a8b7c6d
 GET /v1/operations/op-run
 GET /v1/projects
 GET /v1/projects/6b1f0c2e-4c1a-4b8e-9a51-2f7d3c8e1a01/live

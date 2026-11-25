@@ -1,9 +1,10 @@
 // The account's own read, and the /v1 routes only its signed-in owner may call (keys, changing the account, the object
-// resolver, the card onboarding session, asking for machines). The SDK has no methods for them, so they go through the
-// client's request() here, typed once. A key calling an owner-only one gets 403 `permission_denied`.
+// resolver, the card onboarding session, asking for machines), typed once as the screens read them: each goes through
+// the SDK's own method, its answer as the route gives it. A key calling an owner-only one gets 403 `permission_denied`.
 //
 // `GET /v1/account` answers the signed-in owner and one of the account's own secret keys acting for the account. A key
 // reads a closed list of fields, the ones not marked "the owner's view only" below.
+import { Account, ConnectedApp, Key, Machine } from 'noclick';
 import type { CardProgramStatus, NoClick, Page } from 'noclick';
 
 export interface AccountCounts {
@@ -198,28 +199,43 @@ export interface ObjectRef {
 // Owner routes are account-level: they never carry a user header.
 const account = { user: null } as const;
 
-export function getAccount(client: NoClick, signal?: AbortSignal): Promise<AccountView> {
-    return client.request<AccountView>('GET', '/v1/account', { ...account, signal });
+export async function getAccount(client: NoClick, signal?: AbortSignal): Promise<AccountView> {
+    return (await Account.get({ client, signal })).raw as unknown as AccountView;
 }
 
 /** Changes only the fields sent; `default_region: null` clears it, `spending_paused: null` the default, and
  *  `spend_cap_usd: null` the monthly spending cap (whole dollars; only the signed-in owner sets, raises or removes it). */
-export function updateAccount(
+export async function updateAccount(
     client: NoClick,
     input: { default_region?: string | null; spending_paused?: PausedSpendingDefault | null; spend_cap_usd?: number | null }
 ): Promise<AccountView> {
-    return client.request<AccountView>('PATCH', '/v1/account', { ...account, json: input });
+    const changes = {
+        ...('default_region' in input ? { defaultRegion: input.default_region } : {}),
+        ...('spending_paused' in input ? { spendingPaused: input.spending_paused } : {}),
+        ...('spend_cap_usd' in input ? { spendCapUsd: input.spend_cap_usd } : {}),
+    };
+    return (await Account.update(changes, { client })).raw as unknown as AccountView;
 }
 
 export async function listKeys(
     client: NoClick,
     options: { status?: 'active' | 'revoked' | 'all'; cursor?: string | null; limit?: number } = {}
 ): Promise<Page<KeyView>> {
-    const page = await client.request<{ data: KeyView[]; next_cursor: string | null }>('GET', '/v1/keys', {
-        ...account,
-        query: { status: options.status, cursor: options.cursor, limit: options.limit },
-    });
-    return { data: page.data, nextCursor: page.next_cursor ?? null };
+    const page = await Key.listPage({ client, status: options.status, cursor: options.cursor ?? undefined, limit: options.limit });
+    return { data: page.data.map(keyView), nextCursor: page.nextCursor };
+}
+
+/** A key as the routes answer it; a new secret key's `raw_key` is the SDK's `secret`, shown this once. */
+function keyView(key: Key): KeyView {
+    return { ...(key.raw as unknown as KeyView), ...(key.secret ? { raw_key: key.secret } : {}) };
+}
+
+function publicAccess(input: PublicAccessInput) {
+    return {
+        ...(input.public_endpoints !== undefined ? { publicEndpoints: input.public_endpoints } : {}),
+        ...(input.per_visitor_limit_per_minute !== undefined ? { perVisitorLimitPerMinute: input.per_visitor_limit_per_minute } : {}),
+        ...(input.allowed_origins !== undefined ? { allowedOrigins: input.allowed_origins } : {}),
+    };
 }
 
 export const TOKEN_SCOPE = 'credentials:token';
@@ -251,11 +267,19 @@ export function fullAccessScopes(all: readonly string[]): string[] {
 
 /** The account's public endpoints, for a publishable key to list. */
 export async function listPublicEndpoints(client: NoClick, signal?: AbortSignal): Promise<PublicEndpoint[]> {
-    return (await client.request<{ data: PublicEndpoint[] }>('GET', '/v1/public_endpoints', { ...account, signal })).data;
+    return (await Account.publicEndpoints({ client, signal })).map((endpoint) => endpoint.raw as unknown as PublicEndpoint);
 }
 
-export function createKey(client: NoClick, input: CreateKeyInput): Promise<KeyView> {
-    return client.request<KeyView>('POST', '/v1/keys', { ...account, json: input });
+export async function createKey(client: NoClick, input: CreateKeyInput): Promise<KeyView> {
+    const key = await Key.create(input.name, input.scopes ?? [], {
+        client,
+        ...(input.type ? { type: input.type } : {}),
+        ...(input.spend_cap_usd_per_month != null ? { spendCapUsdPerMonth: input.spend_cap_usd_per_month } : {}),
+        ...(input.user_id ? { userId: input.user_id } : {}),
+        ...(input.expires_at ? { expiresAt: new Date(input.expires_at) } : {}),
+        ...publicAccess(input),
+    });
+    return keyView(key);
 }
 
 export interface SetupCode {
@@ -267,16 +291,21 @@ export interface SetupCode {
 }
 
 /** A one-time code a coding agent trades for a key that lands in its project's .env, never in its context. */
-export function createSetupCode(client: NoClick): Promise<SetupCode> {
-    return client.request<SetupCode>('POST', '/v1/cli/setup_codes', account);
+export async function createSetupCode(client: NoClick): Promise<SetupCode> {
+    return (await Key.setupCode({ client })).raw as unknown as SetupCode;
 }
 
-export function updateKey(client: NoClick, keyId: string, input: UpdateKeyInput): Promise<KeyView> {
-    return client.request<KeyView>('PATCH', `/v1/keys/${encodeURIComponent(keyId)}`, { ...account, json: input });
+export async function updateKey(client: NoClick, keyId: string, input: UpdateKeyInput): Promise<KeyView> {
+    const changes = {
+        ...(input.name !== undefined ? { name: input.name } : {}),
+        ...('spend_cap_usd_per_month' in input ? { spendCapUsdPerMonth: input.spend_cap_usd_per_month } : {}),
+        ...publicAccess(input),
+    };
+    return keyView(await Key.update(keyId, changes, { client }));
 }
 
-export function revokeKey(client: NoClick, keyId: string): Promise<KeyView> {
-    return client.request<KeyView>('DELETE', `/v1/keys/${encodeURIComponent(keyId)}`, account);
+export async function revokeKey(client: NoClick, keyId: string): Promise<KeyView> {
+    return keyView(await Key.revoke(keyId, { client }));
 }
 
 /** What an MCP connection may do, one OAuth scope each, in the order people read them. */
@@ -307,25 +336,22 @@ export interface ConnectedAppView {
 }
 
 export async function listConnectedApps(client: NoClick, options: { cursor?: string | null } = {}): Promise<Page<ConnectedAppView>> {
-    const page = await client.request<{ data: ConnectedAppView[]; next_cursor: string | null }>('GET', '/v1/connected_apps', {
-        ...account,
-        query: { cursor: options.cursor },
-    });
-    return { data: page.data, nextCursor: page.next_cursor ?? null };
+    const page = await ConnectedApp.listPage({ client, cursor: options.cursor ?? undefined });
+    return { data: page.data.map((app) => app.raw as unknown as ConnectedAppView), nextCursor: page.nextCursor };
 }
 
 /** Returns the revoked view (`revoked_at` set). */
-export function revokeConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
-    return client.request<ConnectedAppView>('DELETE', `/v1/connected_apps/${encodeURIComponent(appId)}`, account);
+export async function revokeConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
+    return (await ConnectedApp.revoke(appId, { client })).raw as unknown as ConnectedAppView;
 }
 
 /** Turns a revoked connection NoClick makes back on, as it was; returns it live (`revoked_at` null). */
-export function restoreConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
-    return client.request<ConnectedAppView>('POST', `/v1/connected_apps/${encodeURIComponent(appId)}/restore`, account);
+export async function restoreConnectedApp(client: NoClick, appId: string): Promise<ConnectedAppView> {
+    return (await ConnectedApp.restore(appId, { client })).raw as unknown as ConnectedAppView;
 }
 
-export function resolveObject(client: NoClick, ref: string, signal?: AbortSignal): Promise<ObjectRef> {
-    return client.request<ObjectRef>('GET', `/v1/objects/${encodeURIComponent(ref)}`, { ...account, signal });
+export async function resolveObject(client: NoClick, ref: string, signal?: AbortSignal): Promise<ObjectRef> {
+    return (await Account.resolve(ref, { client, signal })).raw as unknown as ObjectRef;
 }
 
 /** `GET /v1/cards/program` on the wire (`Card.program()` reads it camelCased). */
@@ -386,11 +412,15 @@ export interface MachineAccessRequest {
     accept_usage_policy: boolean;
 }
 
-export function getMachineAccess(client: NoClick, signal?: AbortSignal): Promise<MachineAccessView> {
-    return client.request<MachineAccessView>('GET', '/v1/machines/vetting', { ...account, signal });
+export async function getMachineAccess(client: NoClick, signal?: AbortSignal): Promise<MachineAccessView> {
+    return (await Machine.access({ client, signal })).raw as unknown as MachineAccessView;
 }
 
 /** Asks NoClick for machines; only the signed-in owner may (a key gets 403), and an approved account gets 409. */
-export function requestMachineAccess(client: NoClick, input: MachineAccessRequest): Promise<MachineAccessView> {
-    return client.request<MachineAccessView>('POST', '/v1/machines/vetting', { ...account, json: input });
+export async function requestMachineAccess(client: NoClick, input: MachineAccessRequest): Promise<MachineAccessView> {
+    const asked = await Machine.requestAccess(
+        { companyName: input.company_name, website: input.website, country: input.country, useCase: input.use_case, acceptUsagePolicy: input.accept_usage_policy },
+        { client },
+    );
+    return asked.raw as unknown as MachineAccessView;
 }

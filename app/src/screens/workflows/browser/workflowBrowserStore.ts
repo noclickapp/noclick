@@ -22,7 +22,7 @@
 // the workflow-browser surface.
 
 import { proxy, ref } from 'valtio';
-import type { NoClick } from 'noclick';
+import { type NoClick, Workflow } from 'noclick';
 import { resolveAgentModelKind } from '@/lib/harnessBrand';
 import { valtioCache } from '@/lib/indexeddb';
 import { buildGraphPreview, type GraphPreview } from '@/lib/graphPreview';
@@ -159,8 +159,12 @@ export function setWorkflowBrowserClient(client: NoClick | null) {
     else clientReady = new Promise<NoClick>((resolve) => (clientArrived = resolve));
 }
 
-const v1 = async <T = Json>(method: string, path: string, options: { query?: Json; json?: Json } = {}): Promise<T> =>
-    (browserClient ?? (await clientReady)).request<T>(method, path, { ...options, user: null } as never);
+/** Call `fn` with the page's client: at once when the host set it, else once it does. */
+const withClient = <T>(fn: (client: NoClick) => Promise<T>): Promise<T> => (browserClient ? fn(browserClient) : clientReady.then(fn));
+
+/** Call `fn` on one of this page's workflows, by id, on its client. */
+const onWorkflow = <T>(workflowId: string, fn: (workflow: Workflow) => Promise<T>): Promise<T> =>
+    withClient((client) => fn(Workflow.fromId(workflowId, { client })));
 
 /** What a failed call says, for the page's alerts. */
 export const failureOf = (err: unknown): string => (err instanceof Error ? err.message : String(err));
@@ -527,12 +531,12 @@ export function fetchTree(scopeId: string) {
     const k = `${scopeId}::tree`;
     const seq = nextSeq(k);
 
-    v1<Json>('GET', '/v1/workflows/folders', { query: { organization_id: orgIdForScope(scopeId) } }).then(
-        (response) => {
+    withClient((client) => Workflow.folders({ organizationId: orgIdForScope(scopeId), client })).then(
+        (folders) => {
             if (!isCurrentSeq(k, seq)) return; // a newer fetch for this key superseded us
             const s = ensureScope(scopeId);
             s.foldersLoaded = true;
-            s.folders = folderTreeOf(response.data ?? []);
+            s.folders = folderTreeOf(folders.map((f) => f.raw));
         },
         (err) => {
             if (!isCurrentSeq(k, seq)) return;
@@ -554,9 +558,9 @@ export function fetchWorkflows(scopeId: string, folderId: string | null) {
     const seq = nextSeq(k);
     slice.workflowsLoading[key] = true;
 
-    const query = { folder_id: folderId ?? 'top', organization_id: orgIdForScope(scopeId), include: 'preview' };
-    v1<Json>('GET', '/v1/workflows', { query }).then(
-        (response) => {
+    const organizationId = orgIdForScope(scopeId) ?? undefined;
+    withClient((client) => Workflow.inFolder(folderId, { preview: true, organizationId, client })).then(
+        (listing) => {
             if (!isCurrentSeq(k, seq)) return; // superseded
             const s = ensureScope(scopeId);
             s.workflowsLoading[key] = false;
@@ -564,14 +568,14 @@ export function fetchWorkflows(scopeId: string, folderId: string | null) {
             // object identity (see mapWorkflowApp) — a no-op refetch must not re-layout
             // every card.
             const prevById = new Map((s.workflows[key] ?? []).map((w) => [w.id, w]));
-            s.workflows[key] = (response.data ?? [])
-                .map((wf: Json) => mapWorkflowApp(wf, prevById.get(wf.id)))
+            s.workflows[key] = listing.workflows
+                .map((wf) => mapWorkflowApp(wf.raw as Json, prevById.get(wf.id)))
                 .filter((w: WorkflowApp) => !isTombstoned(w.id));
             // hidden_shared_count is a root-level figure (plan-limited shared flows); a
             // subfolder listing reports its own (0) and must not overwrite the root's.
             if (key === '') {
-                s.hiddenSharedCount = response.hidden_shared_count || 0;
-                s.tier = response.plan || 'free';
+                s.hiddenSharedCount = listing.hiddenSharedCount;
+                s.tier = listing.plan || 'free';
             }
         },
         (err) => {
@@ -586,14 +590,13 @@ export function fetchWorkflows(scopeId: string, folderId: string | null) {
 export function fetchSharedResources() {
     const k = 'shared';
     const seq = nextSeq(k);
-    const query = { shared_with_me: 'true' };
-    Promise.all([v1<Json>('GET', '/v1/workflows', { query }), v1<Json>('GET', '/v1/workflows/folders', { query })]).then(
+    withClient((client) => Promise.all([Workflow.sharedWithMe({ client }), Workflow.folders({ sharedWithMe: true, client })])).then(
         ([workflows, folders]) => {
             if (!isCurrentSeq(k, seq)) return; // superseded
             browserStore.shared.workflows = dedupById(
-                (workflows.data ?? []).map(mapSharedWorkflowResource).filter((w: WorkflowApp) => !isTombstoned(w.id)),
+                workflows.map((w) => mapSharedWorkflowResource(w.raw)).filter((w: WorkflowApp) => !isTombstoned(w.id)),
             );
-            browserStore.shared.folders = dedupById((folders.data ?? []).map(mapSharedFolderResource));
+            browserStore.shared.folders = dedupById(folders.map((f) => mapSharedFolderResource(f.raw)));
             browserStore.shared.loaded = true;
         },
         // Don't clobber the existing list on a transient error.
@@ -608,48 +611,31 @@ export function fetchSharedResources() {
 
 export const browserWrites = {
     createFolder: (scopeId: string, folder: { name: string; description: string; parentId: string | null }) =>
-        v1('POST', '/v1/workflows/folders', {
-            json: {
-                name: folder.name,
-                description: folder.description,
-                parent_id: folder.parentId ?? undefined,
-                organization_id: orgIdForScope(scopeId),
-            },
-        }),
+        withClient((client) => Workflow.createFolder(folder.name, {
+            description: folder.description, parent: folder.parentId ?? undefined, organizationId: orgIdForScope(scopeId), client,
+        })),
     updateFolder: (scopeId: string, folderId: string, changes: { name?: string; description?: string; parentId?: string | null }) =>
-        v1('PATCH', `/v1/workflows/folders/${encodeURIComponent(folderId)}`, {
-            json: {
-                name: changes.name,
-                description: changes.description,
-                ...(changes.parentId !== undefined && { parent_id: changes.parentId }),
-                organization_id: orgIdForScope(scopeId),
-            },
-        }),
+        withClient((client) => Workflow.updateFolder(folderId, {
+            name: changes.name, description: changes.description,
+            ...(changes.parentId !== undefined && { parent: changes.parentId }),
+            organizationId: orgIdForScope(scopeId), client,
+        })),
     deleteFolder: (scopeId: string, folderId: string) =>
-        v1('DELETE', `/v1/workflows/folders/${encodeURIComponent(folderId)}`, {
-            query: { organization_id: orgIdForScope(scopeId) },
-        }),
+        withClient((client) => Workflow.deleteFolder(folderId, { organizationId: orgIdForScope(scopeId), client })),
     moveWorkflow: (scopeId: string, workflowId: string, folderId: string | null) =>
-        v1('POST', `/v1/workflows/${encodeURIComponent(workflowId)}/move`, {
-            json: { folder_id: folderId, organization_id: orgIdForScope(scopeId) },
-        }),
+        onWorkflow(workflowId, (w) => w.moveTo(folderId, { organizationId: orgIdForScope(scopeId) })),
     updateWorkflow: (workflowId: string, changes: { name?: string; description?: string }) =>
-        v1('POST', `/v1/workflows/${encodeURIComponent(workflowId)}/edits`, {
-            json: { ops: [{ op: 'update_workflow', name: changes.name, description: changes.description }] },
-        }),
+        onWorkflow(workflowId, (w) => w.update({ name: changes.name, description: changes.description })),
     /** A blank workflow in this scope, filed in `folderId`, named the next free "Untitled" by the API. */
     createWorkflow: (scopeId: string, folderId: string | null) =>
-        v1<Json>('POST', '/v1/workflows', {
-            json: { folder_id: folderId ?? undefined, organization_id: orgIdForScope(scopeId) },
-        }),
-    trashWorkflow: (workflowId: string) => v1('DELETE', `/v1/workflows/${encodeURIComponent(workflowId)}`),
+        withClient((client) => Workflow.create(null, { folder: folderId, organizationId: orgIdForScope(scopeId), client }))
+            .then((w) => w.raw as Json),
+    trashWorkflow: (workflowId: string) => onWorkflow(workflowId, (w) => w.delete()),
     forkWorkflow: (scopeId: string, workflowId: string, name: string) =>
-        v1<Json>('POST', `/v1/workflows/${encodeURIComponent(workflowId)}/fork`, {
-            json: { name, organization_id: orgIdForScope(scopeId) },
-        }),
-    listTrash: () => v1<Json>('GET', '/v1/workflows/trash').then((r) => (r.data ?? []) as TrashedWorkflow[]),
-    restoreWorkflow: (workflowId: string) => v1('POST', `/v1/workflows/${encodeURIComponent(workflowId)}/restore`),
-    deleteForGood: (workflowId: string) => v1('DELETE', `/v1/workflows/${encodeURIComponent(workflowId)}/trash`),
+        onWorkflow(workflowId, (w) => w.fork({ name, organizationId: orgIdForScope(scopeId) })).then((w) => w.raw as Json),
+    listTrash: () => withClient((client) => Workflow.trashed({ client })).then((ws) => ws.map((w) => w.raw as unknown as TrashedWorkflow)),
+    restoreWorkflow: (workflowId: string) => onWorkflow(workflowId, (w) => w.restore()),
+    deleteForGood: (workflowId: string) => onWorkflow(workflowId, (w) => w.deleteForGood()),
 };
 
 /** A workflow in the trash, as GET /v1/workflows/trash lists it. */

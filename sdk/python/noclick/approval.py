@@ -606,19 +606,22 @@ class Approval(_Object):
         return await list_all("/v1/approvals", lambda raw, _scope: cls._new(raw=raw, client=client, user=None),
                               params={"status": status}, user=user, limit=limit, client=client)
 
-    async def _answer(self, approved: bool, note: Optional[str]) -> "Approval":
+    async def _answer(self, approved: bool, note: Optional[str],
+                      accepted: Optional[List[str]] = None) -> "Approval":
         self._raw = await resolve_client(self._client).request(
-            "POST", self._path("/answer"), json=compact(approved=approved, note=note), user=None)
+            "POST", self._path("/answer"), json=compact(approved=approved, note=note, accepted=accepted), user=None)
         return self
 
     @synced
-    async def approve(self, *, note: Optional[str] = None) -> "Approval":
+    async def approve(self, *, note: Optional[str] = None, accepted: Optional[List[str]] = None) -> "Approval":
         """Approve it from your own code, with one of your account's secret keys that names the
         ``approvals:answer`` scope; NoClick then runs the call itself, once, exactly as it was held. Refused
         with ``noclick.PermissionDenied`` for the key the call was made with, a call whose terms a person
         accepts, one needing a scope the key lacks or only the owner makes, a key acting for a user, and a key
         without the scope; with ``noclick.SpendCapExceeded`` when its price, beside what the key spent and
-        approved this month, is past the key's own monthly cap.
+        approved this month, is past the key's own monthly cap. ``accepted`` names the terms (each of its
+        ``consent``, by its terms id) the person accepts by approving, for the signed-in owner answering a call whose
+        terms apply: code can't accept terms for a person.
 
         Returns:
             This approval, answered: ``status`` is ``approved``, then ``used`` once the call ran;
@@ -630,7 +633,7 @@ class Approval(_Object):
             approval.approve(note="Within this week's budget.")
             noclick.Operation.from_id(approval.operation_id).wait()
         """
-        return await self._answer(True, note)
+        return await self._answer(True, note, accepted)
 
     @synced
     async def decline(self, *, note: Optional[str] = None) -> "Approval":

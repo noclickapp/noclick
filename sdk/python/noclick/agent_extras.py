@@ -17,7 +17,7 @@ from urllib.parse import quote
 
 from ._attachment import Attachment
 from ._client import path_segment
-from ._object import Page, _Object, compact, field, paginate, parse_time
+from ._object import Page, _Object, compact, field, paginate, parse_time, read_scope
 from ._sync import synced
 from ._scope import AMBIENT
 from .exceptions import NotFound
@@ -149,15 +149,20 @@ class AgentMemory:
     def __repr__(self) -> str:
         return f"AgentMemory(agent={self._agent._known('name') or self._agent._known('id')!r})"
 
-    async def _call(self, method: str, suffix: str, user: Any, **kwargs: Any) -> Any:
+    async def _call(self, method: str, suffix: str, user: Any, user_filter: Any = None, **kwargs: Any) -> Any:
         raw = await self._agent._ensure()
-        return await self._agent._request(
-            method, f"/v1/agents/{raw['id']}/memory{suffix}", user=self._agent._talk_scope(user), **kwargs,
-        )
+        if user_filter is None:
+            scope = self._agent._talk_scope(user)
+        else:  # the layer it names, read and written as the account
+            scope, layer = await read_scope(user, user_filter)
+            kwargs["params"] = {**(kwargs.get("params") or {}), "user_id": layer}
+        return await self._agent._request(method, f"/v1/agents/{raw['id']}/memory{suffix}", user=scope, **kwargs)
 
     @synced
-    async def list(self, *, user: Any = AMBIENT) -> List[MemoryEntry]:
-        """The entries of one layer: the account's outside ``as_user``, else the user's.
+    async def list(self, *, user: Any = AMBIENT, user_filter: Any = None) -> List[MemoryEntry]:
+        """The entries of one layer: the account's outside ``as_user``, else the user's. ``user_filter`` names the
+        layer instead, read as the account: a user's (a ``User`` or your id), or ``noclick.NO_USER`` for the
+        account's own; a suspended user's reads this way too. Every method here takes it.
 
         Returns:
             Each entry's name, description, version and when it last changed, by name; ``content`` is
@@ -169,11 +174,12 @@ class AgentMemory:
             for entry in support.memory.list():
                 print(entry.name, entry.description, entry.updated_by)
         """
-        response = await self._call("GET", "", user) or {}
+        response = await self._call("GET", "", user, user_filter) or {}
         return [MemoryEntry._from(row) for row in response.get("data") or []]
 
     @synced
-    async def search(self, query: str, *, limit: Optional[int] = None, user: Any = AMBIENT) -> List[MemoryEntry]:
+    async def search(self, query: str, *, limit: Optional[int] = None, user: Any = AMBIENT,
+                     user_filter: Any = None) -> List[MemoryEntry]:
         """Search what the agent remembers in a scope, the way the agent does: a
         user's entries and the account's. An entry matches when its name,
         description or content holds any of the query's words (a word also
@@ -190,11 +196,11 @@ class AgentMemory:
             for entry in support.memory.search("refund policy", user="user_42"):
                 print(entry.name, entry.content)
         """
-        response = await self._call("GET", "", user, params={"q": query, "limit": limit}) or {}
+        response = await self._call("GET", "", user, user_filter, params={"q": query, "limit": limit}) or {}
         return [MemoryEntry._from(row) for row in response.get("data") or []]
 
     @synced
-    async def read(self, name: str, *, user: Any = AMBIENT) -> MemoryEntry:
+    async def read(self, name: str, *, user: Any = AMBIENT, user_filter: Any = None) -> MemoryEntry:
         """One entry in full; a name with no entry raises ``noclick.NotFound``.
 
         Returns:
@@ -206,7 +212,7 @@ class AgentMemory:
             refunds = support.memory.read("refunds")
             print(refunds.version, refunds.content)
         """
-        return MemoryEntry._from(await self._call("GET", f"/{quote(name, safe='')}", user))
+        return MemoryEntry._from(await self._call("GET", f"/{quote(name, safe='')}", user, user_filter))
 
     @synced
     async def save(
@@ -217,6 +223,7 @@ class AgentMemory:
         description: Optional[str] = None,
         version: Optional[int] = None,
         user: Any = AMBIENT,
+        user_filter: Any = None,
     ) -> MemoryEntry:
         """Write an entry, creating it if the name is new. ``description`` is the
         line the agent sees every turn (required for a new entry, kept when you
@@ -246,10 +253,11 @@ class AgentMemory:
                     print("The agent changed it since; read it again.")
         """
         body = compact(content=content, description=description, version=version)
-        return MemoryEntry._from(await self._call("PUT", f"/{quote(name, safe='')}", user, json=body))
+        return MemoryEntry._from(await self._call("PUT", f"/{quote(name, safe='')}", user, user_filter, json=body))
 
     @synced
-    async def delete(self, name: str, *, version: Optional[int] = None, user: Any = AMBIENT) -> None:
+    async def delete(self, name: str, *, version: Optional[int] = None, user: Any = AMBIENT,
+                     user_filter: Any = None) -> None:
         """Forget an entry. With ``version``, only if it is still at that version
         (else ``noclick.Conflict``). The agent can save the name again later.
 
@@ -259,10 +267,10 @@ class AgentMemory:
             entry = support.memory.read("old-pricing")
             support.memory.delete("old-pricing", version=entry.version)
         """
-        await self._call("DELETE", f"/{quote(name, safe='')}", user, params={"version": version})
+        await self._call("DELETE", f"/{quote(name, safe='')}", user, user_filter, params={"version": version})
 
     @synced
-    async def versions(self, name: str, *, user: Any = AMBIENT) -> List[MemoryEntryVersion]:
+    async def versions(self, name: str, *, user: Any = AMBIENT, user_filter: Any = None) -> List[MemoryEntryVersion]:
         """An entry's versions, newest first: the one it holds now, then those kept from earlier saves (its last
         50 in all). A name with no entry raises ``noclick.NotFound``.
 
@@ -275,11 +283,12 @@ class AgentMemory:
             for v in support.memory.versions("refunds"):
                 print(v.version, v.current, v.written_by.type, v.saved_at)
         """
-        response = await self._call("GET", f"/{quote(name, safe='')}/versions", user) or {}
+        response = await self._call("GET", f"/{quote(name, safe='')}/versions", user, user_filter) or {}
         return [MemoryEntryVersion._from(row) for row in response.get("data") or []]
 
     @synced
-    async def get_version(self, name: str, version: int, *, user: Any = AMBIENT) -> MemoryEntryVersion:
+    async def get_version(self, name: str, version: int, *, user: Any = AMBIENT,
+                          user_filter: Any = None) -> MemoryEntryVersion:
         """One version of an entry, with its content; one it no longer keeps raises ``noclick.NotFound``.
 
         Returns:
@@ -290,10 +299,11 @@ class AgentMemory:
             first = noclick.Agent.from_name("support").memory.get_version("refunds", 1)
             print(first.content)
         """
-        return MemoryEntryVersion._from(await self._call("GET", f"/{quote(name, safe='')}/versions/{version}", user))
+        return MemoryEntryVersion._from(await self._call("GET", f"/{quote(name, safe='')}/versions/{version}", user,
+                                                         user_filter))
 
     @synced
-    async def restore(self, name: str, version: int, *, user: Any = AMBIENT) -> MemoryEntry:
+    async def restore(self, name: str, version: int, *, user: Any = AMBIENT, user_filter: Any = None) -> MemoryEntry:
         """Put an entry back as it was at ``version``: a new version holding that one's content and description,
         so the one it replaces is kept too.
 
@@ -305,10 +315,11 @@ class AgentMemory:
             support = noclick.Agent.from_name("support")
             support.memory.restore("refunds", 1)
         """
-        return MemoryEntry._from(await self._call("POST", f"/{quote(name, safe='')}/versions/{version}/restore", user))
+        return MemoryEntry._from(await self._call("POST", f"/{quote(name, safe='')}/versions/{version}/restore", user,
+                                                  user_filter))
 
     @synced
-    async def entries(self, *, user: Any = AMBIENT) -> List[MemoryEntry]:
+    async def entries(self, *, user: Any = AMBIENT, user_filter: Any = None) -> List[MemoryEntry]:
         """``list``, as ``noclick.Memory`` calls it, so code reads any memory the same way.
 
         Returns:
@@ -319,10 +330,11 @@ class AgentMemory:
             for memory in (noclick.Agent.from_name("support").memory, noclick.Memory.from_name("company")):
                 print([entry.name for entry in memory.entries()])
         """
-        return await self.list.aio(user=user)
+        return await self.list.aio(user=user, user_filter=user_filter)
 
     @synced
-    async def forget(self, name: str, *, version: Optional[int] = None, user: Any = AMBIENT) -> None:
+    async def forget(self, name: str, *, version: Optional[int] = None, user: Any = AMBIENT,
+                     user_filter: Any = None) -> None:
         """``delete``, as ``noclick.Memory`` calls it, so code changes any memory the same way.
 
         Usage::
@@ -330,7 +342,7 @@ class AgentMemory:
             support = noclick.Agent.from_name("support")
             support.memory.forget("old-pricing")
         """
-        await self.delete.aio(name, version=version, user=user)
+        await self.delete.aio(name, version=version, user=user, user_filter=user_filter)
 
 
 # --- workspace -----------------------------------------------------------------

@@ -705,9 +705,7 @@ export default function UserDetail({ rest }: ConsolePageProps) {
     /** True once the status changed; a refusal shows as a toast. */
     const setStatus = async (status: 'active' | 'suspended'): Promise<boolean> => {
         try {
-            if (status === 'suspended') saved(await u.suspend());
-            // User has no reactivate(); PATCH status is the API's way back.
-            else await client.request('PATCH', `/v1/users/${encodeURIComponent(u.id)}`, { json: { status }, user: null });
+            saved(await (status === 'suspended' ? u.suspend() : u.reactivate()));
             await user.refresh();
             invalidateV1('users');
             toast.success(status === 'suspended' ? `${u.id} suspended` : `${u.id} reactivated`);

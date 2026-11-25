@@ -11,7 +11,7 @@ import { HAIRLINE, LiveDot, fmtBytes } from '@/ui/primitives';
 import { credentialLabel } from '@/ui/connectionMark';
 import { cn } from '@/ui/utils';
 import { ALL_USERS, Agent, Agents, Cron, Inbox, NO_USER, NoClickError, Event as NoClickEvent, OnEvent, OnPlatformEvent, OnQueue, OnWebhook, Operation, PhoneNumber, Policy, Queue, Repo, Secret, Usage, Volume, type AgentGrant, type AgentTrigger, type Conversation, type HarnessName, type IntegrationOperation, type JsonObject, type MemoryEntry, type Message, type PolicyVerdict, type Rehearsal } from 'noclick';
-import { BUCKET_TOOLS, DATABASE_TOOLS, toMemoryEntry, toMessage } from '@/sdk/source';
+import { BUCKET_TOOLS, DATABASE_TOOLS } from '@/sdk/source';
 import { formatCount, truncateId } from '@/screens/console/lib/format';
 import { agentCodeSnippet, snippetTabs } from '@/screens/console/lib/snippets';
 import { userLabel, userPath } from '@/screens/console/lib/userFilter';
@@ -183,7 +183,7 @@ function useAgentSpend(agent: Agent): number | null | undefined {
 /** The agent's A2A endpoint, from its card. */
 function A2AFact({ agentId }: { agentId: string }) {
     const { client } = useConsole();
-    const card = useV1(`agents/${agentId}/a2a/card`, () => client.request<{ url?: string }>('GET', `/v1/agents/${encodeURIComponent(agentId)}/a2a/card`, { user: null }));
+    const card = useV1(`agents/${agentId}/a2a/card`, async () => (await Agent.fromId(agentId, { client, user: null }).a2aCard()) as { url?: string });
     const url = card.data?.url;
     if (!url) return null;
     return (
@@ -1252,12 +1252,8 @@ function conversationColumns(): Column<Conversation>[] {
 }
 
 /** A thread read as the account naming whose it is (`user_id`), so a suspended user's still loads. */
-async function readThread(client: ReturnType<typeof useConsole>['client'], agentId: string, userId: string | null, conversation: string): Promise<Message[]> {
-    const raw = await client.request<{ messages?: JsonObject[] }>('GET', `/v1/agents/${encodeURIComponent(agentId)}/conversations/${encodeURIComponent(conversation)}`, {
-        query: { user_id: userId ?? 'none' },
-        user: null,
-    });
-    return (raw.messages ?? []).map(toMessage);
+async function readThread(agent: Agent, userId: string | null, conversation: string): Promise<Message[]> {
+    return await agent.history(conversation, { userFilter: userId ?? NO_USER });
 }
 
 /** What a conversation's model calls came to, and who holds it; a handed-off one goes back to the agent here. */
@@ -1310,8 +1306,7 @@ function ConversationState({ agent, conversation, onHandedBack }: { agent: Agent
 }
 
 function Transcript({ agent, userId, conversation, person = null }: { agent: Agent; userId: string | null; conversation: string; person?: string | null }) {
-    const { client } = useConsole();
-    const history = useV1(`agents/${agent.id}/conversations/${userId ?? 'none'}/${conversation}`, () => readThread(client, agent.id, userId, conversation));
+    const history = useV1(`agents/${agent.id}/conversations/${userId ?? 'none'}/${conversation}`, () => readThread(agent, userId, conversation));
     if (history.error !== undefined) return <ErrorPanel error={history.error} onRetry={() => void history.refresh()} />;
     if (!history.data) return <div aria-busy className="h-24 animate-pulse rounded-lg bg-foreground/[0.04]" />;
     if (!history.data.length) return <p className="m-0 text-[13px] text-muted-foreground">No messages in this conversation.</p>;
@@ -1884,18 +1879,8 @@ function Triggers({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) =>
 
 const WHO_CHANGED: Record<string, string> = { agent: 'The agent', api: 'Your code', console: 'You' };
 
-/** A memory route as the account, naming the layer by `user_id` (`none`: the account's) so a suspended user's still loads. */
-async function memoryCall<T>(
-    client: ReturnType<typeof useConsole>['client'],
-    agent: Agent,
-    layer: string | null,
-    method: string,
-    name: string | null,
-    options: { json?: unknown; query?: Record<string, string | number | undefined> } = {},
-): Promise<T> {
-    const path = `/v1/agents/${encodeURIComponent(agent.id)}/memory${name === null ? '' : `/${encodeURIComponent(name)}`}`;
-    return await client.request<T>(method, path, { ...options, query: { ...options.query, user_id: layer ?? 'none' }, user: null });
-}
+/** A memory layer read and written as the account, naming whose (`none`: the account's) so a suspended user's still loads. */
+const layerOf = (layer: string | null) => ({ userFilter: layer ?? NO_USER });
 
 function MemoryEditor({
     agent,
@@ -1912,7 +1897,6 @@ function MemoryEditor({
     onSaved: (entry: MemoryEntry) => void;
     onCancel: () => void;
 }) {
-    const { client } = useConsole();
     const [name, setName] = useState(entry?.name ?? '');
     const [description, setDescription] = useState(entry?.description ?? '');
     const [content, setContent] = useState(entry?.content ?? '');
@@ -1922,12 +1906,12 @@ function MemoryEditor({
         setSaving(true);
         setError(undefined);
         try {
-            const saved = toMemoryEntry(
-                await memoryCall<JsonObject>(client, agent, layer, 'PUT', entry ? entry.name : name.trim(), {
-                    // Only lands if the agent hasn't changed it since it was opened.
-                    json: { content, description: description.trim() || undefined, version: entry?.version },
-                }),
-            );
+            // Only lands if the agent hasn't changed it since it was opened.
+            const saved = await agent.memory.save(entry ? entry.name : name.trim(), content, {
+                description: description.trim() || undefined,
+                version: entry?.version,
+                ...layerOf(layer),
+            });
             toast.success(`Saved ${saved.name}`);
             onSaved(saved);
         } catch (err) {
@@ -1982,8 +1966,7 @@ function MemoryDrawer({
     onChanged: (entry: MemoryEntry | null, name: string) => void;
     onClose: () => void;
 }) {
-    const { client } = useConsole();
-    const read = useV1(`agents/${agent.id}/memory/${layer ?? 'account'}/${name}`, async () => toMemoryEntry(await memoryCall<JsonObject>(client, agent, layer, 'GET', name)));
+    const read = useV1(`agents/${agent.id}/memory/${layer ?? 'account'}/${name}`, () => agent.memory.read(name, layerOf(layer)));
     const [editing, setEditing] = useState(false);
     const [forgetting, setForgetting] = useState(false);
     const [busy, setBusy] = useState(false);
@@ -1993,7 +1976,7 @@ function MemoryDrawer({
         if (!entry) return;
         setBusy(true);
         try {
-            await memoryCall(client, agent, layer, 'DELETE', entry.name, { query: { version: entry.version } });
+            await agent.memory.delete(entry.name, { version: entry.version, ...layerOf(layer) });
             toast.success(`${agent.name} forgot ${entry.name}`);
             onChanged(null, entry.name);
             onClose();
@@ -2079,7 +2062,6 @@ const ACCOUNT_LAYER = 'account';
 
 /** Named notes it keeps across conversations: an account agent's shared layer, or one user's. */
 function Memory({ agent }: { agent: Agent }) {
-    const { client } = useConsole();
     const users = useUsers();
     const [layerParam, setLayerParam] = useSearchParam('memlayer');
     const [open, setOpen] = useSearchParam('mem');
@@ -2088,7 +2070,7 @@ function Memory({ agent }: { agent: Agent }) {
     const layerId = agent.userId ? null : layerParam && layerParam !== ACCOUNT_LAYER ? layerParam : null;
     const layer = agent.userId ?? layerId;
     const key = `agents/${agent.id}/memory?layer=${layer ?? ACCOUNT_LAYER}`;
-    const memory = useV1(key, async () => ((await memoryCall<{ data?: JsonObject[] }>(client, agent, layer, 'GET', null)).data ?? []).map(toMemoryEntry));
+    const memory = useV1(key, () => agent.memory.list(layerOf(layer)));
     const rows = memory.data ?? [];
     const upsert = (entry: MemoryEntry | null, name: string) => {
         const rest = rows.filter((e) => e.name !== name);

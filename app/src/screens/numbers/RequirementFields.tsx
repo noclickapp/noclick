@@ -138,8 +138,10 @@ function DocumentAnswer({
         if (uploaded) onChange(uploaded.id);
         if (input.current) input.current.value = '';
     };
+    const removeDocument = purchase.removeDocument;
     const remove = async (document: NumberDocument) => {
-        const removed = await purchase.removeDocument(document);
+        if (!removeDocument) return;
+        const removed = await removeDocument(document);
         if (removed) setKept(removed.keptByCarrier ? document.filename : null);
     };
     return (
@@ -152,7 +154,7 @@ function DocumentAnswer({
                             <FileText className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                             <span className="min-w-0 flex-1 truncate text-foreground">{d.filename}</span>
                             <span className="shrink-0 text-[12.5px] text-muted-foreground">{uploadedOn(d)}</span>
-                            <button
+                            {removeDocument && <button
                                 type="button"
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -163,7 +165,7 @@ function DocumentAnswer({
                                 className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                            </button>}
                         </label>
                     ))}
                 </div>

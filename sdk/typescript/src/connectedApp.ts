@@ -6,8 +6,8 @@
 
 import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
-import { asObject, num, paginate, parseTime, str } from "./object.ts";
-import type { JsonObject } from "./object.ts";
+import { asObject, fetchPage, num, paginate, parseTime, str } from "./object.ts";
+import type { JsonObject, Page, PageOptions } from "./object.ts";
 
 /**
  * One connection, revoked or not: the client (`clientName`, and `clientId`, `noclick:` for one NoClick makes itself),
@@ -63,6 +63,14 @@ export class ConnectedApp {
   static async list(options: { limit?: number; client?: NoClick } = {}): Promise<ConnectedApp[]> {
     const rows = await paginate(resolveClient(options.client), "/v1/connected_apps", { user: null, limit: options.limit });
     return rows.map((raw) => new ConnectedApp(raw));
+  }
+
+  /** One page of `list()`, newest first; pass `nextCursor` back as `cursor`. The signed-in owner's alone. */
+  static async listPage(options: PageOptions & { client?: NoClick } = {}): Promise<Page<ConnectedApp>> {
+    const page = await fetchPage(resolveClient(options.client), "/v1/connected_apps", {
+      user: null, cursor: options.cursor, limit: options.limit,
+    });
+    return { data: page.data.map((raw) => new ConnectedApp(raw)), nextCursor: page.nextCursor };
   }
 
   /**

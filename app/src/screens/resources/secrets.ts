@@ -2,7 +2,7 @@
 // (an environment variable, a file, or neither when a tool server's sign-in reads it), the agents that hold it, and
 // the computer it was moved from. Only names are read: a value never leaves the API. Removing one takes it off each
 // agent that holds it, then deletes it, which also ends any sign-in made of its value.
-import { ALL_USERS, Secret, type NoClick } from 'noclick';
+import { ALL_USERS, Agent, Secret, type NoClick } from 'noclick';
 import type { ResourceItem } from '@/screens/resources/model';
 import type { DeletionImpact, Removal } from '@/screens/resources/platform';
 import { movedFacts, movedFrom, movedLine, type MovedFrom } from '@/lib/movedFrom';
@@ -76,15 +76,15 @@ export async function removeSecret(client: NoClick, s: SecretItem): Promise<stri
     const done: string[] = [];
     for (const agent of s.agents) {
         try {
-            const raw = await client.request<{ secret_ids?: string[] | null }>('GET', `/v1/agents/${agent.id}`, { user });
-            await client.request('PATCH', `/v1/agents/${agent.id}`, { json: { secret_ids: (raw.secret_ids ?? []).filter((id) => id !== s.id) }, user });
+            const held = await Agent.get(agent.id, { client, user });
+            await held.update({ secrets: held.secretIds.filter((id) => id !== s.id) });
             done.push(agent.name);
         } catch (error) {
             throw new Error(`${done.length ? `It came off ${done.join(', ')}, but not` : 'It couldn’t be taken'} off ${agent.name}: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
     try {
-        await client.request('DELETE', `/v1/secrets/${s.id}`, { user });
+        await Secret.fromId(s.id, { client, user }).delete();
     } catch (error) {
         throw new Error(`${done.length ? `It came off ${done.join(', ')}, but it` : 'It'} couldn’t be deleted: ${error instanceof Error ? error.message : String(error)}`);
     }

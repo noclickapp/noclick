@@ -7,10 +7,9 @@
 // the price the buyer saw, with the registrant and the trademark notice's
 // acceptance when the buyer gave them; `onPurchase` hears its operation's id.
 import { DomainRegistrarError, type DomainOffer, type DomainRegistrar, type DomainSearch } from '@/screens/domains/useDomainPurchase';
-import type { KnownRegistrant } from '@/lib/domainRegistrant';
 import { formatPrice as formatDollars } from '@/screens/numbers/numberDisplay';
 import { heldCallOf } from '@/sdk/held';
-import { Domain, NoClickError, type DomainOffer as PlatformOffer, type NoClick } from 'noclick';
+import { Account, Domain, NoClickError, type DomainOffer as PlatformOffer, type NoClick } from 'noclick';
 
 /** The endings Resources searches, most wanted first. */
 export const DOMAIN_ENDINGS = ['com', 'ai', 'io', 'co', 'app', 'dev', 'net', 'org'];
@@ -95,8 +94,8 @@ export function platformRegistrar(client: NoClick, { onPurchase }: { onPurchase?
                         onFile: { name: usable.name, email: usable.email, ...(usable.organization ? { organization: usable.organization } : {}) },
                     };
                 }
-                const { owner } = await client.request<{ owner: KnownRegistrant }>('GET', '/v1/account', { user: null });
-                return { agreementUrl: agreement.url, onFile: null, known: owner };
+                const { owner } = await Account.get({ client });
+                return { agreementUrl: agreement.url, onFile: null, known: owner ?? undefined };
             } catch (error) {
                 throw refusal(error);
             }

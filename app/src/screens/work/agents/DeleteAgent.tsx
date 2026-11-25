@@ -5,7 +5,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
-import { Agent, TrashItem, type NoClick } from 'noclick';
+import { Agent, TrashItem, previewDelete, type NoClick } from 'noclick';
 import { invalidateV1 } from '@/sdk/useV1';
 import { BUTTON_DANGER, BUTTON_GHOST } from '@/ui/buttons';
 import { ShellDialog } from '@/ui/ShellDialog';
@@ -26,11 +26,11 @@ export interface AgentDeletion {
 export async function previewAgentDeletion(client: NoClick, agentId: string): Promise<AgentDeletion> {
     const agent = Agent.fromId(agentId, { client });
     const [preview, conversations, triggers] = await Promise.all([
-        client.request<{ impact: { deletes?: string; reversible?: boolean; undo?: string | null } }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path: `/v1/agents/${agentId}` } }),
+        previewDelete('DELETE', `/v1/agents/${agentId}`, { client }),
         agent.conversations(),
         agent.triggers(),
     ]);
-    return { deletes: preview.impact.deletes ?? '', reversible: preview.impact.reversible === true, undo: preview.impact.undo ?? null, conversations: conversations.length, triggers: triggers.filter((t) => t.kind !== 'channel' && t.kind !== 'routine').length };
+    return { deletes: preview.impact.deletes, reversible: preview.impact.reversible, undo: preview.impact.undo, conversations: conversations.length, triggers: triggers.filter((t) => t.kind !== 'channel' && t.kind !== 'routine').length };
 }
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;

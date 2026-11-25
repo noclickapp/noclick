@@ -1,17 +1,19 @@
-"""Signing a command line in, and what it reads about the key it signed in with.
-
-A device sign-in (``CliLogin.start``, then ``poll`` until a person approves it on the page it names) is made before
-there is a key, so it sends none (a setup code is ``Key.redeem_setup_code``). ``account_status`` and
-``Key.revoke_current`` act with the key the client holds.
-"""
+"""Signing a command line in: a device sign-in (``CliLogin.start``, then ``poll`` until a person approves it on the
+page it names), made before there is a key, so it sends none (a setup code is ``Key.redeem_setup_code``); the
+sign-in as the account's signed-in owner reads and answers it (``CliLogin.get``, ``answer``); and what
+``account_status`` reads about the key a client holds."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Dict, Optional
+from urllib.parse import quote
 
 from ._client import Client, resolve_client
+from ._object import parse_time
 from ._sync import synced
+
 
 @dataclass(frozen=True)
 class CliLoginStart:
@@ -40,8 +42,30 @@ class CliLoginPoll:
     raw: Dict[str, Any] = field(default_factory=dict, repr=False)
 
 
+@dataclass(frozen=True)
 class CliLogin:
-    """A device sign-in: what a command line does to get a key without anyone pasting one."""
+    """A device sign-in, what a command line does to get a key without anyone pasting one (``start``, ``poll``), and
+    one waiting, as its approver reads it: the ``user_code`` its terminal shows, the ``client`` and ``hostname`` that started it, the
+    address it came from (``ip``), the name of the key it gets (``key_name``), its ``status`` (``pending``,
+    ``approved`` or ``denied``) and when it lapses."""
+
+    user_code: str
+    client: str
+    hostname: str
+    ip: Optional[str]
+    key_name: str
+    status: str
+    created_at: Optional[datetime] = None
+    expires_at: Optional[datetime] = None
+    raw: Dict[str, Any] = field(default_factory=dict, repr=False)
+    _api: Optional[Client] = field(default=None, repr=False, compare=False)
+
+    @classmethod
+    def _from(cls, raw: Any, api: Optional[Client]) -> "CliLogin":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("user_code") or "", raw.get("client") or "", raw.get("hostname") or "", raw.get("ip"),
+                   raw.get("key_name") or "", raw.get("status") or "", parse_time(raw.get("created_at")),
+                   parse_time(raw.get("expires_at")), raw, api)
 
     @synced
     @staticmethod
@@ -87,6 +111,39 @@ class CliLogin:
         interval = raw.get("interval_s")
         return CliLoginPoll(status, float(interval) if interval is not None else None, raw.get("key"),
                             raw.get("key_id"), raw.get("key_name"), raw.get("email"), raw)
+
+    @synced
+    @classmethod
+    async def get(cls, code: str, *, client: Optional[Client] = None) -> "CliLogin":
+        """The sign-in waiting for ``code`` (as its terminal shows it, ``WDJB-MJHT``); ``noclick.NotFound`` once
+        it's answered, expired or never started. The signed-in owner's alone.
+
+        Returns:
+            The sign-in.
+
+        Usage::
+
+            login = noclick.CliLogin.get("WDJB-MJHT")
+            print(login.hostname, login.ip)
+        """
+        raw = await resolve_client(client).request("GET", f"/v1/cli/logins/{quote(code, safe='')}", user=None)
+        return cls._from(raw, client)
+
+    @synced
+    async def answer(self, approved: bool) -> "CliLogin":
+        """Approve the sign-in (its CLI's next poll gets a key of the account, every scope but those that read
+        secrets) or deny it. Approve only one you started yourself, just now.
+
+        Returns:
+            The sign-in, answered.
+
+        Usage::
+
+            noclick.CliLogin.get("WDJB-MJHT").answer(True)
+        """
+        raw = await resolve_client(self._api).request(
+            "POST", f"/v1/cli/logins/{quote(self.user_code, safe='')}/answer", json={"approved": approved}, user=None)
+        return CliLogin._from(raw, self._api)
 
 
 @synced

@@ -42,6 +42,11 @@ test("code approves and declines as the account, never as a user", async () => {
 
   api.on("POST", "/v1/approvals/apr_2/answer", json({ ...APPROVAL, id: "apr_2", status: "declined" }));
   assert.equal((await nc.Approval.fromId("apr_2").decline()).status, "declined");
+
+  // The signed-in owner approving a call whose terms apply names the terms it accepts.
+  const terms = api.on("POST", "/v1/approvals/apr_3/answer", json({ ...APPROVAL, id: "apr_3", status: "approved" }));
+  await nc.Approval.fromId("apr_3").approve({ accepted: ["registration_agreement"] });
+  assert.deepEqual(terms.last.body, { approved: true, accepted: ["registration_agreement"] });
 });
 
 test("a key without the scope is refused", async () => {

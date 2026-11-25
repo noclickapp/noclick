@@ -2,8 +2,8 @@
 // their yes: read and answered through the request's own routes (GET /v1/humans/requests/{id}, POST .../answer) with
 // the page's client, the same answer the request's page and texts give. Read again when the tab comes back into focus
 // while it waits: it may have been answered from a text or the page meanwhile.
-import { useCallback, useEffect, useState } from 'react';
-import type { NoClick } from 'noclick';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { HumanRequest, type NoClick } from 'noclick';
 
 /** A question about something in a connected account: the field its choices come from, and the account's
  *  connection that lists them (the picker the canvas's questions use). */
@@ -97,7 +97,8 @@ function messageOf(error: unknown): string {
 
 /** The request `requestId`, read and answered with `client` (the page's own). */
 export function useHumanRequest(client: NoClick, requestId: string) {
-    const path = `/v1/humans/requests/${encodeURIComponent(requestId)}`;
+    // The request as last read, which an answer goes through.
+    const held = useRef<HumanRequest<unknown> | null>(null);
     const [question, setQuestion] = useState<OwnerQuestion | null>(null);
     const [unreadable, setUnreadable] = useState(false);
     const [answering, setAnswering] = useState(false);
@@ -105,13 +106,14 @@ export function useHumanRequest(client: NoClick, requestId: string) {
 
     const load = useCallback(async () => {
         try {
-            setQuestion(await client.request<OwnerQuestion>('GET', path, { user: null }));
+            held.current = await HumanRequest.retrieve(requestId, { client, user: null });
+            setQuestion(held.current.request as unknown as OwnerQuestion);
             setUnreadable(false);
         } catch (error) {
             console.warn('[coordinator] reading the question failed:', error);
             setUnreadable(true);
         }
-    }, [client, path]);
+    }, [client, requestId]);
 
     useEffect(() => {
         void load();
@@ -130,7 +132,12 @@ export function useHumanRequest(client: NoClick, requestId: string) {
             setAnswering(true);
             setFailure(null);
             try {
-                setQuestion(await client.request<OwnerQuestion>('POST', `${path}/answer`, { json: given, user: null }));
+                const request = held.current ?? (await HumanRequest.retrieve(requestId, { client, user: null }));
+                const note = given.note ?? undefined;
+                if (given.approved !== undefined) await (given.approved ? request.approve({ note }) : request.decline({ note }));
+                else await request.answer({ choice: given.choice, text: given.text, connection: given.connection, secretValues: given.secret_values });
+                held.current = request;
+                setQuestion(request.request as unknown as OwnerQuestion);
             } catch (error) {
                 setFailure(messageOf(error));
                 void load();
@@ -138,7 +145,7 @@ export function useHumanRequest(client: NoClick, requestId: string) {
                 setAnswering(false);
             }
         },
-        [client, path, load]
+        [client, requestId, load]
     );
 
     return { question, unreadable, answering, failure, answer };

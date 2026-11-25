@@ -2,9 +2,9 @@
 // the clients that reached it (`/v1/mcp_servers/{id}/clients`, recorded by the server itself as they connect), read
 // again the moment one connects (a platform:resource frame for the server) and on a slow timer as the backstop. Its
 // status is the hosted link's own shape, so the card says connected, waiting or replaced as every MCP card does.
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useClient } from '@/sdk/client';
-import { NotFound } from 'noclick';
+import { McpServer, NotFound } from 'noclick';
 import { useWorkFrames } from '@/sdk/live';
 import { deriveMcpConnectState, type HostedLinkStatus, type McpConnectState } from '@/lib/mcpConnectState';
 
@@ -59,7 +59,7 @@ export function linkStatusOf(server: McpServerView, clients: readonly McpClientV
 
 export function useMcpServerConnect(serverId: string, { enabled = true }: { enabled?: boolean } = {}) {
     const client = useClient();
-    const path = `/v1/mcp_servers/${encodeURIComponent(serverId)}`;
+    const handle = useMemo(() => McpServer.fromId(serverId, { client, user: null }), [client, serverId]);
     const [server, setServer] = useState<McpServerView | null>(null);
     const [clients, setClients] = useState<McpClientView[] | null>(null);
     const [gone, setGone] = useState(false);
@@ -68,18 +68,17 @@ export function useMcpServerConnect(serverId: string, { enabled = true }: { enab
 
     const read = useCallback(async () => {
         try {
-            const [view, seen] = await Promise.all([
-                client.request<McpServerView>('GET', path, { user: null }),
-                client.request<{ data: McpClientView[] }>('GET', `${path}/clients`, { user: null }),
-            ]);
-            setServer(view);
-            setClients(seen.data);
+            // Read first: the handle then knows the server, and its clients are one call more.
+            const view = await handle.refresh();
+            const seen = await handle.clients();
+            setServer(view.raw as unknown as McpServerView);
+            setClients(seen.map((c) => c.raw as unknown as McpClientView));
             setNow(Date.now());
         } catch (error) {
             if (error instanceof NotFound) setGone(true);
             else console.warn('[coordinator] reading the MCP server failed:', error);
         }
-    }, [client, path]);
+    }, [handle]);
 
     useWorkFrames(
         'platform:resource',
@@ -106,8 +105,8 @@ export function useMcpServerConnect(serverId: string, { enabled = true }: { enab
 
     /** A new link in place of this one: the old one stops answering at once. */
     const renew = useCallback(async () => {
-        setServer(await client.request<McpServerView>('POST', `${path}/rotate`, { user: null }));
-    }, [client, path]);
+        setServer((await handle.rotate()).raw as unknown as McpServerView);
+    }, [handle]);
 
     return { server, status, state, gone, renew };
 }

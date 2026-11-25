@@ -40,7 +40,7 @@ import { secretIdList } from "./secret.ts";
 import { Terminal } from "./terminal.ts";
 import type { SecretRef } from "./secret.ts";
 import { resolveScope } from "./scope.ts";
-import type { UserOption, UserRef } from "./scope.ts";
+import type { UserFilter, UserOption, UserRef } from "./scope.ts";
 import type { RegionName } from "./region.ts";
 import type { RepoCheckout } from "./repo.ts";
 import type { NetworkAccess } from "./sandbox.ts";
@@ -997,6 +997,138 @@ export interface AgentHistoryOptions {
   /** Just before this cursor: a `nextCursor` of `historyPage`. */
   before?: string;
   user?: UserOption;
+  /**
+   * Whose thread it is, read as the account (`user_id`): a user's (a `User` or your id for one) or `NO_USER` for the
+   * account's own, instead of acting as the user (`user`). A suspended user's thread reads this way too.
+   */
+  userFilter?: UserFilter;
+}
+
+/** A page of `history`, with the agent's session: the one conversation everyone talking to it shares now. */
+export interface HistoryPage extends Page<Message> {
+  /** The agent's session as the read found it (a read of a conversation nobody wrote in yet names the one it makes). */
+  session: string | null;
+}
+
+/** The chat an activity item happened in, and who it's with. */
+export interface ActivityChat {
+  /** The conversation. */
+  key: string;
+  /** A person's name, or a group's as kept for it. */
+  name: string | null;
+  /** `direct`, `group` or `self` (the owner's own chat). */
+  kind: string | null;
+  /** E.164. */
+  number: string | null;
+  /** The chat's picture, where one was kept. */
+  avatar: string | null;
+  /** The trigger's node, which names the app the chat is on. */
+  nodeType: string | null;
+}
+
+/** A message that came in, as its trigger's node reads it. */
+export interface ActivityMessage {
+  senderName: string | null;
+  senderId: string | null;
+  senderNumber: string | null;
+  senderAvatar: string | null;
+  text: string;
+  /** `{ kind, url, duration, transcript }`: a voice note, an image, a file; the transcript once the turn read it. */
+  media: JsonObject | null;
+  quotedText: string | null;
+  at: Date | null;
+  messageId: string | null;
+}
+
+/** One thing the agent did on a turn, in order. */
+export interface ActivityAction {
+  /** `reply`, `reaction`, `note`, `reminder`, `found`, `held`, `failed` or `quiet`. */
+  kind: string;
+  text: string | null;
+  emoji: string | null;
+  at: Date | null;
+  /** On a `held` call: the request its owner answers. */
+  heldRequestId: string | null;
+  messageId: string | null;
+  /** The tool it called (none for the turn's own end). */
+  tool: string | null;
+  /** A file a reply sent: `{ kind, url }`. */
+  media: JsonObject | null;
+  /** When a reminder wakes it. */
+  when: string | null;
+  /** The memory entry a note saved. */
+  name: string | null;
+  /** A reply the agent edited since. */
+  edited: boolean;
+}
+
+/** The turn an activity item is: its `agent.message` operation and thread. */
+export interface ActivityTurn {
+  id: string;
+  conversationId: string;
+  /** `running` (its actions fill as its calls complete), `done` or `failed`. */
+  status: string;
+  startedAt: Date | null;
+  workedS: number | null;
+  /** The trigger (`{ kind, id, title }`) or the wake-up that started it. */
+  startedBy: JsonObject | null;
+  /** Every call it made, `{ tool, at, error }`. */
+  steps: JsonObject[];
+}
+
+/**
+ * A turn a trigger's event or a wake-up started where no one watched: the chat it happened in, what came in
+ * (`inbound`, then `alsoInbound`, the messages it answered too), what the agent did, and the turn.
+ */
+export interface AgentActivity {
+  chat: ActivityChat;
+  /** The message that started it; null for a turn a wake-up started. */
+  inbound: ActivityMessage | null;
+  /** Messages that came in while the agent was busy and that the same turn answered, oldest first. */
+  alsoInbound: ActivityMessage[];
+  did: ActivityAction[];
+  turn: ActivityTurn;
+  raw: JsonObject;
+}
+
+function toActivityMessage(value: unknown): ActivityMessage {
+  const raw = asObject(value);
+  return {
+    senderName: str(raw.sender_name), senderId: str(raw.sender_id), senderNumber: str(raw.sender_number),
+    senderAvatar: str(raw.sender_avatar), text: str(raw.text) ?? "",
+    media: raw.media && typeof raw.media === "object" ? (raw.media as JsonObject) : null,
+    quotedText: str(raw.quoted_text), at: parseTime(raw.at), messageId: str(raw.message_id),
+  };
+}
+
+function toAgentActivity(value: unknown): AgentActivity {
+  const raw = asObject(value);
+  const chat = asObject(raw.chat);
+  const turn = asObject(raw.turn);
+  return {
+    chat: {
+      key: str(chat.key) ?? "", name: str(chat.name), kind: str(chat.kind), number: str(chat.number),
+      avatar: str(chat.avatar), nodeType: str(chat.node_type),
+    },
+    inbound: raw.inbound && typeof raw.inbound === "object" ? toActivityMessage(raw.inbound) : null,
+    alsoInbound: asList(raw.also_inbound).map(toActivityMessage),
+    did: asList(raw.did).map((row) => {
+      const d = asObject(row);
+      return {
+        kind: str(d.kind) ?? "", text: str(d.text), emoji: str(d.emoji), at: parseTime(d.at),
+        heldRequestId: str(d.held_request_id), messageId: str(d.message_id), tool: str(d.tool),
+        media: d.media && typeof d.media === "object" ? (d.media as JsonObject) : null, when: str(d.when),
+        name: str(d.name), edited: d.edited === true,
+      };
+    }),
+    turn: {
+      id: str(turn.id) ?? "", conversationId: str(turn.conversation_id) ?? "", status: str(turn.status) ?? "done",
+      startedAt: parseTime(turn.started_at), workedS: num(turn.worked_s),
+      startedBy: turn.started_by && typeof turn.started_by === "object" ? (turn.started_by as JsonObject) : null,
+      steps: asList(turn.steps).map((step) => asObject(step)),
+    },
+    raw,
+  };
 }
 
 /**
@@ -2447,21 +2579,57 @@ export class Agent extends ApiObject {
   }
 
   /**
+   * @internal Its conversations' path. One named by a ref (`Agent.fromId("agent:coordinator")`) reads them without
+   * loading the agent first, a round trip less.
+   */
+  async _conversationsPath(): Promise<string> {
+    const named = this._raw ? undefined : this._hints.id;
+    if (typeof named === "string" && named.startsWith("agent:")) return `/v1/agents/${encodeURIComponent(named)}/conversations`;
+    return `/v1/agents/${(await this._ensure()).id}/conversations`;
+  }
+
+  /** @internal What a read of a conversation carries: as its user, or as the account naming whose (`userFilter`). */
+  private async conversationScope(options: { user?: UserOption; userFilter?: UserFilter }):
+    Promise<{ user: UserRef | null; query: Record<string, string | undefined> }> {
+    if (options.userFilter === undefined) return { user: this._talkScope(options.user), query: {} };
+    const { user, userId } = await readScope({ userFilter: options.userFilter, user: options.user });
+    return { user, query: { user_id: userId } };
+  }
+
+  /**
+   * The turns a trigger's event or a wake-up started in one conversation, newest first (the `limit` latest, 50 by
+   * default, at most 200): the chat each happened in and who it's with, what came in (a voice note with its
+   * transcript, a file, what it quoted) and what the agent did, in order. A running turn's `did` fills as its calls
+   * complete. A turn a message from your code started isn't one. `userFilter` reads a user's as the account.
+   *
+   *     for (const item of await support.activity("whatsapp:+14155550101", { limit: 20 })) {
+   *       console.log(item.chat.name, item.inbound?.text, item.did.map((d) => d.kind));
+   *     }
+   */
+  async activity(conversation: string, options: { limit?: number; user?: UserOption; userFilter?: UserFilter } = {}): Promise<AgentActivity[]> {
+    const scope = await this.conversationScope(options);
+    const response = await this._request("GET", `${await this._conversationsPath()}/${encodeURIComponent(conversation)}/activity`, {
+      query: { limit: options.limit, ...scope.query }, user: scope.user,
+    });
+    return asList(response).map(toAgentActivity);
+  }
+
+  /**
    * A page of `history`, to read a long thread back from its newest messages. The `limit` newest (1-200), just
    * before `before`, oldest first. `nextCursor`, while older ones remain, is the `before` of the page before it.
    *
    *     let page = await support.historyPage("ticket-1841", { limit: 50 });
    *     while (page.nextCursor) page = await support.historyPage("ticket-1841", { limit: 50, before: page.nextCursor });
    */
-  async historyPage(conversation: string, options: AgentHistoryOptions = {}): Promise<Page<Message>> {
-    const raw = await this._ensure();
+  async historyPage(conversation: string, options: AgentHistoryOptions = {}): Promise<HistoryPage> {
+    const scope = await this.conversationScope(options);
     const response = asObject(await this._request(
       "GET",
-      `/v1/agents/${raw.id}/conversations/${encodeURIComponent(conversation)}`,
-      { query: { limit: options.limit, before: options.before }, user: this._talkScope(options.user) },
+      `${await this._conversationsPath()}/${encodeURIComponent(conversation)}`,
+      { query: { limit: options.limit, before: options.before, ...scope.query }, user: scope.user },
     ));
     const messages = Array.isArray(response.messages) ? (response.messages as JsonObject[]) : [];
-    return { data: messages.map(toMessage), nextCursor: str(response.next_cursor) };
+    return { data: messages.map(toMessage), nextCursor: str(response.next_cursor), session: str(response.session) };
   }
 
   /**
@@ -2507,10 +2675,9 @@ export class Agent extends ApiObject {
 
   private async conversationCall(options: ReadOptions & { archived?: boolean }):
     Promise<{ path: string; query: Record<string, boolean | undefined> } & ReadOptions> {
-    const raw = await this._ensure();
+    const path = await this._conversationsPath();
     const user = options.userFilter === undefined ? this._talkScope(options.user) : options.user;
-    return { user, userFilter: options.userFilter, client: this._client, path: `/v1/agents/${raw.id}/conversations`,
-             query: { archived: options.archived } };
+    return { user, userFilter: options.userFilter, client: this._client, path, query: { archived: options.archived } };
   }
 
   /**

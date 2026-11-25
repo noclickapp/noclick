@@ -47,7 +47,8 @@ PAGE_OF_MODULE = {
     "popups": "Popups", "account_phones": "AccountPhones", "builder_skill": "BuilderSkill",
     "saved_output": "Workflow",
     "workflow_approval": "Workflow", "workflow_example": "Workflow", "organization": "Organization",
-    "share": "Workflow",
+    "share": "Workflow", "account": "Account", "cli_login": "Key", "deletion": "TrashItem",
+    "referral": "Referral", "agent_signup": "AgentSignup",
 }
 # Module docstrings that describe internals rather than the page's names.
 NO_INTRO = {"_object", "_client", "_version", "_attachment", "agent_extras", "agent_conversations", "app_services", "cron", "live",

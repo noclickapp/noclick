@@ -1,6 +1,6 @@
 // The SDK client for server code (loaders and actions that read NoClick before a page renders): it holds the app's
 // key. Screens never use it; they call useClient(), whose client goes through the key proxy.
-import { NoClick, type ClientOptions } from 'noclick';
+import { Account, APIConnectionError, NoClick, NoClickError, Unauthenticated, type ClientOptions } from 'noclick';
 import { noclickApiKey, type AppConfig, type ConfigProblem } from './config.server';
 
 export function serverClient(config: AppConfig, options: Omit<ClientOptions, 'apiKey' | 'baseUrl'> = {}): NoClick {
@@ -32,28 +32,23 @@ export async function givenKeyProblem(config: AppConfig, fetchImpl: typeof fetch
     if (lastAsked !== null && lastAsked.of === of && now - lastAsked.at < (lastAsked.problem ? REFUSED_MS : WORKS_MS)) return lastAsked.problem;
     let problem: ConfigProblem | null = null;
     try {
-        const response = await fetchImpl(`${config.apiUrl}/v1/status`, {
-            headers: { authorization: `Bearer ${key}`, accept: 'application/json' },
-            redirect: 'manual',
-        });
-        if (response.status === 401) {
-            const { error } = (await response.json()) as { error?: { message?: unknown; next_step?: unknown; reason?: unknown } };
-            if (typeof error?.reason === 'string' && error.reason.startsWith(GIVEN_KEY_REASON)) {
-                problem = {
-                    name: 'NOCLICK_API_KEY',
-                    problem: `is given to this app by NoClick, and doesn’t work yet. ${typeof error.message === 'string' ? error.message : ''}`.trim(),
-                    fix: `${typeof error.next_step === 'string' ? `${error.next_step} ` : ''}There is nothing to paste: this page opens the app once the key works.`,
-                    given: true,
-                };
-            }
-        } else {
-            await response.body?.cancel();
-        }
+        await Account.status({ client: new NoClick({ apiKey: key, baseUrl: config.apiUrl, fetch: fetchImpl, maxRetries: 0 }) });
     } catch (error) {
-        // The error's name and code only: its message, or the request it describes, may carry the key.
-        const reason = (error as { cause?: { code?: unknown } }).cause?.code ?? (error as Error).name;
-        console.error(`This app couldn't ask NoClick's API whether the key NoClick gave it works yet (${String(reason)}).`);
-        return null;
+        if (error instanceof APIConnectionError || !(error instanceof NoClickError)) {
+            // The error's name and code only: its message, or the request it describes, may carry the key.
+            const reason = (error as { cause?: { code?: unknown } }).cause?.code ?? (error as Error).name;
+            console.error(`This app couldn't ask NoClick's API whether the key NoClick gave it works yet (${String(reason)}).`);
+            return null;
+        }
+        const reason = error.details.reason;
+        if (error instanceof Unauthenticated && typeof reason === 'string' && reason.startsWith(GIVEN_KEY_REASON)) {
+            problem = {
+                name: 'NOCLICK_API_KEY',
+                problem: `is given to this app by NoClick, and doesn’t work yet. ${error.message}`.trim(),
+                fix: `${error.nextStep ? `${error.nextStep} ` : ''}There is nothing to paste: this page opens the app once the key works.`,
+                given: true,
+            };
+        }
     }
     lastAsked = { of, at: now, problem };
     return problem;

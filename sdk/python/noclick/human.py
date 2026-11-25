@@ -197,6 +197,27 @@ class HumanRequest(Operation):
 
     @synced
     @classmethod
+    async def retrieve(cls, request_id: str, *, user: Any = AMBIENT, client: Optional[Client] = None) -> "HumanRequest":
+        """One request by its own id (a ``request_id``, the ``/h/{id}`` page's): what it asks, how it stands
+        (``request_status``) and, once answered, the answer. A user reads only their own; any other raises
+        ``noclick.NotFound``. Answer it with ``answer``, ``approve`` or ``decline``.
+
+        Returns:
+            The request.
+
+        Usage::
+
+            request = noclick.HumanRequest.retrieve("hr_3f2a1c9e")
+            if request.request_status == "pending":
+                request.approve(note="Go ahead")
+        """
+        scope = resolve_scope(user)
+        view = await resolve_client(client).request("GET", f"/v1/humans/requests/{path_segment(request_id)}",
+                                                    user=scope) or {}
+        return cls._from_view(view, client=client, user=scope)
+
+    @synced
+    @classmethod
     async def summary(cls, **filters: Any) -> OperationSummary:
         """How many human-request operations (ask, approve, notify) match, by operation
         status; takes ``Operation.summary``'s filters except ``kind``.

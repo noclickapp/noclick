@@ -322,6 +322,27 @@ export interface IntegrationOperation {
  * its name (`channel_message`, `contact_created`), what it means, and the filters that narrow it, each
  * with what it matches (one marked `Required.` must be given).
  */
+/** A chat's profile on a WhatsApp number linked by QR code: its picture and, a group's, its name. */
+export interface ChatProfile {
+  /** The chat's id, as its messages give it. */
+  jid: string;
+  name: string | null;
+  /** A lasting link to NoClick's copy of its picture. */
+  avatarUrl: string | null;
+  raw: JsonObject;
+}
+
+function toIntegrationEvents(response: unknown): IntegrationEvent[] {
+  return asList(response).map((row) => asObject(row)).map((row) => ({
+    name: str(row.name) ?? "",
+    description: str(row.description),
+    filters: Object.fromEntries(Object.entries(asObject(row.filters)).map(([k, v]) => [k, String(v)])),
+    shape: row.shape && typeof row.shape === "object" ? (row.shape as JsonObject) : null,
+    sample: row.sample && typeof row.sample === "object" ? (row.sample as JsonObject) : null,
+    raw: row,
+  }));
+}
+
 export interface IntegrationEvent {
   name: string;
   description: string | null;
@@ -1000,15 +1021,37 @@ export class Connection extends ApiObject {
 
   /** The app events its integration can wake an agent with, for `OnEvent` (what it pushes as it happens, never a poll). */
   async events(): Promise<IntegrationEvent[]> {
-    const response = await this._request("GET", `${await this.integrationPath()}/events`, { user: null });
-    return asList(response).map((row) => asObject(row)).map((row) => ({
-      name: str(row.name) ?? "",
-      description: str(row.description),
-      filters: Object.fromEntries(Object.entries(asObject(row.filters)).map(([k, v]) => [k, String(v)])),
-      shape: row.shape && typeof row.shape === "object" ? (row.shape as JsonObject) : null,
-      sample: row.sample && typeof row.sample === "object" ? (row.sample as JsonObject) : null,
-      raw: row,
-    }));
+    return toIntegrationEvents(await this._request("GET", `${await this.integrationPath()}/events`, { user: null }));
+  }
+
+  /**
+   * The app events an integration (`gmail`, `slack`, ...) can wake an agent with, for `OnEvent`, read by its name:
+   * no connection needed. Each with its description, the filters that narrow it and what its data has held in your
+   * account's own events.
+   *
+   *     for (const event of await Connection.integrationEvents("slack")) console.log(event.name, event.filters);
+   */
+  static async integrationEvents(integration: string, options: { client?: NoClick } = {}): Promise<IntegrationEvent[]> {
+    const path = `/v1/integrations/${encodeURIComponent(integration)}/events`;
+    return toIntegrationEvents(await resolveClient(options.client).request("GET", path, { user: null }));
+  }
+
+  /**
+   * Each chat's profile on a WhatsApp number linked by QR code: its picture (`avatarUrl`, a lasting link to NoClick's
+   * copy) and a group's `name`, null where it has none, hides it, or isn't known yet (a later read has it). `jids` are
+   * chat ids as its messages give them (`12025550101@c.us`, an `@lid`, a group's `@g.us`), up to 100. Personal data:
+   * show them only to people who may read this connection.
+   *
+   *     const [chat] = await whatsapp.chatProfiles(["12025550101@c.us"]);
+   *     console.log(chat.name, chat.avatarUrl);
+   */
+  async chatProfiles(jids: readonly string[], options: { user?: UserOption } = {}): Promise<ChatProfile[]> {
+    const query = jids.map((jid) => `jid=${encodeURIComponent(jid)}`).join("&");
+    const response = await this._request("GET", `${this.path}/chat_profiles?${query}`, options.user === undefined ? {} : { user: options.user });
+    return asList(response).map((row) => {
+      const raw = asObject(row);
+      return { jid: str(raw.jid) ?? "", name: str(raw.name), avatarUrl: str(raw.avatar_url), raw };
+    });
   }
 
   /**
@@ -1066,6 +1109,26 @@ export class Connection extends ApiObject {
   async checkAccess(): Promise<{ valid: boolean | null; error: string | null; helpUrl: string | null }> {
     const answer = asObject(await this.act("POST", "/access"));
     return { valid: typeof answer.valid === "boolean" ? answer.valid : null, error: str(answer.error), helpUrl: str(answer.help_url) };
+  }
+
+  /**
+   * Whether its account works where the app is about to use it: with `nodeType`, that step type's own check of the
+   * provider's access (as `checkAccess()` runs it); with `workflow`, whether that workflow's automatic runs can use
+   * the account as its owner (`runsForOwner`, and why not). Never a secret.
+   *
+   *     const { runsForOwner, reason } = await connection.accessFor({ workflow });
+   *     if (runsForOwner === false) console.log(reason);
+   */
+  async accessFor(options: { nodeType?: string; workflow?: string | ApiObject } = {}): Promise<ConnectionAccessCheck> {
+    const workflowId = options.workflow === undefined ? undefined : String(await refId(options.workflow));
+    const answer = asObject(await this.act("GET", "/access", undefined, false, { node_type: options.nodeType, workflow_id: workflowId }));
+    return {
+      runsForOwner: typeof answer.runs_for_owner === "boolean" ? answer.runs_for_owner : null,
+      reason: str(answer.reason),
+      valid: typeof answer.valid === "boolean" ? answer.valid : null,
+      error: str(answer.error),
+      raw: answer,
+    };
   }
 
   /**
@@ -1494,6 +1557,50 @@ export class SignIn {
   }
 }
 
+/** What `connection.accessFor()` answers: each part only when it was asked for. */
+export interface ConnectionAccessCheck {
+  /** With a workflow: whether its automatic runs can use the account as its owner. */
+  runsForOwner: boolean | null;
+  /** Why they can't, when they can't. */
+  reason: string | null;
+  /** With a step type: whether the provider lets the account in (its own check). */
+  valid: boolean | null;
+  /** The provider's words when it doesn't. */
+  error: string | null;
+  raw: JsonObject;
+}
+
+/**
+ * A request for someone to connect an account of theirs (`ConnectLink.create`): the person it went to (or none, for a
+ * link to copy), what it asks for, and the page they connect on. The account they connect is theirs.
+ */
+export interface CredentialRequest {
+  id: string;
+  /** The page they connect on. */
+  url: string | null;
+  credentialType: string;
+  targetEmail: string | null;
+  /** `pending`, `fulfilled`, `cancelled` or `expired`. */
+  status: string;
+  expiresAt: Date | null;
+  raw: JsonObject;
+}
+
+/** What `ConnectLink.create` takes beside the credential type. */
+export interface CredentialRequestOptions {
+  /** Who to email the request to; left out, the link is yours to send. */
+  email?: string;
+  /** A note shown on their page. */
+  message?: string;
+  /** Where the page is served from, when it isn't NoClick's own. */
+  frontendUrl?: string;
+  /** For a model provider: the sign-in it asks for. */
+  agentOauthType?: string;
+  /** For a model provider: a sign-in it never offers. */
+  agentOauthWithheld?: string;
+  client?: NoClick;
+}
+
 /**
  * A connect page URL that is also the operation tracking it. `wait()` resolves to what it connected: the
  * `Connection`, or an agent's `AgentToolServer` for that server's sign-in link.
@@ -1529,6 +1636,31 @@ export class ConnectLink<T = Connection> extends Operation<T> {
   /** How many connect-link operations match, by status. */
   static override async summary(options: KindScopedFilters = {}): Promise<OperationSummary> {
     return await Operation.summary(withKinds(options, CONNECT_KINDS, "ConnectLink.summary"));
+  }
+
+  /**
+   * Ask someone to connect an account of theirs (`credentialType`, an integration's credential type such as
+   * `slack_oauth`): by email to `email`, or as a link you copy. The account they connect is theirs, not yours; a
+   * connection's own `connectLink()` fills a connection of yours instead.
+   *
+   *     const asked = await ConnectLink.create("slack_oauth", { email: "sam@example.com", message: "For the digest" });
+   *     console.log(asked.url, asked.status);
+   */
+  static async create(credentialType: string, options: CredentialRequestOptions = {}): Promise<CredentialRequest> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/connections/connect_links", {
+      json: compact({
+        credential_type: credentialType, target_email: options.email, message: options.message,
+        frontend_url: options.frontendUrl, agent_oauth_type: options.agentOauthType,
+        agent_oauth_withheld: options.agentOauthWithheld,
+      }),
+      user: null,
+    }));
+    const request = asObject(raw.request);
+    return {
+      id: String(request.id ?? ""), url: str(raw.provide_url), credentialType: String(request.credential_type ?? credentialType),
+      targetEmail: str(request.target_email), status: String(request.status ?? "pending"),
+      expiresAt: parseTime(request.expires_at), raw,
+    };
   }
 
   /** @internal */

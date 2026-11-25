@@ -1,7 +1,7 @@
 // AI Fill: NoClick's drafter on one step, read back without writing it (`POST /v1/workflows/{id}/drafts` with
 // `write: false`), so the canvas applies what it drafted as the person's own edit: their save writes it and their
 // undo takes it back.
-import { Operation, type NoClick } from 'noclick';
+import { Workflow, type NoClick } from 'noclick';
 import type { NodeUpdatePayload } from './applyNodeUpdate';
 
 /** What the panel's Autofill asks for: the operation and every setting, the operation alone, the settings of the
@@ -36,16 +36,12 @@ export async function draftStep(
     mode: AiFillMode,
     field?: string
 ): Promise<StepDraft> {
-    const body: Record<string, unknown> = {
-        steps: [{ id: stepId }],
+    const drafting = await Workflow.fromId(workflowId, { client }).draft([stepId], {
         mode: DRAFT_MODES[mode],
+        field: mode === 'single_field' ? field : undefined,
         write: false,
-    };
-    if (mode === 'single_field') body.field = field;
-    const raw = (await client.request('POST', `/v1/workflows/${encodeURIComponent(workflowId)}/drafts`, {
-        json: body,
-    })) as { id: string };
-    const result = (await Operation.fromId(raw.id, { client }).wait()) as DraftResult;
+    });
+    const result = (await drafting.wait()).raw as DraftResult;
     const step = result?.steps?.[stepId];
     if (!step) throw new Error('The draft named no result for this step.');
     return step;

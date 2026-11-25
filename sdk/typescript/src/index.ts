@@ -17,6 +17,18 @@
 // The list is one name per line, in order (scripts/export_list.ts), so changes that add names merge cleanly.
 
 export {
+  Account,
+} from "./account.ts";
+export type {
+  AccountCallOptions,
+  AccountChanges,
+  AccountStatus,
+  ObjectRef,
+  PausedSpendingDefault,
+  PaymentLink,
+  PublicEndpoint,
+} from "./account.ts";
+export {
   AccountPhones,
 } from "./accountPhones.ts";
 export type {
@@ -29,6 +41,11 @@ export {
   AgentConversation,
 } from "./agent.ts";
 export type {
+  ActivityAction,
+  ActivityChat,
+  ActivityMessage,
+  ActivityTurn,
+  AgentActivity,
   AgentApprovalsOption,
   AgentCommand,
   AgentCommandInput,
@@ -62,6 +79,7 @@ export type {
   HarnessModelRoute,
   HarnessName,
   HarnessRequest,
+  HistoryPage,
   JobFilters,
   Message,
   MessageChannel,
@@ -141,6 +159,7 @@ export type {
   ConversationSandbox,
   MemoryEntry,
   MemoryEntryVersion,
+  MemoryLayer,
   MemoryWriter,
   Rehearsal,
   SandboxFilesOptions,
@@ -158,6 +177,12 @@ export type {
   AgentMoveStatus,
   AgentMoveStep,
 } from "./agentMove.ts";
+export {
+  AgentSignup,
+} from "./agentSignup.ts";
+export type {
+  ClaimKeyAccess,
+} from "./agentSignup.ts";
 export {
   AI,
 } from "./ai.ts";
@@ -381,12 +406,16 @@ export {
   run,
 } from "./connection.ts";
 export type {
+  ChatProfile,
   ConnectionAccess,
+  ConnectionAccessCheck,
   ConnectionCreateOptions,
   ConnectionHealth,
   ConnectionOrigin,
   ConnectionShared,
   ConnectionStatus,
+  CredentialRequest,
+  CredentialRequestOptions,
   InWorkspace,
   IntegrationEvent,
   IntegrationInfo,
@@ -451,6 +480,13 @@ export type {
   Table,
   UsedBy,
 } from "./database.ts";
+export {
+  previewDelete,
+} from "./deletion.ts";
+export type {
+  DeletionImpact,
+  DeletionPreview,
+} from "./deletion.ts";
 export {
   DeployPlan,
   RepoDeploy,
@@ -595,6 +631,10 @@ export {
 } from "./key.ts";
 export type {
   KeyOptions,
+  KeyStatus,
+  PublicAccess,
+  PublicEndpointRef,
+  SetupCode,
 } from "./key.ts";
 export {
   ProjectLive,
@@ -623,6 +663,8 @@ export {
   MachineFiles,
 } from "./machine.ts";
 export type {
+  MachineAccess,
+  MachineAccessRequest,
   MachineAddOwnOptions,
   MachineAgentState,
   MachineCreateOptions,
@@ -805,6 +847,9 @@ export type {
   QueueMessageStatus,
 } from "./queue.ts";
 export {
+  Referral,
+} from "./referral.ts";
+export {
   regions,
 } from "./region.ts";
 export type {
@@ -871,6 +916,7 @@ export {
 } from "./share.ts";
 export type {
   ShareAccess,
+  ShareInviteAccepted,
   ShareInviteLink,
   SharedResourceType,
 } from "./share.ts";
@@ -1090,6 +1136,7 @@ export type {
   StepWorkspace,
   WorkflowBuildResult,
   WorkflowBuilder,
+  WorkflowConnectionInfo,
   WorkflowDraftResult,
   WorkflowEdge,
   WorkflowEdit,
@@ -1158,6 +1205,7 @@ export {
 export type {
   InvitePreview,
   MyWorkspace,
+  SpaceNoClick,
   SpaceQuestion,
   WorkspaceCreateOptions,
   WorkspaceMember,

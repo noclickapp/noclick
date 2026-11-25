@@ -234,6 +234,11 @@ export interface NumberPurchaseTransport {
     /** Sends a document's file to the place the `phone_number:document_upload` step answered (`path`): the document
      *  as filed, or why it wasn't. A surface that files no documents has none. */
     upload?: (path: string, file: File) => Promise<{ document?: NumberDocument; error?: string }>;
+    /** Files a document in one step (the SDK's `PhoneNumber.uploadDocument`), in place of `document_upload` + `upload`. */
+    uploadDocument?: (subject: { country: string; number_type: NumberType }, requirement: NumberRequirement, file: File) => Promise<NumberDocument>;
+    /** False where the transport can't list the account's numbers in review or its kept documents: the page then offers
+     *  only the documents uploaded while it's open. */
+    readsKept?: boolean;
     /** Where an account short of funds adds some, linked beside that refusal; none where the host has no such page. */
     fundsHref?: string;
     /** Called once a number is the account's (a host with cached lists of what the account holds drops them). */
@@ -343,7 +348,7 @@ export function usePhoneNumberPurchase({
 
     // The account's numbers the carrier is reviewing, or sent back. A purchase link's own order comes with its status.
     const loadOrders = useCallback(async () => {
-        if (confirmation || !filesDocuments) return;
+        if (confirmation || !filesDocuments || transportRef.current.readsKept === false) return;
         try {
             const reply: Reply<{ orders: NumberOrder[] }> = await transportRef.current.send({ event_name: 'phone_number:orders' });
             if (!reply.error) setOrders(reply.orders ?? []);
@@ -359,6 +364,10 @@ export function usePhoneNumberPurchase({
     /** The account's documents, read once a number that asks for them is chosen. */
     const loadDocuments = useCallback(async () => {
         if (documents !== null || !filesDocuments) return;
+        if (transportRef.current.readsKept === false) {
+            setDocuments([]);
+            return;
+        }
         const reply: Reply<{ documents: NumberDocument[] }> = await transportRef.current.send({ event_name: 'phone_number:documents' });
         if (reply.error) failed(reply, 'Could not load your documents.');
         else setDocuments(reply.documents ?? []);
@@ -370,6 +379,12 @@ export function usePhoneNumberPurchase({
         setUploading(requirement.id);
         setError(null);
         try {
+            const direct = transportRef.current.uploadDocument;
+            if (direct) {
+                const filed = await direct(subject, requirement, file);
+                setDocuments((current) => [filed, ...(current ?? [])]);
+                return filed;
+            }
             const reply: Reply<{ upload_url_path: string }> = await transportRef.current.send({
                 event_name: 'phone_number:document_upload',
                 country: subject.country,
@@ -629,7 +644,8 @@ export function usePhoneNumberPurchase({
         uploadDocument,
         /** The requirement a document is uploading for. */
         uploading,
-        removeDocument,
+        /** Null where the transport can't remove a document (the SDK's, today). */
+        removeDocument: transport.readsKept === false ? null : removeDocument,
         orders,
         resubmit,
         /** Purchases waiting on the account's owner, each followed where it's shown until it's bought or not. */

@@ -2169,6 +2169,24 @@ class WorkflowFolderListing:
     workflows: List["Workflow"]
     #: Workflows shared with you that your plan has no room for, left out.
     hidden_shared_count: int
+    #: The plan that room is judged by (``free``, ``member``, ...); ``None`` when the API didn't say.
+    plan: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class WorkflowConnectionInfo:
+    """An account one of a workflow's steps uses, as the canvas names it (``workflow.connections()``): its name and
+    type, and who it belongs to. Never a value."""
+
+    #: The credential's id, as the step holds it.
+    id: str
+    name: str
+    credential_type: str
+    #: Whether it's your own account (else a collaborator's, lent to this workflow, or its owner's).
+    owned_by_me: bool
+    #: Who it belongs to when it isn't yours.
+    owner_name: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
 
 # ``update_folder``'s parent left out: the folder stays where it is (``None`` is the top).
@@ -2741,7 +2759,7 @@ class Workflow(_Object):
         raw = await resolve_client(client).request("GET", "/v1/workflows", params=params, user=None) or {}
         return WorkflowFolderListing(
             [cls._new(raw=row, client=client, user=None) for row in raw.get("data") or []],
-            int(raw.get("hidden_shared_count") or 0))
+            int(raw.get("hidden_shared_count") or 0), raw.get("plan"))
 
     @synced
     @classmethod
@@ -3899,6 +3917,59 @@ class Workflow(_Object):
                     "search": search or None},
             user=user, user_filter=user_filter, limit=limit, client=self._client,
         )
+
+    @synced
+    async def runs_page(
+        self,
+        *,
+        cursor: Optional[str] = None,
+        limit: Optional[int] = None,
+        status: Union[None, str, Sequence[str]] = None,
+        user_filter: Any = None,
+        user: Any = AMBIENT,
+        source: Union[None, str, Sequence[str]] = None,
+        trigger: Union[None, str, Sequence[str]] = None,
+        waiting: Optional[bool] = None,
+        search: Optional[str] = None,
+    ) -> Page:
+        """One page of runs, newest first: ``runs()``'s filters, a page at a time (``limit`` up to 100); pass
+        ``next_cursor`` back as ``cursor`` for the next.
+
+        Returns:
+            A page whose ``data`` holds the runs and whose ``next_cursor`` is ``None`` on the last page.
+
+        Usage::
+
+            intake = noclick.Workflow.from_name("order-intake")
+            page = intake.runs_page(status="failed", limit=50)
+            while page.next_cursor:
+                page = intake.runs_page(status="failed", limit=50, cursor=page.next_cursor)
+        """
+        return await list_page(
+            f"{await self._path()}/runs", lambda raw, _scope: WorkflowRun._from(raw),
+            params={"status": csv(status), "source": csv(source), "trigger": csv(trigger),
+                    "waiting": None if waiting is None else ("true" if waiting else "false"),
+                    "search": search or None},
+            user=user, user_filter=user_filter, cursor=cursor, limit=limit, client=self._client,
+        )
+
+    @synced
+    async def connections(self) -> List[WorkflowConnectionInfo]:
+        """The accounts its steps use, by name and owner: what the canvas shows beside each step. Metadata only,
+        never a value; a collaborator reads the owner's and the ones lent to the workflow.
+
+        Returns:
+            Each account's ``id``, ``name``, ``credential_type``, whether it's yours, and its owner's name if not.
+
+        Usage::
+
+            for account in noclick.Workflow.from_name("order-intake").connections():
+                print(account.name, "yours" if account.owned_by_me else account.owner_name)
+        """
+        raw = await self._request("GET", f"{await self._path()}/connections") or {}
+        return [WorkflowConnectionInfo(str(c.get("id")), c.get("name") or "", c.get("credential_type") or "",
+                                       bool(c.get("owned_by_me")), c.get("owner_name"), c)
+                for c in raw.get("credentials") or []]
 
     @synced
     async def get_run(self, run_id: str, *, detail: Optional[str] = None) -> WorkflowRun:

@@ -44,6 +44,7 @@ function world(options: RunsFetchOptions = {}) {
         maxRetries: 0,
         fetch: async (input, init) => {
             const url = new URL(String(input instanceof Request ? input.url : input));
+            url.searchParams.sort(); // a query by its parameters, whatever order the client sends them in
             sent.push({ line: `${init?.method ?? 'GET'} ${decodeURIComponent(url.pathname)}${url.search}`, body: init?.body ? (JSON.parse(String(init.body)) as Json) : {} });
             return answers(input, init);
         },
@@ -104,7 +105,7 @@ describe('the run log on the API', () => {
 
         act(() => result.current.log.onLoadMore());
         await waitFor(() => expect(result.current.logs).toHaveLength(4));
-        expect(lines().at(-1)).toBe(`GET /v1/workflows/${WORKFLOW}/runs?limit=50&cursor=run_4`);
+        expect(lines().at(-1)).toBe(`GET /v1/workflows/${WORKFLOW}/runs?cursor=run_4&limit=50`);
         expect(result.current.logs[2]).toMatchObject({ id: 'run_3', status: 'running', trigger: 'cron', message: 'Running…', duration: undefined });
 
         act(() => result.current.log.onFiltersChange({ status: 'error', trigger: 'all', query: '' }));
@@ -365,7 +366,7 @@ describe('running a workflow on the API', () => {
             `POST /v1/workflows/${WORKFLOW}/runs`,
             expect.stringMatching(/^GET \/v1\/operations\/op_new\/wait/),
             `GET /v1/workflows/${WORKFLOW}/runs/run_new`,
-            `GET /v1/workflows/${WORKFLOW}/outputs?steps=hook%2Cagent%2Cslack&full=true`,
+            `GET /v1/workflows/${WORKFLOW}/outputs?full=true&steps=hook%2Cagent%2Cslack`,
         ]);
         // Each step rests with how its run went and what it output, never the secret its stored output holds.
         expect(states(result.current.nodes)).toEqual([['hook', 'idle', 'completed'], ['agent', 'idle', 'completed'], ['slack', 'idle', 'completed']]);

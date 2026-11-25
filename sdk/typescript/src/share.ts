@@ -141,4 +141,26 @@ export class Share {
     }));
     return { workflowId: String(raw.workflow_id), url: String(raw.url), token: String(raw.token), access: raw.access as ShareAccess };
   }
+
+  /**
+   * Join a workflow through its invite link's `token`, signed in: you get the link's access to it, as a share of your
+   * own. Accepting again changes nothing. `refreshSession` says the session's token should be refreshed to see it.
+   *
+   *     const joined = await Share.acceptInvite(token);
+   *     console.log(joined.workflowId, joined.workflowName);
+   */
+  static async acceptInvite(token: string, options: { client?: NoClick } = {}): Promise<ShareInviteAccepted> {
+    const raw = asObject(await resolveClient(options.client).request(
+      "POST", `/v1/shares/invites/${encodeURIComponent(token)}/accept`, { user: null }));
+    return { workflowId: String(raw.workflow_id), workflowName: (raw.workflow_name as string | null) ?? null,
+             refreshSession: raw.refresh_session === true };
+  }
+}
+
+/** The workflow an invite link joined you to (`Share.acceptInvite`). */
+export interface ShareInviteAccepted {
+  workflowId: string;
+  workflowName: string | null;
+  /** The session's token should be refreshed for it to see the workflow. */
+  refreshSession: boolean;
 }

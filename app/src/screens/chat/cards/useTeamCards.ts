@@ -5,14 +5,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ChannelSeat } from '@/screens/chat/cards/agentWords';
 import { useClient } from '@/sdk/client';
-import { NotFound } from 'noclick';
+import { Agent, Channel, NO_USER, NotFound } from 'noclick';
 import { useWorkFrames } from '@/sdk/live';
 import { list, str, type JsonObject } from '@/lib/toolCalls';
 
 /** How often a card read while its turn may still change it reads again. */
 export const FOLLOW_READ_MS = 4000;
 
-const rows = (page: unknown): JsonObject[] => list(page as JsonObject, 'data').filter((r): r is JsonObject => !!r && typeof r === 'object');
 
 /** `read` once, again on a channel frame and while `follow` is on; `gone` once it answers 404. */
 function useCardRead<T>(page: string, read: () => Promise<T>, follow: boolean) {
@@ -45,17 +44,16 @@ export interface AgentCardView {
 export function useAgentCard(agentId: string, follow: boolean) {
     const client = useClient();
     const read = useCallback(async (): Promise<AgentCardView> => {
-        const path = `/v1/agents/${encodeURIComponent(agentId)}`;
-        const [agent, triggers, channels] = await Promise.all([
-            client.request<JsonObject>('GET', path, { user: null }),
-            client.request('GET', `${path}/triggers`, { user: null }),
-            client.request('GET', '/v1/channels', { user: null, query: { status: 'open', user_id: 'none', limit: 100 } }),
+        const agent = Agent.fromId(agentId, { client, user: null });
+        const [read, triggers, channels] = await Promise.all([
+            agent.hydrate(),
+            agent.triggers(),
+            Channel.list({ client, status: 'open', agent: agentId, userFilter: NO_USER, limit: 100 }),
         ]);
-        const mine = rows(channels).filter((c) => list(c, 'members').some((m) => str(m as JsonObject, 'agent_id') === agentId));
         const seats = await Promise.all(
-            mine.map(async (channel) => ({ channel, triggers: rows(await client.request('GET', `/v1/channels/${str(channel, 'id')}/triggers`, { user: null })) }))
+            channels.map(async (channel) => ({ channel: channel.raw as JsonObject, triggers: (await channel.triggers()).map((t) => t.raw as JsonObject) })),
         );
-        return { agent, triggers: rows(triggers), seats };
+        return { agent: read.raw as JsonObject, triggers: triggers.map((t) => t.raw as JsonObject), seats };
     }, [client, agentId]);
     return useCardRead('the agent', read, follow);
 }

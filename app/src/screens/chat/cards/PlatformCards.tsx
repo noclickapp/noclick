@@ -27,6 +27,7 @@ import { openAgentInWork } from '@/screens/work/place';
 import { ProgressMotion } from '@/ui/chat/motion';
 import { useNow } from '@/lib/clock';
 import { isActiveJob, type CoordinatorJob } from '@/lib/threadJobs';
+import { continuedBy, heldOperationOf } from '@/sdk/useFollowedOperations';
 import { list, obj, str, type CoordinatorToolCall, type JsonObject } from '@/lib/toolCalls';
 import { cn } from '@/ui/utils';
 import { impactRows } from '@/screens/resources/platform';
@@ -95,15 +96,15 @@ function WhatGoes({ impact }: { impact: ApprovalImpact }) {
     );
 }
 
-/** Once it's approved: whether it has run, from the job that follows it when there is one, and through the work
- *  its run started (a domain registering) when it started some. */
-function AfterApproval({ action, used, jobId }: { action: string; used: boolean; jobId?: string }) {
-    const { job } = useCoordinatorJob(jobId);
+/** Once it's approved: whether it has run, from the held call's operation, which the approval runs, and through the
+ *  work its run started (a domain registering) when it started some. */
+function AfterApproval({ action, used, operationId }: { action: string; used: boolean; operationId?: string }) {
+    const { job } = useCoordinatorJob(operationId);
     const status = str(job, 'status');
-    const continuedBy = str(job, 'continued_by');
-    if (status === 'completed' && continuedBy) {
+    const next = continuedBy(job);
+    if (status === 'completed' && next) {
         const started = obj(obj(job, 'result'), 'response');
-        return <OperationWork jobId={continuedBy} what={action} kind={str(started, 'kind')} step={str(started, 'step')} since={Date.parse(str(job, 'updated_at') ?? '') || Date.now()} />;
+        return <OperationWork jobId={next} what={action} kind={str(started, 'kind')} step={str(started, 'step')} since={Date.parse(str(job, 'updated_at') ?? '') || Date.now()} />;
     }
     if (status === 'completed') return <Receipt>Done · {action}</Receipt>;
     if (status === 'failed' || status === 'cancelled') {
@@ -129,7 +130,7 @@ export function PlatformApprovalCard({ call }: { call: CoordinatorToolCall }) {
     // Only the account's signed-in owner answers it here; a key opens its page.
     const answers = useOwnerOnly()('approvals');
 
-    if (status === 'approved' || status === 'used') return <AfterApproval action={action} used={status === 'used'} jobId={str(call.result, 'job_id')} />;
+    if (status === 'approved' || status === 'used') return <AfterApproval action={action} used={status === 'used'} operationId={heldOperationOf(call)} />;
     if (status === 'declined') return <Receipt tone="info">Declined · nothing happened: {action}</Receipt>;
     if (status === 'expired') return <Receipt tone="info">Nobody approved it in time, so nothing happened: {action}</Receipt>;
     if (status === 'canceled') return <Receipt tone="info">Withdrawn · nothing happened: {action}</Receipt>;

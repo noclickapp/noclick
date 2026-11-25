@@ -430,9 +430,9 @@ class ProjectLive(_Service):
         return LiveExecResult._from(raw)
 
     @synced
-    async def edits(self, *, after: int = 0, limit: int = 50) -> LiveEdits:
-        """What Vite did with each edit of the app's newest session after ``after`` (a sequence number), oldest
-        first: edits made by commands and by agents attached to it alike.
+    async def edits(self, *, after: int = 0, limit: int = 50, session_id: Optional[str] = None) -> LiveEdits:
+        """What Vite did with each edit of the app's newest session (or ``session_id``'s) after ``after`` (a sequence
+        number), oldest first: edits made by commands and by agents attached to it alike.
 
         Returns:
             Up to ``limit`` edits (at most 200), with ``last_seq`` to read the next ones after. Empty when no
@@ -447,7 +447,8 @@ class ProjectLive(_Service):
                 print(edit.seq, edit.outcome, edit.files)
             seen = edits.last_seq
         """
-        return LiveEdits._from(await self._request("GET", "edits", params={"after": after or None, "limit": limit}))
+        return LiveEdits._from(await self._request(
+            "GET", "edits", params={"after": after or None, "limit": limit, "session_id": session_id}))
 
     @synced
     async def enter_link(self) -> LiveEnterLink:

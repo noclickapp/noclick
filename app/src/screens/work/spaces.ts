@@ -108,7 +108,7 @@ export function useSpaces(): Spaces {
             personalId: (data ?? []).find(yours)?.id ?? null,
             sharePersonal: async () => {
                 try {
-                    const raw = await client.request<{ id: string; name: string }>('POST', '/v1/me/personal_space', { user: null });
+                    const raw = await Workspace.personalSpace({ client });
                     keep({ id: raw.id, workspaceId: raw.id, name: raw.name, own: true, role: 'owner', personal: true });
                     return raw.id;
                 } catch (e) {

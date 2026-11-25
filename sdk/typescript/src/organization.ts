@@ -139,6 +139,48 @@ export class Organization {
     return await call(options, "POST", `/v1/organizations/invites/${encodeURIComponent(token)}/accept`);
   }
 
+  /**
+   * An invite to a team workspace by its token, before accepting it: which workspace, from whom, as what role.
+   *
+   *     const invite = await Organization.invitation(token);
+   *     console.log(invite.organization_name, invite.role);
+   */
+  static async invitation(token: string, options: Options = {}): Promise<JsonObject> {
+    return await call(options, "GET", `/v1/organizations/invites/${encodeURIComponent(token)}`);
+  }
+
+  /**
+   * Set its picture (its owner or an admin): `imageData` base64, at most 2 MB. Answers its `icon_url`.
+   *
+   *     const { icon_url } = await Organization.uploadIcon(acme, pngBase64, { contentType: "image/png" });
+   */
+  static async uploadIcon(organization: Ref, imageData: string,
+    options: Options & { contentType?: "image/png" | "image/jpeg" | "image/gif" | "image/webp" } = {}): Promise<JsonObject> {
+    return await call(options, "PUT", `${at(organization)}/icon`, { image_data: imageData, content_type: options.contentType });
+  }
+
+  /** Its SAML single sign-on, as it's set up. */
+  static async sso(organization: Ref, options: Options = {}): Promise<JsonObject> {
+    return await call(options, "GET", `${at(organization)}/sso`);
+  }
+
+  /**
+   * Set up SAML single sign-on for its email domain (its owner only), from the identity provider's metadata URL.
+   *
+   *     await Organization.configureSso(acme, { domain: "acme.com", metadataUrl: "https://idp.acme.com/metadata" });
+   */
+  static async configureSso(organization: Ref, sso: { domain: string; metadataUrl: string; attributeMapping?: JsonObject },
+    options: Options = {}): Promise<JsonObject> {
+    return await call(options, "PUT", `${at(organization)}/sso`, {
+      domain: sso.domain, metadata_url: sso.metadataUrl, attribute_mapping: sso.attributeMapping,
+    });
+  }
+
+  /** Turn its single sign-on off (its owner only). */
+  static async disableSso(organization: Ref, options: Options = {}): Promise<void> {
+    await call(options, "DELETE", `${at(organization)}/sso`);
+  }
+
   /** Make the workspace your session acts in a team one you're in, or your own (`null`). */
   static async switchTo(organization: Ref | null, options: Options = {}): Promise<void> {
     await call(options, "POST", "/v1/me/organization", { organization_id: organization === null ? null : idOf(organization) });

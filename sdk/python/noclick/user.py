@@ -390,6 +390,22 @@ class User(_Object):
         return self
 
     @synced
+    async def reactivate(self) -> "User":
+        """Let a suspended user act again: calls made for it work from now on. The account's own call: a user
+        acting for itself can't change its status.
+
+        Returns:
+            This user, now ``active``.
+
+        Usage::
+
+            noclick.User.from_id("user_42").reactivate()
+        """
+        raw = await self._ensure()
+        self._raw = await self._request("PATCH", _path(raw["id"]), json={"status": "active"}, user=None)
+        return self
+
+    @synced
     async def pause_spending(
         self, *, message: Optional[str] = None, action: Optional[Tuple[str, str]] = None,
     ) -> "User":

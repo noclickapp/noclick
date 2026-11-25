@@ -7,7 +7,7 @@
 // repo also gets the reader its page browses it with, and every kind the way its
 // page removes it.
 import type { KindId } from './kinds';
-import type { DeletionImpact, Removal, TrashEntry } from './platform';
+import { impactOf, type DeletionImpact, type Removal, type TrashEntry } from './platform';
 import type { RepoReader, RepoSummary } from './RepoBrowser';
 import type { DnsRecordRow } from './ResourceDetail';
 import type { ResourceItem, ResourceOwner, ResourceUser } from './model';
@@ -15,7 +15,7 @@ import type { WorkflowRef } from './files';
 import { countOf, fmtBytes } from '@/ui/primitives';
 import { servedNames, type ServedName } from '@/screens/console/pages/resources/appDomains';
 import { dayLabel, registeredHere, sourceLabel } from '@/screens/console/pages/resources/DomainsParts';
-import { NoClickError, type Bucket, type NoClick, type Database, type DnsRecord, type Domain, type Inbox, type Project, type Repo, type TrashItem, type UsedBy } from 'noclick';
+import { NoClickError, previewDelete, type Bucket, type NoClick, type Database, type DnsRecord, type Domain, type Inbox, type Project, type Repo, type TrashItem, type UsedBy } from 'noclick';
 import { authorName, decodeText, isBinaryPath, refFor } from '@/lib/repoText';
 
 
@@ -393,7 +393,7 @@ export type DeletePreviewer = (path: string, user: string | null) => Promise<Del
 
 /** The platform's own deletion preview, through `client`. */
 export function deletePreviewer(client: NoClick): DeletePreviewer {
-    return async (path, user) => (await client.request<{ impact: DeletionImpact }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path }, user })).impact;
+    return async (path, user) => impactOf((await previewDelete('DELETE', path, { client, user })).impact);
 }
 
 /** How a kind's page removes it, the way the platform API does: a connected domain is disconnected (it stays

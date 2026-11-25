@@ -4,13 +4,13 @@
 // again before the links it handed out stop (an hour after they're listed). A file is deleted as the API deletes it,
 // its preview's words first; one of a workflow shared to view only offers none.
 import { useMemo } from 'react';
-import { WorkflowFile, WorkflowTable, attachmentsPage, deleteAttachment, type Attachment, type NoClick, type Page } from 'noclick';
+import { WorkflowFile, WorkflowTable, attachmentsPage, deleteAttachment, previewDelete as previewDeletion, type Attachment, type NoClick, type Page } from 'noclick';
 import type { FileEntry, FileKind, FileSource } from './files';
 import { useClient } from '@/sdk/client';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { useResources } from './context';
-import type { DeletionImpact, Removal } from './platform';
+import { impactOf, type DeletionImpact, type Removal } from './platform';
 
 /** A file or table, as the page lists it. */
 export interface FileRef {
@@ -70,7 +70,7 @@ function previewType(type: string | null, mime: string | null): string {
 
 async function previewDelete(client: NoClick, path: string): Promise<DeletionImpact> {
     try {
-        return (await client.request<{ impact: DeletionImpact }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path } })).impact;
+        return impactOf((await previewDeletion('DELETE', path, { client })).impact);
     } catch (error) {
         throw new Error(errorText(error));
     }

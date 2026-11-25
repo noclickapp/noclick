@@ -76,6 +76,14 @@ from ._watch import (
     watch,
     watch_token,
 )
+from .account import (
+    Account,
+    AccountStatus,
+    ObjectRef,
+    PausedSpendingDefault,
+    PaymentLink,
+    PublicEndpoint,
+)
 from .account_phones import (
     AccountPhones,
     LinkedPhone,
@@ -83,7 +91,12 @@ from .account_phones import (
     PhoneLinkCode,
 )
 from .agent import (
+    ActivityAction,
+    ActivityChat,
+    ActivityMessage,
+    ActivityTurn,
     Agent,
+    AgentActivity,
     AgentCommand,
     AgentCommands,
     AgentGrant,
@@ -99,6 +112,7 @@ from .agent import (
     HarnessInfo,
     HarnessModel,
     HarnessRequest,
+    HistoryPage,
     Message,
     ModelSwitchGrant,
     ModelSwitching,
@@ -149,6 +163,9 @@ from .agent_extras import (
 )
 from .agent_move import (
     AgentMove,
+)
+from .agent_signup import (
+    AgentSignup,
 )
 from .ai import (
     AI,
@@ -251,11 +268,14 @@ from .connected_app import (
     ConnectedApp,
 )
 from .connection import (
+    ChatProfile,
     ConnectLink,
     Connection,
+    ConnectionAccessCheck,
     ConnectionHealth,
     ConnectionOperations,
     ConnectionShared,
+    CredentialRequest,
     IntegrationEvent,
     IntegrationInfo,
     IntegrationOperation,
@@ -292,6 +312,11 @@ from .database import (
     MigrationResult,
     QueryResult,
     Table,
+)
+from .deletion import (
+    DeletionImpact,
+    DeletionPreview,
+    preview_delete,
 )
 from .deploy import (
     DeployKeyAsk,
@@ -388,6 +413,7 @@ from .inbox import (
 )
 from .key import (
     Key,
+    SetupCode,
 )
 from .live import (
     LiveDataCopy,
@@ -403,6 +429,7 @@ from .live import (
 )
 from .machine import (
     Machine,
+    MachineAccess,
     MachineFileEntry,
     MachineFiles,
     MachineHealth,
@@ -496,6 +523,9 @@ from .queues import (
     QueueDepth,
     QueueMessage,
 )
+from .referral import (
+    Referral,
+)
 from .region import (
     Region,
     regions,
@@ -527,6 +557,7 @@ from .session import (
 )
 from .share import (
     Share,
+    ShareInviteAccepted,
     ShareInviteLink,
 )
 from .skill import (
@@ -614,6 +645,7 @@ from .workflow import (
     WorkflowBuild,
     WorkflowBuildResult,
     WorkflowBuilder,
+    WorkflowConnectionInfo,
     WorkflowDraftResult,
     WorkflowEdit,
     WorkflowEndpoint,
@@ -649,6 +681,7 @@ from .workflow_resources import (
 )
 from .workspace import (
     MyWorkspace,
+    SpaceNoClick,
     SpaceQuestion,
     Workspace,
     WorkspaceInvite,
@@ -657,6 +690,12 @@ from .workspace import (
 )
 
 __all__ = [
+    "Account",
+    "AccountStatus",
+    "ObjectRef",
+    "PausedSpendingDefault",
+    "PaymentLink",
+    "PublicEndpoint",
     "__version__",
     "Client",
     "configure",
@@ -681,9 +720,12 @@ __all__ = [
     "ToolCallSummary",
     "ApiRequest",
     "Connection",
+    "ChatProfile",
     "run",
     "ConnectionOperations",
     "ConnectLink",
+    "CredentialRequest",
+    "ConnectionAccessCheck",
     "SignIn",
     "NumberAgent",
     "Verification",
@@ -716,6 +758,12 @@ __all__ = [
     "ApprovalExplanation",
     "OwnApprovals",
     "Agent",
+    "AgentActivity",
+    "ActivityChat",
+    "ActivityMessage",
+    "ActivityAction",
+    "ActivityTurn",
+    "HistoryPage",
     "AgentConversation",
     "AgentStateRow",
     "CommandResult",
@@ -835,6 +883,7 @@ __all__ = [
     "Subscription",
     "SubscriptionDelivery",
     "Workspace",
+    "SpaceNoClick",
     "WorkspaceMember",
     "WorkspaceInvite",
     "MyWorkspace",
@@ -862,6 +911,7 @@ __all__ = [
     "SandboxFiles",
     "ExecResult",
     "Machine",
+    "MachineAccess",
     "MachineSize",
     "MachineSizeRegion",
     "MachineHost",
@@ -974,6 +1024,9 @@ __all__ = [
     "Secret",
     "Version",
     "TrashItem",
+    "preview_delete",
+    "DeletionPreview",
+    "DeletionImpact",
     "Docs",
     "Doc",
     "DocHit",
@@ -1030,7 +1083,10 @@ __all__ = [
     "WorkflowTable",
     "AgentStepWorkspace",
     "Organization",
+    "Referral",
+    "AgentSignup",
     "Share",
+    "ShareInviteAccepted",
     "ShareInviteLink",
     "TableRow",
     "RowsPage",
@@ -1045,6 +1101,7 @@ __all__ = [
     "StepTypeConnection",
     "WorkflowFolder",
     "WorkflowFolderListing",
+    "WorkflowConnectionInfo",
     "workflow_examples",
     "workflow_example",
     "WorkflowExample",
@@ -1102,6 +1159,7 @@ __all__ = [
     "CapChange",
     "Notifications",
     "Key",
+    "SetupCode",
     "CliLogin",
     "CliLoginStart",
     "CliLoginPoll",

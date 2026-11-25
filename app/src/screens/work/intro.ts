@@ -5,7 +5,7 @@
 // none. The personal space (the account's channels in no workspace) has the account's own NoClick in its NoClick
 // channel, made the first time Work finds none there: its owner's alone, never shown to the people they share it with.
 import { useMemo } from 'react';
-import { Channel, Conflict, NO_USER, type NoClick } from 'noclick';
+import { Channel, Conflict, NO_USER, Workspace, type NoClick } from 'noclick';
 import type { Channel as Room } from '@/screens/channels/types';
 import type { Channels } from '@/screens/channels/useChannels';
 import { noclickNaming, useSpaceNoClicks, useWorkV1, YOUR_NOCLICK, type SpaceNoClick, type SpaceNoClicks } from './agents/reads';
@@ -40,7 +40,7 @@ export function spaceNoClickId(client: NoClick, workspaceId: string): Promise<st
     spaceNoClicks.set(client, held);
     const was = held.get(workspaceId);
     if (was) return was;
-    const asking = client.request<{ agent_id: string }>('GET', `/v1/workspaces/${encodeURIComponent(workspaceId)}/noclick`, { user: null }).then((raw) => raw.agent_id);
+    const asking = Workspace.fromId(workspaceId, { client, user: null }).noclickAgent().then((found) => found.agentId);
     held.set(workspaceId, asking);
     asking.catch(() => held.delete(workspaceId));
     return asking;

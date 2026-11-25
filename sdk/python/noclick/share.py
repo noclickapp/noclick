@@ -173,3 +173,32 @@ class Share:
         raw = await resolve_client(client).request("POST", "/v1/shares/invite_links",
                                                    json={"workflow_id": workflow_id}, user=None)
         return ShareInviteLink(raw["workflow_id"], raw["url"], raw["token"], raw["access"])
+
+    @synced
+    @staticmethod
+    async def accept_invite(token: str, *, client: Optional[Client] = None) -> "ShareInviteAccepted":
+        """Join a workflow through its invite link's ``token``, signed in: you get the link's access to it, as a
+        share of your own. Accepting again changes nothing.
+
+        Returns:
+            The workflow's id and name, and whether the session's token should be refreshed to see it.
+
+        Usage::
+
+            joined = noclick.Share.accept_invite(token)
+            print(joined.workflow_id, joined.workflow_name)
+        """
+        raw = await resolve_client(client).request(
+            "POST", f"/v1/shares/invites/{quote(token, safe='')}/accept", user=None) or {}
+        return ShareInviteAccepted(str(raw.get("workflow_id")), raw.get("workflow_name"),
+                                   bool(raw.get("refresh_session")))
+
+
+@dataclass(frozen=True)
+class ShareInviteAccepted:
+    """The workflow an invite link joined you to (``Share.accept_invite``)."""
+
+    workflow_id: str
+    workflow_name: Optional[str]
+    #: The session's token should be refreshed for it to see the workflow.
+    refresh_session: bool

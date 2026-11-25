@@ -344,6 +344,21 @@ class IntegrationEvent:
                    raw.get("shape"), raw.get("sample"), raw)
 
 
+@dataclass(frozen=True)
+class ChatProfile:
+    """A chat's profile on a WhatsApp number linked by QR code: its ``jid`` (as its messages give it), its picture
+    (``avatar_url``) and, a group's, its ``name``."""
+
+    jid: str
+    name: Optional[str]
+    avatar_url: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "ChatProfile":
+        return cls(raw.get("jid") or "", raw.get("name"), raw.get("avatar_url"), raw)
+
+
 def _integration_name(integration: Any) -> Optional[str]:
     if integration is None or isinstance(integration, str):
         return integration
@@ -1116,6 +1131,46 @@ class Connection(_Object):
         response = await self._catalog("/events")
         return [IntegrationEvent._from(row) for row in response["data"]]
 
+    @synced
+    @staticmethod
+    async def integration_events(integration: str, *, client: Optional[Client] = None) -> List[IntegrationEvent]:
+        """The app events an integration (``gmail``, ``slack``, ...) can wake an agent with, for ``noclick.OnEvent``,
+        read by its name: no connection needed.
+
+        Returns:
+            Every event, with its ``description``, the ``filters`` it takes and what its data has held in your
+            account's own events.
+
+        Usage::
+
+            for event in noclick.Connection.integration_events("slack"):
+                print(event.name, list(event.filters))
+        """
+        response = await resolve_client(client).request(
+            "GET", f"/v1/integrations/{path_segment(integration)}/events", user=None) or {}
+        return [IntegrationEvent._from(row) for row in response.get("data") or []]
+
+    @synced
+    async def chat_profiles(self, jids: Sequence[str], *, user: Any = AMBIENT) -> List[ChatProfile]:
+        """Each chat's profile on a WhatsApp number linked by QR code: its picture (``avatar_url``, a lasting link to
+        NoClick's copy) and a group's ``name``, ``None`` where it has none, hides it, or isn't known yet (a later
+        read has it). ``jids`` are chat ids as its messages give them (``12025550101@c.us``, an ``@lid``, a group's
+        ``@g.us``), up to 100. Personal data: show them only to people who may read this connection.
+
+        Returns:
+            Each chat's ``ChatProfile``.
+
+        Usage::
+
+            whatsapp = noclick.Connection.from_name("whatsapp")
+            for chat in whatsapp.chat_profiles(["12025550101@c.us"]):
+                print(chat.jid, chat.name, chat.avatar_url)
+        """
+        kwargs: Dict[str, Any] = {} if user is AMBIENT else {"user": resolve_scope(user)}
+        response = await self._request("GET", f"{self._path()}/chat_profiles", params={"jid": list(jids)},
+                                       **kwargs) or {}
+        return [ChatProfile._from(row) for row in response.get("data") or []]
+
     # --- connecting ------------------------------------------------------
 
     @synced
@@ -1407,6 +1462,27 @@ class Connection(_Object):
         """
         answer = await self._act("POST", "/access") or {}
         return {key: answer.get(key) for key in ("valid", "error", "help_url")}
+
+    @synced
+    async def access_for(self, *, node_type: Optional[str] = None, workflow: Any = None) -> "ConnectionAccessCheck":
+        """Whether its account works where the app is about to use it: with ``node_type``, that step type's own
+        check of the provider's access (as ``check_access()`` runs it); with ``workflow``, whether that workflow's
+        automatic runs can use the account as its owner. Never a secret.
+
+        Returns:
+            ``runs_for_owner`` and ``reason`` for a workflow, ``valid`` and ``error`` for a step type (``None`` for
+            what wasn't asked).
+
+        Usage::
+
+            access = noclick.Connection.get("credential:...").access_for(workflow="6f1c…")
+            if access.runs_for_owner is False:
+                print(access.reason)
+        """
+        workflow_id = None if workflow is None else await ref_id(workflow)
+        answer = await self._act("GET", "/access", params=compact(node_type=node_type, workflow_id=workflow_id)) or {}
+        return ConnectionAccessCheck(answer.get("runs_for_owner"), answer.get("reason"), answer.get("valid"),
+                                answer.get("error"), answer)
 
     @synced
     async def number_agent(self) -> NumberAgent:
@@ -1938,6 +2014,37 @@ async def run(
     return response["result"]
 
 
+@dataclass(frozen=True)
+class ConnectionAccessCheck:
+    """What ``connection.access_for()`` answers: each part only when it was asked for."""
+
+    #: With a workflow: whether its automatic runs can use the account as its owner.
+    runs_for_owner: Optional[bool]
+    #: Why they can't, when they can't.
+    reason: Optional[str]
+    #: With a step type: whether the provider lets the account in (its own check).
+    valid: Optional[bool]
+    #: The provider's words when it doesn't.
+    error: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+@dataclass(frozen=True)
+class CredentialRequest:
+    """A request for someone to connect an account of theirs (``ConnectLink.create``): who it went to (or none, for a
+    link to copy), what it asks for, and the page they connect on. The account they connect is theirs."""
+
+    id: str
+    #: The page they connect on.
+    url: Optional[str]
+    credential_type: str
+    target_email: Optional[str]
+    #: ``pending``, ``fulfilled``, ``cancelled`` or ``expired``.
+    status: str
+    expires_at: Any
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
 _CONNECT_KINDS = ("credential.connect",)
 
 
@@ -1970,6 +2077,32 @@ class ConnectLink(Operation):
                 print(op.user_id, op.summary_text, op.created_at)   # ... Connect gmail ...
         """
         return await Operation.list.aio(limit=limit, **_with_kinds(filters, _CONNECT_KINDS, "ConnectLink.list"))
+
+    @synced
+    @staticmethod
+    async def create(credential_type: str, *, email: Optional[str] = None, message: Optional[str] = None,
+                     frontend_url: Optional[str] = None, agent_oauth_type: Optional[str] = None,
+                     agent_oauth_withheld: Optional[str] = None,
+                     client: Optional[Client] = None) -> CredentialRequest:
+        """Ask someone to connect an account of theirs (``credential_type``, an integration's credential type such as
+        ``slack_oauth``): by email to ``email``, or as a link you copy. The account they connect is theirs, not
+        yours; a connection's own ``connect_link()`` fills a connection of yours instead.
+
+        Returns:
+            The request, with the page they connect on (``url``) and its ``status``.
+
+        Usage::
+
+            asked = noclick.ConnectLink.create("slack_oauth", email="sam@example.com", message="For the digest")
+            print(asked.url, asked.status)
+        """
+        raw = await resolve_client(client).request("POST", "/v1/connections/connect_links", json=compact(
+            credential_type=credential_type, target_email=email, message=message, frontend_url=frontend_url,
+            agent_oauth_type=agent_oauth_type, agent_oauth_withheld=agent_oauth_withheld), user=None) or {}
+        request = raw.get("request") or {}
+        return CredentialRequest(str(request.get("id") or ""), raw.get("provide_url"),
+                                 request.get("credential_type") or credential_type, request.get("target_email"),
+                                 request.get("status") or "pending", parse_time(request.get("expires_at")), raw)
 
     @synced
     @classmethod

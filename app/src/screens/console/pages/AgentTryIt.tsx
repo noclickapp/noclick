@@ -8,7 +8,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { NoClickError, type Agent, type AgentReply, type JsonObject, type Operation, type OperationStep } from 'noclick';
+import { NoClickError, OperationTimeout, type Agent, type AgentReply, type JsonObject, type Operation, type OperationStep } from 'noclick';
 import { TERMINAL_STATUSES } from '@/sdk/source';
 import { operationStatus } from '@/screens/console/lib/status';
 import { agentMessageSnippet, snippetTabs } from '@/screens/console/lib/snippets';
@@ -126,13 +126,13 @@ export function AgentTryIt({ agent }: { agent: Agent }) {
     // The server's long-poll answers when the turn ends or after FOLLOW_S, so a
     // turn costs at most one read per FOLLOW_S however long a hold lasts.
     const follow = async (index: number, op: Operation<AgentReply>) => {
-        let status = op.status as string;
-        while (alive.current && !TERMINAL_STATUSES.has(status)) {
-            const started = Date.now();
-            const raw = await client.request<JsonObject>('GET', `/v1/operations/${encodeURIComponent(op.id)}/wait`, { query: { timeout_s: FOLLOW_S }, user: null });
-            status = String(raw.status);
-            update(index, { status, step: (raw.step as OperationStep | null | undefined) ?? null });
-            if (!TERMINAL_STATUSES.has(status)) await new Promise((r) => setTimeout(r, Math.max(0, started + FOLLOW_S * 1000 - Date.now())));
+        while (alive.current && !TERMINAL_STATUSES.has(op.status as string)) {
+            try {
+                await op.wait({ timeoutS: FOLLOW_S });
+            } catch (err) {
+                if (!(err instanceof OperationTimeout)) break; // it ended badly: the read below says how
+            }
+            update(index, { status: op.status as string, step: op.step });
         }
         if (!alive.current) return;
         // The finished operation, read once through the SDK for its typed reply or error.

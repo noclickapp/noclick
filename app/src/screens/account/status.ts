@@ -40,7 +40,9 @@ export function toAccountStatus(raw: unknown): AccountStatus {
     };
 }
 
-/** Reads the account through `client`. The SDK has no method for `/v1/status` yet, so this is its request(). */
+/** Reads the account through `client` (`Account.status()`). The SDK loads with the first read: the console's context
+ *  imports this, and a canvas slot's reader (a page's workflow preview) loads none of the SDK. */
 export async function readAccountStatus(client: NoClick, signal?: AbortSignal): Promise<AccountStatus> {
-    return toAccountStatus(await client.request('GET', '/v1/status', { signal }));
+    const { Account } = await import('noclick');
+    return toAccountStatus((await Account.status({ client, signal })).raw);
 }

@@ -251,6 +251,21 @@ export class HumanRequest<T> extends Operation<T> {
     );
   }
 
+  /**
+   * One request by its own id (a `HumanRequest.requestId`, the `/h/{id}` page's): what it asks, how it stands
+   * (`requestStatus`) and, once answered, the answer. A user reads only their own; throws `NotFound` for any other.
+   * Answer it with `answer`, `approve` or `decline`.
+   *
+   *     const request = await HumanRequest.retrieve("hr_3f2a1c9e");
+   *     if (request.requestStatus === "pending") await request.approve({ note: "Go ahead" });
+   */
+  static async retrieve(requestId: string, options: { client?: NoClick; user?: UserOption } = {}): Promise<HumanRequest<unknown>> {
+    const view = asObject(await resolveClient(options.client).request("GET", `/v1/humans/requests/${encodeURIComponent(requestId)}`, {
+      user: resolveScope(options.user),
+    }));
+    return HumanRequest._fromView<unknown>(view, { client: options.client, user: options.user });
+  }
+
   /** How many human-request operations (ask, approve, notify) match, by operation status. */
   static override async summary(options: KindScopedFilters = {}): Promise<OperationSummary> {
     return await Operation.summary(withKinds(options, HUMAN_KINDS, "HumanRequest.summary"));

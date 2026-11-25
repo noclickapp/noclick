@@ -269,6 +269,17 @@ export class User extends ApiObject {
   }
 
   /**
+   * Let a suspended user act again: calls made for it work from now on. The account's own call: a user acting for
+   * itself can't change its status.
+   *
+   *     await User.fromId("user_42").reactivate();
+   */
+  async reactivate(): Promise<this> {
+    this._raw = await this._request<JsonObject>("PATCH", await this._path(), { json: { status: "active" }, user: null });
+    return this;
+  }
+
+  /**
    * Stop everything that costs money for this user until `resumeSpending()`, and say what they can
    * do about it. Call it from your billing when they run out (say, at a balance alert) or fall
    * behind. `message` is what NoClick tells them, in your words, up to 500 characters; `action` is

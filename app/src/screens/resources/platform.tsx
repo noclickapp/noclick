@@ -4,6 +4,7 @@
 import { createContext, useContext, type ComponentType } from 'react';
 import type { NumberPurchaseTransport } from '@/screens/numbers/usePhoneNumberPurchase';
 import type { DomainRegistrar } from '@/screens/domains/useDomainPurchase';
+import type { DeletionImpact as PreviewedImpact } from 'noclick';
 import type { KindId } from './kinds';
 import type { ResourceItem, ResourceOwner } from './model';
 
@@ -17,6 +18,18 @@ export interface DeletionImpact {
     reversible: boolean;
     /** How it's taken back, when it can be: "Restorable from the trash for 30 days." */
     undo?: string | null;
+}
+
+/** What `previewDelete` (the SDK's) says a deletion does, as Resources reads it. */
+export function impactOf(impact: PreviewedImpact): DeletionImpact {
+    return {
+        deletes: impact.deletes,
+        depends_on_it: impact.dependsOnIt,
+        data_lost: impact.dataLost,
+        stops_billing: impact.stopsBilling,
+        reversible: impact.reversible,
+        undo: impact.undo,
+    };
 }
 
 /** Something of a kind deleted to the trash, restorable until `purgeAfter`. */

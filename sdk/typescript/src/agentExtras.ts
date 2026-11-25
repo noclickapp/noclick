@@ -17,13 +17,13 @@ import type { MessageAuthor } from "./agentConversations.ts";
 import type { Attachment } from "./attachment.ts";
 import type { NoClick } from "./client.ts";
 import { NotFound } from "./errors.ts";
-import { ApiObject, asList, asObject, compact, num, paginate, parseTime, str } from "./object.ts";
+import { ApiObject, asList, asObject, compact, num, paginate, parseTime, readScope, str } from "./object.ts";
 import type { JsonObject, ObjectInit, Page, PageOptions } from "./object.ts";
 import { namedWorkstream, registerResult } from "./operation.ts";
 import type { NamedWorkstream } from "./operation.ts";
 import { toExecResult } from "./sandbox.ts";
 import type { ExecResult } from "./sandbox.ts";
-import type { UserOption } from "./scope.ts";
+import type { UserFilter, UserOption } from "./scope.ts";
 import { TerminalConnection } from "./terminal.ts";
 import type { TerminalConnectOptions } from "./terminal.ts";
 import { toVolumeEntry } from "./volume.ts";
@@ -140,6 +140,16 @@ export function toMemoryEntryVersion(raw: JsonObject): MemoryEntryVersion {
  * scope can read it too, with `memories: [agent.memory]`, and named memories (`Memory`) are
  * attached the same way.
  */
+/**
+ * Which layer of an agent's memory a call reaches: as its user (`user`: the account's outside `asUser`, else the
+ * user's), or, read and written as the account, the layer `userFilter` names (a user's, or `NO_USER` for the
+ * account's own).
+ */
+export interface MemoryLayer {
+  user?: UserOption;
+  userFilter?: UserFilter;
+}
+
 export class AgentMemory {
   private readonly agent: Agent;
 
@@ -152,18 +162,26 @@ export class AgentMemory {
     return new AgentMemory(agent);
   }
 
-  private async call(method: string, suffix: string, user: UserOption, options: { query?: JsonObject; json?: unknown } = {}): Promise<unknown> {
+  private async call(method: string, suffix: string, layer: MemoryLayer, options: { query?: JsonObject; json?: unknown } = {}): Promise<unknown> {
     const raw = await this.agent._ensure();
+    // A layer named by `userFilter` is read and written as the account, naming whose it is.
+    const named = layer.userFilter === undefined ? undefined : await readScope({ userFilter: layer.userFilter, user: layer.user });
     return await this.agent._request(method, `/v1/agents/${raw.id}/memory${suffix}`, {
       ...options,
-      query: options.query as Record<string, string | number | undefined>,
-      user: this.agent._talkScope(user),
+      query: { ...options.query, ...(named ? { user_id: named.userId } : {}) } as Record<string, string | number | undefined>,
+      user: named ? named.user : this.agent._talkScope(layer.user),
     });
   }
 
-  /** The entries of one layer (the account's outside `asUser`, else the user's), by name, without their content. */
-  async list(options: { user?: UserOption } = {}): Promise<MemoryEntry[]> {
-    return (asList(await this.call("GET", "", options.user)) as JsonObject[]).map(toMemoryEntry);
+  /**
+   * The entries of one layer (the account's outside `asUser`, else the user's), by name, without their content.
+   * `userFilter` names the layer instead, read as the account: a user's (a `User` or your id) or `NO_USER` for the
+   * account's own; a suspended user's reads this way too. Every method here takes it.
+   *
+   *     const entries = await support.memory.list({ userFilter: "user_42" });
+   */
+  async list(options: MemoryLayer = {}): Promise<MemoryEntry[]> {
+    return (asList(await this.call("GET", "", options)) as JsonObject[]).map(toMemoryEntry);
   }
 
   /**
@@ -172,14 +190,14 @@ export class AgentMemory {
    * also finds `refunds`), or whose name or description holds the query; best first, with content
    * (10 unless `limit` says otherwise, at most 100).
    */
-  async search(query: string, options: { limit?: number; user?: UserOption } = {}): Promise<MemoryEntry[]> {
-    const rows = asList(await this.call("GET", "", options.user, { query: { q: query, limit: options.limit } })) as JsonObject[];
+  async search(query: string, options: { limit?: number } & MemoryLayer = {}): Promise<MemoryEntry[]> {
+    const rows = asList(await this.call("GET", "", options, { query: { q: query, limit: options.limit } })) as JsonObject[];
     return rows.map(toMemoryEntry);
   }
 
   /** One entry in full; a name with no entry throws `NotFound`. */
-  async read(name: string, options: { user?: UserOption } = {}): Promise<MemoryEntry> {
-    return toMemoryEntry(asObject(await this.call("GET", `/${encodeURIComponent(name)}`, options.user)));
+  async read(name: string, options: MemoryLayer = {}): Promise<MemoryEntry> {
+    return toMemoryEntry(asObject(await this.call("GET", `/${encodeURIComponent(name)}`, options)));
   }
 
   /**
@@ -187,45 +205,45 @@ export class AgentMemory {
    * turn (required for a new entry, kept when omitted). With `version` the save only lands if the
    * entry is still at that version, else `Conflict`; without it, it replaces whatever is there.
    */
-  async save(name: string, content: string, options: { description?: string; version?: number; user?: UserOption } = {}): Promise<MemoryEntry> {
+  async save(name: string, content: string, options: { description?: string; version?: number } & MemoryLayer = {}): Promise<MemoryEntry> {
     const json = compact({ content, description: options.description, version: options.version });
-    return toMemoryEntry(asObject(await this.call("PUT", `/${encodeURIComponent(name)}`, options.user, { json })));
+    return toMemoryEntry(asObject(await this.call("PUT", `/${encodeURIComponent(name)}`, options, { json })));
   }
 
   /** Forget an entry; with `version`, only if it is still at that version (else `Conflict`). */
-  async delete(name: string, options: { version?: number; user?: UserOption } = {}): Promise<void> {
-    await this.call("DELETE", `/${encodeURIComponent(name)}`, options.user, { query: { version: options.version } });
+  async delete(name: string, options: { version?: number } & MemoryLayer = {}): Promise<void> {
+    await this.call("DELETE", `/${encodeURIComponent(name)}`, options, { query: { version: options.version } });
   }
 
   /**
    * An entry's versions, newest first: the one it holds now, then those kept from earlier saves (its
    * last 50 in all), without their content. A name with no entry throws `NotFound`.
    */
-  async versions(name: string, options: { user?: UserOption } = {}): Promise<MemoryEntryVersion[]> {
-    const rows = asList(await this.call("GET", `/${encodeURIComponent(name)}/versions`, options.user)) as JsonObject[];
+  async versions(name: string, options: MemoryLayer = {}): Promise<MemoryEntryVersion[]> {
+    const rows = asList(await this.call("GET", `/${encodeURIComponent(name)}/versions`, options)) as JsonObject[];
     return rows.map(toMemoryEntryVersion);
   }
 
   /** One version of an entry, with its content; one it no longer keeps throws `NotFound`. */
-  async getVersion(name: string, version: number, options: { user?: UserOption } = {}): Promise<MemoryEntryVersion> {
-    return toMemoryEntryVersion(asObject(await this.call("GET", `/${encodeURIComponent(name)}/versions/${version}`, options.user)));
+  async getVersion(name: string, version: number, options: MemoryLayer = {}): Promise<MemoryEntryVersion> {
+    return toMemoryEntryVersion(asObject(await this.call("GET", `/${encodeURIComponent(name)}/versions/${version}`, options)));
   }
 
   /**
    * Put an entry back as it was at `version`: a new version holding that one's content and
    * description, so the one it replaces is kept too.
    */
-  async restore(name: string, version: number, options: { user?: UserOption } = {}): Promise<MemoryEntry> {
-    return toMemoryEntry(asObject(await this.call("POST", `/${encodeURIComponent(name)}/versions/${version}/restore`, options.user)));
+  async restore(name: string, version: number, options: MemoryLayer = {}): Promise<MemoryEntry> {
+    return toMemoryEntry(asObject(await this.call("POST", `/${encodeURIComponent(name)}/versions/${version}/restore`, options)));
   }
 
   /** `list`, as `Memory` calls it. */
-  async entries(options: { user?: UserOption } = {}): Promise<MemoryEntry[]> {
+  async entries(options: MemoryLayer = {}): Promise<MemoryEntry[]> {
     return await this.list(options);
   }
 
   /** `delete`, as `Memory` calls it. */
-  async forget(name: string, options: { version?: number; user?: UserOption } = {}): Promise<void> {
+  async forget(name: string, options: { version?: number } & MemoryLayer = {}): Promise<void> {
     await this.delete(name, options);
   }
 

@@ -77,8 +77,20 @@ export function operationIdOf(call: CoordinatorToolCall): string | undefined {
     return str(call.result, 'operation_id') ?? (str(response, 'object') === 'coding_job' ? str(response, 'operation_id') : undefined);
 }
 
+/** The held call a call's approval runs once it's approved: the operation its result names beside the approval. */
+export function heldOperationOf(call: CoordinatorToolCall): string | undefined {
+    return !failed(call.result) && str(call.result, 'approval_id') ? str(call.result, 'operation_id') : undefined;
+}
+
+/** The operation a held call's request started, once it ran (a domain's registration): its response is the
+ *  operation, or names it. */
+export function continuedBy(job: CoordinatorJob | undefined): string | undefined {
+    const response = obj(obj(job, 'result'), 'response');
+    return str(response, 'object') === 'operation' ? str(response, 'id') : str(response, 'operation_id');
+}
+
 function operationIds(calls: readonly CoordinatorToolCall[]): string[] {
-    return [...new Set(calls.flatMap((call) => operationIdOf(call) ?? []))];
+    return [...new Set(calls.flatMap((call) => [operationIdOf(call), heldOperationOf(call)].filter((id): id is string => !!id)))];
 }
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -94,8 +106,11 @@ function goneJob(id: string, last: CoordinatorJob | undefined): CoordinatorJob {
 /** The cards' jobs on a thread whose work is /v1 operations, read with `client`, with what `pushed` has heard. */
 export function operationFollower(client: NoClick, pushed: PushedOperations): ThreadJobs {
     return function useFollowedOperations(calls) {
-        const ids = useMemo(() => operationIds(calls), [calls]);
         const [jobs, setJobs] = useState<Record<string, CoordinatorJob>>({});
+        // A held call, once approved and run, carries on in the operation its request started: followed too.
+        const named = useMemo(() => operationIds(calls), [calls]);
+        const carriedOn = Object.values(jobs).flatMap((job) => continuedBy(job) ?? []).join(' ');
+        const ids = useMemo(() => [...new Set([...named, ...(carriedOn ? carriedOn.split(' ') : [])])], [named, carriedOn]);
         const heard = useSyncExternalStore(pushed.subscribe, pushed.snapshot, pushed.snapshot);
         const following = useRef(new Set<string>());
         const stopped = useRef(false);

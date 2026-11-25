@@ -560,9 +560,9 @@ export class Approval extends ApiObject {
     return `/v1/approvals/${encodeURIComponent(String(this._known("id")))}${suffix}`;
   }
 
-  private async answer(approved: boolean, note: string | undefined): Promise<this> {
+  private async answer(approved: boolean, note: string | undefined, accepted?: string[]): Promise<this> {
     this._raw = await resolveClient(this._client).request<JsonObject>("POST", this.at("/answer"), {
-      json: compact({ approved, note }), user: null,
+      json: compact({ approved, note, accepted }), user: null,
     });
     return this;
   }
@@ -573,9 +573,14 @@ export class Approval extends ApiObject {
    * was made with, a call whose terms a person accepts, one needing a scope the key lacks or only the owner makes, a
    * key acting for a user, and a key without the scope; `SpendCapExceeded` when its price, beside what the key spent
    * and approved this month, is past the key's own monthly cap.
+   *
+   * `accepted` names the terms (each of its `consent`, by its terms id) the person accepts by approving, for the
+   * signed-in owner answering a call whose terms apply: code can't accept terms for a person.
+   *
+   *     await approval.approve({ note: "Within this week's budget." });
    */
-  approve(options: { note?: string } = {}): Promise<this> {
-    return this.answer(true, options.note);
+  approve(options: { note?: string; accepted?: string[] } = {}): Promise<this> {
+    return this.answer(true, options.note, options.accepted);
   }
 
   /**

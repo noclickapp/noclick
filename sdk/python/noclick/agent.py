@@ -560,6 +560,122 @@ def _channel(value: Any) -> Optional[Dict[str, Any]]:
 
 
 @dataclass(frozen=True)
+class HistoryPage(Page):
+    """A page of ``history``, with the agent's ``session``: the one conversation everyone talking to it shares now
+    (a read of a conversation nobody wrote in yet names the one it makes)."""
+
+    session: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class ActivityChat:
+    """The chat an activity item happened in, and who it's with: ``key`` the conversation, ``kind`` ``direct``,
+    ``group`` or ``self`` (the owner's own chat), ``number`` E.164, ``avatar`` its picture where one was kept,
+    ``node_type`` the trigger's node, which names the app the chat is on."""
+
+    key: str
+    name: Optional[str]
+    kind: Optional[str]
+    number: Optional[str]
+    avatar: Optional[str]
+    node_type: Optional[str]
+
+
+@dataclass(frozen=True)
+class ActivityMessage:
+    """A message that came in, as its trigger's node reads it. ``media`` is ``{kind, url, duration, transcript}`` (a
+    voice note, an image, a file), the transcript once the turn read it."""
+
+    sender_name: Optional[str]
+    sender_id: Optional[str]
+    sender_number: Optional[str]
+    sender_avatar: Optional[str]
+    text: str
+    media: Optional[Dict[str, Any]]
+    quoted_text: Optional[str]
+    at: Any
+    message_id: Optional[str]
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "ActivityMessage":
+        media = raw.get("media")
+        return cls(raw.get("sender_name"), raw.get("sender_id"), raw.get("sender_number"), raw.get("sender_avatar"),
+                   raw.get("text") or "", media if isinstance(media, dict) else None, raw.get("quoted_text"),
+                   parse_time(raw.get("at")), raw.get("message_id"))
+
+
+@dataclass(frozen=True)
+class ActivityAction:
+    """One thing the agent did on a turn, in order. ``kind``: ``reply`` (with ``media`` ``{kind, url}`` for a file it
+    sent; ``edited`` once it edited it), ``reaction`` (``emoji``), ``note``, ``reminder`` (``when``), ``found``,
+    ``held`` (``held_request_id``, the request its owner answers), ``failed`` or ``quiet``."""
+
+    kind: str
+    text: Optional[str]
+    emoji: Optional[str]
+    at: Any
+    held_request_id: Optional[str]
+    message_id: Optional[str]
+    tool: Optional[str]
+    media: Optional[Dict[str, Any]]
+    when: Optional[str]
+    name: Optional[str]
+    edited: bool
+
+
+@dataclass(frozen=True)
+class ActivityTurn:
+    """The turn an activity item is: its ``agent.message`` operation (``id``) and thread (``conversation_id``).
+    ``status`` is ``running`` (its actions fill as its calls complete), ``done`` or ``failed``; ``started_by`` the
+    trigger (``{kind, id, title}``) or the wake-up that started it; ``steps`` every call, ``{tool, at, error}``."""
+
+    id: str
+    conversation_id: str
+    status: str
+    started_at: Any
+    worked_s: Optional[float]
+    started_by: Optional[Dict[str, Any]]
+    steps: List[Dict[str, Any]]
+
+
+@dataclass(frozen=True)
+class AgentActivity:
+    """A turn a trigger's event or a wake-up started where no one watched: the ``chat`` it happened in, what came in
+    (``inbound``, None for a wake-up's; ``also_inbound``, the messages it answered too), what the agent ``did``, and
+    the ``turn``."""
+
+    chat: ActivityChat
+    inbound: Optional[ActivityMessage]
+    also_inbound: List[ActivityMessage]
+    did: List[ActivityAction]
+    turn: ActivityTurn
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "AgentActivity":
+        chat, turn = raw.get("chat") or {}, raw.get("turn") or {}
+        did = []
+        for row in raw.get("did") or []:
+            media = row.get("media")
+            did.append(ActivityAction(
+                row.get("kind") or "", row.get("text"), row.get("emoji"), parse_time(row.get("at")),
+                row.get("held_request_id"), row.get("message_id"), row.get("tool"),
+                media if isinstance(media, dict) else None, row.get("when"), row.get("name"), row.get("edited") is True))
+        started_by = turn.get("started_by")
+        return cls(
+            ActivityChat(chat.get("key") or "", chat.get("name"), chat.get("kind"), chat.get("number"),
+                         chat.get("avatar"), chat.get("node_type")),
+            ActivityMessage._from(raw["inbound"]) if isinstance(raw.get("inbound"), dict) else None,
+            [ActivityMessage._from(m) for m in raw.get("also_inbound") or [] if isinstance(m, dict)],
+            did,
+            ActivityTurn(turn.get("id") or "", turn.get("conversation_id") or "", turn.get("status") or "done",
+                         parse_time(turn.get("started_at")), turn.get("worked_s"),
+                         started_by if isinstance(started_by, dict) else None, list(turn.get("steps") or [])),
+            raw,
+        )
+
+
+@dataclass(frozen=True)
 class Message:
     """One message of a conversation: its ``role`` is ``user``, ``assistant``,
     ``person`` (someone it was handed off to) or ``note`` (a line added with
@@ -2232,6 +2348,7 @@ class Agent(_Object):
     @synced
     async def history(
         self, conversation: str, *, limit: Optional[int] = None, before: Optional[str] = None, user: Any = AMBIENT,
+        user_filter: Any = None,
     ) -> List[Message]:
         """The messages of one conversation, oldest first. Every one, or the ``limit`` newest (1-200), just
         before ``before`` (a ``next_cursor`` of ``history_page``).
@@ -2253,18 +2370,22 @@ class Agent(_Object):
                 support = noclick.Agent.from_name("support")
                 latest = support.history("ticket-1841", limit=20)
         """
-        return (await self.history_page.aio(conversation, limit=limit, before=before, user=user)).data
+        return (await self.history_page.aio(conversation, limit=limit, before=before, user=user,
+                                            user_filter=user_filter)).data
 
     @synced
     async def history_page(
         self, conversation: str, *, limit: Optional[int] = None, before: Optional[str] = None, user: Any = AMBIENT,
-    ) -> Page:
+        user_filter: Any = None,
+    ) -> HistoryPage:
         """A page of ``history``, to read a long thread back. The ``limit`` newest messages
-        (1-200), just before ``before``, oldest first.
+        (1-200), just before ``before``, oldest first. ``user_filter`` reads whose thread it is as the account
+        (a user's, or ``noclick.NO_USER`` for the account's own) instead of acting as the user; a suspended user's
+        thread reads this way too.
 
         Returns:
             A page whose ``data`` holds the messages and whose ``next_cursor``, while older ones remain, is the
-            ``before`` of the page before it (None once it reaches the first message).
+            ``before`` of the page before it (None once it reaches the first message), with the agent's ``session``.
 
         Usage:
             Read a thread back, 50 messages at a time::
@@ -2278,12 +2399,54 @@ class Agent(_Object):
                         break
                     page = support.history_page("ticket-1841", limit=50, before=page.next_cursor)
         """
-        raw = await self._ensure()
+        scope, named = await self._conversation_scope(user, user_filter)
         response = await self._request(
-            "GET", f"/v1/agents/{raw['id']}/conversations/{quote(conversation, safe='')}",
-            params={"limit": limit, "before": before}, user=self._talk_scope(user),
+            "GET", f"{await self._conversations_path()}/{quote(conversation, safe='')}",
+            params={"limit": limit, "before": before, **named}, user=scope,
         ) or {}
-        return Page([Message._from(m) for m in response.get("messages") or []], response.get("next_cursor"))
+        return HistoryPage([Message._from(m) for m in response.get("messages") or []], response.get("next_cursor"),
+                           response.get("session"))
+
+    async def _conversations_path(self) -> str:
+        """Its conversations' path. One named by a ref (``Agent.from_id("agent:coordinator")``) reads them without
+        loading the agent first, a round trip less."""
+        named = None if self._raw is not None else self._known("id")
+        if isinstance(named, str) and named.startswith("agent:"):
+            return f"/v1/agents/{quote(named, safe='')}/conversations"
+        return f"/v1/agents/{(await self._ensure())['id']}/conversations"
+
+    async def _conversation_scope(self, user: Any, user_filter: Any) -> Tuple[Any, Dict[str, Any]]:
+        """What a read of a conversation carries: as its user, or as the account naming whose (``user_filter``)."""
+        if user_filter is None:
+            return self._talk_scope(user), {}
+        scope, user_id = await read_scope(user, user_filter)
+        return scope, {"user_id": user_id}
+
+    @synced
+    async def activity(
+        self, conversation: str, *, limit: Optional[int] = None, user: Any = AMBIENT, user_filter: Any = None,
+    ) -> List[AgentActivity]:
+        """The turns a trigger's event or a wake-up started in one conversation, newest first (the ``limit`` latest,
+        50 by default, at most 200): the chat each happened in and who it's with, what came in (a voice note with its
+        transcript, a file, what it quoted) and what the agent did, in order. A running turn's ``did`` fills as its
+        calls complete. A turn a message from your code started isn't one. ``user_filter`` reads a user's as the
+        account.
+
+        Returns:
+            Each turn as an ``AgentActivity``.
+
+        Usage::
+
+            support = noclick.Agent.from_name("support")
+            for item in support.activity("whatsapp:+14155550101", limit=20):
+                print(item.chat.name, item.inbound.text if item.inbound else None, [d.kind for d in item.did])
+        """
+        scope, named = await self._conversation_scope(user, user_filter)
+        response = await self._request(
+            "GET", f"{await self._conversations_path()}/{quote(conversation, safe='')}/activity",
+            params={"limit": limit, **named}, user=scope,
+        ) or {}
+        return [AgentActivity._from(row) for row in response.get("data") or []]
 
     @synced
     async def note(self, conversation: str, text: str, *, data: Optional[Dict[str, Any]] = None,
@@ -2342,12 +2505,12 @@ class Agent(_Object):
 
     async def _conversation_call(self, user: Any, user_filter: Any,
                                  archived: Optional[bool] = None) -> Tuple[Dict[str, Any], str]:
-        raw = await self._ensure()
+        path = await self._conversations_path()
         return {
             "user": self._talk_scope(user) if user_filter is None else user,
             "user_filter": user_filter, "client": self._client,
             **({"params": {"archived": "true" if archived else "false"}} if archived is not None else {}),
-        }, f"/v1/agents/{raw['id']}/conversations"
+        }, path
 
     def conversation(self, name: str, *, user: Any = AMBIENT) -> AgentConversation:
         """One of its conversations, as a chat reads and changes it. Its settings, a fork, a revert, its context and

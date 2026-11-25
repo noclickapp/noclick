@@ -400,6 +400,37 @@ export class Machine extends ApiObject {
   }
 
   /**
+   * Whether NoClick vetted the account's company for machines (`status`: `not_submitted`, `pending`, `approved` or
+   * `rejected`, with its `reason`), which an account's first machine needs.
+   *
+   *     const access = await Machine.access();
+   *     if (access.status !== "approved") console.log(access.status, access.reason);
+   */
+  static async access(options: { client?: NoClick; signal?: AbortSignal } = {}): Promise<MachineAccess> {
+    return toMachineAccess(asObject(await resolveClient(options.client).request("GET", "/v1/machines/vetting", {
+      user: null, signal: options.signal,
+    })));
+  }
+
+  /**
+   * Ask NoClick for machines: the company, its website and country (ISO 3166-1 alpha-2), what its machines will run,
+   * and the machines usage policy accepted. Signed in, the owner accepts it themselves; from your server, a key holding
+   * `machines:vetting` also says who accepted it and when (`acceptedBy`, `acceptedAt`). NoClick reviews it before the
+   * account's first machine; an approved account gets `Conflict`.
+   *
+   *     await Machine.requestAccess({ companyName: "Acme", website: "https://acme.com", country: "US",
+   *       useCase: "Support agents that never sleep", acceptUsagePolicy: true });
+   */
+  static async requestAccess(request: MachineAccessRequest, options: { client?: NoClick } = {}): Promise<MachineAccess> {
+    const json = compact({
+      company_name: request.companyName, website: request.website, country: request.country, use_case: request.useCase,
+      accept_usage_policy: request.acceptUsagePolicy, accepted_by: request.acceptedBy,
+      accepted_at: request.acceptedAt?.toISOString(),
+    });
+    return toMachineAccess(asObject(await resolveClient(options.client).request("POST", "/v1/machines/vetting", { json, user: null })));
+  }
+
+  /**
    * Start an always-on machine called `name` (unique to its user; a taken name throws `Conflict`
    * with `existingId`, or with `allowExisting: true` returns the machine already there, as it is: nothing
    * about it changes), refused with `PriceExceeded` if its size costs more than `maxMonthlyUsd` on the host it goes
@@ -827,4 +858,41 @@ export class Machine extends ApiObject {
   async delete(): Promise<void> {
     await this._request("DELETE", await this._path());
   }
+}
+
+/** Where the account's request for machines stands (`Machine.access`). */
+export interface MachineAccess {
+  status: "not_submitted" | "pending" | "approved" | "rejected";
+  /** The machines usage policy's version the request accepted (the current one before any request). */
+  policyVersion: string;
+  companyName: string | null;
+  website: string | null;
+  country: string | null;
+  useCase: string | null;
+  submittedAt: Date | null;
+  decidedAt: Date | null;
+  /** Why NoClick declined it. */
+  reason: string | null;
+  raw: JsonObject;
+}
+
+/** What `Machine.requestAccess` sends. */
+export interface MachineAccessRequest {
+  companyName: string;
+  website: string;
+  country: string;
+  useCase: string;
+  acceptUsagePolicy: boolean;
+  /** From a key: who accepted the policy for the company. */
+  acceptedBy?: { name: string; email: string };
+  /** From a key: when they accepted it. */
+  acceptedAt?: Date;
+}
+
+function toMachineAccess(raw: JsonObject): MachineAccess {
+  return {
+    status: (str(raw.status) ?? "not_submitted") as MachineAccess["status"], policyVersion: str(raw.policy_version) ?? "",
+    companyName: str(raw.company_name), website: str(raw.website), country: str(raw.country), useCase: str(raw.use_case),
+    submittedAt: parseTime(raw.submitted_at), decidedAt: parseTime(raw.decided_at), reason: str(raw.reason), raw,
+  };
 }

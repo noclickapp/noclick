@@ -95,7 +95,7 @@ function footer(onClose: () => void, label: string, disabled: boolean) {
 }
 
 /** Reads what a call does, as the platform previews it (null while it's read; a failure says so and lets it go on). */
-export function usePreview(path: string, method = 'DELETE'): { impact: Impact | null; failed: string | null } {
+export function usePreview(path: string, method: 'DELETE' | 'POST' = 'DELETE'): { impact: Impact | null; failed: string | null } {
     const client = useWorkClient();
     const [impact, setImpact] = useState<Impact | null>(null);
     const [failed, setFailed] = useState<string | null>(null);

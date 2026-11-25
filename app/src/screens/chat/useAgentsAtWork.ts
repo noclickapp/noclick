@@ -8,28 +8,23 @@
 // A slow re-read stands behind them all while something's going, as the frames' backstop. The chat's own agent is
 // left out of all of it: the coding agents are read once the chat has found it, so it never shows as work at all.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { NoClick } from 'noclick';
+import { Agent, Approval, Operation, Project, type NoClick } from 'noclick';
 import type { CoordinatorJob, CoordinatorJobs } from '@/lib/threadJobs';
 import { useWorkFrames } from '@/sdk/live';
 import { obj, str, type CoordinatorToolCall } from '@/lib/toolCalls';
 import { standing } from '@/slots';
 import { approvalUrl, billingSettingsUrl } from '@/screens/console/lib/site';
 import { atWork, type AtWork, type AtWorkLinks, type AtWorkSources } from './atWork/model';
-import type { AgentSlice, CodingAgentsPage, EditsPage, FollowedOperation, HeldApproval, JobUpdate, LiveRead, LiveState, ProjectSlice } from './atWork/types';
+import type { AgentSlice, CodingAgentsPage, EditFeedback, FollowedOperation, HeldApproval, JobUpdate, LiveRead, LiveState, ProjectSlice } from './atWork/types';
 import { CHAT_PLACES } from './slots';
 import { useSite } from './site';
 import { operationIdOf } from '@/sdk/useFollowedOperations';
-import { openTabForLater } from '@/lib/oauthPopup';
 
 /** How often the reads are taken again while something's going and no frame came: the frames' backstop. */
 export const BACKSTOP_MS = 60_000;
 // The newest edits a row shows.
 const EDITS_SHOWN = 3;
 const ACCOUNT = { user: null } as const;
-
-interface Page<T> {
-    data: T[];
-}
 
 /** One read kept current: taken when `key` names one, again on `reread()`, one at a time (a reread asked for while
  *  one runs runs once after it). A read that fails keeps what the last one gave. */
@@ -184,12 +179,12 @@ async function readLive(client: NoClick, projectId: string, signal: AbortSignal)
     const live = await client.request<LiveState>('GET', `/v1/projects/${projectId}/live`, { ...ACCOUNT, signal });
     const last = live.session?.edits.last_seq ?? 0;
     if (!live.session || !last) return { session: live.session, edits: [] };
-    const page = await client.request<EditsPage>('GET', `/v1/projects/${projectId}/live/edits`, {
-        ...ACCOUNT,
-        signal,
-        query: { session_id: live.session.id, after: Math.max(0, last - EDITS_SHOWN), limit: EDITS_SHOWN },
+    const edits = await Project.fromId(projectId, { client, ...ACCOUNT }).live.edits({
+        sessionId: live.session.id,
+        after: Math.max(0, last - EDITS_SHOWN),
+        limit: EDITS_SHOWN,
     });
-    return { session: live.session, edits: page.data };
+    return { session: live.session, edits: edits.map((edit) => edit.raw as unknown as EditFeedback) };
 }
 
 // A warm agent only waits for its next message: nothing's going.
@@ -197,26 +192,27 @@ const GOING = new Set(['working', 'waiting', 'paused']);
 
 /** `own`: the chat's own agent, null until the chat has found it. */
 export function useAgentsAtWork(client: NoClick, turns: readonly ThreadTurn[], jobs: CoordinatorJobs, own: string | null): AtWork {
-    const [coding, rereadCoding] = useRead(own ? 'coding' : null, (signal) => client.request<CodingAgentsPage>('GET', '/v1/agents/coding', { ...ACCOUNT, signal }));
+    const [coding, rereadCoding] = useRead(own ? 'coding' : null, async () => (await Agent.coding({ client, user: null })).raw as unknown as CodingAgentsPage);
     const { operations, requests } = useMemo(() => threadWork(turns, jobs), [turns, jobs]);
     const going = (coding?.data ?? []).filter((a) => a.agent_id !== own && GOING.has(a.state));
     const tasks = operations.filter((op) => op.kind === 'agent.task');
     const someWork = going.length > 0 || operations.some((op) => op.status === 'running' || op.status === 'waiting');
 
     // The apps the work is in: read once there's work.
-    const [projects, rereadProjects] = useRead(someWork ? 'projects' : null, async (signal) => (await client.request<Page<ProjectSlice>>('GET', '/v1/projects', { ...ACCOUNT, signal, query: { limit: 100 } })).data);
+    const [projects, rereadProjects] = useRead(someWork ? 'projects' : null, async () =>
+        (await Project.listPage({ client, user: null, limit: 100 })).data.map((p) => p.raw as unknown as ProjectSlice));
 
     // The agents behind the tasks: what they check out names the app they work on.
     const agentIds = useMemo(() => [...new Set(tasks.flatMap((op) => (op.agent_id ? [op.agent_id] : [])))], [tasks]);
-    const [agents] = useReads(agentIds, (id, signal) => client.request<AgentSlice>('GET', `/v1/agents/${id}`, { ...ACCOUNT, signal }));
+    const [agents] = useReads(agentIds, async (id) => (await Agent.get(id, { client, user: null })).raw as unknown as AgentSlice);
 
     // Each app an agent edits live: its session and newest edits.
     const liveApps = useMemo(() => [...new Set(going.flatMap((a) => (a.place === 'live' && a.app ? [a.app.project_id] : [])))], [going]);
     const [live, rereadLive] = useReads(liveApps, (id, signal) => readLive(client, id, signal));
 
     // What waits on the owner's OK, read again whenever the thread moves (a turn that held a purchase, an answer).
-    const [approvals, rereadApprovals] = useRead('approvals', async (signal) =>
-        (await client.request<Page<HeldApproval>>('GET', '/v1/approvals', { ...ACCOUNT, signal, query: { status: 'pending', limit: 20 } })).data
+    const [approvals, rereadApprovals] = useRead('approvals', async () =>
+        (await Approval.list({ client, status: 'pending', limit: 20 })).map((a) => a.raw as unknown as HeldApproval)
     );
     const moved = turns.length;
     const first = useRef(true);
@@ -273,20 +269,7 @@ export function useAgentsAtWork(client: NoClick, turns: readonly ThreadTurn[], j
     }, [links, own, coding, projects, operations, agents, approvals, live, requests]);
 }
 
-/** Opens the app in live mode in a new tab: a fresh link that opens it there, minted as it's opened (each lasts two
- *  hours, so one kept from when the work was handed over may have lapsed). */
-export async function openLive(client: NoClick, projectId: string): Promise<void> {
-    const tab = openTabForLater();
-    try {
-        const { url } = await client.request<{ url: string }>('POST', `/v1/projects/${projectId}/live/enter_links`, { ...ACCOUNT, json: {} });
-        if (!tab.go(url)) window.location.assign(url);
-    } catch (error) {
-        tab.close();
-        throw error;
-    }
-}
-
 /** Stops a turn or a task: its operation is canceled, which its agent and NoClick hear. */
 export async function stopWork(client: NoClick, operationId: string): Promise<void> {
-    await client.request('POST', `/v1/operations/${operationId}/cancel`, { ...ACCOUNT, json: {} });
+    await Operation.fromId(operationId, { client, user: null }).cancel();
 }

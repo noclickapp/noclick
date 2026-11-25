@@ -2,7 +2,7 @@
 // reads each one back (the platform's agents.activity items): the chat and who it's with, the message that came in
 // (its words, a voice note with its transcript, a file, what it quoted) and what the agent did, in order. Work draws a
 // turn a chat app's message started as that chat (ChatTurn); this module reads the wire and says which turns those are.
-import type { Agent, JsonObject, NoClick } from 'noclick';
+import { Connection, type Agent, type JsonObject, type NoClick } from 'noclick';
 import type { UserEntry } from './thread';
 
 export type ChatKind = 'direct' | 'group' | 'self';
@@ -162,10 +162,8 @@ export const ACTIVITY_PAGE = 100;
 
 /** A conversation's triggered turns, newest first, the `limit` latest: in the thread its history reads (`agent`, once
  *  its fields are read, names whose). */
-export async function readTurnActivity(client: NoClick, agent: Agent, conversation: string, limit = ACTIVITY_PAGE): Promise<TurnActivity[]> {
-    const path = `/v1/agents/${encodeURIComponent(agent.id)}/conversations/${encodeURIComponent(conversation)}/activity`;
-    const body = await client.request<JsonObject>('GET', path, { query: { limit }, user: agent._talkScope(undefined) });
-    return (Array.isArray(body.data) ? (body.data as JsonObject[]) : []).map(toTurnActivity);
+export async function readTurnActivity(agent: Agent, conversation: string, limit = ACTIVITY_PAGE): Promise<TurnActivity[]> {
+    return (await agent.activity(conversation, { limit })).map((item) => toTurnActivity(item.raw));
 }
 
 /** What a chat app keeps of a chat or a person: their picture, and a group's name. */
@@ -196,10 +194,8 @@ export function missingProfiles(items: readonly TurnActivity[], connectionOf: (t
 
 /** Each chat id's profile on a connection `agent`'s trigger listens on, read in the agent's scope. */
 export async function readChatProfiles(client: NoClick, agent: Agent, ref: string, jids: readonly string[]): Promise<Map<string, ChatProfile>> {
-    const query = jids.map((j) => `jid=${encodeURIComponent(j)}`).join('&');
-    const body = await client.request<JsonObject>('GET', `/v1/connections/${encodeURIComponent(ref)}/chat_profiles?${query}`, { user: agent._talkScope(undefined) });
-    const rows = Array.isArray(body.data) ? (body.data as JsonObject[]) : [];
-    return new Map(rows.filter((r) => typeof r.jid === 'string').map((r) => [String(r.jid), { name: s(r.name), avatar: s(r.avatar_url) }]));
+    const rows = await Connection.fromId(ref, { client }).chatProfiles(jids, { user: agent._talkScope(undefined) });
+    return new Map(rows.filter((r) => r.jid).map((r) => [r.jid, { name: r.name, avatar: r.avatarUrl }]));
 }
 
 /** `a` with what its connection keeps of its chat and writer, where its own delivery carried none. */

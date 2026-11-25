@@ -123,6 +123,24 @@ export interface WorkflowFolderListing {
   workflows: Workflow[];
   /** Workflows shared with you that your plan has no room for, left out. */
   hiddenSharedCount: number;
+  /** The plan that room is judged by (`free`, `member`, ...); null when the API didn't say. */
+  plan: string | null;
+}
+
+/**
+ * An account one of a workflow's steps uses, as the canvas names it (`workflow.connections()`): its name and type,
+ * and who it belongs to. Never a value.
+ */
+export interface WorkflowConnectionInfo {
+  /** The credential's id, as the step holds it. */
+  id: string;
+  name: string;
+  credentialType: string;
+  /** Whether it's your own account (else a collaborator's, lent to this workflow, or its owner's). */
+  ownedByMe: boolean;
+  /** Who it belongs to when it isn't yours. */
+  ownerName: string | null;
+  raw: JsonObject;
 }
 
 /** A graph as a picture of it needs it, in its saved shape (`Workflow.inFolder(..., { preview: true })`). */
@@ -2695,6 +2713,7 @@ export class Workflow extends ApiObject {
     return {
       workflows: rows.map((row) => new Workflow({ raw: asObject(row), client: options.client })),
       hiddenSharedCount: Number(raw.hidden_shared_count ?? 0),
+      plan: typeof raw.plan === "string" ? raw.plan : null,
     };
   }
 
@@ -3364,6 +3383,36 @@ export class Workflow extends ApiObject {
     const { status, source, trigger, waiting, search, limit = 20, ...read } = options;
     const query = { status: csv(status), source: csv(source), trigger: csv(trigger), waiting, search: search || undefined };
     return await listAll({ ...read, client: read.client ?? this._client, path, query, limit }, (raw) => toWorkflowRun(raw));
+  }
+
+  /**
+   * One page of runs, newest first, with `nextCursor` to read the next (null on the last page): `runs()`'s filters,
+   * a page at a time (`limit` up to 100).
+   *
+   *     let page = await workflow.runsPage({ status: "failed", limit: 50 });
+   *     while (page.nextCursor) page = await workflow.runsPage({ status: "failed", limit: 50, cursor: page.nextCursor });
+   */
+  async runsPage(options: Omit<WorkflowRunsOptions, "limit"> & PageOptions = {}): Promise<Page<WorkflowRun>> {
+    const path = `${await this.path()}/runs`;
+    const { status, source, trigger, waiting, search, cursor, limit, ...read } = options;
+    const query = { status: csv(status), source: csv(source), trigger: csv(trigger), waiting, search: search || undefined };
+    return await listPage({ ...read, client: read.client ?? this._client, path, query, cursor, limit },
+      (raw) => toWorkflowRun(raw));
+  }
+
+  /**
+   * The accounts its steps use, by name and owner: what the canvas shows beside each step. Metadata only, never a
+   * value; a collaborator reads the owner's and the ones lent to the workflow.
+   *
+   *     for (const account of await workflow.connections()) console.log(account.name, account.ownedByMe ? "yours" : account.ownerName);
+   */
+  async connections(): Promise<WorkflowConnectionInfo[]> {
+    const raw = asObject(await this._request("GET", `${await this.path()}/connections`));
+    return asList(raw.credentials).map((row) => {
+      const c = asObject(row);
+      return { id: String(c.id), name: String(c.name ?? ""), credentialType: String(c.credential_type ?? ""),
+               ownedByMe: c.owned_by_me === true, ownerName: str(c.owner_name), raw: c };
+    });
   }
 
   /**

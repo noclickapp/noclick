@@ -3,7 +3,7 @@
 // `session` frames (a clear or a resume, from anywhere), and opens the agent on its active one. A message in it names
 // the chat it came from (`chat`): a channel's is `channel:<its id>`.
 import { invalidateV1, readV1 } from '@/sdk/useV1';
-import type { Agent, Conversation, JsonObject, NoClick } from 'noclick';
+import type { Agent, Conversation, NoClick } from 'noclick';
 import { listedAgent, useWorkV1 } from '../agents/reads';
 import { useWorkFrames } from '@/sdk/live';
 
@@ -19,18 +19,17 @@ export interface Sessions {
 
 /** An agent's sessions: an agent nobody has talked to has none yet, and reading any chat of it makes the one its
  *  first message would (the platform's `reading`), which the read names. */
-export async function readSessions(client: NoClick, agent: Agent): Promise<Sessions> {
+export async function readSessions(agent: Agent): Promise<Sessions> {
     const all = await agent.conversations();
     const found = all.find((c) => c.active);
     if (found) return { active: found.conversation, all };
-    const path = `/v1/agents/${encodeURIComponent(agent.id)}/conversations/chat-${crypto.randomUUID()}`;
-    const read = await client.request<JsonObject>('GET', path, { query: { limit: 1 }, user: agent._talkScope(undefined) });
+    const read = await agent.historyPage(`chat-${crypto.randomUUID()}`, { limit: 1 });
     return { active: String(read.session), all };
 }
 
 /** The agent's sessions as Work reads them, null while unread. */
 export function useSessions(agentId: string | null): { sessions: Sessions | null; error: unknown; refresh: () => Promise<void> } {
-    const read = useWorkV1(agentId ? sessionsKey(agentId) : null, (client) => readSessions(client, listedAgent(client, agentId!)));
+    const read = useWorkV1(agentId ? sessionsKey(agentId) : null, (client) => readSessions(listedAgent(client, agentId!)));
     return { sessions: read.data ?? null, error: read.error, refresh: read.refresh };
 }
 
@@ -38,7 +37,7 @@ export function useSessions(agentId: string | null): { sessions: Sessions | null
 export const useActiveSession = (agentId: string | null): string | null => useSessions(agentId).sessions?.active ?? null;
 
 /** Reads the session an agent opens on, ahead of a click. */
-export const readActiveSession = async (client: NoClick, agentId: string): Promise<string> => (await readV1(client, sessionsKey(agentId), () => readSessions(client, listedAgent(client, agentId)))).active;
+export const readActiveSession = async (client: NoClick, agentId: string): Promise<string> => (await readV1(client, sessionsKey(agentId), () => readSessions(listedAgent(client, agentId)))).active;
 
 /** Keeps every agent's sessions current: a clear or a resume anywhere (another page, a chat's /clear, the API) reads
  *  them again, and the views showing the agent move to its new session. */

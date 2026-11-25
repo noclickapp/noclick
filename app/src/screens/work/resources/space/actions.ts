@@ -6,7 +6,7 @@
 import { toast } from 'sonner';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { invalidateV1 } from '@/sdk/useV1';
-import { Agent, Channel, TrashItem, Workspace, type NoClick } from 'noclick';
+import { Agent, Channel, TrashItem, Workspace, previewDelete as previewDeletion, type NoClick } from 'noclick';
 import { renameKnowledge } from '@/screens/resources/knowledge';
 import { removeSecret, SECRETS_KEY } from '@/screens/resources/secrets';
 import { AGENTS_KEY } from '../../agents/reads';
@@ -177,11 +177,10 @@ export interface Impact {
     undo: string | null;
 }
 
-/** The platform's preview of `method path` (`POST /v1/delete_previews`). */
-export async function previewCall(client: NoClick, path: string, method = 'DELETE'): Promise<Impact> {
-    const { impact } = await client.request<{ impact: Record<string, unknown> }>('POST', '/v1/delete_previews', { json: { method, path } });
-    const strings = (v: unknown) => (Array.isArray(v) ? v.map(String) : []);
-    return { deletes: String(impact.deletes ?? ''), dependsOnIt: strings(impact.depends_on_it), dataLost: strings(impact.data_lost), reversible: impact.reversible !== false, undo: typeof impact.undo === 'string' ? impact.undo : null };
+/** The platform's preview of `method path` (the SDK's `previewDelete`). */
+export async function previewCall(client: NoClick, path: string, method: 'DELETE' | 'POST' = 'DELETE'): Promise<Impact> {
+    const { impact } = await previewDeletion(method, path, { client });
+    return { deletes: impact.deletes, dependsOnIt: impact.dependsOnIt, dataLost: impact.dataLost, reversible: impact.reversible, undo: impact.undo };
 }
 
 /** What deleting it does, as the platform previews it (the agents, apps, spaces and sign-ins that lose it), else null. */

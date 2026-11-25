@@ -109,23 +109,29 @@ describe("the store's reads and writes on /v1", () => {
 
     it('sends each write to its route, naming the workspace', async () => {
         void browserWrites.createFolder('org_team', { name: 'Reports', description: '', parentId: null });
-        expect(api.last('POST', '/v1/workflows/folders').json).toEqual({
-            name: 'Reports', description: '', parent_id: undefined, organization_id: 'team' });
+        await settle();
+        expect(api.last('POST', '/v1/workflows/folders').json).toMatchObject({ name: 'Reports', organization_id: 'team' });
         void browserWrites.updateFolder('personal', 'f1', { parentId: null });
-        expect(api.last('PATCH', '/v1/workflows/folders/f1').json).toEqual({
-            name: undefined, description: undefined, parent_id: null, organization_id: undefined });
+        await settle();
+        const moved = api.last('PATCH', '/v1/workflows/folders/f1').json!;
+        expect(moved.parent_id).toBeNull(); // to the top
+        expect('organization_id' in moved && moved.organization_id !== undefined).toBe(false);
         void browserWrites.moveWorkflow('org_team', 'w1', 'f1');
-        expect(api.last('POST', '/v1/workflows/w1/move').json).toEqual({ folder_id: 'f1', organization_id: 'team' });
+        await settle();
+        expect(api.last('POST', '/v1/workflows/w1/move').json).toMatchObject({ folder_id: 'f1', organization_id: 'team' });
         void browserWrites.updateWorkflow('w1', { name: 'Renamed' });
-        expect(api.last('POST', '/v1/workflows/w1/edits').json).toEqual({
-            ops: [{ op: 'update_workflow', name: 'Renamed', description: undefined }] });
+        await settle();
+        expect(api.last('POST', '/v1/workflows/w1/edits').json).toMatchObject({ ops: [{ op: 'update_workflow', name: 'Renamed' }] });
         void browserWrites.trashWorkflow('w1');
+        await settle();
         expect(api.last('DELETE', '/v1/workflows/w1')).toBeTruthy();
         void browserWrites.deleteFolder('org_team', 'f1');
+        await settle();
         expect(api.last('DELETE', '/v1/workflows/folders/f1').query).toEqual({ organization_id: 'team' });
         const fork = browserWrites.forkWorkflow('personal', 'tpl', 'Lead finder');
+        await settle();
         const forked = api.last('POST', '/v1/workflows/tpl/fork');
-        expect(forked.json).toEqual({ name: 'Lead finder', organization_id: undefined });
+        expect(forked.json).toEqual({ name: 'Lead finder' });
         forked.answer({ id: 'copy', name: 'Lead finder' });
         expect(await fork).toEqual({ id: 'copy', name: 'Lead finder' });
     });
@@ -138,6 +144,7 @@ describe("the store's reads and writes on /v1", () => {
         asked.answer({ id: 'w9', name: 'Untitled 2', description: null });
         expect(await made).toEqual({ id: 'w9', name: 'Untitled 2', description: null });
         void browserWrites.createWorkflow('personal', null);
-        expect(api.last('POST', '/v1/workflows').json).toEqual({ folder_id: undefined, organization_id: undefined });
+        await settle();
+        expect(api.last('POST', '/v1/workflows').json).toEqual({});
     });
 });

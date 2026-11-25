@@ -2,6 +2,7 @@
 // signed-in owner compares the code and the machine, then approves (the CLI's
 // next poll gets an API key named after its machine) or denies.
 import { useState } from 'react';
+import { CliLogin as SignIn } from 'noclick';
 import { Link } from 'react-router';
 import { HAIRLINE } from '@/ui/primitives';
 import { Input } from '@/ui/input';
@@ -30,8 +31,6 @@ export interface CliLogin {
     created_at: string;
     expires_at: string;
 }
-
-const owner = { user: null } as const;
 
 function CodeForm({ onCode }: { onCode: (code: string) => void }) {
     const [typed, setTyped] = useState('');
@@ -88,8 +87,7 @@ function Answered({ login, onAnother }: { login: CliLogin; onAnother: () => void
 function Pending({ code, onAnother }: { code: string; onAnother: () => void }) {
     const Terms = useSlot(TERMS);
     const { client } = useConsole();
-    const path = `/v1/cli/logins/${encodeURIComponent(code)}`;
-    const login = useV1(`cli_login:${code}`, () => client.request<CliLogin>('GET', path, owner));
+    const login = useV1(`cli_login:${code}`, () => SignIn.get(code, { client }));
     const [answered, setAnswered] = useState<CliLogin | null>(null);
     const [failure, setFailure] = useState<unknown>(undefined);
     const [busy, setBusy] = useState(false);
@@ -109,12 +107,13 @@ function Pending({ code, onAnother }: { code: string; onAnother: () => void }) {
     }
     if (!login.data) return <div aria-busy className="h-48 max-w-xl animate-pulse rounded-xl bg-foreground/[0.03]" />;
 
-    const view = login.data;
+    const signIn = login.data;
+    const view = signIn.raw as unknown as CliLogin;
     const answer = async (approved: boolean) => {
         setBusy(true);
         setFailure(undefined);
         try {
-            setAnswered(await client.request<CliLogin>('POST', `${path}/answer`, { ...owner, json: { approved } }));
+            setAnswered((await signIn.answer(approved)).raw as unknown as CliLogin);
             if (approved) invalidateV1('keys');
         } catch (error) {
             setFailure(error);

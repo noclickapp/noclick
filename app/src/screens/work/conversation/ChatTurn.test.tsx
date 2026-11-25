@@ -169,7 +169,7 @@ describe('a chat turn', () => {
         await waitFor(() => expect(approve.hasAttribute('disabled')).toBe(false));
         fireEvent.click(approve);
         await waitFor(() => expect(card().textContent).toContain('Approved: Send email: the October invoice to Rahul'));
-        expect(fake.requests.filter((r) => r.method === 'POST').map((r) => [r.path, r.body])).toEqual([['/v1/humans/requests/req-held/answer', { approved: true, note: null }]]);
+        expect(fake.requests.filter((r) => r.method === 'POST').map((r) => [r.path, r.body])).toEqual([['/v1/humans/requests/req-held/answer', { approved: true }]]);
         cleanup();
 
         const again = fakeWorkAgent({ humanRequests: [HELD_REQUEST] });
@@ -181,7 +181,7 @@ describe('a chat turn', () => {
         });
         fireEvent.click(decline);
         await waitFor(() => expect(declined.card().textContent).toContain('You declined, so it didn’t run'));
-        expect(again.requests.filter((r) => r.method === 'POST').map((r) => r.body)).toEqual([{ approved: false, note: null }]);
+        expect(again.requests.filter((r) => r.method === 'POST').map((r) => r.body)).toEqual([{ approved: false }]);
     });
 
     it('ends in "Handled by" with how long it worked, its steps a tap away', () => {

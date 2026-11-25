@@ -100,6 +100,17 @@ function toMyWorkspace(raw: JsonObject): MyWorkspace {
 }
 
 /** What an invite is for, read without joining (`Workspace.invitation`). */
+/** A space's own NoClick: the agent that answers in it, made the first time it's asked for. */
+export interface SpaceNoClick {
+  workspaceId: string;
+  /** Put it in a channel by this id. */
+  agentId: string;
+  name: string;
+  /** How a person reads it: `NoClick · <space>`. */
+  label: string;
+  raw: JsonObject;
+}
+
 export interface InvitePreview {
   workspace: { id: string; name: string; logoUrl: string | null };
   accountName: string | null;
@@ -452,6 +463,19 @@ export class Workspace extends ApiObject {
     return parseTime(this._field("created_at"));
   }
 
+  /**
+   * The space's own NoClick (an account's own spaces have one; the personal space's is the account's own NoClick),
+   * made the first time it's asked for: put it in a channel by its `agentId`.
+   *
+   *     const helper = await Workspace.fromName("Support").noclickAgent();
+   *     await channel.addMember(helper.agentId);
+   */
+  async noclickAgent(): Promise<SpaceNoClick> {
+    const raw = await this._request<JsonObject>("GET", `${await this.path()}/noclick`, { user: null });
+    return { workspaceId: str(raw.workspace_id) ?? "", agentId: str(raw.agent_id) ?? "", name: str(raw.name) ?? "",
+             label: str(raw.label) ?? "", raw };
+  }
+
   /** Its path once its id is known (a workspace reached by name loads first). */
   private async path(): Promise<string> {
     const id = this._known("id") ?? (await this._ensure()).id;
@@ -700,6 +724,18 @@ export class Workspace extends ApiObject {
     const id = typeof workspace === "string" ? workspace : workspace.id;
     const rows = asList(await resolveClient(options.client).request("GET", `/v1/workspaces/${id}/questions`, { user: null }));
     return (rows as JsonObject[]).map(toSpaceQuestion);
+  }
+
+  /**
+   * Your personal space (your channels in no workspace) as a space people can join, made the first time: its invites,
+   * people and DMs go through it. Its channels stay where they are, shown to its people, never your own chat with
+   * NoClick. Signed in to NoClick; answers it as `mine()` lists it.
+   *
+   *     const personal = await Workspace.personalSpace();
+   *     console.log(personal.id, personal.name);
+   */
+  static async personalSpace(options: { client?: NoClickClient } = {}): Promise<MyWorkspace> {
+    return toMyWorkspace(await resolveClient(options.client).request<JsonObject>("POST", "/v1/me/personal_space", { user: null }));
   }
 
   /** Leave a workspace you joined (and each of its channels). */

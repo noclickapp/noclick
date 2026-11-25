@@ -343,6 +343,31 @@ _CONVERGED = ("size", "volumes", "network", "max_monthly_usd")
 
 
 @designed
+@dataclass(frozen=True)
+class MachineAccess:
+    """Where the account's request for machines stands (``Machine.access``): ``status`` (``not_submitted``,
+    ``pending``, ``approved`` or ``rejected``, with its ``reason``), the machines usage policy's version it accepted
+    (``policy_version``: the current one before any request) and what it said of the company."""
+
+    status: str
+    policy_version: str
+    company_name: Optional[str] = None
+    website: Optional[str] = None
+    country: Optional[str] = None
+    use_case: Optional[str] = None
+    submitted_at: Any = None
+    decided_at: Any = None
+    reason: Optional[str] = None
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "MachineAccess":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(raw.get("status") or "not_submitted", raw.get("policy_version") or "", raw.get("company_name"),
+                   raw.get("website"), raw.get("country"), raw.get("use_case"), parse_time(raw.get("submitted_at")),
+                   parse_time(raw.get("decided_at")), raw.get("reason"), raw)
+
+
 class Machine(_Object):
     """An always-on computer of a fixed ``size`` in one ``region``, billed a flat
     monthly price. Agents created with ``machine=`` run their harness on it, each
@@ -464,6 +489,48 @@ class Machine(_Object):
     @staticmethod
     async def _wire(body: Dict[str, Any]) -> Dict[str, Any]:
         return {**body, "volumes": await volume_ids(body["volumes"])} if "volumes" in body else body
+
+    @synced
+    @staticmethod
+    async def access(*, client: Optional[Client] = None) -> MachineAccess:
+        """Whether NoClick vetted the account's company for machines, which an account's first machine needs.
+
+        Returns:
+            Its ``status`` (``not_submitted``, ``pending``, ``approved`` or ``rejected``, with ``reason``).
+
+        Usage::
+
+            access = noclick.Machine.access()
+            if access.status != "approved":
+                print(access.status, access.reason)
+        """
+        return MachineAccess._from(await resolve_client(client).request("GET", "/v1/machines/vetting", user=None))
+
+    @synced
+    @staticmethod
+    async def request_access(
+        *, company_name: str, website: str, country: str, use_case: str, accept_usage_policy: bool,
+        accepted_by: Optional[Dict[str, str]] = None, accepted_at: Any = None, client: Optional[Client] = None,
+    ) -> MachineAccess:
+        """Ask NoClick for machines: the company, its website and country (ISO 3166-1 alpha-2), what its machines will
+        run, and the machines usage policy accepted. Signed in, the owner accepts it themselves; from your server, a
+        key holding ``machines:vetting`` also says who accepted it (``accepted_by``: ``{"name", "email"}``) and when
+        (``accepted_at``, a timezone-aware datetime). NoClick reviews it before the account's first machine; an
+        approved account gets ``noclick.Conflict``.
+
+        Returns:
+            The request, ``pending``.
+
+        Usage::
+
+            noclick.Machine.request_access(company_name="Acme", website="https://acme.com", country="US",
+                                           use_case="Support agents that never sleep", accept_usage_policy=True)
+        """
+        body = compact(company_name=company_name, website=website, country=country, use_case=use_case,
+                       accept_usage_policy=accept_usage_policy, accepted_by=accepted_by,
+                       accepted_at=accepted_at.isoformat() if accepted_at is not None else None)
+        return MachineAccess._from(await resolve_client(client).request("POST", "/v1/machines/vetting", json=body,
+                                                                        user=None))
 
     @synced
     @classmethod

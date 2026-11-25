@@ -5,7 +5,7 @@
 import { useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { FileText, GitBranch, KeyRound, Lock, Plug, Terminal } from 'lucide-react';
-import { Agent, type Connection, type NoClick, type Secret } from 'noclick';
+import { Agent, previewDelete, type Connection, type NoClick, type Secret } from 'noclick';
 import { invalidateV1 } from '@/sdk/useV1';
 import { DeleteConfirmPopup } from '@/ui/DeleteConfirmPopup';
 import { BUTTON_PRIMARY, BUTTON_GHOST } from '@/ui/buttons';
@@ -324,8 +324,8 @@ function BrowserSignInRow({ signIn }: { signIn: BrowserSignIn }) {
 async function alsoUsing(client: NoClick, gone: Secret[], self: string): Promise<string[]> {
     const lines = new Set<string>();
     for (const s of gone) {
-        const { impact } = await client.request<{ impact: { depends_on_it?: unknown } }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path: `/v1/secrets/${s.id}` } });
-        for (const d of Array.isArray(impact.depends_on_it) ? impact.depends_on_it : []) if (typeof d === 'string' && !d.includes(`'${self}'`)) lines.add(d);
+        const { impact } = await previewDelete('DELETE', `/v1/secrets/${s.id}`, { client });
+        for (const d of impact.dependsOnIt) if (!d.includes(`'${self}'`)) lines.add(d);
     }
     return [...lines];
 }

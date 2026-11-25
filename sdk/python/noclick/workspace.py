@@ -94,6 +94,18 @@ class MyWorkspace:
 
 
 @dataclass(frozen=True)
+class SpaceNoClick:
+    """A space's own NoClick: the agent that answers in it (``agent_id``, put it in a channel by it), its ``name``,
+    and its ``label`` as a person reads it (``NoClick · <space>``)."""
+
+    workspace_id: str
+    agent_id: str
+    name: str
+    label: str
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+
+@dataclass(frozen=True)
 class SpaceQuestion:
     """A question your own NoClick asked a space's NoClick (``Workspace.questions``):
     ``waiting`` until it's answered once, then ``answered`` with its ``answer``, or
@@ -860,6 +872,41 @@ class Workspace(_Object):
             print(acme.summary()["kinds"]["agents"]["working"])
         """
         return await self._request("GET", f"{await self._id_path()}/summary") or {}
+
+    @synced
+    async def noclick_agent(self) -> SpaceNoClick:
+        """The space's own NoClick (an account's own spaces have one; the personal space's is the account's own
+        NoClick), made the first time it's asked for: put it in a channel by its ``agent_id``.
+
+        Returns:
+            Its ``agent_id``, ``name`` and ``label`` (``NoClick · <space>``).
+
+        Usage::
+
+            helper = noclick.Workspace.from_name("Support").noclick_agent()
+            channel.add_member(helper.agent_id)
+        """
+        raw = await self._request("GET", f"{await self._id_path()}/noclick", user=None) or {}
+        return SpaceNoClick(raw.get("workspace_id") or "", raw.get("agent_id") or "", raw.get("name") or "",
+                            raw.get("label") or "", raw)
+
+    @synced
+    @classmethod
+    async def personal_space(cls, *, client: Optional[Client] = None) -> MyWorkspace:
+        """Your personal space (your channels in no workspace) as a space people can join, made the first time: its
+        invites, people and DMs go through it. Its channels stay where they are, shown to its people, never your own
+        chat with NoClick. Signed in to NoClick.
+
+        Returns:
+            It, as ``mine()`` lists it.
+
+        Usage::
+
+            personal = noclick.Workspace.personal_space()
+            print(personal.id, personal.name)
+        """
+        response = await resolve_client(client).request("POST", "/v1/me/personal_space", user=None) or {}
+        return MyWorkspace._from(response)
 
     @synced
     @classmethod

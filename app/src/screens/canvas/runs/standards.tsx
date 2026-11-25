@@ -11,7 +11,7 @@
 // about a failed step, and a fix that's done in NoClick's app (adding funds, raising the spending cap) opens there.
 // The SDK loads with the first read (../standardsSdk.ts), and the results view with the first run opened.
 import { lazy, Suspense, useContext, useMemo } from 'react';
-import type { NoClick } from 'noclick';
+import type { NoClick, PageOptions, WorkflowRunSource, WorkflowRunStatus, WorkflowRunTrigger, WorkflowRunsOptions } from 'noclick';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { addFundsUrl, billingSettingsUrl, NOCLICK_SITE } from '@/screens/console/lib/site';
 import { useClient } from '@/sdk/client';
@@ -26,7 +26,7 @@ type Json = Record<string, unknown>;
 const LOG_STATUS: Record<string, ExecutionStatus> = { succeeded: 'success', failed: 'error', running: 'running' };
 /** The API's narrowing for each of the log's statuses: a run that waits lists as running there, told apart by
  *  `waiting`. */
-const API_STATUS: Record<ExecutionStatus, { status: string; waiting?: boolean }> = {
+const API_STATUS: Record<ExecutionStatus, { status: WorkflowRunStatus; waiting?: boolean }> = {
     success: { status: 'succeeded' },
     error: { status: 'failed' },
     running: { status: 'running', waiting: false },
@@ -39,10 +39,10 @@ const LOG_SOURCE: Record<string, ExecutionTrigger> = { app: 'manual', schedule: 
 const LOG_TRIGGER: Record<string, ExecutionTrigger> = { webhook: 'webhook', email: 'email' };
 /** The API's narrowing for each way of starting the log narrows by: its `source`, or the kind of event (`trigger`).
  *  None for a form's: the API has no word for it, so no run is one. */
-const API_STARTED: Partial<Record<ExecutionTrigger, { source?: string; trigger?: string }>> = {
-    manual: { source: 'app' },
-    cron: { source: 'schedule' },
-    run: { source: 'api,endpoint' },
+const API_STARTED: Partial<Record<ExecutionTrigger, { source?: WorkflowRunSource[]; trigger?: WorkflowRunTrigger }>> = {
+    manual: { source: ['app'] },
+    cron: { source: ['schedule'] },
+    run: { source: ['api', 'endpoint'] },
     webhook: { trigger: 'webhook' },
     email: { trigger: 'email' },
 };
@@ -75,7 +75,7 @@ export function logOfRun(run: Json): WorkflowExecutionLog {
 
 /** The API's query for a page of the log; null for a narrowing no run can meet (a way of starting the API has no word
  *  for), whose page is empty. */
-function runsQuery({ limit, filters, cursor }: RunLogQuery): Record<string, string | number | boolean | undefined> | null {
+function runsQuery({ limit, filters, cursor }: RunLogQuery): (Omit<WorkflowRunsOptions, 'limit'> & PageOptions) | null {
     const started = filters.trigger === 'all' ? {} : API_STARTED[filters.trigger];
     if (!started) return null;
     const ended = filters.status === 'all' ? undefined : API_STATUS[filters.status];
@@ -90,8 +90,6 @@ function runsQuery({ limit, filters, cursor }: RunLogQuery): Record<string, stri
     };
 }
 
-const path = (workflowId: string) => `/v1/workflows/${encodeURIComponent(workflowId)}`;
-
 function v1RunReads(client: NoClick): RunReads {
     const sdk = () => import('../standardsSdk');
     return {
@@ -99,9 +97,9 @@ function v1RunReads(client: NoClick): RunReads {
         runs: async (workflowId, query): Promise<RunLogPage> => {
             const narrowed = runsQuery(query);
             if (!narrowed) return { logs: [], next: null };
-            const page = await client.request<Json>('GET', `${path(workflowId)}/runs`, { query: narrowed });
-            const data = Array.isArray(page.data) ? (page.data as Json[]) : [];
-            return { logs: data.map(logOfRun), next: text(page.next_cursor) };
+            const { Workflow } = await sdk();
+            const page = await Workflow.fromId(workflowId, { client }).runsPage(narrowed);
+            return { logs: page.data.map((run) => logOfRun(run.raw)), next: page.nextCursor };
         },
         counts: async (workflowId): Promise<ExecutionCounts> => {
             const { Workflow } = await sdk();

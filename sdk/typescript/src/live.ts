@@ -425,12 +425,16 @@ export class ProjectLive extends ProjectService {
   }
 
   /**
-   * What Vite did with each edit of the app's newest session after `after` (a sequence number), oldest first: up
-   * to `limit` (50 by default, at most 200), with `lastSeq` to read the next ones after. Empty when no session has run.
+   * What Vite did with each edit of the app's newest session (or `sessionId`'s) after `after` (a sequence number),
+   * oldest first: up to `limit` (50 by default, at most 200), with `lastSeq` to read the next ones after. Empty when
+   * no session has run.
+   *
+   *     const { session } = await app.live.status();
+   *     if (session) for (const edit of await app.live.edits({ sessionId: session.id })) console.log(edit.seq, edit.outcome);
    */
-  async edits(options: { after?: number; limit?: number } = {}): Promise<LiveEdits> {
+  async edits(options: { after?: number; limit?: number; sessionId?: string } = {}): Promise<LiveEdits> {
     return toEdits(await this._call("GET", ["edits"], {
-      query: { after: options.after || undefined, limit: options.limit ?? 50 },
+      query: { after: options.after || undefined, limit: options.limit ?? 50, session_id: options.sessionId },
     }));
   }
 

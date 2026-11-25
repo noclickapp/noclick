@@ -8,7 +8,7 @@ import { useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import type { NoClick } from 'noclick';
+import { HumanRequest, type NoClick } from 'noclick';
 import { humanRequestStatus } from '@/screens/console/lib/status';
 import { userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -117,8 +117,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     );
 }
 
-function getRequest(client: NoClick, requestId: string, signal: AbortSignal): Promise<RequestView> {
-    return client.request<RequestView>('GET', `/v1/humans/requests/${encodeURIComponent(requestId)}`, { user: null, signal });
+async function getRequest(client: NoClick, requestId: string): Promise<RequestView> {
+    return (await HumanRequest.retrieve(requestId, { client, user: null })).request as unknown as RequestView;
 }
 
 const ANSWERED_BY: Record<string, string> = {
@@ -142,7 +142,7 @@ export function HumanRequestDrawer({
 }) {
     const { client } = useConsole();
     const href = useConsoleHref();
-    const fetched = useV1(requestId && !row ? `humans/request/${requestId}` : null, (signal) => getRequest(client, requestId!, signal), { enabled: !listLoading });
+    const fetched = useV1(requestId && !row ? `humans/request/${requestId}` : null, () => getRequest(client, requestId!), { enabled: !listLoading });
     const view = row ?? fetched.data;
 
     useEffect(() => {

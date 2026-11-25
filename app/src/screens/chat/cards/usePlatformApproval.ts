@@ -6,14 +6,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWorkFrames } from '@/sdk/live';
 import { useClient } from '@/sdk/client';
-import { NoClickError, type NoClick } from 'noclick';
-import { answerBody, type ApprovalView, type Failure } from '../approvals';
-
-const approvalPath = (approvalId: string) => `/v1/approvals/${encodeURIComponent(approvalId)}`;
+import { Approval, NoClickError, type NoClick } from 'noclick';
+import type { ApprovalView, Failure } from '../approvals';
 
 /** The approval as /v1 answers it to the account. */
 export async function readApproval(client: NoClick, approvalId: string): Promise<ApprovalView> {
-    return await client.request<ApprovalView>('GET', approvalPath(approvalId), { user: null });
+    return (await Approval.fromId(approvalId, { client }).refresh()).raw as unknown as ApprovalView;
 }
 
 /** A /v1 call's refusal as the approval page shows one: its message and what to do next. */
@@ -72,8 +70,9 @@ export function usePlatformApproval(approvalId: string) {
         async (decision: 'approve' | 'decline') => {
             setAnswering(true);
             try {
-                const view = await client.request<ApprovalView>('POST', `${approvalPath(approvalId)}/answer`, { user: null, json: answerBody(decision, '', []) });
-                setAnswer({ approval: view });
+                const held = Approval.fromId(approvalId, { client });
+                const view = decision === 'approve' ? await held.approve() : await held.decline();
+                setAnswer({ approval: view.raw as unknown as ApprovalView });
             } catch (error) {
                 setAnswer({ failure: failureOfError(error) });
             } finally {

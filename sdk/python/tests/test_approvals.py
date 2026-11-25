@@ -45,6 +45,11 @@ def test_code_approves_and_declines_as_the_account_never_as_a_user(api, client):
     api.post("/v1/approvals/apr_2/answer").respond(json={**APPROVAL, "id": "apr_2", "status": "declined"})
     assert nc.Approval.from_id("apr_2").decline().status == "declined"
 
+    # The signed-in owner approving a call whose terms apply names the terms it accepts.
+    terms = api.post("/v1/approvals/apr_3/answer").respond(json={**APPROVAL, "id": "apr_3", "status": "approved"})
+    nc.Approval.from_id("apr_3").approve(accepted=["registration_agreement"])
+    assert body(terms.calls.last.request) == {"approved": True, "accepted": ["registration_agreement"]}
+
 
 def test_a_key_without_the_scope_or_that_made_the_call_is_refused(api, client):
     api.post("/v1/approvals/apr_1/answer").respond(403, json={"error": {

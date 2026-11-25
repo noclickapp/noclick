@@ -259,6 +259,82 @@ class Organization:
 
     @synced
     @staticmethod
+    async def invitation(token: str, *, client: Optional[Client] = None) -> Dict[str, Any]:
+        """An invite to a team workspace by its token, before accepting it.
+
+        Returns:
+            Which workspace (``organization_name``), from whom, and as what ``role``.
+
+        Usage::
+
+            invite = noclick.Organization.invitation(token)
+            print(invite["organization_name"], invite["role"])
+        """
+        return await _call(client, "GET", f"/v1/organizations/invites/{quote(token, safe='')}")
+
+    @synced
+    @staticmethod
+    async def upload_icon(organization: Any, image_data: str, *, content_type: str = "image/png",
+                          client: Optional[Client] = None) -> Dict[str, Any]:
+        """Set its picture (its owner or an admin): ``image_data`` base64, at most 2 MB; ``content_type`` image/png,
+        image/jpeg, image/gif or image/webp.
+
+        Returns:
+            Its ``icon_url``.
+
+        Usage::
+
+            import base64
+
+            noclick.Organization.upload_icon(acme, base64.b64encode(open("logo.png", "rb").read()).decode())
+        """
+        return await _call(client, "PUT", f"/v1/organizations/{_id(organization)}/icon",
+                           {"image_data": image_data, "content_type": content_type})
+
+    @synced
+    @staticmethod
+    async def sso(organization: Any, *, client: Optional[Client] = None) -> Dict[str, Any]:
+        """Its SAML single sign-on, as it's set up.
+
+        Returns:
+            Its domain, its identity provider's metadata URL and whether it's on.
+
+        Usage::
+
+            print(noclick.Organization.sso(acme))
+        """
+        return await _call(client, "GET", f"/v1/organizations/{_id(organization)}/sso")
+
+    @synced
+    @staticmethod
+    async def configure_sso(organization: Any, *, domain: str, metadata_url: str,
+                            attribute_mapping: Optional[Dict[str, Any]] = None,
+                            client: Optional[Client] = None) -> Dict[str, Any]:
+        """Set up SAML single sign-on for its email domain (its owner only), from the identity provider's metadata.
+
+        Returns:
+            The single sign-on as it's now set up.
+
+        Usage::
+
+            noclick.Organization.configure_sso(acme, domain="acme.com", metadata_url="https://idp.acme.com/metadata")
+        """
+        return await _call(client, "PUT", f"/v1/organizations/{_id(organization)}/sso",
+                           {"domain": domain, "metadata_url": metadata_url, "attribute_mapping": attribute_mapping})
+
+    @synced
+    @staticmethod
+    async def disable_sso(organization: Any, *, client: Optional[Client] = None) -> None:
+        """Turn its single sign-on off (its owner only).
+
+        Usage::
+
+            noclick.Organization.disable_sso(acme)
+        """
+        await _call(client, "DELETE", f"/v1/organizations/{_id(organization)}/sso")
+
+    @synced
+    @staticmethod
     async def switch_to(organization: Any, *, client: Optional[Client] = None) -> None:
         """Make the workspace your session acts in a team one you're in, or your own (``None``).
 

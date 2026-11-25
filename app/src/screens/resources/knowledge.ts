@@ -3,8 +3,7 @@
 // account's agents are where those links live (`skills: [{id, pin}]`, `memories: [{id, writes}]`). The compute list
 // is every NoClick machine held, every agent sandbox up now and every developer sandbox live. Read through the
 // platform client (the console's in Resources, Work's in a space), over the API's own JSON.
-import { ALL_USERS, Machine, Memory, Skill as SdkSkill, TrashItem, compute, type Agent, type AppTesting, type NoClick, type SkillFiles } from 'noclick';
-import { toMemoryEntry } from '@/sdk/source';
+import { ALL_USERS, Agent, Machine, Memory, Skill as SdkSkill, TrashItem, compute, previewDelete, type AppTesting, type MemoryEntry as SdkMemoryEntry, type NoClick, type SkillFiles } from 'noclick';
 
 type Wire = Record<string, unknown>;
 const text = (v: unknown) => (typeof v === 'string' ? v : '');
@@ -201,35 +200,28 @@ export interface MemoryEntry {
     writtenBy: Writer | null;
 }
 
-/** The account's named memories (an agent's own is listed with its agent's, `agentMemories`). */
+/** The account's named memories. */
 export async function listMemories(client: NoClick): Promise<MemoryItem[]> {
     return (await Memory.list({ client, limit: LIMIT })).map((m) => toMemory(m.raw));
 }
 
-/** One agent's memories: its own first, then the ones it attaches, in order. */
-export async function agentMemories(client: NoClick, agentId: string): Promise<MemoryItem[]> {
-    const page = await client.request<{ data: Wire[] }>('GET', '/v1/memories', { query: { agent_id: agentId, limit: LIMIT } });
-    return list(page.data).map(toMemory);
+export async function getMemory(client: NoClick, id: string): Promise<MemoryItem> {
+    return toMemory((await Memory.get(id, { client })).raw as Wire);
 }
 
-export async function getMemory(client: NoClick, id: string): Promise<MemoryItem> {
-    return toMemory(await client.request<Wire>('GET', `/v1/memories/${id}`));
-}
+/** An entry as the SDK reads it, in this page's shape. */
+const entryOf = (entry: SdkMemoryEntry): MemoryEntry => ({
+    name: entry.name, description: entry.description, content: entry.content, version: entry.version,
+    updatedAt: entry.updatedAt?.toISOString() ?? null, writtenBy: writer((entry.raw as Wire).written_by),
+});
 
 export async function memoryEntries(client: NoClick, id: string): Promise<MemoryEntry[]> {
-    const rows = await client.request<Wire[] | { data: Wire[] }>('GET', `/v1/memories/${id}/entries`);
-    const raw = Array.isArray(rows) ? rows : list(rows.data);
-    return raw.map((row) => {
-        const entry = toMemoryEntry(row as Parameters<typeof toMemoryEntry>[0]);
-        return { name: entry.name, description: entry.description, content: entry.content, version: entry.version, updatedAt: entry.updatedAt?.toISOString() ?? null, writtenBy: writer(row.written_by) };
-    });
+    return (await Memory.fromId(id, { client }).entries()).map(entryOf);
 }
 
 /** One entry in full, its content with it (a list leaves content out). */
 export async function readEntry(client: NoClick, id: string, name: string): Promise<MemoryEntry> {
-    const row = await client.request<Wire>('GET', `/v1/memories/${id}/entries/${encodeURIComponent(name)}`);
-    const entry = toMemoryEntry(row as Parameters<typeof toMemoryEntry>[0]);
-    return { name: entry.name, description: entry.description, content: entry.content, version: entry.version, updatedAt: entry.updatedAt?.toISOString() ?? null, writtenBy: writer(row.written_by) };
+    return entryOf(await Memory.fromId(id, { client }).read(name));
 }
 
 /** Writes an entry over the version read (0 or none: a new one). */
@@ -264,8 +256,8 @@ export async function trashKnowledge(client: NoClick, item: Knowledge): Promise<
 
 /** What deleting it does, as the platform previews it: the agents it's detached from. */
 export async function previewTrash(client: NoClick, item: Knowledge): Promise<{ deletes: string; dependsOnIt: string[] }> {
-    const { impact } = await client.request<{ impact: Wire }>('POST', '/v1/delete_previews', { json: { method: 'DELETE', path: route(item.kind, item.id) } });
-    return { deletes: text(impact.deletes), dependsOnIt: list(impact.depends_on_it).map(String) };
+    const { impact } = await previewDelete('DELETE', route(item.kind, item.id), { client });
+    return { deletes: impact.deletes, dependsOnIt: impact.dependsOnIt };
 }
 
 // ── the account's agents, and their links ──────────────────────────────────
@@ -300,7 +292,10 @@ export function agentRef(agent: Agent): AgentRef {
 
 /** Sets an agent's skills or memories to `links`, in order (acting for its user, where it's a user's). */
 export async function setAgentLinks(client: NoClick, agent: AgentRef, change: { skills?: AgentRef['skills']; memories?: AgentRef['memories'] }): Promise<void> {
-    await client.request('PATCH', `/v1/agents/${agent.id}`, { json: change, user: agent.userId ?? undefined });
+    await Agent.fromId(agent.id, { client, user: agent.userId ?? undefined }).update({
+        skills: change.skills?.map((s) => (s.pin === null ? s.id : SdkSkill.fromId(s.id, { client }).pinned(s.pin))),
+        memories: change.memories?.map((m) => (m.writes ? Memory.fromId(m.id, { client }).writable() : m.id)),
+    });
 }
 
 /** The most memories an agent reads besides its own. */

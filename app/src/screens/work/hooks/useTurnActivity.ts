@@ -78,7 +78,7 @@ export function useTurnActivity(caller: Agent, key: string, conversation: string
     useEffect(() => {
         if (!needed || items !== null) return;
         const asked = cacheKey;
-        readV1(client, cacheKey, () => caller.hydrate().then(() => readTurnActivity(client, caller, conversation))).then(
+        readV1(client, cacheKey, () => caller.hydrate().then(() => readTurnActivity(caller, conversation))).then(
             (read) => shown.current === asked && setItems(read),
             (e: unknown) => {
                 if (shown.current !== asked) return;
@@ -94,7 +94,7 @@ export function useTurnActivity(caller: Agent, key: string, conversation: string
         const asked = shown.current;
         const ops = new Set(heardOps.current);
         heardOps.current = new Set();
-        readTurnActivity(client, caller, conversation, RECENT).then(
+        readTurnActivity(caller, conversation, RECENT).then(
             (fresh) => {
                 if (shown.current !== asked) return;
                 setItems((kept) => {

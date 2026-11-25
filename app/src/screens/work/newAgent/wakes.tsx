@@ -95,8 +95,7 @@ export function useEventFilters(integration: string | undefined, event: string |
 /** Every event an app's integration has, each with its description and filters. */
 export function useIntegrationEvents(integration: string | undefined) {
     return useWorkV1(integration ? `work:events:${integration}` : null, async (client) => {
-        const page = await client.request<{ data: JsonObject[] }>('GET', `/v1/integrations/${encodeURIComponent(integration!)}/events`);
-        return page.data;
+        return (await Connection.integrationEvents(integration!, { client })).map((event) => event.raw);
     });
 }
 

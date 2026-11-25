@@ -13,10 +13,11 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { HAIRLINE, SURFACE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { PhoneNumber, type AnswerWithOptions, type AvailableNumber, type PhoneCall, type PhoneCallers, type PhoneNumberType } from 'noclick';
+import { PhoneNumber, type AnswerWithOptions, type PhoneCall, type PhoneCallers } from 'noclick';
 import { NumberFinder } from '@/screens/numbers/NumberFinder';
 import { addFundsUrl } from '@/screens/console/lib/site';
-import { usePhoneNumberPurchase, type NumberHolder, type NumberPurchaseTransport } from '@/screens/numbers/usePhoneNumberPurchase';
+import { usePhoneNumberPurchase, type NumberPurchaseTransport } from '@/screens/numbers/usePhoneNumberPurchase';
+import { sdkNumberTransport } from '@/screens/numbers/sdkTransport';
 import { formatDuration } from '@/screens/console/lib/format';
 import { PHONE_NUMBERS_EMPTY } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
@@ -551,91 +552,12 @@ function NumberDrawer({
     );
 }
 
-/** The shared number purchase flow (``usePhoneNumberPurchase``) over ``/v1``: prices are the API's own dollars, and a
- *  purchase's ceilings are exactly the prices the row showed. */
+/** The console's: over its client, the funds link NoClick's top-up, as every surface that sells numbers links it. */
 export function useConsoleNumberTransport(client: ReturnType<typeof useConsole>['client'], buyer: { user: string | null; name: string }): NumberPurchaseTransport {
     const { site } = useConsole();
     const latest = useRef(buyer);
     latest.current = buyer;
-    const send = useCallback<NumberPurchaseTransport['send']>(
-        async (event) => {
-            if (event.event_name === 'phone_number:coverage') {
-                const countries = await PhoneNumber.coverage({ client, user: null });
-                return {
-                    countries: countries.map((c) => ({
-                        country: c.country,
-                        number_types: c.types,
-                        texting_types: c.textingTypes,
-                        documents_types: c.documentsTypes,
-                        steps_types: c.stepsTypes,
-                    })),
-                };
-            }
-            if (event.event_name === 'phone_number:places') {
-                return { places: await PhoneNumber.places(event.country as string, { client, user: null, type: event.number_type as PhoneNumberType }) };
-            }
-            if (event.event_name === 'phone_number:search') {
-                const found = await PhoneNumber.available({
-                    client,
-                    user: null,
-                    country: event.country as string,
-                    type: event.number_type as PhoneNumberType,
-                    areaCode: (event.area_code as string | null) ?? undefined,
-                    locality: (event.locality as string | null) ?? undefined,
-                    region: (event.region as string | null) ?? undefined,
-                    contains: (event.contains as string | null) ?? undefined,
-                    features: event.features as 'voice' | 'voice_sms',
-                    limit: event.limit as number,
-                });
-                return { numbers: found.map(offerOf) };
-            }
-            if (event.event_name === 'phone_number:buy') {
-                const holder = event.holder as NumberHolder | undefined;
-                const number = await PhoneNumber.buy(event.phone_number as string, {
-                    client,
-                    user: latest.current.user,
-                    country: event.country as string,
-                    type: event.number_type as PhoneNumberType,
-                    maxMonthlyUsd: event.monthly_usd as number,
-                    maxUpfrontUsd: event.upfront_usd as number,
-                    address: holder && {
-                        name: holder.name,
-                        businessName: holder.business_name ?? undefined,
-                        street: holder.street,
-                        street2: holder.street2 ?? undefined,
-                        city: holder.city,
-                        region: holder.region ?? undefined,
-                        postalCode: holder.postal_code,
-                        country: holder.country,
-                        phone: holder.phone ?? undefined,
-                    },
-                    name: latest.current.name.trim() || undefined,
-                });
-                // The console files no documents, so a number it buys is never left in the carrier's review.
-                if (!(number instanceof PhoneNumber)) throw new Error(`${number.number} is in the carrier's review: follow it as order ${number.id}.`);
-                return { credential_id: number.id, phone_number: number.number };
-            }
-            throw new Error(`The console doesn't send ${event.event_name}.`);
-        },
-        [client]
-    );
-    // Where an account short of funds adds some: NoClick's top-up, as every surface that sells numbers links it.
-    return useMemo(() => ({ send, fundsHref: addFundsUrl(site) }), [send, site]);
-}
-
-function offerOf(n: AvailableNumber) {
-    return {
-        phone_number: n.number,
-        country: n.country,
-        number_type: n.type,
-        locality: n.locality ?? '',
-        region: n.region ?? '',
-        capabilities: n.capabilities,
-        monthly_usd: n.monthlyUsd ?? 0,
-        upfront_usd: n.upfrontUsd ?? 0,
-        requirements: n.requirements,
-        texting: n.texting,
-    };
+    return useMemo(() => sdkNumberTransport(client, () => latest.current, addFundsUrl(site)), [client, site]);
 }
 
 function BuyNumberFlow({ defaultUser, onBought }: { defaultUser: string | null; onBought: (number: string) => void }) {
@@ -644,8 +566,7 @@ function BuyNumberFlow({ defaultUser, onBought }: { defaultUser: string | null; 
     const [name, setName] = useState('');
     const [user, setUser] = useState<string | null>(defaultUser);
     const transport = useConsoleNumberTransport(client, { user, name });
-    // Documents are filed in the app, or through the API with them (POST /v1/phone_numbers/documents).
-    const purchase = usePhoneNumberPurchase({ transport, country, filesDocuments: false, onCredentialCreated: (_id, number) => onBought(number) });
+    const purchase = usePhoneNumberPurchase({ transport, country, onCredentialCreated: (_id, number) => onBought(number) });
     return (
         <div className="flex flex-col gap-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
