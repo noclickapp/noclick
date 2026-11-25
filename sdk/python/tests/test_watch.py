@@ -138,9 +138,9 @@ def test_a_token_call_refused_for_good_ends_watch_and_a_token_source_replaces_th
     assert connect.opened[0].url == "wss://relay.test/v1/watch/socket/r_9"
 
 
-def test_without_the_live_extra_watch_names_what_to_install(monkeypatch):
+def test_without_websockets_watch_names_what_to_install(monkeypatch):
     monkeypatch.setitem(sys.modules, "websockets.asyncio.client", None)
-    with pytest.raises(ImportError, match=r'noclick\[live\]'):
+    with pytest.raises(ImportError, match=r'pip install websockets'):
         for _ in nc.watch():
             pass
 

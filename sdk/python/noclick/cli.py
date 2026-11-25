@@ -78,6 +78,49 @@ def _note(message: str) -> None:
     print(message, file=sys.stderr)
 
 
+# --- the command line's own words ----------------------------------------------
+# An error's next step and a build log are written for code (``noclick.Database.create(...)``, ``GET /v1/...``): the
+# command line says the command that does it instead.
+
+#: What the running command is about, which its words name (the app a deploy or logs reads).
+_CONTEXT: Dict[str, str] = {}
+
+_MAKES = {
+    "Project": "Create it with its first deploy: noclick deploy {name} --create",
+    "Database": "Create it with: noclick db create {name}",
+    "Bucket": "Create it with: noclick bucket create {name}",
+}
+_SDK_MAKES = re.compile(r"(?:Create|Issue|Buy) it with noclick\.(\w+)\.\w+\(.*create_if_missing=True\.?")
+_BUILD_LOG_STEP = re.compile(r"Read its build log: GET /v1/deployments/([\w-]+)/logs\?kind=build\.?")
+_SETTING_SET = re.compile(r'app\.settings\.set\(("[^"]*"), ("[^"]*")\)')
+
+
+def _cli_words(text: str) -> str:
+    """``text`` with what it says to do in code said as the command that does it."""
+    text = _BUILD_LOG_STEP.sub(r"Read its build log: noclick logs --build --deployment \1", text)
+    app = _CONTEXT.get("app") or "<app>"
+    return _SETTING_SET.sub(lambda m: f"noclick settings set {app} {m.group(1)} {m.group(2)}", text)
+
+
+def _for_the_terminal(err: Error) -> Tuple[str, Optional[str]]:
+    """An error's message and next step as the command line says them."""
+    message, step = err.message, err.next_step
+    name = err.details.get("name") or ""
+    if message.startswith("No project is named"):  # an app, as every other command says
+        message = message.replace("No project is named", "No app is named", 1)
+    if step:
+        made = _SDK_MAKES.search(step)
+        if made:
+            step = _MAKES.get(made.group(1), "There's no noclick command that makes one: make it in the NoClick app, "
+                                             "or in code with noclick.{kind}.create(...).").format(
+                name=name or f"<{made.group(1).lower()}>", kind=made.group(1))
+        elif step.startswith("Run statements that write with execute"):
+            step = "Run it again with --write."
+        else:
+            step = _cli_words(step)
+    return _cli_words(message), step
+
+
 # --- credentials -------------------------------------------------------------
 
 
@@ -110,7 +153,7 @@ def _keyring() -> Any:
     except ImportError:
         raise CommandError(
             "No OS keychain library is installed.",
-            next_step="pip install 'noclick[cli]', or pass --store file to keep the key in a file only you can read.",
+            next_step="pip install keyring, or pass --store file to keep the key in a file only you can read.",
         ) from None
     return keyring
 
@@ -131,6 +174,16 @@ class KeychainStore:
                 f"The OS keychain refused: {exc}",
                 next_step="Unlock the keychain and retry, or pass --store file.",
             ) from exc
+
+    def usable(self) -> bool:
+        """Whether the machine has a keychain to keep a key in: a server or container often has none, where the
+        keychain library's own backend only refuses."""
+        try:
+            from keyring.backends import fail
+        except ImportError:
+            return True
+        found = getattr(self._keyring, "get_keyring", None)
+        return found is None or not isinstance(found(), fail.Keyring)
 
     def read(self, profile: str) -> Optional[str]:
         return self._call("get_password", profile)
@@ -168,7 +221,16 @@ class FileStore:
 
 
 def key_store(name: str) -> Any:
-    return KeychainStore() if name == "keychain" else FileStore()
+    """``keychain``, ``file``, or ``auto``: the OS keychain where this machine has one to keep it in, else the file."""
+    if name == "file":
+        return FileStore()
+    if name == "keychain":
+        return KeychainStore()
+    try:
+        store = KeychainStore()
+    except CommandError:  # no keychain library
+        return FileStore()
+    return store if store.usable() else FileStore()
 
 
 @dataclass
@@ -293,7 +355,7 @@ def _anonymous_post(http: httpx.Client, path: str, body: Dict[str, Any]) -> Dict
 
 
 def cmd_login(args: argparse.Namespace) -> int:
-    store = key_store(args.store)  # refuse a missing keychain before the browser opens
+    store = key_store(args.store)  # refuse a missing keychain before the browser opens (--store keychain)
     api_url = (os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL).rstrip("/")
     with httpx.Client(base_url=api_url, timeout=30, headers={"User-Agent": USER_AGENT}) as http:
         start = _anonymous_post(http, "/v1/cli/logins", {"client": "noclick-cli", "hostname": socket.gethostname()})
@@ -309,15 +371,22 @@ def cmd_login(args: argparse.Namespace) -> int:
             if poll.get("status") == "approved":
                 break
             interval = poll.get("interval_s") or interval
-    store.write(args.profile, poll["key"])
+    try:
+        store.write(args.profile, poll["key"])
+    except CommandError as refused:
+        if args.store != "auto":
+            raise
+        _note(f"{refused.message.rstrip('.')}. Keeping the key in a file only you can read instead.")
+        store = FileStore()
+        store.write(args.profile, poll["key"])
     config = _read_config()
     config.setdefault("profiles", {})[args.profile] = {
         "api_url": api_url, "store": store.name, "key_id": poll.get("key_id"), "key_name": poll.get("key_name"),
         "key_prefix": poll["key"][:12], "email": poll.get("email"),
     }
     _write_config(config)
-    where = "the OS keychain" if store.name == "keychain" else str(FileStore().path)
-    print(f"Signed in as {poll.get('email') or 'your account'}.")
+    where = "the OS keychain" if store.name == "keychain" else f"{FileStore().path} (only you can read it)"
+    print(f"Signed in as {poll.get('email') or 'your account'}.", flush=True)
     _note(f"The key \"{poll.get('key_name')}\" is in {where}. noclick logout revokes it.")
     return 0
 
@@ -399,7 +468,11 @@ def cmd_logout(args: argparse.Namespace) -> int:
 
 
 def cmd_agents_list(args: argparse.Namespace) -> int:
-    agents = Agent.list(limit=args.limit, user_filter=ALL_USERS if args.all_users else None)
+    # One more than shown says whether there are more.
+    agents = Agent.list(limit=args.limit + 1 if args.limit else None,
+                        user_filter=ALL_USERS if args.all_users else None)
+    more = bool(args.limit) and len(agents) > args.limit
+    agents = agents[:args.limit] if args.limit else agents
     if args.json:
         _print_json(agents)
         return 0
@@ -408,6 +481,8 @@ def cmd_agents_list(args: argparse.Namespace) -> int:
         [(a.name, a.model, a.user_id or "account", a.created_at, a.id) for a in agents],
         empty="No agents yet.",
     )
+    if more:
+        _note(f"The first {args.limit}: there are more (--limit 0 lists every one).")
     return 0
 
 
@@ -455,7 +530,7 @@ def cmd_agents_chat(args: argparse.Namespace) -> int:
         tools = [call["tool"] for call in reply.tool_calls]
         if tools:
             _note(f"({', '.join(tools)})")
-        print(reply.text)
+        print(reply.text, flush=True)  # piped, each reply as it comes
         if interactive:
             print()
     if conversation:
@@ -513,7 +588,11 @@ def _plural(n: int, word: str) -> str:
     return f"{n} {word}{'' if n == 1 else 's'}"
 
 
-def _print_result(result: Any, as_json: bool) -> None:
+# A statement that defines the schema: what the engine counts as rows written for it is its own catalog's.
+_DEFINES = re.compile(r"^\s*(?:create|drop|alter)\b", re.IGNORECASE)
+
+
+def _print_result(result: Any, as_json: bool, sql: str = "") -> None:
     if as_json:
         _print_json(result.rows)
         return
@@ -521,6 +600,8 @@ def _print_result(result: Any, as_json: bool) -> None:
     if result.columns:
         _table(result.columns, [[row.get(c) for c in result.columns] for row in result.rows], empty="(no rows)")
         _note(f"{_plural(len(result.rows), 'row')}{took}")
+    elif _DEFINES.match(sql):
+        _note(f"Done{took}.")
     else:
         _note(f"{_plural(result.rows_written, 'row')} written{took}")
 
@@ -532,7 +613,14 @@ def _run_sql(db: Any, sql: str, params: Any, write: bool) -> Any:
 
 def cmd_db_query(args: argparse.Namespace) -> int:
     db = Database.from_name(args.database)
-    _print_result(_run_sql(db, args.sql, [_value(p) for p in args.param] or None, args.write), args.json)
+    _print_result(_run_sql(db, args.sql, [_value(p) for p in args.param] or None, args.write), args.json, args.sql)
+    return 0
+
+
+def cmd_db_create(args: argparse.Namespace) -> int:
+    db = Database.create(args.name, engine=args.engine, region=args.region)
+    print(db.name)
+    _note(f"Created the {db.engine} database {db.name}. Query it with: noclick db query {db.name} \"select 1\"")
     return 0
 
 
@@ -555,7 +643,7 @@ def cmd_db_shell(args: argparse.Namespace) -> int:
             continue
         sql, buffer = "\n".join(buffer), []
         try:
-            _print_result(_run_sql(db, sql, None, args.write), as_json=False)
+            _print_result(_run_sql(db, sql, None, args.write), as_json=False, sql=sql)
         except InvalidRequest as err:  # a SQL error: say so and keep the shell open
             _note(f"error: {err.message}")
     return 0
@@ -613,8 +701,21 @@ def cmd_bucket_ls(args: argparse.Namespace) -> int:
     return 0
 
 
+# What a folder's copy never uploads: a checkout's own history.
+_NOT_UPLOADED = (".git",)
+
+
 def _local_files(root: Path) -> Iterator[Path]:
-    return (p for p in sorted(root.rglob("*")) if p.is_file())
+    return (p for p in sorted(root.rglob("*"))
+            if p.is_file() and not any(part in _NOT_UPLOADED for part in p.relative_to(root).parts))
+
+
+def cmd_bucket_create(args: argparse.Namespace) -> int:
+    bucket = Bucket.create(args.name, public=args.public, region=args.region)
+    print(bucket.name)
+    _note(f"Created the {'public ' if args.public else ''}bucket {bucket.name}. Copy a file in with: "
+          f"noclick bucket cp <file> {bucket.name}:")
+    return 0
 
 
 def cmd_bucket_cp(args: argparse.Namespace) -> int:
@@ -636,6 +737,8 @@ def cmd_bucket_cp(args: argparse.Namespace) -> int:
                 raise CommandError(f"{args.src} isn't a folder.", next_step="Drop -r to copy one file.")
             base = dst[1] if not dst[1] or dst[1].endswith("/") else dst[1] + "/"
             pairs = [(base + p.relative_to(local).as_posix(), p) for p in _local_files(local)]
+            if (local / ".git").exists():
+                _note(f"Leaving out {local / '.git'}, the checkout's own history.")
         else:
             pairs = [(dst[1] + local.name if not dst[1] or dst[1].endswith("/") else dst[1], local)]
         for key, source in pairs:
@@ -653,7 +756,12 @@ def cmd_bucket_cp(args: argparse.Namespace) -> int:
             path.write_bytes(bucket.read(obj.key))
             _note(f"{_size(obj.size):>9}  {path}")
         return 0
-    data = bucket.read(src[1])
+    try:
+        data = bucket.read(src[1])
+    except NotFound as missing:
+        folder = src[1].rpartition("/")[0]
+        raise NotFound(missing.message, next_step=f"List its files with: noclick bucket ls {src[0]}"
+                                                  f"{'/' + folder if folder else ''}", details=missing.details) from None
     if args.dst == "-":
         sys.stdout.buffer.write(data)
         sys.stdout.buffer.flush()
@@ -713,6 +821,23 @@ def _push(root: str, url: str, branch: str) -> None:
         ) from None
 
 
+def _app(name: str) -> Project:
+    """The app ``name``, which the command's words name (``_CONTEXT``)."""
+    _CONTEXT["app"] = name
+    return Project.from_name(name)
+
+
+def _untracked(root: str) -> None:
+    """Say which files a deploy leaves out because git doesn't track them (and doesn't ignore them either)."""
+    left = [line for line in _git("ls-files", "--others", "--exclude-standard", cwd=root).splitlines() if line]
+    if not left:
+        return
+    shown = ", ".join(left[:8]) + (f" and {len(left) - 8} more" if len(left) > 8 else "")
+    _note(f"Not deployed, as git doesn't track {'it' if len(left) == 1 else 'them'}: {shown}. To include "
+          f"{'it' if len(left) == 1 else 'them'}: git add, git commit, then deploy again (or list "
+          f"{'it' if len(left) == 1 else 'them'} in .gitignore to stop this note).")
+
+
 def cmd_deploy(args: argparse.Namespace) -> int:
     try:
         root = _git("rev-parse", "--show-toplevel")
@@ -736,9 +861,11 @@ def cmd_deploy(args: argparse.Namespace) -> int:
                 raise
             raise CommandError("You're not on a branch.", next_step="Pass --branch to name the one to deploy.") from None
     sha = _git("rev-parse", "HEAD", cwd=root)
+    _untracked(root)
     if args.app and args.project and args.app != args.project:
         raise CommandError(f"Two apps named: {args.project} and --app {args.app}.", next_step="Name the app once.")
     name = args.app or args.project or Path(root).name
+    _CONTEXT["app"] = name
     if args.create:
         repo = Repo.from_name(name, create_if_missing=True)
         budget = UNSET if args.budget is None else args.budget
@@ -756,6 +883,9 @@ def cmd_deploy(args: argparse.Namespace) -> int:
             ) from None
         if args.budget is not None:
             project.update(budget_usd_per_month=args.budget)
+        serving = project.production
+        if serving is not None and serving.commit == sha and serving.branch == branch:
+            _note(f"Production already serves {sha[:7]}: nothing changed since, so this builds it again.")
     _push(root, repo.clone_url(write=True, ttl_s=600), branch)
     _note(f"Pushed {sha[:7]} to {branch}.")
     op = project.deploy(branch=branch, commit=sha)  # exactly what was pushed, even if the branch moves on
@@ -768,9 +898,8 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         deployment = op.wait()
     except OperationFailed as failed:
         deployment_id = failed.details.get("deployment_id")
-        if deployment_id:
-            for line in Deployment.from_id(deployment_id).logs(kind="build")[-20:]:
-                _note(f"  {line.message}")
+        if deployment_id:  # its end, less a last line that's the error printed after it
+            _build_log(Deployment.from_id(deployment_id), last=20, leave_out=failed.message)
         raise
     print(deployment.url)
     if deployment.raw.get("preview_link"):
@@ -796,31 +925,89 @@ def _said_deployment(result: Dict[str, Any]) -> bool:
     return False
 
 
+def _build_log(deployment: Deployment, *, last: Optional[int] = None, leave_out: str = "") -> None:
+    """A deployment's build log, to stderr (its ``last`` lines), less a last line that only says ``leave_out``: the
+    error printed after it."""
+    lines = deployment.logs(kind="build")
+    if lines and leave_out and lines[-1].message.strip() == leave_out.strip():
+        lines = lines[:-1]
+    for line in lines[-last:] if last else lines:
+        _note(f"  {_cli_words(line.message)}")
+
+
 def cmd_logs(args: argparse.Namespace) -> int:
-    project = Project.from_name(args.project)
+    if args.build:
+        if args.deployment:
+            deployment = Deployment.from_id(args.deployment)
+        else:
+            if not args.project:
+                raise CommandError("Name the app, or a deployment with --deployment.")
+            found = _app(args.project).deployments(limit=1)
+            if not found:
+                raise NotFound(f"{args.project} has no deployments yet.",
+                               next_step=f"Deploy it with: noclick deploy {args.project}")
+            deployment = found[0]
+        _note(f"Build log of {deployment.id} ({deployment.branch}, {(deployment.commit or '')[:7]}, {deployment.status}):")
+        for line in deployment.logs(kind="build"):
+            print(f"{(line.level or '').upper():<5}  {_cli_words(line.message)}", flush=True)
+        return 0
+    if not args.project:
+        raise CommandError("Name the app whose logs to print.", next_step="noclick logs <app>")
+    project = _app(args.project)
     since = args.since
     seen: set = set()
 
-    def show() -> Optional[datetime]:
+    def show() -> Tuple[Optional[datetime], int]:
         lines = project.logs(since=since, level=args.level, limit=args.limit)  # oldest first
+        shown = 0
         for line in lines:
             mark = (line.at, line.deployment_id, line.message)
             if mark in seen:
                 continue
             seen.add(mark)
+            shown += 1
             at = line.at.astimezone().strftime("%H:%M:%S") if isinstance(line.at, datetime) else line.at
-            print(f"{at}  {(line.level or '').upper():<5}  {line.message}")
-        return lines[-1].at if lines else since
+            # Flushed: piped (| grep, > file), each line as it comes, and none lost to Ctrl-C.
+            print(f"{at}  {(line.level or '').upper():<5}  {line.message}", flush=True)
+        if not lines and not args.follow and lines.delay_s:
+            _note(f"No lines{' since then' if since else ''}. A line takes up to {lines.delay_s}s to show after its "
+                  "request: read again in a moment, or follow them with -f.")
+        return (lines[-1].at if lines else since), shown
 
-    since = show()
+    since, shown = show()
     if not args.follow:
         return 0
     try:
         while True:
-            _sleep(POLL_S)
-            since = show()
+            if shown < args.limit:  # a full read may have stopped short of the newest lines: read on at once
+                _sleep(POLL_S)
+            since, shown = show()
     except KeyboardInterrupt:
         return 0
+
+
+# --- settings ----------------------------------------------------------------
+
+
+def cmd_settings_list(args: argparse.Namespace) -> int:
+    found = _app(args.project).settings.list()
+    if args.json:
+        _print_json(found)
+        return 0
+    _table(["NAME", "VALUE"], sorted(found.items()), empty=f"{args.project} has no settings.")
+    return 0
+
+
+def cmd_settings_set(args: argparse.Namespace) -> int:
+    _app(args.project).settings.set(args.name, args.value)
+    _note(f"Set {args.name}. It reaches {args.project} at its next deploy: noclick deploy {args.project}")
+    return 0
+
+
+def cmd_settings_delete(args: argparse.Namespace) -> int:
+    _app(args.project).settings.delete(args.name)
+    _note(f"Deleted {args.name}. {args.project} stops seeing it at its next deploy.")
+    return 0
 
 
 # --- domains -----------------------------------------------------------------
@@ -836,6 +1023,10 @@ def cmd_domains_search(args: argparse.Namespace) -> int:
         [(o.name, o.available, _usd(o.price_usd), _usd(o.renewal_usd), o.premium) for o in offers],
         empty=f"No domains found for {args.query}.",
     )
+    asked = args.query.strip().lower().rstrip(".")
+    if "." in asked and all(o.name.lower() != asked for o in offers):
+        _note(f"{asked} isn't for sale here: it's registered, or it names a well-known brand or bank, which NoClick "
+              "never offers.")
     return 0
 
 
@@ -874,6 +1065,12 @@ def _estimate_items(path: str) -> List[Dict[str, Any]]:
     return items
 
 
+def _options(options: Dict[str, Any]) -> str:
+    """What a kind's variant is priced as, in a few words: its plain options (a runtime, a region, an engine); the
+    rest, such as a size's every field, only in --json."""
+    return ", ".join(str(v) for v in options.values() if v and isinstance(v, (str, int, float)))
+
+
 def cmd_estimate(args: argparse.Namespace) -> int:
     if args.kinds:
         kinds = Estimate.kinds(region=args.region)
@@ -881,7 +1078,7 @@ def cmd_estimate(args: argparse.Namespace) -> int:
             _print_json(kinds)
             return 0
         _table(["KIND", "AS", "CHARGE", "UNIT PRICE", "PER", "USAGE (DEFAULT)"],
-               [(k.kind, ", ".join(f"{v}" for v in k.options.values() if v), p.charge, f"${p.unit_usd:g}", p.unit,
+               [(k.kind, _options(k.options), p.charge, f"${p.unit_usd:g}", p.unit,
                  ", ".join(f"{u.name} ({u.default:g})" for u in k.usage if u.name in p.usage_fields))
                 for k in kinds for p in k.prices], empty="Nothing to estimate.")
         return 0
@@ -948,7 +1145,7 @@ def cmd_webhooks_listen(args: argparse.Namespace) -> int:
                         continue
                     outcome = _forward(http, args.forward_to, secret, event)
                     stamp = event.created_at.astimezone().strftime("%H:%M:%S")
-                    print(f"{stamp}  {event.type:<28} {event.id}  -> {outcome}")
+                    print(f"{stamp}  {event.type:<28} {event.id}  -> {outcome}", flush=True)
                 if events:  # `since` is inclusive: remember only what sits on the boundary
                     since = events[-1].created_at
                     seen = {e.id for e in events if e.created_at == since}
@@ -1224,7 +1421,7 @@ def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
         from websockets.exceptions import ConnectionClosed
         from websockets.sync.client import connect
     except ImportError:
-        raise CommandError("A shell needs the command line's extras: pip install 'noclick[cli]'.") from None
+        raise CommandError("A shell needs websockets: pip install websockets.") from None
     if os.name != "posix" or not sys.stdin.isatty():
         raise CommandError("noclick machines ssh needs a terminal on macOS or Linux (on Windows, use WSL).")
     import shutil
@@ -1321,10 +1518,12 @@ def build_parser() -> argparse.ArgumentParser:
         sub = commands.add_parser(name, help=summary, description=summary)
         return sub.add_subparsers(dest="subcommand", metavar="<subcommand>", required=True)
 
-    login = command(commands, "login", cmd_login, "Sign in from a browser and keep the key in your OS keychain.",
+    login = command(commands, "login", cmd_login, "Sign in from a browser and keep the key in your OS keychain "
+                                                  "(or a file only you can read where there's none).",
                     auth=False)
-    login.add_argument("--store", choices=("keychain", "file"), default="keychain",
-                       help="Where to keep the key: the OS keychain (default), or a file only you can read.")
+    login.add_argument("--store", choices=("auto", "keychain", "file"), default="auto",
+                       help="Where to keep the key: the OS keychain, or a file only you can read (default: the "
+                            "keychain where this machine has one, else the file).")
     login.add_argument("--no-browser", action="store_true", help="Print the link without opening a browser.")
     command(commands, "whoami", cmd_whoami,
             "Show the account the next command acts in, the key it will use and where that came from.",
@@ -1335,7 +1534,7 @@ def build_parser() -> argparse.ArgumentParser:
     listing = command(agents, "list", cmd_agents_list, "List agents: yours and the current user's.",
                       parents=[as_json, user])
     listing.add_argument("--all-users", action="store_true", help="Every user's agents, and the account's.")
-    listing.add_argument("--limit", type=int, help="Show at most this many.")
+    listing.add_argument("--limit", type=int, default=50, help="Show at most this many (default 50; 0 for all).")
     chat = command(agents, "chat", cmd_agents_chat, "Talk to an agent; each line you type is one turn.",
                    parents=[user])
     chat.add_argument("name", help="The agent's name.")
@@ -1456,6 +1655,10 @@ def build_parser() -> argparse.ArgumentParser:
     query.add_argument("-p", "--param", action="append", default=[], metavar="VALUE",
                        help="A value for the next ?, as JSON when it parses (42, null) or else text.")
     query.add_argument("--write", action="store_true", help="Allow a statement that changes data (read-only otherwise).")
+    made = command(db, "create", cmd_db_create, "Create a database.", parents=[user])
+    made.add_argument("name", help="Its name: 1-64 letters, digits and . _ -.")
+    made.add_argument("--engine", choices=("sqlite", "postgres"), default="sqlite", help="Default: sqlite.")
+    made.add_argument("--region", help="Where its data is kept, for good (default: your account's default region).")
     shell = command(db, "shell", cmd_db_shell, "An interactive SQL prompt.", parents=[user])
     shell.add_argument("database", help="The database's name.")
     shell.add_argument("--write", action="store_true", help="Allow statements that change data (read-only otherwise).")
@@ -1464,11 +1667,16 @@ def build_parser() -> argparse.ArgumentParser:
     ls = command(bucket, "ls", cmd_bucket_ls, "List buckets, or the files in one.", parents=[as_json, user])
     ls.add_argument("path", nargs="?", metavar="bucket[/prefix]", help="A bucket, optionally with a key prefix.")
     ls.add_argument("-r", "--recursive", action="store_true", help="Every key under the prefix, not one level.")
+    mb = command(bucket, "create", cmd_bucket_create, "Create a bucket.", parents=[user])
+    mb.add_argument("name", help="Its name: 1-64 letters, digits and . _ -.")
+    mb.add_argument("--public", action="store_true", help="Serve every file at a plain URL.")
+    mb.add_argument("--region", help="Where its files are kept (default: your account's default region).")
     cp = command(bucket, "cp", cmd_bucket_cp, "Copy files between your machine and a bucket, written bucket:key.",
                  parents=[user])
     cp.add_argument("src", help="A local path, - for stdin, or bucket:key.")
     cp.add_argument("dst", help="A local path, - for stdout, or bucket:key (a trailing / keeps the file name).")
-    cp.add_argument("-r", "--recursive", action="store_true", help="Copy a folder, or every key under a prefix.")
+    cp.add_argument("-r", "--recursive", action="store_true",
+                    help="Copy a folder (never its .git), or every key under a prefix.")
     cp.add_argument("--content-type", metavar="TYPE", help="The upload's content type (guessed from the name otherwise).")
 
     deploy = command(commands, "deploy", cmd_deploy, "Push the commit you're on and deploy it.",
@@ -1486,12 +1694,29 @@ def build_parser() -> argparse.ArgumentParser:
     deploy.add_argument("--no-wait", action="store_true", help="Print the operation id instead of waiting.")
     deploy.add_argument("--token", help="A deploy token, as NoClick's MCP server hands an agent with the command "
                                         "(it reaches one repo and its apps), instead of your key.")
-    logs = command(commands, "logs", cmd_logs, "Print an app's logs.", parents=[user])
-    logs.add_argument("project", help="The app's name.")
+    logs = command(commands, "logs", cmd_logs, "Print an app's logs, or a deployment's build log.", parents=[user])
+    logs.add_argument("project", nargs="?", help="The app's name.")
+    logs.add_argument("--build", action="store_true", help="Print a build log: the app's newest deployment's, or "
+                                                          "--deployment's.")
+    logs.add_argument("--deployment", metavar="ID", help="With --build: this deployment's build log.")
     logs.add_argument("-f", "--follow", action="store_true", help="Keep printing new lines until Ctrl-C.")
     logs.add_argument("--since", type=_since, help="How far back: 15m, 2h, 1d, or an ISO time (default: the latest lines).")
     logs.add_argument("--level", choices=("warn", "error"), help="Only warnings and errors, or only errors.")
     logs.add_argument("--limit", type=int, default=100, help="At most this many lines per read (default 100).")
+
+    settings = group("settings", "An app's plain settings, which it reads from its environment.")
+    listed = command(settings, "list", cmd_settings_list, "List an app's settings and their values.",
+                     parents=[as_json, user])
+    listed.add_argument("project", help="The app's name.")
+    setting = command(settings, "set", cmd_settings_set, "Set one (it reaches the app at its next deploy).",
+                      parents=[user])
+    setting.add_argument("project", help="The app's name.")
+    setting.add_argument("name", help="Letters, digits and _, starting with a letter.")
+    setting.add_argument("value", help="At most 4 KB; put anything sensitive in the app's secrets instead.")
+    unset = command(settings, "delete", cmd_settings_delete, "Delete one (from the app's next deploy).",
+                    parents=[user])
+    unset.add_argument("project", help="The app's name.")
+    unset.add_argument("name")
 
     domains = group("domains", "Search for and buy domains.")
     search = command(domains, "search", cmd_domains_search, "Check which names are available, and their prices.",
@@ -1539,9 +1764,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _report(err: Error) -> None:
-    _note(f"error: {err.message}")
-    if err.next_step:
-        _note(f"  next step: {err.next_step}")
+    message, step = _for_the_terminal(err)
+    _note(f"error: {message}")
+    if step:
+        _note(f"  next step: {step}")
     if err.request_id:
         _note(f"  request id: {err.request_id}")
 

@@ -332,7 +332,7 @@ calls included.
 
 ## The CLI
 
-[The `noclick` command](https://noclick.com/docs/guide/cli) comes with the Python package (`pip install "noclick[cli]"`).
+[The `noclick` command](https://noclick.com/docs/guide/cli) comes with the Python package (`pip install noclick`).
 
 ## Custom interface components: `noclick/embed`
 

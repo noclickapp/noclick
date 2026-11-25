@@ -16,7 +16,7 @@ Your key follows the account's objects, its users' included; acting for one user
 server whose page should watch hands the page a token from ``watch_token`` (pass the page's ``origin``); the page
 opens it with the TypeScript SDK's ``watch({ token })``.
 
-``watch`` needs the ``websockets`` package: ``pip install "noclick[live]"``.
+``watch`` speaks ``websockets``, which comes with the package.
 """
 
 from __future__ import annotations
@@ -214,7 +214,7 @@ def _connector() -> Callable[..., Any]:
     try:
         from websockets.asyncio.client import connect
     except ImportError:
-        raise ImportError('noclick.watch needs the websockets package: pip install "noclick[live]"') from None
+        raise ImportError('noclick.watch needs the websockets package: pip install websockets') from None
     return connect
 
 

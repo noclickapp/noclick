@@ -357,7 +357,8 @@ noclick.User.list(spending="paused")
 
 ## The `noclick` command
 
-`pip install "noclick[cli]"`, then `noclick login` (a browser approves it, and the key stays in your OS keychain),
+`pip install noclick`, then `noclick login` (a browser approves it, and the key stays in your OS keychain, or in a
+file only you can read where there's none),
 `noclick agents chat`, `noclick bucket cp`, `noclick webhooks listen` and more: [The CLI](https://noclick.com/docs/guide/cli).
 
 ## Invite-only beta

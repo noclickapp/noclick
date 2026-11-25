@@ -191,14 +191,35 @@ def test_login_denied_or_expired_is_an_error(home, monkeypatch, api, capsys):
     assert home.keychain.saved == {}
 
 
-def test_login_refuses_before_the_flow_when_there_is_no_keychain(home, monkeypatch, api, capsys):
+def test_login_without_a_keychain_keeps_the_key_in_a_private_file_and_says_where(home, monkeypatch, api, capsys):
+    """``pip install noclick`` then ``noclick login`` failed for want of a keychain library (2026-11-25): with none,
+    or a machine with no keychain behind it, or one that refuses, the key goes in the private file, said so. Asked
+    for the keychain by name, a missing one refuses before the browser opens."""
     def missing():
-        raise cli.CommandError("No OS keychain library is installed.", next_step="pip install 'noclick[cli]'")
+        raise cli.CommandError("No OS keychain library is installed.", next_step="pip install keyring")
 
     monkeypatch.setattr(cli, "_keyring", missing)
-    start = api.post("/v1/cli/logins").respond(json={})
-    assert run("login") == 1
+    start = api.post("/v1/cli/logins").respond(json={"device_code": "dc", "user_code": "A-B",
+                                                     "verification_url": "https://x.test"})
+    api.post("/v1/cli/logins/token").respond(json={"status": "approved", "key": "nk_live_filekey123",
+                                                   "key_name": "CLI on box"})
+    assert run("login", "--store", "keychain") == 1
     assert "No OS keychain" in capsys.readouterr().err and start.call_count == 0
+
+    monkeypatch.delenv("NOCLICK_API_KEY")
+    assert run("login", "--no-browser") == 0
+    path = home.config / "credentials.json"
+    assert f'The key "CLI on box" is in {path} (only you can read it).' in capsys.readouterr().err
+    assert cli.resolve_credentials("default").key == "nk_live_filekey123"
+    assert json.loads((home.config / "config.json").read_text())["profiles"]["default"]["store"] == "file"
+
+    refusing = FakeKeyring()
+    refusing.set_password = lambda *a: (_ for _ in ()).throw(refusing.KeyringError("no Secret Service"))
+    monkeypatch.setattr(cli, "_keyring", lambda: refusing)
+    path.unlink()
+    assert run("login", "--no-browser") == 0
+    assert "The OS keychain refused: no Secret Service. Keeping the key in a file" in capsys.readouterr().err
+    assert json.loads(path.read_text()) == {"default": "nk_live_filekey123"}
 
 
 def test_login_can_keep_the_key_in_a_private_file(home, monkeypatch, api):
@@ -1035,3 +1056,205 @@ def test_estimate_lists_the_kinds_or_says_what_it_needs(home, api, tmp_path, cap
     path.write_text("{not json")
     assert run("estimate", str(path)) == 1
     assert "isn't JSON" in capsys.readouterr().err
+
+
+# --- what a hands-on review found (2026-11-25) ------------------------------------------
+
+
+class Piped(io.StringIO):
+    """A pipe's stdout: what reaches it is only what was flushed, so a line printed and not flushed is held (and lost
+    when the command is stopped)."""
+
+    def __init__(self):
+        super().__init__()
+        self.reached = ""
+
+    def flush(self):
+        self.reached = self.getvalue()
+
+
+def test_what_a_command_prints_as_it_goes_reaches_a_pipe_at_once(home, api, monkeypatch):
+    """logs -f, webhooks listen and a piped agents chat printed nothing into a pipe until they ended, and a stopped
+    command lost all of it."""
+    api.get("/v1/projects").respond(json=listing(PROJECT))
+    api.get("/v1/projects/prj_1/logs").respond(json=listing(
+        {"at": "2026-09-28T10:00:00Z", "level": "error", "message": "POST /book 500"}))
+    piped = Piped()
+    monkeypatch.setattr(sys, "stdout", piped)
+    monkeypatch.setattr(cli, "_sleep", stop_after(1))
+    assert run("logs", "booking", "-f") == 0
+    assert piped.reached.endswith("POST /book 500\n")
+
+    event = {"object": "event", "id": "evt_1", "type": "operation.succeeded", "data": {}, "user_id": None,
+             "created_at": "2026-09-28T10:00:01Z"}
+    api.get("/v1/events").respond(json=listing(event))
+    api.post("http://localhost:3000/hooks").respond(204)
+    monkeypatch.setattr(cli, "_sleep", stop_after(1))
+    assert run("webhooks", "listen", "--forward-to", "http://localhost:3000/hooks") == 0
+    assert piped.reached.endswith("evt_1  -> 204 No Content\n")
+
+    api.get("/v1/agents").respond(json=listing(agent_row()))
+    api.post("/v1/agents/ag_1/messages").respond(202, json=_reply("Booked."))
+    monkeypatch.setattr(sys, "stdin", io.StringIO("book Friday\n"))
+    assert run("agents", "chat", "support") == 0
+    assert piped.reached.endswith("Booked.\n")
+
+
+def test_logs_say_how_late_a_line_can_be_and_follow_reads_on_past_a_full_read(home, api, monkeypatch, capsys):
+    api.get("/v1/projects").respond(json=listing(PROJECT))
+    line = lambda second: {"at": f"2026-09-28T10:00:0{second}Z", "level": "info", "message": f"GET /{second}"}
+    logs = api.get("/v1/projects/prj_1/logs").mock(side_effect=[
+        httpx.Response(200, json={**listing(), "delay_s": 60}),
+        # Followed: a read that came back full is read on from its last line at once, never after a wait.
+        httpx.Response(200, json=listing(line(1), line(2))),
+        httpx.Response(200, json=listing(line(2), line(3))),
+        httpx.Response(200, json=listing(line(3))),
+    ])
+    assert run("logs", "booking") == 0
+    assert "No lines. A line takes up to 60s to show after its request" in capsys.readouterr().err
+    monkeypatch.setattr(cli, "_sleep", stop_after(2))
+    assert run("logs", "booking", "-f", "--limit", "2") == 0
+    assert [c.request.url.params.get("since", "")[:19] for c in logs.calls[1:]] == [
+        "", "2026-09-28T10:00:02", "2026-09-28T10:00:03"]
+    assert [row.split("  ")[-1].strip() for row in capsys.readouterr().out.splitlines()] == ["GET /1", "GET /2", "GET /3"]
+
+
+def test_logs_build_prints_a_build_log_and_a_missing_app_is_an_app(home, api, capsys):
+    api.get("/v1/projects").respond(json=listing(PROJECT))
+    api.get("/v1/projects/prj_1/deployments").respond(json=listing({**DEPLOYMENT, "status": "failed"}))
+    api.get("/v1/deployments/dep_1/logs").respond(json=listing(
+        {"at": "2026-09-28T10:00:00Z", "level": "warn", "message": 'Set it as one of the app\'s settings, which reach '
+                                                                    'the build (app.settings.set("API_URL", "..."))'}))
+    assert run("logs", "booking", "--build") == 0
+    out = capsys.readouterr()
+    assert "Build log of dep_1 (main, 3f2a1c9, failed)" in out.err
+    assert out.out == 'WARN   Set it as one of the app\'s settings, which reach the build (noclick settings set ' \
+                      'booking "API_URL" "...")\n'
+
+    api.get("/v1/projects").respond(json=listing())
+    assert run("logs", "nccli-worker") == 1
+    err = capsys.readouterr().err
+    assert "error: No app is named 'nccli-worker'." in err
+    assert "next step: Create it with its first deploy: noclick deploy nccli-worker --create" in err
+
+
+@pytest.mark.parametrize("argv, route, answer, said", [
+    # A write through a read: the flag that allows it, not the SDK method.
+    (["db", "query", "booking-db", "delete from bookings"], ("POST", "/v1/databases/db_1/query"),
+     httpx.Response(400, json={"error": {"type": "invalid_request", "message": "query runs read-only.",
+                                         "next_step": "Run statements that write with execute (or batch)."}}),
+     "next step: Run it again with --write."),
+    (["db", "query", "nope", "select 1"], None, None, "next step: Create it with: noclick db create nope"),
+    (["bucket", "cp", "uploads:missing.pdf", "."], ("GET", "/v1/buckets/bkt_1/objects"),
+     httpx.Response(404, json={"error": {"type": "not_found", "message": "No file at 'missing.pdf'.",
+                                         "next_step": "List the bucket's files with GET .../objects."}}),
+     "next step: List its files with: noclick bucket ls uploads"),
+    (["ops", "wait", "op_f"], ("GET", "/v1/operations/op_f/wait"),
+     httpx.Response(200, json=operation("op_f", kind="project.deploy", status="failed", error={
+         "type": "operation_failed", "message": "The build failed.",
+         "next_step": "Read its build log: GET /v1/deployments/dep_9/logs?kind=build."})),
+     "next step: Read its build log: noclick logs --build --deployment dep_9"),
+])
+def test_a_next_step_names_the_command_that_takes_it(home, api, capsys, argv, route, answer, said):
+    api.get("/v1/databases").respond(json=listing(DB))
+    api.get("/v1/databases", params={"name": "nope"}).respond(json=listing())
+    api.get("/v1/buckets").respond(json=listing(BUCKET))
+    if route:
+        api.request(*route).mock(return_value=answer)
+    assert run(*argv) == 1
+    assert said in capsys.readouterr().err
+
+
+def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home, api, capsys):
+    made = api.post("/v1/databases").respond(201, json=DB)
+    assert run("db", "create", "booking-db", "--engine", "postgres") == 0
+    assert body(made.calls.last.request) == {"name": "booking-db", "engine": "postgres"}
+    assert capsys.readouterr().out == "booking-db\n"
+    bucket = api.post("/v1/buckets").respond(201, json=BUCKET)
+    assert run("bucket", "create", "uploads", "--public") == 0
+    assert body(bucket.calls.last.request) == {"name": "uploads", "public": True}
+
+    api.get("/v1/databases").respond(json=listing(DB))
+    api.post("/v1/databases/db_1/query").respond(json={"columns": [], "rows": [], "rows_written": 2,
+                                                         "duration_ms": 5})
+    assert run("db", "query", "booking-db", "create table notes (id integer)", "--write") == 0
+    err = capsys.readouterr().err
+    assert "Done (5 ms)." in err and "written" not in err
+
+
+def test_settings_set_list_and_delete(home, api, capsys):
+    api.get("/v1/projects").respond(json=listing(PROJECT))
+    put = api.put("/v1/projects/prj_1/settings/API_URL").respond(json={})
+    api.get("/v1/projects/prj_1/settings").respond(json=listing({"name": "API_URL", "value": "https://a.test"}))
+    gone = api.delete("/v1/projects/prj_1/settings/API_URL").respond(204)
+    assert run("settings", "set", "booking", "API_URL", "https://a.test") == 0
+    assert body(put.calls.last.request) == {"value": "https://a.test"}
+    assert "reaches booking at its next deploy" in capsys.readouterr().err
+    assert run("settings", "list", "booking") == 0
+    assert capsys.readouterr().out.splitlines()[1].split() == ["API_URL", "https://a.test"]
+    assert run("settings", "delete", "booking", "API_URL") == 0 and gone.call_count == 1
+
+
+def test_a_deploy_names_what_git_leaves_out_and_a_commit_already_live(home, api, monkeypatch, capsys):
+    git = FakeGit()
+    git.outputs["ls-files"] = "worker.js\nassets/logo.png"
+    monkeypatch.setattr(cli, "_git", git)
+    api.get("/v1/projects").respond(json=listing({**PROJECT, "production": DEPLOYMENT}))
+    api.post("/v1/repos/repo_1/clone_url").respond(json={"url": "https://git.noclick.test/booking.git"})
+    api.post("/v1/projects/prj_1/deployments").respond(202, json=operation(
+        "op_d", kind="project.deploy", status="succeeded", result=DEPLOYMENT))
+    assert run("deploy") == 0
+    err = capsys.readouterr().err
+    assert "Not deployed, as git doesn't track them: worker.js, assets/logo.png. To include them: git add" in err
+    assert "Production already serves 3f2a1c9: nothing changed since, so this builds it again." in err
+
+
+def test_a_failed_deploy_says_its_error_once(home, api, monkeypatch, capsys):
+    monkeypatch.setattr(cli, "_git", FakeGit())
+    _deploy_routes(api, deploy_status="failed", error={
+        "type": "operation_failed", "message": "The build failed: no index.html.", "deployment_id": "dep_9"})
+    api.get("/v1/deployments/dep_9/logs").respond(json=listing(
+        {"at": "2026-09-28T10:00:00Z", "level": "info", "message": "npm run build"},
+        {"at": "2026-09-28T10:00:04Z", "level": "error", "message": "The build failed: no index.html."}))
+    assert run("deploy") == 1
+    err = capsys.readouterr().err
+    assert "  npm run build" in err and err.count("The build failed: no index.html.") == 1
+
+
+def test_bucket_cp_of_a_checkout_leaves_its_git_history_out(home, api, tmp_path, capsys):
+    api.get("/v1/buckets").respond(json=listing(BUCKET))
+    put = api.put("/v1/buckets/bkt_1/objects").respond(json={"key": "k", "size": 1})
+    site = tmp_path / "site"
+    (site / ".git" / "objects").mkdir(parents=True)
+    (site / ".git" / "objects" / "ab").write_text("blob")
+    (site / "index.html").write_text("<h1>hi</h1>")
+    assert run("bucket", "cp", "-r", str(site), "uploads:site/") == 0
+    assert [c.request.url.params["key"] for c in put.calls] == ["site/index.html"]
+    assert "Leaving out" in capsys.readouterr().err
+
+
+def test_agents_list_shows_a_page_and_says_theres_more(home, api, capsys):
+    route = api.get("/v1/agents").respond(json=listing(*(agent_row(id=f"ag_{i}", name=f"a{i}") for i in range(3))))
+    assert run("agents", "list", "--limit", "2") == 0
+    assert route.calls.last.request.url.params["limit"] == "3"
+    captured = capsys.readouterr()
+    assert len(captured.out.splitlines()) == 3 and "there are more" in captured.err
+    assert run("agents", "list") == 0 and route.calls.last.request.url.params["limit"] == "51"
+
+
+def test_domains_search_says_when_the_name_asked_for_isnt_offered(home, api, capsys):
+    api.get("/v1/domains/search").respond(json=listing(
+        {"name": "google.ai", "available": True, "price_usd": 199.98, "renewal_usd": 199.98, "premium": False}))
+    assert run("domains", "search", "google.com") == 0
+    assert "google.com isn't for sale here" in capsys.readouterr().err
+
+
+def test_estimate_kinds_says_what_a_variant_is_in_a_few_words(home, api, capsys):
+    api.get("/v1/estimates/kinds").respond(json=listing({
+        "object": "estimate_kind", "kind": "project", "label": "App", "description": "d",
+        "options": {"runtime": "container", "region": "us-east", "size": {"cpu": 1.0, "memory": 512}},
+        "usage": [], "prices": [{"charge": "instance", "description": "d", "unit": "hour", "unit_usd": 0.05,
+                                 "usage_fields": []}], "not_included": []}))
+    assert run("estimate", "--kinds") == 0
+    row = capsys.readouterr().out.splitlines()[1]
+    assert "container, us-east" in row and "{" not in row
