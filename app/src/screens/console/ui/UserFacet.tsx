@@ -2,8 +2,9 @@
 // forms' User field: a search over GET /v1/users?q=, the five most recent by
 // default, each by your id for them with its name and status.
 import { useEffect, useState } from 'react';
-import { Check, ChevronDown, Search } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { ALL_USERS, NO_USER, User } from 'noclick';
 import { userFilterLabel, type UserFilterValue } from '@/screens/console/lib/userFilter';
@@ -53,16 +54,7 @@ export function UserPickerList({
     const users = useUserSearch(query);
     return (
         <div className="flex flex-col gap-1">
-            <label className="flex items-center gap-2 rounded-md bg-foreground/[0.04] px-2">
-                <Search className="h-3.5 w-3.5 text-muted-foreground" />
-                <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search users"
-                    aria-label="Search users"
-                    className="h-8 w-full bg-transparent text-[13px] text-foreground outline-none placeholder:text-[hsl(var(--placeholder))]"
-                />
-            </label>
+            <SearchField size="sm" value={query} onChange={setQuery} placeholder="Search users" />
             {!query &&
                 fixed.map((f) => (
                     <button key={f.label} type="button" className={ROW} onClick={() => onPick(f.value)}>

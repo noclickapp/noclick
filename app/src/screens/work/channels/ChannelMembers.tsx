@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { cn } from '@/ui/utils';
 import { usePickerAgents } from './pickerAgents';
-import { SearchField } from './tabs';
+import { SearchField } from '@/ui/SearchField';
 
 const CIRCLE = 'grid h-8 w-8 shrink-0 place-items-center rounded-full max-md:h-10 max-md:w-10 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70';
 const ROW = 'flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors';
@@ -111,7 +111,7 @@ export function ChannelMembers({
                     </button>
                 </div>
                 <div className="px-3 pb-2">
-                    <SearchField value={query} onChange={setQuery} placeholder={adding ? 'Find one of your agents' : 'Find people and agents'} inputRef={search} />
+                    <SearchField value={query} onChange={setQuery} placeholder={adding ? 'Find one of your agents' : 'Find people and agents'} ref={search} />
                 </div>
                 <div className="max-h-[440px] overflow-y-auto px-1.5 pb-1.5 scrollbar-subtle">
                     {adding ? (

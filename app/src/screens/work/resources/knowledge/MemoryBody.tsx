@@ -3,7 +3,7 @@
 // over the version read, as an agent's does, so two writers never overwrite each other.
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Pencil, Search, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useWorkClient } from '../../client';
 import { useWorkV1 } from '../../agents/reads';
 import { invalidateV1 } from '@/sdk/useV1';
@@ -11,6 +11,7 @@ import { forgetEntry, memoryEntries, readEntry, saveEntry, type MemoryEntry, typ
 import { BUTTON_GHOST } from '@/ui/buttons';
 import { FIELD_LABEL } from '@/ui/fields';
 import { relTime } from '@/ui/primitives';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { AREA, list, PageSection, PILL_FIELD, SMALL_PRIMARY, UsedByList, WriterFace, writerName, XS } from './parts';
 import { MEMORIES_KEY, useKnowledge } from './store';
@@ -102,10 +103,7 @@ export function MemoryBody({ memory, now }: { memory: MemoryItem; now: string })
             </PageSection>
             <PageSection title="Entries" meta={entries.data ? all.length : undefined}>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <label className="relative block flex-1">
-                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
-                        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search entries" aria-label="Search entries" className={cn(PILL_FIELD, 'h-9 pl-10')} />
-                    </label>
+                    <SearchField value={query} onChange={setQuery} placeholder="Search entries" className="flex-1" />
                     <div className="flex items-center gap-1">
                         {FILTERS.map(([id, label]) => (
                             <button

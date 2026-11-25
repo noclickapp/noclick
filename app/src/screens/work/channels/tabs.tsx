@@ -2,10 +2,10 @@
 // the conversation (what was said, shared and kept), never an agent's settings. Pins and bookmarks are read when the
 // channel opens and again when a frame says they moved; files and links when their tab opens. Opening a pin or a
 // shared file in the conversation jumps the timeline to its message and lights it for a moment.
-import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactNode, type Ref } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { SiFigma, SiGithub, SiGoogle, SiGoogledocs, SiGooglesheets, SiLinear, SiNotion, SiStripe } from 'react-icons/si';
-import { Bookmark, Copy, FileCode2, FileSpreadsheet, FileText, Globe, MessageSquareText, MoreHorizontal, Paperclip, Pin, PinOff, Plus, Search, Trash2, X } from 'lucide-react';
+import { Bookmark, Copy, FileCode2, FileSpreadsheet, FileText, Globe, MessageSquareText, MoreHorizontal, Paperclip, Pin, PinOff, Plus, Trash2 } from 'lucide-react';
 import { HAIRLINE } from '@/ui/primitives';
 import { timeLabel } from '@/screens/channels/MessageList';
 import { LogoMark, MARK_IN_A_SHAPE } from '@/ui/LogoMark';
@@ -14,6 +14,7 @@ import { authorMember } from '@/screens/channels/model';
 import type { ChannelAuthor, ChannelMember, ChannelMessage } from '@/screens/channels/types';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { useWorkFrames } from '@/sdk/live';
 import { useChanged } from '@/lib/useChanged';
@@ -447,20 +448,6 @@ function SiteTile({ url, small }: { url: string; small?: boolean }) {
         <span className={cn(TILE, small && 'h-8 w-8')}>
             <SiteMark url={url} className={small ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
         </span>
-    );
-}
-
-export function SearchField({ value, onChange, placeholder, inputRef }: { value: string; onChange: (v: string) => void; placeholder: string; inputRef?: Ref<HTMLInputElement> }) {
-    return (
-        <label className="flex h-9 items-center gap-2 rounded-full bg-foreground/[0.03] pl-3.5 pr-1 ring-1 ring-inset ring-border transition-shadow focus-within:ring-foreground/25 dark:ring-foreground/[0.09] dark:focus-within:ring-foreground/25">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={2} />
-            <input ref={inputRef} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} className="min-w-0 flex-1 bg-transparent text-[13.5px] outline-none placeholder:text-muted-foreground/70" />
-            {value && (
-                <button type="button" aria-label="Clear" onClick={() => onChange('')} className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground">
-                    <X className="h-3.5 w-3.5" strokeWidth={2} />
-                </button>
-            )}
-        </label>
     );
 }
 

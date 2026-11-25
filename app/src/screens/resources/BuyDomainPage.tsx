@@ -8,7 +8,7 @@
 import { useContext, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
-import { ExternalLink, Globe, Loader2, Search } from 'lucide-react';
+import { ExternalLink, Globe, Loader2 } from 'lucide-react';
 import { Checkbox } from '@/ui/checkbox';
 import { Skeleton } from '@/ui/skeleton';
 import { EMPTY_REGISTRANT, REGISTRANT_FIELDS, registrantFrom, withKnown, type RegistrantDraft } from '@/lib/domainRegistrant';
@@ -23,6 +23,7 @@ import {
     type DomainSearch,
 } from '@/screens/domains/useDomainPurchase';
 import { formatPrice as formatDollars } from '@/screens/numbers/numberDisplay';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { FIELD, FIELD_LABEL, QUIET_LINK } from '@/ui/fields';
@@ -353,20 +354,18 @@ export function DomainFinder({
                         />
                     ))}
                     <form onSubmit={onSubmit} className="flex max-w-xl items-center gap-2">
-                        <label className="relative min-w-0 flex-1">
-                            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                ref={input}
-                                value={text}
-                                onChange={(e) => setText(e.target.value.slice(0, 80))}
-                                placeholder="A name or a domain, like acme or acme.ai"
-                                aria-label="The domain or name to search for"
-                                autoCapitalize="none"
-                                autoCorrect="off"
-                                spellCheck={false}
-                                className="h-10 w-full rounded-full border border-border bg-transparent pl-10 pr-4 text-[14.5px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
-                            />
-                        </label>
+                        <SearchField
+                            ref={input}
+                            size="lg"
+                            value={text}
+                            onChange={(value) => setText(value.slice(0, 80))}
+                            placeholder="A name or a domain, like acme or acme.ai"
+                            aria-label="The domain or name to search for"
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            enterKeyHint="search"
+                            className="flex-1"
+                        />
                         <button type="submit" disabled={busy} className={cn(BUTTON_PRIMARY, 'h-10 px-5')}>
                             {searching && <Loader2 className="h-4 w-4 animate-spin" />}
                             Search

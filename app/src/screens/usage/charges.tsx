@@ -6,12 +6,12 @@
 // charge on its own line.
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Download, Loader2, Search, X } from 'lucide-react';
+import { ChevronRight, Download, Loader2, X } from 'lucide-react';
 import { cn } from '@/ui/utils';
 import { saveCsv } from '@/lib/tableCsv';
 import { BUTTON_GHOST, BUTTON_SECONDARY } from '@/ui/buttons';
 import { SidePanel } from '@/ui/SidePanel';
-import { SearchClearButton } from '@/ui/SearchClearButton';
+import { SearchField } from '@/ui/SearchField';
 import { ROWS } from '@/ui/primitives';
 import { HUED, ShareBar, serviceColor, type Ink } from '@/screens/usage/charts';
 import { useSlot } from '@/slots';
@@ -225,19 +225,7 @@ export function ChargesTable({
                         </div>
                     )}
                 </div>
-                <label className="relative block shrink-0 @[640px]:w-56">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                        ref={searchRef}
-                        type="search"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search charges"
-                        aria-label="Search charges"
-                        className="h-8 w-full rounded-full border border-border bg-transparent pl-8 pr-8 text-[13px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1]"
-                    />
-                    <SearchClearButton value={query} onClear={() => setQuery('')} inputRef={searchRef} className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2" />
-                </label>
+                <SearchField ref={searchRef} type="search" size="sm" value={query} onChange={setQuery} placeholder="Search charges" className="w-full shrink-0 @[640px]:w-56" />
             </div>
             {chips.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">

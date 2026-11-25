@@ -4,13 +4,14 @@
 // the shell does: the serif for a memory's name, the shell's fields and pills,
 // and the library as one group of rows divided by hairlines.
 import { useId, useState } from 'react';
-import { ArrowLeft, BookOpen, Brain, ChevronDown, ChevronRight, Folder, Loader2, MessageSquare, Pencil, Plus, RefreshCw, Search, Trash2, UserRound, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, ChevronDown, ChevronRight, Folder, Loader2, MessageSquare, Pencil, Plus, RefreshCw, Trash2, UserRound } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Skeleton } from '@/ui/skeleton';
 import { BUTTON_DANGER, BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { FIELD, FIELD_LABEL } from '@/ui/fields';
 import { DISPLAY } from '@/ui/titles';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { EmptyState, HAIRLINE } from '@/ui/primitives';
 import { useMemories, type MemoryEntry, type MemoryTransport, type MemoryHeader, type MemoryNames, type MemoryState as CoordinatorMemoryState, type MemoryWrite as CoordinatorMemoryWrite } from './useMemories';
@@ -308,22 +309,7 @@ export function CoordinatorMemoriesView({ memory }: { memory: CoordinatorMemoryS
             )}
             <aside className={cn('min-w-0 space-y-4', hasSelection && 'hidden')} aria-label="Memory library">
                 <div className="flex items-center gap-2">
-                    <div className="relative min-w-0 flex-1">
-                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-                        <input
-                            aria-label="Search memories"
-                            placeholder="Search memories"
-                            value={memory.query}
-                            onChange={(e) => memory.search(e.target.value)}
-                            maxLength={300}
-                            className={cn(FIELD, 'pl-10', memory.query && 'pr-10')}
-                        />
-                        {memory.query && (
-                            <button type="button" onClick={() => memory.search('')} aria-label="Clear memory search" className={cn(ICON_BUTTON, 'absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2')}>
-                                <X className="h-3.5 w-3.5" />
-                            </button>
-                        )}
-                    </div>
+                    <SearchField size="lg" value={memory.query} onChange={memory.search} placeholder="Search memories" maxLength={300} className="flex-1" />
                     <button type="button" className={BUTTON_SECONDARY} onClick={memory.create} disabled={memory.busy}>
                         <Plus className="h-4 w-4" />
                         Add memory

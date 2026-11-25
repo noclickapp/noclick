@@ -6,11 +6,12 @@
 // for the owner's yes on their other accounts.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { ChevronRight, Globe, Search, ShieldCheck } from 'lucide-react';
+import { ChevronRight, Globe, ShieldCheck } from 'lucide-react';
 import { Agent, type AgentToolAction, type AgentToolApp, type ToolRule, type ToolRules } from 'noclick';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { HAIRLINE } from '@/ui/primitives';
 import { Switch } from '@/ui/switch';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { useWorkClient } from '../client';
 import { HarnessMark } from '../agents/harness';
@@ -220,17 +221,7 @@ function Actions({ app, rules, restricted, onAction }: { app: AgentToolApp; rule
     return (
         <div className="pb-3 pl-11 animate-in fade-in-0 slide-in-from-top-1 duration-200 max-sm:pl-1 motion-reduce:animate-none" data-testid="app-actions">
             {view.kind !== 'all' && (
-                <label className="mb-1.5 flex h-8 items-center gap-2 rounded-full bg-foreground/[0.05] px-3 focus-within:ring-1 focus-within:ring-foreground/20">
-                    <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
-                    <input
-                        type="search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={`Search its ${app.actions.length} actions`}
-                        aria-label={`Search ${app.label}’s actions`}
-                        className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-[hsl(var(--placeholder))] max-sm:text-[16px]"
-                    />
-                </label>
+                <SearchField type="search" size="sm" value={search} onChange={setSearch} placeholder={`Search its ${app.actions.length} actions`} aria-label={`Search ${app.label}’s actions`} className="mb-1.5" />
             )}
             {view.kind === 'all' &&
                 view.groups.map(([name, list]) => (

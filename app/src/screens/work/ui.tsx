@@ -2,10 +2,9 @@
 // header, the two resizable columns (the list, and the panel beside the main pane, each dragged from its edge and
 // remembered on this device), a close button, and a choice's mark. A page's head is the shell's (`PageHead`).
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from 'react';
-import { AtSign, Check, Plus, Search, X } from 'lucide-react';
-import { PHONE_SEARCH_BOX } from '@/ui/fields';
+import { AtSign, Check, Plus, X } from 'lucide-react';
 import { HAIRLINE } from '@/ui/primitives';
-import { SearchClearButton } from '@/ui/SearchClearButton';
+import { SearchField, searchFieldClass } from '@/ui/SearchField';
 import { createPanelWidth } from '@/ui/panelWidth';
 import { ResizeEdge } from '@/ui/ResizeEdge';
 import { TAP_ROW } from '@/ui/sidebarParts';
@@ -42,11 +41,7 @@ export const LIST_TOP = 'sticky top-0 z-10 -mx-2 bg-background px-2 pb-2 max-md:
 
 /** A column's search pill (a field, or Home's button to the palette). On a phone it keeps the 16px edge and grows to a
  *  finger's height; on a laptop its glyph centres on the rows' faces below it. */
-export const FIND_PILL = cn(
-    'mb-2 flex h-9 w-full items-center gap-2 rounded-full border pl-3 text-muted-foreground transition-colors [@media(hover:hover)]:hover:bg-foreground/[0.03] sm:pl-[15px] max-md:mx-2 max-md:w-[calc(100%-16px)]',
-    HAIRLINE,
-    PHONE_SEARCH_BOX
-);
+export const FIND_PILL = cn(searchFieldClass('md'), 'mb-2 w-full pl-3 sm:pl-[15px] max-md:mx-2 max-md:w-[calc(100%-16px)]');
 
 /** A list's action (New agent, Invite people): a soft card, a round tile holding its glyph, then its label. The glyph's
  *  ink is softened as a whole, never stroke by stroke, so where its strokes cross reads as one line. On a laptop its tile
@@ -114,26 +109,16 @@ export function FindField({
     /** The list's way to add, beside the search on one line (a phone's, where the list draws no action row). */
     add?: ListAdd;
 }) {
-    const ownRef = useRef<HTMLInputElement>(null);
-    const ref = inputRef ?? ownRef;
     const field = (
-        <label className={cn(FIND_PILL, 'pr-1 focus-within:border-foreground/25 focus-within:bg-foreground/[0.03]', add && 'mb-0 w-auto min-w-0 flex-1 max-md:mx-0 max-md:w-auto')}>
-            <Search className="h-4 w-4 shrink-0" strokeWidth={1.8} />
-            <input
-                ref={ref}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder={placeholder}
-                aria-label={placeholder}
-                aria-keyshortcuts={keys}
-                autoComplete="off"
-                spellCheck={false}
-                enterKeyHint="search"
-                className="min-w-0 flex-1 bg-transparent text-[13.5px] text-foreground outline-none placeholder:text-muted-foreground max-md:text-[16px]"
-            />
-            <SearchClearButton value={value} onClear={() => onChange('')} inputRef={ref} />
-        </label>
+        <SearchField
+            ref={inputRef}
+            value={value}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            aria-keyshortcuts={keys}
+            className={cn(FIND_PILL, add && 'mb-0 w-auto flex-1 max-md:mx-0 max-md:w-auto')}
+        />
     );
     if (!add) return field;
     const Icon = add.icon;

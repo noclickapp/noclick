@@ -2,7 +2,7 @@
 // developer's own id for them, with this month's spend against each cap. Also
 // the small form pieces Keys and a user's page share.
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Check, Search } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Input } from '@/ui/input';
@@ -24,7 +24,7 @@ import { DataTable, type Column } from '../ui/DataTable';
 import { EmptyCode } from '../ui/EmptyCode';
 import { FacetSelect } from '../ui/FacetSelect';
 import { PageHeader } from '../ui/PageHeader';
-import { SEARCH_PILL } from '../ui/PillTabs';
+import { SearchField } from '@/ui/SearchField';
 import { StatusPill } from '../ui/StatusPill';
 import { TimeCell } from '../ui/TimeCell';
 
@@ -353,17 +353,7 @@ export default function Users() {
                 }
             />
             <div className="mb-3 flex flex-wrap items-center gap-2">
-                <label className={cn(SEARCH_PILL, 'flex-1 sm:max-w-xs')}>
-                    <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" />
-                    <input
-                        ref={search}
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        placeholder="Search by id, name or email"
-                        aria-label="Search users"
-                        className="h-full w-full min-w-0 bg-transparent text-xs text-foreground outline-none placeholder:text-[hsl(var(--placeholder))]"
-                    />
-                </label>
+                <SearchField ref={search} size="sm" value={text} onChange={setText} placeholder="Search by id, name or email" aria-label="Search users" className="flex-1 sm:max-w-xs" />
                 <FacetSelect label="Status" value={statusFilter ?? null} options={STATUS_OPTIONS} onChange={setStatus} />
             </div>
             <SpendReadError spend={spend} className="mb-2" />

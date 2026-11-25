@@ -17,7 +17,6 @@ import {
     ArrowRight,
     LayoutGrid,
     List,
-    Search,
     Users,
     User,
     UserPlus,
@@ -25,7 +24,7 @@ import {
     Loader2,
 } from 'lucide-react';
 import { useIsMobile } from '@/ui/useIsMobile';
-import { PHONE_SEARCH } from '@/ui/fields';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { fuzzyFilter } from '@/lib/fuzzySearch';
 import { isTextEntryTarget } from '@/lib/keyboard';
@@ -1461,7 +1460,8 @@ export function WorkflowBrowser({
                                 <DroppableHeaderBar
                                     folderId={null}
                                     idSuffix="header-root"
-                                    className="mb-6 flex-wrap gap-x-4 gap-y-3 rounded-xl px-0 pt-0 sm:mb-7"
+                                    // On a phone the list's search sits as far below the actions as the rows sit below it.
+                                    className={cn('mb-6 flex-wrap gap-x-4 gap-y-3 rounded-xl px-0 pt-0 sm:mb-7', layoutMode === 'list' && 'max-sm:mb-3')}
                                 >
                                     {(currentFolder || !inPhone) && (
                                     <div className="min-w-0 flex-1">
@@ -1519,22 +1519,14 @@ export function WorkflowBrowser({
                                         ref={listContainerRef}
                                     >
                                         {/* Search — global (folders + workflows across the tree) */}
-                                        <div className="relative">
-                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 dark:text-white/30 pointer-events-none" />
-                                            <input
-                                                ref={searchInputRef}
-                                                type="text"
-                                                value={listSearch}
-                                                onChange={(e) =>
-                                                    setListSearch(
-                                                        e.target.value
-                                                    )
-                                                }
-                                                onKeyDown={handleSearchKeyDown}
-                                                placeholder="Search automations and folders"
-                                                className={`h-10 w-full rounded-xl border border-border bg-transparent pl-9 pr-3 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 dark:border-foreground/[0.1] dark:focus:border-foreground/25 ${PHONE_SEARCH}`}
-                                            />
-                                        </div>
+                                        <SearchField
+                                            ref={searchInputRef}
+                                            size="lg"
+                                            value={listSearch}
+                                            onChange={setListSearch}
+                                            onKeyDown={handleSearchKeyDown}
+                                            placeholder="Search automations and folders"
+                                        />
 
                                         {/* Merged folder + workflow rows, sorted by last edited */}
                                         {listItems.length > 0 && (

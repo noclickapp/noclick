@@ -3,6 +3,7 @@
 // offers keys first, then values from the schema and the page's loaded lists.
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Search, X } from 'lucide-react';
+import { searchFieldClass } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { canonicalQuery, parseQuery, type QueryError, type QuerySchema } from '@/screens/console/lib/query';
 import { useSlashFocus } from '@/screens/console/hooks/useSlashFocus';
@@ -146,10 +147,10 @@ export function QueryBar({
             {/* A click anywhere on the chip row focuses the input, which is itself keyboard-reachable. */}
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div
-                className="flex min-h-9 w-full flex-wrap items-center gap-1 rounded-[18px] border border-foreground/[0.08] bg-foreground/[0.025] px-3 py-1 transition-colors focus-within:border-foreground/[0.16] focus-within:bg-foreground/[0.05]"
+                className={cn(searchFieldClass('md'), 'h-auto min-h-9 w-full flex-wrap gap-1 rounded-[18px] px-3 py-1 max-md:h-auto max-md:min-h-10')}
                 onClick={() => inputRef.current?.focus()}
             >
-                <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <Search className="h-4 w-4 shrink-0" strokeWidth={1.8} />
                 {chips.map(({ word, i }) => (
                     <span
                         key={`${word}-${i}`}
@@ -185,7 +186,7 @@ export function QueryBar({
                     onFocus={() => setOpen(true)}
                     onBlur={() => window.setTimeout(() => setOpen(false), 120)}
                     onKeyDown={onKeyDown}
-                    className="h-7 min-w-[8rem] flex-1 bg-transparent font-mono text-[12px] text-foreground outline-none placeholder:font-sans placeholder:text-[13px] placeholder:text-[hsl(var(--placeholder))]"
+                    className="h-7 min-w-[8rem] flex-1 bg-transparent font-mono text-[12px] text-foreground outline-none placeholder:font-sans placeholder:text-[13px] placeholder:text-muted-foreground max-md:text-[16px] max-md:placeholder:text-[16px]"
                 />
                 {count !== undefined && <span className="shrink-0 whitespace-nowrap text-[12px] tabular-nums text-muted-foreground">{count}</span>}
             </div>

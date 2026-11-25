@@ -19,6 +19,7 @@ import { BrandIcon } from '@/ui/BrandIcon';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { scoreFields } from '@/lib/fuzzyRank';
 import { useChanged } from '@/lib/useChanged';
+import { SearchField } from '@/ui/SearchField';
 import { cn } from '@/ui/utils';
 import { useSlot } from '@/slots';
 import { APPS, type ToolApp } from '../slots';
@@ -555,28 +556,19 @@ function AddTool({
         <>
             <PanelHead title={`Add to ${name}`} onBack={onBack} onClose={onClose} />
             <div className="shrink-0 px-2 pb-1">
-                <label className="flex h-10 items-center gap-2.5 rounded-full bg-foreground/[0.05] px-3.5 ring-1 ring-inset ring-border transition-shadow focus-within:ring-foreground/25 dark:ring-foreground/[0.1]">
-                    <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
-                    <input
-                        ref={input}
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && shown[0]) {
-                                e.preventDefault();
-                                shown[0].pick();
-                            }
-                        }}
-                        placeholder={`What should ${name} be able to use?`}
-                        aria-label={`What should ${name} be able to use?`}
-                        className="min-w-0 flex-1 bg-transparent text-[13.5px] outline-none placeholder:text-[hsl(var(--placeholder))] max-sm:text-[16px]"
-                    />
-                    {q && (
-                        <button type="button" aria-label="Clear" onClick={() => setQ('')} className="grid h-6 w-6 place-items-center rounded-full text-muted-foreground hover:bg-foreground/[0.08] hover:text-foreground">
-                            <X className="h-3 w-3" strokeWidth={2} />
-                        </button>
-                    )}
-                </label>
+                <SearchField
+                    ref={input}
+                    size="lg"
+                    value={q}
+                    onChange={setQ}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && shown[0]) {
+                            e.preventDefault();
+                            shown[0].pick();
+                        }
+                    }}
+                    placeholder={`What should ${name} be able to use?`}
+                />
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-2 scrollbar-subtle" data-testid="tool-offers">
                 {!apps.length && !q && <p className="px-2 pt-2 text-[12.5px] text-muted-foreground">Loading the apps…</p>}

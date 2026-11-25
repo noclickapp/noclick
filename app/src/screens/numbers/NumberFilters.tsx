@@ -8,9 +8,8 @@ import { countryName } from '@/lib/countryName';
 import { coverageDetail, TYPE_LABELS, type PhoneNumberPurchase, type PlaceKind } from '@/screens/numbers/usePhoneNumberPurchase';
 import { cn } from '@/ui/utils';
 import { BUTTON_PRIMARY } from '@/ui/buttons';
+import { SearchField } from '@/ui/SearchField';
 
-const INPUT =
-    'h-10 w-full rounded-full border border-border bg-transparent px-4 text-[14px] text-foreground outline-none transition-colors placeholder:text-[hsl(var(--placeholder))] focus:border-foreground/25 disabled:opacity-60 dark:border-foreground/[0.1]';
 const PILL = 'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] transition-colors disabled:opacity-60';
 const PILL_ON = 'bg-primary text-primary-foreground';
 const PILL_OFF = 'bg-secondary text-foreground/85 hover:bg-accent dark:bg-foreground/[0.06] dark:hover:bg-foreground/[0.1]';
@@ -92,11 +91,13 @@ export function NumberFilters({ purchase, compact = false }: { purchase: PhoneNu
             {country && (
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative min-w-[12rem] flex-[2_1_14rem]">
-                        <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <input
+                        <SearchField
+                            size="lg"
+                            icon={MapPin}
+                            clear={false}
                             value={filters.place}
-                            onChange={(e) => {
-                                update({ place: e.target.value.slice(0, 64), placeKind: null }, false);
+                            onChange={(value) => {
+                                update({ place: value.slice(0, 64), placeKind: null }, false);
                                 setPlaceOpen(true);
                             }}
                             onFocus={() => setPlaceOpen(true)}
@@ -107,7 +108,7 @@ export function NumberFilters({ purchase, compact = false }: { purchase: PhoneNu
                             aria-expanded={placeOpen && suggestions.length > 0}
                             aria-autocomplete="list"
                             aria-controls={listId}
-                            className={cn(INPUT, 'pl-10')}
+                            className="w-full"
                         />
                         {placeOpen && suggestions.length > 0 && (
                             <div id={listId} role="listbox" className="absolute left-0 right-0 top-full z-20 mt-1.5 overflow-hidden rounded-2xl border border-border bg-popover py-1 shadow-lg">
@@ -132,12 +133,15 @@ export function NumberFilters({ purchase, compact = false }: { purchase: PhoneNu
                             </div>
                         )}
                     </div>
-                    <input
+                    <SearchField
+                        size="lg"
+                        icon={null}
+                        clear={false}
                         value={filters.contains}
-                        onChange={(e) => update({ contains: e.target.value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10) }, false)}
+                        onChange={(value) => update({ contains: value.toUpperCase().replace(/[^0-9A-Z*]/g, '').slice(0, 10) }, false)}
                         placeholder="Digits it contains"
                         aria-label="Digits or letters the number contains"
-                        className={cn(INPUT, 'min-w-[9rem] flex-[1_1_9rem] tabular-nums')}
+                        className="min-w-[9rem] flex-[1_1_9rem] tabular-nums"
                     />
                     <div className="flex gap-1.5" role="radiogroup" aria-label="What the number must do">
                         {(

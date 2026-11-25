@@ -18,6 +18,7 @@ import type { Intent } from '@/ui/useIntent';
 import { useWork } from '../context';
 import { cn } from '@/ui/utils';
 import { THREADS } from '../place';
+import { searchTextClass } from '@/ui/SearchField';
 import { Count, FIND_PILL, LIST_CURRENT, LIST_ROW, MentionCount } from '../ui';
 import { DropLine, FoldHeader, lowerHalf, MoveMenu, SectionNameField, useDrag, usePressAndHold, type Dragged, type DropAt } from './SectionParts';
 import {
@@ -255,7 +256,7 @@ export function HomeList({
     return (
         <>
             {palette && (
-                <button type="button" onClick={() => palette.open()} className={cn(FIND_PILL, 'pr-3 text-[13.5px] max-md:text-[16px]')}>
+                <button type="button" onClick={() => palette.open()} className={cn(FIND_PILL, searchTextClass('md'), 'pr-3 text-left')}>
                     <Search className="h-4 w-4 shrink-0" strokeWidth={1.8} />
                     Find a conversation…
                 </button>

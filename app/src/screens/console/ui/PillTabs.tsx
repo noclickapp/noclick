@@ -44,7 +44,3 @@ export function PillSwitch({ tabs, value, onChange, label, className }: { tabs: 
         </Tabs.Root>
     );
 }
-
-/** The rounded search field from /templates, for a `<label>` around an icon and an input. */
-export const SEARCH_PILL =
-    'flex h-8 min-w-0 items-center gap-2 rounded-full border border-foreground/[0.07] bg-foreground/[0.025] px-3.5 transition-colors focus-within:border-foreground/[0.14] focus-within:bg-foreground/[0.05]';
