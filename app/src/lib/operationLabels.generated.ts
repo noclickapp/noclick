@@ -1226,6 +1226,7 @@ esputnik
 etermin
 etsy
 event-tickets
+eventbrite
 eventify
 everflow
 everhour
