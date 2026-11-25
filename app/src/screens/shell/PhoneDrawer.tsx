@@ -1,11 +1,12 @@
-// The phone's sidebar as a drawer a finger moves. A swipe across the page opens it, following the finger; a swipe across
-// it (or the dim beside it) closes it; let go and it settles by where it was and how fast the finger moved. On a page one
-// level down the same swipe goes back instead, pressing the bar's back control. Once first drawn (when the phone is
-// idle after the first page) the sidebar stays mounted, so opening never waits on it rendering.
+// The phone's sidebar as a drawer under the page. A swipe across the page slides the page right off it, following the
+// finger, as a rounded card that dims; a swipe across either (or a tap on the page) slides it back; let go and it
+// settles by where it was and how fast the finger moved. On a page one level down the same swipe goes back instead,
+// pressing the bar's back control. Once first drawn (when the phone is idle after the first page) the sidebar stays
+// mounted, so opening never waits on it rendering.
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeft } from 'lucide-react';
-import { SIDEBAR_SHEET, SIDEBAR_SHEET_OVERLAY } from '@/ui/sidebarParts';
+import { SIDEBAR_SHEET, SIDEBAR_SHEET_OVERLAY, SidebarScaleProvider } from '@/ui/sidebarParts';
 import { BACK_PX, anotherLayerOpen, backCounts, readDirection, releaseVelocity, settleMs, settlesOpen, takesItsOwnSwipe, type SwipeMode } from './phoneSwipe';
 
 interface PhoneDrawerProps {
@@ -15,6 +16,8 @@ interface PhoneDrawerProps {
     back: () => HTMLElement | null;
     /** The control that opens the drawer, which focus returns to as it closes. */
     trigger: RefObject<HTMLElement | null>;
+    /** The page, which slides right off the drawer (it carries `PHONE_PAGE`). */
+    page: RefObject<HTMLElement | null>;
     children: ReactNode;
 }
 
@@ -24,7 +27,7 @@ interface Gesture {
     y0: number;
     /** Where the finger was when the touch was read as a swipe, so the drawer moves from there without a jump. */
     lockedAt: number | null;
-    /** Where the drawer was then, in px from open (0) to shut (-width). */
+    /** How open the drawer was then, 0 shut to 1 open. */
     from: number;
     dx: number;
     samples: { t: number; x: number }[];
@@ -32,29 +35,31 @@ interface Gesture {
 }
 
 const EASE = 'cubic-bezier(0.2, 0.9, 0.3, 1)';
+/** The page's near corners, rounded as it leaves (matching PHONE_PAGE's open radius). */
+const RADIUS = 44;
+/** How far behind the drawer starts, as a share of its width: it drifts in under the page. */
+const PARALLAX = 0.18;
 const ARROW_HIDDEN = -48;
 
+/** Over the page while it's pushed aside, so a tap or a swipe there closes the drawer (the page itself is inert). */
+const CATCHER = 'pointer-events-none fixed inset-y-0 right-0 left-[min(80vw,340px)] z-[2] data-[open=true]:pointer-events-auto';
 const BACK_ARROW =
     'pointer-events-none fixed left-0 top-1/2 z-[65] -mt-5 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground opacity-0 shadow-lg transition-colors duration-150 data-[armed=true]:border-transparent data-[armed=true]:bg-foreground data-[armed=true]:text-background';
 
-/** The drawer's left edge now, mid-transition included: 0 open, -width shut. Where no transform is computed (no
- *  stylesheet), where its state puts it. */
-function drawerX(sheet: HTMLElement, open: boolean, width: number): number {
-    const transform = getComputedStyle(sheet).transform;
-    if (transform && transform !== 'none' && typeof DOMMatrixReadOnly === 'function') return new DOMMatrixReadOnly(transform).m41;
-    return open ? 0 : -width;
-}
-
-export function PhoneDrawer({ open, onOpenChange, back, trigger, children }: PhoneDrawerProps) {
+export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children }: PhoneDrawerProps) {
     const sheet = useRef<HTMLDivElement>(null);
     const dim = useRef<HTMLDivElement>(null);
     const arrow = useRef<HTMLDivElement>(null);
     const [host, setHost] = useState<HTMLElement | null>(null);
+    const [pageEl, setPageEl] = useState<HTMLElement | null>(null);
     const [drawn, setDrawn] = useState(open);
     const live = useRef({ open, back, onOpenChange });
     live.current = { open, back, onOpenChange };
 
-    useEffect(() => setHost(document.body), []);
+    useEffect(() => {
+        setHost(document.body);
+        setPageEl(page.current);
+    }, [page]);
 
     // Drawn ahead of the first swipe on a touch screen, once the page has painted and the phone has a moment; elsewhere
     // when first opened.
@@ -95,63 +100,75 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, children }: Pho
         let settling = 0;
         let arrowHiding = 0;
         const width = () => sheet.current?.offsetWidth || 300;
-        const xOf = (g: Gesture) => Math.min(0, Math.max(-width(), g.from + g.dx - (g.lockedAt ?? 0)));
+        const progressOf = (g: Gesture) => Math.min(1, Math.max(0, g.from + (g.dx - (g.lockedAt ?? 0)) / width()));
+
+        /** How open the drawer is now, mid-settle included, read from where the page is. Where nothing is computed (no
+         *  stylesheet), where its state puts it. */
+        const progressNow = () => {
+            const el = page.current;
+            const transform = el ? getComputedStyle(el).transform : '';
+            if (transform && transform !== 'none' && typeof DOMMatrixReadOnly === 'function') return Math.min(1, Math.max(0, new DOMMatrixReadOnly(transform).m41 / width()));
+            return live.current.open ? 1 : 0;
+        };
+
+        const place = (p: number) => {
+            const w = width();
+            const radius = Math.min(1, p * 5) * RADIUS;
+            const el = page.current;
+            if (el) {
+                el.style.transform = `translateX(${p * w}px)`;
+                el.style.borderRadius = `${radius}px 0 0 ${radius}px`;
+                el.style.overflow = 'hidden';
+            }
+            if (dim.current) dim.current.style.opacity = String(p);
+            if (sheet.current) sheet.current.style.transform = `translateX(${-(1 - p) * w * PARALLAX}px)`;
+        };
 
         const paint = () => {
             frame = 0;
             const g = gesture;
             if (!g || g.lockedAt === null) return;
-            if (g.mode === 'back') {
-                const pulled = Math.max(0, g.dx - g.lockedAt);
-                const reach = Math.min(1, pulled / BACK_PX);
-                const past = Math.max(0, pulled - BACK_PX) * 0.12;
-                const el = arrow.current;
-                if (!el) return;
-                el.style.transform = `translateX(${ARROW_HIDDEN + 62 * reach + past}px)`;
-                el.style.opacity = String(Math.min(1, reach * 1.6));
-                el.dataset.armed = String(pulled >= BACK_PX);
-                return;
-            }
-            const x = xOf(g);
-            const w = width();
-            if (sheet.current) sheet.current.style.transform = `translateX(${x}px)`;
-            if (dim.current) dim.current.style.opacity = String((x + w) / w);
+            if (g.mode !== 'back') return place(progressOf(g));
+            const pulled = Math.max(0, g.dx - g.lockedAt);
+            const reach = Math.min(1, pulled / BACK_PX);
+            const past = Math.max(0, pulled - BACK_PX) * 0.12;
+            const el = arrow.current;
+            if (!el) return;
+            el.style.transform = `translateX(${ARROW_HIDDEN + 62 * reach + past}px)`;
+            el.style.opacity = String(Math.min(1, reach * 1.6));
+            el.dataset.armed = String(pulled >= BACK_PX);
         };
 
-        // Hands the drawer back to its classes (data-open) once a settle has run.
+        const moved = () => [page.current, dim.current, sheet.current];
+
+        // Hands the page and drawer back to their classes (`data-menu`, `data-open`) once a settle has run.
         const release = () => {
-            for (const el of [sheet.current, dim.current]) {
+            for (const el of moved()) {
                 if (!el) continue;
-                el.style.removeProperty('transform');
-                el.style.removeProperty('transition');
-                el.style.removeProperty('opacity');
-                el.style.removeProperty('visibility');
+                for (const property of ['transform', 'transition', 'opacity', 'visibility', 'border-radius', 'overflow', 'will-change']) el.style.removeProperty(property);
             }
         };
 
         const take = () => {
             window.clearTimeout(settling);
-            const s = sheet.current;
-            const d = dim.current;
-            if (!s || !d || !gesture) return;
-            gesture.from = drawerX(s, live.current.open, width());
-            s.style.transition = 'none';
-            s.style.visibility = 'visible';
-            s.style.transform = `translateX(${gesture.from}px)`;
-            d.style.transition = 'none';
-            d.style.opacity = String((gesture.from + width()) / width());
+            if (!gesture) return;
+            gesture.from = progressNow();
+            for (const el of moved()) {
+                if (!el) continue;
+                el.style.transition = 'none';
+                el.style.willChange = el === dim.current ? 'opacity' : 'transform';
+            }
+            if (sheet.current) sheet.current.style.visibility = 'visible';
+            place(gesture.from);
         };
 
-        const settle = (toOpen: boolean, x: number, velocity: number) => {
-            const s = sheet.current;
-            const d = dim.current;
-            if (!s || !d) return;
-            const target = toOpen ? 0 : -width();
-            const ms = settleMs(Math.abs(target - x), velocity);
-            s.style.transition = `transform ${ms}ms ${EASE}`;
-            d.style.transition = `opacity ${ms}ms ${EASE}`;
-            s.style.transform = `translateX(${target}px)`;
-            d.style.opacity = toOpen ? '1' : '0';
+        const settle = (toOpen: boolean, from: number, velocity: number) => {
+            const ms = settleMs(Math.abs((toOpen ? 1 : 0) - from) * width(), velocity);
+            const curve = `${ms}ms ${EASE}`;
+            if (page.current) page.current.style.transition = `transform ${curve}, border-radius ${curve}`;
+            if (dim.current) dim.current.style.transition = `opacity ${curve}`;
+            if (sheet.current) sheet.current.style.transition = `transform ${curve}`;
+            place(toOpen ? 1 : 0);
             if (toOpen !== live.current.open) live.current.onOpenChange(toOpen);
             settling = window.setTimeout(release, ms + 40);
         };
@@ -224,9 +241,8 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, children }: Pho
                 if (event.type === 'touchend' && backCounts(g.dx - g.lockedAt, velocity)) g.back?.click();
                 return;
             }
-            const x = xOf(g);
-            const w = width();
-            settle(event.type === 'touchend' && settlesOpen((x + w) / w, velocity), x, velocity);
+            const p = progressOf(g);
+            settle(event.type === 'touchend' ? settlesOpen(p, velocity) : g.from > 0.5, p, velocity);
         };
 
         document.addEventListener('touchstart', onStart, { passive: true });
@@ -242,30 +258,35 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, children }: Pho
             window.clearTimeout(settling);
             window.clearTimeout(arrowHiding);
         };
-    }, [host]);
+    }, [host, page]);
 
     if (!host) return null;
-    return createPortal(
+    return (
         <>
-            <div ref={dim} data-open={open} aria-hidden className={SIDEBAR_SHEET_OVERLAY} onClick={() => onOpenChange(false)} />
-            <div
-                ref={sheet}
-                id="phone-menu"
-                role="dialog"
-                aria-modal={open || undefined}
-                aria-hidden={!open || undefined}
-                aria-label="Menu"
-                tabIndex={-1}
-                data-open={open}
-                inert={!open}
-                className={SIDEBAR_SHEET}
-            >
-                {drawn && children}
-            </div>
-            <div ref={arrow} aria-hidden data-armed="false" className={BACK_ARROW} style={{ transform: `translateX(${ARROW_HIDDEN}px)` }}>
-                <ChevronLeft className="h-5 w-5" strokeWidth={2} />
-            </div>
-        </>,
-        host
+            {pageEl && createPortal(<div ref={dim} data-open={open} aria-hidden className={SIDEBAR_SHEET_OVERLAY} />, pageEl)}
+            {createPortal(
+                <>
+                    <div
+                        ref={sheet}
+                        id="phone-menu"
+                        role="dialog"
+                        aria-modal={open || undefined}
+                        aria-hidden={!open || undefined}
+                        aria-label="Menu"
+                        tabIndex={-1}
+                        data-open={open}
+                        inert={!open}
+                        className={SIDEBAR_SHEET}
+                    >
+                        <SidebarScaleProvider value="phone">{drawn && children}</SidebarScaleProvider>
+                    </div>
+                    <div aria-hidden data-open={open} className={CATCHER} onClick={() => onOpenChange(false)} />
+                    <div ref={arrow} aria-hidden data-armed="false" className={BACK_ARROW} style={{ transform: `translateX(${ARROW_HIDDEN}px)` }}>
+                        <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+                    </div>
+                </>,
+                host
+            )}
+        </>
     );
 }

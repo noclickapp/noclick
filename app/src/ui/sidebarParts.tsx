@@ -1,10 +1,10 @@
-// The sidebar's parts (rows, header, column, account button, the phone sheet's
+// The sidebar's parts (rows, header, column, account button, the phone drawer's
 // styling), shared by the app's sidebar and the developer console's so the two
 // read as one app. They read no app state; each sidebar adds its own pages,
 // workspace and account menu.
-import { forwardRef, useEffect, type ButtonHTMLAttributes, type ComponentType, type ReactNode } from 'react';
+import { createContext, forwardRef, useContext, useEffect, type ButtonHTMLAttributes, type ComponentType, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import { ArrowUpRight, PanelLeft, PanelLeftClose, Search, X } from 'lucide-react';
+import { ArrowUpRight, PanelLeft, PanelLeftClose, Search } from 'lucide-react';
 import { CountBadge } from '@/ui/CountBadge';
 import { AccountAvatar, type AccountMenuUser } from '@/ui/accountParts';
 import { LogoMark } from '@/ui/LogoMark';
@@ -23,12 +23,28 @@ export const SIDEBAR_IDLE = 'text-foreground/85 hover:bg-foreground/[0.05] hover
 export const SIDEBAR_CURRENT = 'bg-accent text-accent-foreground dark:bg-foreground/[0.09] dark:text-foreground';
 export const SIDEBAR_ICON_BUTTON =
     "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl after:absolute after:-inset-0.5 after:content-[''] text-foreground/75 transition-colors hover:bg-foreground/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-/** The phone's sidebar drawer and the dim behind it, shut or open by `data-open`; a swipe moves them in between
- *  (screens/shell/PhoneDrawer). Invisible while shut, so its shadow never shows at the screen's edge. */
+/** The phone's sidebar sits under the page, which slides right off it as a rounded, dimmed card (screens/shell/
+ *  PhoneDrawer). Shut or open by `data-open`; a swipe moves them in between. Its width is `PHONE_DRAWER_WIDTH`, written
+ *  out in each class (Tailwind reads class names as written). */
+export const PHONE_DRAWER_WIDTH = 'min(80vw,340px)';
 export const SIDEBAR_SHEET =
-    'fixed inset-y-0 left-0 z-[70] w-[300px] max-w-[85vw] border-r border-border bg-card pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-2xl outline-none will-change-transform invisible -translate-x-full transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:visible data-[open=true]:translate-x-0 motion-reduce:transition-none dark:border-foreground/[0.08] dark:bg-black';
+    'fixed inset-y-0 left-0 z-0 w-[min(80vw,340px)] bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] outline-none invisible -translate-x-[18%] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:visible data-[open=true]:translate-x-0 motion-reduce:transition-none';
+/** The page while the drawer is open: moved right by the drawer's width, its near corners rounded, over the drawer. */
+export const PHONE_PAGE =
+    'z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
+/** The dim over the page while it's pushed aside: it greys the page out, a card you tap to come back to. */
 export const SIDEBAR_SHEET_OVERLAY =
-    'pointer-events-none fixed inset-0 z-[60] bg-black/40 opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 motion-reduce:transition-none';
+    'pointer-events-none absolute inset-0 z-[45] bg-black/[0.16] opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:opacity-100 motion-reduce:transition-none dark:bg-[rgb(58_58_58/0.58)]';
+
+/** How big a sidebar's parts are drawn: a laptop column's, or a phone drawer's, sized for a thumb (bigger rows, search
+ *  as an icon beside the workspace). The phone drawer provides it. */
+export type SidebarScale = 'column' | 'phone';
+const SidebarScaleContext = createContext<SidebarScale>('column');
+export const SidebarScaleProvider = SidebarScaleContext.Provider;
+export function useSidebarScale(): SidebarScale {
+    return useContext(SidebarScaleContext);
+}
+const PHONE_ITEM = 'h-12 gap-4 rounded-2xl px-3.5 text-[17px] tracking-[-0.01em]';
 
 export type SidebarIcon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -61,16 +77,17 @@ export function SidebarItem({
     /** For a row that also folds rows under it. */
     expanded?: boolean;
 }) {
+    const phone = useSidebarScale() === 'phone';
     const props = {
         onClick: onSelect,
         'aria-current': current ? ('page' as const) : undefined,
         'aria-expanded': expanded,
         'aria-label': collapsed ? label : undefined,
-        className: cn(SIDEBAR_ITEM, current ? SIDEBAR_CURRENT : SIDEBAR_IDLE, collapsed && 'justify-center px-0'),
+        className: cn(SIDEBAR_ITEM, phone && PHONE_ITEM, current ? SIDEBAR_CURRENT : SIDEBAR_IDLE, collapsed && 'justify-center px-0'),
     };
     const body = (
         <>
-            <Icon className="h-5 w-5 shrink-0" strokeWidth={1.6} />
+            <Icon className={cn('shrink-0', phone ? 'h-6 w-6' : 'h-5 w-5')} strokeWidth={1.6} />
             {!collapsed && <span className="min-w-0 flex-1 truncate text-left">{label}</span>}
             {!collapsed && href && <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.6} />}
             {!collapsed && trailing}
@@ -129,9 +146,21 @@ function SidebarSearchField({ onSearch }: { onSearch: () => void }) {
     );
 }
 
-/** The header: the title and `end` (collapse on a laptop, close on a phone), search under them; on the rail, `end` alone. */
+/** The header: the title and `end` (collapse on a laptop), search under them; on the rail, `end` alone; in a phone's
+ *  drawer, the title with search as an icon beside it, nothing to close (the page beside it closes it). */
 export function SidebarHeader({ collapsed, title, onSearch, end }: { collapsed: boolean; title: ReactNode; onSearch: () => void; end: ReactNode }) {
+    const phone = useSidebarScale() === 'phone';
     if (collapsed) return <div className="flex h-14 shrink-0 items-center justify-center px-2">{end}</div>;
+    if (phone)
+        return (
+            <div className="flex h-16 shrink-0 items-center gap-1 px-3">
+                <div className="min-w-0 flex-1">{title}</div>
+                <button type="button" aria-label="Search" onClick={onSearch} className={cn(SIDEBAR_ICON_BUTTON, 'h-11 w-11 rounded-full')}>
+                    <Search className="h-[22px] w-[22px]" strokeWidth={1.8} />
+                </button>
+                {end}
+            </div>
+        );
     return (
         <div className="shrink-0 px-2 pb-2">
             <div className="flex h-14 items-center gap-0.5">
@@ -180,6 +209,7 @@ export const SidebarAccountButton = forwardRef<
     HTMLButtonElement,
     { user: AccountMenuUser; plan: string; collapsed: boolean } & ButtonHTMLAttributes<HTMLButtonElement>
 >(function SidebarAccountButton({ user, plan, collapsed, className, ...props }, ref) {
+    const phone = useSidebarScale() === 'phone';
     return (
         <button
             ref={ref}
@@ -192,11 +222,11 @@ export const SidebarAccountButton = forwardRef<
             )}
             {...props}
         >
-            <AccountAvatar user={user} className="h-8 w-8 shrink-0" />
+            <AccountAvatar user={user} className={cn('shrink-0', phone ? 'h-10 w-10' : 'h-8 w-8')} />
             {!collapsed && (
                 <span className="flex min-w-0 flex-col leading-tight">
-                    <span className="truncate text-[13.5px] font-medium text-foreground">{userDisplayName({ email: user.email, name: user.display_name }, 'You')}</span>
-                    <span className="truncate text-[12px] text-muted-foreground">{plan}</span>
+                    <span className={cn('truncate font-medium text-foreground', phone ? 'text-[16px]' : 'text-[13.5px]')}>{userDisplayName({ email: user.email, name: user.display_name }, 'You')}</span>
+                    <span className={cn('truncate text-muted-foreground', phone ? 'text-[14px]' : 'text-[12px]')}>{plan}</span>
                 </span>
             )}
         </button>
@@ -216,14 +246,5 @@ export function SidebarColumn({ collapsed, className, children, testId }: { coll
             {!collapsed && <ResizeEdge panel={sidebarPanel} label="Resize sidebar" />}
             <div className="h-full overflow-hidden">{children}</div>
         </aside>
-    );
-}
-
-/** The phone sheet's close control. */
-export function SheetClose({ onClose }: { onClose: () => void }) {
-    return (
-        <button type="button" className={SIDEBAR_ICON_BUTTON} aria-label="Close menu" onClick={onClose}>
-            <X className="h-5 w-5" strokeWidth={1.6} />
-        </button>
     );
 }

@@ -1,6 +1,6 @@
 // The app's frame. On a laptop: the sidebar, then (beside an open canvas) the builder chat, then the page. On a phone:
-// a slim bar with the menu, the page's name and the page's own actions over the page, the sidebar as a drawer a swipe
-// across the page opens (on a page one level down the swipe goes back instead: PhoneDrawer), and the builder over the
+// a slim bar with the menu, the page's name and the page's own actions over the page, the sidebar under the page, which
+// a swipe slides aside (on a page one level down the swipe goes back instead: PhoneDrawer), and the builder over the
 // canvas while it's open. The builder is mounted once either way. What the sidebar holds is the host's: the frame draws
 // it as a column on a laptop and in the drawer on a phone. A strip across the top of the page is the shell's
 // `shell.banner` slot.
@@ -9,7 +9,7 @@ import { Menu } from 'lucide-react';
 import { useSlot } from '@/slots';
 import { BuilderMark } from '@/ui/glyphs';
 import { PhoneBarContext } from '@/ui/phoneBar';
-import { SIDEBAR_ICON_BUTTON, SheetClose, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
+import { PHONE_PAGE, SIDEBAR_ICON_BUTTON, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
 import { sidebarWidthFor, useSidebarResizing, useSidebarWidth } from '@/ui/sidebarPanel';
 import { cn } from '@/ui/utils';
 import { PhoneDrawer } from './PhoneDrawer';
@@ -18,7 +18,7 @@ import { BANNER } from './slots';
 /** Where the sidebar's content is drawn: the laptop column (folded to a rail or not) or the phone's sheet. */
 export interface SidebarFrame {
     collapsed: boolean;
-    /** The header's closing control (collapse on a laptop, close on a phone). */
+    /** The header's control at its end (collapse on a laptop; none on a phone, where the page beside it closes it). */
     headerEnd: ReactNode;
     /** Called after any navigation, so a sheet can close itself. */
     onNavigate?: () => void;
@@ -89,6 +89,7 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
     const taken = builderLeads || leadTaken;
     const close = () => setMenuOpen(false);
     const trigger = useRef<HTMLButtonElement>(null);
+    const page = useRef<HTMLDivElement>(null);
     // The bar's way back where a page one level down (or the builder's history) put one, for the swipe to press.
     const backControl = useCallback(() => {
         const holder = builderLeads ? builderLead : leadTaken ? lead : null;
@@ -103,7 +104,12 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
     return (
         // Clear of the notch and the home indicator, so every page's foot (a message box, a view bar) is where a thumb
         // reaches it without each page keeping clear itself.
-        <div inert={menuOpen} className="fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
+        <div
+            ref={page}
+            inert={menuOpen}
+            data-menu={menuOpen ? 'open' : undefined}
+            className={cn('fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]', PHONE_PAGE)}
+        >
             {Banner && <Banner />}
             <header className="flex h-12 shrink-0 items-center gap-1 px-2">
                 <button
@@ -118,8 +124,8 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
                 >
                     <Menu className="h-5 w-5" strokeWidth={1.75} />
                 </button>
-                <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger}>
-                    {sidebar({ collapsed: false, headerEnd: <SheetClose onClose={close} />, onNavigate: close })}
+                <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger} page={page}>
+                    {sidebar({ collapsed: false, headerEnd: null, onNavigate: close })}
                 </PhoneDrawer>
                 <span className={cn('min-w-0 flex-1 truncate px-1 text-[15px] font-semibold tracking-[-0.01em] text-foreground', taken && 'hidden')}>{title}</span>
                 <div ref={setLead} className={leadTaken && !builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />

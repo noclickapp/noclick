@@ -13,7 +13,7 @@ import { ACCOUNT_MENU_ITEM, planLabel, type AccountMenuUser } from '@/ui/account
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { BuilderMark } from '@/ui/glyphs';
 import { HAIRLINE } from '@/ui/primitives';
-import { SIDEBAR_CURRENT, SidebarAccountButton, SidebarHeader, SidebarItem } from '@/ui/sidebarParts';
+import { SIDEBAR_CURRENT, SidebarAccountButton, SidebarHeader, SidebarItem, useSidebarScale } from '@/ui/sidebarParts';
 import { cn } from '@/ui/utils';
 import type { SidebarFrame } from './AppShell';
 import { SHELL_PAGES, type ShellPage } from './pages';
@@ -65,6 +65,7 @@ export function ResourcesNav({
         onKind(kind);
         onNavigate?.();
     };
+    const phone = useSidebarScale() === 'phone';
     const select = () => {
         if (current && open) return remember(false);
         remember(true);
@@ -84,8 +85,8 @@ export function ResourcesNav({
             />
             {open && (
                 // Text rows on a guide line hung from the Resources icon; each lines up with the parent's label.
-                <div className="relative mt-0.5 flex flex-col gap-0.5 pl-8" role="group" aria-label="Resource kinds">
-                    <span aria-hidden className="absolute bottom-1.5 left-[21.5px] top-1.5 w-px bg-foreground/15" />
+                <div className={cn('relative mt-0.5 flex flex-col gap-0.5', phone ? 'pl-10' : 'pl-8')} role="group" aria-label="Resource kinds">
+                    <span aria-hidden className={cn('absolute bottom-1.5 top-1.5 w-px bg-foreground/15', phone ? 'left-[25.5px]' : 'left-[21.5px]')} />
                     {KINDS.map((kind) => {
                         const here = activeKind === kind.id;
                         return (
@@ -95,7 +96,8 @@ export function ResourcesNav({
                                 onClick={() => go(kind.id)}
                                 aria-current={here ? 'page' : undefined}
                                 className={cn(
-                                    'flex h-9 w-full items-center gap-2 rounded-xl px-3 text-left text-[14.5px] transition-colors',
+                                    'flex w-full items-center gap-2 text-left transition-colors',
+                                    phone ? 'h-11 rounded-2xl px-3.5 text-[16px]' : 'h-9 rounded-xl px-3 text-[14.5px]',
                                     here ? SIDEBAR_CURRENT : 'text-foreground/75 hover:bg-foreground/[0.05] hover:text-foreground'
                                 )}
                             >
@@ -180,11 +182,12 @@ export function ShellSidebarContent({ user, collapsed, headerEnd, onNavigate, on
         onNavigate?.();
         onSearch();
     };
+    const phone = useSidebarScale() === 'phone';
     return (
         <div className="flex h-full min-h-0 flex-col">
             <SidebarHeader collapsed={collapsed} title={<Workspace user={user} onNavigate={onNavigate} />} onSearch={search} end={headerEnd} />
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 pb-3 scrollbar-subtle">
+            <div className={cn('flex min-h-0 flex-1 flex-col overflow-y-auto pb-3 scrollbar-subtle', phone ? 'px-3 pt-1' : 'px-2')}>
                 {builder && (
                     <div className={cn('mb-2 border-b pb-2', HAIRLINE)}>
                         <SidebarItem label="Builder" icon={BuilderMark} current={builder.open} collapsed={collapsed} onSelect={builder.onToggle} />
@@ -202,7 +205,7 @@ export function ShellSidebarContent({ user, collapsed, headerEnd, onNavigate, on
             </div>
 
             {/* No rule above the foot: its card and account stand on the column's own surface. */}
-            <div className="flex shrink-0 flex-col gap-0.5 p-2">
+            <div className={cn('flex shrink-0 flex-col', phone ? 'gap-2 px-3 pb-2' : 'gap-0.5 p-2')}>
                 {!collapsed && Card && <Card />}
                 {/* Mounted even on the rail: what's in it may listen for the app's events (a balance opens its way to
                     add funds when work runs out of them). */}
