@@ -297,7 +297,7 @@ export function ConnectionsContent() {
     };
     return (
         <PageFrame title="Connections" description={PAGE_DESCRIPTION}>
-            <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-3">
+            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-3 sm:mb-5">
                 <div className="-mx-5 flex min-w-0 gap-1.5 overflow-x-auto px-5 scrollbar-hide sm:mx-0 sm:px-0" role="tablist" aria-label="Connections">
                     {tabs.map((t) => (
                         <button
