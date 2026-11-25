@@ -304,7 +304,6 @@ function v1StepReads(client: NoClick, scope: StepScope | null): StepReads {
             await (await step()).clearState();
             return { success: true };
         },
-        reconnectWebhookRelay: null,
     };
 }
 

@@ -2,7 +2,7 @@
 // It validates both on the frontend (instant feedback with AJV) and backend (security).
 
 import { useEffect, useState, useCallback, useRef, useMemo, type ReactNode, type JSX } from 'react';
-import { CheckCircle2, AlertCircle, Braces, Loader2, ChevronDown, ChevronRight, Wifi, WifiOff, ArrowUpRight, Sparkles, Repeat2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Braces, Loader2, ChevronDown, ChevronRight, ArrowUpRight, Sparkles, Repeat2 } from 'lucide-react';
 import { hasListReference } from '@/screens/canvas/listReferences';
 import { useDebounce } from '@/lib/useDebounce';
 import { useSlot } from '@/slots';
@@ -344,7 +344,6 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
 
     // Backend validation (debounced, security layer), where the host judges settings before they're saved
     const validate = reads.validate;
-    const reconnectRelay = reads.reconnectWebhookRelay;
     useEffect(() => {
         const validateWithBackend = async () => {
             if (!schema || !validate) return;
@@ -1648,39 +1647,6 @@ function NodeConfigForm({ rootSchema, nodeType, config, onChange, onInjectIterat
                             </div>
                         )}
 
-                        {/* Webhook Relay Status (shown below webhook_url field) */}
-                        {nodeType === 'trigger-webhook' && key === 'webhook_url' && localConfig.relay_connected !== undefined && !localConfig.is_production && reconnectRelay && (
-                            <WebhookRelayStatus
-                                isConnected={localConfig.relay_connected}
-                                onReconnect={async () => {
-                                    // Capture nodeId at callback start to prevent race conditions
-                                    const capturedNodeId = nodeId;
-                                    try {
-                                        const response = await reconnectRelay();
-                                        if (response?.success) {
-                                            // Reload the field value to get fresh relay status
-                                            // The relay's status shows only once a load with these ids has run.
-                                            const reloadResponse = await reads.value({
-                                                node_type: nodeType,
-                                                field_name: 'webhook_url',
-                                                workflow_id: workflowId as string,
-                                                node_id: capturedNodeId as string,
-                                            });
-                                            if (reloadResponse?.success && reloadResponse.values) {
-                                                // Use functional update to avoid race conditions
-                                                setLocalConfig(prev => {
-                                                    const newConfig = { ...prev, ...reloadResponse.values };
-                                                    tellLater(() => onChange(newConfig, capturedNodeId));
-                                                    return newConfig;
-                                                });
-                                            }
-                                        }
-                                    } catch (error) {
-                                        console.error('Failed to reconnect relay:', error);
-                                    }
-                                }}
-                            />
-                        )}
                     </div>
                 );
             })}
@@ -1968,58 +1934,6 @@ export function NodeConfigFieldControl({
                 workflowId,
             )}
         </StepContext.Provider>
-    );
-}
-
-// Webhook relay status indicator component with reconnect button
-function WebhookRelayStatus({ isConnected, onReconnect }: { isConnected: boolean; onReconnect: () => Promise<void> }) {
-    const [isReconnecting, setIsReconnecting] = useState(false);
-
-    const handleReconnect = async () => {
-        setIsReconnecting(true);
-        try {
-            await onReconnect();
-        } finally {
-            setIsReconnecting(false);
-        }
-    };
-
-    return (
-        <div className={`flex flex-wrap items-center justify-between gap-2 px-3 py-2 mt-2 rounded-lg border ${
-            isConnected
-                ? 'bg-green-500/10 border-green-500/20'
-                : 'bg-red-500/10 border-red-500/20'
-        }`}>
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-                {isConnected ? (
-                    <>
-                        <Wifi className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-                        <span className="text-xs text-green-600 dark:text-green-400 break-words min-w-0">Using Local Backend Tunnel Relay</span>
-                    </>
-                ) : (
-                    <>
-                        <WifiOff className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-                        <span className="text-xs text-red-600 dark:text-red-400 break-words min-w-0">Relay Disconnected</span>
-                    </>
-                )}
-            </div>
-            {!isConnected && (
-                <button
-                    onClick={handleReconnect}
-                    disabled={isReconnecting}
-                    className="px-2 py-1 text-xs bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded text-red-600 dark:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                >
-                    {isReconnecting ? (
-                        <>
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                            Reconnecting...
-                        </>
-                    ) : (
-                        'Reconnect'
-                    )}
-                </button>
-            )}
-        </div>
     );
 }
 

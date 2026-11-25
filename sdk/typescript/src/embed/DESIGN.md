@@ -4,7 +4,7 @@
 
 The SDK lets custom React components (running in iframes) interact with the NoClick workflow they belong to. It provides a JavaScript API for reading data, triggering execution, managing state, and handling credentials.
 
-**Transport**: `window.parent.postMessage()` (iframe → host). The host (HtmlReactBlock) translates messages into socket events / Valtio state mutations. A future WebSocket transport enables the same API for external web apps.
+**Transport**: `window.parent.postMessage()` (iframe → host). The host (HtmlReactBlock) translates messages into socket events / Valtio state mutations. Outside an iframe, the HTTP transport (`transports/http.ts`) makes the same calls on the platform API with the page's key and hears what changes as room frames (its pages' room for State changes, each run's own room for its steps), never by polling; published pages use it. The older WebSocket transport stays for pages built with it.
 
 ---
 

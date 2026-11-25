@@ -5,10 +5,11 @@
 //   staged message. The runs the workflow added itself come from its settings (below), so only the offered ones are
 //   taken from the list;
 // - a run: `POST /v1/workflows/{id}/rehearsals` with the run's name among the workflow's test runs, a
-//   `workflow.rehearse` operation. The API reports a test run when it ends, not step by step: the screen shows it
-//   thinking, then every step at once (each call with what it was given, what the simulated world answered and what
-//   it would have sent) and the agent's closing words. It plays the test runs the workflow holds, so the screen's
-//   changes are written first (`runsSaved`);
+//   `workflow.rehearse` operation. The screen joins the workflow's room (the SDK's `Room`) for the run, where each of
+//   its steps is published as it moves (`rehearsal:progress`, tagged with the run's operation): each call as the agent
+//   makes it, then with what it was given, what the simulated world answered and what it would have sent. The run is
+//   read once as it ends, for the agent's closing words (and its steps, if the room missed any). It plays the test
+//   runs the workflow holds, so the screen's changes are written first (`runsSaved`);
 // - the workflow's own test runs, names, edits and removals: its `rehearsal_authoring` setting, read with its graph
 //   (`GET /v1/workflows/{id}/graph`) and written as an `update_workflow` edit (only its owner's key may);
 // - what still needs connecting: the workflow's steps as `GET /v1/workflows/{id}` reads them (a step whose account
@@ -24,7 +25,7 @@ import { useProvidedClient } from '@/sdk/client';
 import { deriveUnmetConnections, type UnmetConnection } from '../readiness';
 import type { RehearsalAuthoring } from './authoring';
 import type { MockRun } from './scenarios';
-import { deriveArtifacts, toReplayRows, type LiveRow, type LiveRunState } from './liveRows';
+import { applyProgressFrame, deriveArtifacts, toReplayRows, type LiveRow, type LiveRunState } from './liveRows';
 import type { PickedRun, StagedSituations } from './reads';
 import { triggersOfStaged, type StagedTrigger } from './staged';
 
@@ -137,8 +138,21 @@ export function rowsOfTranscript(transcript: readonly Json[], reply: string, at:
     return rows;
 }
 
-export function useV1TestRun(workflowId: string | null, picked: PickedRun): LiveRunState {
-    const client = useProvidedClient();
+/** What the workflow's room carries a test run's steps as. */
+const PROGRESS = 'rehearsal:progress';
+
+/** Whether the room gave every call the run's read names, each finished: then the rows it drew stand (with the
+ *  timings the screen measured as they moved), else the read's. */
+function heardEveryCall(streamed: readonly LiveRow[], read: readonly LiveRow[]): boolean {
+    const calls = (rows: readonly LiveRow[]) => rows.filter((row) => row.thought === undefined);
+    const heard = calls(streamed);
+    return heard.length === calls(read).length && heard.every((row) => row.status === 'completed');
+}
+
+/** A run over `/v1` with the client a `ClientProvider` above gives, else the one `clientOf` resolves to (a host whose
+ *  screen sits under no provider). */
+export function useV1TestRun(workflowId: string | null, picked: PickedRun, clientOf?: () => Promise<NoClick>): LiveRunState {
+    const provided = useProvidedClient();
     const snap = useSnapshot(runs);
     const slot = workflowId ? snap.byWorkflow[workflowId] : undefined;
     const current = slot && slot.run === picked.slug ? slot : undefined;
@@ -161,16 +175,39 @@ export function useV1TestRun(workflowId: string | null, picked: PickedRun): Live
         const end = (over: Partial<RunSlot>) => {
             if (still()) Object.assign(runs.byWorkflow[workflowId], over, { phase: 'done' });
         };
-        if (!client) return end({ error: NO_CLIENT });
+        let room: { leave: () => void } | null = null;
         try {
-            const { Workflow } = await sdk();
+            const client = provided ?? (clientOf ? await clientOf() : null);
+            if (!client) return end({ error: NO_CLIENT });
+            const { Room, Workflow } = await sdk();
+            // Each step as it moves, from the workflow's room. A frame can arrive before the run's id does: it waits.
+            let runId: string | null = null;
+            const early: Json[] = [];
+            const heard = (frame: Json) => {
+                if (frame.operation_id !== runId || !still()) return;
+                applyProgressFrame(runs.byWorkflow[workflowId].rows, frame);
+            };
+            const joined = await Room.join(`workflow:${workflowId}`, { client });
+            room = joined;
+            joined.on('event', (event) => {
+                if (event.from !== null || event.event !== PROGRESS) return;
+                const frame = (event.data ?? {}) as Json;
+                if (runId === null) early.push(frame);
+                else heard(frame);
+            });
             const operation = await Workflow.fromId(workflowId, { client }).rehearse({ testRun: picked.slug });
+            runId = operation.id;
+            early.splice(0).forEach(heard);
             const result = await operation.wait();
-            end({ rows: rowsOfTranscript(result.transcript, result.reply, Date.now()), reply: result.reply });
+            const streamed = still() ? runs.byWorkflow[workflowId].rows : [];
+            const read = rowsOfTranscript(result.transcript, result.reply, Date.now());
+            end({ rows: heardEveryCall(streamed, read) ? [...streamed] : read, reply: result.reply });
         } catch (error) {
             end({ error: await said(error) });
+        } finally {
+            room?.leave();
         }
-    }, [workflowId, picked.slug, client]);
+    }, [workflowId, picked.slug, provided, clientOf]);
 
     return useMemo<LiveRunState>(() => {
         void tick;

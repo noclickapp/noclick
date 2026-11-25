@@ -22,6 +22,7 @@ GET /v1/workflows/wf_orders/steps/hook/outputs/run_4
 GET /v1/workflows/wf_orders/steps/hook/outputs/run_5
 GET /v1/workflows/wf_orders/test_runs
 POST /v1/connections/conn_acme-slack/verify
+POST /v1/rooms/workflow%3Awf_orders/tokens
 POST /v1/workflows/wf_orders/edits
 POST /v1/workflows/wf_orders/rehearsals
 POST /v1/workflows/wf_orders/runs

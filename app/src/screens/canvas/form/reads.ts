@@ -99,8 +99,6 @@ export interface StepReads {
     previewExpression(request: ExpressionPreviewRequest): Promise<ExpressionPreviewAnswer>;
     /** Clears what a step keeps between runs (an agent's conversations, a step's state). */
     clearState(workflowId: string | undefined, nodeId: string): Promise<ClearStateAnswer>;
-    /** Reconnects a trigger's development webhook relay, where the host runs one; null elsewhere. */
-    reconnectWebhookRelay: (() => Promise<{ success: boolean; message?: string }>) | null;
 }
 
 /** The step whose form this is, for reads that address it: provided by the form around its fields, so a widget's read

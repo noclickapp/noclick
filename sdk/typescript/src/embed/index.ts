@@ -32,11 +32,13 @@ export { useInputs } from './react.js';
 export interface InitOptions {
   /**
    * Transport to use. Defaults to 'postmessage' (for iframe components).
-   * Pass 'websocket' with url + apiKey for external apps.
+   * Pass 'http' with apiKey + workflowId for a page outside NoClick: the calls go to the platform API.
+   * 'websocket' is the app socket that pages published before 'http' were built with; it is what an
+   * apiKey with no transport still picks, so those pages keep working. New pages name 'http'.
    * Pass a Transport instance for fully custom transports.
    */
-  transport?: 'postmessage' | 'websocket' | import('./core/transport.js').Transport;
-  /** NoClick backend URL. Defaults to 'https://api.noclick.io'. */
+  transport?: 'postmessage' | 'http' | 'websocket' | import('./core/transport.js').Transport;
+  /** NoClick API URL: 'https://api.noclick.com' for 'http', 'https://api.noclick.io' for 'websocket'. */
   url?: string;
   /** API key for authentication (required for 'websocket' transport). */
   apiKey?: string;
@@ -54,7 +56,7 @@ export interface InitOptions {
  *
  * External app:
  *   import { init } from 'noclick';
- *   await init({ apiKey: 'nk_live_...' });
+ *   await init({ transport: 'http', apiKey: 'nk_live_...', workflowId: '...' });
  */
 export async function init(options: InitOptions = {}): Promise<void> {
   // Auto-detect transport: if apiKey is provided, use websocket; otherwise postmessage (iframe)
@@ -65,6 +67,16 @@ export async function init(options: InitOptions = {}): Promise<void> {
       case 'postmessage':
         setTransport(new PostMessageTransport());
         break;
+      case 'http': {
+        if (!options.apiKey || !options.workflowId) {
+          throw new Error("HTTP transport requires 'apiKey' and 'workflowId' options.");
+        }
+        const { HttpTransport } = await import('./transports/http.js');
+        const http = new HttpTransport({ url: options.url, apiKey: options.apiKey, workflowId: options.workflowId });
+        setTransport(http);
+        await http.connect();
+        break;
+      }
       case 'websocket': {
         if (!options.apiKey) {
           throw new Error("WebSocket transport requires 'apiKey' option.");
@@ -80,7 +92,7 @@ export async function init(options: InitOptions = {}): Promise<void> {
         break;
       }
       default:
-        throw new Error(`Unknown transport: ${transport}. Use 'postmessage', 'websocket', or pass a Transport instance.`);
+        throw new Error(`Unknown transport: ${transport}. Use 'postmessage', 'http', 'websocket', or pass a Transport instance.`);
     }
   } else {
     setTransport(transport);

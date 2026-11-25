@@ -1,18 +1,18 @@
 // @vitest-environment happy-dom
 // A workflow's Test Run where no host fills its slot, over the platform API: the list the workflow offers (with the
-// runs it keeps in its settings), a run of one (its steps when it ends, what it would have sent, the agent's closing
-// words; a run that fails says why), the screen's changes to the workflow's test runs written before a run plays
+// runs it keeps in its settings), a run of one (each step as the workflow's room carries it, what it would have sent,
+// the agent's closing words once it ends; a run that fails says why), the screen's changes to the workflow's test runs written before a run plays
 // them, what still needs connecting, nothing shared; and the bench's canned runs, which reach no API at all.
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NoClick } from 'noclick';
 import type { ReactNode } from 'react';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClientProvider } from '@/sdk/client';
 import { fill, standing } from '@/slots';
 import { WORKFLOW } from '../graph/fixtures';
 import { FRAME_PARTS, TEST_RUN } from '../slots';
 import { forgetAuthoring } from './authoring';
-import { AUTHORING, REHEARSAL, SAMPLE, testRunFetch, type TestRunFetchOptions } from './fixtures';
+import { AUTHORING, FixtureRoomSocket, REHEARSAL, SAMPLE, testRunFetch, type TestRunFetchOptions } from './fixtures';
 import { applyProgressFrame, deriveArtifacts, readableStep, toReplayRows, type LiveRow } from './liveRows';
 import { triggersOfStaged } from './staged';
 import { forgetTestRuns, keep, rowsOfTranscript, stagedOfTestRuns } from './standards';
@@ -26,7 +26,13 @@ beforeAll(async () => {
     await Promise.all([import('../standardsSdk'), import('@/screens/resources/CodeView')]);
 });
 
+beforeEach(() => {
+    FixtureRoomSocket.open = [];
+    vi.stubGlobal('WebSocket', FixtureRoomSocket);
+});
+
 afterEach(() => {
+    vi.unstubAllGlobals();
     cleanup();
     forgetAuthoring();
     forgetTestRuns();
@@ -55,7 +61,9 @@ const path = `/v1/workflows/${WORKFLOW}`;
 
 describe('the Test Run on the platform API', () => {
     it('lists what the workflow offers with the runs it keeps, and plays one', async () => {
-        const { Around, lines, sent } = world();
+        let end = (): void => undefined;
+        const ended = new Promise<void>((resolve) => (end = resolve));
+        const { Around, lines, sent } = world({ played: async () => (await ended, { result: REHEARSAL }) });
         const { container } = render(<TestRunScreen icons={{}} live={{ workflowId: WORKFLOW }} />, { wrapper: Around });
         expect(container.textContent).toContain('Looking at your workflow');
         await screen.findByText('Sample event', { selector: 'span' });
@@ -69,17 +77,32 @@ describe('the Test Run on the platform API', () => {
         await waitFor(() => expect(container.textContent).toContain("Without Tell the team, your agent can't act."));
 
         fireEvent.click(button('Test Run'));
-        await waitFor(() => expect(container.textContent).toContain('What it would have sent'));
+        await waitFor(() => expect(sent.some((call) => call.line === `GET /v1/operations/op_test/wait`)).toBe(true));
         const run = sent.find((call) => call.line === `POST ${path}/rehearsals`)!;
         expect(run.body).toEqual({ test_run: 'generic:trigger-webhook' });
-        // Each step at once: the agent's words, the call with what it would have sent, the search.
+        // While it runs, each step as its workflow's room carries it: the call under way, then what it would have sent.
+        // Another run's step in the same room isn't this one's.
+        const [room] = FixtureRoomSocket.open;
+        expect(room.url).toContain(`workflow:${WORKFLOW}`);
+        act(() => {
+            room.publish('op_someone_else', { kind: 'step', step_id: 'x1', tool: 'gmail__send_email', status: 'in_progress', args: {} });
+            room.publish('op_test', { kind: 'step', step_id: 's1', tool: 'slack__send_message', status: 'in_progress', args: { channel: '#orders' } });
+        });
+        await waitFor(() => expect(container.textContent).toContain('Send message'));
+        expect(container.textContent).not.toContain('What it would have sent');
+        expect(container.textContent).not.toContain('Send email');
+        act(() => room.publish('op_test', { kind: 'step', step_id: 's1', tool: 'slack__send_message', status: 'completed', result: { ok: true }, outbound: 'Order ord_81 came in: 42.50, paid.' }));
+        await act(async () => end());
+        // Once it ends, the run is read once: its closing words, and the steps the room missed.
+        await waitFor(() => expect(container.textContent).toContain('What it would have sent'));
+        expect(FixtureRoomSocket.open).toEqual([]);
         expect(container.textContent).toContain('A new order: tell the team.');
         expect(container.textContent).toContain('Send message');
         expect(container.textContent).toContain('Web search');
         expect(container.textContent).toContain('Order ord_81 came in: 42.50, paid.');
         // Nothing is shared from here.
         expect(button('Share this run')).toBeUndefined();
-        expect(lines().filter((line) => line.startsWith('POST'))).toEqual([`POST ${path}/rehearsals`]);
+        expect(lines().filter((line) => line.startsWith('POST'))).toEqual([`POST /v1/rooms/workflow:${WORKFLOW}/tokens`, `POST ${path}/rehearsals`]);
     });
 
     it('writes the screen’s changes to the workflow’s test runs before a run plays them', async () => {
@@ -94,7 +117,7 @@ describe('the Test Run on the platform API', () => {
         fireEvent.click(button('Test Run'));
         await waitFor(() => expect(sent.some((call) => call.line === `POST ${path}/rehearsals`)).toBe(true));
         const order = sent.filter((call) => call.line.startsWith('POST')).map((call) => call.line);
-        expect(order).toEqual([`POST ${path}/edits`, `POST ${path}/rehearsals`]);
+        expect(order).toEqual([`POST ${path}/edits`, `POST /v1/rooms/workflow:${WORKFLOW}/tokens`, `POST ${path}/rehearsals`]);
         const edit = sent.find((call) => call.line === `POST ${path}/edits`)!;
         const written = ((edit.body.ops as Json[])[0].settings as Json).rehearsal_authoring as { runs: Record<string, { slug: string }[]>; names: Record<string, string> };
         const added = written.runs['trigger-webhook'].at(-1)!;

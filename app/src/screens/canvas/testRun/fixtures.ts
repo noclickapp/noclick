@@ -47,8 +47,8 @@ export interface TestRunFetchOptions {
     observe?: Observe;
     /** The test runs the workflow keeps in its settings (AUTHORING by default); an edit replaces them. */
     authoring?: { held: Json | null };
-    /** What a run settles with (REHEARSAL by default), or the error it fails with. */
-    played?: () => { result: Json } | { error: Json };
+    /** What a run settles with (REHEARSAL by default), or the error it fails with; a promise holds the run open. */
+    played?: () => { result: Json } | { error: Json } | Promise<{ result: Json } | { error: Json }>;
     /** Why the list can't be read. */
     listRefused?: string;
 }
@@ -96,6 +96,10 @@ export function testRunFetch(options: TestRunFetchOptions = {}): typeof fetch {
             }
             return graph(input, init);
         }
+        // The workflow's room, which the screen joins for a run to hear its steps as they move (`FixtureRoomSocket`).
+        if (method === 'POST' && path === `/v1/rooms/workflow:${WORKFLOW}/tokens`) {
+            return Response.json({ object: 'room_token', url: `wss://relay.test/v1/rooms/socket/workflow:${WORKFLOW}?ticket=tk`, token: 'tok', access: 'edit', expires_at: null, connection_ends_at: null });
+        }
         if (method === 'POST' && path === `${workflow}/rehearsals`) {
             if (!offered().some((run) => run.key === body.test_run || run.name === body.test_run)) {
                 return refused(404, 'not_found', `'Orders' offers no test run '${String(body.test_run)}'.`);
@@ -103,7 +107,7 @@ export function testRunFetch(options: TestRunFetchOptions = {}): typeof fetch {
             return Response.json({ object: 'operation', id: 'op_test', kind: 'workflow.rehearse', status: 'queued', summary: 'Orders: a test run', created_at: '2026-10-16T15:00:00.000Z', updated_at: '2026-10-16T15:00:00.000Z', result: null, error: null }, { status: 202 });
         }
         if (method === 'GET' && (path === '/v1/operations/op_test/wait' || path === '/v1/operations/op_test')) {
-            const settled = played();
+            const settled = await played();
             const base = { object: 'operation', id: 'op_test', kind: 'workflow.rehearse', summary: 'Orders: a test run', created_at: '2026-10-16T15:00:00.000Z', updated_at: '2026-10-16T15:00:09.000Z' };
             return Response.json('result' in settled ? { ...base, status: 'succeeded', result: settled.result, error: null } : { ...base, status: 'failed', result: null, error: settled.error });
         }
@@ -131,4 +135,42 @@ export function testRunFetch(options: TestRunFetchOptions = {}): typeof fetch {
         options.observe?.(request.method, url.pathname, Promise.resolve(answered), body, init);
         return answered;
     };
+}
+
+/** A workflow's room as a page joins it (the SDK's `Room`, given this as its WebSocket): the page is let in at once,
+ *  and a test publishes a run's steps there (`publish`), as NoClick does while a test run plays. */
+export class FixtureRoomSocket {
+    static open: FixtureRoomSocket[] = [];
+    onopen: (() => void) | null = null;
+    onmessage: ((event: { data: string }) => void) | null = null;
+    onclose: ((event: { code: number; reason: string }) => void) | null = null;
+    onerror: ((error: unknown) => void) | null = null;
+    readyState = 1;
+    private heard = 0;
+
+    constructor(public url: string) {
+        FixtureRoomSocket.open.push(this);
+        queueMicrotask(() => {
+            this.onopen?.();
+            const me = { id: 'm_me', user: { id: 'me', name: 'Me' }, color: '#F87171', data: {}, joined_at: 1 };
+            this.hear({ type: 'ready', member: me, members: [me], access: 'edit', ends_at: Math.floor(Date.now() / 1000) + 900, runs: [], resumed: false });
+        });
+    }
+
+    send(): void {}
+
+    close(): void {
+        this.readyState = 3;
+        FixtureRoomSocket.open = FixtureRoomSocket.open.filter((socket) => socket !== this);
+    }
+
+    /** NoClick's `rehearsal:progress` frame of the run `operation` in the room. */
+    publish(operation: string, frame: Json): void {
+        this.heard += 1;
+        this.hear({ type: 'event', id: `ev-${this.heard}`, event: 'rehearsal:progress', from: null, data: { operation_id: operation, rehearsed: true, ...frame } });
+    }
+
+    private hear(frame: Json): void {
+        this.onmessage?.({ data: JSON.stringify(frame) });
+    }
 }

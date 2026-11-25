@@ -50,7 +50,7 @@ import { SetupView } from './setup/SetupView';
 import { useSavedVariables } from './setup/variables';
 import { GRAPH_SAVES, RUN_READS, RUN_RESULTS, STEP_DRAWING } from './slots';
 import { forgetAuthoring } from './testRun/authoring';
-import { testRunFetch } from './testRun/fixtures';
+import { FixtureRoomSocket, testRunFetch } from './testRun/fixtures';
 import { forgetTestRuns } from './testRun/standards';
 import { TestRunScreen } from './testRun/TestRunScreen';
 import { WorkflowCanvas } from './WorkflowCanvas';
@@ -436,6 +436,8 @@ async function testRun(actsAs: 'owner' | 'key'): Promise<Call[]> {
     const calls: Call[] = [];
     forgetAuthoring();
     forgetTestRuns();
+    // The workflow's room, which the screen joins for the run.
+    vi.stubGlobal('WebSocket', FixtureRoomSocket);
     const client = new NoClick({
         apiKey: 'nk_test',
         baseUrl: 'https://api.test',
@@ -460,6 +462,7 @@ async function testRun(actsAs: 'owner' | 'key'): Promise<Call[]> {
     fireEvent.click(screen.getAllByRole('button').find((b) => b.textContent?.trim() === 'Test Run')!);
     await waitFor(() => expect(container.textContent).toContain('What it would have sent'));
     unmount();
+    vi.unstubAllGlobals();
     return calls;
 }
 
