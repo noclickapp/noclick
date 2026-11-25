@@ -950,6 +950,7 @@ brandfetch
 brandfolder
 braze
 breezy-hr
+brevo
 brex
 brightcove
 brightdata
