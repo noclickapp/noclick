@@ -1435,6 +1435,7 @@ gsmtasks
 gtmetrix
 gumroad
 gusto
+habitify
 hackernews
 hackmd
 hailey-hr
