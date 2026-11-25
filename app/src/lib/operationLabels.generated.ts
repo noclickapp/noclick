@@ -2509,6 +2509,7 @@ zoho-cliq
 zoho-cpaas-formerly-zeptomail
 zoho-creator
 zoho-crm
+zoho-desk
 zoho-inventory
 zoho-mail
 zoho-people
