@@ -177,13 +177,12 @@ describe('swiping on a phone', () => {
         expect(isOpen(), 'it scrolls back to its start first').toBe(false);
     });
 
-    it('opens the menu from your picture, and keeps the page from zooming while the phone shell is up', async () => {
+    it('keeps the page from zooming while the phone shell is up', async () => {
         const { unmount } = render(
-            <AppShell isMobile me={{ email: 'ada@example.com', display_name: 'Ada Lovelace' }} sidebar={() => null} collapsed={false} onCollapsedChange={() => {}} title="Chat" builder={null} builderShown={false} builderWidth={0} animate>
+            <AppShell isMobile sidebar={() => null} collapsed={false} onCollapsedChange={() => {}} title="Chat" builder={null} builderShown={false} builderWidth={0} animate>
                 <p>The chat</p>
             </AppShell>
         );
-        expect(screen.getByRole('button', { name: 'Open menu' }).querySelector('[data-phone-me]'), 'your picture, not the menu icon').not.toBeNull();
         expect(document.documentElement.style.touchAction, 'no double-tap or pinch zoom').toBe('pan-x pan-y');
         const pinch = new Event('gesturestart', { cancelable: true });
         document.dispatchEvent(pinch);

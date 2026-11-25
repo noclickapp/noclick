@@ -34,12 +34,9 @@ export const SIDEBAR_SHEET =
     'group/sheet fixed inset-y-0 left-0 z-0 w-[min(80vw,340px)] bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] outline-none invisible -translate-x-[18%] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:visible data-[open=true]:translate-x-0 motion-reduce:transition-none';
 /** The page while the drawer is open: moved right by the drawer's width, its near corners rounded, over the drawer. */
 export const PHONE_PAGE =
-    'group/page z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
-/** Your picture at the bar's start, which opens the drawer: it fades off the page as the drawer opens, and the same
- *  picture fades in at the drawer's top (`PHONE_ME_IN_SHEET`), as X's does. A swipe sets both as it goes (PhoneDrawer,
- *  by `data-phone-me`). */
-export const PHONE_ME_ON_PAGE =
-    'transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] group-data-[menu=open]/page:scale-[0.85] group-data-[menu=open]/page:opacity-0 motion-reduce:transition-none';
+    'z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
+/** Your picture atop the drawer: it fades and grows in as the drawer opens. A swipe sets it as it goes (PhoneDrawer, by
+ *  `data-phone-me`). */
 export const PHONE_ME_IN_SHEET =
     'scale-[0.85] opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] group-data-[open=true]/sheet:scale-100 group-data-[open=true]/sheet:opacity-100 motion-reduce:transition-none';
 /** The dim over the page while it's pushed aside: it greys the page out, a card you tap to come back to. */

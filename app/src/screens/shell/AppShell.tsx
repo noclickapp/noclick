@@ -1,16 +1,14 @@
 // The app's frame. On a laptop: the sidebar, then (beside an open canvas) the builder chat, then the page. On a phone:
-// a bar with your picture (which opens the menu), the page's name centred and the page's own actions over the page, the
-// sidebar under the page, which a swipe slides aside (on a page one level down the swipe goes back instead:
-// PhoneDrawer), and the builder over the canvas while it's open. The page doesn't zoom, as an app's screen doesn't. The builder is mounted once either way. What the sidebar holds is the host's: the frame draws
-// it as a column on a laptop and in the drawer on a phone. A strip across the top of the page is the shell's
+// a bar with the menu, the page's name centred and the page's own actions over the page, the sidebar under the page,
+// which a swipe slides aside (on a page one level down the swipe goes back instead: PhoneDrawer), and the builder over
+// the canvas while it's open; the page doesn't zoom, as an app's screen doesn't. The builder is mounted once either way.
+// What the sidebar holds is the host's: the frame draws it as a column on a laptop and in the drawer on a phone. A strip across the top of the page is the shell's
 // `shell.banner` slot.
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Menu } from 'lucide-react';
 import { useSlot } from '@/slots';
 import { BuilderMark } from '@/ui/glyphs';
-import { AccountAvatar, type AccountMenuUser } from '@/ui/accountParts';
 import { PHONE_BAR_BUTTON, PhoneBarContext } from '@/ui/phoneBar';
-import { PHONE_ME_ON_PAGE, PHONE_PAGE, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
+import { PHONE_PAGE, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
 import { sidebarWidthFor, useSidebarResizing, useSidebarWidth } from '@/ui/sidebarPanel';
 import { cn } from '@/ui/utils';
 import { PhoneDrawer } from './PhoneDrawer';
@@ -34,8 +32,6 @@ export interface AppShellProps {
     onCollapsedChange: (collapsed: boolean) => void;
     /** The page's name, for the phone bar (a link where it leads somewhere). */
     title: ReactNode;
-    /** Whose app it is: the phone bar's picture, which opens the menu (without one, the menu's icon). */
-    me?: AccountMenuUser;
     /** The builder chat, mounted once. */
     builder: ReactNode;
     builderShown: boolean;
@@ -75,7 +71,17 @@ function LaptopShell({ sidebar, collapsed, onCollapsedChange, builder, builderSh
     );
 }
 
-function PhoneShell({ sidebar, title, me, builder, builderShown, builderToggle, children }: AppShellProps) {
+/** The menu as two lines, the lower one shorter (as ChatGPT draws it), in place of a three-line hamburger. */
+function MenuLines() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <path d="M3.5 8h17" />
+            <path d="M3.5 16h10" />
+        </svg>
+    );
+}
+
+function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, children }: AppShellProps) {
     const Banner = useSlot(BANNER);
     const [menuOpen, setMenuOpen] = useState(false);
     const [slot, setSlot] = useState<HTMLElement | null>(null);
@@ -132,7 +138,7 @@ function PhoneShell({ sidebar, title, me, builder, builderShown, builderToggle, 
             className={cn('fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]', PHONE_PAGE)}
         >
             {Banner && <Banner />}
-            {/* Three parts, the outer two as wide as each other so the name stays centred: your picture (or the way back),
+            {/* Three parts, the outer two as wide as each other so the name stays centred: the menu (or the way back),
                 the page's name (or the open thing's), and the page's actions. */}
             <header className="flex h-14 shrink-0 items-center px-1.5">
                 <div className="flex min-w-0 flex-1 basis-0 items-center">
@@ -146,13 +152,7 @@ function PhoneShell({ sidebar, title, me, builder, builderShown, builderToggle, 
                         onClick={() => setMenuOpen(true)}
                         className={cn(PHONE_BAR_BUTTON, taken && 'hidden')}
                     >
-                        {me ? (
-                            <span data-phone-me className={PHONE_ME_ON_PAGE}>
-                                <AccountAvatar user={me} className="h-[34px] w-[34px]" />
-                            </span>
-                        ) : (
-                            <Menu className="h-6 w-6" strokeWidth={1.75} />
-                        )}
+                        <MenuLines />
                     </button>
                     <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger} page={page}>
                         {sidebar({ collapsed: false, headerEnd: null, onNavigate: close })}
