@@ -2495,6 +2495,7 @@ youtrust
 youtube
 youtube-transcript
 zadarma
+zapsign
 zeeg
 zeffy
 zendesk
