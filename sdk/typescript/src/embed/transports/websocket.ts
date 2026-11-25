@@ -29,25 +29,6 @@ const responseTransforms: Record<string, (data: any, params?: Record<string, unk
     }
     return data;
   },
-  'auth.listCredentials': (data) => {
-    // Backend returns { credentials: [...] }, SDK expects CredentialInfo[]
-    return (data?.credentials ?? []).map((c: any) => ({
-      id: c.id,
-      type: c.credential_type,
-      name: c.name,
-    }));
-  },
-  'auth.hasCredential': (data, params) => {
-    // Backend returns credential list; SDK expects boolean
-    const credType = params?.credentialType as string;
-    return (data?.credentials ?? []).some((c: any) => c.credential_type === credType);
-  },
-  'auth.createCredential': (data) => {
-    // Backend returns { success, credential: { id, credential_type, name } }
-    const c = data?.credential;
-    if (!c) return null;
-    return { id: c.id, type: c.credential_type, name: c.name };
-  },
   'workflow.getInfo': (data) => {
     // Backend returns { workflow: { id, name, workflow_data: { nodes } } }
     const wf = data?.workflow ?? data;
@@ -207,24 +188,6 @@ export class WebSocketTransport implements Transport {
         event: 'workflow:get',
         transform: () => ({
           workflow_id: this.options.workflowId,
-        }),
-      },
-
-      // Credentials
-      'auth.listCredentials': {
-        event: 'credential:list',
-        transform: () => ({}),
-      },
-      'auth.hasCredential': {
-        event: 'credential:list',
-        transform: () => ({}),
-      },
-      'auth.createCredential': {
-        event: 'credential:create',
-        transform: (p: Record<string, unknown>) => ({
-          credential_type: p.credentialType,
-          credential_data: p.data,
-          name: p.name,
         }),
       },
 
@@ -531,11 +494,11 @@ export class WebSocketTransport implements Transport {
     const params = msg.params as Record<string, unknown>;
     const requestId = msg.id as string;
 
-    // auth.requestCredential requires browser OAuth popup — not supported in WebSocket transport
-    if (method === 'auth.requestCredential') {
+    // A published app's page reaches none of the account's connections: its visitors aren't the account's owner.
+    if (method.startsWith('auth.')) {
       this.handlers.forEach(fn => fn({
         type: 'noclick:response', id: requestId,
-        error: 'auth.requestCredential (OAuth flow) is not supported in published apps. Use auth.createCredential for API key credentials, or pre-configure OAuth credentials in the workflow editor.',
+        error: "A published app's page doesn't reach the account's connections: pre-configure them in the workflow editor.",
       }));
       return;
     }

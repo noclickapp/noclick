@@ -110,14 +110,6 @@ describe('WebSocketTransport — request mapping + response transforms', () => {
     expect(got).toContainEqual(expect.objectContaining({ type: 'noclick:response', id: 'r3' }));
   });
 
-  it('auth.hasCredential → credential:list, transforms to boolean using request params', async () => {
-    const { t, socket, got } = await connected();
-    t.send({ type: 'noclick:request', id: 'r4', method: 'auth.hasCredential', params: { credentialType: 'github' } });
-    expect(socket.emit).toHaveBeenCalledWith('credential:list', { request_id: 'r4' });
-    socket.fire('response', { request_id: 'r4', data: { credentials: [{ credential_type: 'github' }] } });
-    expect(got).toContainEqual({ type: 'noclick:response', id: 'r4', result: true });
-  });
-
   it('nodes.list fetches graph + outputs and derives label/hasOutput (two-step)', async () => {
     const { t, socket, got } = await connected();
     const lastEmit = (event: string) => socket.emit.mock.calls.filter((c) => c[0] === event).slice(-1)[0]?.[1] as any;
@@ -179,12 +171,14 @@ describe('WebSocketTransport — request mapping + response transforms', () => {
     }));
   });
 
-  it('rejects auth.requestCredential as unsupported without emitting', async () => {
+  it('refuses every auth call without emitting: a page reaches none of the account\'s connections', async () => {
     const { t, socket, got } = await connected();
-    t.send({ type: 'noclick:request', id: 'r6', method: 'auth.requestCredential', params: { credentialType: 'x' } });
+    for (const method of ['auth.listCredentials', 'auth.hasCredential', 'auth.createCredential', 'auth.requestCredential']) {
+      t.send({ type: 'noclick:request', id: method, method, params: { credentialType: 'x', data: {} } });
+    }
     expect(socket.emit).not.toHaveBeenCalled();
-    expect(got[0]).toMatchObject({ type: 'noclick:response', id: 'r6' });
-    expect(got[0].error).toContain('not supported');
+    expect(got.map((m) => [m.id, m.error])).toEqual(['auth.listCredentials', 'auth.hasCredential',
+      'auth.createCredential', 'auth.requestCredential'].map((m) => [m, expect.stringContaining("account's connections")]));
   });
 
   it('rejects unknown methods', async () => {
