@@ -1837,6 +1837,7 @@ paddle
 padlet-1
 pagerduty
 pagespeed
+pandadoc
 paperform
 paradym
 parallel
