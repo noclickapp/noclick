@@ -50,6 +50,46 @@ export function compileConfigSchema(schema: object) {
     return ajv.compile(schema);
 }
 
+type Validator = ReturnType<typeof compileConfigSchema>;
+
+/** Each `$defs` and `definitions` entry the properties reach through local `$ref`s, transitively. A step type's schema
+ *  holds every operation's definitions (Zoom's 1,226), and Ajv walks all it's handed: one operation needs a few. */
+function reachableDefs(root: any, properties: Record<string, unknown>) {
+    const picked: Record<'$defs' | 'definitions', Record<string, unknown>> = { $defs: {}, definitions: {} };
+    const walk = (node: unknown): void => {
+        if (Array.isArray(node)) return node.forEach(walk);
+        if (!node || typeof node !== 'object') return;
+        for (const [key, value] of Object.entries(node)) {
+            const ref = key === '$ref' && typeof value === 'string' ? /^#\/(\$defs|definitions)\/([^/]+)$/.exec(value) : null;
+            if (ref) {
+                const where = ref[1] as '$defs' | 'definitions';
+                const name = ref[2];
+                const def = root?.[where]?.[name];
+                if (def !== undefined && !(name in picked[where])) {
+                    picked[where][name] = def;
+                    walk(def);
+                }
+            } else walk(value);
+        }
+    };
+    walk(properties);
+    return picked;
+}
+
+/** Compiled validators by step schema and what they judge (its operation, its visible fields), so a check while
+ *  someone types compiles nothing: Ajv's own cache is keyed by the schema object, which each check made anew, so every
+ *  keystroke compiled again and kept the last one. */
+const validators = new WeakMap<object, Map<string, Validator>>();
+
+function validatorFor(root: object | undefined, key: string, schema: () => object): Validator {
+    if (!root) return compileConfigSchema(schema());
+    let byKey = validators.get(root);
+    if (!byKey) validators.set(root, (byKey = new Map()));
+    let validate = byKey.get(key);
+    if (!validate) byKey.set(key, (validate = compileConfigSchema(schema())));
+    return validate;
+}
+
 /** The settings a run hands the step as written, never filling a `{{ }}` in them (the backend's
  *  `literal_config_fields`): an agent run through the API takes its instructions as text. */
 function asWrittenFields(nodeType: string, config: Record<string, any>): Set<string> {
@@ -156,13 +196,12 @@ export function judgeConfigForm(
     }
     const visibleRequired = allRequired.filter((f: string) => f in visibleProperties);
 
-    const validationSchema = {
+    const validationSchema = () => ({
         type: 'object',
         properties: visibleProperties,
         required: visibleRequired,
-        $defs: rootSchema?.$defs || {},
-        definitions: rootSchema?.definitions || {}
-    };
+        ...reachableDefs(rootSchema, visibleProperties),
+    });
 
     // Preprocess config: parse JSON string values for fields that expect arrays or
     // objects (e.g., person_titles: "[\"CEO\",\"Owner\"]" → ["CEO","Owner"]), as the
@@ -192,7 +231,7 @@ export function judgeConfigForm(
         }
     }
 
-    const validate = compileConfigSchema(validationSchema);
+    const validate = validatorFor(rootSchema, [operation ?? '', ...Object.keys(visibleProperties)].join('\u0000'), validationSchema);
     const ajvValid = validate(preprocessed);
 
     const validationErrors: ConfigFormError[] = [];
