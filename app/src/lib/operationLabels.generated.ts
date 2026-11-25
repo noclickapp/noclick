@@ -2118,6 +2118,7 @@ semrush
 send-email
 send-pulse
 sendbird
+sendblue-1
 sendcloud
 sendfox
 sendgrid
