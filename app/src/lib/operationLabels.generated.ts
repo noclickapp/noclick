@@ -1423,6 +1423,7 @@ heartbeat
 hedy
 hello-tracks
 helloasso
+helpdesk
 here
 hetrixtools
 hetzner
