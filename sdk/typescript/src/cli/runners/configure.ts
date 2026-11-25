@@ -18,6 +18,7 @@ import { UsageError, type Values } from "../args.ts";
 import { host } from "../host.ts";
 import { OK } from "../exits.ts";
 import type { Io } from "../output.ts";
+import * as spend from "../spend.ts";
 import { CommandError } from "../store.ts";
 import { answer, appNamed, appOf, num, on, str, table, usd } from "./kit.ts";
 
@@ -182,8 +183,11 @@ export async function settingsDelete(values: Values, io: Io): Promise<number> {
 }
 
 export async function dbCreate(values: Values, io: Io): Promise<number> {
+  const engine = (str(values, "engine") ?? "sqlite") as DatabaseEngine;
+  await spend.check(io, [{ kind: "database", engine }], num(values, "max_usd"),
+    { what: `A ${engine} database`, per: "a month at the usage NoClick assumes" });
   const db = await Database.create(String(values.name), {
-    engine: str(values, "engine") as DatabaseEngine | undefined, region: str(values, "region") as RegionName | undefined,
+    engine, region: str(values, "region") as RegionName | undefined,
   });
   io.out(db.name);
   io.err(`Created the ${db.engine} database ${db.name}. Query it with: noclick db query ${db.name} "select 1"`);
@@ -191,6 +195,7 @@ export async function dbCreate(values: Values, io: Io): Promise<number> {
 }
 
 export async function bucketCreate(values: Values, io: Io): Promise<number> {
+  await spend.check(io, [{ kind: "bucket" }], num(values, "max_usd"), { what: "A bucket", per: "a month at the usage NoClick assumes" });
   const bucket = await Bucket.create(String(values.name), { public: on(values, "public"), region: str(values, "region") as RegionName | undefined });
   io.out(bucket.name);
   io.err(`Created the ${on(values, "public") ? "public " : ""}bucket ${bucket.name}. Copy a file in with: noclick bucket cp <file> ${bucket.name}:`);

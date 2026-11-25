@@ -5,7 +5,8 @@
  * A clean git checkout pushes the commit it's on. Anything else (no git, `--no-git`, or a checkout with uncommitted or
  * untracked files) ships the folder as a commit of its own through the API: in a checkout the files git would track,
  * outside one every file but the default excludes and what its `.gitignore` names. A file that looks like a secret
- * (`.env`, a key, a login) refuses the deploy before anything is made: a secret goes in `noclick secret set`.
+ * (`.env`, a key, a login) is left out, never shipped, and the deploy says how to give the app its values with
+ * `noclick secret set`; only one committed in the commit a deploy ships refuses it.
  */
 
 import { execFile } from "node:child_process";
@@ -63,16 +64,57 @@ export function secretFile(root: string, path: string): boolean {
   return false;
 }
 
-function refuseSecrets(root: string, paths: string[], how: string): void {
-  const found = paths.filter((p) => secretFile(root, p));
-  if (found.length) {
-    throw new CommandError(`${how} would carry what looks like a secret into the app's repo: ${found.slice(0, 5).join(", ")}` +
-      `${found.length > 5 ? ` and ${found.length - 5} more` : ""}.`, {
-      nextStep: "Add them to .gitignore, and give the app each value with noclick secret set NAME --from-env VAR (it " +
-        "reaches the app's code as an environment variable, never a file).",
-      details: { files: found },
+const ENV_LINE = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/gm;
+
+/** A file a deploy left out because it looks like a secret, and the names it gives values to (never a value). */
+export interface LeftOut {
+  path: string;
+  names: string[];
+}
+
+function nextSteps(item: LeftOut): string[] {
+  return item.names.length ? item.names.map((name) => `noclick secret set ${name} --from-env ${name}`)
+    : [`noclick secret set NAME --stdin < ${item.path}`];
+}
+
+function leftOutOf(root: string, path: string): LeftOut {
+  const name = path.split("/").at(-1)!.toLowerCase();
+  if (!name.startsWith(".env") && !name.startsWith(".dev.vars")) return { path, names: [] };
+  let text = "";
+  try {
+    text = readFileSync(join(root, path), "utf8");
+  } catch {
+    // unreadable: named without its keys
+  }
+  return { path, names: [...new Set([...text.matchAll(ENV_LINE)].map((m) => m[1]!))] };
+}
+
+/** The files of `paths` a deploy leaves out because they look like secrets (the Python CLI's `keep_secrets_out`).
+ *  One already committed in `head` (`committed`: its files), the commit a deploy ships, refuses it. */
+export function keepSecretsOut(root: string, paths: string[], committed: string[] = [], head: string | null = null): LeftOut[] {
+  const inHistory = committed.filter((p) => secretFile(root, p));
+  if (inHistory.length) {
+    const named = inHistory.slice(0, 5).join(", ") + (inHistory.length > 5 ? ` and ${inHistory.length - 5} more` : "");
+    throw new CommandError(`${named} looks like a secret and is committed in ${(head ?? "").slice(0, 7)}, the commit this ` +
+      "deploy ships, so deploying would put it in the app's repo.", {
+      nextStep: `git rm --cached ${inHistory.slice(0, 5).join(" ")}, add it to .gitignore and commit; give the app each value ` +
+        "with noclick secret set NAME --from-env NAME, and change the values (they're in this checkout's history).",
+      details: { files: inHistory },
     });
   }
+  return paths.filter((p) => secretFile(root, p)).map((p) => leftOutOf(root, p));
+}
+
+function sayLeftOut(io: Io, left: LeftOut[]): void {
+  for (const item of left) {
+    io.err(`Left out ${item.path}: it looks like a secret, and a secret never ships in the app's code. Give the app its values with:`);
+    for (const step of nextSteps(item)) io.err(`  ${step}`);
+  }
+}
+
+function leftOutData(left: LeftOut[]): Array<Record<string, unknown>> {
+  return left.map((item) => ({ path: item.path, why: "looks like a secret, and a secret never ships in the app's code",
+    names: item.names, next_steps: nextSteps(item) }));
 }
 
 // --- git --------------------------------------------------------------------------------------------------------
@@ -302,21 +344,36 @@ export async function deploy(values: Values, io: Io): Promise<number> {
   // Everything a deploy refuses is refused before anything is made, set or pushed.
   let dirty = false;
   let files: string[];
+  let left: LeftOut[];
   if (checkout) {
-    dirty = (await git(["status", "--porcelain", "--untracked-files=all"], checkout)) !== "";
+    const head = await git(["rev-parse", "--verify", "--quiet", "HEAD^{commit}"], checkout).catch(() => null);
+    const committed = head ? (await git(["ls-tree", "-r", "-z", "--name-only", head], checkout)).split("\0").filter(Boolean) : [];
+    files = (await git(["ls-files", "-co", "--exclude-standard", "-z"], checkout)).split("\0").filter((p) => p && existsSync(join(checkout, p)));
+    left = keepSecretsOut(root, files, committed, head);
+    const out = new Set(left.map((item) => item.path));
+    files = files.filter((p) => !out.has(p));
+    // What git says changed, less what's left out: a checkout whose only change is a secret ships its commit.
+    const status = (await git(["status", "--porcelain", "-z", "--untracked-files=all"], checkout)).split("\0");
+    for (let i = 0; i < status.length; i++) {
+      const entry = status[i]!;
+      if (entry.length < 4) continue;
+      if (entry[0] === "R" || entry[0] === "C") i++; // its old path follows
+      if (!out.has(entry.slice(3))) dirty = true;
+    }
     if (dirty && on(values, "only_committed")) {
       throw new CommandError("Your checkout has uncommitted or untracked files, and --only-committed ships the commit alone.",
         { nextStep: "Commit them (or leave out --only-committed to ship the folder as it is)." });
     }
-    files = (await git(["ls-files", "-co", "--exclude-standard", "-z"], checkout)).split("\0").filter((p) => p && existsSync(join(checkout, p)));
   } else {
     if (on(values, "only_committed")) {
       throw new CommandError(`${root} isn't a git checkout, so there are no commits to ship.`, { nextStep: "Deploy without --only-committed, which ships the folder as it is." });
     }
     files = folderFiles(root);
+    left = keepSecretsOut(root, files);
+    const out = new Set(left.map((item) => item.path));
+    files = files.filter((p) => !out.has(p));
   }
   if (!files.length) throw new CommandError(`There's nothing to deploy: ${root} holds no files.`, { nextStep: "Run noclick deploy in the app's folder (or pass --dir)." });
-  refuseSecrets(root, files, "Deploying the folder");
 
   const { project, made } = await target(values, root, link !== null);
   if (made) io.err(`Made the app ${project.name} and its repo, with a monthly budget of ${usd(project.budgetUsdPerMonth)} (--budget sets another).`);
@@ -326,6 +383,7 @@ export async function deploy(values: Values, io: Io): Promise<number> {
   const branch = await branchOf(values, project, checkout);
   const production = branch === project.productionBranch;
   io.err(`Deploying ${root} to ${project.name} (${production ? "production" : `a preview of ${branch}`}).`);
+  sayLeftOut(io, left);
 
   let commit: string | null;
   if (checkout && !dirty) {
@@ -342,7 +400,8 @@ export async function deploy(values: Values, io: Io): Promise<number> {
     io.err(`Linked ${root} to ${project.name} (.noclick/project.json): later commands here act on it.`);
   }
   const op = await project.deploy({ branch, commit: commit ?? undefined });
-  return await settle(values, io, op, "Building", { app: { id: project.id, name: project.name }, branch, production, commit, made, files });
+  return await settle(values, io, op, "Building", { app: { id: project.id, name: project.name }, branch, production, commit, made, files,
+    left_out: leftOutData(left) });
 }
 
 // --- link ------------------------------------------------------------------------------------------------------

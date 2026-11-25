@@ -161,21 +161,46 @@ def test_a_dirty_checkout_ships_a_snapshot_and_the_checkout_never_changes(shell,
     assert git("log", "-1", "--format=%s", "noclick/main", cwd=shell) == "Add sign-in"
 
 
-def test_a_deploy_refuses_a_secret_or_uncommitted_work_before_anything_is_pushed(shell, api, tmp_path, capsys):
-    checkout(shell, {"app.js": "v1\n"})
+def test_a_secret_is_left_out_and_said_and_only_a_committed_one_refuses(shell, api, tmp_path, capsys):
+    head = checkout(shell, {"app.js": "v1\n"})
     link(shell)
     remote = tmp_path / "remote.git"
     git("init", "--bare", "-q", "-b", "main", str(remote), cwd=tmp_path)
     deploy = app_routes(api, remote)
-    (shell / ".env").write_text("STRIPE_KEY=sk_live_abc\n")
+    (shell / ".env").write_text("STRIPE_KEY=sk_live_abc\nexport DB_URL=postgres://u:p@h/db\n")
+    # A checkout whose only change is a secret ships its commit as it is; --only-committed takes it as clean.
+    assert run("deploy", "--only-committed") == 0
+    assert body(deploy.calls.last.request) == {"branch": "main", "commit": head}
+    capsys.readouterr()
+
+    (shell / ".env.example").write_text("STRIPE_KEY=\n")
+    assert run("deploy", "--json") == 0
+    out = capsys.readouterr()
+    result = json.loads(out.out)
+    assert result["left_out"] == [{"path": ".env",
+                                   "why": "looks like a secret, and a secret never ships in the app's code",
+                                   "names": ["STRIPE_KEY", "DB_URL"],
+                                   "next_steps": ["noclick secret set STRIPE_KEY --from-env STRIPE_KEY",
+                                                  "noclick secret set DB_URL --from-env DB_URL"]}]
+    shipped = git("rev-parse", "main", cwd=remote)
+    assert git("ls-tree", "--name-only", shipped, cwd=remote).split() == [".env.example", "app.js"]
+    assert git("rev-parse", f"{shipped}^", cwd=remote) == head  # a snapshot of what else changed, on the commit
+    assert "noclick secret set DB_URL --from-env DB_URL" in out.err
+    assert "sk_live" not in out.out + out.err and "u:p@h" not in out.out + out.err
+
+
+    # Committed, it's in the app's history either way: refused before anything is pushed.
+    git("add", "-f", ".env", cwd=shell)
+    git("commit", "-qm", "oops", cwd=shell)
+    calls = deploy.call_count
     assert run("deploy") == 1
     err = capsys.readouterr().err
-    assert ".env" in err and "noclick secret set" in err and "sk_live" not in err
-    (shell / ".env").unlink()
+    assert ".env looks like a secret and is committed in" in err and "git rm --cached .env" in err
+    assert deploy.call_count == calls and git("rev-parse", "main", cwd=remote) == shipped
+    git("reset", "-q", "--hard", head, cwd=shell)
     (shell / "app.js").write_text("v2\n")
     assert run("deploy", "--only-committed") == 1
     assert "uncommitted changes" in capsys.readouterr().err
-    assert deploy.call_count == 0 and git("branch", cwd=remote) == ""
 
 
 def test_a_preview_deploy_ships_its_branch_and_says_how_to_promote_it(shell, api, tmp_path, capsys):
@@ -219,6 +244,7 @@ def test_a_folder_outside_git_ships_what_changed_through_the_api(shell, api, cap
     (shell / "dist").mkdir()
     (shell / "dist" / "built.js").write_text("ignored\n")
     (shell / ".gitignore").write_text("/dist\n")
+    (shell / ".dev.vars").write_text("API_TOKEN=tok_live_1\n")  # a secret: left out, never sent
     api.get("/v1/projects").respond(json=listing(PROJECT))
     api.get(f"/v1/projects/{APP}").respond(json=PROJECT)
     api.get("/v1/repos/repo_1").respond(json={"object": "repo", "id": "repo_1", "name": "booking"})
@@ -239,6 +265,8 @@ def test_a_folder_outside_git_ships_what_changed_through_the_api(shell, api, cap
     assert body(deploy.calls.last.request) == {"branch": "main", "commit": "b" * 40}
     err = capsys.readouterr().err
     assert "A index.html" not in err and "M index.html" in err and "D old.html" in err
+    assert "Left out .dev.vars" in err and "noclick secret set API_TOKEN --from-env API_TOKEN" in err
+    assert "tok_live" not in err
 
     # A link out of the folder would carry this machine's file: refused before anything is sent.
     (shell.parent / "id_ed25519").write_text("-----BEGIN OPENSSH PRIVATE KEY-----\n")

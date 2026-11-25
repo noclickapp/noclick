@@ -1045,7 +1045,7 @@ def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home,
     bucket = api.post("/v1/buckets").respond(201, json=BUCKET)
     assert run("bucket", "create", "uploads", "--public") == 0
     assert body(bucket.calls.last.request) == {"name": "uploads", "public": True}
-    assert body(priced.calls[0].request)["items"] == [{"kind": "database", "options": {"engine": "postgres"}}]
+    assert body(priced.calls[0].request)["items"] == [{"kind": "database", "engine": "postgres"}]
     assert "A bucket costs about $0.50 a month at the usage NoClick assumes." in capsys.readouterr().err
     # What it would cost is said first, and a ceiling under it makes nothing.
     assert run("bucket", "create", "uploads", "--max-usd", "0.1") == cli.exits.REFUSED

@@ -254,15 +254,62 @@ def _secret_file(root: Path, path: str) -> bool:
     return False
 
 
-def _refuse_secrets(root: Path, paths: Sequence[str], how: str) -> None:
-    found = [p for p in paths if _secret_file(root, p)]
-    if found:
+_ENV_LINE = re.compile(r"^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=", re.M)
+
+
+@dataclass(frozen=True)
+class LeftOut:
+    """A file a deploy left out because it looks like a secret, and the names it gives values to (an env file's;
+    never a value)."""
+
+    path: str
+    names: Tuple[str, ...] = ()
+
+    def next_steps(self) -> List[str]:
+        if self.names:
+            return [f"noclick secret set {name} --from-env {name}" for name in self.names]
+        return [f"noclick secret set NAME --stdin < {self.path}"]
+
+    def as_data(self) -> Dict[str, Any]:
+        return {"path": self.path, "why": "looks like a secret, and a secret never ships in the app's code",
+                "names": list(self.names), "next_steps": self.next_steps()}
+
+
+def _left_out(root: Path, path: str) -> LeftOut:
+    name = path.rsplit("/", 1)[-1].lower()
+    names: Tuple[str, ...] = ()
+    if name.startswith((".env", ".dev.vars")):
+        try:
+            text = (root / path).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            text = ""
+        names = tuple(dict.fromkeys(_ENV_LINE.findall(text)))
+    return LeftOut(path, names)
+
+
+def keep_secrets_out(root: Path, paths: Sequence[str], committed: Sequence[str] = (),
+                     head: Optional[str] = None) -> List[LeftOut]:
+    """The files of ``paths`` a deploy leaves out because they look like secrets. One already committed in ``head``
+    (``committed``: its files), the commit a deploy ships, refuses it: that's in the app's history either way."""
+    in_history = [p for p in committed if _secret_file(root, p)]
+    if in_history:
         raise CommandError(
-            f"{how} would carry what looks like a secret into the app's repo: {', '.join(found[:5])}"
-            + (f" and {len(found) - 5} more" if len(found) > 5 else "") + ".",
-            next_step="Add them to .gitignore, and give the app each value with noclick secret set NAME --from-env "
-                      "VAR (it reaches the app's code as an environment variable, never a file).",
-            details={"files": found})
+            f"{', '.join(in_history[:5])}" + (f" and {len(in_history) - 5} more" if len(in_history) > 5 else "")
+            + f" looks like a secret and is committed in {(head or '')[:7]}, the commit this deploy ships, so "
+            "deploying would put it in the app's repo.",
+            next_step=f"git rm --cached {' '.join(in_history[:5])}, add it to .gitignore and commit; give the app "
+                      "each value with noclick secret set NAME --from-env NAME, and change the values (they're in "
+                      "this checkout's history).",
+            details={"files": in_history})
+    return [_left_out(root, p) for p in paths if _secret_file(root, p)]
+
+
+def say_left_out(left: Sequence[LeftOut]) -> None:
+    for item in left:
+        _note(f"Left out {item.path}: it looks like a secret, and a secret never ships in the app's code. Give the "
+              "app its values with:")
+        for step in item.next_steps():
+            _note(f"  {step}")
 
 
 # --- shipping a git checkout ----------------------------------------------------------------------------------
@@ -303,10 +350,12 @@ class Tree:
     head: Optional[str]
     head_tree: str
     changes: List[Tuple[str, str]] = field(default_factory=list)
+    left_out: List[LeftOut] = field(default_factory=list)
 
 
 def working_tree(root: str) -> Tree:
-    """The checkout's files as they are, ignored ones left out, without touching its index, HEAD or branch."""
+    """The checkout's files as they are, ignored ones and uncommitted ones that look like secrets left out, without
+    touching its index, HEAD or branch. A secret committed in HEAD refuses (``keep_secrets_out``)."""
     try:
         head: Optional[str] = _git("rev-parse", "--verify", "--quiet", "HEAD^{commit}", cwd=root)
     except CommandError:
@@ -320,11 +369,18 @@ def working_tree(root: str) -> Tree:
             shutil.copy2(index, scratch)
         env = {"GIT_INDEX_FILE": scratch}
         _git("add", "-A", "--", ".", ":(exclude).noclick", cwd=root, env=env)
-        tree = _git("write-tree", cwd=root, env=env)
         base = head or EMPTY_TREE
+        committed = _git("ls-tree", "-r", "-z", "--name-only", head, cwd=root).split("\0") if head else []
+        added = _git("diff", "--cached", "--name-only", "--no-renames", "--diff-filter=AM", "-z", base, cwd=root,
+                     env=env).split("\0")
+        left = keep_secrets_out(Path(root), [p for p in added if p], [p for p in committed if p], head)
+        if left:
+            _git("rm", "--cached", "--quiet", "--", *(item.path for item in left), cwd=root, env=env)
+        tree = _git("write-tree", cwd=root, env=env)
         listed = _git("diff", "--cached", "--name-status", "--no-renames", "-z", base, cwd=root, env=env).split("\0")
     head_tree = _git("rev-parse", f"{head}^{{tree}}", cwd=root) if head else EMPTY_TREE
-    return Tree(tree, head, head_tree, [(status[0], path) for status, path in zip(listed[::2], listed[1::2]) if path])
+    return Tree(tree, head, head_tree, [(status[0], path) for status, path in zip(listed[::2], listed[1::2]) if path],
+                left)
 
 
 def _identity(root: str) -> Dict[str, str]:
@@ -348,11 +404,11 @@ class Shipped:
     snapshot: bool = False
     files: List[Tuple[str, str]] = field(default_factory=list)
     replaced: Optional[str] = None
+    left_out: List[LeftOut] = field(default_factory=list)
 
 
 def check_tree(root: str, tree: Tree, *, only_committed: bool) -> None:
-    """Refuse a checkout with nothing to deploy, uncommitted work under ``--only-committed``, or a snapshot that would
-    carry a secret."""
+    """Refuse a checkout with nothing to deploy, or uncommitted work under ``--only-committed``."""
     dirty = tree.tree != tree.head_tree
     if dirty and only_committed:
         raise CommandError(
@@ -362,8 +418,6 @@ def check_tree(root: str, tree: Tree, *, only_committed: bool) -> None:
     if tree.tree == EMPTY_TREE:
         raise CommandError("There's nothing to deploy: the folder holds no files git would commit.",
                            next_step="Add the app's files (or check .gitignore), then deploy again.")
-    if dirty:
-        _refuse_secrets(Path(root), [p for s, p in tree.changes if s != "D"], "Deploying the folder as it is")
 
 
 def ship_checkout(root: str, tree: Tree, url: str, branch: str, *, message: str) -> Shipped:
@@ -401,7 +455,8 @@ def ship_checkout(root: str, tree: Tree, url: str, branch: str, *, message: str)
             args += ["-p", parent]
         sha = _git(*args, "-m", body, cwd=root, env=_identity(root))
     _push(root, env, sha, branch)
-    return Shipped(sha, branch, snapshot=sha != tree.head, files=tree.changes if dirty else [], replaced=replaced)
+    return Shipped(sha, branch, snapshot=sha != tree.head, files=tree.changes if dirty else [], replaced=replaced,
+                   left_out=tree.left_out)
 
 
 def _ancestor(root: str, env: Dict[str, str], branch: str, sha: str, of: str) -> bool:
@@ -500,6 +555,9 @@ def ship_folder(root: Path, repo: Repo, branch: str, *, message: str) -> Shipped
     changed; no git needed."""
     globs = ignore_globs(root)
     local = folder_files(root, globs)
+    left = keep_secrets_out(root, list(local))
+    for item in left:
+        del local[item.path]
     if not local:
         raise CommandError(f"There's nothing to deploy: {root} holds no files.",
                            next_step="Run noclick deploy in the app's folder (or pass --dir).")
@@ -517,7 +575,6 @@ def ship_folder(root: Path, repo: Repo, branch: str, *, message: str) -> Shipped
         if path not in local and not _excluded(path, globs):
             changes[path] = None
             statuses.append(("D", path))
-    _refuse_secrets(root, [p for s, p in statuses if s != "D"], "Deploying the folder")
     size = sum(len(d) for d in changes.values() if d)
     if len(changes) > MAX_FILES or size > MAX_BYTES:
         raise CommandError(
@@ -527,9 +584,10 @@ def ship_folder(root: Path, repo: Repo, branch: str, *, message: str) -> Shipped
                       "again: a checkout pushes with git, whatever its size.")
     if not changes:
         head = branches.get(branch)
-        return Shipped(head.head if head else None, branch)
+        return Shipped(head.head if head else None, branch, left_out=left)
     commit = repo.commit(changes, message=message, branch=branch)
-    return Shipped(commit.sha if commit else None, branch, snapshot=True, files=sorted(statuses, key=lambda s: s[1]))
+    return Shipped(commit.sha if commit else None, branch, snapshot=True, files=sorted(statuses, key=lambda s: s[1]),
+                   left_out=left)
 
 
 # --- deploy -------------------------------------------------------------------------------------------------------
@@ -617,7 +675,7 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         if args.only_committed:
             raise CommandError(f"{root} isn't a git checkout, so there are no commits to ship.",
                                next_step="Deploy without --only-committed, which ships the folder as it is.")
-        paths = list(folder_files(root))
+        paths = [p for p in folder_files(root) if not _secret_file(root, p)]
     inside = config.root + "/" if config.root else ""
     published = _source_published(shape, [p[len(inside):] for p in paths if p.startswith(inside)])
     if published:
@@ -660,7 +718,8 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         "commit": shipped.commit, "operation_id": op.id, "shape": {"kind": shape.kind, "said": shape.said},
         "snapshot": shipped.snapshot, "files": [{"status": s, "path": p} for s, p in shipped.files[:_JSON_FILES]],
         "files_more": max(0, len(shipped.files) - _JSON_FILES), "configured": applied.changes,
-        "made": applied.made, "translated": translated.added if translated else []}
+        "made": applied.made, "translated": translated.added if translated else [],
+        "left_out": [item.as_data() for item in shipped.left_out]}
     if args.no_wait:
         _note(f"Deploying. Wait for it with: noclick ops wait {op.id}")
         _out(args, data, op.id)
@@ -697,6 +756,7 @@ def _published_source(paths: Sequence[str]) -> CommandError:
 
 
 def _said_shipped(shipped: Shipped) -> None:
+    say_left_out(shipped.left_out)
     short = (shipped.commit or "")[:7]
     if not shipped.snapshot:
         _note(f"Shipping {short or 'the branch as it is'} to {shipped.branch}.")
@@ -1220,9 +1280,10 @@ def register(kit: Any) -> None:
     deploy.epilog = (
         "In a git checkout it ships the commit you're on; with uncommitted or untracked files, a snapshot of the "
         "folder as a commit of its own on top (your checkout never changes), naming each file. Outside git it "
-        "commits the folder through the API. Files that look like secrets (.env, keys) are refused. The folder's "
-        "first deploy makes its app (named after it) and links it. noclick.json's bindings, env and crons are given "
-        "to the app first, and a wrangler config's vars, D1, KV, R2 and crons are written into noclick.json. Once "
+        "commits the folder through the API. Files that look like secrets (.env, keys) are left out, each named "
+        "with the noclick secret set command for its values; one committed in the commit it ships refuses it. The "
+        "folder's first deploy makes its app (named after it) and links it. noclick.json's bindings, env and crons "
+        "are given to the app first, and a wrangler config's vars, D1, KV, R2 and crons are written into noclick.json. Once "
         "live, its home page and the app's check paths are loaded: when they fail it prints the warning and what to "
         "fix, and exits 1 (the deployment stays live).")
     deploy.add_argument("app_ref", nargs="?", metavar="APP", help="The app (default: this folder's).")

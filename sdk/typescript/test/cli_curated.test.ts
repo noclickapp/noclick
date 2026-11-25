@@ -146,18 +146,21 @@ test("deploy makes a folder's app, ships what isn't ignored as a commit, links i
   assert.deepEqual([link.app, link.app_id], ["shop", APP_ID]);
 });
 
-test("a file that looks like a secret refuses the deploy before anything is made", async () => {
+test("a file that looks like a secret is left out and said, its names never its values", async () => {
   writeFileSync(join(folder, "index.html"), "<h1>shop</h1>");
-  writeFileSync(join(folder, ".env"), `STRIPE=${SECRET}\n`);
+  writeFileSync(join(folder, ".env"), `STRIPE=${SECRET}\nexport DB_URL=postgres://u:p@h/db\n`);
   writeFileSync(join(folder, ".env.example"), "STRIPE=\n");
   const { api } = setup();
   const { commit } = deployRoutes(api);
   const io = captured();
-  assert.equal(await main(["deploy", "--json"], io, signedIn), FAILED);
-  const { error } = JSON.parse(io.stdout.join("\n"));
-  assert.deepEqual(error.details.files, [".env"]);
-  assert.equal(commit.count, 0);
-  assert.equal(io.all().includes(SECRET), false);
+  assert.equal(await main(["deploy", "--app", "shop", "--no-wait", "--json"], io, signedIn), OK, io.all());
+  assert.deepEqual((commit.last.body as { files: Array<{ path: string }> }).files.map((f) => f.path).sort(), [".env.example", "index.html"]);
+  assert.deepEqual(JSON.parse(io.stdout.join("\n")).left_out, [{
+    path: ".env", why: "looks like a secret, and a secret never ships in the app's code", names: ["STRIPE", "DB_URL"],
+    next_steps: ["noclick secret set STRIPE --from-env STRIPE", "noclick secret set DB_URL --from-env DB_URL"],
+  }]);
+  assert.ok(io.stderr.includes("  noclick secret set DB_URL --from-env DB_URL"));
+  assert.equal(io.all().includes(SECRET) || io.all().includes("u:p@h"), false);
 });
 
 test("a checkout with untracked files ships them as a commit; --only-committed refuses", async () => {
@@ -179,6 +182,36 @@ test("a checkout with untracked files ships them as a commit; --only-committed r
   assert.equal(await main(["deploy", "--app", "shop", "--no-wait", "--json"], io, signedIn), OK, io.all());
   assert.deepEqual((commit.last.body as { files: Array<{ path: string }> }).files.map((f) => f.path).sort(), [".gitignore", "app.js", "new.js"]);
   assert.equal(JSON.parse(io.stdout.join("\n")).operation_id, "op_d");
+
+  // An untracked .env alone leaves the checkout clean; committed, it's in the app's history either way: refused.
+  run("add", "new.js");
+  run("commit", "-qm", "second");
+  writeFileSync(join(folder, ".env"), `STRIPE=${SECRET}\n`);
+  const remote = mkdtempSync(join(tmpdir(), "noclick-remote-"));
+  execFileSync("git", ["init", "-q", "--bare", "-b", "main", remote]);
+  api.on("POST", "/v1/repos/repo_1/clone_url", json({ url: `file://${remote}`, expires_at: "2999-01-01T00:00:00Z" }));
+  const clean = captured();
+  assert.equal(await main(["deploy", "--app", "shop", "--only-committed", "--no-wait"], clean, signedIn), OK, clean.all());
+  const head = String(run("rev-parse", "HEAD")).trim();
+  assert.equal(String(execFileSync("git", ["rev-parse", "main"], { cwd: remote })).trim(), head);
+  assert.ok(clean.stderr.includes("Left out .env: it looks like a secret, and a secret never ships in the app's code. Give the app its values with:"));
+  run("add", "-f", ".env");
+  run("commit", "-qm", "oops");
+  const refused = captured();
+  assert.equal(await main(["deploy", "--app", "shop", "--json"], refused, signedIn), FAILED);
+  const { error } = JSON.parse(refused.stdout.join("\n"));
+  assert.deepEqual(error.details.files, [".env"]);
+  assert.match(error.next_step ?? error.nextStep ?? "", /git rm --cached \.env/);
+  assert.equal(commit.count, 1);
+});
+
+test("db create prices the database under --max-usd before it makes anything", async () => {
+  const { api } = setup();
+  const priced = api.on("POST", "/v1/estimates", json({ object: "estimate", monthly_usd: 5, lines: [], items: [] }));
+  const made = api.on("POST", "/v1/databases", json({ object: "database", id: "db_1", name: "orders", engine: "postgres" }));
+  assert.equal(await main(["db", "create", "orders", "--engine", "postgres", "--max-usd", "1"], captured(), signedIn), REFUSED);
+  assert.deepEqual(priced.last.body, { items: [{ kind: "database", engine: "postgres" }] });
+  assert.equal(made.count, 0);
 });
 
 test("rollback serves the release before the live one, and --preview takes no value", async () => {

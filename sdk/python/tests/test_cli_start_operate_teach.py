@@ -185,6 +185,9 @@ def test_estimate_prices_one_kind_from_the_command_line(home, api, capsys):
     assert body(priced.calls.last.request) == {"items": [{"kind": "live_editing",
                                                           "usage": {"hours": 40.0, "cpu_share": 0.5}}]}
     assert run("estimate", "project", "--option", "runtime=container", "--usage", "requests=lots") == exits.FAILED
+    # An option sits beside the kind, as the API takes it (it refuses an ``options`` field).
+    assert run("estimate", "database", "--option", "engine=postgres") == 0
+    assert body(priced.calls.last.request) == {"items": [{"kind": "database", "engine": "postgres"}]}
 
 
 # --- docs, skill, help, mcp -------------------------------------------------------

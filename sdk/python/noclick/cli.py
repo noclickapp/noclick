@@ -574,7 +574,7 @@ def cmd_db_query(args: argparse.Namespace) -> int:
 
 
 def cmd_db_create(args: argparse.Namespace) -> int:
-    cli_spend.check([{"kind": "database", "options": {"engine": args.engine}}], args.max_usd,
+    cli_spend.check([{"kind": "database", "engine": args.engine}], args.max_usd,
                     what=f"A {args.engine} database", per="a month at the usage NoClick assumes")
     db = Database.create(args.name, engine=args.engine, region=args.region)
     print(db.name)
@@ -998,8 +998,9 @@ def cmd_estimate(args: argparse.Namespace) -> int:
                            "stdin).", next_step="Run noclick estimate --kinds to see what each kind takes.")
     if args.file != "-" and not Path(args.file).exists() and re.fullmatch(r"[a-z_]+", args.file):
         # One item by its kind, its usage and options from the command line.
-        items = [{"kind": args.file, **({"usage": _pairs(args.usage, number=True)} if args.usage else {}),
-                  **({"options": _pairs(args.option)} if args.option else {})}]
+        # Its options sit beside its kind, as the API takes them (runtime, engine, region, framework).
+        items = [{**_pairs(args.option), "kind": args.file,
+                  **({"usage": _pairs(args.usage, number=True)} if args.usage else {})}]
     else:
         items = _estimate_items(args.file)
     est = estimate(items)

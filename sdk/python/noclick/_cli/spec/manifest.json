@@ -1843,7 +1843,7 @@
      "required": false
     }
    ],
-   "notes": "In a git checkout it ships the commit you're on; with uncommitted or untracked files, a snapshot of the folder as a commit of its own on top (your checkout never changes), naming each file. Outside git it commits the folder through the API. Files that look like secrets (.env, keys) are refused. The folder's first deploy makes its app (named after it) and links it. noclick.json's bindings, env and crons are given to the app first, and a wrangler config's vars, D1, KV, R2 and crons are written into noclick.json. Once live, its home page and the app's check paths are loaded: when they fail it prints the warning and what to fix, and exits 1 (the deployment stays live).",
+   "notes": "In a git checkout it ships the commit you're on; with uncommitted or untracked files, a snapshot of the folder as a commit of its own on top (your checkout never changes), naming each file. Outside git it commits the folder through the API. Files that look like secrets (.env, keys) are left out, each named with the noclick secret set command for its values; one committed in the commit it ships refuses it. The folder's first deploy makes its app (named after it) and links it. noclick.json's bindings, env and crons are given to the app first, and a wrangler config's vars, D1, KV, R2 and crons are written into noclick.json. Once live, its home page and the app's check paths are loaded: when they fail it prints the warning and what to fix, and exits 1 (the deployment stays live).",
    "examples": [
     "noclick deploy --create",
     "noclick deploy booking --no-wait",
