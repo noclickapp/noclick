@@ -1,8 +1,10 @@
 // How the phone shell reads a sideways swipe: whether a touch is a swipe or a scroll, whether it began on something that
-// takes sideways drags itself, and where a released drawer settles. Plain functions over numbers and elements, so the
-// drawer (PhoneDrawer.tsx) stays a thin layer of touch events over them and they can be tested without a finger.
+// takes sideways drags itself, and where a released drawer or page settles. Plain functions over numbers and elements, so
+// the drawer (PhoneDrawer.tsx) stays a thin layer of touch events over them and they can be tested without a finger.
 
-export type SwipeMode = 'open' | 'close' | 'back';
+/** What a swipe does: opens or closes the drawer, or goes back to the screen under this one, or forward to the one
+ *  just left. */
+export type SwipeMode = 'open' | 'close' | 'back' | 'forward';
 
 /** How far a touch moves before it's read as a swipe or a scroll. */
 export const SLOP_PX = 8;
@@ -10,28 +12,20 @@ export const SLOP_PX = 8;
 const SIDEWAYS = 1.15;
 /** Past this speed (px per ms) a release goes where the finger was heading, however far it got. */
 export const FLICK = 0.35;
-/** How far a back swipe goes before letting go goes back. */
-export const BACK_PX = 96;
-
-/** A moving touch read in its mode's direction: a swipe, a scroll (anything else), or too small to say yet. */
-export function readDirection(mode: SwipeMode, dx: number, dy: number): 'swipe' | 'scroll' | null {
+/** A moving touch read: a swipe to the right or left, a scroll (anything else), or too small to say yet. */
+export function readDirection(dx: number, dy: number): 'right' | 'left' | 'scroll' | null {
     if (Math.abs(dx) < SLOP_PX && Math.abs(dy) < SLOP_PX) return null;
-    const sideways = Math.abs(dx) > Math.abs(dy) * SIDEWAYS;
-    const forward = mode === 'close' ? dx < 0 : dx > 0;
-    return sideways && forward ? 'swipe' : 'scroll';
+    if (Math.abs(dx) <= Math.abs(dy) * SIDEWAYS) return 'scroll';
+    return dx > 0 ? 'right' : 'left';
 }
 
-/** Whether a released drawer settles open, from how open it is (0 shut, 1 open) and the finger's speed (px per ms,
- *  positive toward open). A flick wins; otherwise the nearer side. */
+/** Whether a released drawer settles open (or a page goes on to the screen it's pulled toward), from how far it got (0
+ *  where it started, 1 all the way) and the finger's speed (px per ms, positive toward 1). A flick wins; otherwise the
+ *  nearer side. */
 export function settlesOpen(progress: number, velocity: number): boolean {
     if (velocity > FLICK) return true;
     if (velocity < -FLICK) return false;
     return progress > 0.5;
-}
-
-/** Whether a back swipe let go at `dx` with this speed goes back: far enough, or half as far and flicked. */
-export function backCounts(dx: number, velocity: number): boolean {
-    return dx >= BACK_PX || (dx >= BACK_PX / 2 && velocity > FLICK);
 }
 
 /** How long a released drawer takes to settle: about as fast as the finger left it (the curve starts at ~4.5× its
@@ -53,16 +47,19 @@ export function releaseVelocity(samples: readonly { t: number; x: number }[], no
 }
 
 const OWN_SWIPES = '[data-no-swipe], .react-flow, input[type="range"], [role="slider"]';
-const FIELDS = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
+/** What a person types in: a tap there places the caret, and a swipe there selects text. */
+export const FIELDS = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
 
 /** True when a touch on `target` belongs to what it landed on: the canvas, a slider, the field being typed in, anything
- *  marked `data-no-swipe`, or something scrolled sideways away from its start (which scrolls back first). */
-export function takesItsOwnSwipe(target: Element | null): boolean {
+ *  marked `data-no-swipe`, or something that scrolls sideways and has room to go the finger's way (a swipe right first
+ *  scrolls a list back to its start; a swipe left scrolls it on to its end). */
+export function takesItsOwnSwipe(target: Element | null, toward: 'right' | 'left' = 'right'): boolean {
     const typing = document.activeElement;
     if (typing && typing !== document.body && typing.matches(FIELDS) && target && typing.contains(target)) return true;
     for (let el = target; el && el !== document.body; el = el.parentElement) {
         if (el.matches(OWN_SWIPES)) return true;
-        if (el.scrollLeft > 0 && el.scrollWidth > el.clientWidth) {
+        const room = toward === 'right' ? el.scrollLeft > 0 : el.scrollLeft < el.scrollWidth - el.clientWidth - 1;
+        if (room && el.scrollWidth > el.clientWidth) {
             const overflow = getComputedStyle(el).overflowX;
             if (overflow === 'auto' || overflow === 'scroll') return true;
         }

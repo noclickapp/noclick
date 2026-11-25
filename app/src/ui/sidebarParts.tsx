@@ -34,7 +34,7 @@ export const PHONE_PAGE =
     'z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
 /** The dim over the page while it's pushed aside: it greys the page out, a card you tap to come back to. */
 export const SIDEBAR_SHEET_OVERLAY =
-    'pointer-events-none absolute inset-0 z-[45] bg-black/[0.16] opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:opacity-100 motion-reduce:transition-none dark:bg-[rgb(58_58_58/0.58)]';
+    'pointer-events-none absolute inset-0 z-[45] bg-black/[0.16] opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:opacity-100 motion-reduce:transition-none dark:bg-[rgb(44_44_44/0.58)]';
 
 /** How big a sidebar's parts are drawn: a laptop column's, or a phone drawer's, sized for a thumb (bigger rows, search
  *  as an icon beside the workspace). The phone drawer provides it. */
