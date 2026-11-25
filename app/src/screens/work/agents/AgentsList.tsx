@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import { MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/dropdown-menu';
 import { BotPlus } from '@/ui/BotPlus';
+import { useInPhoneShell } from '@/ui/phoneBar';
 import { useIntent } from '@/ui/useIntent';
 import { cn } from '@/ui/utils';
 import { useWorkClient } from '../client';
@@ -115,6 +116,7 @@ export function useAgentEntries(spaceId: string | null, { ticking = true }: { ti
 }
 
 export function AgentsList({ spaceId, selectedAgentId, onOpen, onNew }: AgentsListProps) {
+    const phone = useInPhoneShell();
     useAgentFrames();
     const { states, noclick, facts, faces, now, entries, loading } = useAgentEntries(spaceId);
     const client = useWorkClient();
@@ -342,9 +344,12 @@ export function AgentsList({ spaceId, selectedAgentId, onOpen, onNew }: AgentsLi
 
     return (
         <div ref={root} data-testid="agents-list">
-            <div className={LIST_TOP}>
-                <ActionRow icon={BotPlus} iconSize={20} label="New agent" onClick={onNew} pressed={drafting} keys="Shift+Meta+O" />
-            </div>
+            {/* On a phone the way to add sits beside the search (FindField's `add`), not in a row of its own. */}
+            {!phone && (
+                <div className={LIST_TOP}>
+                    <ActionRow icon={BotPlus} iconSize={20} label="New agent" onClick={onNew} pressed={drafting} keys="Shift+Meta+O" />
+                </div>
+            )}
             {drafting && (
                 <div aria-current="page" className="mb-2 flex w-full items-center gap-3 rounded-lg bg-foreground/[0.07] py-2 pl-2 pr-2">
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-dashed border-foreground/35 text-muted-foreground">
@@ -356,7 +361,15 @@ export function AgentsList({ spaceId, selectedAgentId, onOpen, onNew }: AgentsLi
                     </span>
                 </div>
             )}
-            <FindField inputRef={input} value={query} onChange={setQuery} onKeyDown={onSearchKey} placeholder="Find an agent" keys="/" />
+            <FindField
+                inputRef={input}
+                value={query}
+                onChange={setQuery}
+                onKeyDown={onSearchKey}
+                placeholder="Find an agent"
+                keys="/"
+                add={phone ? { label: 'New agent', icon: Plus, onClick: onNew, pressed: drafting } : undefined}
+            />
             {chipsShown && (
                 <div className="-mx-2 mb-2 flex gap-1 overflow-x-auto px-2 scrollbar-hide max-md:-mt-1 max-md:mb-1 max-md:px-4 max-md:py-1" role="group" aria-label="Show">
                     {chips.map((c) => {

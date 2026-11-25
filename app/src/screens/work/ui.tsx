@@ -87,6 +87,14 @@ export function ActionRow({
 }
 
 /** A column's search (Find an agent, Find a person): a pill with its glyph, clearing with ×; 8px above the list. */
+/** A list's one way to add (New agent, Invite people), which a phone draws as a round button beside the search. */
+export interface ListAdd {
+    label: string;
+    icon: ComponentType<{ className?: string; strokeWidth?: number }>;
+    onClick: () => void;
+    pressed?: boolean;
+}
+
 export function FindField({
     value,
     onChange,
@@ -94,6 +102,7 @@ export function FindField({
     inputRef,
     onKeyDown,
     keys,
+    add,
 }: {
     value: string;
     onChange: (value: string) => void;
@@ -102,11 +111,13 @@ export function FindField({
     onKeyDown?: (e: ReactKeyboardEvent<HTMLInputElement>) => void;
     /** Its keyboard shortcut, for assistive tech (never shown). */
     keys?: string;
+    /** The list's way to add, beside the search on one line (a phone's, where the list draws no action row). */
+    add?: ListAdd;
 }) {
     const ownRef = useRef<HTMLInputElement>(null);
     const ref = inputRef ?? ownRef;
-    return (
-        <label className={cn(FIND_PILL, 'pr-1 focus-within:border-foreground/25 focus-within:bg-foreground/[0.03]')}>
+    const field = (
+        <label className={cn(FIND_PILL, 'pr-1 focus-within:border-foreground/25 focus-within:bg-foreground/[0.03]', add && 'mb-0 w-auto min-w-0 flex-1 max-md:mx-0 max-md:w-auto')}>
             <Search className="h-4 w-4 shrink-0" strokeWidth={1.8} />
             <input
                 ref={ref}
@@ -123,6 +134,22 @@ export function FindField({
             />
             <SearchClearButton value={value} onClear={() => onChange('')} inputRef={ref} />
         </label>
+    );
+    if (!add) return field;
+    const Icon = add.icon;
+    return (
+        <div className="mb-2 flex items-center gap-2 max-md:mx-2">
+            {field}
+            <button
+                type="button"
+                aria-label={add.label}
+                aria-pressed={add.pressed}
+                onClick={add.onClick}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-foreground text-background transition-opacity [-webkit-touch-callout:none] active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+                <Icon className="h-5 w-5" strokeWidth={2.2} />
+            </button>
+        </div>
     );
 }
 

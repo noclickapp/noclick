@@ -4,6 +4,7 @@
 // or last line.
 import { useState } from 'react';
 import { UserPlus } from 'lucide-react';
+import { useInPhoneShell } from '@/ui/phoneBar';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { timeLabel } from '@/screens/channels/MessageList';
 import { MemberAvatar } from '@/screens/channels/avatars';
@@ -62,6 +63,7 @@ export function DmsList({
     /** What the list says while no one else is in the space. */
     alone?: string;
 }) {
+    const phone = useInPhoneShell();
     const [query, setQuery] = useState('');
     const words = query.toLowerCase().split(/\s+/).filter(Boolean);
     const found = (...texts: (string | null | undefined)[]) => words.every((w) => texts.some((t) => t?.toLowerCase().includes(w)));
@@ -72,12 +74,13 @@ export function DmsList({
     const anyone = dms.length > 0 || others.length > 0;
     return (
         <>
-            {onInvite && (
+            {/* On a phone the way to invite sits beside the search (FindField's `add`), not in a row of its own. */}
+            {onInvite && !phone && (
                 <div className={LIST_TOP}>
                     <ActionRow icon={UserPlus} label="Invite people" onClick={onInvite} />
                 </div>
             )}
-            <FindField value={query} onChange={setQuery} placeholder="Find a person" />
+            <FindField value={query} onChange={setQuery} placeholder="Find a person" add={phone && onInvite ? { label: 'Invite people', icon: UserPlus, onClick: onInvite } : undefined} />
             {query && anyone && !sorted.length && !shownOthers.length && <p className="px-2.5 pt-1 text-[13px] leading-snug text-muted-foreground">No one called “{query.trim()}”</p>}
             <ul className="flex flex-col gap-px" data-testid="dms-list">
                 {sorted.map(({ channel, person }) => {
