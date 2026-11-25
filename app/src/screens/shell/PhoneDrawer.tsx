@@ -186,6 +186,16 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
             }
             if (dim.current) dim.current.style.opacity = String(p);
             if (sheet.current) sheet.current.style.transform = `translateX(${-(1 - p) * w * PARALLAX}px)`;
+            // Your picture leaves the page early and arrives atop the drawer late, so it reads as one picture moving.
+            const [onPage, inSheet] = pictures();
+            if (onPage) {
+                onPage.style.opacity = String(Math.max(0, 1 - p * 1.6));
+                onPage.style.transform = `scale(${1 - p * 0.15})`;
+            }
+            if (inSheet) {
+                inSheet.style.opacity = String(clamp((p - 0.25) / 0.6));
+                inSheet.style.transform = `scale(${0.85 + 0.15 * p})`;
+            }
         };
 
         /** Going back `p` of the way: the page slides right off the screen under it, which drifts in and brightens. */
@@ -214,7 +224,9 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
             else place(p);
         };
 
-        const moved = () => [page.current, dim.current, sheet.current];
+        /** Your picture on the page's bar and atop the drawer, where the host draws them (`data-phone-me`). */
+        const pictures = () => [trigger.current?.querySelector<HTMLElement>('[data-phone-me]') ?? null, sheet.current?.querySelector<HTMLElement>('[data-phone-me]') ?? null];
+        const moved = () => [page.current, dim.current, sheet.current, ...pictures()];
         const pageMoved = () => [page.current, under.current, underShade.current, pageShade.current, over.current];
         const PROPERTIES = ['transform', 'transition', 'opacity', 'visibility', 'border-radius', 'overflow', 'will-change', 'box-shadow'];
         const unstyle = (els: (HTMLElement | null)[]) => {
@@ -233,6 +245,7 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
                 el.style.transition = 'none';
                 el.style.willChange = el === dim.current ? 'opacity' : 'transform';
             }
+            for (const el of pictures()) if (el) el.style.willChange = 'opacity, transform';
             if (sheet.current) sheet.current.style.visibility = 'visible';
             place(gesture.from);
         };
@@ -243,6 +256,7 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
             if (page.current) page.current.style.transition = `transform ${curve}, border-radius ${curve}`;
             if (dim.current) dim.current.style.transition = `opacity ${curve}`;
             if (sheet.current) sheet.current.style.transition = `transform ${curve}`;
+            for (const el of pictures()) if (el) el.style.transition = `opacity ${curve}, transform ${curve}`;
             place(toOpen ? 1 : 0);
             if (toOpen !== live.current.open) live.current.onOpenChange(toOpen);
             settling = window.setTimeout(release, ms + 40);

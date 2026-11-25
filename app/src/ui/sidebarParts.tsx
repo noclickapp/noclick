@@ -19,7 +19,10 @@ import { SIDEBAR_RAIL_WIDTH, sidebarPanel, useSidebarResizing, useSidebarWidth }
 // Every sidebar's rows (the app's and the developer console's) share these.
 export const SIDEBAR_ITEM =
     'relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[15px] tracking-[-0.005em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
-export const SIDEBAR_IDLE = 'text-foreground/85 hover:bg-foreground/[0.05] hover:text-foreground dark:text-foreground/80';
+/** A row you tap to go somewhere, as a phone's own lists behave: lit while pressed rather than left looking hovered
+ *  (a hover style sticks to whatever a finger last touched), and no link preview on a long press. */
+export const TAP_ROW = '[-webkit-touch-callout:none] [@media(hover:none)]:active:bg-foreground/[0.08]';
+export const SIDEBAR_IDLE = `text-foreground/85 [@media(hover:hover)]:hover:bg-foreground/[0.05] [@media(hover:hover)]:hover:text-foreground dark:text-foreground/80 ${TAP_ROW}`;
 export const SIDEBAR_CURRENT = 'bg-accent text-accent-foreground dark:bg-foreground/[0.09] dark:text-foreground';
 export const SIDEBAR_ICON_BUTTON =
     "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl after:absolute after:-inset-0.5 after:content-[''] text-foreground/75 transition-colors hover:bg-foreground/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -28,10 +31,17 @@ export const SIDEBAR_ICON_BUTTON =
  *  out in each class (Tailwind reads class names as written). */
 export const PHONE_DRAWER_WIDTH = 'min(80vw,340px)';
 export const SIDEBAR_SHEET =
-    'fixed inset-y-0 left-0 z-0 w-[min(80vw,340px)] bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] outline-none invisible -translate-x-[18%] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:visible data-[open=true]:translate-x-0 motion-reduce:transition-none';
+    'group/sheet fixed inset-y-0 left-0 z-0 w-[min(80vw,340px)] bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] outline-none invisible -translate-x-[18%] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:visible data-[open=true]:translate-x-0 motion-reduce:transition-none';
 /** The page while the drawer is open: moved right by the drawer's width, its near corners rounded, over the drawer. */
 export const PHONE_PAGE =
-    'z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
+    'group/page z-[1] transition-[transform,border-radius] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[menu=open]:translate-x-[min(80vw,340px)] data-[menu=open]:overflow-hidden data-[menu=open]:rounded-l-[44px] motion-reduce:transition-none';
+/** Your picture at the bar's start, which opens the drawer: it fades off the page as the drawer opens, and the same
+ *  picture fades in at the drawer's top (`PHONE_ME_IN_SHEET`), as X's does. A swipe sets both as it goes (PhoneDrawer,
+ *  by `data-phone-me`). */
+export const PHONE_ME_ON_PAGE =
+    'transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] group-data-[menu=open]/page:scale-[0.85] group-data-[menu=open]/page:opacity-0 motion-reduce:transition-none';
+export const PHONE_ME_IN_SHEET =
+    'scale-[0.85] opacity-0 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] group-data-[open=true]/sheet:scale-100 group-data-[open=true]/sheet:opacity-100 motion-reduce:transition-none';
 /** The dim over the page while it's pushed aside: it greys the page out, a card you tap to come back to. */
 export const SIDEBAR_SHEET_OVERLAY =
     'pointer-events-none absolute inset-0 z-[45] bg-black/[0.16] opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0.9,0.3,1)] data-[open=true]:opacity-100 motion-reduce:transition-none dark:bg-[rgb(44_44_44/0.58)]';

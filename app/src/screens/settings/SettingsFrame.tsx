@@ -9,7 +9,7 @@ import { HAIRLINE } from '@/ui/primitives';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { useIsMobile } from '@/ui/useIsMobile';
 import { PhoneBarBack, useInPhoneShell } from '@/ui/phoneBar';
-import { SidebarItem } from '@/ui/sidebarParts';
+import { SidebarItem, TAP_ROW } from '@/ui/sidebarParts';
 import { DISPLAY, PAGE_TITLE } from '@/ui/titles';
 import type { SectionGroup, SettingsSectionId } from './sections';
 
@@ -61,7 +61,7 @@ export function SettingsFrame<Id extends string>({
                                                 key={item.id}
                                                 type="button"
                                                 onClick={() => onSelect(item.id)}
-                                                className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-foreground/[0.03] focus-visible:bg-foreground/[0.03] focus-visible:outline-none"
+                                                className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors [@media(hover:hover)]:hover:bg-foreground/[0.03] focus-visible:bg-foreground/[0.03] focus-visible:outline-none ${TAP_ROW}`}
                                             >
                                                 <Icon className="h-5 w-5 shrink-0 text-foreground/75" strokeWidth={1.6} />
                                                 <span className="min-w-0 flex-1">

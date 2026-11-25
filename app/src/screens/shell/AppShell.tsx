@@ -1,15 +1,16 @@
 // The app's frame. On a laptop: the sidebar, then (beside an open canvas) the builder chat, then the page. On a phone:
-// a slim bar with the menu, the page's name and the page's own actions over the page, the sidebar under the page, which
-// a swipe slides aside (on a page one level down the swipe goes back instead: PhoneDrawer), and the builder over the
-// canvas while it's open. The builder is mounted once either way. What the sidebar holds is the host's: the frame draws
+// a bar with your picture (which opens the menu), the page's name centred and the page's own actions over the page, the
+// sidebar under the page, which a swipe slides aside (on a page one level down the swipe goes back instead:
+// PhoneDrawer), and the builder over the canvas while it's open. The page doesn't zoom, as an app's screen doesn't. The builder is mounted once either way. What the sidebar holds is the host's: the frame draws
 // it as a column on a laptop and in the drawer on a phone. A strip across the top of the page is the shell's
 // `shell.banner` slot.
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Menu } from 'lucide-react';
 import { useSlot } from '@/slots';
 import { BuilderMark } from '@/ui/glyphs';
-import { PhoneBarContext } from '@/ui/phoneBar';
-import { PHONE_PAGE, SIDEBAR_ICON_BUTTON, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
+import { AccountAvatar, type AccountMenuUser } from '@/ui/accountParts';
+import { PHONE_BAR_BUTTON, PhoneBarContext } from '@/ui/phoneBar';
+import { PHONE_ME_ON_PAGE, PHONE_PAGE, SidebarColumn, SidebarToggle, useSidebarShortcut } from '@/ui/sidebarParts';
 import { sidebarWidthFor, useSidebarResizing, useSidebarWidth } from '@/ui/sidebarPanel';
 import { cn } from '@/ui/utils';
 import { PhoneDrawer } from './PhoneDrawer';
@@ -33,6 +34,8 @@ export interface AppShellProps {
     onCollapsedChange: (collapsed: boolean) => void;
     /** The page's name, for the phone bar (a link where it leads somewhere). */
     title: ReactNode;
+    /** Whose app it is: the phone bar's picture, which opens the menu (without one, the menu's icon). */
+    me?: AccountMenuUser;
     /** The builder chat, mounted once. */
     builder: ReactNode;
     builderShown: boolean;
@@ -72,19 +75,24 @@ function LaptopShell({ sidebar, collapsed, onCollapsedChange, builder, builderSh
     );
 }
 
-function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, children }: AppShellProps) {
+function PhoneShell({ sidebar, title, me, builder, builderShown, builderToggle, children }: AppShellProps) {
     const Banner = useSlot(BANNER);
     const [menuOpen, setMenuOpen] = useState(false);
     const [slot, setSlot] = useState<HTMLElement | null>(null);
     const [builderSlot, setBuilderSlot] = useState<HTMLElement | null>(null);
     const [lead, setLead] = useState<HTMLElement | null>(null);
+    const [leadTitle, setLeadTitle] = useState<HTMLElement | null>(null);
     const [leadTaken, setLeadTaken] = useState(false);
     const [builderLead, setBuilderLead] = useState<HTMLElement | null>(null);
+    const [builderLeadTitle, setBuilderLeadTitle] = useState<HTMLElement | null>(null);
     const [builderLeadTaken, setBuilderLeadTaken] = useState(false);
-    const bar = useMemo(() => ({ slot, lead, setLeadTaken }), [slot, lead]);
+    const bar = useMemo(() => ({ slot, lead, title: leadTitle, setLeadTaken }), [slot, lead, leadTitle]);
     // The builder over the page has slots of its own, shown in place of the page's while it's open: its actions, and
     // its way back (out of its history), which is the builder's, not the page's.
-    const builderBar = useMemo(() => ({ slot: builderSlot, lead: builderLead, setLeadTaken: setBuilderLeadTaken }), [builderSlot, builderLead]);
+    const builderBar = useMemo(
+        () => ({ slot: builderSlot, lead: builderLead, title: builderLeadTitle, setLeadTaken: setBuilderLeadTaken }),
+        [builderSlot, builderLead, builderLeadTitle]
+    );
     const builderLeads = builderShown && builderLeadTaken;
     const taken = builderLeads || leadTaken;
     const close = () => setMenuOpen(false);
@@ -95,6 +103,19 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
         const holder = builderLeads ? builderLead : leadTaken ? lead : null;
         return holder?.querySelector<HTMLElement>('[data-phone-back]') ?? null;
     }, [builderLeads, builderLead, leadTaken, lead]);
+    // An app's screen doesn't zoom: no double-tap or pinch zoom of the page while the phone shell is up (a canvas still
+    // zooms itself; fields are 16px, so focusing one doesn't zoom either).
+    useEffect(() => {
+        const root = document.documentElement;
+        const before = root.style.touchAction;
+        root.style.touchAction = 'pan-x pan-y';
+        const noZoom = (event: Event) => event.preventDefault();
+        document.addEventListener('gesturestart', noZoom);
+        return () => {
+            root.style.touchAction = before;
+            document.removeEventListener('gesturestart', noZoom);
+        };
+    }, []);
     // Anything in the menu that moves to another page (the balance meter opens Usage) closes it.
     useEffect(() => {
         const onSwitch = () => setMenuOpen(false);
@@ -111,42 +132,58 @@ function PhoneShell({ sidebar, title, builder, builderShown, builderToggle, chil
             className={cn('fixed inset-0 flex flex-col bg-background pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]', PHONE_PAGE)}
         >
             {Banner && <Banner />}
-            <header className="flex h-12 shrink-0 items-center gap-1 px-2">
-                <button
-                    ref={trigger}
-                    type="button"
-                    aria-label="Open menu"
-                    aria-haspopup="dialog"
-                    aria-expanded={menuOpen}
-                    aria-controls="phone-menu"
-                    onClick={() => setMenuOpen(true)}
-                    className={cn(SIDEBAR_ICON_BUTTON, taken && 'hidden')}
-                >
-                    <Menu className="h-5 w-5" strokeWidth={1.75} />
-                </button>
-                <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger} page={page}>
-                    {sidebar({ collapsed: false, headerEnd: null, onNavigate: close })}
-                </PhoneDrawer>
-                <span className={cn('min-w-0 flex-1 truncate px-1 text-[15px] font-semibold tracking-[-0.01em] text-foreground', taken && 'hidden')}>{title}</span>
-                <div ref={setLead} className={leadTaken && !builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
-                <div ref={setBuilderLead} className={builderLeads ? 'flex min-w-0 flex-1 items-center gap-1' : 'hidden'} />
-                {/* Its actions shrink before they run off the bar: a label in them truncates. */}
-                <div ref={setSlot} className={cn('flex min-w-0 items-center gap-0.5', builderShown && 'hidden')} />
-                <div ref={setBuilderSlot} className={cn('flex shrink-0 items-center gap-0.5', !builderShown && 'hidden')} />
-                {builderToggle && (
+            {/* Three parts, the outer two as wide as each other so the name stays centred: your picture (or the way back),
+                the page's name (or the open thing's), and the page's actions. */}
+            <header className="flex h-14 shrink-0 items-center px-1.5">
+                <div className="flex min-w-0 flex-1 basis-0 items-center">
                     <button
+                        ref={trigger}
                         type="button"
-                        onClick={builderToggle.onToggle}
-                        aria-pressed={builderToggle.open}
-                        className={cn(
-                            'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] transition-colors',
-                            builderToggle.open ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/[0.06]'
-                        )}
+                        aria-label="Open menu"
+                        aria-haspopup="dialog"
+                        aria-expanded={menuOpen}
+                        aria-controls="phone-menu"
+                        onClick={() => setMenuOpen(true)}
+                        className={cn(PHONE_BAR_BUTTON, taken && 'hidden')}
                     >
-                        <BuilderMark className="h-4 w-4" />
-                        Builder
+                        {me ? (
+                            <span data-phone-me className={PHONE_ME_ON_PAGE}>
+                                <AccountAvatar user={me} className="h-[34px] w-[34px]" />
+                            </span>
+                        ) : (
+                            <Menu className="h-6 w-6" strokeWidth={1.75} />
+                        )}
                     </button>
-                )}
+                    <PhoneDrawer open={menuOpen} onOpenChange={setMenuOpen} back={backControl} trigger={trigger} page={page}>
+                        {sidebar({ collapsed: false, headerEnd: null, onNavigate: close })}
+                    </PhoneDrawer>
+                    <div ref={setLead} className={leadTaken && !builderLeads ? 'flex min-w-0 items-center' : 'hidden'} />
+                    <div ref={setBuilderLead} className={builderLeads ? 'flex min-w-0 items-center' : 'hidden'} />
+                </div>
+                <div className="flex min-w-0 max-w-[60%] items-center justify-center px-1">
+                    <span className={cn('truncate text-[17px] font-semibold tracking-[-0.015em] text-foreground', taken && 'hidden')}>{title}</span>
+                    <div ref={setLeadTitle} className={leadTaken && !builderLeads ? 'flex min-w-0 items-center justify-center' : 'hidden'} />
+                    <div ref={setBuilderLeadTitle} className={builderLeads ? 'flex min-w-0 items-center justify-center' : 'hidden'} />
+                </div>
+                <div className="flex flex-1 basis-0 items-center justify-end gap-0.5">
+                    {/* Its actions shrink before they run off the bar: a label in them truncates. */}
+                    <div ref={setSlot} className={cn('flex min-w-0 items-center gap-0.5', builderShown && 'hidden')} />
+                    <div ref={setBuilderSlot} className={cn('flex shrink-0 items-center gap-0.5', !builderShown && 'hidden')} />
+                    {builderToggle && (
+                        <button
+                            type="button"
+                            onClick={builderToggle.onToggle}
+                            aria-pressed={builderToggle.open}
+                            className={cn(
+                                'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] transition-colors',
+                                builderToggle.open ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/[0.06]'
+                            )}
+                        >
+                            <BuilderMark className="h-4 w-4" />
+                            Builder
+                        </button>
+                    )}
+                </div>
             </header>
             <main className="relative min-h-0 flex-1 overflow-hidden">
                 <PhoneBarContext.Provider value={bar}>{children}</PhoneBarContext.Provider>

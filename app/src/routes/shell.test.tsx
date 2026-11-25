@@ -221,7 +221,7 @@ describe('the frame on a phone', () => {
         expect(where()).toBe('/chat');
         await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
         expect(within(bar()).queryByText('Work')).toBeNull();
-        expect(bar().textContent).toBe('');
+        expect(bar().textContent, 'nothing but your picture').toBe(within(bar()).getByRole('button', { name: 'Open menu' }).textContent);
     });
 
     it('names Usage in the bar, though the sidebar lists it nowhere', async () => {

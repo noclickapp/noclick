@@ -31,6 +31,7 @@ export function AppFrame({ user, places, ...frame }: AppFrameProps) {
             <CommandPalette />
             <AppShell
                 {...frame}
+                me={frame.me ?? user}
                 sidebar={(at) => (
                     <ShellSidebarContent
                         {...at}

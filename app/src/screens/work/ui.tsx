@@ -7,11 +7,11 @@ import { HAIRLINE } from '@/ui/primitives';
 import { SearchClearButton } from '@/ui/SearchClearButton';
 import { createPanelWidth } from '@/ui/panelWidth';
 import { ResizeEdge } from '@/ui/ResizeEdge';
+import { TAP_ROW } from '@/ui/sidebarParts';
 import { cn } from '@/ui/utils';
 import { Tip } from './tooltip';
 
-export const LIST_ROW =
-    'flex w-full items-center gap-2.5 rounded-lg pl-2 pr-2 text-left transition-colors hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
+export const LIST_ROW = `flex w-full items-center gap-2.5 rounded-lg pl-2 pr-2 text-left transition-colors [@media(hover:hover)]:hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${TAP_ROW}`;
 export const LIST_CURRENT = 'bg-foreground/[0.07] hover:bg-foreground/[0.07]';
 /** A round icon button; on a phone a finger's 40px, whatever size it's drawn at on a laptop. */
 export const ICON_BUTTON =

@@ -9,9 +9,10 @@ import { KINDS, resourceAddress, type KindId } from '@/screens/resources/kinds';
 import { useClient } from '@/sdk/client';
 import { useV1 } from '@/sdk/useV1';
 import { useSlot } from '@/slots';
-import { ACCOUNT_MENU_ITEM, type AccountMenuUser } from '@/ui/accountParts';
+import { ACCOUNT_MENU_ITEM, AccountAvatar, type AccountMenuUser } from '@/ui/accountParts';
 import { DropdownMenuItem } from '@/ui/dropdown-menu';
 import { LogoMark } from '@/ui/LogoMark';
+import { PHONE_ME_IN_SHEET, useSidebarScale } from '@/ui/sidebarParts';
 import { useTheme } from '@/ui/useTheme';
 import { SHELL_PAGES } from './pages';
 import { asCmd, heldCommands, registeredEntries, shortcutsCommand, signOutCommand, themeCommands } from './palette/commands';
@@ -22,10 +23,23 @@ import { ACCOUNT_SESSION, PAGES, type AccountSession, type PaletteContext, type 
 /** The workspace as the account's own name, beside NoClick's mark lined up with the sidebar's icons below. It leads
  *  to the app's home, the account at a glance. */
 export function AccountName({ user, onNavigate }: { user: AccountMenuUser; onNavigate?: () => void }) {
+    const name = userDisplayName({ email: user.email, name: user.display_name }, 'NoClick');
+    const phone = useSidebarScale() === 'phone';
+    if (phone) {
+        // The drawer's title, as X draws its top: the picture the phone bar showed fades in here as the drawer opens.
+        return (
+            <Link to="/" onClick={onNavigate} className="flex h-14 min-w-0 items-center gap-3 rounded-2xl px-1.5">
+                <span data-phone-me className={PHONE_ME_IN_SHEET}>
+                    <AccountAvatar user={user} className="h-10 w-10" />
+                </span>
+                <span className="truncate text-[18px] font-semibold tracking-[-0.015em] text-foreground">{name}</span>
+            </Link>
+        );
+    }
     return (
         <Link to="/" onClick={onNavigate} className="flex min-w-0 items-center gap-1 rounded-xl py-1.5 transition-colors hover:bg-foreground/[0.05]">
             <LogoMark className="ml-[13px] h-[18px] w-[18px] shrink-0" alt="NoClick" />
-            <span className="truncate px-1.5 text-[14px] font-semibold tracking-[-0.01em] text-foreground">{userDisplayName({ email: user.email, name: user.display_name }, 'NoClick')}</span>
+            <span className="truncate px-1.5 text-[14px] font-semibold tracking-[-0.01em] text-foreground">{name}</span>
         </Link>
     );
 }
