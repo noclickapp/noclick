@@ -1520,6 +1520,7 @@ iterable
 itm-platform
 jackrabbit-class
 jaicob
+jenkins
 jev
 jibble
 jigsawstack
