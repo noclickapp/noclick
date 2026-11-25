@@ -1,6 +1,6 @@
 // A turn's work as t3code's activity log draws it. Finished, one quiet "Worked for 43s" line that opens into each step;
-// while the agent works, "Working for 1m 04s" over its steps, the running one shining and its command's output arriving
-// under it. Each step is an icon in a 24px slot and what it did: a command with its output and exit code, an edit with
+// while the agent works, Claude Code's CLI's line ("✻ Working · 1m 04s · ↑ 12k ↓ 988 tokens") over its steps, the
+// running one shining and its command's output arriving under it. Each step is an icon in a 24px slot and what it did: a command with its output and exit code, an edit with
 // its diff, a read, a search, one of NoClick's own tools with what it was given and what it answered.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ChevronRight, CircleAlert, CircleHelp, CornerDownRight, Download as DownloadIcon, FilePen, FileText, FlaskConical, FolderOpen, ListTree, LoaderCircle, Minimize2, Package, Search, ShieldCheck, SquareTerminal, Wrench, type LucideIcon } from 'lucide-react';
@@ -89,25 +89,44 @@ export function tokenCount(n: number): string {
     return `${Math.round(n / 1000)}k`;
 }
 
-/** What a running turn has come to, after its clock: "↓ 988 tokens · thought for 10s" ("thinking 4s" while it does),
- *  each part once there's something to say. */
+/** What a running turn has come to, after its clock: "↑ 12k ↓ 988 tokens · thought for 10s" ("thinking 4s" while it
+ *  does): what its model calls read, what it wrote, each part once there's something to say. */
 export function paceLine(pace: TurnPace, now: number): string {
     const parts: string[] = [];
     const tokens = tokensSoFar(pace);
-    if (tokens > 0) parts.push(`↓ ${tokenCount(tokens)} tokens`);
+    const flow = [pace.inputTokens ? `↑ ${tokenCount(pace.inputTokens)}` : '', tokens > 0 ? `↓ ${tokenCount(tokens)}` : ''].filter(Boolean);
+    if (flow.length) parts.push(`${flow.join(' ')} tokens`);
     const thought = thoughtMs(pace, now);
     if (pace.thinkingSince !== null) parts.push(`thinking ${spent(thought)}`);
     else if (thought >= 1000) parts.push(`thought for ${spent(thought)}`);
     return parts.join(' · ');
 }
 
-/** What's alive: no dot, no spinner, a slow shine across the words. */
+/** What's alive: a slow shine across the words. */
 export function Shine({ children, className }: { children: ReactNode; className?: string }) {
     return <span className={cn('work-shine', className)}>{children}</span>;
 }
 
-/** "Working for 4m 12s · ↓ 988 tokens · thought for 10s", as Claude Code's CLI shows a turn under way; "Compacting
- *  for 12s" while older history is summarized. */
+/** Claude Code's CLI spinner: its glyph turning out and back from ✻, which it stays at where motion is reduced. */
+const SPINNER = ['✻', '✽', '✻', '✶', '✳', '✢', '·', '✢', '✳', '✶'];
+const SPINNER_MS = 120;
+
+function Spinner() {
+    const [frame, setFrame] = useState(0);
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+        const t = setInterval(() => setFrame((f) => (f + 1) % SPINNER.length), SPINNER_MS);
+        return () => clearInterval(t);
+    }, []);
+    return (
+        <span aria-hidden className="inline-block w-3 text-center text-foreground/70" data-testid="turn-spinner">
+            {SPINNER[frame]}
+        </span>
+    );
+}
+
+/** "✻ Working · 4m 12s · ↑ 12k ↓ 988 tokens · thought for 10s", as Claude Code's CLI shows a turn under way, from
+ *  the moment it's sent; "Compacting · 12s" while older history is summarized. */
 export function WorkingLine({ from, compacting, downloading, pace }: { from: number; compacting?: number | null; downloading?: Download | null; pace?: TurnPace }) {
     const now = useNow();
     // A machine fetching its harness says so in NoClick's words, a thin bar under it where the size is known.
@@ -129,10 +148,10 @@ export function WorkingLine({ from, compacting, downloading, pace }: { from: num
     }
     return (
         <p className="flex h-6 items-baseline gap-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite">
-            {compacting ? <Minimize2 className="h-3.5 w-3.5 self-center" strokeWidth={2} /> : null}
-            <Shine>{compacting ? 'Compacting for' : 'Working for'}</Shine>
+            {compacting ? <Minimize2 className="h-3.5 w-3.5 self-center" strokeWidth={2} /> : <Spinner />}
+            <Shine>{compacting ? 'Compacting' : 'Working'}</Shine>
             <span className="tabular-nums" suppressHydrationWarning>
-                {spent(now - (compacting ?? from))}
+                · {spent(now - (compacting ?? from))}
             </span>
             {!compacting && pace && paceLine(pace, now) && (
                 <span className="tabular-nums opacity-70" data-testid="turn-pace" suppressHydrationWarning>

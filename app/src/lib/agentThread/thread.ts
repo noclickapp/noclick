@@ -195,17 +195,19 @@ export interface TurnEntry {
     pace?: TurnPace;
 }
 
-/** A running turn's pace, as Claude Code's CLI shows it ("14s · ↓ 988 tokens · thought for 10s"), from its
+/** A running turn's pace, as Claude Code's CLI shows it ("14s · ↑ 12k ↓ 988 tokens · thought for 10s"), from its
  *  `progress` moments (the one shape every harness's turn tells it in): the tokens it has written so far (`estimated`
- *  where its harness reports none yet), and how long it thought, its thinking under way since `thinkingSince`. */
+ *  where its harness reports none yet), what its model calls read (`inputTokens`, once its harness reports them), and
+ *  how long it thought, its thinking under way since `thinkingSince`. */
 export interface TurnPace {
     tokens: number | null;
     estimated: boolean;
     thinkingMs: number;
     thinkingSince: number | null;
+    inputTokens?: number | null;
 }
 
-const NO_PACE: TurnPace = { tokens: null, estimated: false, thinkingMs: 0, thinkingSince: null };
+const NO_PACE: TurnPace = { tokens: null, estimated: false, thinkingMs: 0, thinkingSince: null, inputTokens: null };
 
 /** A running turn's pace (none heard: nothing yet). */
 export const paceOf = (turn: TurnEntry): TurnPace => turn.pace ?? NO_PACE;
@@ -229,6 +231,8 @@ function heardProgress(pace: TurnPace, raw: JsonObject, at: number): TurnPace {
     if (raw.thinking === true && next.thinkingSince === null) next = { ...next, thinkingSince: at };
     if (raw.thinking === false) next = doneThinking(next, at);
     if (typeof raw.output_tokens === 'number') next = { ...next, tokens: raw.output_tokens, estimated: raw.estimated === true };
+    const usage = raw.usage && typeof raw.usage === 'object' ? (raw.usage as JsonObject) : null;
+    if (typeof usage?.input_tokens === 'number' && usage.input_tokens > 0) next = { ...next, inputTokens: usage.input_tokens };
     return next;
 }
 
@@ -693,8 +697,13 @@ function withUserMessage(thread: Thread, event: AgentEvent, at: number): Thread 
     // A channel's posts start their turn as they're shown (their message is kept as it starts): its card says what it's
     // doing from the first moment, and a turn that ends having drawn nothing is gone again, as history reads it.
     const begins = entry.channel && event.operationId && !entries.some((e) => e.kind === 'turn' && e.operationId === event.operationId) ? [runningTurn(event.operationId, at)] : [];
-    // A message that joined the turn under way sits in it, where the turn's later work follows it.
+    // A message that joined the turn under way sits in it, where the turn's later work follows it; the turn's own,
+    // read after the turn said it's at work (a page watching hears that first), goes before it.
     const live = liveTurn(thread);
+    if (live && event.operationId && live.operationId === event.operationId && !live.parts.length && live.reply === null) {
+        const turnAt = entries.indexOf(live);
+        return { ...thread, entries: [...entries.slice(0, turnAt), entry, ...entries.slice(turnAt)] };
+    }
     if (live && event.operationId && live.operationId !== event.operationId && live.operationId) return { ...thread, entries: [...entries, entry, ...begins] };
     if (live && (!event.operationId || live.operationId === event.operationId)) {
         return replace(thread, { ...live, parts: [...live.parts, { kind: 'user', entry: { ...entry, steer: true } }] });

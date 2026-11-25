@@ -43,8 +43,21 @@ describe("a running turn's pace, from its progress moments", () => {
     it('shows the tokens its progress says, estimated or reported', () => {
         const counted = play([...START, [2, { type: 'progress', output_tokens: 140, estimated: true, operation_id: OP }]]);
         expect(paceLine(paceOf(turnOf(counted)), at(4))).toBe('↓ 140 tokens · thinking 4s');
-        const reported = applyEvent(counted, heard({ type: 'progress', output_tokens: 988, estimated: false, usage: { input_tokens: 12, cached_tokens: 300_000, output_tokens: 988 }, operation_id: OP }), at(5));
-        expect(paceOf(turnOf(reported))).toMatchObject({ tokens: 988, estimated: false });
+        const reported = applyEvent(counted, heard({ type: 'progress', output_tokens: 988, estimated: false, usage: { input_tokens: 312_000, cached_tokens: 300_000, output_tokens: 988 }, operation_id: OP }), at(5));
+        expect(paceOf(turnOf(reported))).toMatchObject({ tokens: 988, estimated: false, inputTokens: 312_000 });
+        expect(paceLine(paceOf(turnOf(reported)), at(6))).toBe('↑ 312k ↓ 988 tokens · thinking 6s');
+    });
+
+    it('is at work from the moment its runner starts it, before its message or a word comes, its message drawn first', () => {
+        const working: Frame = { type: 'progress', working: true, stage: 'delivering', started_at: at(0), elapsed_ms: 0, operation_id: OP };
+        const thread = play([
+            [0, working],
+            [2, { type: 'message', role: 'user', id: '4', text: 'Reply with only the word pong.', operation_id: OP }],
+        ]);
+        expect(thread.entries.map((e) => [e.kind, e.kind === 'turn' && e.status])).toEqual([
+            ['user', false],
+            ['turn', 'running'],
+        ]);
     });
 
     it('reads nothing of its words or calls themselves', () => {
