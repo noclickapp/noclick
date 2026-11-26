@@ -8,10 +8,11 @@ export interface PhoneLinkCode {
 }
 
 // How each opens a chat with NoClick, with a drafted first message when there is one: WhatsApp's link, and for
-// iMessage the Messages app's sms: link (iOS takes the body after "&").
+// iMessage the Messages app's sms: link, its body after "?&": iOS reads it after the "&", Android's Messages after the
+// "?" (with "&" alone, Android took the whole string for the number, 2026-11-27).
 export const TEXT_APPS = {
     whatsapp: { label: 'WhatsApp', app: 'WhatsApp', href: (number: string, body: string | null) => `https://wa.me/${number.replace(/\D/g, '')}${body ? `?text=${encodeURIComponent(body)}` : ''}` },
-    imessage: { label: 'iMessage', app: 'Messages', href: (number: string, body: string | null) => `sms:${number}${body ? `&body=${encodeURIComponent(body)}` : ''}` },
+    imessage: { label: 'iMessage', app: 'Messages', href: (number: string, body: string | null) => `sms:${number}${body ? `?&body=${encodeURIComponent(body)}` : ''}` },
 } as const;
 
 /** Opens `app` on NoClick's number, with the message that links this phone drafted when there's a code. */
