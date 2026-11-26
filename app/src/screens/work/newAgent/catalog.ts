@@ -111,14 +111,17 @@ export function modesOf(harness: HarnessInfo | undefined, only?: readonly Permis
 /** A model as Work names it, from its harness's label ("[openrouter] OpenAI: GPT-6 Luna (latest)"): its plain name
  *  ("GPT-6 Luna", without the route in brackets, the maker before a colon, "latest", the context size or plan badges), the route
  *  it's reached through ("openrouter"), whether it's free, and whether it's an alias that always takes the newest
- *  (its id's `~`, or "latest" on its label); its id's last part until its list is read. */
+ *  (its id's `~`, or "latest" on its label); its id read as a name where nothing names it. */
 export function modelParts(label: string | null | undefined, id: string): { name: string; via: string | null; free: boolean; latest: boolean } {
     const text = (label ?? '').split(' · ')[0].trim();
     const via = /^\[([^\]]+)\]/.exec(text)?.[1] ?? null;
     const [head, ...notes] = text.replace(/^\[[^\]]*\]\s*/, '').split(' - ');
     const bare = head.replace(/^[^:]{1,30}:\s+/, '');
     const name = bare.replace(/\s*\(?latest\)?$/i, '').trim();
-    return { name: name || idName(id), via, free: notes.some((n) => n.trim() === 'Free'), latest: id.includes('~') || name !== bare.trim() };
+    // A list that names a model by its id alone (Codex's `gpt-5.6-luna`) is read as a name too, a note after it kept.
+    const own = id.split('/').at(-1) ?? id;
+    const named = name.toLowerCase().startsWith(own.toLowerCase()) && /^(\s|$)/.test(name.slice(own.length)) ? idName(id) + name.slice(own.length) : name;
+    return { name: named || idName(id), via, free: notes.some((n) => n.trim() === 'Free'), latest: id.includes('~') || name !== bare.trim() };
 }
 
 const ACRONYMS = new Set(['gpt', 'glm', 'oss', 'vl', 'ai', 'llm']);

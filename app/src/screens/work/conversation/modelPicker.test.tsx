@@ -121,8 +121,12 @@ it('names a model its harness lists by an alias as the list does, in the box and
     expect(current.textContent).toContain('Claude Opus 5.5');
 });
 
-it('reads a model its harness has never named as its name, not its id', async () => {
-    const { idName } = await import('../newAgent/catalog');
+it('reads a model its harness has never named, or names by its id alone, as its name', async () => {
+    const { idName, modelName } = await import('../newAgent/catalog');
+    // Codex's list labels each model with its id.
+    expect(modelName('gpt-5.6-luna', 'gpt-5.6-luna')).toBe('GPT-5.6 Luna');
+    expect(modelName('gpt-5-codex (ChatGPT API key only)', 'gpt-5-codex')).toBe('GPT-5 Codex (ChatGPT API key only)');
+    expect(modelName('[OpenRouter] OpenAI: GPT-6 Luna', 'openrouter/openai/gpt-6-luna')).toBe('GPT-6 Luna');
     expect(idName('claude-opus-5-5')).toBe('Claude Opus 5.5');
     expect(idName('anthropic/claude-sonnet-4-5-20250929')).toBe('Claude Sonnet 4.5');
     expect(idName('gpt-5.5')).toBe('GPT-5.5');
