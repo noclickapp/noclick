@@ -47,6 +47,8 @@ export interface WorkPlace {
     trigger: string | null;
     /** The agent's machine page, in its session's place. */
     machine: boolean;
+    /** In an agent's session: the subagent whose own screen is open over it. */
+    subagent: string | null;
     /** The Resources view's own place (a kind, an item), its to read and write. */
     res: string | null;
     item: string | null;
@@ -67,6 +69,7 @@ export function readPlace(params: URLSearchParams): WorkPlace {
         profileTab: (PROFILE_TABS as readonly string[]).includes(params.get('ptab') ?? '') ? (params.get('ptab') as ProfileTab) : null,
         trigger: params.get('trigger'),
         machine: params.get('machine') === '1',
+        subagent: params.get('sub'),
         res: params.get('res'),
         item: params.get('item'),
     };
@@ -91,6 +94,7 @@ export function withPlace(params: URLSearchParams, change: PlaceChange): URLSear
     write('ptab', change.profileTab);
     write('trigger', change.trigger);
     write('machine', change.machine === undefined ? undefined : change.machine ? '1' : null);
+    write('sub', change.subagent);
     write('res', change.res);
     write('item', change.item);
     return next;

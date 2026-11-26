@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '@/ui/tooltip';
-import { BesideCard, BesideRail, type BesideAsk } from './Beside';
+import { BesideCard, BesideRail, HelpersLine, type BesideAsk } from './Beside';
 import { agentItem, type BesideItem } from './besideItems';
 import type { Operation } from 'noclick';
 
@@ -84,4 +84,34 @@ describe('Work’s Beside', () => {
         const card = await screen.findByRole('tooltip');
         expect(card.textContent).toContain('WorkstreamSpring launch');
     });
+
+    it('on a phone, leads with what needs you and what failed, runs the busiest four, folds the rest, and finds one by name', () => {
+        const many = [item('wait', 'needs'), item('fail', 'failed'), ...Array.from({ length: 12 }, (_, i) => ({ ...item(`run${i}`, 'running'), activeAt: Date.now() - i * 1000 })), item('d1', 'done'), item('d2', 'done')];
+        draw(<BesideRail items={many} facts={null} face={{ id: 'main', kind: 'agent', name: 'Main' }} look={() => ({ harness: null, runsOn: null })} selected={null} onSelect={() => undefined} stoppable={() => false} onStop={() => undefined} fresh={new Set()} phone />);
+        const rail = screen.getByTestId('beside-rail');
+        expect([...rail.querySelectorAll('[data-group]')].map((g) => g.getAttribute('data-group'))).toEqual(['needs', 'failed', 'running', 'done']);
+        const running = rail.querySelector('[data-group="running"]')!;
+        // The most recently active four, the rest behind a fold.
+        expect([...running.querySelectorAll('[data-beside]')].map((r) => r.getAttribute('data-beside'))).toEqual(['run0', 'run1', 'run2', 'run3']);
+        fireEvent.click(within(rail).getByRole('button', { name: /8 more running/ }));
+        expect(running.querySelectorAll('[data-beside]')).toHaveLength(12);
+        // Sixteen is a list to search: one by its task's name, the groups set aside meanwhile.
+        fireEvent.change(within(rail).getByPlaceholderText('Find a subagent'), { target: { value: 'task run11' } });
+        expect([...rail.querySelectorAll('[data-beside]')].map((r) => r.getAttribute('data-beside'))).toEqual(['run11']);
+    });
+
+    it('says on one line under the working line what needs you first, and opens them on a tap', () => {
+        const opened = vi.fn();
+        const { unmount } = draw(<HelpersLine items={[...Array.from({ length: 12 }, (_, i) => item(`run${i}`, 'running')), item('fail', 'failed'), item('wait', 'needs')]} harness={null} onOpen={opened} />);
+        const line = screen.getByTestId('helpers-line');
+        expect(line.textContent).toBe('14 subagents · 1 needs you · 1 failed');
+        // Its marks lead with what needs you, then what failed.
+        expect([...line.querySelectorAll(':scope > span:first-child > span > [data-ring]')].map((m) => m.getAttribute('data-ring'))).toEqual(['needs', 'failed', 'running']);
+        fireEvent.click(line);
+        expect(opened).toHaveBeenCalledOnce();
+        unmount();
+        draw(<HelpersLine items={[item('a', 'running'), item('b', 'running'), item('c', 'running'), item('d', 'done')]} harness={null} onOpen={opened} />);
+        expect(screen.getByTestId('helpers-line').textContent).toBe('3 subagents running · 1 done');
+    });
 });
+

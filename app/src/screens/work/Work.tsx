@@ -400,7 +400,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             openChannel: (id, options = {}) => {
                 const target = open.find((c) => c.id === id);
                 go(
-                    { view: target?.kind === 'dm' ? 'dms' : 'home', space: target ? spaceIdOf(target, personalId) : null, channel: id, thread: options.thread ?? null, machine: false, agent: null, panel: place.panel === 'profile' ? null : undefined },
+                    { view: target?.kind === 'dm' ? 'dms' : 'home', space: target ? spaceIdOf(target, personalId) : null, channel: id, thread: options.thread ?? null, machine: false, subagent: null, agent: null, panel: place.panel === 'profile' ? null : undefined },
                     { replace: options.replace }
                 );
             },
@@ -411,18 +411,20 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             },
             openAgent: (agentId) => {
                 prefetchConversation(client, agentId);
-                go({ view: 'agents', agent: agentId, machine: false, thread: null, panel: place.panel === 'profile' ? null : undefined });
+                go({ view: 'agents', agent: agentId, machine: false, subagent: null, thread: null, panel: place.panel === 'profile' ? null : undefined });
             },
             openProfile: (agentId, at) => go({ agent: agentId, panel: 'profile', thread: null, profileTab: at?.tab ?? null, trigger: at?.trigger ?? null }),
             // The machine page opens in the main pane's place, in whichever view asked (an agent's session, Resources).
             openMachine: (agentId) => go({ agent: agentId, machine: true, thread: null }),
             newAgent: () => go({ view: 'agents', agent: NEW_AGENT, machine: false }),
-            openHome: () => go({ view: 'home', channel: null, thread: null, agent: null, machine: false, panel: null }),
+            openHome: () => go({ view: 'home', channel: null, thread: null, agent: null, machine: false, subagent: null, panel: null }),
             openMembers: (tab = 'people') => go({ panel: tab, thread: null }),
             closePanel: () => go({ panel: null, thread: null, profileTab: null, trigger: null }),
+            subagent: place.subagent,
+            openSubagent: (id, options) => go({ subagent: id }, { replace: options?.replace }),
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps -- startDm reads the space it was made for
-        [open, dmChannels, go, place.panel, space.id, client, personalId]
+        [open, dmChannels, go, place.panel, place.subagent, space.id, client, personalId]
     );
 
     // A space made here opens on its NoClick channel. If that fails the space stays as it is, and the error offers to try again.
@@ -731,7 +733,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
         // The bar's way back over what doesn't draw its own (a channel, a thread and the machine page do).
         const shownAgent = (agents.data ?? []).find((a) => a.id === place.agent);
         const agentName = shownAgent ? nameOf(shownAgent, noclicks) : 'Agent';
-        const phoneBack = !screen ? null : place.thread || place.machine || (!panel && place.view !== 'agents' && place.view !== 'resources') ? null : panel ? (
+        const phoneBack = !screen ? null : place.thread || place.machine || (place.subagent && !panel) || (!panel && place.view !== 'agents' && place.view !== 'resources') ? null : panel ? (
             <PhoneBarBack label="Back" title={<span className="truncate">{place.panel === 'profile' ? agentName : place.panel === 'questions' ? ASKED_TITLE : `Members of ${space.name}`}</span>} onBack={() => go({ panel: null })} />
         ) : place.view === 'resources' ? (
             <PhoneBarBack label={place.item && isSpaceKind(place.res) ? kindOf(place.res).label : 'Resources'} onBack={() => go(place.item ? { item: null } : { res: null })} />

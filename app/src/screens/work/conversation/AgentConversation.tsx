@@ -44,7 +44,7 @@ import { changedFiles, flatSteps, isSubagentCall, liveTurn, pendingRequests, ste
 import { useConversation } from './useConversation';
 import { STOP_FIRST, useSessionControls } from './sessionControls';
 import { cameByOf, repliedOn, SourceChip, viaBubble } from './sources';
-import { BesideCard, BesideLog, BesidePill, BesideRail, CARD_MIN_PANE, cardReserve, ConversationFacts, MIN_COLUMN, RAIL_ROOM, RailPanel, RailSheet, StopBeside, useFresh, type RowLook, type SaidTo } from './Beside';
+import { BesideCard, BesideLog, BesidePill, HelpersLine, BesideRail, CARD_MIN_PANE, cardReserve, ConversationFacts, MIN_COLUMN, RAIL_ROOM, RailPanel, RailSheet, StopBeside, useFresh, type RowLook, type SaidTo } from './Beside';
 import { SubagentBox } from './SubagentBox';
 import { isLive, type BesideItem } from './besideItems';
 import { BrowserMotion } from '../browser/pieces';
@@ -148,7 +148,10 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
     // What works beside it: the card (or its pill), the rail it grows into, the subagent whose log the pane shows.
     const pane = useWidth();
     const [rail, setRail] = useState(false);
-    const [picked, setPicked] = useState<string | null>(null);
+    // Kept where you are when the host keeps it (Work's URL: a back swipe goes home), else here.
+    const [ownPick, setOwnPick] = useState<string | null>(null);
+    const picked = nav.openSubagent ? (nav.subagent ?? null) : ownPick;
+    const setPicked = (id: string | null) => (nav.openSubagent ? nav.openSubagent(id) : setOwnPick(id));
     const [stopping, setStopping] = useState<BesideItem | null>(null);
 
     useEffect(() => {
@@ -161,7 +164,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
         setBeside(null);
         setDrawer(null);
         setRail(false);
-        setPicked(null);
+        setOwnPick(null);
     }, [agentId, conversation]);
 
     const live = liveTurn(thread);
@@ -339,6 +342,10 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
     const cardFits = !inPhone && pane.width >= CARD_MIN_PANE;
     const besideShown = c.ready && besideItems.length > 0;
     const pickedItem = besideItems.find((b) => b.id === picked && b.kind === 'subagent') ?? null;
+    // A subagent the address names that this session doesn't have (an old link) leaves the address.
+    useEffect(() => {
+        if (c.ready && nav.subagent && !pickedItem) nav.openSubagent?.(null, { replace: true });
+    }, [c.ready, nav.subagent, pickedItem]); // eslint-disable-line react-hooks/exhaustive-deps
     const railOpen = rail && besideShown && !inPhone;
     const sheetOpen = rail && besideShown && inPhone;
     const railBeside = railOpen && pane.width - RAIL_ROOM >= MIN_COLUMN;
@@ -410,6 +417,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
                         onAnswer={(r, d) => void c.answer(r, d)}
                         onBack={() => setPicked(null)}
                         onStop={stoppable(pickedItem) ? () => setStopping(pickedItem) : undefined}
+                        phone={inPhone}
                     />
                 ) : (
                     <>
@@ -534,6 +542,7 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
                                         <ThreadCards thread={thread} follow={c.followJobs}>
                                             {rows}
                                         </ThreadCards>
+                                        {inPhone && besideShown && (live || besideItems.some(isLive)) && <HelpersLine items={besideItems} harness={harness} onOpen={() => setRail(true)} />}
                                     </>
                                 )}
                             </div>
@@ -565,7 +574,8 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
                         commands={c.commands}
                         queued={c.queued}
                         requests={requests}
-                        subagents={subagentsOf(thread)}
+                        // On a phone they're the helpers line's, under the working line.
+                        subagents={inPhone ? [] : subagentsOf(thread)}
                         onShowSubagents={showSubagents}
                         mentionables={mentionables}
                         controls={c.ready && renamable(agent) ? undefined : KEPT_NAME_CONTROLS}

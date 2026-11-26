@@ -22,13 +22,15 @@ import { ShellDialog } from '@/ui/ShellDialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip';
 import { cn } from '@/ui/utils';
+import { PhoneBarBack } from '@/ui/phoneBar';
 import { BesideBrowserRail, BesideBrowserTile } from '../browser/pieces';
 import { AgentRing } from '../agents/AgentRing';
 import { HarnessMark, harnessLabel } from '../agents/harness';
 import type { RingStatus } from '../agents/states';
 import { useConversationSandbox, useMachine } from '../profile/reads';
 import { DiffStat, diffStat, Elapsed, StepList } from './Activity';
-import { clockOf, grouped, isLive, type BesideItem } from './besideItems';
+import { clockOf, grouped, isLive, type BesideItem, type BesideStatus } from './besideItems';
+import { FindField } from '../ui';
 import { ApprovalRow, PlanCard, QuestionSummary, UserRow } from './Rows';
 import type { UserEntry } from '@/lib/agentThread/thread';
 
@@ -477,12 +479,26 @@ export interface BesideRailProps {
     fresh: ReadonlySet<string>;
 }
 
-/** The rail: its facts, main, then Needs you, Running and Done today, each head sticking as it scrolls. */
+/** How many run in full on a phone's sheet before the rest fold, and from how many it can be searched. */
+const BUSIEST = 4;
+const SEARCH_FROM = 9;
+
+/** The rail: its facts, main, then Needs you, Running and Done today, each head sticking as it scrolls. On a phone what
+ *  failed leads after what needs you, only the busiest few running show (the rest fold), and a long list is searchable. */
 export function BesideRail({ items, asks = [], facts, face, look, selected, onSelect, stoppable, onStop, onClose, phone = false, fresh, title = 'Subagents' }: BesideRailProps) {
     const [doneOpen, setDoneOpen] = useState(false);
+    const [moreOpen, setMoreOpen] = useState(false);
+    const [query, setQuery] = useState('');
     // The browser heads the rail as its own block, never a row.
     const browser = items.some((b) => b.kind === 'browser');
-    const { needs, running, done } = grouped(items.filter((b) => b.kind !== 'browser'));
+    const listed = items.filter((b) => b.kind !== 'browser');
+    const { needs, running, done: ended } = grouped(listed);
+    const failed = phone ? ended.filter((b) => b.status === 'failed') : [];
+    const done = phone ? ended.filter((b) => b.status !== 'failed') : ended;
+    const busiest = phone && !moreOpen ? running.slice(0, BUSIEST) : running;
+    const searchable = phone && listed.length >= SEARCH_FROM;
+    const words = query.trim().toLowerCase();
+    const found = words ? listed.filter((b) => `${b.title} ${b.line ?? ''}`.toLowerCase().includes(words)) : null;
     const live = needs.length + running.length + asks.length;
     const stickyBg = 'bg-composer';
     const head = (label: string, n: number, tone?: 'needs') => (
@@ -506,7 +522,16 @@ export function BesideRail({ items, asks = [], facts, face, look, selected, onSe
                     )}
                 </div>
             )}
+            {searchable && (
+                <div className="shrink-0 px-2 pb-1">
+                    <FindField value={query} onChange={setQuery} placeholder="Find a subagent" />
+                </div>
+            )}
             <div className="min-h-0 flex-1 overflow-y-auto px-1.5 pb-3 scrollbar-subtle">
+                {found ? (
+                    found.length ? found.map(row) : <p className="px-2.5 pt-3 text-[13px] text-muted-foreground">None called “{query.trim()}”</p>
+                ) : (
+                <>
                 {asks.length > 0 && <NeedsGroup asks={asks} phone={phone} sticky={stickyBg} onDone={onClose} />}
                 <div className="px-1 pb-1">
                     {facts}
@@ -532,10 +557,22 @@ export function BesideRail({ items, asks = [], facts, face, look, selected, onSe
                         {needs.map(row)}
                     </section>
                 )}
+                {failed.length > 0 && (
+                    <section data-group="failed">
+                        {head('Failed', failed.length)}
+                        {failed.map(row)}
+                    </section>
+                )}
                 {running.length > 0 && (
                     <section data-group="running">
                         {head('Running', running.length)}
-                        {running.map(row)}
+                        {busiest.map(row)}
+                        {running.length > busiest.length && (
+                            <button type="button" onClick={() => setMoreOpen(true)} className="flex min-h-[48px] w-full items-center gap-2.5 rounded-[12px] px-2.5 text-left text-[13px] text-muted-foreground transition-colors [@media(hover:none)]:active:bg-foreground/[0.06]">
+                                {running.length - busiest.length} more running
+                                <ChevronRight className="ml-auto h-3.5 w-3.5" strokeWidth={2.25} />
+                            </button>
+                        )}
                     </section>
                 )}
                 {done.length > 0 && (
@@ -547,6 +584,8 @@ export function BesideRail({ items, asks = [], facts, face, look, selected, onSe
                         </button>
                         {(doneOpen || settling.length > 0) && <div className="opacity-80">{(doneOpen ? done : settling).map(row)}</div>}
                     </section>
+                )}
+                </>
                 )}
             </div>
         </div>
@@ -571,6 +610,7 @@ export function BesideLog({
     onAnswer,
     onBack,
     onStop,
+    phone = false,
 }: {
     item: BesideItem;
     face: ChannelMember;
@@ -580,12 +620,33 @@ export function BesideLog({
     onAnswer?: (request: HarnessRequest, decision: RequestDecision) => void;
     onBack: () => void;
     onStop?: () => void;
+    /** On a phone: a screen of its own, the bar's back going to main. */
+    phone?: boolean;
 }) {
     const call = item.call!;
     const prompt = typeof call.arguments.prompt === 'string' ? call.arguments.prompt : null;
     const words = call.output.trim();
+    const where = isLive(item) ? <Elapsed from={item.startedAt} /> : `${STATUS_WORD[item.status]} · ${tookOf(item)}`;
     return (
         <>
+            {phone ? (
+                <header className="shrink-0 px-4 pb-2 pt-1" data-testid="beside-log">
+                    <PhoneBarBack label={face.name || 'main'} title="Subagent" onBack={onBack} />
+                    <p className="text-[16px] font-semibold leading-snug [overflow-wrap:anywhere]">{item.title}</p>
+                    <div className="mt-1.5 flex min-h-10 items-center gap-2 text-[13px] tabular-nums text-muted-foreground">
+                        <RingMark item={item} harness={harness} size={20} />
+                        <span className="min-w-0 truncate">
+                            {where}
+                            {call.children.length > 0 && ` · ${call.children.length} step${call.children.length === 1 ? '' : 's'}`}
+                        </span>
+                        {onStop && (
+                            <button type="button" onClick={onStop} className="ml-auto inline-flex h-10 shrink-0 items-center rounded-full px-3.5 text-[14px] font-medium text-foreground [@media(hover:none)]:active:bg-foreground/[0.08]">
+                                Stop
+                            </button>
+                        )}
+                    </div>
+                </header>
+            ) : (
             <header className="flex h-12 shrink-0 items-center gap-2 pl-3 pr-3" data-testid="beside-log">
                 <button type="button" aria-label="Back to main" onClick={onBack} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.05] hover:text-foreground">
                     <ArrowLeft className="h-4 w-4" strokeWidth={2} />
@@ -602,7 +663,7 @@ export function BesideLog({
                 </nav>
                 <span className="ml-auto flex shrink-0 items-center gap-2 text-[12.5px] tabular-nums text-muted-foreground">
                     {item.status === 'failed' ? <CircleAlert className="h-3.5 w-3.5 text-red-500 dark:text-red-300" strokeWidth={2} /> : null}
-                    <span>{isLive(item) ? <Elapsed from={item.startedAt} /> : `${STATUS_WORD[item.status]} · ${tookOf(item)}`}</span>
+                    <span>{where}</span>
                     {onStop && (
                         <button type="button" onClick={onStop} aria-label="Stop the turn" className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] text-foreground/85 transition-colors hover:bg-foreground/[0.05] hover:text-foreground max-sm:px-2.5">
                             <Square className="h-3 w-3 fill-current sm:hidden" strokeWidth={0} />
@@ -611,6 +672,7 @@ export function BesideLog({
                     )}
                 </span>
             </header>
+            )}
             <div className="min-h-0 flex-1 overflow-y-auto scrollbar-subtle">
                 <div className="mx-auto flex min-h-full w-full max-w-[46rem] flex-col justify-end gap-3 px-5 pb-4 pt-8">
                     <p className="text-[12.5px] leading-relaxed text-muted-foreground">
@@ -695,4 +757,43 @@ export function useFresh(items: readonly BesideItem[], hold = 2600): ReadonlySet
     }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
     useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
     return fresh;
+}
+
+/** What needs you first, then what failed, then what runs: the order its marks lead in. */
+const URGENCY: Record<BesideStatus, number> = { needs: 0, failed: 1, running: 2, done: 3, stopped: 4 };
+
+/** On a phone, under the working line: its helpers as one line, what needs you first ("50 subagents · 1 needs you ·
+ *  1 failed", "3 subagents running · 1 done"); a tap opens them as a sheet. */
+export function HelpersLine({ items, harness, onOpen }: { items: readonly BesideItem[]; harness: HarnessName | null; onOpen: () => void }) {
+    const shown = items.filter((b) => b.kind === 'subagent' || b.kind === 'agent');
+    if (!shown.length) return null;
+    const count = (status: BesideStatus) => shown.filter((b) => b.status === status).length;
+    const [needs, failed, running] = [count('needs'), count('failed'), count('running')];
+    const done = shown.length - needs - failed - running;
+    const noun = (n: number) => `${n} subagent${n === 1 ? '' : 's'}`;
+    const alarm = needs + failed > 0;
+    const lead = !alarm && running ? `${noun(running)} running` : noun(shown.length);
+    const rest = (alarm ? [needs && `${needs} needs you`, failed && `${failed} failed`] : [done && `${done} done`]).filter(Boolean);
+    const marks = [...shown].sort((a, b) => URGENCY[a.status] - URGENCY[b.status]).slice(0, 3);
+    return (
+        <button
+            type="button"
+            onClick={onOpen}
+            data-testid="helpers-line"
+            className="-mx-2 mt-0.5 flex w-[calc(100%+1rem)] items-center gap-2.5 rounded-[14px] px-2 py-2 text-left text-sm transition-colors [-webkit-touch-callout:none] [@media(hover:none)]:active:bg-foreground/[0.06] [@media(hover:hover)]:hover:bg-foreground/[0.04]"
+        >
+            <span className="flex shrink-0 items-center">
+                {marks.map((b, i) => (
+                    <span key={b.id} className={cn('rounded-full ring-2 ring-background', i > 0 && '-ml-2')}>
+                        <RingMark item={b} harness={harness} size={20} />
+                    </span>
+                ))}
+            </span>
+            <span className="min-w-0 truncate">
+                <span className="text-foreground">{lead}</span>
+                {rest.length > 0 && <span className="text-muted-foreground"> · {rest.join(' · ')}</span>}
+            </span>
+            <ChevronRight className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={2} />
+        </button>
+    );
 }

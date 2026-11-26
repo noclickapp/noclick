@@ -23,6 +23,10 @@ export interface WorkNav {
     openMembers(tab?: Exclude<WorkPanel, 'profile'>): void;
     /** Close what's beside the main pane. */
     closePanel(): void;
+    /** The subagent whose own screen is open over the session, kept where you are (a back swipe goes home), by a host
+     *  that keeps it there; without one, the session keeps it itself. */
+    subagent?: string | null;
+    openSubagent?(id: string | null, options?: { replace?: boolean }): void;
 }
 
 export const WorkNavContext = createContext<WorkNav | null>(null);
