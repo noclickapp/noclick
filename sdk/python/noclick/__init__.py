@@ -250,6 +250,7 @@ from .card import (
     CardDispute,
     CardFunding,
     CardMerchantCategory,
+    CardOnboardingSession,
     CardProgram,
     CardTransaction,
 )
@@ -986,6 +987,7 @@ __all__ = [
     "CardBankTransfer",
     "CardDispute",
     "CardProgram",
+    "CardOnboardingSession",
     "CardMerchantCategory",
     "Project",
     "Deployment",

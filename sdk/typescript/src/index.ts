@@ -358,6 +358,7 @@ export type {
   CardFunding,
   CardInterval,
   CardMerchantCategory,
+  CardOnboardingSession,
   CardProgram,
   CardProgramStatus,
   CardStatus,

@@ -156,6 +156,13 @@ test("a settled charge is disputed with its reason, and Card.program and merchan
   assert.deepEqual([state.status, state.companyName], ["active", "Acme"]);
   const [software] = await nc.Card.merchantCategories();
   assert.deepEqual([software.name, software.mccs], ["software", ["5734"]]);
+  const opened = api.on("POST", "/v1/cards/program/session", json({
+    object: "card_onboarding_session", client_secret: "secret_fixture", publishable_key: "pk_fixture", account: "acct_fixture",
+    expires_at: null, program: { object: "card_program", status: "not_started", requirements_due: [] },
+  }));
+  const session = await nc.asUser("acme", () => nc.Card.onboardingSession());
+  assert.equal(opened.last.headers.get("NoClick-User"), null);
+  assert.deepEqual([session.clientSecret, session.account, session.program.status], ["secret_fixture", "acct_fixture", "not_started"]);
 });
 
 test("update clears with null and leaves out the rest; freeze, unfreeze and close", async () => {

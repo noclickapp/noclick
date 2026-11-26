@@ -162,6 +162,19 @@ export interface CardProgram {
   raw: JsonObject;
 }
 
+/** A session for the card issuer's embedded onboarding form (`Card.onboardingSession()`). */
+export interface CardOnboardingSession {
+  /** What the issuer's embedded form opens with. */
+  clientSecret: string;
+  /** The issuer's publishable key the form loads with. */
+  publishableKey: string;
+  /** The company's account at the issuer. */
+  account: string;
+  expiresAt: Date | null;
+  program: CardProgram;
+  raw: JsonObject;
+}
+
 /** A name `merchants` takes, and the merchant category codes it covers. */
 export interface CardMerchantCategory {
   name: string;
@@ -377,14 +390,22 @@ export class Card extends ApiObject {
 
   /** Where your company's card issuing stands. It's applied for once, in the console. */
   static async program(options: { client?: NoClick } = {}): Promise<CardProgram> {
-    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/cards/program", { user: null }));
+    return toProgram(asObject(await resolveClient(options.client).request("GET", "/v1/cards/program", { user: null })));
+  }
+
+  /**
+   * Open your company's card program on first use and start a session of the card issuer's embedded onboarding
+   * form, where it applies. The signed-in owner's alone (a key gets `PermissionDenied`); `Conflict` once the issuer
+   * rejected the company, `NotAvailable` where cards aren't enabled.
+   */
+  static async onboardingSession(options: { client?: NoClick } = {}): Promise<CardOnboardingSession> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/cards/program/session", { user: null }));
     return {
-      status: (str(raw.status) ?? "not_started") as CardProgramStatus,
-      requirementsDue: strings(raw.requirements_due),
-      companyName: str(raw.company_name),
-      country: str(raw.country),
-      currency: str(raw.currency),
-      onboardingUrl: str(raw.onboarding_url),
+      clientSecret: str(raw.client_secret) ?? "",
+      publishableKey: str(raw.publishable_key) ?? "",
+      account: str(raw.account) ?? "",
+      expiresAt: parseTime(raw.expires_at),
+      program: toProgram(asObject(raw.program)),
       raw,
     };
   }
@@ -607,4 +628,16 @@ export class Card extends ApiObject {
   async close(): Promise<this> {
     return await this.act("close");
   }
+}
+
+function toProgram(raw: JsonObject): CardProgram {
+  return {
+    status: (str(raw.status) ?? "not_started") as CardProgramStatus,
+    requirementsDue: strings(raw.requirements_due),
+    companyName: str(raw.company_name),
+    country: str(raw.country),
+    currency: str(raw.currency),
+    onboardingUrl: str(raw.onboarding_url),
+    raw,
+  };
 }

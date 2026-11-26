@@ -165,6 +165,15 @@ def test_program_and_merchant_categories_are_the_accounts(api, client):
     assert "NoClick-User" not in program.calls.last.request.headers
     assert (state.status, state.requirements_due, state.country) == ("pending_verification", ["company.tax_id"], "US")
     assert (software.name, software.mccs) == ("software", ["5734"])
+    opened = api.post("/v1/cards/program/session").respond(json={
+        "object": "card_onboarding_session", "client_secret": "secret_fixture", "publishable_key": "pk_fixture",
+        "account": "acct_fixture", "expires_at": None,
+        "program": {"object": "card_program", "status": "not_started", "requirements_due": []}})
+    with nc.as_user("acme"):
+        session = nc.Card.onboarding_session()
+    assert "NoClick-User" not in opened.calls.last.request.headers
+    assert (session.client_secret, session.account, session.program.status) == (
+        "secret_fixture", "acct_fixture", "not_started")
 
 
 def test_update_clears_with_none_and_leaves_the_rest(api, client):

@@ -5,16 +5,25 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import ts from 'typescript';
 
-/** Why a file may keep its hits. `pending` is work a later change moves onto the SDK, naming that change. */
+/** Why a file may keep its hits. Every kind stays: what will move onto the SDK moves, it isn't listed. */
 export type Kind =
+    /** A link NoClick signed (a file's download, an upload's put): the link is the capability, it's no API call. */
     | 'signed-link'
+    /** The app's own server forwarding the browser's SDK calls to NoClick with the key it holds. */
     | 'proxy'
+    /** Signing someone in: the identity provider's own flow, before there's a session or key to call with. */
     | 'auth'
+    /** Another company's service (payments, an app store, a map), reached as that service asks. */
     | 'third-party'
+    /** A static file the app serves itself (a search index, an icon map, a bundle): no NoClick API. */
     | 'same-origin-asset'
+    /** What the browser reports about itself (errors, timings), to the telemetry endpoint. */
     | 'telemetry'
+    /** Development tooling that never ships to a person. */
     | 'dev-only'
+    /** NoClick's own staff pages, on internal routes that are out of the API and its SDKs by design. */
     | 'staff'
+    /** A design lab's stand-ins, answering the page's fetches from its scene so it reaches no network. */
     | 'lab'
     /** A keyless page its link opens, on that link's own routes: the link is the capability, so there's no key to
      *  hold, and what it does is NoClick's own for the link's maker (a card's reveal, a signature, a payment). */
@@ -22,13 +31,16 @@ export type Kind =
     /** A public page every visitor gets from the edge cache: it reads NoClick's public catalog (and runs its anonymous
      *  test runs) with no key and no account, so nothing is the visitor's to hold. */
     | 'marketing-page'
-    | 'pending';
+    /** A public read every page makes before anyone signs in (what the instance offers, its model catalog): nothing
+     *  in it is an account's, and there's no key yet. */
+    | 'public-read'
+    /** A surface for something older than the API that's being retired, never extended (the keys made in Settings
+     *  before the developer console): it goes with what it serves. */
+    | 'retiring';
 
 export interface Allowed {
     count: number;
     why: Kind;
-    /** The change that moves a `pending` file's hits (2 to 4, numbered in the host's plan of the work). */
-    chunk?: number;
 }
 
 export type Allowlist = Record<string, Allowed>;
@@ -121,7 +133,7 @@ export function scan(modules: Record<string, string>): Record<string, string[]> 
 }
 
 /** What's wrong with `allow` against what `scan` found: a file with hits it doesn't list, a count that went up, a count
- *  that went down without the allowlist shrinking with it, an entry for a file with none, a `pending` naming no change. */
+ *  that went down without the allowlist shrinking with it, an entry for a file with none. */
 export function judge(found: Record<string, string[]>, allow: Allowlist): string[] {
     const wrong: string[] = [];
     for (const [file, hits] of Object.entries(found)) {
@@ -132,8 +144,6 @@ export function judge(found: Record<string, string[]>, allow: Allowlist): string
     }
     for (const [file, allowed] of Object.entries(allow)) {
         if (!found[file]) wrong.push(`${file}: nothing left to allow: take it out of the allowlist`);
-        if (allowed.why === 'pending' && !(allowed.chunk && allowed.chunk >= 2 && allowed.chunk <= 4)) wrong.push(`${file}: pending names no change (2 to 4)`);
-        if (allowed.why !== 'pending' && allowed.chunk !== undefined) wrong.push(`${file}: only pending work names a change`);
     }
     return wrong;
 }

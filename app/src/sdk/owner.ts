@@ -4,7 +4,7 @@
 //
 // `GET /v1/account` answers the signed-in owner and one of the account's own secret keys acting for the account. A key
 // reads a closed list of fields, the ones not marked "the owner's view only" below.
-import { Account, ConnectedApp, Key, Machine } from 'noclick';
+import { Account, Card, ConnectedApp, Key, Machine } from 'noclick';
 import type { CardProgramStatus, NoClick, Page } from 'noclick';
 
 export interface AccountCounts {
@@ -379,8 +379,8 @@ export interface CardOnboardingSession {
  * Opens the company's card program on first use (a key gets 403). 409 `conflict` once the issuer
  * rejected the company, `not_available` where cards aren't enabled.
  */
-export function createCardOnboardingSession(client: NoClick): Promise<CardOnboardingSession> {
-    return client.request<CardOnboardingSession>('POST', '/v1/cards/program/session', account);
+export async function createCardOnboardingSession(client: NoClick): Promise<CardOnboardingSession> {
+    return (await Card.onboardingSession({ client })).raw as unknown as CardOnboardingSession;
 }
 
 

@@ -176,10 +176,12 @@ function threadWork(turns: readonly ThreadTurn[], jobs: CoordinatorJobs): { oper
 
 /** An app's live session and its newest edits. */
 async function readLive(client: NoClick, projectId: string, signal: AbortSignal): Promise<LiveRead> {
-    const live = await client.request<LiveState>('GET', `/v1/projects/${projectId}/live`, { ...ACCOUNT, signal });
+    const project = Project.fromId(projectId, { client, ...ACCOUNT });
+    const live = (await project.live.status()).raw as unknown as LiveState;
+    signal.throwIfAborted();
     const last = live.session?.edits.last_seq ?? 0;
     if (!live.session || !last) return { session: live.session, edits: [] };
-    const edits = await Project.fromId(projectId, { client, ...ACCOUNT }).live.edits({
+    const edits = await project.live.edits({
         sessionId: live.session.id,
         after: Math.max(0, last - EDITS_SHOWN),
         limit: EDITS_SHOWN,

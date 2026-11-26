@@ -42,14 +42,14 @@ describe('the scanner', () => {
         expect(hitsIn('src/screens/page.tsx', "const url = '/v1/account';")).toEqual([]);
     });
 
-    it('fails a new file, a count that moved either way, a stale entry and a pending naming no change', () => {
+    it('fails a new file, a count that moved either way and a stale entry', () => {
         expect(
             judge(
                 { 'a.ts': ['network: fetch'], 'b.ts': ['network: fetch', 'network: fetch'], 'c.ts': ['network: fetch'] },
                 {
                     'b.ts': { count: 1, why: 'third-party' },
-                    'c.ts': { count: 2, why: 'pending', chunk: 3 },
-                    'd.ts': { count: 1, why: 'pending' },
+                    'c.ts': { count: 2, why: 'link-page' },
+                    'd.ts': { count: 1, why: 'staff' },
                 },
             ),
         ).toEqual([
@@ -57,7 +57,6 @@ describe('the scanner', () => {
             'b.ts: 2 where 1 are allowed (network: fetch)',
             'c.ts: down to 1 from 2: lower its count in the allowlist',
             'd.ts: nothing left to allow: take it out of the allowlist',
-            'd.ts: pending names no change (2 to 4)',
         ]);
     });
 });

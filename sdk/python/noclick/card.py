@@ -20,6 +20,7 @@ your code or a model.
 from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
 from ._client import Client, resolve_client
@@ -205,6 +206,27 @@ class CardProgram:
         raw = raw if isinstance(raw, dict) else {}
         return cls(str(raw.get("status") or ""), list(raw.get("requirements_due") or []), raw.get("company_name"),
                    raw.get("country"), raw.get("currency"), raw.get("onboarding_url"), raw)
+
+
+@designed
+@dataclass(frozen=True)
+class CardOnboardingSession:
+    """A session for the card issuer's embedded onboarding form (``Card.onboarding_session()``): ``client_secret``
+    and ``publishable_key`` open it on the company's ``account`` at the issuer."""
+
+    client_secret: str
+    publishable_key: str
+    account: str
+    expires_at: Optional[datetime]
+    program: CardProgram
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Any) -> "CardOnboardingSession":
+        raw = raw if isinstance(raw, dict) else {}
+        return cls(str(raw.get("client_secret") or ""), str(raw.get("publishable_key") or ""),
+                   str(raw.get("account") or ""), parse_time(raw.get("expires_at")),
+                   CardProgram._from(raw.get("program")), raw)
 
 
 @designed
@@ -532,6 +554,25 @@ class Card(_Object):
                 print("Apply for cards at", program.onboarding_url, program.requirements_due)
         """
         return CardProgram._from(await resolve_client(client).request("GET", "/v1/cards/program", user=None))
+
+    @synced
+    @classmethod
+    async def onboarding_session(cls, *, client: Optional[Client] = None) -> CardOnboardingSession:
+        """Open your company's card program on first use and start a session of the card issuer's embedded
+        onboarding form, where it applies. The signed-in owner's alone (a key gets ``PermissionDenied``);
+        ``Conflict`` once the issuer rejected the company, ``NotAvailable`` where cards aren't enabled.
+
+        Returns:
+            The form's ``client_secret`` and ``publishable_key``, the company's ``account`` at the issuer, when the
+            session ``expires_at``, and the ``program`` as it stands.
+
+        Usage::
+
+            session = noclick.Card.onboarding_session()
+            print(session.account, session.program.status)
+        """
+        return CardOnboardingSession._from(
+            await resolve_client(client).request("POST", "/v1/cards/program/session", user=None))
 
     @synced
     @classmethod

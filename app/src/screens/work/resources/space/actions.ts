@@ -7,7 +7,7 @@
 import { toast } from 'sonner';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { invalidateV1 } from '@/sdk/useV1';
-import { Agent, Channel, TrashItem, Workflow, Workspace, previewDelete as previewDeletion, type NoClick } from 'noclick';
+import { Agent, Bucket, Channel, Connection, Database, Machine, Memory, Project, Repo, Skill, TrashItem, Workflow, Workspace, previewDelete as previewDeletion, type NoClick } from 'noclick';
 import { renameKnowledge } from '@/screens/resources/knowledge';
 import { removeSecret, SECRETS_KEY } from '@/screens/resources/secrets';
 import { AGENTS_KEY } from '../../agents/reads';
@@ -226,15 +226,33 @@ async function removeSecretThing(client: NoClick, spaceId: string, t: Thing): Pr
     return true;
 }
 
+/** Deletes `t` through its kind's own delete (each kind `deletePath` names); answers the trash entry's id, null where it
+ *  has none. */
+async function deleteOf(client: NoClick, t: Thing): Promise<string | null> {
+    const at = { client };
+    const trash = (item: TrashItem): string | null => (item.raw.id as string | undefined) ?? null;
+    switch (t.kind) {
+        case 'agents': return trash(await Agent.fromId(t.ref, at).delete());
+        case 'skills': return trash(await Skill.fromId(t.ref, at).delete());
+        case 'memories': return trash(await Memory.fromId(t.ref, at).delete());
+        case 'connections': await Connection.fromId(t.ref, at).delete(); return null;
+        case 'channels': return trash(await Channel.fromId(t.ref, at).delete());
+        case 'code': return trash(await Repo.fromId(t.ref, at).delete());
+        case 'websites': return trash(await Project.fromId(t.ref, at).delete());
+        case 'databases': return trash(await Database.fromId(t.ref, at).delete());
+        case 'files': return trash(await Bucket.fromId(t.ref, at).delete());
+        case 'machines': await Machine.fromId(t.ref, at).delete(); return null;
+        default: throw new Error(`Nothing deletes ${t.kind}`);
+    }
+}
+
 /** Deletes it from the account (to the trash where its kind has one); resolves false when it couldn't. */
 export async function deleteThing(client: NoClick, spaceId: string, t: Thing): Promise<boolean> {
     if (t.kind === 'secrets') return removeSecretThing(client, spaceId, t);
-    const path = deletePath(t);
-    if (!path) return false;
+    if (!deletePath(t)) return false;
     let trashId: string | null = null;
     try {
-        const raw = await client.request<{ trash?: { id?: string } } | null>('DELETE', path);
-        trashId = raw?.trash?.id ?? null;
+        trashId = await deleteOf(client, t);
     } catch (error) {
         failed(`Couldn’t delete ${titleFor(t)}`, error);
         return false;
