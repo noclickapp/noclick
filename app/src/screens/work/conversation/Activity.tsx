@@ -152,7 +152,7 @@ export function WorkingLine({ from, compacting, downloading, pace }: { from: num
     }
     return (
         // On a narrow screen the line wraps between its parts (each kept whole), never over the step under it.
-        <p className="flex min-h-6 flex-wrap items-baseline gap-x-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite">
+        <p className="flex min-h-6 flex-wrap items-baseline gap-x-1.5 px-1 text-sm leading-relaxed text-muted-foreground" aria-live="polite" data-testid="working-line">
             {compacting ? <Minimize2 className="h-3.5 w-3.5 self-center" strokeWidth={2} /> : <Spinner />}
             <Shine>{compacting ? 'Compacting' : 'Working'}</Shine>
             <span className="whitespace-nowrap tabular-nums" suppressHydrationWarning>

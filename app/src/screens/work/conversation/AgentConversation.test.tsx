@@ -49,6 +49,11 @@ it('stops working when a wake-up that worked and said nothing ends', async () =>
     ]);
     await waitFor(() => expect(view.status()).toContain('Running gh run view 42'));
     expect(view.turn()).toBe('running');
+    // Where it is now is the turn's last line, under its latest step, so a long turn never scrolls it away.
+    const turn = document.querySelector('[data-row="turn"][data-status="running"]')!;
+    const line = turn.querySelector('[data-testid="working-line"]')!;
+    const step = [...turn.querySelectorAll('*')].find((el) => el.children.length === 0 && el.textContent?.includes('gh run view 42'))!;
+    expect(step.compareDocumentPosition(line) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // While it works, an empty box stops it and a typed one would steer into it.
     expect(view.primary()).toBe('stop');
     // The Stop every box shares (the Chat page's too): the primary circle with a filled square, never red.

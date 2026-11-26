@@ -236,7 +236,6 @@ export function TurnView({
     const files = changedFiles(turn);
     const live = running && (
         <div className="px-1 pb-2 pt-1">
-            <WorkingLine from={turn.startedAt} compacting={turn.compacting} downloading={turn.downloading} pace={turn.pace} />
             {turn.parts.map((p, i) =>
                 p.kind === 'steps' ? (
                     (() => {
@@ -260,6 +259,10 @@ export function TurnView({
                 <>
                     {live}
                     {cards && <div className="px-1 pb-2">{cards}</div>}
+                    {/* Last, as a terminal's is: where the turn is now, beside the box, however long its work runs. */}
+                    <div className="px-1 pb-2">
+                        <WorkingLine from={turn.startedAt} compacting={turn.compacting} downloading={turn.downloading} pace={turn.pace} />
+                    </div>
                 </>
             ) : (
                 <div className="px-1 pt-3">
