@@ -10,7 +10,7 @@ import { BrowserRouter, useNavigate, useSearchParams } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PhoneBarBack } from '@/ui/phoneBar';
 import { AppShell } from './AppShell';
-import { isDeeper } from './phoneStack';
+import { capture, isDeeper, MAX_COPIED } from './phoneStack';
 import { readDirection, releaseVelocity, settleMs, settlesOpen } from './phoneSwipe';
 
 let clock = 1_000;
@@ -208,6 +208,29 @@ describe('swiping on a phone', () => {
         await act(async () => fireEvent.click(page));
         expect(isOpen()).toBe(false);
         expect(document.activeElement, 'a tap leaves no focus ring on the menu button').not.toBe(button);
+    });
+});
+
+describe('the copies a swipe shows', () => {
+    it('copies the page only when a tap lands, never at a touch (every scroll starts with one)', async () => {
+        shell();
+        const page = screen.getByText('The chat');
+        const cloned = vi.spyOn(Node.prototype, 'cloneNode');
+        fireEvent.pointerDown(page, { isPrimary: true });
+        await act(() => new Promise((done) => setTimeout(done, 20)));
+        expect(cloned).not.toHaveBeenCalled();
+        fireEvent.click(page);
+        expect(cloned).toHaveBeenCalled();
+        cloned.mockRestore();
+    });
+
+    it('keeps no copy of a page too big to copy, such as a long session’s log', () => {
+        const small = document.createElement('div');
+        small.innerHTML = '<p>A short list</p>';
+        expect(capture(small)?.root.textContent).toBe('A short list');
+        const big = document.createElement('div');
+        big.innerHTML = '<p>step</p>'.repeat(MAX_COPIED + 1);
+        expect(capture(big)).toBeNull();
     });
 });
 

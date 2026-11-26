@@ -414,32 +414,14 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
 
         // A tap that leaves this screen for one inside it (a channel from its list, a section of Settings) keeps a picture
         // of the screen it left, for the back swipe from there; the tap on the bar's way back keeps one of the screen it
-        // leaves, for the swipe forward. The copy is made as the finger goes down, before anything has changed, so the
-        // tap itself never waits on it, unless the tap is quicker than the copy.
-        let tap: { place: string; at: number; shot: Shot | null; timer: number } | null = null;
-        const shoot = () => {
-            if (tap && !tap.shot && page.current) tap.shot = capture(page.current);
-        };
-        const onPointerDown = (event: PointerEvent) => {
-            const el = page.current;
-            const target = event.target instanceof Element ? event.target : null;
-            if (!event.isPrimary || moving || live.current.open || !el || !target || !el.contains(target) || target.closest(FIELDS)) return;
-            if (tap) window.clearTimeout(tap.timer);
-            tap = { place: here(), at: performance.now(), shot: null, timer: window.setTimeout(shoot, 0) };
-        };
+        // leaves, for the swipe forward. The copy is made as the tap lands, before its handlers change anything, and only
+        // then: a copy at every touch (each scroll begins with one) churned a long session's whole page on every scroll,
+        // and the phone ended the page for its memory (2026-11-26).
         const onClick = (event: MouseEvent) => {
             const el = page.current;
             const target = event.target instanceof Element ? event.target : null;
-            if (!el || !target || !el.contains(target)) return;
-            if (!tap || tap.place !== here() || performance.now() - tap.at > 3000) {
-                // A click without a finger (a keyboard, a test): copied now, before its handlers run.
-                if (tap) window.clearTimeout(tap.timer);
-                tap = { place: here(), at: performance.now(), shot: null, timer: 0 };
-            }
-            window.clearTimeout(tap.timer);
-            shoot();
-            const left = tap;
-            tap = null;
+            if (moving || live.current.open || !el || !target || !el.contains(target) || target.closest(FIELDS)) return;
+            const left = { place: here(), shot: capture(el) };
             const viaBack = target.closest('[data-phone-back]') !== null;
             const start = performance.now();
             const watch = () => {
@@ -462,18 +444,15 @@ export function PhoneDrawer({ open, onOpenChange, back, trigger, page, children 
         document.addEventListener('touchmove', onMove, { passive: false });
         document.addEventListener('touchend', onEnd);
         document.addEventListener('touchcancel', onEnd);
-        document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
         document.addEventListener('click', onClick, true);
         return () => {
             document.removeEventListener('touchstart', onStart);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('touchend', onEnd);
             document.removeEventListener('touchcancel', onEnd);
-            document.removeEventListener('pointerdown', onPointerDown, { capture: true });
             document.removeEventListener('click', onClick, true);
             if (frame) cancelAnimationFrame(frame);
             window.clearTimeout(settling);
-            if (tap) window.clearTimeout(tap.timer);
         };
     }, [host, page]);
 

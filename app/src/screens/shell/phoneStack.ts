@@ -14,16 +14,20 @@ export interface Shot {
 const REPLACED = new Set(['IFRAME', 'VIDEO', 'AUDIO', 'OBJECT', 'EMBED', 'CANVAS']);
 /** How many places keep the screen under them. */
 const KEPT = 8;
+/** A page with more elements than this isn't copied (a long session's log): copying it costs a phone too much memory,
+ *  and its swipe shows the plain screen under it instead. */
+export const MAX_COPIED = 4000;
 
 /** Where the app is: its path and query, which is everything a place in it is. */
 export function here(): string {
     return window.location.pathname + window.location.search;
 }
 
-/** A copy of the page as it looks now. */
-export function capture(page: HTMLElement): Shot {
-    const root = page.cloneNode(true) as HTMLElement;
+/** A copy of the page as it looks now; null for one too big to copy. */
+export function capture(page: HTMLElement): Shot | null {
     const originals = page.getElementsByTagName('*');
+    if (originals.length > MAX_COPIED) return null;
+    const root = page.cloneNode(true) as HTMLElement;
     const copies = root.getElementsByTagName('*');
     const scrolled: Shot['scrolled'] = [];
     const replaced: [Element, number, number][] = [];
