@@ -911,6 +911,7 @@ benzinga
 bettercontact
 beyond-presence
 bfl
+bigcartel
 bigcommerce
 bigmailer
 bigoven
