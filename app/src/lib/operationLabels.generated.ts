@@ -2425,6 +2425,7 @@ unipile
 uniswap-api
 universe
 unleash
+unleashed-software
 uplisting
 upload-post
 uploadcare
