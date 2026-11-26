@@ -72,7 +72,8 @@ export class HumanRequestLink {
 
   /**
    * Answer it, once: a question's `choice` (or `choices`) and `text`, an approval's `decision` (`approve` or `deny`);
-   * a held call's `approved`, `note` and each of its terms accepted; a step question's `connection` or `values`.
+   * a held call's `approved`, `note` and each of its terms accepted; a step question's `connection` or `values`; a
+   * file question's `secret_values` (one for each of its keys) or `file_content` (the whole file).
    * Rejects with the reason an answer isn't taken (already answered, expired, not this link's to give).
    */
   async answer(body: JsonObject): Promise<JsonObject> {

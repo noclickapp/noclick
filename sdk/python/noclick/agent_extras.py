@@ -515,10 +515,23 @@ class ConversationSandbox:
 @dataclass(frozen=True)
 class SandboxFilesPage(Page):
     """One page of a sandbox's folder (``AgentSandbox.files_page``): ``data`` holds ``VolumeEntry``s, ``next_cursor``
-    is ``None`` on the last page, and ``source`` says where it was read: the running ``sandbox``, or what its
-    ``workspace`` kept."""
+    is ``None`` on the last page, and ``source`` says where it was read: the running ``sandbox``, the agent's
+    container on its ``machine``, or what its ``workspace`` kept."""
 
     source: str = "sandbox"
+
+
+@dataclass(frozen=True)
+class SandboxEnv:
+    """A dotenv file after ``AgentSandbox.set_env``: its ``entry``, and its key names after the change (``keys``),
+    never a value."""
+
+    entry: VolumeEntry
+    keys: List[str]
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "SandboxEnv":
+        return cls(VolumeEntry._from(raw.get("entry") or {}), [str(key) for key in raw.get("keys") or []])
 
 
 @dataclass(frozen=True)
@@ -547,9 +560,11 @@ class SandboxShell:
 
 class AgentSandbox:
     """The machine an agent works on (``agent.sandbox()``), one whoever it answers: what it is and costs, its files,
-    and your own commands on it, beside the agent's work. While its sandbox runs, its files are read there with
-    every secret it holds taken out; while it's stopped, from what its workspace kept. Files and commands need the
-    account's secret key with the ``agents:terminal`` scope (they reach what the sandbox holds)."""
+    and your own commands on it, beside the agent's work. While its sandbox (or its container on a machine) runs,
+    its files are read and written there, every secret it holds taken out of what you read; while it's stopped,
+    they're read from what its workspace kept (a machine that keeps its workspaces on its own disk shows them only
+    while its container runs, else raises ``noclick.Conflict``). Files and commands need the account's secret key
+    with the ``agents:terminal`` scope (they reach what the sandbox holds)."""
 
     #: The conversation it was named by; none reads it through the agent's session.
     conversation: Optional[str]
@@ -652,6 +667,62 @@ class AgentSandbox:
         """
         return await self._agent._request("GET", await self._route("/files"), params={"path": path}, binary=True,
                                           user=self._scope())
+
+    @synced
+    async def write(self, path: str, data: Union[bytes, str], *, mode: Optional[str] = None,
+                    secret: bool = False) -> VolumeEntry:
+        """Write ``data`` (bytes, or text as UTF-8) to ``path`` in its running sandbox or container, replacing the
+        file whole at once and making any folders it needs (up to 16 MB). A stopped conversation raises
+        ``noclick.Conflict`` (its next turn starts its sandbox).
+
+        Args:
+            path: The file's absolute path there.
+            data: What it holds.
+            mode: Its octal mode: ``"0644"`` by default, ``"0600"`` for a secret file.
+            secret: It holds secrets: its values (each value of a ``KEY=value`` file, else its JSON strings or its
+                lines) are taken out of everything NoClick shows of the sandbox from then on (file reads, its turns'
+                events), even after it starts again; the agent working there still reads the file.
+
+        Returns:
+            The file as written, with its ``size``.
+
+        Usage::
+
+            coder = noclick.Agent.from_name("coder")
+            coder.sandbox().write("/workspace/.npmrc", f"//registry.npmjs.org/:_authToken={token}\\n", secret=True)
+        """
+        content = data.encode() if isinstance(data, str) else bytes(data)
+        return VolumeEntry._from(await self._agent._request(
+            "PUT", await self._route("/files"), params=compact(path=path, mode=mode, secret="true" if secret else None),
+            content=content, user=self._scope()))
+
+    @synced
+    async def set_env(self, path: str, set: Optional[Dict[str, str]] = None,
+                      unset: Optional[List[str]] = None) -> SandboxEnv:
+        """Set and unset keys of the dotenv file at ``path`` in its running sandbox or container, in place: a key in
+        ``set`` has its line replaced where the file has it, else one added at its end, and an ``unset`` key's lines
+        go; comments, blank lines and the order of the rest stay. A file that isn't there is made (``0600``). A
+        stopped conversation raises ``noclick.Conflict``.
+
+        Args:
+            path: The dotenv file's absolute path there.
+            set: Each key's value, one line each; every value set is taken out of what NoClick shows of the sandbox
+                from then on, as a ``secret`` file's are.
+            unset: Keys whose lines are taken out.
+
+        Returns:
+            A ``SandboxEnv``: the file's entry and its key names after the change, never a value.
+
+        Usage::
+
+            coder = noclick.Agent.from_name("coder")
+            env = coder.sandbox().set_env("/workspace/app/.env", set={"STRIPE_KEY": key}, unset=["OLD_KEY"])
+            print(env.keys)
+        """
+        return SandboxEnv._from(await self._agent._request(
+            "PATCH", await self._route("/files"), params={"path": path},
+            json=compact(set=dict(set) if set is not None else None, unset=list(unset) if unset is not None else None),
+            user=self._scope()) or {})
 
     @synced
     async def exec(self, command: str, *, timeout_s: Optional[int] = None) -> ExecResult:

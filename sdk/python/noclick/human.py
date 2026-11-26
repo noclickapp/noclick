@@ -41,6 +41,25 @@ class Answer:
 
 
 @dataclass(frozen=True)
+class HumanFileAsk:
+    """A file in the asking agent's sandbox or machine its owner fills in (``HumanRequest.file``): a local ``.env``,
+    a key file. Only an agent's own ``ask`` tool asks one, and only the account's owner answers it: with ``keys``, a
+    value for each (set in the file as ``KEY=value`` lines, the rest of it kept); without (``keys`` ``None``), the
+    whole file. NoClick writes it at ``path`` there as a file holding secrets, never keeping it anywhere else."""
+
+    path: str
+    keys: Optional[List[str]]
+    agent_id: str
+    agent_name: Optional[str] = None
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "HumanFileAsk":
+        keys = raw.get("keys")
+        return cls(raw.get("path") or "", list(keys) if isinstance(keys, list) else None, raw.get("agent_id") or "",
+                   raw.get("agent_name"))
+
+
+@dataclass(frozen=True)
 class OwnerEmail:
     """An email confirmed for the owner: ``status`` is ``added``, or ``verified`` when an
     agent's turn confirmed it (it's added once that turn ends); ``merged`` when an account
@@ -272,6 +291,12 @@ class HumanRequest(Operation):
         return list(self._request_view.get("undelivered") or [])
 
     @property
+    def file(self) -> Optional[HumanFileAsk]:
+        """A file question's file where the agent works (``None`` for any other request)."""
+        raw = self._request_view.get("file")
+        return HumanFileAsk._from(raw) if isinstance(raw, dict) else None
+
+    @property
     def note(self) -> Optional[str]:
         """What the approver wrote with their answer (``None`` until answered, or if they wrote nothing)."""
         result = self._known("result")
@@ -296,6 +321,7 @@ class HumanRequest(Operation):
         text: Optional[str] = None,
         connection: Any = None,
         secret_values: Optional[Mapping[str, str]] = None,
+        file_content: Optional[str] = None,
     ) -> "HumanRequest":
         """Answer a question from your own code, as the person it waits on (who may: as ``approve``
         says). A question takes a ``choice`` (or ``choices`` for one asked with ``multiple``) and/or
@@ -303,7 +329,10 @@ class HumanRequest(Operation):
         the account's that fits), which NoClick sets on the step as your key, so it needs the
         ``workflows`` scope and a key acting for your whole account, never a user's or an agent's own
         tools; a ``secret`` question, ``secret_values`` (a value for each of its keys), kept in the
-        secret and never with the answer, which needs the ``secrets`` scope.
+        secret and never with the answer, which needs the ``secrets`` scope. A ``file`` question is the
+        account's owner's alone, signed in: ``secret_values`` for its keys, else ``file_content`` (the
+        whole file as text, up to 1 MB), written into the asking agent's sandbox or machine while it runs
+        and never kept with the answer.
 
         Returns:
             This request, answered: ``request_status`` is ``answered``.
@@ -318,7 +347,8 @@ class HumanRequest(Operation):
             connection = connection._ref()
         return await self._answer({"choice": choice, "choices": list(choices) if choices else None, "text": text,
                                    "connection": connection,
-                                   "secret_values": dict(secret_values) if secret_values is not None else None})
+                                   "secret_values": dict(secret_values) if secret_values is not None else None,
+                                   "file_content": file_content})
 
     @synced
     async def approve(self, *, note: Optional[str] = None) -> "HumanRequest":

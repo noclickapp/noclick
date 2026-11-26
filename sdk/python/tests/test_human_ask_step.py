@@ -1,5 +1,6 @@
-"""``Human.ask`` with ``connect`` (which connection a workflow step uses) and ``secret`` (a secret's values), and
-``HumanRequest.answer`` from code: what the calls send and how the answers read, against the mocked transport."""
+"""``Human.ask`` with ``connect`` (which connection a workflow step uses) and ``secret`` (a secret's values), an
+agent's file question, and ``HumanRequest.answer`` from code: what the calls send and how the answers read, against
+the mocked transport."""
 
 import noclick as nc
 from platform_helpers import body, operation
@@ -54,3 +55,19 @@ def test_code_answers_with_a_connection_or_the_values(api, client):
     assert request.request_status == "answered"
     request.approve(note="fine")
     assert body(answered.calls.last.request) == {"approved": True, "note": "fine"}
+
+
+def test_a_file_question_names_the_file_and_its_owner_answers_with_the_file(api, client):
+    file = {"path": "/workspace/app/.env", "keys": None, "agent_id": "ag_1", "agent_name": "coder"}
+    api.get("/v1/humans/requests/hr_2").respond(json={"id": "hr_2", "operation_id": "op_f", "kind": "ask",
+                                                      "status": "delivered", "file": file})
+    answered = api.post("/v1/humans/requests/hr_2/answer").respond(json={"id": "hr_2", "status": "answered",
+                                                                         "file": file})
+    request = nc.HumanRequest.retrieve("hr_2")
+    assert request.file == nc.HumanFileAsk("/workspace/app/.env", None, "ag_1", "coder")
+    request.answer(file_content="STRIPE_KEY=sk_test_1\n")
+    assert body(answered.calls.last.request) == {"file_content": "STRIPE_KEY=sk_test_1\n"}
+    assert request.request_status == "answered"
+    api.get("/v1/humans/requests/hr_3").respond(json={"id": "hr_3", "kind": "ask", "status": "delivered",
+                                                      "file": None})
+    assert nc.HumanRequest.retrieve("hr_3").file is None

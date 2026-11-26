@@ -71,8 +71,23 @@ export interface HumanSecretAsk {
 }
 
 /**
+ * A file in the asking agent's sandbox or machine its owner fills in (`HumanRequest.file`): a local `.env`, a key
+ * file. Only an agent's own `ask` tool asks one, and only the account's owner answers it: with `keys`, a value for
+ * each (set in the file as `KEY=value` lines, the rest of it kept); without, the whole file. NoClick writes it there
+ * as a file holding secrets, never keeping it anywhere else.
+ */
+export interface HumanFileAsk {
+  /** The file's absolute path where the agent works. */
+  path: string;
+  /** The keys they fill in; null when they write the whole file. */
+  keys: string[] | null;
+  agentId: string;
+  agentName: string | null;
+}
+
+/**
  * What `HumanRequest.answer` takes: a question's choice(s) and/or text, a connect question's connection, or a secret
- * question's values.
+ * or file question's values (or the file itself).
  */
 export interface HumanAnswerFields {
   choice?: string;
@@ -80,8 +95,10 @@ export interface HumanAnswerFields {
   text?: string;
   /** One of the account's connections that fits (a `Connection`, or its ref or name). */
   connection?: string | Connection;
-  /** A value for each of the secret's keys: kept in the secret, never with the answer. */
+  /** A value for each of the secret's keys, or of a file question's: kept in the secret or the file, never with the answer. */
   secretValues?: Record<string, string>;
+  /** A file question's that names no keys: the file as it's written (text, up to 1 MB), kept in the file and never with the answer. */
+  fileContent?: string;
 }
 
 /** What `Human.ask` takes beside its question. */
@@ -300,6 +317,17 @@ export class HumanRequest<T> extends Operation<T> {
     return Array.isArray(this._view.undelivered) ? (this._view.undelivered as JsonObject[]) : [];
   }
 
+  /** A file question's file where the agent works (null for any other request). */
+  get file(): HumanFileAsk | null {
+    const file = this._view.file;
+    if (!file || typeof file !== "object") return null;
+    const raw = file as JsonObject;
+    return {
+      path: str(raw.path) ?? "", keys: Array.isArray(raw.keys) ? strings(raw.keys) : null,
+      agentId: str(raw.agent_id) ?? "", agentName: str(raw.agent_name),
+    };
+  }
+
   /** What the approver wrote with their answer (null until answered, or if they wrote nothing). */
   get note(): string | null {
     const result = this._known("result");
@@ -321,7 +349,9 @@ export class HumanRequest<T> extends Operation<T> {
    * `choices`) and/or `text`; a connect question's `connection` (one of the account's that fits), which NoClick sets
    * on the step as your key, so it needs the `workflows` scope and a key acting for your whole account, never a
    * user's or an agent's own tools; a secret question's `secretValues`, kept in the secret and never with the
-   * answer, which needs the `secrets` scope.
+   * answer, which needs the `secrets` scope. A file question (`file`) is the account's owner's alone, signed in:
+   * `secretValues` for its keys, else `fileContent`, the whole file, written into the asking agent's sandbox or
+   * machine while it runs.
    *
    * @example
    * for (const request of await HumanRequest.list({ status: "pending", kind: "ask", answerable: "code" })) {
@@ -336,6 +366,7 @@ export class HumanRequest<T> extends Operation<T> {
       text: fields.text,
       connection,
       secret_values: fields.secretValues ? { ...fields.secretValues } : undefined,
+      file_content: fields.fileContent,
     });
   }
 

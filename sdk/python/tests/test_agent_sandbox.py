@@ -1,6 +1,7 @@
 """An agent's sandbox: ``agent.sandbox()`` reads what it is and costs (``get``), its files a folder
-at a time (``files``, ``files_page``, ``read``) and runs a command beside the agent's work (``exec``);
-``Agent.coding()`` reads every coding agent and what each is doing."""
+at a time (``files``, ``files_page``, ``read``), writes one into it (``write``, ``set_env``) and runs a
+command beside the agent's work (``exec``); ``Agent.coding()`` reads every coding agent and what each is
+doing."""
 
 import pytest
 
@@ -64,9 +65,46 @@ def test_its_files_a_folder_at_a_time_and_one_files_bytes(api, client):
     assert isinstance(page, nc.SandboxFilesPage)
     assert (page.source, page.next_cursor, page.data[0].path) == ("workspace", "/workspace/src", "/workspace/src")
 
+    files.respond(json={"object": "list", "data": [ENTRY], "next_cursor": None, "source": "machine"})
+    assert machine.files_page().source == "machine"
+
     files.respond(content=b"TOKEN=[redacted]")
     assert machine.read("/workspace/.env") == b"TOKEN=[redacted]"
     assert files.calls.last.request.url.params["path"] == "/workspace/.env"
+
+
+def test_a_file_written_into_its_running_sandbox_raw_holding_secrets(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    put = api.put(f"{PATH}/files").respond(json={
+        "object": "sandbox_entry", "path": "/workspace/.npmrc", "type": "file", "size": 24,
+        "updated_at": "2026-11-27T10:00:00Z"})
+    machine = nc.Agent.from_id("ag_1").sandbox("user:42/main")
+    written = machine.write("/workspace/.npmrc", "//registry/:_authToken=t\n", secret=True)
+    assert isinstance(written, nc.VolumeEntry)
+    assert (written.path, written.type, written.size) == ("/workspace/.npmrc", "file", 24)
+    sent = put.calls.last.request
+    assert dict(sent.url.params) == {"path": "/workspace/.npmrc", "secret": "true"}
+    assert sent.content == b"//registry/:_authToken=t\n"
+    assert sent.headers["content-type"] == "application/octet-stream"
+
+    machine.write("/root/bin/deploy", b"#!", mode="0755")
+    assert dict(put.calls.last.request.url.params) == {"path": "/root/bin/deploy", "mode": "0755"}
+    assert put.calls.last.request.content == b"#!"
+
+
+def test_a_dotenv_files_keys_set_and_unset_in_place_the_answer_names_its_keys(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    patch = api.patch(f"{PATH}/files").respond(json={
+        "object": "sandbox_env", "keys": ["DATABASE_URL", "STRIPE_KEY"],
+        "entry": {"object": "sandbox_entry", "path": "/workspace/app/.env", "type": "file", "size": 61,
+                  "updated_at": None}})
+    env = nc.Agent.from_id("ag_1").sandbox("user:42/main").set_env(
+        "/workspace/app/.env", set={"STRIPE_KEY": "sk_test_1"}, unset=["OLD_KEY"])
+    assert patch.calls.last.request.url.params["path"] == "/workspace/app/.env"
+    assert body(patch.calls.last.request) == {"set": {"STRIPE_KEY": "sk_test_1"}, "unset": ["OLD_KEY"]}
+    assert isinstance(env, nc.SandboxEnv)
+    assert (env.entry.path, env.entry.size, env.keys) == ("/workspace/app/.env", 61, ["DATABASE_URL", "STRIPE_KEY"])
+    assert "sk_test_1" not in repr(env)
 
 
 def test_a_command_beside_the_agents_work(api, client):

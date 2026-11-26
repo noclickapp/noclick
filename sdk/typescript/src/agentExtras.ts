@@ -371,9 +371,18 @@ function toConversationSandbox(raw: JsonObject): ConversationSandbox {
   };
 }
 
-/** One page of a sandbox's folder; `source` says where it was read: the running `sandbox`, or what its `workspace` kept. */
+/**
+ * One page of a sandbox's folder; `source` says where it was read: the running `sandbox`, the agent's container on its
+ * `machine`, or what its `workspace` kept.
+ */
 export interface SandboxFilesPage extends Page<VolumeEntry> {
-  source: "sandbox" | "workspace";
+  source: "sandbox" | "machine" | "workspace";
+}
+
+/** A dotenv file after `AgentSandbox.setEnv`: its entry, and its key names after the change (never a value). */
+export interface SandboxEnv {
+  entry: VolumeEntry;
+  keys: string[];
 }
 
 export interface SandboxFilesOptions {
@@ -383,9 +392,11 @@ export interface SandboxFilesOptions {
 
 /**
  * The machine an agent works on (`agent.sandbox()`): what it is and costs, its files and your own commands on it,
- * beside the agent's work. An agent has one, whoever it answers. While its sandbox runs, its files are read there with every
- * secret it holds taken out; while it's stopped, from what its workspace kept. Files and commands need the account's
- * owner: signed in, or its secret key with the `agents:terminal` scope. Sends nothing yet.
+ * beside the agent's work. An agent has one, whoever it answers. While its sandbox (or its container on a machine)
+ * runs, its files are read and written there, every secret it holds taken out of what you read; while it's stopped,
+ * they're read from what its workspace kept (a machine that keeps its workspaces on its own disk shows them only while
+ * its container runs, else throws `Conflict`). Files and commands need the account's owner: signed in, or its secret
+ * key with the `agents:terminal` scope. Sends nothing yet.
  *
  *     const machine = coder.sandbox();
  *     if ((await machine.get()).status === "running") console.log((await machine.exec("git status --short")).stdout);
@@ -442,7 +453,7 @@ export class AgentSandbox {
     }));
     return {
       data: asList(raw).map(toVolumeEntry), nextCursor: str(raw.next_cursor),
-      source: raw.source === "sandbox" ? "sandbox" : "workspace",
+      source: raw.source === "sandbox" || raw.source === "machine" ? raw.source : "workspace",
     };
   }
 
@@ -451,6 +462,40 @@ export class AgentSandbox {
     return await this.agent._request<Uint8Array>("GET", await this.route("/files"), {
       query: { path }, responseType: "bytes", user: this.agent._talkScope(this.user),
     });
+  }
+
+  /**
+   * Write `data` (bytes, or text as UTF-8) to `path` (absolute) in its running sandbox or container, replacing the
+   * file whole at once and making any folders it needs (up to 16 MB). `mode` is its octal mode: `0644` by default,
+   * `0600` for a secret file. With `secret`, the file holds secrets: its values (each value of a `KEY=value` file,
+   * else its JSON strings or its lines) are taken out of everything NoClick shows of the sandbox from then on (file
+   * reads, its turns' events), even after it starts again; the agent working there still reads the file. A stopped
+   * conversation throws `Conflict` (its next turn starts its sandbox).
+   *
+   *     await coder.sandbox().write("/workspace/.npmrc", `//registry.npmjs.org/:_authToken=${token}\n`, { secret: true });
+   */
+  async write(path: string, data: string | Uint8Array, options: { mode?: string; secret?: boolean } = {}): Promise<VolumeEntry> {
+    return toVolumeEntry(await this.agent._request("PUT", await this.route("/files"), {
+      query: { path, mode: options.mode, secret: options.secret ? "true" : undefined }, body: data,
+      user: this.agent._talkScope(this.user),
+    }));
+  }
+
+  /**
+   * Set and unset keys of the dotenv file at `path` in its running sandbox or container, in place: a key in `set`
+   * has its line replaced where the file has it, else one added at its end, and an `unset` key's lines go; comments,
+   * blank lines and the order of the rest stay. A file that isn't there is made (`0600`). A value is one line, and
+   * each one set is taken out of what NoClick shows of the sandbox from then on, as a `secret` file's are. Resolves
+   * to the file's entry and its key names after the change, never a value. A stopped conversation throws `Conflict`.
+   *
+   *     const env = await coder.sandbox().setEnv("/workspace/app/.env", { set: { STRIPE_KEY: key }, unset: ["OLD_KEY"] });
+   *     console.log(env.keys);
+   */
+  async setEnv(path: string, change: { set?: Record<string, string>; unset?: string[] }): Promise<SandboxEnv> {
+    const raw = asObject(await this.agent._request("PATCH", await this.route("/files"), {
+      query: { path }, json: compact({ set: change.set, unset: change.unset }), user: this.agent._talkScope(this.user),
+    }));
+    return { entry: toVolumeEntry(raw.entry), keys: Array.isArray(raw.keys) ? raw.keys.map(String) : [] };
   }
 
   /**

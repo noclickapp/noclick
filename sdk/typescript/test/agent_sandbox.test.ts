@@ -1,6 +1,6 @@
 // An agent's sandbox: `agent.sandbox()` reads what it is and costs (`get`), its files a folder at a
-// time (`files`, `filesPage`, `read`) and runs a command beside the agent's work (`exec`); `Agent.coding()` reads every
-// coding agent and what each is doing.
+// time (`files`, `filesPage`, `read`), writes one into it (`write`, `setEnv`) and runs a command beside the agent's work
+// (`exec`); `Agent.coding()` reads every coding agent and what each is doing.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -62,10 +62,48 @@ test("its files a folder at a time, and one file's bytes", async () => {
   api.on("GET", `${PATH}/files`, json({ ...listing([ENTRY], "/workspace/src"), source: "workspace" }));
   const page = await machine.filesPage();
   assert.deepEqual([page.source, page.nextCursor, page.data[0].path], ["workspace", "/workspace/src", "/workspace/src"]);
+  api.on("GET", `${PATH}/files`, json({ ...listing([ENTRY]), source: "machine" }));
+  assert.equal((await machine.filesPage()).source, "machine");
 
   const bytes = api.on("GET", `${PATH}/files`, () => new Response(new TextEncoder().encode("TOKEN=[redacted]")));
   assert.equal(new TextDecoder().decode(await machine.read("/workspace/.env")), "TOKEN=[redacted]");
   assert.deepEqual([bytes.last.query.get("path"), bytes.last.query.get("view")], ["/workspace/.env", null]);
+});
+
+test("a file written into its running sandbox, raw, holding secrets", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const put = api.on("PUT", `${PATH}/files`, json({
+    object: "sandbox_entry", path: "/workspace/.npmrc", type: "file", size: 24, updated_at: "2026-11-27T10:00:00Z",
+  }));
+  const machine = nc.Agent.fromId("ag_1").sandbox("main thread", { user: USER_ID });
+  const written = await machine.write("/workspace/.npmrc", "//registry/:_authToken=t\n", { secret: true });
+  assert.deepEqual([written.path, written.type, written.size, written.updatedAt?.toISOString()],
+    ["/workspace/.npmrc", "file", 24, "2026-11-27T10:00:00.000Z"]);
+  assert.deepEqual([put.last.query.get("path"), put.last.query.get("secret"), put.last.query.get("mode")],
+    ["/workspace/.npmrc", "true", null]);
+  assert.equal(put.last.body, "//registry/:_authToken=t\n");
+  assert.equal(put.last.headers.get("Content-Type"), "application/octet-stream");
+  assert.equal(put.last.headers.get("NoClick-User"), USER_ID);
+
+  await machine.write("/root/bin/deploy", new Uint8Array([35, 33]), { mode: "0755" });
+  assert.deepEqual([put.last.query.get("mode"), put.last.query.get("secret")], ["0755", null]);
+  assert.deepEqual(put.last.body, new Uint8Array([35, 33]));
+});
+
+test("a dotenv file's keys set and unset in place: the answer names its keys, never a value", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patch = api.on("PATCH", `${PATH}/files`, json({
+    object: "sandbox_env", keys: ["DATABASE_URL", "STRIPE_KEY"],
+    entry: { object: "sandbox_entry", path: "/workspace/app/.env", type: "file", size: 61, updated_at: null },
+  }));
+  const env = await nc.Agent.fromId("ag_1").sandbox("main thread").setEnv("/workspace/app/.env", {
+    set: { STRIPE_KEY: "sk_test_1" }, unset: ["OLD_KEY"],
+  });
+  assert.equal(patch.last.query.get("path"), "/workspace/app/.env");
+  assert.deepEqual(patch.last.body, { set: { STRIPE_KEY: "sk_test_1" }, unset: ["OLD_KEY"] });
+  assert.deepEqual([env.entry.path, env.entry.size, env.keys], ["/workspace/app/.env", 61, ["DATABASE_URL", "STRIPE_KEY"]]);
 });
 
 test("a command beside the agent's work, as the user whose thread it is", async () => {

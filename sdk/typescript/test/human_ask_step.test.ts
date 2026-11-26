@@ -1,5 +1,6 @@
-// Human.ask with connect (which connection a workflow step uses) and secret (a secret's values), and
-// HumanRequest.answer from code: what the calls send and how the answers read, against the mocked transport.
+// Human.ask with connect (which connection a workflow step uses) and secret (a secret's values), an agent's file
+// question, and HumanRequest.answer from code: what the calls send and how the answers read, against the mocked
+// transport.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -60,4 +61,18 @@ test("code answers with a connection or the values; approve still sends its deci
   assert.equal(req.requestStatus, "answered");
   await req.approve({ note: "fine" });
   assert.deepEqual(answered.last.body, { approved: true, note: "fine" });
+});
+
+test("a file question names the file where the agent works, and its owner answers with the file", async () => {
+  const { api } = setup();
+  const file = { path: "/workspace/app/.env", keys: null, agent_id: "ag_1", agent_name: "coder" };
+  api.on("GET", "/v1/humans/requests/hr_2", json({ id: "hr_2", operation_id: "op_f", kind: "ask", status: "delivered", file }));
+  const answered = api.on("POST", "/v1/humans/requests/hr_2/answer", json({ id: "hr_2", status: "answered", file }));
+  const req = await nc.HumanRequest.retrieve("hr_2");
+  assert.deepEqual(req.file, { path: "/workspace/app/.env", keys: null, agentId: "ag_1", agentName: "coder" });
+  await req.answer({ fileContent: "STRIPE_KEY=sk_test_1\n" });
+  assert.deepEqual(answered.last.body, { file_content: "STRIPE_KEY=sk_test_1\n" });
+  assert.equal(req.requestStatus, "answered");
+  api.on("GET", "/v1/humans/requests/hr_3", json({ id: "hr_3", kind: "ask", status: "delivered", file: null }));
+  assert.equal((await nc.HumanRequest.retrieve("hr_3")).file, null);
 });
