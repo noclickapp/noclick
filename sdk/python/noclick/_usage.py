@@ -261,6 +261,18 @@ class UsageBilling:
 
 
 @dataclass(frozen=True)
+class BillingDetails:
+    """The plan's Stripe ``subscription`` (``status``, ``current_period_end``: when it renews, or ends when
+    ``cancel_at_period_end``), an older plan's credit ``topup_subscription`` (also its ``credits_per_month``,
+    ``interval`` and ``subscription_id``) and the default card (``payment_method``: ``brand``, ``last4``,
+    ``exp_month``, ``exp_year``), each None where there's none."""
+
+    subscription: Optional[Dict[str, Any]]
+    topup_subscription: Optional[Dict[str, Any]]
+    payment_method: Optional[Dict[str, Any]]
+
+
+@dataclass(frozen=True)
 class UsageCredits:
     """The pool a workspace's work draws on, as NoClick's balance meter reads it, in credits: the included usage
     ``used`` against ``limit`` in the ``period`` (``day`` where the plan counts by day, else ``month``), the month's
@@ -523,6 +535,44 @@ class Usage:
             auto_top_up=billing.get("autoTopUp"),
             raw=billing,
         )
+
+    @synced
+    @staticmethod
+    async def billing_details(*, organization_id: Optional[str] = None,
+                              client: Optional[Client] = None) -> BillingDetails:
+        """The plan's Stripe subscription, an older plan's credit top-up subscription and the default card. The
+        signed-in owner's alone; ``organization_id`` names a team workspace they own or administer.
+
+        Returns:
+            The ``BillingDetails``.
+
+        Usage::
+
+            details = noclick.Usage.billing_details()
+            if details.payment_method:
+                print(details.payment_method["brand"], details.payment_method["last4"])
+        """
+        raw = await resolve_client(client).request("GET", "/v1/usage/billing/details",
+                                                   params=compact(organization_id=organization_id), user=None) or {}
+        return BillingDetails(subscription=raw.get("subscription"), topup_subscription=raw.get("topup_subscription"),
+                              payment_method=raw.get("payment_method"))
+
+    @synced
+    @staticmethod
+    async def billing_portal(*, organization_id: Optional[str] = None, client: Optional[Client] = None) -> str:
+        """A session on Stripe's customer portal, where the signed-in owner changes their plan, card and invoices:
+        open its URL within a few minutes. ``organization_id`` names a team workspace they own or administer.
+
+        Returns:
+            The portal's URL.
+
+        Usage::
+
+            print(noclick.Usage.billing_portal())
+        """
+        raw = await resolve_client(client).request("POST", "/v1/usage/billing/portal",
+                                                   json=compact(organization_id=organization_id), user=None) or {}
+        return raw["url"]
 
     @synced
     @staticmethod

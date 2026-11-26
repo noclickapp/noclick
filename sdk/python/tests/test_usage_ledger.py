@@ -71,6 +71,24 @@ def test_the_money_behind_it_or_none(api, client):
     assert nc.Usage.billing() is None
 
 
+def test_billing_details_and_the_portal_read_the_plans_stripe_side(api, client):
+    read = api.get("/v1/usage/billing/details").respond(json={
+        "object": "billing_details",
+        "subscription": {"status": "active", "current_period_end": "2026-12-01T00:00:00Z", "cancel_at_period_end": False},
+        "topup_subscription": None,
+        "payment_method": {"brand": "visa", "last4": "4242", "exp_month": 8, "exp_year": 2029}})
+    details = nc.Usage.billing_details(organization_id="org_1")
+    assert read.calls.last.request.url.params["organization_id"] == "org_1"
+    assert isinstance(details, nc.BillingDetails) and details.topup_subscription is None
+    assert (details.subscription["status"], details.payment_method["last4"]) == ("active", "4242")
+    portal = api.post("/v1/usage/billing/portal").respond(json={
+        "object": "billing_portal", "url": "https://billing.stripe.com/p/session/test_1"})
+    assert nc.Usage.billing_portal() == "https://billing.stripe.com/p/session/test_1"
+    assert portal.calls.last.request.content == b"{}"
+    nc.Usage.billing_portal(organization_id="org_1")
+    assert b'"organization_id":"org_1"' in portal.calls.last.request.content.replace(b" ", b"")
+
+
 def test_credits_read_the_meters_pool_a_team_workspaces_by_its_id(api, client):
     route = api.get("/v1/usage/credits").respond(json={
         "object": "credit_usage", "used": 1.5, "limit": 4, "period": "day", "monthly_used": 3, "monthly_cap": 20,

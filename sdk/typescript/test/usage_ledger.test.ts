@@ -68,6 +68,31 @@ test("the money behind it, or null", async () => {
   assert.equal(await nc.Usage.billing(), null);
 });
 
+test("Usage.billingDetails() and billingPortal() read the plan's Stripe side", async () => {
+  const { api } = setup();
+  const read = api.on("GET", "/v1/usage/billing/details", json({
+    object: "billing_details",
+    subscription: { status: "active", current_period_end: "2026-12-01T00:00:00Z", cancel_at_period_end: true },
+    topup_subscription: {
+      status: "active", current_period_end: "2027-01-15T08:00:00Z", cancel_at_period_end: false, credits_per_month: 400,
+      interval: "year", subscription_id: "sub_topup",
+    },
+    payment_method: null,
+  }));
+  assert.deepEqual(await nc.Usage.billingDetails({ organizationId: "org_1" }), {
+    subscription: { status: "active", currentPeriodEnd: "2026-12-01T00:00:00Z", cancelAtPeriodEnd: true },
+    topupSubscription: {
+      status: "active", currentPeriodEnd: "2027-01-15T08:00:00Z", cancelAtPeriodEnd: false, creditsPerMonth: 400,
+      interval: "year", subscriptionId: "sub_topup",
+    },
+    paymentMethod: null,
+  });
+  assert.equal(read.last.query.get("organization_id"), "org_1");
+  const portal = api.on("POST", "/v1/usage/billing/portal", json({ object: "billing_portal", url: "https://billing.stripe.com/p/session/test_1" }));
+  assert.equal(await nc.Usage.billingPortal(), "https://billing.stripe.com/p/session/test_1");
+  assert.deepEqual(portal.last.body, {});
+});
+
 test("Usage.credits() reads the meter's pool, a team workspace's by its id", async () => {
   const { api } = setup();
   const body = {

@@ -284,6 +284,28 @@ export interface UsageBilling {
 }
 
 /**
+ * The plan's subscription, an older plan's credit top-up subscription and the default card, as Stripe holds them for
+ * the signed-in owner (or a team workspace they own or administer); each null where there's none.
+ */
+export interface BillingDetails {
+  subscription: {
+    status: string;
+    /** When it renews, or ends when it's set to end; ISO 8601. */
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+  } | null;
+  topupSubscription: {
+    status: string;
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+    creditsPerMonth: number;
+    interval: "month" | "year";
+    subscriptionId: string;
+  } | null;
+  paymentMethod: { brand: string; last4: string; expMonth: number; expYear: number } | null;
+}
+
+/**
  * The pool a workspace's work draws on, as NoClick's balance meter reads it, in credits: the included usage `used`
  * against `limit` in the `period` (`day` where the plan counts by day, else `month`), the month's `monthlyUsed`
  * against `monthlyCap`, and the dollar balance drawn after it. `poolUserId` is whose pool it is; `isOrgCredits` when
@@ -532,6 +554,52 @@ export class Usage {
       }),
       user: null,
     }));
+  }
+
+  /**
+   * The plan's Stripe subscription, an older plan's credit top-up subscription and the default card. The signed-in
+   * owner's alone; `organizationId` names a team workspace they own or administer.
+   *
+   *     const { subscription, paymentMethod } = await Usage.billingDetails();
+   */
+  static async billingDetails(options: { organizationId?: string; client?: NoClick } = {}): Promise<BillingDetails> {
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/usage/billing/details", {
+      query: { organization_id: options.organizationId },
+      user: null,
+    }));
+    const sub = raw.subscription ? asObject(raw.subscription) : null;
+    const topup = raw.topup_subscription ? asObject(raw.topup_subscription) : null;
+    const card = raw.payment_method ? asObject(raw.payment_method) : null;
+    return {
+      subscription: sub && {
+        status: str(sub.status) ?? "", currentPeriodEnd: str(sub.current_period_end), cancelAtPeriodEnd: sub.cancel_at_period_end === true,
+      },
+      topupSubscription: topup && {
+        status: str(topup.status) ?? "", currentPeriodEnd: str(topup.current_period_end),
+        cancelAtPeriodEnd: topup.cancel_at_period_end === true, creditsPerMonth: Number(topup.credits_per_month ?? 0),
+        interval: topup.interval === "year" ? "year" : "month", subscriptionId: str(topup.subscription_id) ?? "",
+      },
+      paymentMethod: card && {
+        brand: str(card.brand) ?? "unknown", last4: str(card.last4) ?? "", expMonth: Number(card.exp_month ?? 0),
+        expYear: Number(card.exp_year ?? 0),
+      },
+    };
+  }
+
+  /**
+   * A session on Stripe's customer portal, where the signed-in owner changes their plan, card and invoices: open its
+   * URL within a few minutes. `organizationId` names a team workspace they own or administer.
+   *
+   *     window.location.href = await Usage.billingPortal();
+   */
+  static async billingPortal(options: { organizationId?: string; client?: NoClick } = {}): Promise<string> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/usage/billing/portal", {
+      json: compact({ organization_id: options.organizationId }),
+      user: null,
+    }));
+    const url = str(raw.url);
+    if (!url) throw new Error("NoClick answered no customer portal URL.");
+    return url;
   }
 
   /**

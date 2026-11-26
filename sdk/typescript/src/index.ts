@@ -1053,6 +1053,7 @@ export {
 export type {
   AccountCap,
   AgentBudget,
+  BillingDetails,
   CapChange,
   KeyCap,
   LedgerCharge,

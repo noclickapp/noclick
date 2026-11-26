@@ -43,6 +43,7 @@ from ._scope import (
 from ._usage import (
     AccountCap,
     AgentBudget,
+    BillingDetails,
     CapChange,
     KeyCap,
     LedgerCharge,
@@ -1185,6 +1186,7 @@ __all__ = [
     "UsageCharges",
     "LedgerCharge",
     "UsageBilling",
+    "BillingDetails",
     "UsageCredits",
     "Workstream",
     "AccountCap",
