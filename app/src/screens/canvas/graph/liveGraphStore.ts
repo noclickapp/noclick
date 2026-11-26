@@ -113,7 +113,7 @@ interface GraphRecord {
 }
 
 const DEBOUNCE_MS = 2000;
-// Ack watchdog: a save whose response never arrives (socket died mid-flight)
+// Ack watchdog: a save whose response never arrives (the connection died mid-flight)
 // must release the in-flight latch so later saves aren't wedged.
 const SAVE_ACK_TIMEOUT_MS = 15000;
 // Consecutive-failure cap: stop auto-retrying after this many failures in a
@@ -707,7 +707,7 @@ function fireSave(rec: GraphRecord, opts?: { unconditional?: boolean }): void {
         return;
     }
 
-    const host = standing(GRAPH_SAVES).socket;
+    const host = standing(GRAPH_SAVES).whole;
     if (!host) {
         rec.dirty = false;
         console.error(`[liveGraphStore] ${rec.workflowId} saves whole through a host's own save, and there is none`);

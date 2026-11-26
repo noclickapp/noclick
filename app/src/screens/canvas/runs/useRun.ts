@@ -10,7 +10,7 @@
 // read cuts long ones short). Without the stream (a host with none) a run started here still ends on its operation's
 // wait, with its steps' final states.
 //
-// NoClick's app runs through its own socket instead (an editor's run carries its unsaved graph, a form's inputs, a
+// NoClick's app runs through its own transports instead (an editor's run carries its unsaved graph, a form's inputs, a
 // chat's turn), so this is the canvas's running where no host has its own.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Node } from '@xyflow/react';

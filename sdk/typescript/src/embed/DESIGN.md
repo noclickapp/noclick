@@ -4,7 +4,7 @@
 
 The SDK lets custom React components (running in iframes) interact with the NoClick workflow they belong to. It provides a JavaScript API for reading data, triggering execution, managing state, and handling credentials.
 
-**Transport**: `window.parent.postMessage()` (iframe → host). The host (HtmlReactBlock) translates messages into socket events / Valtio state mutations. Outside an iframe, the HTTP transport (`transports/http.ts`) makes the same calls on the platform API with the page's key and hears what changes as room frames (its pages' room for State changes, each run's own room for its steps), never by polling; published pages use it. The older WebSocket transport stays for pages built with it.
+**Transport**: `window.parent.postMessage()` (iframe → host). The host (HtmlReactBlock) translates messages into platform API calls / Valtio state mutations. Outside an iframe, the HTTP transport (`transports/http.ts`) makes the same calls on the platform API with the page's key and hears what changes as room frames (its pages' room for State changes, each run's own room for its steps), never by polling; published pages use it, and an `apiKey` with no transport picks it.
 
 ---
 
@@ -273,17 +273,17 @@ The `HtmlReactBlock` component listens for `message` events from the iframe and 
 | `nodes.getOutput(id)` | Read from `node.data.output` via ReactFlow state |
 | `nodes.setConfig(id, config)` | Call `setNodes()` to update node data |
 | `nodes.list()` | Read all nodes from ReactFlow state |
-| `execution.runNodesAndGetOutput(run, targets)` | Call `runSingleNode()` with exec ID, subscribe to `workflow:node:output` + `workflow:node:state` socket events, forward matching target outputs as `noclick:stream` messages to iframe |
+| `execution.runNodesAndGetOutput(run, targets)` | Call `runSingleNode()` with exec ID, subscribe to the run's `workflow:node:output` + `workflow:node:state` room frames, forward matching target outputs as `noclick:stream` messages to iframe |
 | `execution.runNodesInBackground(ids)` | Call `runSingleNode()`, no output tracking |
-| `execution.onNodeState(id)` | Subscribe to `workflow:node:state` socket events, forward matching ones |
-| `execution.onNodeOutput(id)` | Subscribe to `workflow:node:output` socket events, forward matching ones |
+| `execution.onNodeState(id)` | Subscribe to the run's `workflow:node:state` room frames, forward matching ones |
+| `execution.onNodeOutput(id)` | Subscribe to the run's `workflow:node:output` room frames, forward matching ones |
 | `state.get(key)` | Read from connected state-manager node's data |
 | `state.set(key, value)` | Update state-manager node's data + trigger save |
 | `state.keys()` | Enumerate all state-manager nodes, collect their keys |
 | `auth.requestCredential(type)` | Open OAuth popup via existing credential flow |
 | `auth.hasCredential(type)` | Check credential store for matching type |
 
-The host maintains a map of pending request IDs → Promise resolvers / stream handlers. When data arrives from the socket layer, it posts the response back to the iframe.
+The host maintains a map of pending request IDs → Promise resolvers / stream handlers. When data arrives from the platform, it posts the response back to the iframe.
 
 ---
 

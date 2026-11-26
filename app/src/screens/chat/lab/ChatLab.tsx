@@ -4,7 +4,7 @@
 // `?as=key` answers as the API answers one of the account's keys rather than its signed-in owner. A window narrower
 // than a laptop's draws it as the phone shell does, under a stand-in for its top bar. Times read against the browser's
 // clock: for two screenshots to match, fix the clock before the page loads (the scenes are set at threads.ts's CLOCK).
-// A host that reaches the network its own way besides the platform client (its own socket, its own fetches) answers
+// A host that reaches the network its own way besides the platform client (its own fetches) answers
 // those from the scene with `prepare`, and may add scenes of its own (`more`).
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';

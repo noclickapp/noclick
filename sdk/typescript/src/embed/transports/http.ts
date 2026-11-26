@@ -1,7 +1,7 @@
 // HTTP transport: the bridge's calls made on the platform API (`/v1`) with the page's key, through the SDK's own
 // client; what changes while the page is open comes as room frames (`Room`), never by reading again: its pages' room
-// (`page:{workflow}`) for State changes, and each run's own (`run:{operation}`) for its steps. Published pages use it;
-// pages published before it keep the WebSocket transport they were built with.
+// (`page:{workflow}`) for State changes, and each run's own (`run:{operation}`) for its steps. Published pages use it,
+// and it's what an apiKey with no transport picks.
 
 import { NoClick } from '../../client.ts';
 import { Room } from '../../room.ts';

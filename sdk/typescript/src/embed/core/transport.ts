@@ -1,5 +1,5 @@
 // Abstract transport interface for SDK ↔ host communication.
-// Implementations: PostMessageTransport (iframe), WebSocketTransport (external apps).
+// Implementations: PostMessageTransport (iframe), HttpTransport (external apps).
 
 export interface TransportEventMap {
   'noclick:response': { id: string; result?: unknown; error?: string };

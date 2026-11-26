@@ -397,8 +397,8 @@ describe('a host’s own whole-graph save', () => {
         const replies: Array<(answer: WholeGraphAnswer) => void> = [];
         let paused = false;
         fill(GRAPH_SAVES, {
-            transportFor: () => 'socket',
-            socket: {
+            transportFor: () => 'whole',
+            whole: {
                 save: (save, answer) => {
                     sent.push(save);
                     replies.push(answer);
@@ -471,7 +471,7 @@ describe('a host’s own whole-graph save', () => {
     });
 
     it('fails loudly for a record that saves whole where no host has a save of its own', async () => {
-        fill(GRAPH_SAVES, { ...V1_GRAPH_SAVES, transportFor: () => 'socket' });
+        fill(GRAPH_SAVES, { ...V1_GRAPH_SAVES, transportFor: () => 'whole' });
         const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const c = client();
         setCanvasEditsClient(c);

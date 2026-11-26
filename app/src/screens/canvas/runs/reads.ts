@@ -1,7 +1,7 @@
 // What the canvas reads to show a workflow's runs and what each step did in them: a page of the run log and its
 // counts, a step's stored outputs, and what a step of a type outputs before it has run. The shapes are the views' own;
 // whoever renders the canvas answers them, through the `canvas.runs.reads` slot (declared in ../slots.ts): this app on
-// /v1 (standards.tsx), NoClick's app on its own socket. Beside them, what only a host has: outputs saved under a name
+// /v1 (standards.tsx), NoClick's app through its own transports. Beside them, what only a host has: outputs saved under a name
 // (`canvas.runs.saved`), what can be done about a failed step (`canvas.runs.fixes`) and a run's results drawn as a
 // whole (`canvas.runs.results`).
 import type { ComponentType, ReactNode } from 'react';

@@ -1,7 +1,7 @@
 // A fake /v1 for Work: the account's spaces (its own, and one it joined in another account, reached through a
 // session), their people, invites, channels and DMs with their messages, threads, pins, bookmarks and shared files,
 // and its agents, kept as state the requests read and change, with a frame for each change (delivered to `live`, as
-// the page's socket delivers the platform's). The real platform client runs over it, so Work is exercised through the
+// the account's change stream delivers the platform's). The real platform client runs over it, so Work is exercised through the
 // SDK as it is in the app. Tests and the local preview build on `fakeWork`.
 import { workFixtureClient } from './client';
 import type { NoClick } from 'noclick';

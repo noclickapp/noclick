@@ -276,8 +276,7 @@ export function connectionsFetch(world: ApiWorld, { actsAs = 'owner', observe }:
             const listed = accounts.filter((c) => every || world.integrationOf(c).integration !== null);
             return Response.json({ object: 'list', data: [...listed.map(view), ...made.values()], next_cursor: null });
         }
-        // The automations that use an account, by its credential id (what the hosted page reads for one only its socket
-        // lists).
+        // The automations that use an account, by its credential id (what the hosted page reads for one).
         if (method === 'GET' && path === '/v1/workflows' && url.searchParams.has('credential_id')) {
             const data = world.usedBy(url.searchParams.get('credential_id')!).map((w) => ({ object: 'workflow', id: w.id, name: w.name, step_types: w.marks }));
             return Response.json({ object: 'list', data, next_cursor: null });

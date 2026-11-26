@@ -9,9 +9,8 @@
 import type { NoClick } from 'noclick';
 
 /** How a record saves its graph: as the edits that changed it on `/v1` (`edits`), or whole through a host's own save
- *  (`socket`, named for where hosts first sent it; NoClick's app has one, decided per workflow). Each record keeps the
- *  way it first saved. */
-export type CanvasSaveTransport = 'socket' | 'edits';
+ *  (`whole`; NoClick's app has one, decided per workflow). Each record keeps the way it first saved. */
+export type CanvasSaveTransport = 'whole' | 'edits';
 
 /** The server's graph as a read or a conflict's answer carries it: steps and connections as a save sends them, and
  *  (on `/v1`) each step's withheld secrets by path. */
@@ -62,8 +61,8 @@ export type ServerGraphRead = { graph: ServerGraphData; version: number | null; 
 export interface GraphSaves {
     /** Which way a record saves, asked at its first save. */
     transportFor: (record: { workflowId: string; isSkill: boolean }) => CanvasSaveTransport;
-    /** The host's own whole-graph save, for a record that saves `socket`; null where there is none. */
-    socket: WholeGraphSaves | null;
+    /** The host's own whole-graph save, for a record that saves `whole`; null where there is none. */
+    whole: WholeGraphSaves | null;
     /** The server's graph read again (a save that never knew what the server holds, a step that couldn't be read
      *  whole), through `client` where the read is the API's. */
     read: (workflowId: string, client: NoClick | null) => Promise<ServerGraphRead>;
@@ -74,7 +73,7 @@ export interface GraphSaves {
 /** The standard: every record saves through `/v1` edits, and the graph is read again from `/v1`. */
 export const V1_GRAPH_SAVES: GraphSaves = {
     transportFor: () => 'edits',
-    socket: null,
+    whole: null,
     read: async (workflowId, client) => {
         if (!client) return { graph: null, error: 'no client to read the workflow with (setCanvasEditsClient)' };
         const { Workflow } = await import('../standardsSdk');

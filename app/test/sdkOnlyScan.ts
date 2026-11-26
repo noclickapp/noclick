@@ -1,4 +1,4 @@
-// What reaches NoClick around the SDK, file by file: a socket, an untyped API call, a raw network call, or server code
+// What reaches NoClick around the SDK, file by file: a socket library, an untyped API call, a raw network call, or server code
 // reading data itself. The open app's guard (sdkOnly.test.ts) runs it over src/; a host of the screens runs it over its
 // own app with its own allowlist. Each file's hits are counted and judged against the allowlist, which only shrinks.
 import { readdirSync, readFileSync } from 'node:fs';
@@ -27,7 +27,7 @@ export type Kind =
 export interface Allowed {
     count: number;
     why: Kind;
-    /** The change that moves a `pending` file's hits (2 to 6, numbered in the host's plan of the work). */
+    /** The change that moves a `pending` file's hits (2 to 4, numbered in the host's plan of the work). */
     chunk?: number;
 }
 
@@ -35,26 +35,11 @@ export type Allowlist = Record<string, Allowed>;
 
 const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$/;
 const SKIPPED_DIRS = new Set(['test', 'tests', 'fixtures', 'node_modules']);
-const SOCKET_PACKAGES = new Set(['socket.io-client', 'yjs', 'y-protocols', 'valtio-yjs']);
+const SOCKET_PACKAGES = new Set(['socket.io-client', 'engine.io-client', 'partysocket', 'yjs', 'y-protocols', 'valtio-yjs']);
 const SOCKET_MODULE = /(?:^|\/)(?:socket-sender|socket-receiver|socketCall|useSocketEvent|useShareSocket)$|(?:^|\/)lib\/socket\/|^\.\/socket\//;
 const SOCKET_CALLS = new Set(['sendEvent', 'sendEventAsync', 'sendEventWithCallback', 'socketCall', 'onSocketEvent', 'useSocketEvent', 'injectWireEvent']);
 const HTTP_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
 const SERVER_PACKAGES = /^(?:pg|@supabase\/.+)$/;
-
-/** The event names a socket declares (`ServerToClientEvents` and `ClientToServerEvents` in a generated types file):
- *  a string naming one is a socket use. Names without a `:` (`error`, `response`) are left out: plain words. */
-export function socketEventNames(generatedTypes: string, interfaces = ['ServerToClientEvents', 'ClientToServerEvents']): Set<string> {
-    const names = new Set<string>();
-    const source = ts.createSourceFile('events.ts', generatedTypes, ts.ScriptTarget.Latest, true);
-    source.forEachChild((node) => {
-        if (!ts.isInterfaceDeclaration(node) || !interfaces.includes(node.name.text)) return;
-        for (const member of node.members) {
-            const name = member.name && (ts.isStringLiteral(member.name) || ts.isIdentifier(member.name)) ? member.name.text : null;
-            if (name?.includes(':')) names.add(name);
-        }
-    });
-    return names;
-}
 
 const isServerModule = (file: string) => /\.server\.[cm]?[jt]sx?$/.test(file) || /(?:^|\/)routes\//.test(file);
 
@@ -69,7 +54,7 @@ const calleeName = (expression: ts.Expression): string | null =>
     ts.isIdentifier(expression) ? expression.text : ts.isPropertyAccessExpression(expression) ? expression.name.text : null;
 
 /** Each hit in one module, as `what`. */
-export function hitsIn(file: string, text: string, eventNames: Set<string> = new Set()): string[] {
+export function hitsIn(file: string, text: string): string[] {
     const found: string[] = [];
     const server = isServerModule(file);
     const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, /\.[cm]?[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
@@ -99,14 +84,7 @@ export function hitsIn(file: string, text: string, eventNames: Set<string> = new
             const name = calleeName(node.expression);
             if (name === 'XMLHttpRequest' || name === 'EventSource' || name === 'WebSocket') found.push(`network: new ${name}`);
         }
-        if (ts.isObjectLiteralExpression(node)) {
-            for (const property of node.properties) {
-                const key = property.name && (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name)) ? property.name.text : null;
-                if (key === 'event_name') found.push('socket: an event_name key');
-            }
-        }
         if (ts.isStringLiteralLike(node) && !ts.isImportDeclaration(node.parent) && !ts.isExportDeclaration(node.parent)) {
-            if (eventNames.has(node.text) && !ts.isLiteralTypeNode(node.parent)) found.push(`socket: names '${node.text}'`);
             if (server && /^\/(?:api|v1)\//.test(node.text)) found.push(`server data: '${node.text}'`);
         }
         ts.forEachChild(node, visit);
@@ -133,10 +111,10 @@ export function modulesUnder(dir: string, base: string): Record<string, string> 
 }
 
 /** Every file's hits, files with none left out. */
-export function scan(modules: Record<string, string>, eventNames?: Set<string>): Record<string, string[]> {
+export function scan(modules: Record<string, string>): Record<string, string[]> {
     const out: Record<string, string[]> = {};
     for (const [file, text] of Object.entries(modules)) {
-        const hits = hitsIn(file, text, eventNames);
+        const hits = hitsIn(file, text);
         if (hits.length) out[file] = hits;
     }
     return out;
@@ -154,7 +132,7 @@ export function judge(found: Record<string, string[]>, allow: Allowlist): string
     }
     for (const [file, allowed] of Object.entries(allow)) {
         if (!found[file]) wrong.push(`${file}: nothing left to allow: take it out of the allowlist`);
-        if (allowed.why === 'pending' && !(allowed.chunk && allowed.chunk >= 2 && allowed.chunk <= 6)) wrong.push(`${file}: pending names no change (2 to 6)`);
+        if (allowed.why === 'pending' && !(allowed.chunk && allowed.chunk >= 2 && allowed.chunk <= 4)) wrong.push(`${file}: pending names no change (2 to 4)`);
         if (allowed.why !== 'pending' && allowed.chunk !== undefined) wrong.push(`${file}: only pending work names a change`);
     }
     return wrong;

@@ -2,7 +2,7 @@
 // dollars (a month, and once when bought), which the purchase carries back so the charge is the price shown. A
 // purchase link buys through a quote its owner confirms instead (`confirmation`). One hook for every surface that
 // sells numbers, each over the transport it hands in: the steps are named (`phone_number:search`, `:buy`, …) and the
-// transport answers each however its host reaches NoClick (the SDK, a socket, a form post).
+// transport answers each however its host reaches NoClick (the SDK, a form post).
 // A number whose country asks for documents is bought with them (uploaded first, through the transport) and answers
 // in text, and the carrier reviews them: its order is in review until the carrier approves it (`orders`), and one it
 // sends back is corrected and resubmitted.

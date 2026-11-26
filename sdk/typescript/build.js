@@ -2,8 +2,7 @@
 // dist/types) and the bridge custom interface components load (dist/sdk.esm.js,
 // which the backend also serves to their iframes). `node build.js embed` builds
 // only the bridge, for the pre-commit hook.
-// React is external (resolved by the iframe import map or the npm peer), and so
-// is socket.io-client (installed separately for the bridge's WebSocket transport).
+// React is external (resolved by the iframe import map or the npm peer).
 
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
@@ -16,7 +15,7 @@ await build({
   bundle: true,
   format: 'esm',
   target: 'es2020',
-  external: ['react', 'react-dom', 'socket.io-client'],
+  external: ['react', 'react-dom'],
   minify: false,
   // The client's tsconfig (strict, ES2022 class fields) is not the bridge's.
   tsconfigRaw: {},

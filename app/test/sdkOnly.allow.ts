@@ -5,7 +5,6 @@ import type { Allowlist } from './sdkOnlyScan';
 
 export const ALLOW: Allowlist = {
     'src/screens/chat/useAgentsAtWork.ts': { count: 1, why: 'pending', chunk: 3 },
-    'src/screens/numbers/usePhoneNumberPurchase.ts': { count: 11, why: 'pending', chunk: 2 },
     'src/screens/resources/ResourceRenderer.tsx': { count: 1, why: 'signed-link' },
     'src/screens/work/resources/space/actions.ts': { count: 1, why: 'pending', chunk: 3 },
     'src/screens/work/slotStandards.tsx': { count: 1, why: 'signed-link' },

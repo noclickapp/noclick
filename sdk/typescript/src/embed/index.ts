@@ -31,16 +31,14 @@ export { useInputs } from './react.js';
 
 export interface InitOptions {
   /**
-   * Transport to use. Defaults to 'postmessage' (for iframe components).
-   * Pass 'http' with apiKey + workflowId for a page outside NoClick: the calls go to the platform API.
-   * 'websocket' is the app socket that pages published before 'http' were built with; it is what an
-   * apiKey with no transport still picks, so those pages keep working. New pages name 'http'.
+   * Transport to use. Defaults to 'postmessage' (for iframe components), or to 'http' when an apiKey is given.
+   * 'http' (apiKey + workflowId) is for a page outside NoClick: the calls go to the platform API.
    * Pass a Transport instance for fully custom transports.
    */
-  transport?: 'postmessage' | 'http' | 'websocket' | import('./core/transport.js').Transport;
-  /** NoClick API URL: 'https://api.noclick.com' for 'http', 'https://api.noclick.io' for 'websocket'. */
+  transport?: 'postmessage' | 'http' | import('./core/transport.js').Transport;
+  /** NoClick API URL for 'http' (default 'https://api.noclick.com'). */
   url?: string;
-  /** API key for authentication (required for 'websocket' transport). */
+  /** API key for authentication (required for 'http' transport). */
   apiKey?: string;
   /** Workflow ID to scope operations to. */
   workflowId?: string;
@@ -55,12 +53,12 @@ export interface InitOptions {
  *   Auto-initializes with postMessage when running inside an iframe.
  *
  * External app:
- *   import { init } from 'noclick';
+ *   import { init } from 'noclick/embed';
  *   await init({ transport: 'http', apiKey: 'nk_live_...', workflowId: '...' });
  */
 export async function init(options: InitOptions = {}): Promise<void> {
-  // Auto-detect transport: if apiKey is provided, use websocket; otherwise postmessage (iframe)
-  const { transport = options.apiKey ? 'websocket' : 'postmessage', nodeId } = options;
+  // Auto-detect transport: if apiKey is provided, use http; otherwise postmessage (iframe)
+  const { transport = options.apiKey ? 'http' : 'postmessage', nodeId } = options;
 
   if (typeof transport === 'string') {
     switch (transport) {
@@ -77,22 +75,8 @@ export async function init(options: InitOptions = {}): Promise<void> {
         await http.connect();
         break;
       }
-      case 'websocket': {
-        if (!options.apiKey) {
-          throw new Error("WebSocket transport requires 'apiKey' option.");
-        }
-        const { WebSocketTransport } = await import('./transports/websocket.js');
-        const ws = new WebSocketTransport({
-          url: options.url || 'https://api.noclick.io',
-          apiKey: options.apiKey,
-          workflowId: options.workflowId,
-        });
-        setTransport(ws);
-        await ws.connect();
-        break;
-      }
       default:
-        throw new Error(`Unknown transport: ${transport}. Use 'postmessage', 'http', 'websocket', or pass a Transport instance.`);
+        throw new Error(`Unknown transport: ${transport}. Use 'postmessage', 'http', or pass a Transport instance.`);
     }
   } else {
     setTransport(transport);

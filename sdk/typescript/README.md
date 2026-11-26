@@ -353,15 +353,14 @@ Every command: [The CLI](https://noclick.com/docs/guide/cli).
 A custom interface component on a NoClick canvas runs in a sandboxed iframe and talks to the workflow it
 belongs to through the bridge: its inputs, any node's output, running nodes and streaming their output,
 state, files and datasets. Inside the canvas it is imported as `@noclick/sdk` and initialises itself over
-`postMessage`, with no key. The same API is the package's `noclick/embed` entry, and `init({ apiKey })` reaches a
-workflow from outside the canvas over the instance's socket API, a self-hosted one included (`url:`).
+`postMessage`, with no key. The same API is the package's `noclick/embed` entry, and `init({ apiKey, workflowId })`
+reaches a workflow from outside the canvas over the platform API (`url:` names another).
 
 ```ts
 import { execution, useInputs } from "noclick/embed";
 ```
 
-Outside the canvas it needs `react` (and `socket.io-client` for the socket API) installed beside it; the
-client above needs neither.
+Outside the canvas it needs `react` installed beside it; the client above doesn't.
 
 Its design is in [`src/embed/DESIGN.md`](./src/embed/DESIGN.md).
 

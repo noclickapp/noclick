@@ -4,7 +4,7 @@
 // own place, which moves as you click around. A window narrower than a laptop's draws it as the phone shell does,
 // under a stand-in for its top bar. Times read against the browser's clock: for two screenshots to match, fix the
 // clock before the page loads. A host that reaches the network its own way besides the platform client (its own
-// socket, its own fetches) answers those from the scene's fixtures with `prepare`.
+// fetches) answers those from the scene's fixtures with `prepare`.
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import type { AccountMenuUser } from '@/ui/accountParts';

@@ -1,4 +1,4 @@
-// The app's screens reach NoClick through the SDK and nothing else: no socket, no untyped `client.request('POST', …)`,
+// The app's screens reach NoClick through the SDK and nothing else: no socket library, no untyped `client.request('POST', …)`,
 // no raw `fetch`, and no server code reading data itself. What still does is listed in sdkOnly.allow.ts with why, and
 // the list only shrinks: a file's count may not go up, and one that goes down takes the list down with it.
 import { join, resolve } from 'node:path';
@@ -10,8 +10,7 @@ import { hitsIn, judge, modulesUnder, scan } from './sdkOnlyScan';
 const APP = resolve(import.meta.dirname, '..');
 
 describe('the scanner', () => {
-    it('counts a socket, an untyped call, a raw network call and server code reading data itself', () => {
-        const events = new Set(['workflow:get']);
+    it('counts a socket library, an untyped call, a raw network call and server code reading data itself', () => {
         expect(
             hitsIn(
                 'src/screens/page.tsx',
@@ -25,15 +24,11 @@ describe('the scanner', () => {
                     "await thing.fetch();",
                     "navigator.sendBeacon('/t', body);",
                     "new WebSocket('wss://x');",
-                    "type Name = 'workflow:get';",
                 ].join('\n'),
-                events,
             ),
         ).toEqual([
             'socket: imports ~/lib/socket-sender',
             'socket: calls sendEventAsync',
-            'socket: an event_name key',
-            "socket: names 'workflow:get'",
             "untyped: request('POST', ...)",
             'network: fetch',
             'network: sendBeacon',
@@ -62,7 +57,7 @@ describe('the scanner', () => {
             'b.ts: 2 where 1 are allowed (network: fetch)',
             'c.ts: down to 1 from 2: lower its count in the allowlist',
             'd.ts: nothing left to allow: take it out of the allowlist',
-            'd.ts: pending names no change (2 to 6)',
+            'd.ts: pending names no change (2 to 4)',
         ]);
     });
 });

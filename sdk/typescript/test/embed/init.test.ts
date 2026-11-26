@@ -1,47 +1,16 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-const H = vi.hoisted(() => {
-  class FakeSocket {
-    connected = false;
-    handlers: Record<string, Function[]> = {};
-    onceHandlers: Record<string, Function[]> = {};
-    emit = vi.fn();
-    disconnect = vi.fn();
-    on(event: string, cb: Function) {
-      (this.handlers[event] ||= []).push(cb);
-      return this;
-    }
-    once(event: string, cb: Function) {
-      (this.onceHandlers[event] ||= []).push(cb);
-      return this;
-    }
-    fire(event: string, ...args: any[]) {
-      (this.handlers[event] || []).slice().forEach((cb) => cb(...args));
-      const once = this.onceHandlers[event] || [];
-      this.onceHandlers[event] = [];
-      once.forEach((cb) => cb(...args));
-    }
-  }
-  const state: { socket: FakeSocket | null } = { socket: null };
-  const io = vi.fn(() => {
-    const s = new FakeSocket();
-    state.socket = s;
-    return s;
-  });
-  return { state, io };
-});
+const R = vi.hoisted(() => ({ joined: [] as string[] }));
 
-vi.mock('socket.io-client', () => ({ io: H.io }));
+vi.mock('../../src/room.ts', () => ({
+  Room: { join: async (name: string) => { R.joined.push(name); return { on: () => () => {}, leave() {} }; } },
+}));
 
 import { init } from '../../src/embed/index';
 import { getTransport, isInitialized } from '../../src/embed/core/transport';
+import { HttpTransport } from '../../src/embed/transports/http';
 import { PostMessageTransport } from '../../src/embed/transports/postmessage';
-
-beforeEach(() => {
-  H.state.socket = null;
-  H.io.mockClear();
-});
 
 describe('init', () => {
   it('defaults to a PostMessageTransport', async () => {
@@ -50,24 +19,20 @@ describe('init', () => {
     expect(getTransport()).toBeInstanceOf(PostMessageTransport);
   });
 
-  it("throws when websocket transport is requested without an apiKey", async () => {
-    await expect(init({ transport: 'websocket' })).rejects.toThrow("requires 'apiKey'");
+  it('throws when the http transport is asked for without an apiKey and a workflowId', async () => {
+    await expect(init({ transport: 'http' })).rejects.toThrow("requires 'apiKey' and 'workflowId'");
+    await expect(init({ apiKey: 'nk_live_x' })).rejects.toThrow("requires 'apiKey' and 'workflowId'");
   });
 
-  it('throws on an unknown transport name', async () => {
+  it('throws on an unknown transport name, the old socket one included', async () => {
     await expect(init({ transport: 'bogus' as any })).rejects.toThrow('Unknown transport');
+    await expect(init({ transport: 'websocket' as any })).rejects.toThrow("Use 'postmessage', 'http'");
   });
 
-  it('selects the websocket transport when an apiKey is provided', async () => {
-    const p = init({ apiKey: 'nk_live_x', url: 'http://localhost:8005' });
-    await vi.waitFor(() => {
-      if (!H.state.socket) throw new Error('socket not created yet');
-    });
-    H.state.socket!.connected = true;
-    H.state.socket!.fire('connect');
-    await p;
-    expect(H.io).toHaveBeenCalledWith('http://localhost:8005', expect.objectContaining({ auth: { api_key: 'nk_live_x' } }));
-    expect(isInitialized()).toBe(true);
+  it('picks the http transport when an apiKey is given, joining its pages\' room', async () => {
+    await init({ apiKey: 'nk_live_x', workflowId: 'wf-1' });
+    expect(getTransport()).toBeInstanceOf(HttpTransport);
+    expect(R.joined).toEqual(['page:wf-1']);
   });
 
   it('accepts a custom Transport instance', async () => {
