@@ -46,6 +46,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "agents_conversations_withdraw_question": ["Withdraw Question", "POST", "write"],
     "agents_create": ["Create Agent", "POST", "write"],
     "agents_delete": ["Delete Agent", "DELETE", "destructive"],
+    "agents_for_apps_create": ["Agent For Apps", "POST", "write"],
     "agents_get": ["Get Agent", "GET", "read"],
     "agents_grants_delete": ["Revoke Grant", "DELETE", "destructive"],
     "agents_jobs_list": ["List Jobs", "GET", "read"],

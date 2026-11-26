@@ -11,6 +11,7 @@ import { agentMarkType } from '@/ui/primitives';
 import type { PlatformChannelEvent, PlatformChannelTypingEvent } from '@/sdk/frames';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { heldCallOf } from '@/sdk/held';
+import { needOf } from '@/lib/agentNeeds';
 import {
     Agent,
     Channel as PlatformChannel,
@@ -172,7 +173,12 @@ function questionOf(event: Raw): NonNullable<ChannelMessage['question']> {
     return { options: options.flatMap((o) => (typeof o.label === 'string' && typeof o.reply === 'string' ? [{ label: o.label, reply: o.reply }] : [])) };
 }
 
-function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question'> {
+/** What an agent still needs, from its message's `connect` event: each of its apps' accounts, and its model. */
+function asksOf(event: Raw): NonNullable<ChannelMessage['asks']> {
+    return { needs: (Array.isArray(event.needs) ? event.needs : []).flatMap((n) => needOf(n) ?? []) };
+}
+
+function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question' | 'asks'> {
     const count = rawCount(raw.reply_count);
     const pinned = raw.pinned && typeof raw.pinned === 'object' ? (raw.pinned as Raw) : null;
     const event = raw.event && typeof raw.event === 'object' ? (raw.event as Raw) : null;
@@ -194,6 +200,7 @@ function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 
         ...(event?.type === 'pinned' && typeof event.message_id === 'string' ? { event: { type: 'pinned' as const, messageId: event.message_id } } : {}),
         ...(event?.type === 'membership' ? { membership: membershipOf(event, who) } : {}),
         ...(event?.type === 'question' ? { question: questionOf(event) } : {}),
+        ...(event?.type === 'connect' ? { asks: asksOf(event) } : {}),
     };
 }
 

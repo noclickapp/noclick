@@ -7,8 +7,9 @@ import { createContext, useContext, type ReactNode } from 'react';
 import type { SetupArrival } from './source';
 
 export interface ChatArrival {
-    /** The automation being set up from another page, until its note is in the thread. */
-    arriving: { name: string; workflowId?: string | null } | null;
+    /** What's being set up from another page, until its note is in the thread: its name, and once it's made what its
+     *  setup is about (`setupSubject`: its automation's id, or `agent:<id>`). */
+    arriving: { name: string; subject?: string | null } | null;
     /** What the arrival draws beside the page (a refusal it met); nothing otherwise. */
     aside?: ReactNode;
 }

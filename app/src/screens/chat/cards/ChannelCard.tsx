@@ -7,7 +7,7 @@
 import { useState, type FormEvent } from 'react';
 import { ArrowUp, ArrowUpRight, Hash, Loader2 } from 'lucide-react';
 import { openedAt, rememberOpened } from '@/screens/work/remember';
-import { useChannelReply, type ReplyAgent } from './useChannelReply';
+import { useChannelReply, type ChannelReply, type ReplyAgent } from './useChannelReply';
 import { CARD, PILL_QUIET, Receipt, Status } from '@/ui/chat/primitives';
 import { useNewerCard } from '@/screens/chat/cards/canvases';
 import { MemberAvatar } from '@/screens/channels/avatars';
@@ -77,9 +77,6 @@ export function PlatformChannelCard({ call }: { call: CoordinatorToolCall }) {
         const at = openedAt(card.channelId);
         return at !== null && at >= call.startedAt;
     });
-    const [draft, setDraft] = useState('');
-    const [sending, setSending] = useState(false);
-    const [sendError, setSendError] = useState<string | null>(null);
     const { channel, messages, carried, agents } = reply;
     // A join's call names no channel: its name comes with the read.
     const name = channel?.name ?? card.name;
@@ -122,23 +119,6 @@ export function PlatformChannelCard({ call }: { call: CoordinatorToolCall }) {
     const newest = words[words.length - 1];
     const to = (newest && authorOf(newest)) ?? (carried.length === 1 ? carried[0] : null);
     const placeholder = newest && to ? `Reply to ${to.name}` : to ? `Message ${to.name}` : `Message ${label}`;
-    const send = async (e: FormEvent) => {
-        e.preventDefault();
-        const said = draft.trim();
-        if (!said || sending) return;
-        setSending(true);
-        setSendError(null);
-        try {
-            // Where agents answer only when @-mentioned, the one it replies to is.
-            await reply.post(channel?.mode === 'mentions' && to && !mentions(said, to.name) ? `@${to.name} ${said}` : said);
-            setDraft('');
-            move();
-        } catch (error) {
-            setSendError(error instanceof Error ? error.message : String(error));
-        } finally {
-            setSending(false);
-        }
-    };
 
     return (
         <section className={cn(CARD, 'overflow-hidden')} data-testid="coordinator-channel-card">
@@ -194,36 +174,63 @@ export function PlatformChannelCard({ call }: { call: CoordinatorToolCall }) {
                     )}
                 </div>
             )}
-            {channel?.status === 'closed' ? (
-                <p className="px-4 pb-3.5 pt-1 text-[13px] text-muted-foreground">It’s closed: everyone can still read it, and no one can post.</p>
-            ) : (
-                <form className="px-3 pb-3 pt-1.5" onSubmit={(e) => void send(e)}>
-                    <div className="flex h-11 items-center gap-2 rounded-full bg-composer pl-4 pr-1.5 ring-1 ring-inset ring-border focus-within:ring-foreground/20 dark:ring-foreground/[0.09]">
-                        <input
-                            value={draft}
-                            onChange={(e) => setDraft(e.target.value)}
-                            placeholder={placeholder}
-                            aria-label={placeholder}
-                            enterKeyHint="send"
-                            disabled={!channel}
-                            className="min-w-0 flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] disabled:opacity-60"
-                        />
-                        <button
-                            type="submit"
-                            aria-label={`Send in ${label}`}
-                            disabled={!draft.trim() || sending || !channel}
-                            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-foreground/[0.08] disabled:text-foreground/35"
-                        >
-                            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.25} />}
-                        </button>
-                    </div>
-                    {(sendError || (reply.error && channel && messages)) && (
-                        <p role="alert" className="mt-1.5 px-3 text-[12.5px] text-red-600 dark:text-red-400">
-                            {sendError ?? reply.error}
-                        </p>
-                    )}
-                </form>
-            )}
+            <ChannelReplyBox reply={reply} to={to} placeholder={placeholder} onSent={move} />
         </section>
+    );
+}
+
+/** The box under a channel's card: what you write posts in the channel as you (where its agents answer only when
+ *  @-mentioned, mentioning `to`, the one it replies to), then `onSent` (which moves you there). A closed channel says
+ *  so in its place. */
+export function ChannelReplyBox({ reply, to, placeholder, onSent, className }: { reply: ChannelReply; to: ChannelMember | null; placeholder: string; onSent: () => void; className?: string }) {
+    const [draft, setDraft] = useState('');
+    const [sending, setSending] = useState(false);
+    const [sendError, setSendError] = useState<string | null>(null);
+    const { channel, messages } = reply;
+    const label = channel?.name ? `#${channel.name}` : 'the channel';
+    if (channel?.status === 'closed') return <p className="px-4 pb-3.5 pt-1 text-[13px] text-muted-foreground">It’s closed: everyone can still read it, and no one can post.</p>;
+    const send = async (e: FormEvent) => {
+        e.preventDefault();
+        const said = draft.trim();
+        if (!said || sending) return;
+        setSending(true);
+        setSendError(null);
+        try {
+            await reply.post(channel?.mode === 'mentions' && to && !mentions(said, to.name) ? `@${to.name} ${said}` : said);
+            setDraft('');
+            onSent();
+        } catch (error) {
+            setSendError(error instanceof Error ? error.message : String(error));
+        } finally {
+            setSending(false);
+        }
+    };
+    return (
+        <form className={cn('px-3 pb-3 pt-1.5', className)} onSubmit={(e) => void send(e)}>
+            <div className="flex h-11 items-center gap-2 rounded-full bg-composer pl-4 pr-1.5 ring-1 ring-inset ring-border focus-within:ring-foreground/20 dark:ring-foreground/[0.09]">
+                <input
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    placeholder={placeholder}
+                    aria-label={placeholder}
+                    enterKeyHint="send"
+                    disabled={!channel}
+                    className="min-w-0 flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-[hsl(var(--placeholder))] disabled:opacity-60"
+                />
+                <button
+                    type="submit"
+                    aria-label={`Send in ${label}`}
+                    disabled={!draft.trim() || sending || !channel}
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-foreground/[0.08] disabled:text-foreground/35"
+                >
+                    {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.25} />}
+                </button>
+            </div>
+            {(sendError || (reply.error && channel && messages)) && (
+                <p role="alert" className="mt-1.5 px-3 text-[12.5px] text-red-600 dark:text-red-400">
+                    {sendError ?? reply.error}
+                </p>
+            )}
+        </form>
     );
 }

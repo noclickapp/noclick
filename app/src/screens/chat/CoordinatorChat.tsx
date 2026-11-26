@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react
 import { toast } from 'sonner';
 import { NotFound, type JsonObject, type NoClick } from 'noclick';
 import type { ChatReference } from '@/lib/agentThread/messages';
+import { setupSubject } from '@/lib/agentThread/thread';
 import { useWorkFrames, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { ConversationBrowserView } from '@/screens/work/browser/BrowserView';
 import { ConversationBrowserProvider, useConversationBrowser } from '@/screens/work/browser/useConversationBrowser';
@@ -111,10 +112,10 @@ function Chat({ client, referenceDisplay, children }: { client: NoClick; referen
     // A note the conversation keeps once per workflow; read back at once, so it never waits on the stream.
     const rereadHistory = state.rereadHistory;
     const arrive = useCallback(
-        async ({ name, setup }: SetupArrival) => {
+        async ({ name, setup, text }: SetupArrival) => {
             const named = name.split(/\s+/).join(' ').trim().slice(0, 120) || 'your automation';
             if (!session) return;
-            await agent.note(session, `Let’s finish setting up ${named}.`, { data: { setup: { ...setup } } as JsonObject, key: `setup:${setup.workflow_id}` });
+            await agent.note(session, text ?? `Let’s finish setting up ${named}.`, { data: { setup: { ...setup } } as JsonObject, key: `setup:${setupSubject(setup)}` });
             await rereadHistory();
         },
         [agent, session, rereadHistory]
@@ -123,7 +124,7 @@ function Chat({ client, referenceDisplay, children }: { client: NoClick; referen
     // NoClick's browser in this chat, once the chat has found its agent: the Beside's tile, the turns' cards, the big view.
     const browser = useConversationBrowser(ownId, ownId ? session : null, 'NoClick');
 
-    const setups = useMemo(() => thread.entries.flatMap((e) => (e.kind === 'note' && e.setup ? [e.setup.workflow_id] : [])), [thread]);
+    const setups = useMemo(() => thread.entries.flatMap((e) => (e.kind === 'note' && e.setup ? [setupSubject(e.setup)] : [])), [thread]);
     const chat: ChatSource = {
         isStreaming: working,
         conversationId: ready ? session : null,

@@ -19,6 +19,7 @@ GET /v1/agents/8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01/memory
 GET /v1/agents/8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01/memory/reach
 GET /v1/agents/8d6f1d3a-0c4e-4d55-9a5b-1f6f2c7b9e01/wakeups
 GET /v1/agents/agent%3Acoordinator/conversations
+GET /v1/agents/agt_roblox
 GET /v1/agents/b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e
 GET /v1/agents/c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f
 GET /v1/agents/coding
@@ -34,10 +35,13 @@ GET /v1/browsers
 GET /v1/channels
 GET /v1/channels/8554d409-867f-466e-a7f1-a71adcf0311d
 GET /v1/channels/8554d409-867f-466e-a7f1-a71adcf0311d/messages
+GET /v1/channels/ch_roblox
+GET /v1/channels/ch_roblox/messages
 GET /v1/connections
 GET /v1/harnesses
 GET /v1/harnesses/claude_code/models
 GET /v1/harnesses/codex/models
+GET /v1/harnesses/hermes/models
 GET /v1/harnesses/sdk/models
 GET /v1/humans/owner/reach
 GET /v1/inboxes

@@ -3,7 +3,7 @@
 // the shared `connection.mark`, an agent's face the channels layer's.
 import type { ComponentType, ReactNode } from 'react';
 import { slot } from '@/slots';
-import type { SetupRef } from '@/lib/agentThread/thread';
+import type { WorkflowSetupRef } from '@/lib/agentThread/thread';
 import type { JsonObject } from '@/lib/toolCalls';
 import type { OwnerAnswer, OwnerPick, OwnerQuestion } from '@/screens/humans/useHumanRequest';
 import type { TextApp } from '@/ui/AppTile';
@@ -84,8 +84,9 @@ export interface QuestionStepProps {
 export const QUESTION_STEP = slot<ComponentType<QuestionStepProps>>('chat.question.step', StepOnNoClick);
 
 /** The card under a note that sets up an automation picked on another page (its setup); `newer` is a newer card in the
- *  thread about the same automation, which folds it. Nothing stands there: the note's words do. */
-export const SETUP_CARD = slot<ComponentType<{ setup: SetupRef; newer?: NewestCard }> | null>('chat.note.setup', null);
+ *  thread about the same automation, which folds it. Nothing stands there: the note's words do. (An agent an agents
+ *  page made draws the chat's own card.) */
+export const SETUP_CARD = slot<ComponentType<{ setup: WorkflowSetupRef; newer?: NewestCard }> | null>('chat.note.setup', null);
 
 /** Under a reply NoClick turned down for want of funds: how to get going again. The standard says so and links to
  *  adding funds on NoClick. */

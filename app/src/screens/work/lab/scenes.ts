@@ -3,6 +3,7 @@
 // draws the lab's index and is what a screenshot of every view walks.
 import { id as agentId } from '../agents/fixtures/workAgents';
 import { AGENT_ID } from '../conversation/fixtures/workAgent';
+import { ROBLOX_CHANNEL_ID } from '../fixtures/agentForApps';
 import type { LabStep } from '@/ui/lab/steps';
 import type { LabWorld } from './worlds';
 
@@ -27,6 +28,8 @@ export const SCENES: readonly LabScene[] = [
     { id: 'channel', title: 'A channel', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'ch_launch' } },
     { id: 'thread', title: 'A thread beside its channel', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'ch_launch', thread: 'l4' } },
     { id: 'threads', title: 'Threads you follow', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'threads' } },
+    { id: 'agent-for-apps-waiting', title: 'An agents page’s agent in its channel, waiting on what it needs', group: 'Spaces', world: 'agent_for_apps', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
+    { id: 'agent-for-apps-ready', title: 'An agents page’s agent in its channel, saying hello', group: 'Spaces', world: 'agent_for_apps_ready', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
     { id: 'dms', title: 'DMs', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'dms' } },
     { id: 'dm', title: 'A DM', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'dms', channel: 'dm_priya' } },
     { id: 'resources', title: 'Resources', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources' } },

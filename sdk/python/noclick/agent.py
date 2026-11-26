@@ -1039,6 +1039,44 @@ async def _list_params(name: Optional[str], status: Optional[str], active_since:
     }
 
 
+@dataclass(frozen=True)
+class AgentForAppsNeed:
+    """What an agent made for some apps (``Agent.for_apps``) needs before it can start: an account of one of its
+    apps (``kind`` ``"app"``, with its ``integration``, ``node_type`` and ``label``), or its model (``"model"``), and
+    whether it's ``connected``."""
+
+    kind: str
+    connected: bool
+    integration: Optional[str] = None
+    node_type: Optional[str] = None
+    label: Optional[str] = None
+    description: Optional[str] = None
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "AgentForAppsNeed":
+        return cls(str(raw.get("kind")), bool(raw.get("connected")), raw.get("integration"), raw.get("node_type"),
+                   raw.get("label"), raw.get("description"))
+
+
+@dataclass(frozen=True)
+class AgentForApps:
+    """An agent for some apps (``Agent.for_apps``): the ``agent``, the ``channel`` it talks in (``id``, ``name``),
+    what it still ``needs``, and whether this call ``created`` it."""
+
+    agent: "Agent"
+    channel: Optional[Dict[str, Any]]
+    needs: List[AgentForAppsNeed]
+    created: bool
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any], client: Optional[Client]) -> "AgentForApps":
+        made = raw.get("agent") or {}
+        agent = Agent._new(hints={"id": made.get("id"), "name": made.get("name")}, client=client)
+        return cls(agent, raw.get("channel"), [AgentForAppsNeed._from(n) for n in raw.get("needs") or []],
+                   bool(raw.get("created")), raw)
+
+
 async def agent_id(agent: Any) -> Optional[str]:
     """The id of an ``Agent`` (hydrating a lazy one) or an id string."""
     if agent is not None and not isinstance(agent, (str, Agent)):
@@ -1087,14 +1125,14 @@ class Agent(_Object):
     can_request: List[str] = field("can_request", doc="What it may ask its user to connect at run time.")
     user_id: Optional[str] = field("user_id")
     workflow_id: Optional[str] = field("workflow_id")
-    node_id: Optional[str] = field("node_id", doc="An app agent's step in its workflow (None for an API agent).")
-    workflow_name: Optional[str] = field("workflow_name", doc="An app agent's workflow, by name.")
+    node_id: Optional[str] = field("node_id", doc="An agent made for apps's step in its workflow (None for an API agent).")
+    workflow_name: Optional[str] = field("workflow_name", doc="An agent made for apps's workflow, by name.")
     access: Optional[str] = field(
-        "access", doc="An app agent's workflow as you hold it: ``owner``, or ``editor`` or ``viewer`` when it was "
+        "access", doc="An agent made for apps's workflow as you hold it: ``owner``, or ``editor`` or ``viewer`` when it was "
         "shared with you (only an owner's or an editor's takes messages).",
     )
-    enabled: Optional[bool] = field("enabled", doc="Whether an app agent is switched on; a disabled one takes no messages.")
-    app_url: Optional[str] = field("app_url", doc="Where an app agent is changed: its workflow in the NoClick app.")
+    enabled: Optional[bool] = field("enabled", doc="Whether an agent made for apps is switched on; a disabled one takes no messages.")
+    app_url: Optional[str] = field("app_url", doc="Where an agent made for apps is changed: its workflow in the NoClick app.")
     parent_id: Optional[str] = field("parent_id")
     ttl_s: Optional[int] = field(
         "ttl_s", doc="Its time to live, in seconds (None if it isn't temporary); ``expires_at`` is when it runs "
@@ -2026,6 +2064,33 @@ class Agent(_Object):
             next_step=f"Use one of: {', '.join(h.name for h in harnesses)}.",
             details={"name": name},
         )
+
+    @synced
+    @classmethod
+    async def for_apps(cls, apps: Sequence[str], *, harness: str = "sdk", client: Optional[Client] = None) -> AgentForApps:
+        """An agent for some of your apps, as NoClick's agents pages set one up: named for them ("Roblox agent"), on
+        ``harness``, holding everything on your account, with a channel of its own in your personal space that opens
+        with what it still needs and says hello, with first tasks to tap, once nothing is missing. Its model runs on
+        a model account of yours that runs the harness's model, else NoClick's own key where the harness takes it,
+        else a model connection waiting for your key or plan. Made once for the same apps and harness: asked again,
+        it's the one made (``created`` False). Your account's owner or one of its own keys makes it; a user's can't.
+
+        Args:
+            apps: Each an integration's name (``"roblox"``) or its step type (``"automation-roblox"``), up to 3.
+            harness: What runs it: ``sdk``, ``claude_code``, ``codex``, ``opencode``, ``hermes`` or ``openclaw``.
+
+        Returns:
+            The ``AgentForApps``: the ``agent``, its ``channel`` (``id``, ``name``), and ``needs``, each app's account
+            and, where it waited when made, its model, each ``connected`` or not.
+
+        Usage::
+
+            made = noclick.Agent.for_apps(["roblox"], harness="hermes")
+            print(made.agent.name, made.channel["name"], [n.label or n.kind for n in made.needs if not n.connected])
+        """
+        raw = await resolve_client(client).request("POST", "/v1/agents/for_apps",
+                                                   json={"apps": list(apps), "harness": harness}, user=None)
+        return AgentForApps._from(raw or {}, client)
 
     @property
     def paused(self) -> bool:

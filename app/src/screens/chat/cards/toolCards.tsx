@@ -5,7 +5,8 @@
 // are the exception: the turn's pages are one Sources list above its cards.
 import { Suspense, useMemo, type ReactNode } from 'react';
 import { standing, useSlot } from '@/slots';
-import type { SetupRef as CoordinatorSetupRef } from '@/lib/agentThread/thread';
+import { setupSubject, type SetupRef as CoordinatorSetupRef } from '@/lib/agentThread/thread';
+import { AgentForAppsCard } from './AgentForAppsCard';
 import { SourcesList, sourceKey, type Source } from '@/ui/chat/media';
 import { Status } from '@/ui/chat/primitives';
 import { cardRefsOf, list, str, type CoordinatorToolCall, type JsonObject } from '@/lib/toolCalls';
@@ -70,10 +71,17 @@ export function CardsProvider({ cards, jobs, moved, children }: { cards: readonl
 }
 
 /** The card under a setup note; `id` is its place among the thread's cards, so a newer one about the same automation
- *  (set up for another client, or built again) folds it. */
+ *  (set up for another client, or built again) folds it. An agent an agents page made is the chat's own card; an
+ *  automation's is its host's. */
 export function SetupNoteCard({ id, setup }: { id: string; setup: CoordinatorSetupRef }) {
     const Card = useSlot(SETUP_CARD);
-    const newer = useNewerCard(id, setup.workflow_id);
+    const newer = useNewerCard(id, setupSubject(setup));
+    if (setup.kind === 'agent_for_apps')
+        return (
+            <div className="mt-3" data-testid="coordinator-setup-card" data-folded={newer ? '' : undefined}>
+                <AgentForAppsCard setup={setup} folded={!!newer} />
+            </div>
+        );
     if (!Card) return null;
     return (
         <div className="mt-3" data-testid="coordinator-setup-card" data-folded={newer ? '' : undefined}>

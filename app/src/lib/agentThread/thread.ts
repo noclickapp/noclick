@@ -9,6 +9,7 @@
 // it points at (its chips); a note can set up an automation (its setup card) or pass on a space's news, and one added
 // while a turn is at work goes before that turn, where the conversation keeps it; a turn NoClick turned down because
 // the account ran out carries what its card draws.
+import { needOf, type AgentNeed } from '@/lib/agentNeeds';
 import { outOfFundsOf, readMessage, turnEndText, type ChatReference } from './messages';
 import type {
     AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, DiffStat, HarnessRequest, JsonObject, Message, MessageChannel, MessageSubagent, MessageTrigger, MessageVia, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
@@ -16,12 +17,29 @@ import type {
 } from 'noclick';
 
 /** An automation a note sets up (one picked on a public page): a hosted link the owner's own agent calls (`mcp`), or
- *  an agent NoClick runs (`agent`), and the agent the owner came for. */
-export interface SetupRef {
+ *  an agent step NoClick runs (`agent`, as an agents page set one up before its agents were platform agents), and the
+ *  agent the owner came for. */
+export interface WorkflowSetupRef {
     kind: 'mcp' | 'agent';
     workflow_id: string;
     client?: string | null;
 }
+
+/** An agent picked on an agents page, already made with its channel (`channel_id`), the apps it works in and what it
+ *  waited on when it was made (`needs`), and the harness the page was for (`client`). */
+export interface AgentForAppsSetupRef {
+    kind: 'agent_for_apps';
+    agent_id: string;
+    channel_id: string;
+    needs: AgentNeed[];
+    client?: string | null;
+}
+
+/** What a note sets up: an automation, or an agent picked on an agents page. */
+export type SetupRef = WorkflowSetupRef | AgentForAppsSetupRef;
+
+/** What a setup is about, for the newest card about it to draw in full: its automation, or its agent. */
+export const setupSubject = (setup: SetupRef): string => (setup.kind === 'agent_for_apps' ? `agent:${setup.agent_id}` : setup.workflow_id);
 
 /** One step of a turn as the activity log draws it: what it did, and what it printed or changed. */
 export interface Step {
@@ -493,9 +511,14 @@ function settledTurn(m: Message, at: number, startedAt: number, key: string): Tu
 }
 
 function setupOf(data: JsonObject | null): SetupRef | null {
-    const setup = data?.setup as Partial<SetupRef> | undefined;
+    const setup = data?.setup as Record<string, unknown> | undefined;
+    const client = typeof setup?.client === 'string' ? { client: setup.client } : {};
+    if (setup?.kind === 'agent_for_apps' && typeof setup.agent_id === 'string' && typeof setup.channel_id === 'string') {
+        const needs = (Array.isArray(setup.needs) ? setup.needs : []).flatMap((n) => needOf(n) ?? []);
+        return { kind: 'agent_for_apps', agent_id: setup.agent_id, channel_id: setup.channel_id, needs, ...client };
+    }
     if (!setup || (setup.kind !== 'mcp' && setup.kind !== 'agent') || typeof setup.workflow_id !== 'string') return null;
-    return { kind: setup.kind, workflow_id: setup.workflow_id, ...(typeof setup.client === 'string' ? { client: setup.client } : {}) };
+    return { kind: setup.kind, workflow_id: setup.workflow_id, ...client };
 }
 
 /** The note a message is: one added to the conversation (`note`, maybe setting an automation up), or a space's news
@@ -513,7 +536,7 @@ function noteOf(m: { role: string | null; text: string; data: JsonObject | null;
     return { kind: 'note', key, text: m.text ?? '', at, setup: space ? null : setupOf(m.data), space, ...(renamedTo ? { renamedTo } : {}), ...(session ? { session } : {}), ...(appTesting ? { appTesting } : {}), ...(modelSwitch ? { modelSwitch } : {}), ...(workflowApproval ? { workflowApproval } : {}) };
 }
 
-const sameNote = (a: NoteEntry, b: NoteEntry) => a.text === b.text && a.setup?.workflow_id === b.setup?.workflow_id && a.setup?.client === b.setup?.client && a.space?.id === b.space?.id;
+const sameNote = (a: NoteEntry, b: NoteEntry) => a.text === b.text && (a.setup ? setupSubject(a.setup) : null) === (b.setup ? setupSubject(b.setup) : null) && a.setup?.client === b.setup?.client && a.space?.id === b.space?.id;
 
 /** The failed turns whose failure a line beside them already says (a model switch's: it moved on, or waits for the
  *  reset), by key: one between the message the turn answers and the next, on either side of the turn (a line written

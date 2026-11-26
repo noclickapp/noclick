@@ -66,10 +66,12 @@ export interface ChatBesideProps {
     onReserve: (px: number) => void;
 }
 
-/** A workflow picked on another page (an /agents page, /mcp), made and now set up from the chat. */
+/** A workflow picked on another page (an /agents page, /mcp), made and now set up from the chat, or an agent an agents
+ *  page made; `text`, what NoClick's note says of it (else that it's finishing setting it up). */
 export interface SetupArrival {
     name: string;
     setup: SetupRef;
+    text?: string;
 }
 
 export const ChatSourceContext = createContext<ChatSource | null>(null);

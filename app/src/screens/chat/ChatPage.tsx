@@ -156,7 +156,7 @@ export function ChatPage() {
     // Until its note is in the thread, the agent being set up holds the thread open.
     const thread = coordinator.thread;
     const size = thread.size;
-    const settingUp = !!arriving && !thread.setups.includes(arriving.workflowId ?? '');
+    const settingUp = !!arriving && !thread.setups.includes(arriving.subject ?? '');
     const view = settingUp || size > 0 ? 'thread' : loaded ? 'start' : 'loading';
     const empty = view === 'start';
     // Pinned to the newest message unless the reader scrolled up, including while a card that loads after its message

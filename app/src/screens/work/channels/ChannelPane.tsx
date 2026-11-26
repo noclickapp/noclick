@@ -35,6 +35,7 @@ import { ChannelTabBar, ChannelTabBody, useChannelTabs, type ChannelTabs } from 
 import { useChannelTypists, useTypingSignal } from '@/screens/channels/typing';
 import { WorkingLine, workingLineOf, type LineTarget } from './WorkingLine';
 import { useWorkViewer } from '../viewer';
+import { NeedPills } from '../agents/needs';
 
 const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer.types).includes('Files');
 /** Every command where whoever shows Work hands asks to NoClick (`ask`): /remind and /automate are asks. */
@@ -384,6 +385,8 @@ function ChannelPaneBody({
         onSeePins: () => tabs.setView('pins'),
         onOpenMessage: (id) => tabs.open(id),
         onAnswer: (text) => void channels.post(channel.id, text, []).catch((e) => toast.error(errorText(e))),
+        // What an agent made on an agents page still needs, connected from its message.
+        Asks: NeedPills,
         // An author's name and face open them: an agent's profile, a person's DM.
         onAuthor: onMember,
         lit,

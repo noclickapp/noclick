@@ -1308,6 +1308,40 @@ export interface HarnessInfo {
   raw: JsonObject;
 }
 
+/**
+ * What an agent made for some apps (`Agent.forApps`) needs before it can start: an account of one of its apps
+ * (`kind` `"app"`, with its `integration`, `nodeType` and `label`), or its model (`"model"`), and whether it's in.
+ */
+export interface AgentForAppsNeed {
+  kind: "app" | "model";
+  connected: boolean;
+  integration: string | null;
+  nodeType: string | null;
+  label: string | null;
+  /** What it does in that app, as the app describes itself. */
+  description: string | null;
+}
+
+/** An agent for some apps (`Agent.forApps`), the channel it talks in, what it still needs, and whether this call made it. */
+export interface AgentForApps {
+  agent: Agent;
+  channel: { id: string; name: string } | null;
+  needs: AgentForAppsNeed[];
+  created: boolean;
+  raw: JsonObject;
+}
+
+function toAgentForAppsNeed(raw: JsonObject): AgentForAppsNeed {
+  return {
+    kind: raw.kind === "model" ? "model" : "app",
+    connected: raw.connected === true,
+    integration: str(raw.integration),
+    nodeType: str(raw.node_type),
+    label: str(raw.label),
+    description: str(raw.description),
+  };
+}
+
 function toHarnessInfo(raw: JsonObject, client: NoClick | undefined): HarnessInfo {
   const name = raw.name as HarnessName;
   return {
@@ -1990,6 +2024,32 @@ export class Agent extends ApiObject {
   }
 
   /**
+   * An agent for some of your apps, as NoClick's agents pages set one up: named for them ("Roblox agent"), on
+   * `harness`, holding everything on your account, with a channel of its own in your personal space that opens with
+   * what it still needs and says hello, with first tasks to tap, once nothing is missing. Its model runs on a model
+   * account of yours that runs the harness's model, else NoClick's own key where the harness takes it, else a model
+   * connection waiting for your key or plan. Made once for the same apps and harness: asked again, it's the one made
+   * (`created` false). Your account's owner or one of its own keys makes it; a user's can't.
+   *
+   *     const made = await Agent.forApps(["roblox"], { harness: "hermes" });
+   *     console.log(made.agent.name, made.channel?.name, made.needs.filter((n) => !n.connected));
+   */
+  static async forApps(apps: string[], options: { harness?: HarnessName; client?: NoClick } = {}): Promise<AgentForApps> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/agents/for_apps", {
+      json: { apps, harness: options.harness ?? "sdk" }, user: null,
+    }));
+    const made = asObject(raw.agent);
+    const channel = asObject(raw.channel ?? {});
+    return {
+      agent: new Agent({ hints: { id: String(made.id), ...(typeof made.name === "string" ? { name: made.name } : {}) }, client: options.client, user: null }),
+      channel: typeof channel.id === "string" ? { id: channel.id, name: String(channel.name) } : null,
+      needs: asList(raw.needs).map((n) => toAgentForAppsNeed(asObject(n))),
+      created: raw.created === true,
+      raw,
+    };
+  }
+
+  /**
    * Every coding agent, and what each is doing. An agent on `claude_code`, `codex`, `opencode`, `hermes` or
    * `openclaw` (an app's own coding agent among them), with its `state` (`working`, `waiting` on a person, `warm`,
    * `paused` and why, `stopped`), where it runs, on whose model credential, its current job, each conversation that's
@@ -2084,23 +2144,23 @@ export class Agent extends ApiObject {
   get origin(): AgentOrigin | null {
     return this._field("origin");
   }
-  /** An app agent's step in its workflow (null for an API agent). */
+  /** An agent made for apps's step in its workflow (null for an API agent). */
   get nodeId(): string | null {
     return this._field("node_id");
   }
-  /** An app agent's workflow, by name. */
+  /** An agent made for apps's workflow, by name. */
   get workflowName(): string | null {
     return this._field("workflow_name");
   }
-  /** An app agent's workflow as you hold it: `owner`, or `editor` or `viewer` when it was shared with you (only an owner's or an editor's takes messages). */
+  /** An agent made for apps's workflow as you hold it: `owner`, or `editor` or `viewer` when it was shared with you (only an owner's or an editor's takes messages). */
   get access(): string | null {
     return this._field("access");
   }
-  /** Whether an app agent is switched on; a disabled one takes no messages. */
+  /** Whether an agent made for apps is switched on; a disabled one takes no messages. */
   get enabled(): boolean | null {
     return this._field("enabled");
   }
-  /** Where an app agent is changed: its workflow in the NoClick app. */
+  /** Where an agent made for apps is changed: its workflow in the NoClick app. */
   get appUrl(): string | null {
     return this._field("app_url");
   }

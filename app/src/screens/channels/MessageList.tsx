@@ -11,8 +11,9 @@
 // who the channel started with. Where the page takes threads and pins (Work), a message's hover
 // bar adds quick reactions, Reply in thread and Pin, a message with replies
 // wears Slack's replies bar, and a pinned one says who pinned it.
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { ArrowRight, Check, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
+import type { AgentNeed } from '@/lib/agentNeeds';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { LogoMark, MARK_IN_A_SHAPE } from '@/ui/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/ui/dropdown-menu';
@@ -348,6 +349,8 @@ export interface MessageActions {
     onAuthor?: (author: ChannelMember) => void;
     /** Post an answer to an agent's question as yours (a tap on one of its answers). */
     onAnswer?: (text: string) => void;
+    /** What connects an agent's asks under its message (what it needs before it can start), where the page can. */
+    Asks?: ComponentType<{ agentId: string; needs: AgentNeed[] }>;
 }
 
 /** The emoji a person reaches for most, first in the hover bar as in Slack. */
@@ -620,6 +623,20 @@ function PinLine({ msg, target, members, actions }: { msg: ChannelMessage; targe
     );
 }
 
+/** What an agent needs before it can start, named under its message where the page connects nothing here. */
+function NamedAsks({ needs }: { needs: AgentNeed[] }) {
+    return (
+        <div className="mt-2 flex flex-wrap gap-1.5" data-testid="message-asks">
+            {needs.map((n) => (
+                <span key={n.kind === 'app' ? n.integration : 'model'} className="inline-flex h-8 items-center gap-1.5 rounded-full bg-foreground/[0.06] px-3.5 text-[13px] text-foreground/80">
+                    <Plug className="h-3.5 w-3.5" strokeWidth={2} />
+                    {n.kind === 'app' ? n.label : 'A model'}
+                </span>
+            ))}
+        </div>
+    );
+}
+
 /** An agent's question's answers as pills: a tap posts that answer as yours. Once you've said something next, the pick
  *  reads back (or nothing, when you answered in your own words). */
 function QuestionAnswers({ options, answer, onAnswer }: { options: ChannelQuestionOption[]; answer?: string; onAnswer?: (text: string) => void }) {
@@ -777,6 +794,7 @@ export function MessageRow({
                 {msg.text && <MessageBody text={msg.text} members={members} channels={channels} onChannel={onChannel} muted={msg.author.type === 'system' && !msg.ephemeral} />}
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
                 {msg.question && <QuestionAnswers options={msg.question.options} answer={answer} onAnswer={actions.onAnswer} />}
+                {msg.asks && msg.asks.needs.length > 0 && (author?.agentId && actions.Asks ? <actions.Asks agentId={author.agentId} needs={msg.asks.needs} /> : <NamedAsks needs={msg.asks.needs} />)}
                 {author && handoffs.length > 0 && <Handoffs from={author} to={handoffs} user={user} />}
                 {canReact && msg.reactions.length > 0 && <Reactions reactions={msg.reactions} onReact={(emoji) => onReact(msg.id, emoji)} />}
                 {actions.onThread && !msg.threadId && <RepliesBar msg={msg} members={members} user={user} onOpen={() => actions.onThread?.(msg.id)} />}

@@ -41,6 +41,8 @@ export const SCENES: readonly ChatScene[] = [
     { id: 'build-done', title: 'An automation built, its app published', group: 'Cards', world: buildScene('done') },
     { id: 'approval-purchase', title: 'A purchase waiting for your OK', group: 'Cards', world: approvalScene('purchase') },
     { id: 'approval-deletion', title: 'A deletion waiting for your OK', group: 'Cards', world: approvalScene('deletion') },
+    { id: 'agent-for-apps-waiting', title: 'An agent from an agents page, waiting on Roblox and a model', group: 'Cards', world: { agentForApps: 'waiting' } },
+    { id: 'agent-for-apps-ready', title: 'An agent from an agents page, with everything connected', group: 'Cards', world: { agentForApps: 'ready' } },
 
     { id: 'working', title: 'A turn at work: Stop', group: 'A turn at work', world: WORKING },
     { id: 'steer', title: 'A turn at work: Steer', group: 'A turn at work', world: WORKING, steps: [{ type: '[data-testid="coordinator-home"] textarea', text: 'And a contact form?' }] },

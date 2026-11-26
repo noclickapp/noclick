@@ -2,6 +2,7 @@
 // workspaces as in Slack. Shapes follow the platform API's channels and
 // workspaces (members, mentions-or-all mode, author {type, id, name}, files,
 // reactions), as the page draws them.
+import type { AgentNeed } from '@/lib/agentNeeds';
 
 /** An agent's colour: its avatar, and how its name reads when @-mentioned. */
 export type AgentHue = 'sky' | 'violet' | 'pink' | 'fuchsia' | 'emerald' | 'blue' | 'purple' | 'teal';
@@ -104,6 +105,8 @@ export interface ChannelMessage {
     membership?: ChannelMembership;
     /** An agent's question with answers to tap: a tap posts its `reply` as yours. */
     question?: { options: ChannelQuestionOption[] };
+    /** What an agent still needs before it can start (an agents page made it): each to connect from its message. */
+    asks?: { needs: AgentNeed[] };
 }
 
 /** One answer to an agent's question: what its button says, and what a tap posts as you. */

@@ -15,10 +15,12 @@ import { fakeWork } from '../fixtures/workApi';
 import { fakeWork as fakeWorkAgents } from '../agents/fixtures/workAgents';
 import { AGENT_ID, catalogRoutes, COMMANDS, fakeWorkAgent, settingsFor } from '../conversation/fixtures/workAgent';
 import { busyHistory, busyLive, liveOperation } from '../conversation/fixtures/scenes';
+import { ROBLOX_CHANNEL, forAppsRoutes, type AgentForAppsState } from '../fixtures/agentForApps';
 
-/** Where a scene's agents come from: the spaces' own three (`spaces`), five at work (`agents`), or one mid-turn
- *  (`session`). */
-export type LabWorld = 'spaces' | 'agents' | 'session';
+/** Where a scene's agents come from: the spaces' own three (`spaces`), five at work (`agents`), one mid-turn
+ *  (`session`), or the spaces' with the agent an agents page made in its channel of your own (`agent_for_apps`, waiting on
+ *  what it needs; `agent_for_apps_ready`, saying hello). */
+export type LabWorld = 'spaces' | 'agents' | 'session' | 'agent_for_apps' | 'agent_for_apps_ready';
 
 export interface Lab {
     client: NoClick;
@@ -111,6 +113,21 @@ function agentMidTurn() {
     return fake;
 }
 
+/** The agent an agents page made, over the spaces': its channel among yours (in no space), it, the account's
+ *  connections and the harnesses as forAppsRoutes answers them. */
+function forAppsLayer(state: AgentForAppsState, spaces: Fetch): Fetch {
+    const routes = forAppsRoutes(state);
+    return async (input, init) => {
+        const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+        const method = init?.method ?? 'GET';
+        if (method === 'GET' && url.pathname === '/v1/channels' && !url.searchParams.get('workspace_id') && !url.searchParams.get('agent_id')) {
+            const base = (await (await spaces(input, init)).json()) as { data: Json[] };
+            return Response.json({ object: 'list', data: [...base.data, ROBLOX_CHANNEL], next_cursor: null });
+        }
+        return routes(method, url.pathname, url.searchParams) ?? Response.json({ error: { type: 'not_found', message: `No route for ${method} ${url.pathname}` } }, { status: 404 });
+    };
+}
+
 /** Told of each call the scene's views make, and handed its answer as it comes: a test's record of what Work called. */
 export type Observe = (method: string, path: string, answered: Promise<Response>) => void;
 
@@ -129,6 +146,7 @@ export function labWorld(world: LabWorld, actsAs: 'owner' | 'key' = 'owner', obs
     const session = world === 'session' ? agentMidTurn() : null;
     const parts = sessionParts(agents);
     const account = makeFixtureFetch({ set: 'populated', actsAs });
+    const appState: AgentForAppsState | null = world === 'agent_for_apps' ? 'waiting' : world === 'agent_for_apps_ready' ? 'ready' : null;
     const owner: Fetch | null = world === 'agents' ? agents.fetch : (session?.fetch ?? null);
     const answer: Fetch = (input, init) => {
         const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
@@ -137,7 +155,7 @@ export function labWorld(world: LabWorld, actsAs: 'owner' | 'key' = 'owner', obs
         const method = init?.method ?? 'GET';
         if (actsAs === 'key' && refusedToAccountKey(method, url.pathname)) return Promise.resolve(refusedToKey(method, url.pathname));
         const fixtures = ownsIt ? [owner, spaces.fetch, agents.fetch] : [spaces.fetch, ...(owner ? [owner] : []), agents.fetch];
-        return first([...new Set(fixtures), parts, account], input, init);
+        return first([...(appState ? [forAppsLayer(appState, spaces.fetch)] : []), ...new Set(fixtures), parts, account], input, init);
     };
     const fetch: Fetch = (input, init) => {
         const answered = answer(input, init);

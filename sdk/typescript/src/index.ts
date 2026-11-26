@@ -53,6 +53,8 @@ export type {
   AgentCommands,
   AgentCreateOptions,
   AgentFields,
+  AgentForApps,
+  AgentForAppsNeed,
   AgentGrant,
   AgentHistoryOptions,
   AgentListOptions,

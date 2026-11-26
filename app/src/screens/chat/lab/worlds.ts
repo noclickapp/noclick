@@ -9,6 +9,7 @@ import { AGENT_ID, fakeCoordinatorAgent, type ExtraRoutes, type LiveEvent } from
 import { AT_WORK_SCENARIOS, atWorkRoutes, type ScenarioId } from '../fixtures/atWorkScenarios';
 import { ANTHROPIC_KEY, SWITCHING_AGENT, switcherRoutes } from '../fixtures/coordinatorSwitchers';
 import { teamRead } from '../fixtures/agentTeamThread';
+import { forAppsNote, forAppsRoutes, type AgentForAppsState } from '@/screens/work/fixtures/agentForApps';
 import { settingsFor } from '@/screens/work/conversation/fixtures/workAgent';
 import { makeFixtureFetch } from '@/screens/console/fixtures/fixtureFetch';
 import { refusedToAccountKey, scopeFor } from '@/screens/console/ownerOnly';
@@ -30,6 +31,8 @@ export interface ChatWorld {
     beside?: ScenarioId;
     /** The agents and channel the agent team's cards read. */
     team?: boolean;
+    /** An agent an agents page made, its note in the thread: waiting on what it needs, or ready. */
+    agentForApps?: AgentForAppsState;
     /** The account has no NoClick (its lookup finds none). */
     missing?: boolean;
     /** Reading which session it's in never answers (`hangs`), or is refused (`refused`). */
@@ -150,6 +153,7 @@ function routesOf(world: ChatWorld, agent: () => Json): ExtraRoutes {
         },
         (method, path) => (method === 'GET' && world.reads && path in world.reads ? json(world.reads[path]) : undefined),
         ...(scenario ? [atWorkRoutes(scenario)] : []),
+        ...(world.agentForApps ? [forAppsRoutes(world.agentForApps) satisfies ExtraRoutes] : []),
         ...(world.team
             ? [
                   ((method, path) => {
@@ -194,7 +198,7 @@ export function chatWorld(world: ChatWorld, actsAs: 'owner' | 'key' = 'owner', o
     const fake = fakeCoordinatorAgent({
         exists: !world.missing,
         agent: SWITCHING_AGENT,
-        history: world.history ?? scenario?.history,
+        history: world.history ?? scenario?.history ?? (world.agentForApps ? [forAppsNote()] : undefined),
         streamed: world.streamed,
         operations: [...(world.operations ?? []), ...(scenario?.operations ?? [])],
         memories: world.memories,
