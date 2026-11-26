@@ -31,6 +31,7 @@ import { AgentKnowledge } from '../resources/knowledge/AgentKnowledge';
 import { useKnowledgeFrames } from '../resources/knowledge/store';
 import { AgentActivity } from './activity';
 import { AppTestingSetting } from './AppTesting';
+import { CitedAuthoritySetting } from './CitedAuthority';
 import { AgentCarried } from './carried';
 import { AgentFacts } from './facts';
 import { ToolServers } from './toolServers';
@@ -282,6 +283,7 @@ function About({ agent, onOpenMachine, onOpenChannel, onTriggers }: { agent: Age
             </section>
             {sessions.dialogs}
             <AppTestingSetting agent={agent} />
+            <CitedAuthoritySetting agent={agent} />
             <ToolServers agent={agent} conversation={conversation} />
             <AgentCarried agent={agent} />
             <AgentKnowledge agentId={agent.id} />

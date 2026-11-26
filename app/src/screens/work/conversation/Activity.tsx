@@ -11,6 +11,7 @@ import { cn } from '@/ui/utils';
 import { spent } from './styles';
 import { ChildAgentRow, spawnedChild } from './subagents';
 import { isSubagentCall, thoughtMs, tokensSoFar, type Download, type Step, type TurnPace } from '@/lib/agentThread/thread';
+import { citedWord } from '@/lib/citedWord';
 
 /** How a conversation shows tool calls, on this device. */
 export type ToolCalls = 'all' | 'failures' | 'none';
@@ -627,6 +628,7 @@ function RawRow({ step, live }: { step: Step; live: boolean }) {
     const w = WORDS[step.kind];
     const named = namedTool(step, running ? 'running' : 'done');
     const stat = step.kind === 'edit' ? diffStat(step.diffs) : null;
+    const cited = step.kind === 'tool' ? citedWord(step.result) : null;
     const opens = (step.kind === 'command' && (!!step.output || running)) || (step.kind === 'edit' && step.diffs.length > 0) || (step.kind === 'tool' && (Object.keys(step.arguments).length > 0 || step.result !== null));
     return (
         <li data-step={step.kind}>
@@ -668,6 +670,14 @@ function RawRow({ step, live }: { step: Step; live: boolean }) {
                     )}
                 </span>
             </div>
+            {cited && (
+                // Acting for several people at once, it did this on one person's word, which it quoted.
+                <ShortcutTooltip label={cited.why || undefined}>
+                    <p data-testid="cited-word" className="ml-7 truncate text-xs text-muted-foreground">
+                        on {cited.author}’s word: “{cited.quote}”
+                    </p>
+                </ShortcutTooltip>
+            )}
             {open && step.kind === 'command' && <OutputTail text={step.output} live={running} />}
             {open && step.kind === 'edit' && step.diffs.map((d) => <DiffBlock key={d.path} diff={d.diff} path={d.path} many={step.diffs.length > 1} />)}
             {open && step.kind === 'tool' && <ToolDetail step={step} />}
