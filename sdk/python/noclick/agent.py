@@ -946,8 +946,10 @@ class ModelSwitching:
     ``mode="switch"`` (a new agent's default): it moves by itself, to any of the owner's own Claude or ChatGPT plans
     freely, and to a paid key (an API key, NoClick's key at cost) only on the owner's say-so. ``mode="stay"``: it
     never leaves its connection, and at a limit waits for the reset. ``allowed``: the connections (``Connection`` or
-    names) it moves between freely, paid keys included; None for the default rule. Only what's given is sent: an
-    update changes only those (``allowed`` alone never changes its mode).
+    names) it moves between freely, paid keys included, tried in the order given; None for the default rule.
+    ``harness="same"`` (the default) moves it only to a connection that runs its own harness, so at a limit it waits
+    rather than go on in another; ``harness="any"`` lets it. Only what's given is sent: an update changes only those
+    (``allowed`` alone never changes its mode).
 
     Usage::
 
@@ -957,6 +959,7 @@ class ModelSwitching:
 
     mode: Any = UNSET
     allowed: Any = UNSET
+    harness: Any = UNSET
 
 
 async def switching_wire(value: Any, *, scope: Any = AMBIENT) -> Optional[Dict[str, Any]]:
@@ -965,10 +968,12 @@ async def switching_wire(value: Any, *, scope: Any = AMBIENT) -> Optional[Dict[s
     if value is None:
         return None
     if isinstance(value, ModelSwitching):
-        value = {k: v for k, v in (("mode", value.mode), ("allowed", value.allowed)) if v is not UNSET}
+        value = {k: v for k, v in (("mode", value.mode), ("allowed", value.allowed), ("harness", value.harness))
+                 if v is not UNSET}
     wire: Dict[str, Any] = {}
-    if "mode" in value:
-        wire["mode"] = value["mode"]
+    for key in ("mode", "harness"):
+        if key in value:
+            wire[key] = value[key]
     if "allowed" in value:
         allowed = value["allowed"]
         wire["allowed"] = None if allowed is None else [
@@ -1215,7 +1220,8 @@ class Agent(_Object):
     model_switching: Dict[str, Any] = field(
         "model_switching",
         doc="Its owner's rule for moving to another model connection when its plan runs out or it's told to: "
-        "``{\"mode\": \"switch\"|\"stay\", \"allowed\": [names]|None}`` (``ModelSwitching``). In ``switch`` "
+        "``{\"mode\": \"switch\"|\"stay\", \"allowed\": [names]|None, \"harness\": \"same\"|\"any\"}`` "
+        "(``ModelSwitching``). In ``switch`` "
         "(the default) any of the owner's own plans is free and a paid key needs their say-so; ``stay`` keeps it on "
         "its connection; ``allowed`` names the ones it moves between freely.",
     )

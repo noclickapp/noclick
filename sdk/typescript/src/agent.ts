@@ -166,13 +166,17 @@ export type AppTesting = "by_itself" | "ask_first" | "never";
  */
 export interface ModelSwitching {
   mode?: "switch" | "stay";
+  /** The connections it moves between freely, tried in this order; null: the default rule. */
   allowed?: string[] | null;
+  /** `same` (the default): only to a connection that runs its own harness, else it waits; `any`: another too. */
+  harness?: "same" | "any";
 }
 
 /** `modelSwitching` as it's set: its allowed connections by name or as `Connection`s. Only what's given changes. */
 export interface ModelSwitchingChange {
   mode?: "switch" | "stay";
   allowed?: (string | Connection)[] | null;
+  harness?: "same" | "any";
 }
 
 /** While a plan's limit has an agent on another connection: the one it left, and when that one is back. */
@@ -218,6 +222,7 @@ async function switchingWire(value: ModelSwitchingChange | null | undefined, sco
   if (value === undefined || value === null) return value;
   const wire: JsonObject = {};
   if (value.mode !== undefined) wire.mode = value.mode;
+  if (value.harness !== undefined) wire.harness = value.harness;
   if (value.allowed !== undefined) {
     wire.allowed = value.allowed === null ? null
       : await Promise.all(value.allowed.map((c) => modelConnectionRef(c, scope))) as string[];
@@ -2329,7 +2334,8 @@ export class Agent extends ApiObject {
   /** How it moves to another of the owner's model connections (`ModelSwitching`). */
   get modelSwitching(): Required<ModelSwitching> {
     const raw = this._field<JsonObject | null>("model_switching") ?? {};
-    return { mode: (raw.mode as "switch" | "stay") ?? "switch", allowed: (raw.allowed as string[] | null) ?? null };
+    return { mode: (raw.mode as "switch" | "stay") ?? "switch", allowed: (raw.allowed as string[] | null) ?? null,
+      harness: (raw.harness as "same" | "any") ?? "same" };
   }
   /** While a plan's limit has it on another connection, the one it left (its first turn after goes back); else null. */
   get switchedFrom(): SwitchedFrom | null {

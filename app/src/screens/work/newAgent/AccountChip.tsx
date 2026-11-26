@@ -422,10 +422,10 @@ function SwitchingView({ accounts, harness, account, value, onChange, onBack }: 
     const isOn = (row: Row) => (value.allowed ? row.refs.length > 0 : row.plan && !row.gone);
     const toggle = (row: Row) => {
         const on = rows.filter((r) => (r === row ? !isOn(r) : isOn(r)));
-        if (!on.length) return onChange({ mode: 'stay', allowed: value.allowed });
+        if (!on.length) return onChange({ ...value, mode: 'stay' });
         const plans = rows.filter((r) => r.plan && !r.gone);
         const theDefault = on.length === plans.length && on.every((r) => plans.includes(r));
-        onChange({ mode: 'switch', allowed: theDefault ? null : on.flatMap((r) => (r.refs.length ? r.refs : [r.key])) });
+        onChange({ ...value, mode: 'switch', allowed: theDefault ? null : on.flatMap((r) => (r.refs.length ? r.refs : [r.key])) });
     };
     const note = (row: Row) => (row.gone ? 'Not connected' : row.account && account?.id === row.account.id ? 'In use now' : row.plan ? null : isOn(row) ? 'Used without asking' : 'Asks you first');
     return (
@@ -439,7 +439,7 @@ function SwitchingView({ accounts, harness, account, value, onChange, onBack }: 
             <div role="radiogroup" aria-label="When a plan runs out" className="relative my-1 grid grid-cols-2 rounded-full bg-foreground/[0.06] p-0.5">
                 <span aria-hidden className={cn('absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-full bg-composer shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out motion-reduce:transition-none dark:bg-foreground/[0.11] dark:shadow-none dark:ring-1 dark:ring-inset dark:ring-foreground/[0.07]', value.mode === 'stay' && 'translate-x-full')} />
                 {MODES.map(({ mode, label }) => (
-                    <button key={mode} type="button" role="radio" aria-checked={value.mode === mode} onClick={() => mode !== value.mode && onChange({ mode, allowed: value.allowed })} className={cn('relative h-7 rounded-full text-[12.5px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring max-sm:h-9 max-sm:text-[14px]', value.mode === mode ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                    <button key={mode} type="button" role="radio" aria-checked={value.mode === mode} onClick={() => mode !== value.mode && onChange({ ...value, mode })} className={cn('relative h-7 rounded-full text-[12.5px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring max-sm:h-9 max-sm:text-[14px]', value.mode === mode ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
                         {label}
                     </button>
                 ))}
