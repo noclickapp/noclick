@@ -1,5 +1,5 @@
-// The machine page's one filesystem: a conversation's sandbox files as folders under its workspace, each file the agent
-// changed in the conversation marked (added or changed) with its newest diff, read from the edits its turns kept.
+// The machine page's files: each file the agent changed in the conversation marked (added or changed) with its newest
+// diff, read from the edits its turns kept, and those changed files as one tree under its workspace.
 import type { Message, VolumeEntry } from 'noclick';
 
 export interface Changed {
@@ -72,13 +72,6 @@ export function buildTree(root: string, entries: readonly VolumeEntry[], changed
     };
     sort(top);
     return top;
-}
-
-export const changedIn = (dir: Dir): number => dir.files.filter((f) => f.changed).length + dir.dirs.reduce((n, d) => n + changedIn(d), 0);
-
-/** Every file in the tree, in the order it lists them. */
-export function filesOf(dir: Dir): FileNode[] {
-    return [...dir.dirs.flatMap(filesOf), ...dir.files];
 }
 
 /** "1.2 KB", "38 MB". */

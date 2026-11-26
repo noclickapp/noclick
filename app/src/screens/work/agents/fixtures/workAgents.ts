@@ -522,7 +522,7 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
             ...created.connections,
         ].filter((c) => !deletedConnections.has(String((c as Json).name)) && !deletedConnections.has(String((c as Json).id)));
 
-    const routes = (method: string, path: string, query: URLSearchParams, body: Json): Response => {
+    const routes = (method: string, path: string, query: URLSearchParams, body: Json, raw?: unknown): Response => {
         const failing = fails.findIndex((f) => f.method === method && f.path === path);
         if (failing >= 0) {
             const [f] = fails.splice(failing, 1);
@@ -852,6 +852,21 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
                 const text = sandboxFiles[at];
                 return text === undefined ? notFound(`No file ${at}.`) : new Response(text, { status: 200, headers: { 'Content-Type': 'application/octet-stream' } });
             }
+            // A write and a .env's merge, as the daemon makes them: a value set reads back hidden.
+            const entry = (p: string) => ({ object: 'sandbox_entry', path: p, type: 'file', size: sandboxFiles[p].length, updated_at: new Date(clock).toISOString() });
+            if (tail === '/sandbox/files' && method === 'PUT') {
+                const at = query.get('path')!;
+                sandboxFiles[at] = typeof raw === 'string' ? raw : new TextDecoder().decode(raw as Uint8Array);
+                return json(entry(at));
+            }
+            if (tail === '/sandbox/files' && method === 'PATCH') {
+                const at = query.get('path')!;
+                const lines = (sandboxFiles[at] ?? '').split('\n').filter(Boolean);
+                const { set = {}, unset = [] } = body as { set?: Record<string, string>; unset?: string[] };
+                const kept = lines.filter((l) => { const k = l.split('=')[0]; return !unset.includes(k) && !(k in set); });
+                sandboxFiles[at] = [...kept, ...Object.keys(set).map((k) => `${k}=[redacted]`)].join('\n') + '\n';
+                return json({ object: 'sandbox_env', entry: entry(at), keys: sandboxFiles[at].split('\n').filter(Boolean).map((l) => l.split('=')[0]) });
+            }
             if (tail === '/sandbox/shell' && method === 'POST') return json({ agent_id: agentId, conversation: c, url: 'wss://api.noclick.test/v1/terminals/attach', token: 'shell-token', token_expires_at: ago(-2 * MIN), idle_limit_s: 900 });
             if (tail === '' && method === 'GET')
                 return json({
@@ -876,11 +891,13 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
         const method = (init?.method ?? 'GET').toUpperCase();
         const raw = init?.body;
         // A file's bytes are said by their size.
-        const body = (typeof raw === 'string' && raw ? JSON.parse(raw) : raw instanceof Uint8Array ? { size_bytes: raw.byteLength } : raw instanceof Blob ? { size_bytes: raw.size } : {}) as Json;
+        // A file written as text is said by its size too.
+        const parsed = typeof raw === 'string' && raw ? (() => { try { return JSON.parse(raw) as Json; } catch { return null; } })() : null;
+        const body = (parsed ?? (raw instanceof Uint8Array ? { size_bytes: raw.byteLength } : raw instanceof Blob ? { size_bytes: raw.size } : typeof raw === 'string' ? { size_bytes: raw.length } : {})) as Json;
         requests.push({ method, path: url.pathname, query: url.searchParams, body });
         // A test's latency: the request answers once this settles, as it stands then.
         await options.answerAfter?.(method, url.pathname, url.searchParams);
-        return routes(method, url.pathname, url.searchParams, body);
+        return routes(method, url.pathname, url.searchParams, body, raw);
     };
 
     return {

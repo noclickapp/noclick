@@ -548,7 +548,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const dmPerson = dmOther ? (people.people.find((p) => p.userId === (dmOther.userId ?? dmOther.id)) ?? null) : null;
     const main =
         place.machine && agentOpen ? (
-            <MachinePage agentId={agentOpen} onBack={() => go({ machine: false })} />
+            <MachinePage agentId={agentOpen} file={place.file} onFile={(file) => go({ file }, { replace: true })} onBack={() => go({ machine: false })} />
         ) : place.view === 'resources' ? (
             // Home's (`space.id` is HOME_SPACE) are its agents in no space and what the account has for them.
             <SpaceResourcesPane spaceId={space.id} />

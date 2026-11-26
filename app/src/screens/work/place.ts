@@ -47,6 +47,9 @@ export interface WorkPlace {
     trigger: string | null;
     /** The agent's machine page, in its session's place. */
     machine: boolean;
+    /** On its machine page: the file open (absolute), which a link from the agent can name; one not there yet opens
+     *  to be made. */
+    file: string | null;
     /** In an agent's session: the subagent whose own screen is open over it. */
     subagent: string | null;
     /** The Resources view's own place (a kind, an item), its to read and write. */
@@ -69,6 +72,7 @@ export function readPlace(params: URLSearchParams): WorkPlace {
         profileTab: (PROFILE_TABS as readonly string[]).includes(params.get('ptab') ?? '') ? (params.get('ptab') as ProfileTab) : null,
         trigger: params.get('trigger'),
         machine: params.get('machine') === '1',
+        file: params.get('file'),
         subagent: params.get('sub'),
         res: params.get('res'),
         item: params.get('item'),
@@ -94,6 +98,8 @@ export function withPlace(params: URLSearchParams, change: PlaceChange): URLSear
     write('ptab', change.profileTab);
     write('trigger', change.trigger);
     write('machine', change.machine === undefined ? undefined : change.machine ? '1' : null);
+    // A file is open only on the machine page: leaving it closes the file too.
+    write('file', change.file !== undefined ? change.file : change.machine === false ? null : undefined);
     write('sub', change.subagent);
     write('res', change.res);
     write('item', change.item);
@@ -105,6 +111,12 @@ export function withPlace(params: URLSearchParams, change: PlaceChange): URLSear
  *  is where its host says (`WORK_ADDRESS`). */
 export function openAgentInWork(agentId: string): void {
     standing(WORK_ADDRESS).go(withPlace(new URLSearchParams(), { space: HOME_SPACE, view: 'agents', agent: agentId, panel: 'profile' }));
+}
+
+/** Open a file on an agent's machine page from outside it (a question asking for it): one not there yet opens to be
+ *  made. */
+export function openMachineFile(agentId: string, path: string): void {
+    standing(WORK_ADDRESS).go(withPlace(new URLSearchParams(), { space: HOME_SPACE, view: 'agents', agent: agentId, machine: true, file: path }));
 }
 
 /** A channel in Work from outside it, as `navigateToWorkChannel` has it: the channel alone, its space read from it, so

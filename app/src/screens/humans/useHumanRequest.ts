@@ -51,6 +51,15 @@ export interface SecretQuestion {
     step?: QuestionStep | null;
 }
 
+/** A file in the asking agent's sandbox or machine its owner fills in: a value for each of `keys` (set in it as
+ *  `KEY=value` lines), else the whole file. */
+export interface FileQuestion {
+    path: string;
+    keys: string[] | null;
+    agent_id: string;
+    agent_name?: string | null;
+}
+
 /** The request as `/v1/humans/requests/{id}` answers it (the fields the card reads). */
 export interface OwnerQuestion {
     id: string;
@@ -61,9 +70,11 @@ export interface OwnerQuestion {
     multiple?: boolean;
     connect?: ConnectQuestion | null;
     secret?: SecretQuestion | null;
+    file?: FileQuestion | null;
     /** Its page: the owner's own link, for the signed-in owner. */
     url?: string | null;
-    /** An approval's answer carries `approved`; a connect question's `connection` and `account`; a secret's `secret`. */
+    /** An approval's answer carries `approved`; a connect question's `connection` and `account`; a secret's `secret`;
+     *  a file's where it went and its key names (never a value). */
     answer: {
         choice?: string | null;
         choices?: string[] | null;
@@ -73,6 +84,8 @@ export interface OwnerQuestion {
         connection?: string | null;
         account?: string | null;
         secret?: string | null;
+        path?: string | null;
+        keys?: string[] | null;
     } | null;
     /** `account`: the account held only one, so it answered and nobody was asked. */
     answered_by?: string | null;
@@ -81,7 +94,8 @@ export interface OwnerQuestion {
 }
 
 /** A question's answer (`choice` or `text`), an approval's (`approved`, with an optional `note`), a connect
- *  question's (`connection`: a connection's ref) or a secret's (`secret_values`, never shown again). */
+ *  question's (`connection`: a connection's ref), a secret's or a file's keys (`secret_values`, never shown again), or
+ *  a file's whole text (`file_content`, never shown again). */
 export interface OwnerAnswer {
     choice?: string;
     text?: string;
@@ -89,6 +103,7 @@ export interface OwnerAnswer {
     note?: string | null;
     connection?: string;
     secret_values?: Record<string, string>;
+    file_content?: string;
 }
 
 function messageOf(error: unknown): string {
@@ -135,7 +150,7 @@ export function useHumanRequest(client: NoClick, requestId: string) {
                 const request = held.current ?? (await HumanRequest.retrieve(requestId, { client, user: null }));
                 const note = given.note ?? undefined;
                 if (given.approved !== undefined) await (given.approved ? request.approve({ note }) : request.decline({ note }));
-                else await request.answer({ choice: given.choice, text: given.text, connection: given.connection, secretValues: given.secret_values });
+                else await request.answer({ choice: given.choice, text: given.text, connection: given.connection, secretValues: given.secret_values, fileContent: given.file_content });
                 held.current = request;
                 setQuestion(request.request as unknown as OwnerQuestion);
             } catch (error) {

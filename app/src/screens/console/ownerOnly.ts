@@ -129,13 +129,15 @@ export const OWNER_ONLY = {
         why: 'Only the account’s owner, signed in, opens their personal space to people.',
         operations: ['POST /v1/me/personal_space'],
     },
-    /** An agent's sandbox: its files, a command run there, and a shell of your own on it. */
+    /** An agent's sandbox: its files (read and written), a command run there, and a shell of your own on it. */
     agentSandbox: {
         what: 'An agent’s sandbox',
         scope: 'agents:terminal',
         why: 'A key reaches an agent’s sandbox only with the agents:terminal scope, which an account’s key with every scope (*) doesn’t hold.',
         operations: [
             'GET /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
+            'PUT /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
+            'PATCH /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/exec',
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
         ],
