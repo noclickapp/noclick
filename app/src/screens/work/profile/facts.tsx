@@ -16,7 +16,7 @@ import { useHarnessSwitch } from '../agents/harnessSwitch';
 import { accountPayer, accountTitle, NOCLICK_KEY_ACCOUNT } from '../newAgent/accounts';
 import { switchedFromLine } from '../newAgent/switchWords';
 import { AccountMark } from '../newAgent/ModelPicker';
-import { modelName, modesOf, PERMISSION_ICON, PERMISSION_MODES, useHarnesses, useHarnessModels, useModelAccounts } from '../newAgent/catalog';
+import { modelName, modesOf, PERMISSION_ICON, PERMISSION_MODES, useHarnesses, useListedModel, useModelAccounts } from '../newAgent/catalog';
 import { KindIcon } from '../triggers/data';
 import { byAttention, nextRun, shortWhen, type TriggerItem } from '../triggers/model';
 import { rereadAgent, useConversationSandbox, useMachine } from './reads';
@@ -212,10 +212,10 @@ export function PermissionsMenu({ agent }: { agent: Agent }) {
 export function useModelLine(agent: Agent): { model: string; payer: string } {
     const harnesses = useHarnesses();
     const harness = harnesses.data?.find((h) => h.name === (agent.harness ?? 'sdk'));
-    const models = useHarnessModels(harness);
     const { accounts } = useModelAccounts();
     const id = agent.model ?? harness?.defaultModel ?? '';
-    const model = id ? modelName(models.data?.find((m) => m.id === id)?.label, id) : '';
+    const listed = useListedModel(harness, id);
+    const model = id ? modelName(listed?.label, id) : '';
     const connection = agent.modelConnection;
     const account = connection ? (connection === NOCLICK_KEY_ACCOUNT.id ? NOCLICK_KEY_ACCOUNT : accounts?.find((a) => a.id === connection)) : NOCLICK_KEY_ACCOUNT;
     return { model, payer: account ? accountPayer(account) : connection ? `the connection ${connection}` : '' };

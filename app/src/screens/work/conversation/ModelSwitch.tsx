@@ -7,7 +7,7 @@ import { ArrowLeftRight, Hourglass, Undo2, type LucideIcon } from 'lucide-react'
 import type { ModelSwitchNote } from '@/lib/agentThread/thread';
 import type { HarnessInfo } from 'noclick';
 import { cn } from '@/ui/utils';
-import { modelName, useHarnesses, useHarnessModels, useModelAccounts } from '../newAgent/catalog';
+import { listedModel, modelName, useHarnesses, useHarnessModels, useModelAccounts } from '../newAgent/catalog';
 import { switchWords, type Told } from '../newAgent/switchWords';
 import { WorkNavContext } from '../nav';
 import { channelHref, openChannelInWork } from '../place';
@@ -63,7 +63,7 @@ function useModelNames(names: readonly (string | null)[]): (harness: string, id:
     const find = (name: string | null): HarnessInfo | undefined => (name ? harnesses.data?.find((h) => h.name === name) : undefined);
     const fromModels = useHarnessModels(find(names[0]));
     const toModels = useHarnessModels(find(names[1]));
-    return (harness, id) => modelName((harness === names[0] ? fromModels : toModels).data?.find((m) => m.id === id)?.label, id);
+    return (harness, id) => modelName(listedModel((harness === names[0] ? fromModels : toModels).data, id)?.label, id);
 }
 
 /** One move, as its line in the chat. */

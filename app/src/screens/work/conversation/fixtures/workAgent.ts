@@ -230,10 +230,15 @@ export function serverView(server: Json): Json {
 /** What Work's pickers read beside an agent, as /v1 answers them: the harnesses and their models, the account's
  *  connections (each checked as `checks` says; `ok` when left out) and model providers, and its machines. Undefined
  *  for any other request. */
-export function catalogRoutes(method: string, path: string, connections: Json[], checks: Record<string, Json> | undefined, at: () => string, query?: URLSearchParams): Response | undefined {
+export function catalogRoutes(method: string, path: string, connections: Json[], checks: Record<string, Json> | undefined, at: () => string, query?: URLSearchParams, lists: Record<string, Json[]> = MODELS): Response | undefined {
     if (method === 'GET' && path === '/v1/harnesses') return json({ object: 'list', data: HARNESSES });
     const models = path.match(/^\/v1\/harnesses\/([^/]+)\/models$/);
-    if (method === 'GET' && models) return json({ object: 'list', data: MODELS[models[1]] ?? [] });
+    if (method === 'GET' && models) {
+        // A search finds a model by its id, label or the model an alias runs, as the API's does.
+        const q = (query?.get('q') ?? '').trim().toLowerCase();
+        const found = (lists[models[1]] ?? []).filter((m) => !q || [m.id, m.label, m.canonical].some((v) => String(v ?? '').toLowerCase().includes(q)));
+        return json({ object: 'list', data: found });
+    }
     if (method === 'GET' && path === '/v1/connections') return json({ object: 'list', data: connections, next_cursor: null });
     const reading = path.match(/^\/v1\/connections\/([^/]+)\/usage$/);
     if (method === 'GET' && reading) {
@@ -312,6 +317,8 @@ export function fakeWorkAgent(
         refuseUpdate?: (body: Json) => Response | undefined;
         /** Which hosts sell machines: Hetzner in Europe and DigitalOcean everywhere (the default), or DigitalOcean alone. */
         machineHosts?: 'two' | 'one';
+        /** A harness's model list in place of the usual one, by harness. */
+        models?: Record<string, Json[]>;
     } = {}
 ): FakeWorkAgent {
     const at = options.at ?? (() => new Date().toISOString());
@@ -441,7 +448,7 @@ export function fakeWorkAgent(
             connections.push(row);
             return json(row, 201);
         }
-        const catalog = catalogRoutes(method, path, connections, options.checks, at, query);
+        const catalog = catalogRoutes(method, path, connections, options.checks, at, query, { ...MODELS, ...options.models });
         if (catalog) return catalog;
         const op = path.match(/^\/v1\/operations\/([^/]+)(\/wait|\/cancel)?$/);
         if (op) {

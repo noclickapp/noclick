@@ -104,3 +104,27 @@ it('turns Fast on and off from the foot', async () => {
     fireEvent.click(screen.getByRole('button', { name: 'Fast' }));
     await waitFor(() => expect(sent(fake)).toEqual([{ speed: 'fast' }, { speed: 'standard' }]));
 });
+
+it('names a model its harness lists by an alias as the list does, in the box and in the list', async () => {
+    // Claude Code's list as the API answers it: aliases, each naming the model it runs. The agent holds the model's
+    // own id (set through the API), which no row's id is.
+    const claudeCode = [
+        { id: 'sonnet', label: 'Claude Sonnet 5.5 (latest)', canonical: 'claude-sonnet-5-5' },
+        { id: 'opus', label: 'Claude Opus 5.5 (latest)', canonical: 'claude-opus-5-5' },
+    ];
+    const fake = fakeWorkAgent({ agent: { harness: 'claude_code', model: 'claude-opus-5-5' }, models: { claude_code: claudeCode } });
+    const { models } = await openPicker({ fake });
+    const chip = screen.getByRole('button', { name: /^Model: / });
+    await waitFor(() => expect(chip.textContent).toContain('Claude Opus 5.5'));
+    expect(chip.textContent).not.toContain('claude-opus-5-5');
+    const current = within(models).getByRole('option', { selected: true });
+    expect(current.textContent).toContain('Claude Opus 5.5');
+});
+
+it('reads a model its harness has never named as its name, not its id', async () => {
+    const { idName } = await import('../newAgent/catalog');
+    expect(idName('claude-opus-5-5')).toBe('Claude Opus 5.5');
+    expect(idName('anthropic/claude-sonnet-4-5-20250929')).toBe('Claude Sonnet 4.5');
+    expect(idName('gpt-5.5')).toBe('GPT-5.5');
+    expect(idName('openrouter/~openai/gpt-luna-latest')).toBe('GPT Luna Latest');
+});

@@ -26,7 +26,7 @@ import { TAP_AREA } from '@/ui/buttons';
 import { HARNESSES, HarnessMark, harnessLabel } from '../agents/harness';
 import { RailTip, tipBeside, useRailTips } from '../railTip';
 import { ACCOUNT_KINDS, accountChoices, accountRefusal, accountShort, accountTitle, connectAsk, downWord, firstUsable, type ModelAccount, needsAccount, runsUnpicked, wayLabel, waysFor, wayTitle, wayType } from './accounts';
-import { modelName, namedRows, PERMISSION_ICON, type HarnessModel, type ModelRow as Row, PERMISSION_MODES, modesOf, rereadAccounts, traitsOf, useHarnesses, useHarnessModels, useModelAccounts, useModelRoutes, useModelSearch } from './catalog';
+import { modelName, namedRows, PERMISSION_ICON, type HarnessModel, type ModelRow as Row, PERMISSION_MODES, modesOf, rereadAccounts, traitsOf, useHarnesses, useHarnessModels, useListedModel, useModelAccounts, useModelRoutes, useModelSearch } from './catalog';
 import { fundsNote, fundsShort, fundsTag, useAddedFunds, useFundsThenSwitch } from './funds';
 
 /** What the picker sets: where it runs, on which model and account, how hard it thinks, how fast, and what it may do
@@ -234,10 +234,9 @@ function Trigger({ pick: value, label, account, className, ...rest }: { pick: Pi
     );
 }
 
-/** A model's plain name from its harness's list (`modelParts`), its id's last part until the list is read. */
+/** A model's plain name from its harness's list (`modelParts`), its id read as a name until the list says. */
 export function useModelLabel(harness: HarnessInfo | undefined, model: string): string {
-    const models = useHarnessModels(harness);
-    return modelName(models.data?.find((m) => m.id === model)?.label, model);
+    return modelName(useListedModel(harness, model)?.label, model);
 }
 
 export function HarnessModelPicker({ value, onChange, choice, accounts, permissionModes, efforts, defaultEffort, open: openProp, onOpenChange, triggerClassName, accountInPill = true, fundsOwner }: HarnessModelPickerProps) {
@@ -568,7 +567,7 @@ function PickerBody({
         <div id="work-model-list" role="listbox" aria-label="Models" className={cn('overflow-y-auto scrollbar-subtle', sheet ? 'mt-0.5 max-h-[264px]' : 'mt-1.5 min-h-0 flex-1')}>
             {rows.map((row, at) => {
                 const fav = favorites.includes(keyOf(row.harness, row.model));
-                const isCurrent = row.harness === value.harness && row.model === value.model;
+                const isCurrent = row.harness === value.harness && (row.model === value.model || row.canonical === value.model);
                 const short = lacks(row);
                 return (
                     <div

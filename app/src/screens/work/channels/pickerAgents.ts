@@ -9,7 +9,7 @@ import type { AgentChoice } from '@/screens/channels/types';
 import { harnessLabel } from '../agents/harness';
 import { keptByNoClick, useNoClickId, useWorkV1, YOUR_NOCLICK } from '../agents/reads';
 import { useSpaceNoClick } from '../intro';
-import { modelName } from '../newAgent/catalog';
+import { listedModel, modelName } from '../newAgent/catalog';
 
 export const NOCLICK_LISTENS = 'Listens here and tells you directly';
 
@@ -32,7 +32,7 @@ export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspa
                 const harness = listed!.find((h) => h.name === name);
                 if (!harness) return [pair, null] as const;
                 const model = given || harness.defaultModel;
-                const found = (await harness.models({ search: model, limit: 10 })).find((m) => m.id === model);
+                const found = listedModel(await harness.models({ search: model, limit: 10 }), model);
                 const plain = modelName(found?.label, model);
                 return [pair, harness.name === 'sdk' ? plain : `${plain} on ${harnessLabel(harness.name)}`] as const;
             })

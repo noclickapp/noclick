@@ -118,7 +118,39 @@ export function modelParts(label: string | null | undefined, id: string): { name
     const [head, ...notes] = text.replace(/^\[[^\]]*\]\s*/, '').split(' - ');
     const bare = head.replace(/^[^:]{1,30}:\s+/, '');
     const name = bare.replace(/\s*\(?latest\)?$/i, '').trim();
-    return { name: name || id.split('/').at(-1) || id, via, free: notes.some((n) => n.trim() === 'Free'), latest: id.includes('~') || name !== bare.trim() };
+    return { name: name || idName(id), via, free: notes.some((n) => n.trim() === 'Free'), latest: id.includes('~') || name !== bare.trim() };
+}
+
+const ACRONYMS = new Set(['gpt', 'glm', 'oss', 'vl', 'ai', 'llm']);
+
+/** A model's id read as a name, for one no list has named yet: `claude-opus-5-5` is Claude Opus 5.5, `gpt-5.5`
+ *  GPT-5.5, a dated snapshot without its date. */
+export function idName(id: string): string {
+    const last = (id.split('/').at(-1) ?? id).replace(/^~/, '').replace(/:.*$/, '').replace(/-(\d{8}|\d{4}-\d{2}-\d{2})$/, '');
+    const words: string[] = [];
+    for (const part of last.split(/[-_\s]+/).filter(Boolean)) {
+        const before = words.at(-1);
+        // A version's parts written apart (`5-5`) are one version (5.5).
+        if (/^\d{1,2}$/.test(part) && before && /^\d{1,2}(\.\d{1,2})*$/.test(before)) words[words.length - 1] = `${before}.${part}`;
+        else words.push(part);
+    }
+    const name = words.map((w) => (ACRONYMS.has(w.toLowerCase()) ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1))).join(' ');
+    return name.replace(/^GPT (\d)/, 'GPT-$1') || id;
+}
+
+/** The row of a harness's list that is `id`: by its own id, else the alias running it (Claude Code lists `opus`; an
+ *  agent set through the API holds `claude-opus-5-5`, which the alias's `canonical` names). */
+export function listedModel<T extends { id: string; canonical?: string | null }>(rows: readonly T[] | undefined, id: string): T | undefined {
+    return rows?.find((m) => m.id === id) ?? rows?.find((m) => m.canonical === id);
+}
+
+/** `id`'s row in `harness`'s list: its first page, else a search by the id (a long list's model past that page, or
+ *  one the list names by an alias). */
+export function useListedModel(harness: HarnessInfo | undefined, id: string): HarnessModel | undefined {
+    const first = useHarnessModels(harness);
+    const onPage = listedModel(first.data, id);
+    const searched = useHarnessModels(first.data && !onPage && id ? harness : undefined, id);
+    return onPage ?? listedModel(searched.data, id);
 }
 
 /** A model as a picker lists it. */
