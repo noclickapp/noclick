@@ -1185,6 +1185,7 @@ directiq
 directus
 discord
 discourse
+disqus
 ditlead
 dixa
 dnsfilter
