@@ -7,7 +7,7 @@
  * file (`--profile` or `NOCLICK_PROFILE`; the config directory `NOCLICK_CONFIG_DIR`, else `~/.config/noclick`).
  */
 
-import { configure } from "../client.ts";
+import { API_KEY_ENV, configure } from "../client.ts";
 import { NoClickError } from "../errors.ts";
 import { asUser } from "../scope.ts";
 import { VERSION } from "../version.ts";
@@ -16,9 +16,11 @@ import { commandsFor, runApi, runDescribe, runHelp, runOperation } from "./comma
 import * as output from "./output.ts";
 import type { Io } from "./output.ts";
 import { host } from "./host.ts";
+import { find as findLink } from "./link.ts";
+import * as screens from "./screens.ts";
 import { RUNNERS } from "./runners/index.ts";
 import { type Command, load } from "./spec.ts";
-import { PROFILE_ENV, signedIn } from "./store.ts";
+import { PROFILE_ENV, readProfiles, signedIn } from "./store.ts";
 
 export type Run = (values: Values, io: Io) => number | Promise<number>;
 
@@ -52,9 +54,54 @@ function curatedSpecs(command: Command): { flags: (FlagSpec & { help?: string })
   return { flags: [...command.flags.map((f) => ({ ...f, type: f.type })), ...GLOBALS], args: command.args };
 }
 
-function topHelp(io: Io): number {
-  io.out(`usage: noclick <command> [flags]   (noclick ${VERSION})\n`);
-  return runHelp(io, {});
+/** `noclick --help`: the curated commands by section, the API's areas as one line (each of them with `--all`). */
+function topHelp(io: Io, all: boolean): number {
+  const spec = load();
+  const areas = all ? new Map([...spec.areas()].map(([area, ops]) => [area, ops.length])) : null;
+  const options = [...spec.manifest.globals, { flag: "-h, --help", help: "Show this help (--all lists every API area)." }];
+  io.out([
+    `usage: noclick [--profile <string>] [--version] <command> ...   (noclick ${VERSION})`, "",
+    "The NoClick platform from your terminal.", "",
+    screens.commands(spec.manifest.screens, areas), "",
+    "flags:", ...options.map((o) => `  ${o.flag.padEnd(24)} ${o.help ?? ""}`), "",
+    "Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
+      + "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C. Docs: https://noclick.com/docs/guide/cli",
+  ].join("\n"));
+  return output.OK;
+}
+
+/** `noclick` alone: what it is and what to run first; signed in, who you are and the folder's app. */
+function firstScreen(io: Io, profile: string): number {
+  const login = readProfiles(host.env)[profile];
+  const said = screens.signedIn(login?.store ? login.email : null, host.env[API_KEY_ENV] ? API_KEY_ENV : undefined);
+  let linked: string | null = null;
+  try {
+    linked = said ? findLink(host.cwd())?.app ?? null : null;
+  } catch {
+    linked = null;
+  }
+  io.out(screens.first(load().manifest.screens, said, linked));
+  return output.OK;
+}
+
+/** Whether `path` is a group of curated commands (`agents`, `agents move`). */
+function isGroup(path: string[]): boolean {
+  return load().commands.some((c) => c.path.length > path.length && path.every((w, i) => c.path[i] === w));
+}
+
+/** `words` naming no command: the closest ones there are, exit 2. */
+function unknownCommand(io: Io, words: string[]): number {
+  const spec = load();
+  const areas = spec.areas();
+  const within: string[] = [];
+  while (within.length < words.length - 1 && isGroup([...within, words[within.length]!])) within.push(words[within.length]!);
+  if (!within.length && words.length > 1 && areas.has(words[0]!)) within.push(words[0]!);
+  const curated = [...new Set(spec.commands
+    .filter((c) => c.path.length > within.length && within.every((w, i) => c.path[i] === w))
+    .map((c) => c.path[within.length]!))];
+  const others = within.length > 1 ? [] : within.length ? (areas.get(within[0]!) ?? []).map((op) => op.command) : [...areas.keys()];
+  io.err(screens.unknown(words[within.length]!, within, curated, others.filter((n) => !curated.includes(n))));
+  return output.USAGE;
 }
 
 /** Run the `noclick` command; returns its exit status. */
@@ -72,12 +119,13 @@ export async function main(
       io.out(`noclick ${VERSION}`);
       return output.OK;
     }
-    if (flag === "-h" || flag === "--help") return topHelp(io);
+    if (flag === "-h" || flag === "--help") return topHelp(io, argv.includes("--all"));
+    if (flag === "--all") continue;
     if (flag === "--profile") profile = rest.shift() ?? profile;
     else if (flag.startsWith("--profile=")) profile = flag.slice(10);
     else return output.report(io, new UsageError(`No global flag ${flag}.`, "noclick --help"), { json: false });
   }
-  if (!rest.length) return topHelp(io);
+  if (!rest.length) return firstScreen(io, profile);
   const json = rest.includes("--json");
   try {
     // The longest curated path the words name, else an operation, else an area's list.
@@ -91,7 +139,7 @@ export async function main(
       const { flags, args } = curatedSpecs(command);
       const values = parse(rest.slice(n), flags, args, usage, command.one_of);
       if (values.help) {
-        io.out(helpText(usage, command.summary, flags, args));
+        io.out(helpText(usage, command.summary, flags, args, command.examples));
         return output.OK;
       }
       const run = curated.get(path.join(" "));
@@ -110,11 +158,9 @@ export async function main(
       if (!rest.slice(2).some((w) => w === "-h" || w === "--help")) signIn(profile);
       return await runOperation(io, op, rest.slice(2));
     }
-    if (spec.areas().has(area!)) {
-      if (!name || name.startsWith("-")) return runHelp(io, { words: [area!] });
-      throw new UsageError(`No command noclick ${area} ${name}.`, `noclick help ${area}`);
-    }
-    throw new UsageError(`No command noclick ${rest[0]}.`, "noclick help");
+    if (spec.areas().has(area!) && (!name || name.startsWith("-"))) return runHelp(io, { words: [area!] });
+    if (isGroup(words)) return runHelp(io, { words });
+    return unknownCommand(io, words);
   } catch (err) {
     if (err instanceof NoClickError || err instanceof UsageError) {
       return output.report(io, err, { json, commands: commandsFor(spec) });

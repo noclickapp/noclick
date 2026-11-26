@@ -1,4 +1,5 @@
-"""Start: ``noclick setup <code>`` (a setup code for a key, no browser) and ``noclick init`` (a folder becomes an
+"""Start: ``noclick signup`` (an agent with no account makes one for itself), ``noclick setup <code>`` (a setup code
+for a key, no browser) and ``noclick init`` (a folder becomes an
 app: from a template, or drafted by the app's coding agent from what you describe), linking the folder."""
 
 from __future__ import annotations
@@ -10,12 +11,14 @@ from pathlib import Path
 from typing import Any, Dict
 
 from ... import cli
-from ..._client import API_URL_ENV, DEFAULT_BASE_URL, resolve_client
+from ..._client import API_URL_ENV, DEFAULT_BASE_URL, Client, resolve_client
+from ...agent_signup import AgentSignup
 from ...exceptions import NotFound
 from ...key import Key
 from ...project import Project
 from ...repo import Repo
-from .. import link, output as out, templates
+from .. import link, output as out, screens, templates
+from ..commands import UsageError
 
 # How long init waits for the coding agent's draft by default: a first app takes it a few minutes.
 DRAFT_TIMEOUT_S = 900.0
@@ -31,6 +34,38 @@ def cmd_setup(args: argparse.Namespace) -> int:
     cli.keep_key(args.profile, args.store, store, api_url, {
         "key": key.secret, "key_id": key.id, "key_name": key.name, "email": key.raw.get("email")})
     out.note("Next: noclick init, or noclick deploy in your app's folder.")
+    return 0
+
+
+def cmd_signup(args: argparse.Namespace) -> int:
+    if not args.accept_terms:
+        raise UsageError("Signing up accepts NoClick's Developer Terms and Acceptable Use Policy: "
+                         + " and ".join(screens.TERMS) + ".",
+                         next_step="Read them, then run noclick signup --accept-terms.")
+    if cli.resolve_credentials(args.profile).login.get("store"):
+        raise cli.CommandError(f"The profile {args.profile} is signed in already: signing up would make another "
+                               "account.", next_step="noclick signup --profile <another> --accept-terms, or noclick "
+                                                     "logout first.")
+    store = cli.key_store(args.store)
+    api_url = (os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL).rstrip("/")
+    agent = args.agent or screens.harness(dict(os.environ))
+    made = AgentSignup.sign_up(agent, accept_terms=True, purpose=args.purpose, email=args.email,
+                               client=Client(api_key="", base_url=api_url))
+    cli.keep_key(args.profile, args.store, store, api_url, {
+        "key": made["key"], "key_id": made.get("key_id"), "key_name": f"Signed up by {agent}",
+        "claim_url": made["claim_url"],
+        "said": "" if args.json else f"Signed up: a NoClick account for {agent}, which a person claims.",
+    })
+    if args.json:
+        out.print_json({k: v for k, v in made.items() if k != "key"})
+    else:
+        days = (made.get("limits") or {}).get("unclaimed_days", 7)
+        out.note(screens.WORKS)
+        out.note(f"Waits for a person to claim it (within {days} days):")
+        for held in (made.get("limits") or {}).get("until_claimed", []):
+            out.note(f"  - {held}")
+        out.note("Give your person this link to claim the account:")
+        print(made["claim_url"], flush=True)
     return 0
 
 
@@ -127,6 +162,18 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 
 def register(kit: Any) -> None:
+    signup = kit.command(kit.commands, "signup", cmd_signup,
+                         "No account and no person to sign in: make one for yourself, as an agent, and get the "
+                         "link your person claims it with.", auth=False, parents=[kit.as_json])
+    signup.add_argument("--agent", metavar="NAME",
+                        help="What you are, as your person will read it (default: the harness running this, else "
+                             "cli).")
+    signup.add_argument("--purpose", metavar="TEXT", help="What the account is for, in a sentence.")
+    signup.add_argument("--email", help="Your person's email: only they may claim it.")
+    signup.add_argument("--accept-terms", action="store_true",
+                        help="Accept NoClick's Developer Terms and Acceptable Use Policy for whoever runs you.")
+    signup.add_argument("--store", choices=("auto", "keychain", "file"), default="auto",
+                        help="Where to keep the key, as noclick login does (default: the keychain, else a file).")
     setup = kit.command(kit.commands, "setup", cmd_setup,
                         "Redeem a setup code (nc_setup_..., from the console's quickstart) for a key, no browser.",
                         auth=False)

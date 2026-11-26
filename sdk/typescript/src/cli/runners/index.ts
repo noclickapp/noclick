@@ -8,6 +8,7 @@ import * as operate from "./operate.ts";
 import * as ship from "./ship.ts";
 
 export const RUNNERS: Record<string, Run> = {
+  signup: auth.signup,
   setup: auth.setup,
   login: auth.login,
   whoami: auth.whoami,

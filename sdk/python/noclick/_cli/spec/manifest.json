@@ -2547,6 +2547,59 @@
   },
   {
    "path": [
+    "signup"
+   ],
+   "summary": "No account and no person to sign in: make one for yourself, as an agent, and get the link your person claims it with.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--agent",
+     "dest": "agent",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "What you are, as your person will read it (default: the harness running this, else cli)."
+    },
+    {
+     "flag": "--purpose",
+     "dest": "purpose",
+     "type": "string",
+     "metavar": "TEXT",
+     "help": "What the account is for, in a sentence."
+    },
+    {
+     "flag": "--email",
+     "dest": "email",
+     "type": "string",
+     "help": "Your person's email: only they may claim it."
+    },
+    {
+     "flag": "--accept-terms",
+     "dest": "accept_terms",
+     "type": "bool",
+     "help": "Accept NoClick's Developer Terms and Acceptable Use Policy for whoever runs you."
+    },
+    {
+     "flag": "--store",
+     "dest": "store",
+     "type": "string",
+     "choices": [
+      "auto",
+      "keychain",
+      "file"
+     ],
+     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file)."
+    }
+   ]
+  },
+  {
+   "path": [
     "setup"
    ],
    "summary": "Redeem a setup code (nc_setup_..., from the console's quickstart) for a key, no browser.",
@@ -2865,5 +2918,254 @@
     "noclick help agents"
    ]
   }
- ]
+ ],
+ "screens": {
+  "intro": "NoClick's CLI: ship a folder as an app, configure and operate it, and reach every API operation.",
+  "sections": [
+   {
+    "name": "Start",
+    "commands": [
+     [
+      "signup",
+      "No account and no person to sign in: make one for yourself, as an agent, and get the link your person claims it with."
+     ],
+     [
+      "setup",
+      "Redeem a setup code (nc_setup_..., from the console's quickstart) for a key, no browser."
+     ],
+     [
+      "login",
+      "Sign in from a browser and keep the key in your OS keychain (or a file only you can read where there's none)."
+     ],
+     [
+      "whoami",
+      "Show the account the next command acts in, the key it will use and where that came from."
+     ],
+     [
+      "logout",
+      "Revoke this profile's key and forget it."
+     ],
+     [
+      "init",
+      "Make a folder an app: from a template, or drafted from what you describe. Links the folder."
+     ],
+     [
+      "link",
+      "Tie this folder to an app, so commands here act on it."
+     ],
+     [
+      "unlink",
+      "Untie this folder from its app (the app is unchanged)."
+     ]
+    ]
+   },
+   {
+    "name": "Ship",
+    "commands": [
+     [
+      "deploy",
+      "Ship this folder to its app and print the live URL."
+     ],
+     [
+      "status",
+      "Everything about the app on one screen: URLs, the live release and its health, errors, bindings, secrets, settings and spend."
+     ],
+     [
+      "open",
+      "Print the app's URL, and open it at a terminal."
+     ],
+     [
+      "releases",
+      "List the app's releases, newest first."
+     ],
+     [
+      "rollback",
+      "Serve an earlier release again, without rebuilding (default: the one before the live one)."
+     ],
+     [
+      "promote",
+      "Put a preview live in production, after its checks."
+     ],
+     [
+      "delete",
+      "Delete the app to the trash: says what goes first, and deletes only with --yes."
+     ],
+     [
+      "live",
+      "Edit the app live: a dev server with its real bindings, then ship what was edited."
+     ]
+    ]
+   },
+   {
+    "name": "Configure",
+    "commands": [
+     [
+      "secret",
+      "Set the app's secrets: values never echo, never in argv."
+     ],
+     [
+      "env",
+      "Set the app's plain settings (they read back; keep secrets in noclick secret)."
+     ],
+     [
+      "settings",
+      "An app's plain settings, which it reads from its environment."
+     ],
+     [
+      "bind",
+      "Give the app a database, bucket, dict, queue or Durable Object class, made if it's missing."
+     ],
+     [
+      "domains",
+      "Search for and buy domains."
+     ]
+    ]
+   },
+   {
+    "name": "Operate",
+    "commands": [
+     [
+      "logs",
+      "Print an app's logs, or a deployment's build log."
+     ],
+     [
+      "db",
+      "Query a database."
+     ],
+     [
+      "bucket",
+      "List and copy files in storage buckets."
+     ],
+     [
+      "wait",
+      "Wait for an operation and print its result; exits 3 when it waits on a person."
+     ],
+     [
+      "ops",
+      "Wait on operations."
+     ],
+     [
+      "estimate",
+      "What apps, databases, buckets and repos would cost a month, before you make them."
+     ],
+     [
+      "agents",
+      "List your agents and talk to them."
+     ],
+     [
+      "users",
+      "List and create users."
+     ],
+     [
+      "machines",
+      "Reach your machines."
+     ],
+     [
+      "webhooks",
+      "Receive events on your machine."
+     ]
+    ]
+   },
+   {
+    "name": "Everything else",
+    "commands": [
+     [
+      "api",
+      "Call any /v1 route: the raw escape hatch."
+     ],
+     [
+      "describe",
+      "An API operation's fields, risk and an example."
+     ],
+     [
+      "help",
+      "Every command, its arguments and flags (--json for all of it)."
+     ]
+    ]
+   },
+   {
+    "name": "Teach",
+    "commands": [
+     [
+      "docs",
+      "Print a guide as Markdown (no key needed), list them, or search every doc."
+     ],
+     [
+      "skill",
+      "Print a skill, a task's playbook, as Markdown (no key needed), or list them."
+     ],
+     [
+      "mcp",
+      "Print, or --install, NoClick's MCP server for a coding agent's harness."
+     ]
+    ]
+   }
+  ],
+  "areas": [
+   "<area> <operation>",
+   "Every /v1 operation; noclick --help --all lists the areas, noclick <area> --help its operations."
+  ],
+  "first": [
+   [
+    "noclick login",
+    "Sign in from a browser (or noclick setup <code>, with a code from the console's Quickstart)."
+   ],
+   [
+    "noclick deploy",
+    "Ship this folder as an app and print its live URL."
+   ],
+   [
+    "noclick status",
+    "The app on one screen: its URLs, live release, health, errors and spend."
+   ]
+  ],
+  "next": [
+   [
+    "noclick --help",
+    "Every command, by what it's for."
+   ],
+   [
+    "noclick docs cli",
+    "The CLI's guide, as Markdown."
+   ],
+   [
+    "noclick help --json",
+    "Every command, its flags and examples, as data."
+   ]
+  ],
+  "signed_out": "No account? noclick signup --accept-terms",
+  "signup": {
+   "terms": [
+    "https://noclick.com/legal/developer-terms",
+    "https://noclick.com/legal/acceptable-use"
+   ],
+   "harnesses": [
+    [
+     "CLAUDECODE",
+     "claude-code"
+    ],
+    [
+     "CODEX_THREAD_ID",
+     "codex"
+    ],
+    [
+     "CODEX_SANDBOX",
+     "codex"
+    ],
+    [
+     "OPENCODE",
+     "opencode"
+    ],
+    [
+     "GEMINI_CLI",
+     "gemini-cli"
+    ],
+    [
+     "CURSOR_AGENT",
+     "cursor"
+    ]
+   ],
+   "works": "Works now: making agents, workflows, channels, dicts, queues, memories and webhooks, and every read."
+  }
+ }
 }

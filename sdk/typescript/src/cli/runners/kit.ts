@@ -4,13 +4,17 @@
  * command acts on, as the Python CLI's parts do.
  */
 
-import { NotFound } from "../../errors.ts";
+import { AgentSignup } from "../../agentSignup.ts";
+import { API_KEY_ENV } from "../../client.ts";
+import { NoClickError, NotFound } from "../../errors.ts";
 import { Project } from "../../project.ts";
 import type { Values } from "../args.ts";
 import { host } from "../host.ts";
 import * as links from "../link.ts";
 import { type Io, printJson } from "../output.ts";
-import { PROFILE_ENV } from "../store.ts";
+import * as screens from "../screens.ts";
+import { load } from "../spec.ts";
+import { PROFILE_ENV, readProfiles, writeProfile } from "../store.ts";
 
 export type Run = (values: Values, io: Io) => Promise<number>;
 
@@ -86,3 +90,22 @@ export async function appNamed(named: string | undefined): Promise<Project> {
     throw new NotFound(`No app is named '${name}'.`, { nextStep: `noclick deploy --app ${name} --create makes it (and its repo).` });
   }
 }
+
+/** On an account `noclick signup` made that no person has claimed yet, say so (and where they claim it), once the
+ *  command has signed in; once it's claimed, stop asking. */
+export async function noteUnclaimed(values: Values, io: Io): Promise<void> {
+  const login = readProfiles(host.env)[profileOf(values)];
+  if (!login?.claim_url || host.env[API_KEY_ENV]) return;
+  let status: unknown;
+  try {
+    status = (await AgentSignup.current()).status;
+  } catch (err) {
+    if (err instanceof NoClickError) return;
+    throw err;
+  }
+  if (status === "unclaimed") io.err(screens.unclaimed(login.claim_url));
+  else if (status === "claimed") writeProfile(host.env, profileOf(values), { ...login, claim_url: undefined });
+}
+
+/** What `noclick signup`'s `--agent` is by default. */
+export const harnessOf = () => screens.harness(load().manifest.screens, host.env);

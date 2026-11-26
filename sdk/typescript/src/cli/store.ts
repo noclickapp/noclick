@@ -31,6 +31,8 @@ export interface Profile {
   key_name?: string | null;
   key_prefix?: string;
   email?: string | null;
+  /** The claim link of an account `noclick signup` made, until a person has claimed it. */
+  claim_url?: string;
 }
 
 export interface Credentials {

@@ -63,10 +63,22 @@ export interface Command {
   examples?: string[];
 }
 
+/** What the CLI shows before a command runs (`screens.ts`): its words, by section and row. */
+export interface Screens {
+  intro: string;
+  sections: { name: string; commands: [string, string][] }[];
+  areas: [string, string];
+  first: [string, string][];
+  next: [string, string][];
+  signed_out: string;
+  signup: { terms: [string, string]; harnesses: [string, string][]; works: string };
+}
+
 export interface Manifest {
   format: number;
   globals: Flag[];
   commands: Command[];
+  screens: Screens;
 }
 
 export class Spec {

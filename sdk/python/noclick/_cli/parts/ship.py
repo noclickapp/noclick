@@ -816,6 +816,7 @@ def _gather(**reads: Callable[[], Any]) -> Dict[str, Any]:
 
 
 def cmd_status(args: argparse.Namespace) -> int:
+    _cli.note_unclaimed(args.profile)
     project, link = _app(args)
     since = datetime.now(timezone.utc) - timedelta(hours=1)
     reads = _gather(deployments=lambda: project.deployments.aio(limit=20),

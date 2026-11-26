@@ -1,6 +1,7 @@
-"""Claiming an account an AI agent made for itself: the claim link it hands a person (``noclick.com/claim/<token>``)
-names a token, which the signed-in person reads (``preview_claim``) and answers (``answer_claim``). Both are a
-signed-in person's own calls (a session), never a key."""
+"""An account an AI agent makes for itself: ``sign_up`` makes it (with no key) and answers its key and a claim link
+for the agent's person, and ``current`` reads whether a person has claimed it. The claim link
+(``noclick.com/claim/<token>``) names a token, which the signed-in person reads (``preview_claim``) and answers
+(``answer_claim``), each a signed-in person's own call (a session), never a key."""
 
 from __future__ import annotations
 
@@ -11,7 +12,54 @@ from ._sync import synced
 
 
 class AgentSignup:
-    """Claiming an account an AI agent made for itself."""
+    """An account an AI agent made for itself, and claiming it."""
+
+    @synced
+    @staticmethod
+    async def sign_up(agent: str, *, accept_terms: bool, purpose: Optional[str] = None, email: Optional[str] = None,
+                      client: Optional[Client] = None) -> Dict[str, Any]:
+        """Make a NoClick account for the agent calling, sent with no key. ``accept_terms`` must be ``True``: it
+        accepts NoClick's Developer Terms and Acceptable Use Policy for whoever runs the agent. ``purpose`` is what
+        the account is for, which the person sees as they claim it; ``email``, the only person who may claim it.
+
+        Returns:
+            The sign-up: its ``key`` (shown this once: keep it out of anything you print), ``claim_url`` for the
+            agent's person, ``expires_at``, ``limits`` (what waits for a claim) and ``terms``.
+
+        Raises:
+            PermissionDenied: With ``reason`` ``not_launched`` while agent sign-up is switched off.
+
+        Usage::
+
+            made = noclick.AgentSignup.sign_up("claude-code", accept_terms=True, purpose="Track a bakery's orders")
+            print(f"Claim it: {made['claim_url']}")
+        """
+        body: Dict[str, Any] = {"agent": agent, "accept_terms": accept_terms}
+        if purpose is not None:
+            body["purpose"] = purpose
+        if email is not None:
+            body["email"] = email
+        return await resolve_client(client).request(
+            "POST", "/v1/agent_signups", json=body, user=None, anonymous=True) or {}
+
+    @synced
+    @staticmethod
+    async def current(*, client: Optional[Client] = None) -> Dict[str, Any]:
+        """The sign-up that made this key.
+
+        Returns:
+            Its ``status`` (``unclaimed``, ``claimed``, ``declined`` or ``expired``), ``expires_at`` and, while
+            unclaimed, ``limits`` (``funds_usd`` and what waits for a claim).
+
+        Raises:
+            NotFound: The key wasn't made by an agent's sign-up.
+
+        Usage::
+
+            if noclick.AgentSignup.current()["status"] == "unclaimed":
+                ...
+        """
+        return await resolve_client(client).request("GET", "/v1/agent_signups/current", user=None) or {}
 
     @synced
     @staticmethod

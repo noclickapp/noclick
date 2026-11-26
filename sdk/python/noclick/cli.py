@@ -44,6 +44,7 @@ from ._scope import ALL_USERS, as_user
 from ._version import __version__
 from .agent import Agent
 from .agent_move import AgentMove
+from .agent_signup import AgentSignup
 from .bucket import Bucket
 from .database import Database
 from .domain import Domain, DomainContact
@@ -54,7 +55,7 @@ from .operation import Operation
 from .project import Deployment, Project
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
-from ._cli import commands as generated, exits, kit as cli_kit, link as cli_link, output, spend as cli_spend
+from ._cli import commands as generated, exits, kit as cli_kit, link as cli_link, output, screens, spend as cli_spend
 from ._cli.output import cell as _cell, note as _note, plain as _plain, plural as _plural, print_json as _print_json
 from ._cli.output import size as _size, table as _table, usd as _usd
 from ._cli.spec import load as load_spec
@@ -340,13 +341,34 @@ def keep_key(profile: str, store_name: str, store: Any, api_url: str, got: Dict[
     config.setdefault("profiles", {})[profile] = {
         "api_url": api_url, "store": store.name, "key_id": got.get("key_id"), "key_name": got.get("key_name"),
         "key_prefix": got["key"][:12], "email": got.get("email"),
+        **({"claim_url": got["claim_url"]} if got.get("claim_url") else {}),
     }
     _write_config(config)
     where = "the OS keychain" if store.name == "keychain" else f"{FileStore().path} (only you can read it)"
-    print(f"Signed in as {got.get('email') or 'your account'}.", flush=True)
+    said = got["said"] if "said" in got else f"Signed in as {got.get('email') or 'your account'}."
+    if said:
+        print(said, flush=True)
     _note(f"The key \"{got.get('key_name')}\" is in {where}. noclick logout revokes it.")
     if os.environ.get(API_KEY_ENV):
         _note(f"{API_KEY_ENV} is set in this shell, and wins over the stored key: unset it to use this one.")
+
+
+def note_unclaimed(profile: str) -> None:
+    """On an account ``noclick signup`` made that no person has claimed yet, say so (and where they claim it), once a
+    command has signed in; once it's claimed, stop asking."""
+    login = _read_config().get("profiles", {}).get(profile, {})
+    if "claim_url" not in login or os.environ.get(API_KEY_ENV):
+        return
+    try:
+        status = AgentSignup.current().get("status")
+    except Error:
+        return
+    if status == "unclaimed":
+        _note(screens.unclaimed(login["claim_url"]))
+    elif status == "claimed":
+        config = _read_config()
+        config["profiles"][profile].pop("claim_url", None)
+        _write_config(config)
 
 
 def _signed_in_as(account: Dict[str, Any]) -> Tuple[str, str]:
@@ -386,6 +408,7 @@ def cmd_whoami(args: argparse.Namespace) -> int:
         })
         return 0
     _print_rows([_signed_in_as(account), *rows])
+    note_unclaimed(args.profile)
     return 0
 
 
@@ -1407,10 +1430,55 @@ def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
 # --- the parser --------------------------------------------------------------
 
 
+def _curated(path: Sequence[str]) -> bool:
+    """Whether ``path`` is a curated command, or a group of them."""
+    return any(c["path"][:len(path)] == list(path) for c in load_spec().commands)
+
+
+class _Parser(argparse.ArgumentParser):
+    """A command's parser: its help ends with the command's examples, as the manifest keeps them."""
+
+    def _check_value(self, action: argparse.Action, value: Any) -> None:
+        # A command it doesn't have: the closest ones it does, rather than every one.
+        if isinstance(action, argparse._SubParsersAction) and value not in action.choices:
+            within = self.prog.split()[1:]
+            curated = [n for n in action.choices if _curated([*within, n])]
+            self.exit(exits.USAGE, screens.unknown(
+                value, within=within, curated=curated, areas=[n for n in action.choices if n not in curated]) + "\n")
+        super()._check_value(action, value)
+
+    def format_help(self) -> str:
+        path = self.prog.split()[1:]
+        found = next((c.get("examples") for c in load_spec().commands if c["path"] == path), None)
+        text = super().format_help()
+        return f"{text}\n{screens.examples(found)}\n" if found else text
+
+
+class _Top(_Parser):
+    """``noclick`` itself: its help lists the curated commands by section and the API's areas as one line, or
+    each of them with ``--all``."""
+
+    show_all = False
+
+    def format_help(self) -> str:
+        sub = next(a for a in self._actions if isinstance(a, argparse._SubParsersAction))
+        summaries = {a.dest: a.help or "" for a in sub._choices_actions if _curated([a.dest])}
+        areas = {a: len(ops) for a, ops in load_spec().areas().items()} if self.show_all else None
+        head = self._get_formatter()
+        head.add_usage(self.usage, self._actions, self._mutually_exclusive_groups)
+        head.add_text(self.description)
+        tail = self._get_formatter()
+        tail.start_section("options")
+        tail.add_arguments([a for a in self._actions if a.option_strings and a.help != argparse.SUPPRESS])
+        tail.end_section()
+        tail.add_text(self.epilog)
+        return f"{head.format_help()}\n{screens.commands(summaries, areas)}\n\n{tail.format_help()}"
+
+
 def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.ArgumentParser:
     """The parser; an area of the API's operations named in ``argv`` gets its commands (``_cli.commands``), and
     ``areas=False`` leaves them all out (the curated commands alone, as the manifest lists them)."""
-    parser = argparse.ArgumentParser(
+    parser = _Top(
         prog="noclick",
         description="The NoClick platform from your terminal.",
         epilog="Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
@@ -1422,11 +1490,13 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
         "--profile", default=os.environ.get(PROFILE_ENV, "default"),
         help=f"Which stored login to use (default: {PROFILE_ENV} or 'default').",
     )
+    parser.add_argument("--all", action="store_true", help=argparse.SUPPRESS)  # with --help: every API area
+    parser.show_all = "--all" in argv
     as_json = argparse.ArgumentParser(add_help=False)
     as_json.add_argument("--json", action="store_true", help="Print JSON instead of a table.")
     user = argparse.ArgumentParser(add_help=False)
     user.add_argument("--user", help="Act for this user: your id for them.")
-    commands = parser.add_subparsers(dest="command", metavar="<command>", required=True)
+    commands = parser.add_subparsers(dest="command", metavar="<command>", parser_class=_Parser)
 
     def command(
         group: Any, name: str, run: Callable[[argparse.Namespace], int], summary: str, *,
@@ -1693,10 +1763,25 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     return parser
 
 
+def _first_screen(profile: str) -> int:
+    """``noclick`` alone: what it is and what to run first; signed in, who you are and the folder's app."""
+    login = _read_config().get("profiles", {}).get(profile, {})
+    said = screens.signed_in(login.get("email") if login.get("store") else None,
+                             from_env=API_KEY_ENV if os.environ.get(API_KEY_ENV) else None)
+    try:
+        linked = cli_link.find()
+    except Error:
+        linked = None
+    print(screens.first(signed_in=said, linked_app=linked.app if linked and said else None))
+    return exits.OK
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the ``noclick`` command; returns its exit status."""
     argv = list(sys.argv[1:] if argv is None else argv)
     args = build_parser(argv).parse_args(argv)
+    if args.command is None:
+        return _first_screen(args.profile)
     try:
         if getattr(args, "token", None):
             configure(api_key=args.token, base_url=os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL)

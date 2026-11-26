@@ -24,7 +24,7 @@ import { FAILED, OK, USAGE } from "../exits.ts";
 import * as links from "../link.ts";
 import type { Io } from "../output.ts";
 import { CommandError, resolveCredentials } from "../store.ts";
-import { ID, answer, appOf, cell, lookup, num, on, profileOf, str, table, usd } from "./kit.ts";
+import { ID, answer, appOf, cell, lookup, noteUnclaimed, num, on, profileOf, str, table, usd } from "./kit.ts";
 
 /** Git never waits on a prompt, nor on a server that sends nothing for this long. */
 const GIT_GIVE_UP_S = 300;
@@ -445,6 +445,7 @@ export async function unlink(values: Values, io: Io): Promise<number> {
 // --- read ------------------------------------------------------------------------------------------------------
 
 export async function status(values: Values, io: Io): Promise<number> {
+  await noteUnclaimed(values, io);
   const { project } = await appOf(values);
   const since = new Date(Date.now() - 86_400_000);
   const [releases, errors, bindings, secrets, settings, usage] = await Promise.all([

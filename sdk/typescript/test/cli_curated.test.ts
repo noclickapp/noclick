@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, test } from "node:test";
@@ -64,6 +64,58 @@ test("setup keeps the key where the Python CLI reads it, readable only by you, a
   // A keychain is asked for by name, and refused before anything is redeemed.
   assert.equal(await main(["setup", "nc_setup_abc", "--store", "keychain"], captured()), FAILED);
   assert.equal(redeem.count, 1);
+});
+
+const SIGNED_UP = {
+  object: "agent_signup", id: "su_1", status: "unclaimed", agent: "claude-code", key: KEY, key_id: "key_9",
+  claim_url: "https://noclick.test/claim/tok_1", expires_at: "2026-12-04T00:00:00Z",
+  limits: { unclaimed_days: 7, until_claimed: ["buying anything (numbers, domains, cards, machines)"] },
+};
+
+test("signup needs the terms, then keeps the key as login does and prints the claim link last", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  host.env.CLAUDECODE = "1";
+  const made = api.on("POST", "/v1/agent_signups", json(SIGNED_UP, { status: 201 }));
+  let io = captured();
+  assert.equal(await main(["signup"], io), USAGE);
+  assert.ok(io.all().includes("https://noclick.com/legal/developer-terms") && io.all().includes("https://noclick.com/legal/acceptable-use"));
+  assert.equal(made.count, 0);
+
+  io = captured();
+  assert.equal(await main(["signup", "--accept-terms", "--purpose", "Track orders"], io), OK);
+  assert.equal(made.last.headers.get("authorization"), null);
+  assert.deepEqual(made.last.body, { agent: "claude-code", accept_terms: true, purpose: "Track orders" });
+  assert.equal(io.all().includes(KEY), false);
+  assert.equal(io.stdout.at(-1), "https://noclick.test/claim/tok_1");
+  assert.ok(io.stderr.some((l) => l.startsWith("Works now:")) && io.all().includes("buying anything"));
+  assert.equal(JSON.parse(readFileSync(join(config, "credentials.json"), "utf8")).default, KEY);
+
+  // whoami and status say it waits for a claim, and stop once a person has claimed it.
+  api.on("GET", "/v1/status", json({ account: { id: "acct_9" } }));
+  const current = api.on("GET", "/v1/agent_signups/current", json({ status: "unclaimed" }), json({ status: "claimed" }));
+  io = captured();
+  assert.equal(await main(["whoami"], io), OK);
+  assert.ok(io.stderr.includes("unclaimed: give your person https://noclick.test/claim/tok_1"));
+  io = captured();
+  assert.equal(await main(["whoami"], io), OK);
+  assert.equal(await main(["whoami"], io), OK);
+  assert.equal(io.all().includes("unclaimed"), false);
+  assert.equal(current.count, 2);
+
+  // A signed-in profile isn't signed up again.
+  assert.equal(await main(["signup", "--accept-terms"], captured()), FAILED);
+  assert.equal(made.count, 1);
+});
+
+test("signup refused by the gate exits 4 in the API's words and keeps nothing", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  api.on("POST", "/v1/agent_signups", apiError(403, "permission_denied", "Agents can't sign up for NoClick by themselves yet.", { reason: "not_launched" }));
+  const io = captured();
+  assert.equal(await main(["signup", "--accept-terms", "--agent", "my-bot"], io), REFUSED);
+  assert.ok(io.all().includes("Agents can't sign up for NoClick by themselves yet."));
+  assert.equal(existsSync(join(config, "credentials.json")), false);
 });
 
 test("login prints the link first, and a run cut short is picked up by the next", async () => {

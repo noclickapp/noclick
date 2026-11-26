@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from noclick import cli  # noqa: E402
+from noclick._cli import screens  # noqa: E402
 
 MANIFEST = ROOT / "noclick" / "_cli" / "spec" / "manifest.json"
 # Every command's own, said once in the manifest's ``globals`` rather than on each command.
@@ -101,10 +102,17 @@ def manifest(existing: Dict[str, Any]) -> Dict[str, Any]:
     for command in commands:
         if examples.get(tuple(command["path"])):
             command["examples"] = examples[tuple(command["path"])]
+    top = next(a for a in parser._actions if isinstance(a, argparse._SubParsersAction))
+    tops = {c["path"][0] for c in commands}
+    sectioned = [n for _, names in screens.SECTIONS for n in names]
+    if sorted(sectioned) != sorted(tops):
+        raise SystemExit(f"screens.SECTIONS must name every top-level command once: {sorted(set(tops) ^ set(sectioned))}")
     return {
         "format": 1,
-        "globals": [_option(a) for a in parser._actions if a.option_strings and a.dest not in GLOBAL_DESTS],
+        "globals": [_option(a) for a in parser._actions
+                    if a.option_strings and a.dest not in GLOBAL_DESTS and a.help != argparse.SUPPRESS],
         "commands": commands,
+        "screens": screens.manifest({a.dest: a.help or "" for a in top._choices_actions}),
     }
 
 

@@ -5,6 +5,7 @@
 
 import { hostname } from "node:os";
 
+import { AgentSignup } from "../../agentSignup.ts";
 import { CliLogin, accountStatus } from "../../cliLogin.ts";
 import { API_KEY_ENV, NoClick, defaultClient } from "../../client.ts";
 import { Expired, PermissionDenied, Unauthenticated } from "../../errors.ts";
@@ -12,9 +13,11 @@ import { Key } from "../../key.ts";
 import type { Values } from "../args.ts";
 import { host } from "../host.ts";
 import { OK } from "../exits.ts";
+import { UsageError } from "../args.ts";
+import { load } from "../spec.ts";
 import type { Io } from "../output.ts";
 import { CommandError, type Profile, readProfiles, resolveCredentials, storeKey, writeProfile } from "../store.ts";
-import { answer, profileOf, str } from "./kit.ts";
+import { answer, harnessOf, noteUnclaimed, on, profileOf, str } from "./kit.ts";
 
 const CLIENT_NAME = "noclick-cli";
 
@@ -56,6 +59,41 @@ export async function setup(values: Values, io: Io): Promise<number> {
   const account = (status.account ?? {}) as Parameters<typeof signedInAs>[0];
   answer(io, values, { signed_in: true, profile: profileOf(values), account }, () => [`Signed in. Account: ${signedInAs(account)}`]);
   io.err(`The key is in ${host.env.NOCLICK_CONFIG_DIR ?? "~/.config/noclick"}/credentials.json (only you can read it). noclick logout revokes it.`);
+  return OK;
+}
+
+/** An agent with no account makes one for itself: the key kept as `login` keeps it, the claim link printed last. */
+export async function signup(values: Values, io: Io): Promise<number> {
+  const words = load().manifest.screens.signup;
+  if (!on(values, "accept_terms")) {
+    throw new UsageError(`Signing up accepts NoClick's Developer Terms and Acceptable Use Policy: ${words.terms.join(" and ")}.`,
+      "Read them, then run noclick signup --accept-terms.");
+  }
+  fileStore(values);
+  const creds = resolveCredentials({ ...host.env, [API_KEY_ENV]: undefined }, profileOf(values));
+  if (creds.key || creds.login.store) {
+    throw new CommandError(`The profile ${profileOf(values)} is signed in already: signing up would make another account.`, {
+      nextStep: "noclick signup --profile <another> --accept-terms, or noclick logout first.",
+    });
+  }
+  const apiUrl = apiUrlOf(values);
+  const agent = str(values, "agent") ?? harnessOf();
+  const made = await AgentSignup.signUp(agent, {
+    acceptTerms: true, purpose: str(values, "purpose"), email: str(values, "email"), client: anonymous(apiUrl),
+  });
+  const { key, ...shown } = made;
+  keep(values, String(key), {
+    api_url: apiUrl, key_id: made.key_id as string, key_name: `Signed up by ${agent}`, claim_url: String(made.claim_url),
+  });
+  io.err(`The key is in ${host.env.NOCLICK_CONFIG_DIR ?? "~/.config/noclick"}/credentials.json (only you can read it). noclick logout revokes it.`);
+  const limits = (made.limits ?? {}) as { unclaimed_days?: number; until_claimed?: string[] };
+  answer(io, values, shown, () => {
+    io.err(words.works);
+    io.err(`Waits for a person to claim it (within ${limits.unclaimed_days ?? 7} days):`);
+    for (const held of limits.until_claimed ?? []) io.err(`  - ${held}`);
+    io.err("Give your person this link to claim the account:");
+    return [`Signed up: a NoClick account for ${agent}, which a person claims.`, String(made.claim_url)];
+  });
   return OK;
 }
 
@@ -116,6 +154,7 @@ export async function whoami(values: Values, io: Io): Promise<number> {
     profile: creds.profile, source: creds.source, key_prefix: creds.key!.slice(0, 12), api_url: creds.apiUrl,
     email: creds.login.email ?? null, key_name: creds.login.key_name ?? null, account,
   }, () => [`Account  ${signedInAs(account)}`, `Key      ${key}`, `Profile  ${creds.profile}`, `API      ${creds.apiUrl}`]);
+  if (!values.json) await noteUnclaimed(values, io);
   return OK;
 }
 

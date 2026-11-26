@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -141,4 +141,58 @@ test("--max-usd prices first and refuses above the ceiling, exit 4", async () =>
   assert.ok(io.stderr.includes("This session costs about $0.42 at most (under --max-usd $1.00)."));
   await assert.rejects(spend.check(io, items, 0.1, { what: "This session", per: "at most" }),
     (err: NoClickError) => exitCode(err.type) === REFUSED && /nothing was done/.test(err.message));
+});
+
+test("noclick alone says what to run first, and signed in, who you are and the folder's app", async () => {
+  const { host } = await import("../src/cli/host.ts");
+  const saved = { env: host.env, cwd: host.cwd };
+  const folder = mkdtempSync(join(tmpdir(), "noclick-first-"));
+  try {
+    host.env = { NOCLICK_CONFIG_DIR: join(folder, "config") };
+    host.cwd = () => folder;
+    let io = captured();
+    assert.equal(await main([], io), OK);
+    const out = io.stdout.join("\n");
+    assert.ok(out.includes("noclick login") && out.includes("noclick deploy") && out.includes("noclick docs cli"));
+    assert.ok(out.split("\n").length <= 20 && out.includes("No account? noclick signup --accept-terms"));
+    mkdirSync(join(folder, "config"));
+    writeFileSync(join(folder, "config", "config.json"), JSON.stringify({ profiles: { default: { store: "file", email: "ana@acme.test" } } }));
+    link.write("booking", { root: folder });
+    io = captured();
+    assert.equal(await main([], io), OK);
+    assert.ok(io.stdout.join("\n").includes("Signed in as ana@acme.test; this folder is linked to booking."));
+    assert.ok(!io.stdout.join("\n").includes("noclick login") && !io.stdout.join("\n").includes("noclick signup"));
+  } finally {
+    Object.assign(host, saved);
+  }
+});
+
+test("--help lists the commands by section and the API as one line; --all lists every area", async () => {
+  let io = captured();
+  assert.equal(await main(["--help"], io), OK);
+  const lines = io.stdout.join("\n").split("\n");
+  const sections = lines.filter((l) => l.endsWith(":") && !l.startsWith(" ")).map((l) => l.slice(0, -1));
+  assert.deepEqual(sections.slice(0, 6), ["Start", "Ship", "Configure", "Operate", "Everything else", "Teach"]);
+  assert.ok(lines.some((l) => l.includes("<area> <operation>")) && !lines.some((l) => l.includes("agent-conversations")));
+  io = captured();
+  assert.equal(await main(["--help", "--all"], io), OK);
+  assert.ok(io.stdout.join("\n").includes("agent-conversations"));
+});
+
+test("a mistyped command names the closest ones, as the Python CLI does, and exits 2", async () => {
+  for (const [argv, said] of [[["deplyo"], "Unknown command 'deplyo'. Did you mean: deploy?"],
+    [["secret", "sett"], "Unknown command 'secret sett'. Did you mean: secret set?"],
+    [["agents", "creat"], "Did you mean: agents create, agents chat?"]] as const) {
+    const io = captured();
+    assert.equal(await main([...argv], io), USAGE);
+    assert.equal(io.stderr.length, 1);
+    assert.ok(io.stderr[0]!.includes(said) && io.stderr[0]!.includes("--help"), io.stderr[0]);
+  }
+});
+
+test("a command's help ends with its examples", async () => {
+  const io = captured();
+  assert.equal(await main(["deploy", "--help"], io), OK);
+  const examples = load().curated(["deploy"])!.examples!;
+  assert.ok(io.stdout.join("\n").endsWith(["examples:", ...examples.map((e) => `  ${e}`)].join("\n")));
 });

@@ -128,9 +128,10 @@ export function parse(
 }
 
 /** A command's help, from the same specs it's parsed by. */
-export function helpText(usage: string, summary: string, flags: (FlagSpec & { help?: string })[], args: (ArgSpec & { help?: string })[]): string {
+export function helpText(usage: string, summary: string, flags: (FlagSpec & { help?: string })[], args: (ArgSpec & { help?: string })[], examples: string[] = []): string {
   const lines = [`usage: ${usage}${args.map((a) => ` ${a.optional ? `[${a.name}]` : `<${a.name}>`}${a.many ? "..." : ""}`).join("")} [flags]`, "", summary];
   if (args.length) lines.push("", "arguments:", ...args.map((a) => `  ${a.name.padEnd(24)} ${a.help ?? ""}`));
   if (flags.length) lines.push("", "flags:", ...flags.map((f) => `  ${`${f.flag}${f.type === "bool" ? "" : ` <${f.type}>`}`.padEnd(24)} ${f.help ?? ""}`));
+  if (examples.length) lines.push("", "examples:", ...examples.map((e) => `  ${e}`));
   return lines.join("\n");
 }

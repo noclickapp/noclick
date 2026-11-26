@@ -43,6 +43,54 @@ def test_setup_redeems_a_code_and_keeps_the_key_like_login(home, api, monkeypatc
     assert run("setup", "nc_setup_abc") == exits.FAILED
 
 
+SIGNED_UP = {"object": "agent_signup", "id": "su_1", "status": "unclaimed", "agent": "claude-code",
+             "key": "nk_live_FAKESIGNUP0001", "key_id": "key_9", "key_prefix": "nk_live_FAKE",
+             "claim_url": "https://noclick.test/claim/tok_1", "expires_at": "2026-12-04T00:00:00Z",
+             "limits": {"unclaimed_days": 7, "until_claimed": ["buying anything (numbers, domains, cards, machines)"]}}
+
+
+def test_signup_needs_the_terms_then_keeps_the_key_and_prints_the_claim_link_last(home, api, monkeypatch, capsys):
+    monkeypatch.delenv("NOCLICK_API_KEY")
+    monkeypatch.setenv("CLAUDECODE", "1")
+    made = api.post("/v1/agent_signups").respond(201, json=SIGNED_UP)
+    assert run("signup") == exits.USAGE
+    err = capsys.readouterr().err
+    assert "https://noclick.com/legal/developer-terms" in err and "https://noclick.com/legal/acceptable-use" in err
+    assert not made.called
+
+    assert run("signup", "--accept-terms", "--purpose", "Track orders", "--store", "file") == 0
+    sent = made.calls.last.request
+    assert "authorization" not in sent.headers
+    assert body(sent) == {"agent": "claude-code", "accept_terms": True, "purpose": "Track orders"}
+    out = capsys.readouterr()
+    assert "FAKESIGNUP" not in out.out + out.err
+    assert out.out.splitlines()[-1] == "https://noclick.test/claim/tok_1"
+    assert "Works now:" in out.err and "buying anything" in out.err
+    assert cli.resolve_credentials("default").key == "nk_live_FAKESIGNUP0001"
+
+    # whoami and status say it waits for a claim, and stop once a person has claimed it.
+    api.get("/v1/status").respond(json={"account": {"id": "acct_9"}})
+    current = api.get("/v1/agent_signups/current").respond(json={"status": "unclaimed"})
+    assert run("whoami") == 0
+    assert "unclaimed: give your person https://noclick.test/claim/tok_1" in capsys.readouterr().err
+    current.respond(json={"status": "claimed"})
+    assert run("whoami") == 0 and run("whoami") == 0
+    assert "unclaimed" not in capsys.readouterr().err and current.call_count == 2
+
+    # A signed-in profile isn't signed up again.
+    assert run("signup", "--accept-terms") == exits.FAILED and made.call_count == 1
+
+
+def test_signup_refused_by_the_gate_exits_4_in_the_apis_words(home, api, monkeypatch, capsys):
+    monkeypatch.delenv("NOCLICK_API_KEY")
+    api.post("/v1/agent_signups").respond(403, json={"error": {
+        "type": "permission_denied", "reason": "not_launched",
+        "message": "Agents can't sign up for NoClick by themselves yet.", "next_step": "Ask your person to sign up."}})
+    assert run("signup", "--accept-terms", "--agent", "my-bot") == exits.REFUSED
+    assert "Agents can't sign up for NoClick by themselves yet." in capsys.readouterr().err
+    assert cli.resolve_credentials("default").key is None
+
+
 def test_init_from_a_template_makes_the_app_and_links_the_folder(home, api, here, monkeypatch, capsys):
     git = FakeGit()
     monkeypatch.setattr(cli, "_git", git)

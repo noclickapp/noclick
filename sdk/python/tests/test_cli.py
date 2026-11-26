@@ -14,6 +14,7 @@ import pytest
 
 import noclick as nc
 from noclick import cli
+from noclick._cli.spec import load
 from platform_helpers import BASE, USER_ID, agent_row, body, listing, operation, user_row
 
 SHA = "3f2a1c9e8b7d6a5f4e3d2c1b0a9f8e7d6c5b4a39"
@@ -84,15 +85,58 @@ def signed_in_with_login(home, monkeypatch, *, store="keychain", key="nk_live_cl
 # --- parsing -------------------------------------------------------------------------
 
 
-def test_help_lists_every_command_as_working(capsys):
+def test_help_lists_the_commands_by_section_and_the_api_as_one_line(capsys):
     with pytest.raises(SystemExit) as done:
         run("--help")
     assert done.value.code == 0
-    text = " ".join(capsys.readouterr().out.split())
+    out = capsys.readouterr().out
+    text = " ".join(out.split())
     for command in ("login Sign in", "logout Revoke", "whoami Show", "agents List", "users List", "bucket List",
                     "ops Wait", "webhooks Receive", "db Query", "deploy Ship", "link Tie", "status Everything", "logs Print", "domains Search"):
         assert command in text, command
-    assert "designed" not in text and "not_available" not in text
+    sections = [line[:-1] for line in out.splitlines() if line.endswith(":") and not line.startswith(" ")]
+    assert sections[:6] == ["Start", "Ship", "Configure", "Operate", "Everything else", "Teach"]
+    assert out.split("Start:\n")[1].startswith("  signup ")
+    assert "<area> <operation>" in out and "agent-conversations" not in out
+    assert len(out.splitlines()) < 70
+    with pytest.raises(SystemExit):
+        run("--help", "--all")
+    assert "agent-conversations" in capsys.readouterr().out
+
+
+def test_noclick_alone_says_what_to_run_first_and_who_you_are(home, monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("NOCLICK_API_KEY", "")
+    assert run() == 0
+    out = capsys.readouterr().out
+    assert "noclick login" in out and "noclick deploy" in out and "noclick docs cli" in out
+    assert "No account? noclick signup --accept-terms" in out
+    assert len(out.splitlines()) <= 20
+    signed_in_with_login(home, monkeypatch)
+    (tmp_path / ".noclick").mkdir()
+    (tmp_path / ".noclick" / "project.json").write_text(json.dumps({"app": "booking"}))
+    monkeypatch.chdir(tmp_path)
+    assert run() == 0
+    out = capsys.readouterr().out
+    assert "Signed in as ana@acme.test; this folder is linked to booking." in out
+    assert "noclick login" not in out and "noclick signup" not in out
+
+
+def test_a_mistyped_command_names_the_closest_and_exits_2(capsys):
+    for argv, said in ((["deplyo"], "Unknown command 'deplyo'. Did you mean: deploy?"),
+                       (["secret", "sett"], "Unknown command 'secret sett'. Did you mean: secret set?"),
+                       (["agents", "creat"], "Did you mean: agents create, agents chat?")):
+        with pytest.raises(SystemExit) as done:
+            run(*argv)
+        assert done.value.code == 2
+        err = capsys.readouterr().err
+        assert said in err and "--help" in err and len(err.splitlines()) == 2, err
+
+
+def test_a_commands_help_ends_with_its_examples(capsys):
+    with pytest.raises(SystemExit):
+        run("deploy", "--help")
+    examples = next(c["examples"] for c in load().commands if c["path"] == ["deploy"])
+    assert capsys.readouterr().out.rstrip().endswith("examples:\n" + "\n".join(f"  {e}" for e in examples))
 
 
 @pytest.mark.parametrize("argv, run_fn, expected", [
