@@ -14,6 +14,7 @@
 import type { Op } from "./spec.ts";
 
 import { WAITING, exitCode } from "./exits.ts";
+import { ERR, OUT } from "./style.ts";
 
 export { FAILED, INTERRUPTED, OK, REFUSED, TIMED_OUT, USAGE, WAITING, WAITING_STATUSES, exitCode } from "./exits.ts";
 
@@ -44,11 +45,14 @@ export function plain(value: unknown): unknown {
 export interface Io {
   out(line: string): void;
   err(line: string): void;
+  /** Which streams are terminals, and how wide stdout's is: only those are styled. An Io without it has none. */
+  terminal?(): { out: boolean; err: boolean; columns: number };
 }
 
 export const processIo: Io = {
   out: (line) => process.stdout.write(`${line}\n`),
   err: (line) => process.stderr.write(`${line}\n`),
+  terminal: () => ({ out: Boolean(process.stdout.isTTY), err: Boolean(process.stderr.isTTY), columns: process.stdout.columns || 100 }),
 };
 
 export function printJson(io: Io, value: unknown): void {
@@ -155,20 +159,28 @@ export function report(io: Io, error: ErrorLike, options: { json: boolean; comma
   if (options.json) {
     printJson(io, { error: body });
   } else {
-    io.err(`${body.exit_code === WAITING ? "waiting on a person" : "error"}: ${body.message}`);
-    if (body.next_step) io.err(`  next step: ${body.next_step}`);
-    for (const line of (body.commands as string[] | undefined) ?? []) io.err(`  run: ${line}`);
-    for (const link of (body.links as string[] | undefined) ?? []) io.err(`  open: ${link}`);
-    if (body.request_id) io.err(`  request id: ${body.request_id}`);
+    const s = ERR;
+    const said = body.exit_code === WAITING ? s.warn("waiting on a person:") : s.error("error:");
+    io.err(`${said} ${s.bold(String(body.message))}`);
+    if (body.next_step) io.err(`  ${s.dim("next step:")} ${body.next_step}`);
+    for (const line of (body.commands as string[] | undefined) ?? []) io.err(`  ${s.dim("run:")} ${s.link(line)}`);
+    for (const link of (body.links as string[] | undefined) ?? []) io.err(`  ${s.dim("open:")} ${s.link(link)}`);
+    if (body.request_id) io.err(`  ${s.dim("request id:")} ${s.dim(String(body.request_id))}`);
   }
   return body.exit_code as number;
 }
 
+const labelOf = (item: Json) => item.name ?? item.title ?? item.email ?? item.summary ?? "";
+
 function rows(items: unknown[]): string[] {
   if (!items.length) return ["(none)"];
+  if (OUT.on && items.every(isObject)) {
+    const cell = (v: unknown) => (v === null || v === undefined ? "-" : String(v));
+    return OUT.table(["ID", "NAME", "STATUS"], (items as Json[]).map((item) => [cell(item.id), cell(labelOf(item)), cell(item.status ?? item.state)]));
+  }
   return items.map((item) => {
     if (!isObject(item)) return String(item);
-    const label = item.name ?? item.title ?? item.email ?? item.summary ?? "";
+    const label = labelOf(item);
     const status = item.status ?? item.state ?? "";
     return [item.id ?? "", label, status].filter((p) => p !== "").join("  ");
   });

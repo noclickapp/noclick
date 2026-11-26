@@ -1,5 +1,8 @@
 /** Parsing a command line by the spec's own description of a command: its positional arguments and its flags. */
 
+import { screen } from "./helpscreen.ts";
+import { OUT } from "./style.ts";
+
 export interface FlagSpec {
   flag: string;
   dest: string;
@@ -127,11 +130,22 @@ export function parse(
   return values;
 }
 
-/** A command's help, from the same specs it's parsed by. */
-export function helpText(usage: string, summary: string, flags: (FlagSpec & { help?: string })[], args: (ArgSpec & { help?: string })[], examples: string[] = []): string {
+const invocation = (f: FlagSpec) => `${f.flag}${f.type === "bool" ? "" : ` <${f.type}>`}`;
+
+/** A command's help, from the same specs it's parsed by: styled at a terminal (`helpscreen.ts`). */
+export function helpText(usage: string, summary: string, flags: (FlagSpec & { help?: string })[], args: (ArgSpec & { help?: string })[], examples: string[] = [], notes?: string): string {
+  if (OUT.on) {
+    const named = args.map((a) => (a.optional ? `[${a.name}]` : `<${a.name}>`) + (a.many ? "..." : ""));
+    return screen(OUT, {
+      usage: [usage, ...(flags.length ? ["[OPTIONS]"] : []), ...named].join(" "),
+      description: summary,
+      sections: [["Arguments", args.map((a) => [a.name, a.help ?? ""])], ["Options", flags.map((f) => [invocation(f), f.help ?? ""])]],
+      notes, examples,
+    });
+  }
   const lines = [`usage: ${usage}${args.map((a) => ` ${a.optional ? `[${a.name}]` : `<${a.name}>`}${a.many ? "..." : ""}`).join("")} [flags]`, "", summary];
   if (args.length) lines.push("", "arguments:", ...args.map((a) => `  ${a.name.padEnd(24)} ${a.help ?? ""}`));
-  if (flags.length) lines.push("", "flags:", ...flags.map((f) => `  ${`${f.flag}${f.type === "bool" ? "" : ` <${f.type}>`}`.padEnd(24)} ${f.help ?? ""}`));
+  if (flags.length) lines.push("", "flags:", ...flags.map((f) => `  ${invocation(f).padEnd(24)} ${f.help ?? ""}`));
   if (examples.length) lines.push("", "examples:", ...examples.map((e) => `  ${e}`));
   return lines.join("\n");
 }

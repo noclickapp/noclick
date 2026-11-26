@@ -56,7 +56,8 @@ export async function secretLs(values: Values, io: Io): Promise<number> {
   const { project } = await appOf(values);
   const found = await project.secrets.list({ environment: environment(values) });
   answer(io, values, { data: found }, () => {
-    table(io, ["NAME", "UPDATED"], Object.entries(found).sort(), `${project.name} has no secrets for ${environment(values)}.`);
+    table(io, ["NAME", "UPDATED"], Object.entries(found).sort(), `${project.name} has no secrets for ${environment(values)}.`,
+      `Secrets of ${project.name} (${environment(values)})`);
     return [];
   });
   return OK;
@@ -95,7 +96,7 @@ export async function envLs(values: Values, io: Io): Promise<number> {
   const { project } = await appOf(values);
   const found = await project.settings.list();
   answer(io, values, { data: found }, () => {
-    table(io, ["NAME", "VALUE"], Object.entries(found).sort(), `${project.name} has no settings.`);
+    table(io, ["NAME", "VALUE"], Object.entries(found).sort(), `${project.name} has no settings.`, `Settings of ${project.name}`);
     return [];
   });
   return OK;
@@ -152,7 +153,8 @@ export async function domainLs(values: Values, io: Io): Promise<number> {
   const { project } = await appOf(values);
   const found = await project.domains();
   answer(io, values, { data: found.map((d) => d.raw) }, () => {
-    table(io, ["DOMAIN", "STATUS"], found.map((d) => [d.name, d.status]), `${project.name} answers only at ${project.url}. Add one: noclick domains add <name>.`);
+    table(io, ["DOMAIN", "STATUS"], found.map((d) => [d.name, d.status]), `${project.name} answers only at ${project.url}. Add one: noclick domains add <name>.`,
+      `Domains of ${project.name}`);
     return [];
   });
   return OK;
@@ -162,7 +164,7 @@ export async function settingsList(values: Values, io: Io): Promise<number> {
   const project = await appNamed(str(values, "project"));
   const found = await project.settings.list();
   answer(io, values, found, () => {
-    table(io, ["NAME", "VALUE"], Object.entries(found).sort(), `${project.name} has no settings.`);
+    table(io, ["NAME", "VALUE"], Object.entries(found).sort(), `${project.name} has no settings.`, `Settings of ${project.name}`);
     return [];
   });
   return OK;
@@ -206,7 +208,7 @@ export async function domainsSearch(values: Values, io: Io): Promise<number> {
   const offers = await Domain.search(String(values.query), { tlds: values.tld as string[] | undefined });
   answer(io, values, { data: offers.map((o) => o.raw) }, () => {
     table(io, ["DOMAIN", "AVAILABLE", "PRICE", "RENEWAL", "PREMIUM"],
-      offers.map((o) => [o.name, o.available, usd(o.priceUsd), usd(o.renewalUsd), o.premium]), "No names found.");
+      offers.map((o) => [o.name, o.available, usd(o.priceUsd), usd(o.renewalUsd), o.premium]), "No names found.", `Domains for ${str(values, "query") ?? ""}`);
     return [];
   });
   const free = offers.find((o) => o.available);

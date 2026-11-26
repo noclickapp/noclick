@@ -21,6 +21,7 @@ from dataclasses import asdict, is_dataclass
 from datetime import date, datetime
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
+from . import style
 from .exits import (  # noqa: F401  (the codes, read through output by the commands)
     FAILED, INTERRUPTED, OK, REFUSED, TIMED_OUT, USAGE, WAITING, WAITING_STATUSES, code_for, exit_code,
 )
@@ -56,6 +57,10 @@ def print_json(value: Any) -> None:
 
 def note(text: str) -> None:
     """A line for a person: stderr, never in the way of what a script reads."""
+    print(style.ERR.note(text), file=sys.stderr, flush=True)
+
+
+def _say(text: str) -> None:
     print(text, file=sys.stderr, flush=True)
 
 
@@ -160,15 +165,17 @@ def report(error: Any, *, as_json: bool, commands: Optional[Commands] = None,
         print_json({"error": body})
     else:
         waiting = body["exit_code"] == WAITING
-        note(f"{'waiting on a person' if waiting else 'error'}: {body['message']}")
+        s = style.ERR
+        said = s.warn("waiting on a person:") if waiting else s.error("error:")
+        _say(f"{said} {s.bold(body['message']) if s.on else body['message']}")
         if body["next_step"]:
-            note(f"  next step: {body['next_step']}")
+            _say(f"  {s.dim('next step:')} {body['next_step']}")
         for line in body.get("commands", []):
-            note(f"  run: {line}")
+            _say(f"  {s.dim('run:')} {s.link(line)}")
         for link in body.get("links", []):
-            note(f"  open: {link}")
+            _say(f"  {s.dim('open:')} {s.link(link)}")
         if body.get("request_id"):
-            note(f"  request id: {body['request_id']}")
+            _say(f"  {s.dim('request id:')} {s.dim(body['request_id'])}")
     return body["exit_code"]
 
 
@@ -200,13 +207,22 @@ def _rows(items: Sequence[Any]) -> Iterable[str]:
     if not items:
         yield "(none)"
         return
+    if style.OUT.on and all(isinstance(item, dict) for item in items):
+        rows = [[cell(item.get("id")), cell(_label(item)), cell(item.get("status") or item.get("state"))]
+                for item in items]
+        yield from style.OUT.table(["ID", "NAME", "STATUS"], rows)
+        return
     for item in items:
         if isinstance(item, dict):
-            label = item.get("name") or item.get("title") or item.get("email") or item.get("summary") or ""
+            label = _label(item)
             status = item.get("status") or item.get("state") or ""
             yield "  ".join(str(p) for p in (item.get("id", ""), label, status) if p != "")
         else:
             yield str(item)
+
+
+def _label(item: Dict[str, Any]) -> str:
+    return item.get("name") or item.get("title") or item.get("email") or item.get("summary") or ""
 
 
 def answer(value: Any, *, as_json: bool) -> None:
@@ -240,10 +256,16 @@ def cell(value: Any) -> str:
     return str(value)
 
 
-def table(headers: Sequence[str], rows: Iterable[Sequence[Any]], *, empty: str) -> None:
+def table(headers: Sequence[str], rows: Iterable[Sequence[Any]], *, empty: str, title: Optional[str] = None) -> None:
+    """Rows under headers: at a terminal a bordered table (``title`` above it), else columns lined up."""
     cells = [[cell(v) for v in row] for row in rows]
     if not cells:
         note(empty)
+        return
+    if style.OUT.on:
+        for each in style.OUT.table([h or " " for h in headers], cells, title=title):
+            print(each)
+        sys.stdout.flush()
         return
     widths = [max(len(h), *(len(row[i]) for row in cells)) for i, h in enumerate(headers)]
     for row in [list(headers), *cells]:

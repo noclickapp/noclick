@@ -12,12 +12,14 @@ import { NoClickError } from "../errors.ts";
 import { asUser } from "../scope.ts";
 import { VERSION } from "../version.ts";
 import { type ArgSpec, type FlagSpec, type Values, UsageError, helpText, parse } from "./args.ts";
+import { screen } from "./helpscreen.ts";
 import { commandsFor, runApi, runDescribe, runHelp, runOperation } from "./commands.ts";
 import * as output from "./output.ts";
 import type { Io } from "./output.ts";
 import { host } from "./host.ts";
 import { find as findLink } from "./link.ts";
 import * as screens from "./screens.ts";
+import * as style from "./style.ts";
 import { RUNNERS } from "./runners/index.ts";
 import { type Command, load } from "./spec.ts";
 import { PROFILE_ENV, readProfiles, signedIn } from "./store.ts";
@@ -54,18 +56,29 @@ function curatedSpecs(command: Command): { flags: (FlagSpec & { help?: string })
   return { flags: [...command.flags.map((f) => ({ ...f, type: f.type })), ...GLOBALS], args: command.args };
 }
 
+const EXITS = "Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
+  + "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C.";
+
 /** `noclick --help`: the curated commands by section, the API's areas as one line (each of them with `--all`). */
 function topHelp(io: Io, all: boolean): number {
   const spec = load();
   const areas = all ? new Map([...spec.areas()].map(([area, ops]) => [area, ops.length])) : null;
   const options = [...spec.manifest.globals, { flag: "-h, --help", help: "Show this help (--all lists every API area)." }];
+  if (style.OUT.on) {
+    io.out(screen(style.OUT, {
+      usage: "noclick [OPTIONS] <command> ...", description: "The NoClick platform from your terminal.",
+      middle: screens.commands(spec.manifest.screens, areas, style.OUT).split("\n"),
+      sections: [["Options", options.map((o) => [o.flag, o.help ?? ""] as [string, string])]],
+      notes: `${EXITS} Docs: https://noclick.com/docs/guide/cli (noclick ${VERSION})`,
+    }));
+    return output.OK;
+  }
   io.out([
     `usage: noclick [--profile <string>] [--version] <command> ...   (noclick ${VERSION})`, "",
     "The NoClick platform from your terminal.", "",
     screens.commands(spec.manifest.screens, areas), "",
     "flags:", ...options.map((o) => `  ${o.flag.padEnd(24)} ${o.help ?? ""}`), "",
-    "Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
-      + "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C. Docs: https://noclick.com/docs/guide/cli",
+    `${EXITS} Docs: https://noclick.com/docs/guide/cli`,
   ].join("\n"));
   return output.OK;
 }
@@ -80,7 +93,7 @@ function firstScreen(io: Io, profile: string): number {
   } catch {
     linked = null;
   }
-  io.out(screens.first(load().manifest.screens, said, linked));
+  io.out(screens.first(load().manifest.screens, said, linked, style.OUT));
   return output.OK;
 }
 
@@ -100,14 +113,18 @@ function unknownCommand(io: Io, words: string[]): number {
     .filter((c) => c.path.length > within.length && within.every((w, i) => c.path[i] === w))
     .map((c) => c.path[within.length]!))];
   const others = within.length > 1 ? [] : within.length ? (areas.get(within[0]!) ?? []).map((op) => op.command) : [...areas.keys()];
-  io.err(screens.unknown(words[within.length]!, within, curated, others.filter((n) => !curated.includes(n))));
+  io.err(screens.unknown(words[within.length]!, within, curated, others.filter((n) => !curated.includes(n)), style.ERR));
   return output.USAGE;
 }
 
 /** Run the `noclick` command; returns its exit status. */
 export async function main(
-  argv: string[], io: Io = output.processIo, options: { signIn?: (profile: string) => void } = {},
+  argv: string[], given: Io = output.processIo, options: { signIn?: (profile: string) => void } = {},
 ): Promise<number> {
+  const terminal = given.terminal?.() ?? { out: false, err: false, columns: 100 };
+  style.configure(style.modeIn(argv), terminal, host.env, () => terminal.columns);
+  // A note for a person (stderr) reads as what it is: a check for what's done, an arrow for a step, the rest dim.
+  const io: Io = style.ERR.on ? { ...given, err: (line) => given.err(style.ERR.note(line)) } : given;
   const signIn = options.signIn ?? signInWith;
   const spec = load();
   let profile = host.env[PROFILE_ENV] || "default";
@@ -121,6 +138,14 @@ export async function main(
     }
     if (flag === "-h" || flag === "--help") return topHelp(io, argv.includes("--all"));
     if (flag === "--all") continue;
+    if (flag === "--color") {
+      const mode = rest.shift();
+      if (!style.MODES.includes(mode as style.Mode)) {
+        return output.report(io, new UsageError(`--color is one of ${style.MODES.join(", ")}, not ${mode}.`, "noclick --help"), { json: false });
+      }
+      continue;
+    }
+    if (flag.startsWith("--color=")) continue;
     if (flag === "--profile") profile = rest.shift() ?? profile;
     else if (flag.startsWith("--profile=")) profile = flag.slice(10);
     else return output.report(io, new UsageError(`No global flag ${flag}.`, "noclick --help"), { json: false });
@@ -139,7 +164,7 @@ export async function main(
       const { flags, args } = curatedSpecs(command);
       const values = parse(rest.slice(n), flags, args, usage, command.one_of);
       if (values.help) {
-        io.out(helpText(usage, command.summary, flags, args, command.examples));
+        io.out(helpText(usage, command.summary, flags, args, command.examples, command.notes));
         return output.OK;
       }
       const run = curated.get(path.join(" "));

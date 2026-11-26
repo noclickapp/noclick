@@ -13,6 +13,7 @@ import { host } from "../host.ts";
 import * as links from "../link.ts";
 import { type Io, printJson } from "../output.ts";
 import * as screens from "../screens.ts";
+import { OUT } from "../style.ts";
 import { load } from "../spec.ts";
 import { PROFILE_ENV, readProfiles, writeProfile } from "../store.ts";
 
@@ -45,11 +46,16 @@ export function usd(value: number | null | undefined): string {
   return value === null || value === undefined ? "-" : `$${value.toFixed(2)}`;
 }
 
-/** Rows under headers, columns lined up; `empty` as a note when there are none. */
-export function table(io: Io, headers: string[], rows: unknown[][], empty: string): void {
+/** Rows under headers: at a terminal a bordered table (`title` above it), else columns lined up; `empty` as a note
+ *  when there are none. */
+export function table(io: Io, headers: string[], rows: unknown[][], empty: string, title?: string): void {
   const cells = rows.map((row) => row.map(cell));
   if (!cells.length) {
     io.err(empty);
+    return;
+  }
+  if (OUT.on) {
+    for (const line of OUT.table(headers.map((h) => h || " "), cells, title)) io.out(line);
     return;
   }
   const widths = headers.map((h, i) => Math.max(h.length, ...cells.map((r) => r[i]!.length)));

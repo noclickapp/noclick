@@ -1188,3 +1188,54 @@ def test_an_exit_status_says_whether_it_failed_waits_on_a_person_or_was_refused(
     assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.REFUSED
     api.post("/v1/domains").respond(500, json={"error": {"type": "server_error", "message": "Broke."}})
     assert run("domains", "buy", "acmebooking.com", "--max-price", "15") == cli.exits.FAILED
+
+
+# --- how it looks ----------------------------------------------------------------------------------------------------
+
+
+def test_at_a_terminal_it_is_styled_and_piped_or_told_not_to_it_prints_plain_text(home, api, monkeypatch, capsys):
+    from noclick._cli import style
+    api.get("/v1/agents").respond(json=listing(agent_row(), agent_row(id="ag_2", name="concierge")))
+    api.get("/v1/agents/nope").respond(404, json={"error": {"type": "not_found", "message": "No agent named nope.",
+                                                            "next_step": "List agents with GET /v1/agents."}})
+    commands = [["agents", "list"], ["--help"], ["deploy", "--help"], ["agents", "get", "nope"], []]
+
+    def shown(*flags):
+        printed = []
+        for argv in commands:
+            try:
+                run(*flags, *argv)
+            except SystemExit:
+                pass
+            captured = capsys.readouterr()
+            printed.append(captured.out + captured.err)
+        return printed
+
+    try:
+        piped = shown()
+        assert not any("\x1b[" in text for text in piped)
+        styled = shown("--color", "always")
+        assert all("\x1b[" in text for text in styled)
+        assert shown("--color", "never") == piped
+        monkeypatch.setenv("NO_COLOR", "1")
+        assert style.wanted("auto", type("Tty", (), {"isatty": lambda self: True})(), os.environ) is False
+        # Styled, the table is a box and the last line of what a command answers is still the bare value.
+        assert "╭" in styled[0] and "│ support" in style.visible(styled[0])
+        assert style.visible(styled[3]).startswith("error: No agent named nope.")
+        # A status screen keeps its words, its labels dimmed and its status word coloured.
+        screen = ["booking  https://booking.noclick.site", "  live        ready 3f2a1c9 on main"]
+        shown = style.Style(True).fields(screen)
+        assert [style.visible(line) for line in shown] == screen and "\x1b[" in shown[1]
+    finally:
+        style.configure("never")
+
+
+@pytest.mark.parametrize("columns", [80, 120])
+def test_a_table_fits_the_terminal_cutting_prose_before_ids(columns):
+    from noclick._cli.style import Style, visible
+    rows = [["dep_" + "8f2a1c9d3e4b5a6f7e8d9c0b1a2f3e4d", "ready", "Bigger buttons on the booking page " * 4]]
+    lines = Style(True, width=columns).table(["ID", "STATUS", "MESSAGE"], rows, title="Releases of booking")
+    assert all(len(visible(line)) <= columns for line in lines)
+    body = visible(lines[4])
+    assert rows[0][0] in body and body.rstrip("│ ").endswith("…")
+    assert visible(lines[0]).strip() == "Releases of booking"

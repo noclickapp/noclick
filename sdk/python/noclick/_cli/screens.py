@@ -5,7 +5,11 @@ them into the manifest's ``screens``, which the TypeScript CLI draws the same sc
 from __future__ import annotations
 
 import difflib
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
+
+from .style import Style, clip
+
+PLAIN = Style()
 
 INTRO = "NoClick's CLI: ship a folder as an app, configure and operate it, and reach every API operation."
 
@@ -68,8 +72,13 @@ def manifest(summaries: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def _rows(rows: Iterable[Tuple[str, str]], width: int) -> List[str]:
-    return [f"  {name:<{width}}  {text}" for name, text in rows]
+def _rows(rows: Iterable[Tuple[str, str]], width: int, s: Style = PLAIN,
+          name_as: Optional[Callable[[str], str]] = None) -> List[str]:
+    if not s.on:
+        return [f"  {name:<{width}}  {text}" for name, text in rows]
+    paint = name_as or s.accent
+    room = max(s.width() - width - 4, 20)  # one line each: a description too long for the terminal is cut
+    return [f"  {paint(name.ljust(width))}  {s.dim(clip(text, room))}" for name, text in rows]
 
 
 def signed_in(email: Optional[str], *, from_env: Optional[str] = None) -> Optional[str]:
@@ -78,53 +87,57 @@ def signed_in(email: Optional[str], *, from_env: Optional[str] = None) -> Option
     return f"Signed in as {email}" if email else None
 
 
-def first(*, signed_in: Optional[str], linked_app: Optional[str]) -> str:
+def first(*, signed_in: Optional[str], linked_app: Optional[str], s: Style = PLAIN) -> str:
     """``noclick`` alone: what it is, the three things to do first, where to go next. Signed in (``signed_in``'s
     words), who you are and the folder's app in place of signing in."""
-    lines = [INTRO, ""]
+    lines = [s.bold(INTRO), ""]
     start = list(FIRST)
     if signed_in:
-        lines.append(signed_in
-                     + (f"; this folder is linked to {linked_app}." if linked_app else "."))
+        said = signed_in + (f"; this folder is linked to {linked_app}." if linked_app else ".")
+        lines.append(f"{s.ok('✓')} {said}" if s.on else said)
+        if s.on:
+            lines.append("")
         start = start[1:]
     rows = [*start, *NEXT]
     width = max(len(name) for name, _ in rows)
-    shown = _rows(start, width)
+    shown = _rows(start, width, s, s.link)
     if not signed_in:  # beside signing in: an agent with no person to sign in
-        shown.insert(1, f"  {SIGNED_OUT}")
-    lines += ["Start here:", *shown, "", "Then:", *_rows(NEXT, width)]
+        word, command = SIGNED_OUT.split("? ", 1)
+        shown.insert(1, f"  {s.dim(word + '?')} {s.link(command)}" if s.on else f"  {SIGNED_OUT}")
+    lines += [*s.section("Start here"), *shown, "", *s.section("Then"), *_rows(NEXT, width, s, s.link)]
     return "\n".join(lines)
 
 
-def commands(summaries: Dict[str, str], areas: Optional[Dict[str, int]]) -> str:
+def commands(summaries: Dict[str, str], areas: Optional[Dict[str, int]], s: Style = PLAIN) -> str:
     """The commands by section, one line each, then the API's areas: one line, or (``--all``) each of them."""
     shown = [*summaries, AREAS[0], *(areas or {})]
     width = max(len(name) for name in shown)
     lines: List[str] = []
     for name, names in SECTIONS:
-        lines += [f"{name}:", *_rows(((n, summaries[n]) for n in names if n in summaries), width)]
+        lines += [*s.section(name), *_rows(((n, summaries[n]) for n in names if n in summaries), width, s)]
         if name == "Everything else":
             if areas is None:
-                lines += _rows([AREAS], width)
+                lines += _rows([AREAS], width, s)
             else:
                 lines += _rows(((area, f"{count} API operation{'' if count == 1 else 's'}: noclick {area} --help lists them.")
-                                for area, count in sorted(areas.items())), width)
+                                for area, count in sorted(areas.items())), width, s)
         lines.append("")
     return "\n".join(lines).rstrip()
 
 
-def unknown(word: str, *, within: Sequence[str], curated: Sequence[str], areas: Sequence[str]) -> str:
+def unknown(word: str, *, within: Sequence[str], curated: Sequence[str], areas: Sequence[str],
+            s: Style = PLAIN) -> str:
     """A command line naming a command there isn't: the closest curated commands, else the closest API areas (under
     a group, its commands and operations alike)."""
     said = " ".join([*within, word])
     pools = [[*curated, *areas]] if within else [list(curated), list(areas)]
     near = next((found for found in (difflib.get_close_matches(word, pool, n=3) for pool in pools) if found), [])
     prefix = " ".join(["noclick", *within])
-    lines = [f"Unknown command '{said}'." + (
-        f" Did you mean: {', '.join(' '.join([*within, n]) for n in near)}?" if near else "")]
-    lines.append(f"Every command: {prefix} --help")
+    lines = [s.error(f"Unknown command '{said}'.") + (
+        f" Did you mean: {', '.join(s.link(' '.join([*within, n])) for n in near)}?" if near else "")]
+    lines.append(f"{s.dim('Every command:')} {s.link(prefix + ' --help')}")
     return "\n".join(lines)
 
 
-def examples(lines: Sequence[str]) -> str:
-    return "\n".join(["examples:", *(f"  {line}" for line in lines)])
+def examples(lines: Sequence[str], s: Style = PLAIN) -> str:
+    return "\n".join([*(s.section("Examples") if s.on else ["examples:"]), *(f"  {s.link(line)}" for line in lines)])

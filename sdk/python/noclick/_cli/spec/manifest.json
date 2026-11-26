@@ -12,6 +12,17 @@
    "dest": "profile",
    "type": "string",
    "help": "Which stored login to use (default: NOCLICK_PROFILE or 'default')."
+  },
+  {
+   "flag": "--color",
+   "dest": "color",
+   "type": "string",
+   "choices": [
+    "auto",
+    "always",
+    "never"
+   ],
+   "help": "Colours and tables: auto (only at a terminal, never under NO_COLOR, TERM=dumb or CI), always or never."
   }
  ],
  "commands": [

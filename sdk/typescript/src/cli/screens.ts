@@ -5,10 +5,18 @@
  */
 
 import type { Screens } from "./spec.ts";
+import { Style, clip } from "./style.ts";
 
 type Row = readonly [string, string];
 
-const rows = (list: Iterable<Row>, width: number) => [...list].map(([name, text]) => `  ${name.padEnd(width)}  ${text}`);
+const PLAIN = new Style();
+
+function rows(list: Iterable<Row>, width: number, s: Style = PLAIN, nameAs?: (text: string) => string): string[] {
+  if (!s.on) return [...list].map(([name, text]) => `  ${name.padEnd(width)}  ${text}`);
+  const paint = nameAs ?? s.accent;
+  const room = Math.max(s.width() - width - 4, 20); // one line each: a description too long for the terminal is cut
+  return [...list].map(([name, text]) => `  ${paint(name.padEnd(width))}  ${s.dim(clip(text, room))}`);
+}
 
 export function signedIn(email: string | null | undefined, fromEnv?: string): string | null {
   if (fromEnv) return `Signed in with ${fromEnv}`;
@@ -16,17 +24,22 @@ export function signedIn(email: string | null | undefined, fromEnv?: string): st
 }
 
 /** `noclick` alone: what it is, the three things to do first, where to go next. */
-export function first(screens: Screens, said: string | null, linkedApp: string | null): string {
-  const lines = [screens.intro, ""];
+export function first(screens: Screens, said: string | null, linkedApp: string | null, s: Style = PLAIN): string {
+  const lines = [s.bold(screens.intro), ""];
   let start: Row[] = screens.first;
   if (said) {
-    lines.push(said + (linkedApp ? `; this folder is linked to ${linkedApp}.` : "."));
+    const line = said + (linkedApp ? `; this folder is linked to ${linkedApp}.` : ".");
+    lines.push(s.on ? `${s.ok("✓")} ${line}` : line);
+    if (s.on) lines.push("");
     start = start.slice(1);
   }
   const width = Math.max(...[...start, ...screens.next].map(([name]) => name.length));
-  const shown = rows(start, width);
-  if (!said) shown.splice(1, 0, `  ${screens.signed_out}`); // beside signing in: an agent with no person to sign in
-  lines.push("Start here:", ...shown, "", "Then:", ...rows(screens.next, width));
+  const shown = rows(start, width, s, s.link);
+  if (!said) { // beside signing in: an agent with no person to sign in
+    const [word, command] = screens.signed_out.split("? ");
+    shown.splice(1, 0, s.on ? `  ${s.dim(`${word}?`)} ${s.link(command!)}` : `  ${screens.signed_out}`);
+  }
+  lines.push(...s.section("Start here"), ...shown, "", ...s.section("Then"), ...rows(screens.next, width, s, s.link));
   return lines.join("\n");
 }
 
@@ -40,17 +53,17 @@ export function unclaimed(claimUrl: string | null | undefined): string {
 }
 
 /** The commands by section, one line each, then the API's areas: one line, or (`areas`) each of them. */
-export function commands(screens: Screens, areas: Map<string, number> | null): string {
+export function commands(screens: Screens, areas: Map<string, number> | null, s: Style = PLAIN): string {
   const names = screens.sections.flatMap((s) => s.commands.map(([n]) => n));
   const width = Math.max(...[...names, screens.areas[0], ...(areas?.keys() ?? [])].map((n) => n.length));
   const lines: string[] = [];
   for (const section of screens.sections) {
-    lines.push(`${section.name}:`, ...rows(section.commands, width));
+    lines.push(...s.section(section.name), ...rows(section.commands, width, s));
     if (section.name === "Everything else") {
-      if (!areas) lines.push(...rows([screens.areas], width));
+      if (!areas) lines.push(...rows([screens.areas], width, s));
       else {
         const sorted = [...areas].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-        lines.push(...rows(sorted.map(([area, n]) => [area, `${n} API operation${n === 1 ? "" : "s"}: noclick ${area} --help lists them.`] as const), width));
+        lines.push(...rows(sorted.map(([area, n]) => [area, `${n} API operation${n === 1 ? "" : "s"}: noclick ${area} --help lists them.`] as const), width, s));
       }
     }
     lines.push("");
@@ -60,12 +73,13 @@ export function commands(screens: Screens, areas: Map<string, number> | null): s
 
 /** A command line naming a command there isn't: the closest curated commands, else the closest API areas (under
  * a group, its commands and operations alike). */
-export function unknown(word: string, within: string[], curated: string[], areas: string[]): string {
+export function unknown(word: string, within: string[], curated: string[], areas: string[], s: Style = PLAIN): string {
   const said = [...within, word].join(" ");
   const pools = within.length ? [[...curated, ...areas]] : [curated, areas];
   const near = pools.map((pool) => closeMatches(word, pool)).find((found) => found.length) ?? [];
-  const mean = near.length ? ` Did you mean: ${near.map((n) => [...within, n].join(" ")).join(", ")}?` : "";
-  return [`Unknown command '${said}'.${mean}`, `Every command: ${["noclick", ...within].join(" ")} --help`].join("\n");
+  const mean = near.length ? ` Did you mean: ${near.map((n) => s.link([...within, n].join(" "))).join(", ")}?` : "";
+  return [`${s.error(`Unknown command '${said}'.`)}${mean}`,
+    `${s.dim("Every command:")} ${s.link(`${["noclick", ...within].join(" ")} --help`)}`].join("\n");
 }
 
 // --- Python's difflib.get_close_matches, so both CLIs suggest the same names ------------------------------------

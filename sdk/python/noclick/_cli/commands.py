@@ -72,8 +72,12 @@ def add_areas(commands: Any, parents: Sequence[argparse.ArgumentParser], argv: S
             add_operation(group, op, parents)
 
 
+# The global flags that take a value, so the word after one is never read as the area.
+_VALUED_GLOBALS = ("--profile", "--color")
+
+
 def _named_area(argv: Sequence[str], spec: Spec) -> Optional[str]:
-    words = [a for a in argv if not a.startswith("-")]
+    words = [a for i, a in enumerate(argv) if not a.startswith("-") and (i == 0 or argv[i - 1] not in _VALUED_GLOBALS)]
     return words[0] if words and words[0] in spec.areas() else None
 
 

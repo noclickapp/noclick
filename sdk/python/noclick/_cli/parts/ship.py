@@ -34,7 +34,7 @@ from ...exceptions import Conflict, Error, NotFound, OperationFailed
 from ...project import Deployment, Project
 from ...queues import Queue
 from ...repo import Repo, _blob_sha
-from .. import appconfig, link as links, output
+from .. import appconfig, link as links, output, style
 
 CommandError = _cli.CommandError
 _note = output.note
@@ -888,7 +888,7 @@ def cmd_status(args: argparse.Namespace) -> int:
     if getattr(args, "json", False):
         _out(args, data, None)
     else:
-        print("\n".join(lines))
+        print("\n".join(style.OUT.fields(lines)))
     return 0
 
 
@@ -931,7 +931,8 @@ def cmd_releases(args: argparse.Namespace) -> int:
     output.table(("", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED", "MESSAGE"),
                 (["*" if d.production else "", d.id, d.branch, d.status, (d.commit or "")[:7], d.created_at,
                   appconfig.clip((d.commit_message or "").splitlines()[0] if d.commit_message else "", 50)]
-                 for d in shown), empty=f"{project.name} has no deployments yet: noclick deploy.")
+                 for d in shown), empty=f"{project.name} has no deployments yet: noclick deploy.",
+                 title=f"Releases of {project.name}")
     if len(found) > args.limit:
         _note(f"More: noclick releases --limit {args.limit * 2}{' --all' if args.all else ''}")
     if shown:
@@ -1058,7 +1059,8 @@ def cmd_secret_ls(args: argparse.Namespace) -> int:
     if getattr(args, "json", False):
         _out(args, {"data": [{"name": n, "updated_at": at} for n, at in sorted(found.items())]}, None)
         return 0
-    output.table(("NAME", "UPDATED"), sorted(found.items()), empty=f"{project.name} has no secrets for {args.env}.")
+    output.table(("NAME", "UPDATED"), sorted(found.items()), empty=f"{project.name} has no secrets for {args.env}.",
+                 title=f"Secrets of {project.name} ({args.env})")
     return 0
 
 
@@ -1128,7 +1130,8 @@ def cmd_env_ls(args: argparse.Namespace) -> int:
     if getattr(args, "json", False):
         _out(args, {"data": found}, None)
         return 0
-    output.table(("NAME", "VALUE"), sorted(found.items()), empty=f"{project.name} has no settings.")
+    output.table(("NAME", "VALUE"), sorted(found.items()), empty=f"{project.name} has no settings.",
+                 title=f"Settings of {project.name}")
     return 0
 
 
@@ -1258,7 +1261,8 @@ def cmd_domain_ls(args: argparse.Namespace) -> int:
         _out(args, {"data": [d.raw for d in found]}, None)
         return 0
     output.table(("DOMAIN", "STATUS", "SOURCE"), ((d.name, d.status, d.source) for d in found),
-                empty=f"{project.name} answers only at {project.url}. Add one: noclick domains add <name>.")
+                empty=f"{project.name} answers only at {project.url}. Add one: noclick domains add <name>.",
+                 title=f"Domains of {project.name}")
     return 0
 
 

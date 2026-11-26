@@ -22,6 +22,7 @@ import { UsageError, type Values } from "../args.ts";
 import { host } from "../host.ts";
 import { FAILED, OK, USAGE } from "../exits.ts";
 import * as links from "../link.ts";
+import { OUT } from "../style.ts";
 import type { Io } from "../output.ts";
 import { CommandError, resolveCredentials } from "../store.ts";
 import { ID, answer, appOf, cell, lookup, noteUnclaimed, num, on, profileOf, str, table, usd } from "./kit.ts";
@@ -460,14 +461,16 @@ export async function status(values: Values, io: Io): Promise<number> {
     errors_24h: errors.length, bindings: bindings.map((b) => ({ name: b.name, kind: b.kind })), secrets: Object.keys(secrets),
     settings: Object.keys(settings), spend_usd: usage.usd, budget_usd: project.budgetUsdPerMonth,
   }, () => [
-    `app         ${project.name} (${project.id})`,
-    `live        ${live ? `${(live.commit ?? live.id).slice(0, 7)} since ${cell(live.createdAt)}${live.warning ? `: ${live.warning}` : ""}` : "nothing yet: noclick deploy"}`,
-    `last deploy ${releases[0] ? `${releases[0].branch}, ${releases[0].status}` : "-"}`,
-    `errors      ${errors.length} in the last day${errors.length ? ": noclick logs --level error" : ""}`,
-    `bindings    ${bindings.map((b) => `${b.name} (${b.kind})`).join(", ") || "-"}`,
-    `secrets     ${Object.keys(secrets).sort().join(", ") || "-"}`,
-    `settings    ${Object.keys(settings).sort().join(", ") || "-"}`,
-    `spend       ${usd(usage.usd)} this month${project.budgetUsdPerMonth !== null ? ` of its ${usd(project.budgetUsdPerMonth)} budget` : ""}`,
+    ...OUT.fields([
+      `app         ${project.name} (${project.id})`,
+      `live        ${live ? `${(live.commit ?? live.id).slice(0, 7)} since ${cell(live.createdAt)}${live.warning ? `: ${live.warning}` : ""}` : "nothing yet: noclick deploy"}`,
+      `last deploy ${releases[0] ? `${releases[0].branch}, ${releases[0].status}` : "-"}`,
+      `errors      ${errors.length} in the last day${errors.length ? ": noclick logs --level error" : ""}`,
+      `bindings    ${bindings.map((b) => `${b.name} (${b.kind})`).join(", ") || "-"}`,
+      `secrets     ${Object.keys(secrets).sort().join(", ") || "-"}`,
+      `settings    ${Object.keys(settings).sort().join(", ") || "-"}`,
+      `spend       ${usd(usage.usd)} this month${project.budgetUsdPerMonth !== null ? ` of its ${usd(project.budgetUsdPerMonth)} budget` : ""}`,
+    ]),
     project.url,
   ]);
   return OK;
@@ -494,7 +497,8 @@ export async function releases(values: Values, io: Io): Promise<number> {
   const shown = found.slice(0, limit);
   answer(io, values, { data: shown.map((d) => d.raw), has_more: found.length > limit }, () => {
     table(io, ["", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED"], shown.map((d) => [d.production ? "*" : "", d.id, d.branch,
-      d.status, (d.commit ?? "").slice(0, 7), d.createdAt]), `${project.name} has no deployments yet: noclick deploy.`);
+      d.status, (d.commit ?? "").slice(0, 7), d.createdAt]), `${project.name} has no deployments yet: noclick deploy.`,
+      `Releases of ${project.name}`);
     return [];
   });
   if (found.length > limit) io.err(`More: noclick releases --limit ${limit * 2}${on(values, "all") ? " --all" : ""}`);

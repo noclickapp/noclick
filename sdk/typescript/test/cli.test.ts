@@ -210,3 +210,54 @@ test("a command's help ends with its examples", async () => {
   const examples = load().curated(["deploy"])!.examples!;
   assert.ok(io.stdout.join("\n").endsWith(["examples:", ...examples.map((e) => `  ${e}`)].join("\n")));
 });
+
+test("at a terminal it is styled; piped, or told not to, it prints plain text", async () => {
+  const style = await import("../src/cli/style.ts");
+  const terminal = (io: ReturnType<typeof captured>) => Object.assign(io, { terminal: () => ({ out: true, err: true, columns: 100 }) });
+  const { api } = setup();
+  api.on("GET", "/v1/agents/a1", apiError(404, "not_found", "No agent a1.", { next_step: "List agents with GET /v1/agents." }));
+  const commands = [["--help"], ["deploy", "--help"], ["agents", "get", "a1"], []];
+  const { host } = await import("../src/cli/host.ts");
+  const env = host.env;
+  host.env = {}; // a terminal of its own: not the CI this runs in
+  const shown = async (make: () => ReturnType<typeof captured>, flags: string[] = []) => {
+    const printed: string[] = [];
+    for (const argv of commands) {
+      const io = make();
+      await main([...flags, ...argv], io, signedIn);
+      printed.push([...io.stdout, ...io.stderr].join("\n"));
+    }
+    return printed;
+  };
+  try {
+    const piped = await shown(captured);
+    assert.ok(piped.every((text) => !text.includes("\x1b[")));
+    const styled = await shown(() => terminal(captured()));
+    assert.ok(styled.every((text) => text.includes("\x1b[")));
+    assert.deepEqual(await shown(() => terminal(captured()), ["--color", "never"]), piped);
+    assert.ok(style.visible(styled[2]!).startsWith("error: No agent a1."));
+    const screen = ["booking  https://booking.noclick.site", "  live        ready 3f2a1c9 on main"];
+    const fields = new style.Style(true).fields(screen);
+    assert.deepEqual(fields.map(style.visible), screen);
+    assert.ok(fields[1]!.includes("\x1b["));
+    assert.equal(style.wanted("auto", true, { NO_COLOR: "1" }), false);
+    assert.equal(style.wanted("auto", true, { CI: "true" }), false);
+    assert.equal(style.wanted("always", false, { NO_COLOR: "1" }), true);
+  } finally {
+    host.env = env;
+    style.configure("never", { out: false, err: false }, {}, () => 100);
+  }
+});
+
+for (const columns of [80, 120]) {
+  test(`a table fits ${columns} columns, cutting prose before ids`, async () => {
+    const { Style, visible } = await import("../src/cli/style.ts");
+    const id = `dep_${"8f2a1c9d3e4b5a6f7e8d9c0b1a2f3e4d"}`;
+    const lines = new Style(true, { columns: () => columns }).table(["ID", "STATUS", "MESSAGE"],
+      [[id, "ready", "Bigger buttons on the booking page ".repeat(4)]], "Releases of booking");
+    assert.ok(lines.every((line) => visible(line).length <= columns));
+    const body = visible(lines[4]!);
+    assert.ok(body.includes(id) && body.replace(/[│ ]+$/, "").endsWith("…"));
+    assert.equal(visible(lines[0]!).trim(), "Releases of booking");
+  });
+}

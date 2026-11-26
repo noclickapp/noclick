@@ -55,7 +55,8 @@ from .operation import Operation
 from .project import Deployment, Project
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
-from ._cli import commands as generated, exits, kit as cli_kit, link as cli_link, output, screens, spend as cli_spend
+from ._cli import commands as generated, exits, helpscreen, kit as cli_kit, link as cli_link, output, screens
+from ._cli import spend as cli_spend, style
 from ._cli.output import cell as _cell, note as _note, plain as _plain, plural as _plural, print_json as _print_json
 from ._cli.output import size as _size, table as _table, usd as _usd
 from ._cli.spec import load as load_spec
@@ -460,7 +461,7 @@ def cmd_agents_list(args: argparse.Namespace) -> int:
     _table(
         ["NAME", "MODEL", "USER", "CREATED", "ID"],
         [(a.name, a.model, a.user_id or "account", a.created_at, a.id) for a in agents],
-        empty="No agents yet.",
+        empty="No agents yet.", title="Agents",
     )
     if more:
         _note(f"The first {args.limit}: there are more (--limit 0 lists every one).")
@@ -553,7 +554,7 @@ def cmd_users_list(args: argparse.Namespace) -> int:
     _table(
         ["ID", "NAME", "EMAIL", "STATUS", "CREATED"],
         [(u.id, u.name, u.email, u.status, u.created_at) for u in users],
-        empty="No users yet.",
+        empty="No users yet.", title="Users",
     )
     return 0
 
@@ -940,7 +941,8 @@ def cmd_settings_list(args: argparse.Namespace) -> int:
     if args.json:
         _print_json(found)
         return 0
-    _table(["NAME", "VALUE"], sorted(found.items()), empty=f"{args.project} has no settings.")
+    _table(["NAME", "VALUE"], sorted(found.items()), empty=f"{args.project} has no settings.",
+           title=f"Settings of {args.project}")
     return 0
 
 
@@ -967,7 +969,7 @@ def cmd_domains_search(args: argparse.Namespace) -> int:
     _table(
         ["DOMAIN", "AVAILABLE", "PRICE", "RENEWAL", "PREMIUM"],
         [(o.name, o.available, _usd(o.price_usd), _usd(o.renewal_usd), o.premium) for o in offers],
-        empty=f"No domains found for {args.query}.",
+        empty=f"No domains found for {args.query}.", title=f"Domains for {args.query}",
     )
     asked = args.query.strip().lower().rstrip(".")
     if "." in asked and all(o.name.lower() != asked for o in offers):
@@ -1470,12 +1472,15 @@ class _Parser(argparse.ArgumentParser):
             within = self.prog.split()[1:]
             curated = [n for n in action.choices if _curated([*within, n])]
             self.exit(exits.USAGE, screens.unknown(
-                value, within=within, curated=curated, areas=[n for n in action.choices if n not in curated]) + "\n")
+                value, within=within, curated=curated, areas=[n for n in action.choices if n not in curated],
+                s=style.ERR) + "\n")
         super()._check_value(action, value)
 
     def format_help(self) -> str:
         path = self.prog.split()[1:]
         found = next((c.get("examples") for c in load_spec().commands if c["path"] == path), None)
+        if style.OUT.on:
+            return helpscreen.screen(self, style.OUT, examples=found or ())
         text = super().format_help()
         return f"{text}\n{screens.examples(found)}\n" if found else text
 
@@ -1490,6 +1495,8 @@ class _Top(_Parser):
         sub = next(a for a in self._actions if isinstance(a, argparse._SubParsersAction))
         summaries = {a.dest: a.help or "" for a in sub._choices_actions if _curated([a.dest])}
         areas = {a: len(ops) for a, ops in load_spec().areas().items()} if self.show_all else None
+        if style.OUT.on:
+            return helpscreen.screen(self, style.OUT, middle=screens.commands(summaries, areas, style.OUT).split("\n"))
         head = self._get_formatter()
         head.add_usage(self.usage, self._actions, self._mutually_exclusive_groups)
         head.add_text(self.description)
@@ -1516,6 +1523,9 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
         "--profile", default=os.environ.get(PROFILE_ENV, "default"),
         help=f"Which stored login to use (default: {PROFILE_ENV} or 'default').",
     )
+    parser.add_argument("--color", choices=style.MODES, default="auto",
+                        help="Colours and tables: auto (only at a terminal, never under NO_COLOR, TERM=dumb or CI), "
+                             "always or never.")
     parser.add_argument("--all", action="store_true", help=argparse.SUPPRESS)  # with --help: every API area
     parser.show_all = "--all" in argv
     as_json = argparse.ArgumentParser(add_help=False)
@@ -1807,13 +1817,14 @@ def _first_screen(profile: str) -> int:
         linked = cli_link.find()
     except Error:
         linked = None
-    print(screens.first(signed_in=said, linked_app=linked.app if linked and said else None))
+    print(screens.first(signed_in=said, linked_app=linked.app if linked and said else None, s=style.OUT))
     return exits.OK
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the ``noclick`` command; returns its exit status."""
     argv = list(sys.argv[1:] if argv is None else argv)
+    style.configure(style.mode_in(argv))
     args = build_parser(argv).parse_args(argv)
     if args.command is None:
         return _first_screen(args.profile)
