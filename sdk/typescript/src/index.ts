@@ -279,6 +279,7 @@ export type {
   BrowserContentFormat,
   BrowserCreateOptions,
   BrowserDownload,
+  BrowserPlace,
   BrowserStatus,
   BrowserWaitingOn,
   BrowserWatchedStep,

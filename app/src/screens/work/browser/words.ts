@@ -83,6 +83,14 @@ export function headlineOf(text: string): string {
     return `${cut.slice(0, Math.max(cut.lastIndexOf(' '), HEADLINE_MAX / 2)).replace(/[\s,;:–-]+$/, '')}…`;
 }
 
+/** Where it runs, when that's beside the agent (its own browser, which reaches what it runs on localhost): "In its
+ *  sandbox", "On noclick-dev-1"; null for NoClick's remote browsers, as every browser was before. */
+export function whereOf(browser: Pick<Browser, 'place' | 'placeName'>): string | null {
+    if (browser.place === 'sandbox') return 'In its sandbox';
+    if (browser.place === 'machine') return `On ${browser.placeName ?? 'its machine'}`;
+    return null;
+}
+
 /** Where a browser stands for the person watching it:
  *  - `starting`: it's starting;
  *  - `working`: it runs, in its conversation's turn (an act driving it, or the agent's own calls) or for an act;

@@ -11,7 +11,7 @@ import { useBrowserView } from './useBrowserView';
 import { cn } from '@/ui/utils';
 import { BrowserMotion, canTakeOver, Caption, ControlBar, LARGE, LivePicture, OUTLINE, restingFrame, StatusDot, StepsList, TakeOver } from './pieces';
 import { useBrowserControl, type BrowserControl, type BrowserShown } from './useConversationBrowser';
-import { captionOf, isLiveState, stateOf } from './words';
+import { captionOf, isLiveState, stateOf, whereOf } from './words';
 
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -87,6 +87,7 @@ function BigView({ ctl }: { ctl: BrowserControl }) {
                     <StatusDot state={state} />
                     <span className="shrink-0 font-medium">{live ? 'Browser' : (ctl.shown as { label: string }).label}</span>
                     {live && browser?.url && <span className="min-w-0 truncate text-[11.5px] text-muted-foreground">{browser.url.replace(/^https?:\/\//, '')}</span>}
+                    {live && browser && whereOf(browser) && <span className="shrink-0 text-[11.5px] text-muted-foreground">· {whereOf(browser)}</span>}
                     <span className="flex-1" />
                     {live && state !== 'control' && canTakeOver(browser) && <TakeOver ctl={ctl} quiet={state !== 'needs'} />}
                     <button type="button" aria-label="Shrink it back" onClick={ctl.hide} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground">
@@ -130,7 +131,7 @@ function FullScreen({ ctl }: { ctl: BrowserControl }) {
                 </button>
                 <div className="min-w-0 flex-1">
                     <p className="text-[14px] font-medium">{live ? 'Browser' : (ctl.shown as { label: string }).label}</p>
-                    {live && browser?.url && <p className="truncate text-[11.5px] text-muted-foreground">{browser.url.replace(/^https?:\/\//, '')}</p>}
+                    {live && browser?.url && <p className="truncate text-[11.5px] text-muted-foreground">{[browser.url.replace(/^https?:\/\//, ''), whereOf(browser)].filter(Boolean).join(' · ')}</p>}
                 </div>
                 <StatusDot state={state} className="mr-2" />
             </div>

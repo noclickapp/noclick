@@ -12,7 +12,7 @@ import { cn } from '@/ui/utils';
 import { clockOf } from '../conversation/besideItems';
 import { Elapsed } from '../conversation/Activity';
 import { useBrowserAct, useBrowserControl, type BrowserControl } from './useConversationBrowser';
-import { captionOf, did, doing, headlineOf, isLiveState, siteOf, stateOf, type BrowserState, type StepLike } from './words';
+import { captionOf, did, doing, headlineOf, isLiveState, siteOf, stateOf, whereOf, type BrowserState, type StepLike } from './words';
 import { useSlot } from '@/slots';
 import { REPLY_MARKDOWN } from '../slots';
 
@@ -140,6 +140,12 @@ const elapsedFrom = (browser: Browser, act: Operation | null, state: BrowserStat
  *  from a resting browser would connect to it, and a connected browser is billed. */
 export const restingFrame = (browser: Browser, act?: Operation | null): string | null => browser.frameUrl ?? frameOf(act);
 
+/** "· In its sandbox", "· On noclick-dev-1": where it runs, when that's beside the agent. */
+function Where({ browser }: { browser: Browser }) {
+    const where = whereOf(browser);
+    return where ? <span className="shrink-0 text-muted-foreground" data-testid="browser-where">· {where}</span> : null;
+}
+
 /** The tile in the Beside card: the live thumbnail (opening the big view), "Browser · site", the caption with how long
  *  its step has run, and Take over while a step waits on you. Once it rests, one line: the page it stopped on, and
  *  Paused (waiting for the next turn, unbilled) or Done. */
@@ -164,6 +170,7 @@ export function BrowserTile({ ctl, act }: { ctl: BrowserControl; act: Operation 
                 <span className="min-w-0 flex-1 truncate">
                     Browser{site && <span className="text-muted-foreground"> · {site}</span>}
                 </span>
+                <Where browser={browser} />
                 <span className="shrink-0 text-[11.5px] tabular-nums text-muted-foreground">{state === 'idle' ? 'Paused' : `Done${took ? ` · ${took}` : ''}`}</span>
             </button>
         );
@@ -177,6 +184,7 @@ export function BrowserTile({ ctl, act }: { ctl: BrowserControl; act: Operation 
                 <StatusDot state={state} />
                 <span className="shrink-0 font-medium">Browser</span>
                 {site && <span className="min-w-0 truncate text-muted-foreground">· {site}</span>}
+                <Where browser={browser} />
             </div>
             <div className="flex min-h-4 min-w-0 items-center gap-2 px-1.5 text-[11.5px]">
                 <Caption text={captionOf(browser)} shine={state === 'working' || state === 'starting'} className="flex-1" />
@@ -206,6 +214,7 @@ export function BrowserRailBlock({ ctl, act }: { ctl: BrowserControl; act: Opera
                 <StatusDot state={state} />
                 <span className="shrink-0 font-medium">Browser</span>
                 {site && <span className="min-w-0 truncate text-muted-foreground">· {site}</span>}
+                <Where browser={browser} />
                 <span className="flex-1" />
                 {started && <span className="shrink-0 text-[11.5px] text-muted-foreground"><Elapsed from={started} /></span>}
             </div>

@@ -36,6 +36,8 @@ import { resolveScope } from "./scope.ts";
 /** `parked`: waiting on a person, or (an agent's browser) for its conversation's next turn; neither billed nor counted against `timeoutS`. */
 export type BrowserStatus = "starting" | "running" | "parked" | "closed" | "failed";
 export type BrowserContentFormat = "markdown" | "text" | "html";
+/** What runs a browser: NoClick's remote browsers, or a coding agent's own place (its sandbox, its container on a machine). */
+export type BrowserPlace = "remote" | "sandbox" | "machine";
 
 /** Where the browser is: the page's `url` (after redirects) and `title`. */
 export interface PageState {
@@ -449,6 +451,17 @@ export class Browser extends ApiObject {
   /** Where it runs: its profile's region, else the one it was created in. */
   get region(): string | null {
     return this._field("region");
+  }
+  /**
+   * What runs it: `remote` (NoClick's remote browsers), or, for a coding agent's own browser beside it, `sandbox`
+   * (its sandbox) or `machine` (its container on a machine, `placeName`), which reaches what the agent runs on localhost.
+   */
+  get place(): BrowserPlace {
+    return this._field("place") ?? "remote";
+  }
+  /** The machine it runs on, for a browser whose `place` is `machine`. */
+  get placeName(): string | null {
+    return this._field("place_name") ?? null;
   }
   /** The profile it is signed in with (null if none). */
   get profileId(): string | null {

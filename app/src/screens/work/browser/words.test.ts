@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Browser } from 'noclick';
 import { browserItems, grouped, type BesideItem } from '../conversation/besideItems';
-import { captionOf, did, doing, headlineOf, siteOf, stateOf } from './words';
+import { captionOf, did, doing, headlineOf, siteOf, stateOf, whereOf } from './words';
 
 type View = Pick<Browser, 'id' | 'status' | 'acting' | 'held' | 'waitingOn' | 'steps' | 'url' | 'startedAt' | 'createdAt' | 'closedAt'>;
 
@@ -41,6 +41,14 @@ describe('the words of a step', () => {
         expect(siteOf('https://www.kestrel.example/checkout?x=1')).toBe('kestrel.example');
         expect(siteOf('not a url')).toBeNull();
         expect(siteOf(null)).toBeNull();
+    });
+
+    it('say where it runs when that is beside the agent, and nothing for the remote browser', () => {
+        const at = (place: Browser['place'], placeName: string | null = null) => whereOf({ place, placeName } as Browser);
+        expect(at('sandbox')).toBe('In its sandbox');
+        expect(at('machine', 'noclick-dev-1')).toBe('On noclick-dev-1');
+        expect(at('machine')).toBe('On its machine');
+        expect(at('remote')).toBeNull();
     });
 });
 

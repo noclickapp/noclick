@@ -532,6 +532,12 @@ class Browser(_Object):
                       "its conversation's next turn), ``closed`` or ``failed``.",
     )
     region: Optional[str] = field("region", doc="Where it runs: its profile's region, else the one it was created in.")
+    place: Optional[str] = field(
+        "place", doc="What runs it: ``remote`` (NoClick's remote browsers), or, for a coding agent's own browser beside "
+                     "it, ``sandbox`` (its sandbox) or ``machine`` (its container on a machine, ``place_name``), which "
+                     "reaches what the agent runs on localhost.")
+    place_name: Optional[str] = field("place_name", doc="The machine it runs on, for a browser whose ``place`` is "
+                                                        "``machine``.")
     profile_id: Optional[str] = field("profile_id", doc="The profile it is signed in with (None if none).")
     agent_id: Optional[str] = field("agent_id", doc="The agent driving it, for an agent's browser.")
     conversation: Optional[str] = field(
