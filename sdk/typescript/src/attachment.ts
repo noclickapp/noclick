@@ -82,6 +82,40 @@ export async function uploadFile(request: Request, path: string, file: FileInput
   return toAttachment(asObject(raw));
 }
 
+/** At most this many files go with one message, as the API takes them. */
+export const MAX_FILES = 100;
+
+/**
+ * A file a message sends: one already uploaded (an `Attachment`, or its id), or bytes, a `Blob` or a `File` to
+ * upload first, optionally with its name and type (`{ data, name, mimeType }`).
+ */
+export type MessageFile = Attachment | string | FileInput | ({ data: FileInput } & UploadOptions);
+
+function isFileInput(f: unknown): f is FileInput {
+  return f instanceof Uint8Array || f instanceof ArrayBuffer || (typeof Blob !== "undefined" && f instanceof Blob);
+}
+
+/**
+ * @internal The ids a message sends: an uploaded file's, anything else uploaded first with `upload`. More than
+ * `MAX_FILES` is refused before anything is uploaded, as the API would refuse the message.
+ */
+export async function messageFileIds(
+  files: MessageFile[] | undefined, upload: (file: FileInput, options: UploadOptions) => Promise<Attachment>,
+): Promise<string[] | undefined> {
+  if (!files?.length) return undefined;
+  if (files.length > MAX_FILES) throw new TypeError(`A message carries at most ${MAX_FILES} files.`);
+  const ids: string[] = [];
+  for (const f of files) {
+    if (typeof f === "string") ids.push(f);
+    else if (isFileInput(f)) ids.push(String((await upload(f, {})).id));
+    else if ("data" in f) {
+      const { data, ...options } = f;
+      ids.push(String((await upload(data, options)).id));
+    } else ids.push(String(f.id));
+  }
+  return ids;
+}
+
 /** @internal The ids a message sends: attachments from `upload`, or their ids. */
 export function attachmentIds(files: (Attachment | string)[] | undefined): string[] | undefined {
   return files?.length ? files.map((f) => (typeof f === "string" ? f : String(f.id))) : undefined;

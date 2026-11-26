@@ -519,6 +519,32 @@ def cmd_agents_chat(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_agents_send(args: argparse.Namespace) -> int:
+    """One message, with files, then its reply. ``-`` as the text reads it from stdin, for a text too long to type;
+    a long one is never refused: the agent gets what fits and all of it as a file."""
+    text = sys.stdin.read() if args.text == "-" else args.text
+    if not text.strip():
+        raise InvalidRequest("Send some text.", next_step="noclick agents send <agent> 'What changed?'")
+    agent = _agent_to_talk_to(args.name)
+    turn = agent.send(text, conversation=args.conversation, files=list(args.file or ()))
+    if args.no_wait:
+        print(turn.id)
+        _note(f"Sent. Read its reply with: noclick ops wait {turn.id}")
+        return 0
+    try:
+        reply = turn.wait()
+    except KeyboardInterrupt:
+        _note(f"\nThe turn keeps running. Read its reply with: noclick ops wait {turn.id}")
+        return 130
+    if args.json:
+        _print_json({"text": reply.text, "conversation": reply.conversation, "tool_calls": reply.tool_calls})
+        return 0
+    print(reply.text, flush=True)
+    if reply.conversation:
+        _note(f"Conversation {reply.conversation}: continue it with --conversation {reply.conversation}")
+    return 0
+
+
 def cmd_users_list(args: argparse.Namespace) -> int:
     users = User.list(q=args.q, status=args.status, limit=args.limit)
     if args.json:
@@ -1535,6 +1561,15 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     chat.add_argument("name", help="The agent's name.")
     chat.add_argument("--conversation", help="Continue this conversation (a reply's id, or your own).")
     chat.add_argument("-m", "--message", help="Send one message, print the reply and exit.")
+    send = command(agents, "send", cmd_agents_send, "Send an agent one message, with files, and print its reply.",
+                   parents=[as_json, user])
+    send.add_argument("name", help="The agent's name.")
+    send.add_argument("text", help="The message, or - to read it from stdin. A long one is never refused: the "
+                                   "agent gets what fits, and all of it as a file.")
+    send.add_argument("--file", action="append", metavar="PATH",
+                      help="A file to send with it (repeat for several); it lands in the agent's workspace too.")
+    send.add_argument("--conversation", help="The conversation it goes in (a reply's id, or your own).")
+    send.add_argument("--no-wait", action="store_true", help="Print the turn's operation id instead of its reply.")
 
     machines = group("machines", "Reach your machines.")
     ssh = command(machines, "ssh", cmd_machines_ssh,

@@ -143,6 +143,20 @@ test("--max-usd prices first and refuses above the ceiling, exit 4", async () =>
     (err: NoClickError) => exitCode(err.type) === REFUSED && /nothing was done/.test(err.message));
 });
 
+test("agents send uploads each --file and sends it with the message, then prints the reply", async () => {
+  const { api } = setup();
+  const path = join(mkdtempSync(join(tmpdir(), "nc-send-")), "q3.csv");
+  writeFileSync(path, "month,total\nJuly,10\n");
+  api.on("GET", "/v1/agents", json({ object: "list", data: [{ object: "agent", id: "ag_1", name: "support", status: "active", user_id: null }], next_cursor: null }));
+  const upload = api.on("POST", "/v1/agents/ag_1/attachments", json({ object: "agent_attachment", id: "att_1", name: "q3.csv", mime_type: "text/csv", size_bytes: 21, url: "https://files.test/q3.csv" }, { status: 201 }));
+  const send = api.on("POST", "/v1/agents/ag_1/messages", json(operation({ id: "op_1", kind: "agent.message", status: "succeeded", result: { text: "July was slow.", conversation: "desk", tool_calls: [] } }), { status: 202 }));
+  const io = captured();
+  assert.equal(await main(["agents", "send", "support", "What stands out?", "--file", path, "--conversation", "desk"], io, signedIn), OK);
+  assert.equal(upload.last.query.get("name"), "q3.csv");
+  assert.deepEqual(send.last.body, { text: "What stands out?", conversation: "desk", attachments: ["att_1"] });
+  assert.deepEqual(io.stdout, ["July was slow."]);
+});
+
 test("noclick alone says what to run first, and signed in, who you are and the folder's app", async () => {
   const { host } = await import("../src/cli/host.ts");
   const saved = { env: host.env, cwd: host.cwd };

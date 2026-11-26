@@ -55,6 +55,10 @@ test("a file uploads to the agent, then goes with the message by id", async () =
   assert.deepEqual(send.last.body, { text: "What stands out?", conversation: "desk", attachments: ["att_1", "att_9"] });
   await agent.send("And now?", { conversation: "desk" });
   assert.deepEqual(send.last.body, { text: "And now?", conversation: "desk" });
+  // Bytes or a Blob go in the same call: uploaded first, then sent by id.
+  await agent.send("Compare them.", { files: [{ data: new Uint8Array([1, 2]), name: "notes.txt" }, new File([blob], "q4.pdf"), "att_9"] });
+  assert.deepEqual(upload.calls.map((c) => c.query.get("name")).slice(-2), ["notes.txt", "q4.pdf"]);
+  assert.deepEqual(send.last.body, { text: "Compare them.", attachments: ["att_1", "att_1", "att_9"] });
 });
 
 test("a stream shows files, approvals and long actions; history and a watch carry a message's files", async () => {

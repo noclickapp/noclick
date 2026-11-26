@@ -42,4 +42,5 @@ export const RUNNERS: Record<string, Run> = {
   logs: operate.logs,
   estimate: operate.estimateCmd,
   "ops wait": operate.opsWait,
+  "agents send": operate.agentsSend,
 };

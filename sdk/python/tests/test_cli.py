@@ -420,6 +420,26 @@ def test_agents_chat_keeps_the_thread_across_piped_lines(home, api, monkeypatch,
     assert capsys.readouterr().out == "Hi Ana.\nBooked.\n"
 
 
+def test_agents_send_uploads_its_files_and_sends_them_in_one_call(home, api, tmp_path, monkeypatch, capsys):
+    report = tmp_path / "q3.csv"
+    report.write_text("month,total\nJuly,10\n")
+    api.get("/v1/agents").respond(json=listing(agent_row()))
+    upload = api.post("/v1/agents/ag_1/attachments").respond(201, json={
+        "object": "agent_attachment", "id": "att_1", "name": "q3.csv", "mime_type": "text/csv", "size_bytes": 21,
+        "url": "https://files.test/q3.csv"})
+    send = api.post("/v1/agents/ag_1/messages").respond(202, json=_reply("July was slow."))
+    assert run("agents", "send", "support", "What stands out?", "--file", str(report), "--conversation", "desk") == 0
+    assert upload.calls.last.request.url.params["name"] == "q3.csv" and upload.calls.last.request.content == \
+        report.read_bytes()
+    assert body(send.calls.last.request) == {"text": "What stands out?", "conversation": "desk",
+                                             "attachments": ["att_1"]}
+    assert capsys.readouterr().out == "July was slow.\n"
+    # A text too long to type comes from stdin.
+    monkeypatch.setattr(sys, "stdin", io.StringIO("the whole brief\n"))
+    assert run("agents", "send", "support", "-") == 0
+    assert body(send.calls.last.request) == {"text": "the whole brief\n"}
+
+
 def test_users_list_and_create(home, api, capsys):
     listed = api.get("/v1/users").respond(json=listing(user_row(name="Ana Silva", email="ana@acme.test")))
     assert run("users", "list", "--q", "ana", "--limit", "5") == 0

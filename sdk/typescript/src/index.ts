@@ -263,6 +263,7 @@ export type {
   Attachment,
   AttachmentsOptions,
   FileInput,
+  MessageFile,
   UploadOptions,
 } from "./attachment.ts";
 export {

@@ -1,7 +1,9 @@
 /** Operating an app, as the Python CLI's `logs`, `db query`, `estimate` and `ops wait` do. */
 
 import { readFileSync } from "node:fs";
+import { basename } from "node:path";
 
+import { Agent } from "../../agent.ts";
 import { Database } from "../../database.ts";
 import { Estimate, type EstimateRequestItem, estimate } from "../../estimate.ts";
 import { Operation } from "../../operation.ts";
@@ -128,6 +130,33 @@ export async function opsWait(values: Values, io: Io): Promise<number> {
   if (typeof raw?.warning === "string") {
     io.err(`warning: ${raw.warning}`);
     return FAILED;
+  }
+  return OK;
+}
+
+/** `agents send`: one message to the agent named, with each `--file` uploaded and sent with it, then its reply
+ *  (`--no-wait`: the turn's operation id). `-` as the text reads it from stdin. The agent is the user's own with
+ *  `--user`, else the account's, as the Python CLI finds it; an expired one takes no turns. */
+export async function agentsSend(values: Values, io: Io): Promise<number> {
+  const name = String(values.name);
+  const user = str(values, "user");
+  const text = values.text === "-" ? await host.stdin() : String(values.text ?? "");
+  if (!text.trim()) throw new CommandError("Send some text.", { nextStep: "noclick agents send <agent> 'What changed?'" });
+  const live = (await Agent.list({ name, user })).filter((a) => a.status !== "expired");
+  const agent = live.sort((a, b) => Number(a.userId === null) - Number(b.userId === null))[0];
+  if (!agent) throw new NotFound(`No agent is named '${name}'.`, { nextStep: "List agents with: noclick agents list" });
+  const files = ((values.file as string[] | undefined) ?? []).map((path) => ({ data: new Uint8Array(readFileSync(path)), name: basename(path) }));
+  const turn = await agent.send(text, { conversation: str(values, "conversation"), files, user });
+  if (on(values, "no_wait")) {
+    io.out(turn.id);
+    io.err(`Sent. Read its reply with: noclick ops wait ${turn.id}`);
+    return OK;
+  }
+  const reply = await turn.wait();
+  answer(io, values, { text: reply.text, conversation: reply.conversation, tool_calls: reply.toolCalls },
+    () => [reply.text]);
+  if (!on(values, "json") && reply.conversation) {
+    io.err(`Conversation ${reply.conversation}: continue it with --conversation ${reply.conversation}`);
   }
   return OK;
 }

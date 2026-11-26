@@ -4,8 +4,8 @@ import { AgentMemory, AgentSandbox, AgentWorkspace, ShareLink, toCodingAgents } 
 import { TrashItem, trashed } from "./trash.ts";
 import { wireSettings } from "./approval.ts";
 import type { ScopeApprovals } from "./approval.ts";
-import { attachmentIds, toAttachment, toAttachments, uploadFile } from "./attachment.ts";
-import type { Attachment, FileInput, UploadOptions } from "./attachment.ts";
+import { attachmentIds, messageFileIds, toAttachment, toAttachments, uploadFile } from "./attachment.ts";
+import type { Attachment, FileInput, MessageFile, UploadOptions } from "./attachment.ts";
 import type { AgentEvent, CodingAgents, Rehearsal } from "./agentExtras.ts";
 import {
   conversationChanges, toAgentStates, toAuthor, toCommandResult, toContext, toConversationSettings, toForkedFrom,
@@ -2521,7 +2521,8 @@ export class Agent extends ApiObject {
   }
 
   /**
-   * Start a turn without waiting; `wait()` resolves to the `AgentReply`. `files` go with it, as `message` sends them.
+   * Start a turn without waiting; `wait()` resolves to the `AgentReply`. `files` go with it, as `message` sends them:
+   * uploaded ones by their `Attachment` or id, and bytes, a `Blob` or a `File` (or `{ data, name }`) uploaded first.
    * `command` runs one of the conversation's harness's own commands in place of `text` (pass `text` as null), as
    * `commands` lists them, never parsed from text. `delivery` decides a message sent while the agent works on a turn
    * (it takes one at a time): `steer` joins that turn when it's in the same conversation, `queue` (or omitted) runs it
@@ -2533,13 +2534,16 @@ export class Agent extends ApiObject {
   async send(
     text: string | null,
     options: {
-      conversation?: string | null; files?: (Attachment | string)[]; user?: UserOption; command?: AgentCommandInput;
+      conversation?: string | null; files?: MessageFile[]; user?: UserOption; command?: AgentCommandInput;
       delivery?: MessageDelivery;
     } = {},
   ): Promise<Operation<AgentReply>> {
     const raw = await this._ensure();
     const scope = this._talkScope(options.user);
-    const payload = await this._request("POST", `/v1/agents/${raw.id}/messages`, { json: messageBody(text, options), user: scope });
+    const files = await messageFileIds(options.files, (file, upload) => this.upload(file, upload));
+    const payload = await this._request("POST", `/v1/agents/${raw.id}/messages`, {
+      json: messageBody(text, { ...options, files }), user: scope,
+    });
     return Operation._fromPayload<AgentReply>(payload, { client: this._client, user: scope, kind: "agent.message" });
   }
 
@@ -2679,7 +2683,7 @@ export class Agent extends ApiObject {
    */
   async message(
     text: string,
-    options: { conversation?: string | null; files?: (Attachment | string)[]; timeoutS?: number; user?: UserOption } = {},
+    options: { conversation?: string | null; files?: MessageFile[]; timeoutS?: number; user?: UserOption } = {},
   ): Promise<AgentReply> {
     const operation = await this.send(text, options);
     return await operation.wait({ timeoutS: options.timeoutS });
