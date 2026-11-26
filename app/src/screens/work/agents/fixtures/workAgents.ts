@@ -859,6 +859,12 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
                 sandboxFiles[at] = typeof raw === 'string' ? raw : new TextDecoder().decode(raw as Uint8Array);
                 return json(entry(at));
             }
+            // A file's values as a NoClick secret: its key names come back, never a value.
+            if (tail === '/sandbox/files/secret' && method === 'POST') {
+                const text = sandboxFiles[String(body.path)] ?? '';
+                const keys = text.split('\n').filter((l) => l.includes('=')).map((l) => l.split('=')[0]);
+                return json({ object: 'secret', id: `sec-${++made}`, name: body.name, keys, user_id: null, created_at: new Date(clock).toISOString(), updated_at: new Date(clock).toISOString() }, 201);
+            }
             if (tail === '/sandbox/files' && method === 'PATCH') {
                 const at = query.get('path')!;
                 const lines = (sandboxFiles[at] ?? '').split('\n').filter(Boolean);

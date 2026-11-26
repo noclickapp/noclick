@@ -138,6 +138,7 @@ export const OWNER_ONLY = {
             'GET /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
             'PUT /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
             'PATCH /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files',
+            'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/files/secret',
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/exec',
             'POST /v1/agents/{agent_id}/conversations/{conversation}/sandbox/shell',
         ],

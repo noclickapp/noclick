@@ -48,6 +48,19 @@ it('shows a .env’s names, never its values, and sets one without showing it', 
     expect(document.body.textContent).not.toContain('sk-live-123');
 });
 
+it('saves a .env as a NoClick secret by name, its values never shown', async () => {
+    const fake = open('/workspace/.env');
+    const file = await screen.findByTestId('secrets-file');
+    await within(file).findByText('WIREFERN_ADMIN_KEY');
+    fireEvent.click(within(file).getByRole('button', { name: 'Save as a NoClick secret' }));
+    const name = within(file).getByRole('textbox', { name: 'The secret’s name' }) as HTMLInputElement;
+    expect(name.value).toBe('wirefern-env');
+    fireEvent.click(within(file).getByRole('button', { name: 'Save as secret' }));
+
+    expect((await within(file).findByTestId('saved-as-secret')).textContent).toContain('wirefern-env');
+    expect(fake.requests.find((r) => r.method === 'POST' && r.path.endsWith('/sandbox/files/secret'))?.body).toEqual({ path: '/workspace/.env', name: 'wirefern-env' });
+});
+
 it('makes a file it links to that isn’t there yet', async () => {
     const fake = open('/workspace/todo.md');
     const text = await screen.findByRole('textbox', { name: 'todo.md’s text' });

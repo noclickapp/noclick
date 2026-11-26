@@ -498,7 +498,7 @@ function FileView({ agentId, conversation, file, agentName, writable, onSaved }:
             </div>
             <div className="min-h-0 flex-1 overflow-auto scrollbar-subtle">
                 {file.secret ? (
-                    <SecretsFile agentId={agentId} conversation={conversation} path={file.path} names={missing ? [] : text === null ? null : secretNames(text)} error={missing ? undefined : bytes.error} writable={writable} onSaved={onSaved} />
+                    <SecretsFile agentId={agentId} conversation={conversation} path={file.path} agentName={agentName} names={missing ? [] : text === null ? null : secretNames(text)} error={missing ? undefined : bytes.error} writable={writable} onSaved={onSaved} />
                 ) : editing ? (
                     <textarea
                         autoFocus
@@ -535,7 +535,7 @@ function FileView({ agentId, conversation, file, agentName, writable, onSaved }:
 
 /** A secrets file (`.env`): its names, a value never shown, and values set or taken out one at a time, merged into the
  *  file where it runs (`sandbox.setEnv`), so what's there and unshown stays as it is. */
-function SecretsFile({ agentId, conversation, path, names, error, writable, onSaved }: { agentId: string; conversation: string; path: string; names: string[] | null; error: unknown; writable: boolean; onSaved: (path: string) => void }) {
+function SecretsFile({ agentId, conversation, path, agentName, names, error, writable, onSaved }: { agentId: string; conversation: string; path: string; agentName: string; names: string[] | null; error: unknown; writable: boolean; onSaved: (path: string) => void }) {
     const client = useWorkClient();
     const [rows, setRows] = useState<{ name: string; value: string }[]>([]);
     const [unset, setUnset] = useState<Set<string>>(new Set());
@@ -628,12 +628,75 @@ function SecretsFile({ agentId, conversation, path, names, error, writable, onSa
                     {bad && <p className="text-[12.5px] text-muted-foreground">{!ENV_KEY.test(bad.name.trim()) ? 'A name is letters, digits and _, and doesn’t start with a digit.' : `${bad.name}’s value is one line.`}</p>}
                 </div>
             )}
+            {writable && names.length > 0 && <SaveAsSecret agentId={agentId} conversation={conversation} path={path} agentName={agentName} />}
             <p className="mt-4 text-[12.5px] leading-snug text-muted-foreground">
                 {writable
                     ? 'Values go straight into this file where the agent runs. They never show here again, to you or anyone in the space, and NoClick hides them from what it shows of the agent’s work. The agent itself can read the file: ask it to use them from its code, not print them.'
                     : 'Secret values never show here, to you or to anyone in the space. Values can be added while it runs: it starts with its next turn.'}
             </p>
         </div>
+    );
+}
+
+/** A secret's name: 1-64 letters, digits and . _ - (the secrets API's own rule). */
+const SECRET_NAME = /^[A-Za-z0-9._-]{1,64}$/;
+const secretNameFor = (agentName: string) => `${agentName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'agent'}-env`.slice(0, 64);
+
+/** The file's values as a NoClick secret (`sandbox.saveAsSecret`), read where it runs and never shown: any agent can
+ *  then be given it by name, as env vars, without a model reading a value. */
+function SaveAsSecret({ agentId, conversation, path, agentName }: { agentId: string; conversation: string; path: string; agentName: string }) {
+    const client = useWorkClient();
+    const [naming, setNaming] = useState(false);
+    const [name, setName] = useState(() => secretNameFor(agentName));
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState<string | null>(null);
+    const valid = SECRET_NAME.test(name);
+    const save = async () => {
+        setSaving(true);
+        try {
+            const secret = await sandboxOf(client, agentId, conversation).saveAsSecret(path, { name });
+            setSaved(secret.name);
+            setNaming(false);
+            toast('Saved as a NoClick secret', { description: `${secret.name}: give it to any agent by name. Its values never show.` });
+        } catch (e) {
+            toast.error('Couldn’t save it as a secret', { description: messageOf(e) });
+        } finally {
+            setSaving(false);
+        }
+    };
+    if (saved && !naming)
+        return (
+            <p className="mt-4 text-[12.5px] leading-snug text-muted-foreground" data-testid="saved-as-secret">
+                Saved as the NoClick secret <span className="font-mono text-foreground/85">{saved}</span>. Give it to any agent by name, and it gets these values as env vars.
+            </p>
+        );
+    if (!naming)
+        return (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button type="button" onClick={() => setNaming(true)} className={SMALL_SECONDARY}>
+                    <KeyRound className="h-4 w-4" strokeWidth={1.75} />
+                    Save as a NoClick secret
+                </button>
+                <span className="text-[12.5px] text-muted-foreground">So other agents can use these values too, without anyone seeing them.</span>
+            </div>
+        );
+    return (
+        <form
+            className="mt-4 flex flex-wrap items-center gap-2"
+            onSubmit={(e) => {
+                e.preventDefault();
+                if (valid) void save();
+            }}
+        >
+            <input autoFocus aria-label="The secret’s name" value={name} onChange={(e) => setName(e.target.value)} spellCheck={false} className={cn(SMALL_FIELD, 'w-56 font-mono')} />
+            <button type="submit" disabled={saving || !valid} className={SMALL_PRIMARY}>
+                Save as secret
+            </button>
+            <button type="button" onClick={() => setNaming(false)} className={SMALL_GHOST}>
+                Cancel
+            </button>
+            {!valid && <p className="w-full text-[12.5px] text-muted-foreground">A name is letters, digits and . _ -, up to 64.</p>}
+        </form>
     );
 }
 
