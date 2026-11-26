@@ -2299,6 +2299,7 @@ svix
 swaggerhub
 swarmsyncai
 swidoc
+swit
 sympla
 synap
 syncmate-by-assitro
