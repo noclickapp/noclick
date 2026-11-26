@@ -2179,6 +2179,7 @@ showpad
 sidetracker
 sierra-interactive
 sigma
+sign-now
 sign-plus
 signable
 signal8
