@@ -23,6 +23,7 @@ from ._scope import AMBIENT
 from .exceptions import NotFound
 from .operation import Operation, register_result
 from .sandbox import ExecResult
+from .secret import Secret
 from .volume import VolumeEntry
 
 if TYPE_CHECKING:
@@ -723,6 +724,36 @@ class AgentSandbox:
             "PATCH", await self._route("/files"), params={"path": path},
             json=compact(set=dict(set) if set is not None else None, unset=list(unset) if unset is not None else None),
             user=self._scope()) or {})
+
+    @synced
+    async def save_as_secret(self, path: str, name: str, keys: Optional[List[str]] = None) -> Secret:
+        """Save the dotenv file at ``path`` in its running sandbox or container as the secret ``name``, with no one
+        reading its values: NoClick reads the file there (``KEY=value`` lines, ``export``, quotes and comments as
+        dotenv reads them) and writes them into the secret, made or merged into the one of that name, then takes them
+        out of everything it shows of the sandbox from then on. Give the secret to another agent (its ``secrets``) to
+        share what the file holds. A file with no ``KEY=value`` line raises ``noclick.InvalidRequest``, a stopped
+        conversation ``noclick.Conflict``. The account's secret key with ``agents:terminal`` saves any agent's; the
+        agent itself saves its own sandbox's files with its NoClick tools.
+
+        Args:
+            path: The dotenv file's absolute path there.
+            name: The secret's name.
+            keys: Only these of its keys; every key holding a value when omitted.
+
+        Returns:
+            The ``Secret``: its id, name and key names, never a value.
+
+        Usage::
+
+            coder = noclick.Agent.from_name("coder")
+            stripe = coder.sandbox().save_as_secret("/workspace/app/.env", "stripe", keys=["STRIPE_SECRET_KEY"])
+            billing = noclick.Agent.from_name("billing")
+            billing.update(secrets=[*(billing.secret_ids or []), stripe])
+        """
+        raw = await self._agent._request(
+            "POST", await self._route("/files/secret"), json=compact(path=path, name=name, keys=keys),
+            user=self._scope())
+        return Secret._new(raw=raw, client=self._agent._client, user=self._scope())
 
     @synced
     async def exec(self, command: str, *, timeout_s: Optional[int] = None) -> ExecResult:

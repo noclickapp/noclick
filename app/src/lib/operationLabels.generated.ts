@@ -36,6 +36,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "agents_conversations_resume": ["Resume Conversation", "POST", "write"],
     "agents_conversations_revert": ["Revert Conversation", "POST", "write"],
     "agents_conversations_sandbox": ["Get Sandbox", "GET", "read"],
+    "agents_conversations_sandbox_files_secret": ["Save Sandbox File As Secret", "POST", "write"],
     "agents_conversations_settings_list": ["Read Conversation Settings", "GET", "read"],
     "agents_conversations_subagents_messages_create": ["Message Subagent", "POST", "outbound"],
     "agents_conversations_tool_servers_list": ["Conversation Tool Servers", "GET", "read"],

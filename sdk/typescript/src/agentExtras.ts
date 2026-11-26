@@ -23,6 +23,7 @@ import { namedWorkstream, registerResult } from "./operation.ts";
 import type { NamedWorkstream } from "./operation.ts";
 import { toExecResult } from "./sandbox.ts";
 import type { ExecResult } from "./sandbox.ts";
+import { Secret } from "./secret.ts";
 import type { UserFilter, UserOption } from "./scope.ts";
 import { TerminalConnection } from "./terminal.ts";
 import type { TerminalConnectOptions } from "./terminal.ts";
@@ -496,6 +497,27 @@ export class AgentSandbox {
       query: { path }, json: compact({ set: change.set, unset: change.unset }), user: this.agent._talkScope(this.user),
     }));
     return { entry: toVolumeEntry(raw.entry), keys: Array.isArray(raw.keys) ? raw.keys.map(String) : [] };
+  }
+
+  /**
+   * Save the dotenv file at `path` in its running sandbox or container as the secret `name`, with no one reading
+   * its values: NoClick reads the file there (`KEY=value` lines, `export`, quotes and comments as dotenv reads them;
+   * `keys` limits which, else every key holding a value) and writes them into the secret, made or merged into the
+   * one of that name, then takes them out of everything it shows of the sandbox from then on. Give the secret to
+   * another agent (its `secrets`) to share what the file holds. Resolves to the `Secret`: its id, name and key names,
+   * never a value. A file with no `KEY=value` line throws `InvalidRequest`, a stopped conversation `Conflict`. The
+   * account's secret key with `agents:terminal` saves any agent's; the agent itself saves its own sandbox's files
+   * with its NoClick tools.
+   *
+   *     const stripe = await coder.sandbox().saveAsSecret("/workspace/app/.env", { name: "stripe", keys: ["STRIPE_SECRET_KEY"] });
+   *     const billing = await Agent.fromName("billing").hydrate();
+   *     await billing.update({ secrets: [...billing.secretIds, stripe] });
+   */
+  async saveAsSecret(path: string, options: { name: string; keys?: string[] }): Promise<Secret> {
+    const raw = asObject(await this.agent._request("POST", await this.route("/files/secret"), {
+      json: compact({ path, name: options.name, keys: options.keys }), user: this.agent._talkScope(this.user),
+    }));
+    return Secret._of({ raw, client: this.agent._client, user: this.agent._talkScope(this.user) });
   }
 
   /**

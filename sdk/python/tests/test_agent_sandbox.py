@@ -1,7 +1,7 @@
 """An agent's sandbox: ``agent.sandbox()`` reads what it is and costs (``get``), its files a folder
-at a time (``files``, ``files_page``, ``read``), writes one into it (``write``, ``set_env``) and runs a
-command beside the agent's work (``exec``); ``Agent.coding()`` reads every coding agent and what each is
-doing."""
+at a time (``files``, ``files_page``, ``read``), writes one into it (``write``, ``set_env``), saves a dotenv file as a
+secret (``save_as_secret``) and runs a command beside the agent's work (``exec``); ``Agent.coding()`` reads every
+coding agent and what each is doing."""
 
 import pytest
 
@@ -105,6 +105,21 @@ def test_a_dotenv_files_keys_set_and_unset_in_place_the_answer_names_its_keys(ap
     assert isinstance(env, nc.SandboxEnv)
     assert (env.entry.path, env.entry.size, env.keys) == ("/workspace/app/.env", 61, ["DATABASE_URL", "STRIPE_KEY"])
     assert "sk_test_1" not in repr(env)
+
+
+def test_a_dotenv_file_saved_as_a_secret_answers_the_secret_and_never_a_value(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    save = api.post(f"{PATH}/files/secret").respond(json={
+        "object": "secret", "id": "sec_1", "name": "stripe", "keys": ["STRIPE_SECRET_KEY"], "user_id": None,
+        "used_by": [], "created_at": "2026-11-27T10:00:00Z", "updated_at": "2026-11-27T10:00:00Z"})
+    secret = nc.Agent.from_id("ag_1").sandbox("user:42/main").save_as_secret(
+        "/workspace/app/.env", "stripe", keys=["STRIPE_SECRET_KEY"])
+    assert body(save.calls.last.request) == {"path": "/workspace/app/.env", "name": "stripe",
+                                             "keys": ["STRIPE_SECRET_KEY"]}
+    assert isinstance(secret, nc.Secret)
+    assert (secret.id, secret.name, secret.keys) == ("sec_1", "stripe", ["STRIPE_SECRET_KEY"])
+    nc.Agent.from_id("ag_1").sandbox("user:42/main").save_as_secret("/workspace/.env", "all")
+    assert body(save.calls.last.request) == {"path": "/workspace/.env", "name": "all"}
 
 
 def test_a_command_beside_the_agents_work(api, client):

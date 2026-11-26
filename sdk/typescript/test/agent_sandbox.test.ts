@@ -1,6 +1,7 @@
 // An agent's sandbox: `agent.sandbox()` reads what it is and costs (`get`), its files a folder at a
-// time (`files`, `filesPage`, `read`), writes one into it (`write`, `setEnv`) and runs a command beside the agent's work
-// (`exec`); `Agent.coding()` reads every coding agent and what each is doing.
+// time (`files`, `filesPage`, `read`), writes one into it (`write`, `setEnv`), saves a dotenv file as a secret
+// (`saveAsSecret`) and runs a command beside the agent's work (`exec`); `Agent.coding()` reads every coding agent and
+// what each is doing.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -104,6 +105,21 @@ test("a dotenv file's keys set and unset in place: the answer names its keys, ne
   assert.equal(patch.last.query.get("path"), "/workspace/app/.env");
   assert.deepEqual(patch.last.body, { set: { STRIPE_KEY: "sk_test_1" }, unset: ["OLD_KEY"] });
   assert.deepEqual([env.entry.path, env.entry.size, env.keys], ["/workspace/app/.env", 61, ["DATABASE_URL", "STRIPE_KEY"]]);
+});
+
+test("a dotenv file saved as a secret answers the secret, never a value", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const save = api.on("POST", `${PATH}/files/secret`, json({
+    object: "secret", id: "sec_1", name: "stripe", keys: ["STRIPE_SECRET_KEY"], user_id: null, used_by: [],
+    created_at: "2026-11-27T10:00:00Z", updated_at: "2026-11-27T10:00:00Z",
+  }));
+  const secret = await nc.Agent.fromId("ag_1").sandbox("main thread").saveAsSecret("/workspace/app/.env", {
+    name: "stripe", keys: ["STRIPE_SECRET_KEY"],
+  });
+  assert.deepEqual(save.last.body, { path: "/workspace/app/.env", name: "stripe", keys: ["STRIPE_SECRET_KEY"] });
+  assert.ok(secret instanceof nc.Secret);
+  assert.deepEqual([secret.id, secret.name, secret.keys], ["sec_1", "stripe", ["STRIPE_SECRET_KEY"]]);
 });
 
 test("a command beside the agent's work, as the user whose thread it is", async () => {

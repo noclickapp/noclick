@@ -54,6 +54,11 @@ export class Secret extends ApiObject {
     super(init);
   }
 
+  /** @internal */
+  static _of(init: ObjectInit): Secret {
+    return new Secret(init);
+  }
+
   /**
    * Create a secret, unique by name per user (a taken name throws `Conflict` with `existingId`, or with
    * `allowExisting: true` returns the secret already there, its values untouched).
