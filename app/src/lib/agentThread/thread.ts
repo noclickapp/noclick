@@ -126,12 +126,13 @@ export interface UserEntry {
 
 export type TurnStatus = 'running' | 'done' | 'failed' | 'stopped';
 
-/** Why a turn failed when its model connection's provider turned it down: a key it refused (`provider_rejected`) or a
- *  sign-in that ended (`signed_out`), both `credential_disconnected`, an account out of credit
- *  (`provider_out_of_funds`, `payment_required`), or a plan at its usage limit (`plan_limit`, `plan_limit_reached`,
- *  which the line its switch or its wait left says); on which connection, in NoClick's words. */
+/** Why a turn failed when its model connection couldn't run it: a key its provider refused (`provider_rejected`), a
+ *  sign-in that ended (`signed_out`) or a connection revoked or deleted (`disconnected`), all
+ *  `credential_disconnected`, an account out of credit (`provider_out_of_funds`, `payment_required`), or a plan at its
+ *  usage limit (`plan_limit`, `plan_limit_reached`, which the line its switch or its wait left says); on which
+ *  connection, in NoClick's words. */
 export interface Failure {
-    reason: 'provider_rejected' | 'signed_out' | 'provider_out_of_funds' | 'plan_limit';
+    reason: 'provider_rejected' | 'signed_out' | 'disconnected' | 'provider_out_of_funds' | 'plan_limit';
     /** The ref the agent names it by (`credential:<id>`, or a connection's name). */
     connection: string | null;
     connectionName: string | null;
@@ -144,10 +145,14 @@ export interface Failure {
     nextStep: string | null;
     /** Where its funds are added, for an account out of credit (the provider's billing page). */
     billingUrl: string | null;
+    /** Where the connection's person fixes it (its connect link, or its account's page in NoClick), for its own. */
+    reconnectUrl: string | null;
+    /** What the turn said of it, which its card says already. */
+    line: string | null;
 }
 
 // Each reason a person can act on, by the error type that carries it.
-const FAILURE_TYPES: Record<Failure['reason'], string> = { provider_rejected: 'credential_disconnected', signed_out: 'credential_disconnected', provider_out_of_funds: 'payment_required', plan_limit: 'plan_limit_reached' };
+const FAILURE_TYPES: Record<Failure['reason'], string> = { provider_rejected: 'credential_disconnected', signed_out: 'credential_disconnected', disconnected: 'credential_disconnected', provider_out_of_funds: 'payment_required', plan_limit: 'plan_limit_reached' };
 
 /** Text up to where a reply's older failures went on with the provider's raw answer ("Provider message: …",
  *  "Details: …"), which a person never reads. */
@@ -171,6 +176,8 @@ export function failureOf(raw: unknown): Failure | null {
         providerSaid: ownWords(s(f.provider_said)),
         nextStep: s(f.next_step),
         billingUrl: s(f.billing_url),
+        reconnectUrl: s(f.reconnect_url) ?? s(f.connect_url),
+        line: s(f.line),
     };
 }
 

@@ -274,7 +274,7 @@ export function TurnView({
                     {turn.failure ? (
                         <>
                             {/* What it said on the way, never the platform's line its failed reply carries. */}
-                            {said && turn.reply !== TURN_FAILED_LINE && (
+                            {said && turn.reply !== TURN_FAILED_LINE && turn.reply !== turn.failure.line && (
                                 <div className="pt-2" data-reply>
                                     <Words text={said} />
                                 </div>
@@ -306,10 +306,12 @@ export function TurnView({
 // A plan's sign-in is named for its product, not its company.
 const PLAN_NAMES: Record<string, string> = { anthropic: 'Claude', openai: 'ChatGPT' };
 
-/** A turn whose model connection's provider turned it down, said as what happened ("OpenRouter refused this agent's
- *  key", "Your ChatGPT sign-in ended", "OpenRouter's account is out of credit"), the provider's own words in a line
- *  where it gave any, and what to do: connect it again, or add funds at the provider (else use another key). A plan at
- *  its limit is no refusal: one quiet line in the platform's words, where no line beside it (`told`) says so already. */
+/** A turn whose model connection couldn't run it, said as what happened ("OpenRouter refused this agent's key",
+ *  "Your ChatGPT sign-in ended", "Your OpenRouter connection is disconnected", "OpenRouter's account is out of
+ *  credit"), the provider's own words in a line where it gave any, and what to do: connect it again (in place, where
+ *  the page connects accounts, else at the link the turn carries), or add funds at the provider (else use another
+ *  key). A plan at its limit is no refusal: one quiet line in the platform's words, where no line beside it (`told`)
+ *  says so already. */
 export function RefusedNote({ failure, told, onReconnect, className }: { failure: Failure; told?: boolean; onReconnect?: (failure: Failure) => void; className?: string }) {
     if (failure.reason === 'plan_limit') return told || !failure.message ? null : <PlanLimitLine message={failure.message} className={className} />;
     return <Refusal failure={failure} onReconnect={onReconnect} className={className} />;
@@ -319,9 +321,11 @@ function Refusal({ failure, onReconnect, className }: { failure: Failure; onReco
     const { labels } = useModelAccounts();
     const plan = failure.reason === 'signed_out';
     const funds = failure.reason === 'provider_out_of_funds';
+    const gone = failure.reason === 'disconnected';
     const integration = failure.integration ?? failure.provider;
     const provider = (integration && (plan ? PLAN_NAMES[integration] : labels.get(integration))) || failure.connectionName || 'Its provider';
-    const headline = funds ? `${provider}’s account is out of credit` : plan ? `Your ${provider} sign-in ended` : `${provider} refused this agent’s key`;
+    const headline = funds ? `${provider}’s account is out of credit` : plan ? `Your ${provider} sign-in ended` : gone ? `Your ${provider} connection is disconnected` : `${provider} refused this agent’s key`;
+    const again = plan ? 'Sign in again' : `Reconnect ${provider}`;
     const Icon = funds ? Wallet : KeyRound;
     return (
         <div className={cn('pt-2', className)} data-testid="refused-turn">
@@ -349,9 +353,16 @@ function Refusal({ failure, onReconnect, className }: { failure: Failure; onReco
                     ) : (
                         <button type="button" onClick={() => onReconnect(failure)} className={cn(XS_BUTTON, XS_OUTLINE, 'gap-1.5 px-3')}>
                             <RotateCw className="h-3 w-3" strokeWidth={2.25} />
-                            {plan ? 'Sign in again' : `Reconnect ${provider}`}
+                            {again}
                         </button>
                     ))}
+                {!onReconnect && !funds && failure.reconnectUrl && (
+                    <a href={failure.reconnectUrl} target="_blank" rel="noopener noreferrer" className={cn(XS_BUTTON, XS_OUTLINE, 'gap-1.5 px-3')}>
+                        <RotateCw className="h-3 w-3" strokeWidth={2.25} />
+                        {again}
+                        <ArrowUpRight className="h-3 w-3" strokeWidth={2.25} />
+                    </a>
+                )}
             </div>
         </div>
     );
