@@ -1,6 +1,5 @@
 """A space template added as a new space (``Workspace.from_template``) or into one you have (``add_template``): the
-dry run's page of asks, then the operation whose result names what arrived; a deploy of a template's address is the
-same add."""
+dry run's page of asks, then the operation whose result names what arrived."""
 
 import httpx
 
@@ -56,11 +55,9 @@ def test_a_template_is_read_as_its_page_of_asks_then_added_as_a_new_space(api, c
     assert (added.workspace_id, added.channel_id, added.agents[0]["name"]) == ("ws_1", "ch_noclick", "Writer")
 
 
-def test_a_template_goes_into_a_space_you_have_and_a_deploy_of_its_address_is_that_add(api, client):
+def test_a_template_goes_into_a_space_you_have(api, client):
     into = api.post("/v1/workspaces/ws_9/template/add").respond(json={**PLAN, "target": {
         "workspace_id": "ws_9", "name": "Lumen Coffee", "new": False}})
     plan = nc.Workspace.from_id("ws_9").add_template("social-media-team", dry_run=True)
     assert body(into.calls.last.request) == {"source": {"repo": "social-media-team"}, "dry_run": True}
     assert plan.target["name"] == "Lumen Coffee"
-    api.post("/v1/deploys").respond(json=PLAN)
-    assert isinstance(nc.deploy(ADDRESS, dry_run=True), nc.TemplatePlan)

@@ -22,8 +22,6 @@ import type { ApiObject, CallOptions, JsonObject, ObjectInit } from "./object.ts
 import { Operation, registerResult } from "./operation.ts";
 import { resolveScope } from "./scope.ts";
 import type { UserOption } from "./scope.ts";
-import { templateAnswer } from "./spaceTemplate.ts";
-import type { TemplateAdd, TemplatePlan } from "./spaceTemplate.ts";
 
 /** What `deploy` takes besides its source. */
 export interface DeployOptions extends CallOptions {
@@ -223,8 +221,7 @@ async function sourceOf(source: string | ApiObject, ref: string | undefined): Pr
  * exactly its scopes (only you signed in, or a key holding `keys:create`; otherwise the deploy asks the account's
  * owner), and deploys production. Never a private repository, a URL with a login, an `ssh://` or `git@` address, or
  * another account's repo: push a private one to a repo of yours with git and deploy that. What can't deploy is
- * refused before anything is made. Needs the `apps` and `repos` scopes. A space template's address is added as a new
- * space instead, as `Workspace.fromTemplate` adds it (a `TemplatePlan`, or a `TemplateAdd`).
+ * refused before anything is made. Needs the `apps` and `repos` scopes.
  *
  * Resolves to a `RepoDeploy` whose `wait()` gives the live app (`url`, where its key stands, passwords to read once);
  * with `dryRun: true`, to a `DeployPlan` of what it would do, what it would cost and what it asks of you.
@@ -237,9 +234,9 @@ async function sourceOf(source: string | ApiObject, ref: string | undefined): Pr
  *     const app = Project.fromId(done.projectId);
  *     for (const name of done.toReveal) console.log(name, await app.secrets.reveal(name));
  */
-export async function deploy(source: string | ApiObject, options: DeployOptions & { dryRun: true }): Promise<DeployPlan | TemplatePlan>;
-export async function deploy(source: string | ApiObject, options?: DeployOptions & { dryRun?: false }): Promise<RepoDeploy | TemplateAdd>;
-export async function deploy(source: string | ApiObject, options: DeployOptions = {}): Promise<DeployPlan | RepoDeploy | TemplatePlan | TemplateAdd> {
+export async function deploy(source: string | ApiObject, options: DeployOptions & { dryRun: true }): Promise<DeployPlan>;
+export async function deploy(source: string | ApiObject, options?: DeployOptions & { dryRun?: false }): Promise<RepoDeploy>;
+export async function deploy(source: string | ApiObject, options: DeployOptions = {}): Promise<DeployPlan | RepoDeploy> {
   const user = resolveScope(options.user);
   const json: JsonObject = compact({
     source: await sourceOf(source, options.ref), name: options.name, secrets: options.secrets,
@@ -249,7 +246,6 @@ export async function deploy(source: string | ApiObject, options: DeployOptions 
     dry_run: options.dryRun ? true : undefined,
   });
   const raw = asObject(await resolveClient(options.client).request("POST", "/v1/deploys", { json, user }));
-  if (raw.object === "space_template_plan" || raw.object === "space_template_add") return templateAnswer(raw, { client: options.client, user });
   if (options.dryRun) return new DeployPlan(raw);
   return RepoDeploy._fromResponse(raw.operation, { client: options.client, user });
 }

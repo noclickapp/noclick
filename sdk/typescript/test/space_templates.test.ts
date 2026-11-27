@@ -1,5 +1,5 @@
 // A space template added as a new space (`Workspace.fromTemplate`) or into one you have (`addTemplate`): the dry run's
-// page of asks, then the operation whose result names what arrived; a deploy of a template's address is the same add.
+// page of asks, then the operation whose result names what arrived.
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
@@ -51,13 +51,10 @@ test("a template is read as its page of asks, then added as a new space", async 
   assert.deepEqual([added.workspaceId, added.channelId, added.agents[0].name], ["ws_1", "ch_noclick", "Writer"]);
 });
 
-test("a template goes into a space you have, and a deploy of its address is that add", async () => {
+test("a template goes into a space you have", async () => {
   const { api } = setup();
   const into = api.on("POST", "/v1/workspaces/ws_9/template/add", json({ ...PLAN, target: { workspace_id: "ws_9", name: "Lumen Coffee", new: false } }));
   const plan = await nc.Workspace.fromId("ws_9").addTemplate("social-media-team", { dryRun: true });
   assert.deepEqual(into.last.body, { source: { repo: "social-media-team" }, dry_run: true });
   assert.equal(plan.target.name, "Lumen Coffee");
-  api.on("POST", "/v1/deploys", json(PLAN));
-  const deployed = await nc.deploy(ADDRESS, { dryRun: true });
-  assert.ok(!(deployed instanceof nc.DeployPlan) && deployed.template.name === "Social media team");
 });
