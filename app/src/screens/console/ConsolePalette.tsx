@@ -79,7 +79,7 @@ export function objectHref(basePath: string, ref: ObjectRef, site = ''): string 
         case 'workspace':
             return at('resources/channels', { workspace: ref.id });
         case 'webhook':
-            return at('settings/webhooks', { webhook: ref.id });
+            return at('webhooks', { webhook: ref.id });
         case 'secret':
             return at('resources/secrets', { secret: ref.id });
         case 'dict':

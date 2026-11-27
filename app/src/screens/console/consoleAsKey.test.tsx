@@ -5,6 +5,7 @@
 // refusal. This opens every page of the console as a key and fails on any such request, then checks what a key's
 // console says and leaves out where the owner's has those things.
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { MotionGlobalConfig } from 'framer-motion';
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi, type MockInstance } from 'vitest';
@@ -25,6 +26,8 @@ import { LOG_VIEWS, SECTIONS, SETTINGS_PAGES } from './sections';
 let logged: MockInstance<typeof console.error>;
 beforeEach(() => {
     logged = vi.spyOn(console, 'error');
+    // Usage (the app's page) moves as it draws: an animation cut off by a page's unmount would cancel in the DOM.
+    MotionGlobalConfig.skipAnimations = true;
 });
 afterEach(() => {
     cleanup();
@@ -130,7 +133,7 @@ const ADDRESSES = [
     `logs?op=${TRY_IT_OPERATION_ID}`,
     `logs/${TRY_IT_OPERATION_ID}`,
     `resources/apps?app=${BOOKING_APP_ID}&tab=bindings`,
-    `usage?group=key&row=${KEYS[0].id}`,
+    `usage?by=key`,
     `keys?key=${KEYS[0].id}`,
     'cli?code=ABCD-EFGH',
 ];

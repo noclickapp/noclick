@@ -1,4 +1,4 @@
-// Settings > Webhooks: the endpoints events are delivered to (the account's and its users'),
+// Webhooks (under Access): the endpoints events are delivered to (the account's and its users'),
 // each with its health; the lab reads the same page from fixtures. The drawer
 // (`?webhook=`) edits what an endpoint receives, pauses it, rotates its secret, sends a
 // test event and lists its deliveries; `&delivery=` opens one with the request sent and
@@ -12,7 +12,8 @@ import { cn } from '@/ui/utils';
 import { FieldSelect } from '@/ui/FieldSelect';
 import { Event as NoClickEvent, Webhook, type EventType, type WebhookDelivery } from 'noclick';
 import { formatCount, formatDuration, formatRelative } from '@/screens/console/lib/format';
-import { NEW_SNIPPETS, type Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
+import { docsUrl } from '@/screens/console/lib/site';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { defaultWriteUser } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -20,7 +21,6 @@ import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam, useUserParam } from '@/screens/console/hooks/useQueryState';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { ConsoleButton } from '../ui/Button';
-import { CodeSnippet } from '../ui/CodeSnippet';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { CopyButton } from '../ui/CopyButton';
 import { DataTable, type Column } from '../ui/DataTable';
@@ -29,7 +29,7 @@ import { EmptyCode } from '../ui/EmptyCode';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { JsonView } from '../ui/JsonView';
 import { PageHeader } from '../ui/PageHeader';
-import { RevealOnceSecret } from '../ui/RevealOnceSecret';
+import { SecretShownOnce } from '../ui/RevealOnceSecret';
 import { Segmented } from '../ui/Segmented';
 import { StatusPill } from '../ui/StatusPill';
 import { SWITCH_ROWS, SwitchRow } from '../ui/SwitchRow';
@@ -38,25 +38,6 @@ import { NewInCode } from '../NewInCode';
 import { ConfirmAction, errorText, Field, PanelToolbar, Section } from './resources/shared';
 
 // ── what the page says in code ─────────────────────────────────────────────
-
-/** The receiver's side, reading the secret from the environment. */
-export const WEBHOOK_VERIFY: Snippet = {
-    python: [
-        'import os',
-        'import noclick',
-        '',
-        '# in your POST handler, with the raw body and headers',
-        'event = noclick.Webhook.verify(body, headers, os.environ["NOCLICK_WEBHOOK_SECRET"])',
-        'print(event.type, event.data)',
-    ].join('\n'),
-    typescript: [
-        'import { Webhook } from "noclick";',
-        '',
-        '// in your POST handler, with the raw body and headers',
-        'const event = await Webhook.verify(await request.text(), request.headers, process.env.NOCLICK_WEBHOOK_SECRET!);',
-        'console.log(event.type, event.data);',
-    ].join('\n'),
-};
 
 export const LISTEN_COMMAND = 'noclick webhooks listen --forward-to http://localhost:3000/noclick/events';
 
@@ -646,25 +627,26 @@ function RotateSecret({ hook, onRotated }: { hook: Webhook; onRotated: (secret: 
     );
 }
 
-/** The one-time secret, and the receiver code that uses it (only the env tab holds it). */
+/** The one-time signing secret, alone; the receiver code that reads it is the guide's. */
 function SecretReveal({ secret, title, onDone }: { secret: string | null; title: string; onDone: () => void }) {
+    const { site } = useConsole();
     return (
-        <RevealOnceSecret secret={secret} title={title} description="This is the only time you'll see this signing secret. Your receiver verifies each delivery with it." onDone={onDone}>
-            {(value) => (
-                <div className="flex flex-col gap-2">
-                    <CodeSnippet
-                        tabs={[
-                            { id: 'env', label: 'env', code: `export NOCLICK_WEBHOOK_SECRET=${value}` },
-                            { id: 'python', label: 'Python', code: WEBHOOK_VERIFY.python },
-                            { id: 'typescript', label: 'TypeScript', code: WEBHOOK_VERIFY.typescript },
-                        ]}
-                    />
-                    <p className="m-0 text-[12px] text-muted-foreground">
-                        Only the env tab holds the secret; the receiver code reads <span className="font-mono">$NOCLICK_WEBHOOK_SECRET</span>.
-                    </p>
-                </div>
-            )}
-        </RevealOnceSecret>
+        <SecretShownOnce
+            secret={secret}
+            title={title}
+            description="Copy it now: this is the only time it's shown."
+            label="Signing secret"
+            copyLabel="Copy secret"
+            env="NOCLICK_WEBHOOK_SECRET"
+            where={
+                <>
+                    Your receiver verifies each delivery with it: put it in your server&apos;s <span className="font-mono text-foreground">.env</span> as{' '}
+                    <span className="font-mono text-foreground">NOCLICK_WEBHOOK_SECRET</span>.
+                </>
+            }
+            guide={{ label: 'Verifying deliveries', href: docsUrl(site, 'guide/webhooks') }}
+            onDone={onDone}
+        />
     );
 }
 
@@ -688,7 +670,6 @@ function ListenHint() {
 
 export default function Webhooks() {
     const { client } = useConsole();
-    const href = useConsoleHref();
     const [user, setUser] = useUserParam();
     const [webhookId, setWebhookId] = useSearchParam('webhook');
     const [secret, setSecret] = useState<{ value: string; title: string } | null>(null);
@@ -726,7 +707,7 @@ export default function Webhooks() {
     ];
     return (
         <>
-            <PageHeader crumbs={[{ label: 'Settings', href: href('settings') }]} title="Webhooks" purpose="Endpoints on your server that receive events as they happen: each delivery signed, and retried for 3 days until your server takes it." />
+            <PageHeader section="webhooks" />
             <PanelToolbar
                 user={user}
                 setUser={setUser}

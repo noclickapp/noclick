@@ -1,14 +1,20 @@
-// The console's sections: six fixed sidebar items (the same for every account,
-// so nothing moves as an account grows), Settings at the foot, and the pages
-// reached only from inside them (an agent, the Quickstart). Earlier addresses
-// map onto today's. Pages are found by glob, so a page that hasn't been written
-// yet renders a "Not built yet" stub instead of breaking the build.
+// The console's sections: fixed sidebar items (the same for every account, so
+// nothing moves as an account grows) in the groups Settings lists its own in
+// (Build, Watch, Access) under Home, Settings at the foot, and the pages reached
+// only from inside them (an agent, the Quickstart). Resources and Usage are the
+// app's own pages, drawn in the console's frame. Earlier addresses map onto
+// today's. Pages are found by glob, so a page that hasn't been written yet
+// renders a "Not built yet" stub instead of breaking the build.
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
-import { ChartColumn, House, KeyRound, Layers, Rocket, ScrollText, Settings, SquareTerminal, Users, type LucideIcon } from 'lucide-react';
+import { ChartColumn, House, KeyRound, Layers, Rocket, ScrollText, Settings, ShieldCheck, SquareTerminal, Users, Webhook, type LucideIcon } from 'lucide-react';
 import type { OwnerOnly } from './ownerOnly';
 import { visibleKinds } from './resourceKinds';
 
-export type SectionId = 'home' | 'users' | 'resources' | 'logs' | 'usage' | 'keys' | 'settings' | 'agents' | 'quickstart' | 'cli';
+export type SectionId = 'home' | 'users' | 'resources' | 'logs' | 'usage' | 'keys' | 'webhooks' | 'approval-rules' | 'settings' | 'agents' | 'quickstart' | 'cli';
+
+/** The sidebar's groups, in order; Home sits above them and Settings at the foot. */
+export const SECTION_GROUPS = ['Build', 'Watch', 'Access'] as const;
+export type SectionGroup = (typeof SECTION_GROUPS)[number];
 
 export interface SectionDef {
     id: SectionId;
@@ -16,6 +22,8 @@ export interface SectionDef {
     /** The sentence under the page title. */
     purpose: string;
     icon: LucideIcon;
+    /** The sidebar group it's listed in; none for Home (above the groups) and for what the sidebar doesn't list. */
+    group?: SectionGroup;
     /** Other words people use for it, which the app's command palette matches. */
     keywords?: string;
     /** Sits at the foot of the sidebar instead of in the main list. */
@@ -34,12 +42,14 @@ export interface SectionDef {
 
 export const SECTIONS: readonly SectionDef[] = [
     { id: 'home', label: 'Home', purpose: 'Every agent you run, and what it is doing.', icon: House, keywords: 'developer console developers platform agents', page: 'Home' },
-    { id: 'users', label: 'Users', purpose: 'The people and companies your product acts for.', icon: Users, keywords: 'tenants customers end users', page: 'Users', detailPage: 'UserDetail' },
-    { id: 'resources', label: 'Resources', purpose: 'What your agents and apps use: accounts they act in, numbers and inboxes, machines that run code, and where data lives.', icon: Layers, page: 'Resources' },
-    { id: 'logs', label: 'Logs', purpose: 'Everything that ran, what each call did, and why anything failed.', icon: ScrollText, keywords: 'runs operations errors activity', page: 'Logs' },
-    { id: 'usage', label: 'Usage', purpose: 'What this month cost, where it went, and the caps that bound it.', icon: ChartColumn, keywords: 'costs spend caps limits', page: 'Usage' },
-    { id: 'keys', label: 'API keys', purpose: 'A secret key builds and spends for this account, so keep it on your server. A publishable key only calls what you made public, so it can go in a page.', icon: KeyRound, keywords: 'api key api keys keys secret key publishable key token', ownerOnly: 'keys', page: 'Keys' },
-    { id: 'settings', label: 'Settings', purpose: 'Approval rules, your brand, and connecting your coding tools.', icon: Settings, keywords: 'approvals policy brand coding tools', footer: true, page: 'Settings' },
+    { id: 'users', label: 'Users', purpose: 'The people and companies your product acts for.', icon: Users, group: 'Build', keywords: 'tenants customers end users', page: 'Users', detailPage: 'UserDetail' },
+    { id: 'resources', label: 'Resources', purpose: 'What your account owns, what uses it, and what it costs.', icon: Layers, group: 'Build', keywords: 'numbers domains websites apps databases storage sandboxes queues', page: 'Resources' },
+    { id: 'logs', label: 'Logs', purpose: 'Everything that ran, what each call did, and why anything failed.', icon: ScrollText, group: 'Watch', keywords: 'runs operations errors activity', page: 'Logs' },
+    { id: 'usage', label: 'Usage', purpose: 'What this month cost, and where it went.', icon: ChartColumn, group: 'Watch', keywords: 'costs spend money charges', page: 'Usage' },
+    { id: 'keys', label: 'API keys', purpose: 'A secret key builds and spends for this account, so keep it on your server. A publishable key only calls what you made public, so it can go in a page.', icon: KeyRound, group: 'Access', keywords: 'api key api keys keys secret key publishable key token', ownerOnly: 'keys', page: 'Keys' },
+    { id: 'webhooks', label: 'Webhooks', purpose: 'Endpoints on your server that receive events as they happen: each delivery signed, and retried for 3 days until your server takes it.', icon: Webhook, group: 'Access', keywords: 'webhook endpoints events deliveries signing secret', page: 'Webhooks' },
+    { id: 'approval-rules', label: 'Approval rules', purpose: 'Which tools need a person to approve each call, and which never run.', icon: ShieldCheck, group: 'Access', keywords: 'approvals policy rules deny allow require approval', page: 'Policy' },
+    { id: 'settings', label: 'Settings', purpose: 'Your brand, where new resources run, what a paused user is told, and connecting your coding tools.', icon: Settings, keywords: 'brand region paused spending coding tools mcp plan', footer: true, page: 'Settings' },
     { id: 'agents', label: 'Agents', purpose: 'A hosted agent.', icon: House, hidden: true, navId: 'home', page: 'Home', detailPage: 'AgentDetail' },
     { id: 'quickstart', label: 'Quickstart', purpose: 'Build your first agent.', icon: Rocket, hidden: true, navId: 'home', page: 'Quickstart' },
     // `noclick login` links here; approving a sign-in creates an API key.
@@ -57,10 +67,8 @@ export function sectionById(id: SectionId): SectionDef {
  * `designed` one (drawn, with no API behind it yet) exists only in the lab.
  */
 export const SETTINGS_PAGES: readonly { id: string; label: string; page: string; designed?: boolean }[] = [
-    { id: 'policy', label: 'Approval rules', page: 'Policy' },
     { id: 'brand', label: 'Brand', page: 'Brand' },
     { id: 'install', label: 'Clients and MCP', page: 'Settings' },
-    { id: 'webhooks', label: 'Webhooks', page: 'Webhooks' },
 ];
 
 export const LOG_VIEWS = [
@@ -128,12 +136,15 @@ export function currentPath(segments: readonly string[]): string[] {
             if (tail[0] === 'logs') return ['logs', 'tool-calls'];
             return ['logs'];
         case 'policy':
+            return ['approval-rules', ...tail];
         case 'brand':
             return ['settings', head, ...tail];
         case 'tenants':
             return ['users', ...tail];
         case 'settings':
-            if (tail[0] === 'keys' || tail[0] === 'usage') return [tail[0]];
+            // Keys, Usage, Webhooks and Approval rules were once inside Settings.
+            if (tail[0] === 'keys' || tail[0] === 'usage' || tail[0] === 'webhooks') return tail.slice();
+            if (tail[0] === 'policy') return ['approval-rules', ...tail.slice(1)];
             return segments.slice();
         default:
             return segments.slice();

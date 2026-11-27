@@ -201,7 +201,7 @@ export const routes: FixtureRoute[] = [
     {
         method: 'POST',
         path: '/v1/cli/setup_codes',
-        reply: () => ok({ object: 'setup_code', code: LAB_SETUP_CODE, key_name: 'Coding agent', expires_at: new Date(FIXTURE_NOW_MS + 30 * 60_000).toISOString() }),
+        reply: (r) => ok({ object: 'setup_code', code: LAB_SETUP_CODE, key_name: typeof body(r).name === 'string' ? body(r).name : 'Coding agent', expires_at: new Date(FIXTURE_NOW_MS + 30 * 60_000).toISOString() }),
     },
     {
         method: 'POST',

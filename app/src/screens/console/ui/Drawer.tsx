@@ -9,7 +9,7 @@ import { Maximize2, X } from 'lucide-react';
 import { Link } from 'react-router';
 import { cn } from '@/ui/utils';
 import { HAIRLINE } from '@/ui/primitives';
-import { IdChip } from './IdChip';
+import { CopyIdChip } from './IdChip';
 import { READABLE_PLACEHOLDERS, SHEET_EDGE, SHEET_SURFACE } from './tokens';
 
 export { SHEET_SURFACE };
@@ -70,7 +70,7 @@ export function Drawer({
                             {(status || id) && (
                                 <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                                     {status}
-                                    {id && <IdChip id={id} full />}
+                                    {id && <CopyIdChip id={id} />}
                                 </div>
                             )}
                             <Dialog.Description className="sr-only">Details</Dialog.Description>

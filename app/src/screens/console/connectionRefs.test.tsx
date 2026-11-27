@@ -198,7 +198,7 @@ it('reads a model connection an agent already holds by `credential:` as that key
 });
 
 it('judges the operations of an account connected in the app that an agent holds when a policy draft changes', async () => {
-    const console_ = open('settings/policy', { [SUPPORT.id]: { tools: [...SUPPORT.tools, APP_SLACK.id] } });
+    const console_ = open('approval-rules', { [SUPPORT.id]: { tools: [...SUPPORT.tools, APP_SLACK.id] } });
     const add = await screen.findByRole('textbox', { name: 'Add to Require approval' });
     fireEvent.change(add, { target: { value: 'slack.*' } });
     fireEvent.keyDown(add, { key: 'Enter' });

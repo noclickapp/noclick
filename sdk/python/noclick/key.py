@@ -188,20 +188,22 @@ class Key:
 
     @synced
     @staticmethod
-    async def setup_code(*, scopes: Optional[Sequence[str]] = None, client: Optional[Client] = None) -> SetupCode:
+    async def setup_code(*, scopes: Optional[Sequence[str]] = None, name: Optional[str] = None,
+                         client: Optional[Client] = None) -> SetupCode:
         """A one-time setup code (``nc_setup_...``, 30 minutes) a coding agent redeems for a key of the account
         (``noclick setup <code>``, or ``POST /v1/setup``), so the key lands in its project, never in its context. Its
         key holds every scope but the ones a key holds only when they're named, and also ``scopes``, any of those the
-        agent's work needs (``["machines:vetting"]``). The signed-in owner's alone.
+        agent's work needs (``["machines:vetting"]``). The key takes ``name``, for the task the agent is handed
+        (default ``Coding agent``); a code nobody redeems makes no key. The signed-in owner's alone.
 
         Returns:
             The code.
 
         Usage::
 
-            print(noclick.Key.setup_code().code)
+            print(noclick.Key.setup_code(name="Coding agent: build an agent").code)
         """
-        body = {"scopes": list(scopes)} if scopes else None
+        body = {k: v for k, v in (("scopes", list(scopes) if scopes else None), ("name", name)) if v} or None
         raw = await resolve_client(client).request("POST", "/v1/cli/setup_codes", json=body, user=None) or {}
         return SetupCode(raw.get("code") or "", raw.get("key_name") or "", parse_time(raw.get("expires_at")), raw)
     @staticmethod

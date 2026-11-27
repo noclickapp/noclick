@@ -541,19 +541,25 @@ function placeNote({ user, agent, workspace, layer }: NewPlace): string {
     ].join('');
 }
 
+/** The name a prompt's key takes, so the keys list says which task each coding agent's key was made for. */
+export function coderKeyName(task: CoderTask): string {
+    return `Coding agent: ${task.goal}`.slice(0, 200);
+}
+
 /**
  * The prompt a coding agent is handed. It carries a one-time setup code, never a key: the agent's one command
  * trades the code for a key that goes from the response straight into the project's .env, so the key never
- * passes through the agent's context. `apiBase` is the API the console talks to, which minted the code.
+ * passes through the agent's context. A project that already holds a key skips that step, so the code expires
+ * unused and no second key is made. `apiBase` is the API the console talks to, which minted the code.
  */
 export function coderPrompt(setupCode: string, task: CoderTask, { apiBase = DEFAULT_BASE_URL, place = {} }: { apiBase?: string; place?: NewPlace } = {}): string {
     return lines(
         `Set up NoClick in this project, then help me ${task.goal}.`,
         '',
         '1. Install the SDK for this project\'s language: `pip install noclick` (Python) or `npm install noclick` (TypeScript).',
-        '2. Save my API key to .env with this command. It never prints the key, and its code works once, for 30 minutes:',
+        `2. If this project already has ${API_KEY_ENV} (in .env or its environment), skip this step: the code below then expires unused and no new key is made. Otherwise save my API key to .env with this command. It never prints the key, and its code works once, for 30 minutes:`,
         `   curl -fsS -X POST ${apiBase}/v1/setup -d code=${setupCode} >> .env`,
-        `   Make sure .env is in .gitignore. Never print, read or commit the key. The SDK reads ${API_KEY_ENV}, so load .env when the program starts. If the command fails, ask me for a fresh prompt.`,
+        `   Make sure .env is in .gitignore. Never print, read or commit the key. To check whether it's there, look for the name ${API_KEY_ENV} only (grep -c ${API_KEY_ENV} .env), never the value. The SDK reads ${API_KEY_ENV}, so load .env when the program starts. If the command fails, ask me for a fresh prompt.`,
         `3. ${task.ask}${placeNote(place)} The guide: ${DOCS_URL}/${task.guide}. Every class and method: ${DOCS_URL}/reference/python.`,
         '',
         `When it runs, what it made shows up in my console at ${CONSOLE_BASE_URL}.`
@@ -643,24 +649,6 @@ export function userCodeSnippet(userId: string): Snippet {
             'await gmail.request({ reason: "to send your summaries" }); // emails them its link'
         ),
     };
-}
-
-export const CLAUDE_CODE_MCP = `claude mcp add --transport http noclick ${MCP_URL} --header "Authorization: Bearer $${API_KEY_ENV}"`;
-
-export const CURSOR_MCP = JSON.stringify(
-    { mcpServers: { noclick: { url: MCP_URL, headers: { Authorization: `Bearer \${env:${API_KEY_ENV}}` } } } },
-    null,
-    2
-);
-
-/** The reveal-once step: the raw key is only in the env tab. */
-export function keyRevealTabs(rawKey: string): CodeTab[] {
-    return [
-        { id: 'env', label: 'env', code: envExport(rawKey) },
-        ...snippetTabs(OPERATIONS_EMPTY),
-        { id: 'claude-code', label: 'Claude Code', code: CLAUDE_CODE_MCP },
-        { id: 'cursor', label: 'Cursor', code: CURSOR_MCP },
-    ];
 }
 
 /** The places a New dialog's code is shown for: the account's own, one of your users', a workspace's. */

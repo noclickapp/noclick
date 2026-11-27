@@ -38,11 +38,12 @@ export function SettingsGroup({ children, note, className }: { children: ReactNo
     );
 }
 
-/** One setting: its name and what it does on the left, its control on the right. */
+/** One setting: its name and what it does on the left, its control on the right; a control too wide to sit beside
+ *  them on a phone (a picker, a line to copy) goes under them rather than squeezing them into a column. */
 export function SettingsRow({ label, description, control, className }: { label: ReactNode; description?: ReactNode; control?: ReactNode; className?: string }) {
     return (
         <div className={cn('flex min-h-[64px] flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3.5', className)}>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-[min(100%,12rem)] flex-1">
                 <div className="text-[14.5px] font-medium text-foreground">{label}</div>
                 {description ? <div className="mt-0.5 text-[13px] text-muted-foreground">{description}</div> : null}
             </div>

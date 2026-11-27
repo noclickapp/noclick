@@ -13,7 +13,7 @@ import { useConsole } from '@/screens/console/hooks/useConsole';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { invalidateV1 } from '@/sdk/useV1';
 import { docsUrl } from '@/screens/console/lib/site';
-import { CopyPromptAction, WorksWith, useCopyPrompt } from './Quickstart';
+import { CopyPromptAction, useCopyPrompt } from './Quickstart';
 import { ConsoleButton, type ConsoleButtonProps } from './ui/Button';
 import { CodeSnippet } from './ui/CodeSnippet';
 import { ConsoleDialog } from './ui/ConsoleDialog';
@@ -76,10 +76,9 @@ export function NewInCodeDialog({ kind, place = {}, title, open, onOpenChange }:
                         <div>
                             <h3 className={cn(LABEL, 'mb-1')}>Or let your coding agent write it</h3>
                             <p className="m-0 text-[13px] leading-relaxed text-muted-foreground">
-                                One prompt: your coding agent installs NoClick, saves a key to your project without ever seeing it, and writes the code with you.
+                                One prompt for Claude Code, Codex or Cursor: it installs NoClick, saves a key to your project without ever seeing it, and writes the code with you.
                             </p>
                         </div>
-                        <WorksWith />
                         <CopyPromptAction copier={copier} />
                         <Terms action="copying the prompt" />
                     </section>

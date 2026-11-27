@@ -291,9 +291,9 @@ export interface SetupCode {
 }
 
 /** A one-time code a coding agent trades for a key that lands in its project's .env, never in its context; the key
- *  also holds `scopes`, ones a key with every scope doesn't. */
-export async function createSetupCode(client: NoClick, scopes?: readonly string[]): Promise<SetupCode> {
-    return (await Key.setupCode({ client, scopes: scopes?.length ? [...scopes] : undefined })).raw as unknown as SetupCode;
+ *  also holds `scopes`, ones a key with every scope doesn't, and takes `name`, for the task it's for. */
+export async function createSetupCode(client: NoClick, { scopes, name }: { scopes?: readonly string[]; name?: string } = {}): Promise<SetupCode> {
+    return (await Key.setupCode({ client, scopes: scopes?.length ? [...scopes] : undefined, name })).raw as unknown as SetupCode;
 }
 
 export async function updateKey(client: NoClick, keyId: string, input: UpdateKeyInput): Promise<KeyView> {

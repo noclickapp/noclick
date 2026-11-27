@@ -552,9 +552,7 @@ export default function PolicyPage() {
     return (
         <>
             <PageHeader
-                crumbs={[{ label: 'Settings', href: href('settings') }]}
-                title="Approval rules"
-                purpose="Which tools need a person to approve each call, and which never run."
+                section="approval-rules"
                 actions={
                     <>
                         {pending.error !== undefined && <span className="text-[12px] text-muted-foreground">{"Couldn't count pending approvals."}</span>}

@@ -13,7 +13,7 @@ import { DISPLAY } from '@/ui/titles';
 import { ALL_USERS, Agent } from 'noclick';
 import { useSlot } from '@/slots';
 import { createKey, createSetupCode, fullAccessScopes, type KeyView, type SetupCode } from '@/sdk/owner';
-import { INSTALL_TABS, OPERATIONS_EMPTY, coderPrompt, envExport, snippetTabs, type CoderTask, type NewPlace } from '@/screens/console/lib/snippets';
+import { INSTALL_TABS, OPERATIONS_EMPTY, coderKeyName, coderPrompt, envExport, snippetTabs, type CoderTask, type NewPlace } from '@/screens/console/lib/snippets';
 import { NEW_IN_CODE } from '@/screens/console/lib/newInCode';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
@@ -54,7 +54,7 @@ const CODING_AGENTS: { label: string; mark: ReactNode }[] = [
 ];
 
 /** The agents the prompt is written for: their marks, named on hover, and the rest in a word. */
-export function WorksWith() {
+function WorksWith() {
     return (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <ul aria-label="Works with" className="m-0 flex list-none flex-wrap items-center gap-1.5 p-0">
@@ -84,7 +84,7 @@ export function useCopyPrompt(task: CoderTask, place: NewPlace = {}) {
         setCreating(true);
         setError(null);
         let made: SetupCode | null = null;
-        const minting = createSetupCode(client, task.scopes).then((code) => (made = code));
+        const minting = createSetupCode(client, { scopes: task.scopes, name: coderKeyName(task) }).then((code) => (made = code));
         try {
             await copyToClipboard(minting.then((code) => promptFor(code.code)));
             setSetup(made);

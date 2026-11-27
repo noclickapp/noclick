@@ -32,7 +32,7 @@ import { CodeSnippet } from '../ui/CodeSnippet';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { AsideSection, DetailLayout, Fact, Facts } from '../ui/Detail';
 import { ErrorPanel } from '../ui/ErrorPanel';
-import { IdChip } from '../ui/IdChip';
+import { CopyIdChip } from '../ui/IdChip';
 import { JsonView } from '../ui/JsonView';
 import { PageHeader, PageSection } from '../ui/PageHeader';
 import { RevealOnceSecret } from '../ui/RevealOnceSecret';
@@ -257,7 +257,7 @@ function About({ user, onSaved, spending }: { user: User; onSaved: (u: User) => 
                 <SpendingFact user={user} onPause={spending.onPause} onResume={spending.onResume} />
                 <ContactFacts user={user} onSaved={onSaved} />
                 <Fact label="ID">
-                    <IdChip id={user.id} full />
+                    <CopyIdChip id={user.id} />
                 </Fact>
                 <Fact label="Created">
                     <TimeCell value={user.createdAt} tier="absolute" />

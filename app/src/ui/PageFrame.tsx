@@ -2,10 +2,15 @@
 // and one line on what lives here. On a phone the top bar carries the title.
 // A page one level down names the page it came from: a breadcrumb on a laptop,
 // the bar's back button on a phone.
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { PhoneBarBack, useInPhoneShell } from '@/ui/phoneBar';
 import { PageHead } from '@/ui/PageHead';
+import { cn } from '@/ui/utils';
+
+/** True where a page is drawn inside another frame that scrolls and pads it already (the developer console's): the
+ *  page keeps its head and body, and lays out where that frame puts it. */
+export const InHostFrame = createContext(false);
 
 export function PageFrame({
     title,
@@ -22,10 +27,11 @@ export function PageFrame({
     children: ReactNode;
 }) {
     const inPhone = useInPhoneShell();
+    const hosted = useContext(InHostFrame);
     return (
         // Relative: what a page positions (a screen-reader live region) lays out in its scroll, not the shell's.
-        <div className="relative h-full overflow-y-auto scrollbar-subtle">
-            <div className="mx-auto w-full max-w-[1080px] px-5 pb-24 pt-5 sm:px-8 sm:pt-10">
+        <div className={cn('relative', !hosted && 'h-full overflow-y-auto scrollbar-subtle')}>
+            <div className={hosted ? 'w-full' : 'mx-auto w-full max-w-[1080px] px-5 pb-24 pt-5 sm:px-8 sm:pt-10'}>
                 {back &&
                     (inPhone ? (
                         <PhoneBarBack label={back.label} title={title} onBack={back.onBack} />
@@ -37,7 +43,7 @@ export function PageFrame({
                             <ChevronRight className="h-3.5 w-3.5 opacity-60" />
                         </nav>
                     ))}
-                {(!inPhone || description || actions) && <PageHead className="mb-7" title={inPhone ? undefined : title} line={description} actions={actions} />}
+                {(!inPhone || hosted || description || actions) && <PageHead className="mb-7" title={inPhone && !hosted ? undefined : title} line={description} actions={actions} />}
                 {children}
             </div>
         </div>

@@ -48,7 +48,7 @@ export const NEW_IN_CODE: Readonly<Record<NewKind, NewInCodeKind>> = {
     webhook: {
         mark: Webhook,
         title: 'New endpoint',
-        page: 'settings/webhooks',
+        page: 'webhooks',
         description: 'NoClick POSTs each event you name to this URL, signed. The run that creates it prints its signing secret; later runs find it.',
         guide: 'guide/webhooks',
         goal: 'receive NoClick’s events on my server',

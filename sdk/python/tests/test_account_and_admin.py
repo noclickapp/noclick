@@ -59,9 +59,11 @@ def test_keys_are_listed_changed_revoked_and_a_setup_code_made(api):
     assert body(changed.calls.last.request) == {"name": "worker (prod)", "spend_cap_usd_per_month": None}
     api.delete("/v1/keys/key_1").respond(json={**KEY, "revoked_at": "2026-11-25T11:00:00Z"})
     assert nc.Key.revoke("key_1").revoked_at is not None
-    api.post("/v1/cli/setup_codes").respond(201, json={"object": "setup_code", "code": "nc_setup_x",
-                                                       "key_name": "Coding agent", "expires_at": None})
-    assert nc.Key.setup_code().code == "nc_setup_x"
+    coded = api.post("/v1/cli/setup_codes").respond(201, json={"object": "setup_code", "code": "nc_setup_x",
+                                                               "key_name": "Coding agent: build an agent", "expires_at": None})
+    code = nc.Key.setup_code(name="Coding agent: build an agent")
+    assert (code.code, code.key_name) == ("nc_setup_x", "Coding agent: build an agent")
+    assert body(coded.calls.last.request) == {"name": "Coding agent: build an agent"}
     made = api.post("/v1/keys").respond(201, json={**KEY, "type": "publishable", "scopes": []})
     key = nc.Key.create("site", [], type="publishable", public_endpoints=[{"kind": "agent_share", "id": "sh_1"}],
                         allowed_origins=["https://acme.com"])

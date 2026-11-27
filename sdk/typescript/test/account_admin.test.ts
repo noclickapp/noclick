@@ -53,8 +53,9 @@ test("keys are listed, changed and revoked, and a setup code and a publishable k
   assert.deepEqual(changed.last.body, { name: "worker (prod)", spend_cap_usd_per_month: null });
   api.on("DELETE", "/v1/keys/key_1", json({ ...KEY, revoked_at: "2026-11-25T11:00:00Z" }));
   assert.ok((await nc.Key.revoke("key_1")).revokedAt);
-  api.on("POST", "/v1/cli/setup_codes", json({ object: "setup_code", code: "nc_setup_x", key_name: "Coding agent" }, { status: 201 }));
-  assert.equal((await nc.Key.setupCode()).code, "nc_setup_x");
+  const coded = api.on("POST", "/v1/cli/setup_codes", json({ object: "setup_code", code: "nc_setup_x", key_name: "Coding agent: build an agent" }, { status: 201 }));
+  const code = await nc.Key.setupCode({ name: "Coding agent: build an agent" });
+  assert.deepEqual([code.code, code.keyName, coded.last.body], ["nc_setup_x", "Coding agent: build an agent", { name: "Coding agent: build an agent" }]);
   const made = api.on("POST", "/v1/keys", json({ ...KEY, type: "publishable", scopes: [] }, { status: 201 }));
   const key = await nc.Key.create("site", [], { type: "publishable", publicEndpoints: [{ kind: "agent_share", id: "sh_1" }] });
   assert.deepEqual(made.last.body, { name: "site", scopes: [], type: "publishable", public_endpoints: [{ kind: "agent_share", id: "sh_1" }] });

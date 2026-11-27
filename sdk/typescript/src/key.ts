@@ -147,12 +147,14 @@ export class Key {
    * A one-time setup code (`nc_setup_...`, 30 minutes) a coding agent redeems for a key of the account
    * (`noclick setup <code>`, or `POST /v1/setup`), so the key lands in its project, never in its context. Its key holds
    * every scope but the ones a key holds only when they're named, and also `scopes`, any of those the agent's work needs
-   * (`["machines:vetting"]`). The signed-in owner's alone.
+   * (`["machines:vetting"]`). The key takes `name`, for the task the agent is handed (default `Coding agent`); a code
+   * nobody redeems makes no key. The signed-in owner's alone.
    *
-   *     const { code } = await Key.setupCode();
+   *     const { code } = await Key.setupCode({ name: "Coding agent: build an agent" });
    */
-  static async setupCode(options: { scopes?: string[]; client?: NoClick } = {}): Promise<SetupCode> {
-    const json = options.scopes?.length ? { scopes: options.scopes } : undefined;
+  static async setupCode(options: { scopes?: string[]; name?: string; client?: NoClick } = {}): Promise<SetupCode> {
+    const body = defined({ scopes: options.scopes?.length ? options.scopes : undefined, name: options.name });
+    const json = Object.keys(body).length ? body : undefined;
     const raw = asObject(await resolveClient(options.client).request("POST", "/v1/cli/setup_codes", { json, user: null }));
     return { code: str(raw.code) ?? "", keyName: str(raw.key_name) ?? "", expiresAt: parseTime(raw.expires_at), raw };
   }

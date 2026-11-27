@@ -1,24 +1,25 @@
-// Resources: everything your agents and apps use, by kind. The overview is one
-// tile per kind the account has, with how many, then the kinds it can add;
-// `/resources/<kind>` is that kind's list, with the user facet (`?user=`,
-// default every user), a drawer and its actions; `/resources/<kind>/<page>` is
-// one of the kind's own pages (card issuing, funding the cards).
-import type { ReactNode } from 'react';
-import { ALL_USERS, Connection } from 'noclick';
-import { formatCount } from '@/screens/console/lib/format';
-import { Tile } from '@/ui/Tile';
-import { cn } from '@/ui/utils';
+// Resources: the app's own page (src/screens/resources), drawn in the console's frame, so what the account owns and
+// what it costs reads the same wherever it's looked at; under its tiles, the kinds only code makes. A kind the console
+// has a page of its own for (its user facet, IDs and actions) opens there: `/resources/<kind>` is that kind's list,
+// with the user facet (`?user=`, default every user), a drawer and its actions; `/resources/<kind>/<page>` is one of
+// the kind's own pages (card issuing, funding the cards).
+import { useMemo, type ReactNode } from 'react';
+import { useNavigate } from 'react-router';
+import { InHostFrame } from '@/ui/PageFrame';
+import { Tile, TILE_GRID } from '@/ui/Tile';
+import { ResourcesContext, type ResourcesContextValue } from '@/screens/resources/context';
+import type { KindId } from '@/screens/resources/kinds';
+import { ResourcesView } from '@/screens/resources/ResourcesPage';
+import { ResourcesReads } from '@/screens/resources/reads';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { useUserParam } from '@/screens/console/hooks/useQueryState';
 import { defaultWriteUser } from '@/screens/console/lib/userFilter';
-import { useV1 } from '@/sdk/useV1';
 import type { ConsolePageProps } from '../sections';
 import { ConnectionsTable } from '../connections';
 import { NewInCode } from '../NewInCode';
-import { AREAS, kindLead, visibleKinds, type ResourceKind, type ResourceKindId } from '../resourceKinds';
+import { kindLead, visibleKinds, type ResourceKind, type ResourceKindId } from '../resourceKinds';
 import { DesignedTag } from '../ui/DesignedTag';
-import { ErrorPanel } from '../ui/ErrorPanel';
-import { PageHeader, PageSection } from '../ui/PageHeader';
+import { PageHeader } from '../ui/PageHeader';
 import { AppsPanel } from './resources/AppsPanel';
 import { BrowserProfilesPanel } from './resources/BrowserProfilesPanel';
 import { CardsFundingPage } from './resources/CardsFunding';
@@ -99,134 +100,87 @@ const KIND_PAGES: Partial<Record<ResourceKindId, readonly KindPage[]>> = {
     ],
 };
 
-/** Connections aren't in the account's counts: one read of the first page says whether there are any. */
-function useConnectionCount() {
-    const { client } = useConsole();
-    return useV1('connections?overview', () => Connection.listPage({ client, userFilter: ALL_USERS, limit: 100 }));
+/** The app's kinds the console has a page of its own for, opened there; an agent opens on the console's Home. */
+const CONSOLE_PAGES: Partial<Record<KindId, string>> = {
+    agents: '',
+    numbers: 'resources/phone',
+    email: 'resources/inboxes',
+    apps: 'resources/apps',
+    databases: 'resources/databases',
+    storage: 'resources/storage',
+    machines: 'resources/machines',
+    secrets: 'resources/secrets',
+    repos: 'resources/repos',
+    domains: 'resources/domains',
+};
+
+const SHOWN_IN_APP = new Set(Object.values(CONSOLE_PAGES).map((path) => path.split('/')[1]));
+
+/** The console's kinds the app's page doesn't list: what only your code makes (designed ones in the lab). */
+function codeMadeKinds(lab: boolean): readonly ResourceKind[] {
+    return visibleKinds(lab).filter((kind) => !SHOWN_IN_APP.has(kind.id));
 }
 
-/** How many of a kind the account has: a number and its line, `undefined` while unknown. */
-type Tally = { count: number; line: string } | undefined;
-
-/** The kinds in use: two to a row on a phone, where each tile is its name and count alone. */
-const USED_GRID = 'grid grid-cols-2 gap-2.5 lg:grid-cols-3 xl:grid-cols-4';
-/** The kinds to add, each a line on what it is. */
-const MORE_GRID = 'grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3';
-
-/** The kind's glyph, bare, in the sidebar's line family. */
-function KindGlyph({ kind, quiet = false, className }: { kind: ResourceKind; quiet?: boolean; className?: string }) {
-    const Icon = kind.icon;
-    return <Icon aria-hidden className={cn('h-5 w-5 shrink-0', quiet ? 'text-muted-foreground' : 'text-foreground/75', className)} strokeWidth={1.75} />;
-}
-
-function Overview() {
+function CodeMade() {
     const href = useConsoleHref();
     const { lab } = useConsole();
-    const account = useAccount();
-    const connections = useConnectionCount();
-    const tally = (kind: ResourceKind): Tally => {
-        if (kind.inUse) return account.data ? kind.inUse(account.data) : undefined;
-        if (!connections.data) return undefined;
-        const n = connections.data.data.length;
-        return { count: n, line: `${formatCount(n)}${connections.data.nextCursor ? '+' : ''} ${n === 1 && !connections.data.nextCursor ? 'connection' : 'connections'}` };
-    };
-    const kinds = visibleKinds(lab).map((kind) => ({ kind, tally: tally(kind) }));
-    // A kind is in use once its count says so; one that couldn't be counted stays among them, never shown as none.
-    const failed = (account.error !== undefined && !account.data) || (connections.error !== undefined && !connections.data);
-    const loading = !failed && kinds.some((k) => k.tally === undefined);
-    const used = kinds.filter((k) => !k.tally || k.tally.count > 0);
-    const rest = kinds.filter((k) => k.tally && k.tally.count === 0);
+    const account = useAccount().data;
     return (
-        <>
-            <PageHeader section="resources" />
-            {failed && (
-                <ErrorPanel
-                    error={account.error ?? connections.error}
-                    onRetry={() => {
-                        void account.refresh();
-                        void connections.refresh();
-                    }}
-                    className="mb-8"
-                />
-            )}
-            {loading ? (
-                <div aria-busy className={USED_GRID}>
-                    {Array.from({ length: 8 }, (_, i) => (
-                        <span key={i} className="h-[66px] animate-pulse rounded-2xl bg-foreground/[0.04]" />
-                    ))}
-                </div>
-            ) : (
-                <>
-                    {used.length > 0 && (
-                        <PageSection title="In use">
-                            <ByArea label="In use" kinds={used.map((u) => u.kind)} grid={USED_GRID}>
-                                {(kind) => {
-                                    const tally = used.find((u) => u.kind === kind)?.tally;
-                                    return (
-                                        <Tile
-                                            href={href(`resources/${kind.id}`)}
-                                            mark={<KindGlyph kind={kind} className="hidden sm:block" />}
-                                            title={kind.label}
-                                            detail={tally ? <span className="tabular-nums text-foreground/75">{tally.line}</span> : 'Count unavailable'}
-                                            label={`${kind.label}: ${tally?.line ?? 'count unavailable'}`}
-                                            className="h-full"
-                                        />
-                                    );
-                                }}
-                            </ByArea>
-                        </PageSection>
-                    )}
-                    {rest.length > 0 && <MoreKinds kinds={rest.map((r) => r.kind)} first={!used.length && !failed} />}
-                </>
-            )}
-        </>
+        <section aria-label="Only your code makes these" className="mt-10">
+            <h2 className="m-0 mb-3 text-[15px] font-semibold text-foreground">Only your code makes these</h2>
+            <div className={TILE_GRID}>
+                {codeMadeKinds(lab).map((kind) => {
+                    const Icon = kind.icon;
+                    const line = kind.inUse && account ? kind.inUse(account).line : kind.what;
+                    return (
+                        <Tile
+                            key={kind.id}
+                            href={href(`resources/${kind.id}`)}
+                            mark={
+                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-foreground/[0.05]">
+                                    <Icon aria-hidden className="h-5 w-5 text-foreground/75" strokeWidth={1.75} />
+                                </span>
+                            }
+                            title={kind.label}
+                            detail={line}
+                            label={`${kind.label}: ${line}`}
+                            testId={`code-kind-tile-${kind.id}`}
+                        />
+                    );
+                })}
+            </div>
+        </section>
     );
 }
 
-/** Kinds under their area's name, each area a grid of its own, in the areas' order. */
-function ByArea({ label, kinds, grid, children }: { label: string; kinds: ResourceKind[]; grid: string; children: (kind: ResourceKind) => ReactNode }) {
-    return (
-        <div className="flex flex-col gap-6">
-            {AREAS.map((area) => {
-                const inArea = kinds.filter((k) => k.area === area);
-                if (!inArea.length) return null;
-                return (
-                    <div key={area}>
-                        <h3 className="m-0 mb-2.5 text-[13px] font-medium text-foreground/75 dark:text-muted-foreground">{area}</h3>
-                        <ul aria-label={`${label}: ${area}`} className={cn('m-0 list-none p-0', grid)}>
-                            {inArea.map((kind) => (
-                                <li key={kind.id} className="min-w-0">
-                                    {children(kind)}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                );
-            })}
-        </div>
-    );
-}
-
-/** The kinds the account hasn't used yet, by area: each one a line on what it is. */
-function MoreKinds({ kinds, first }: { kinds: ResourceKind[]; first: boolean }) {
+/** The overview: the app's Resources, its kinds the console has a page for opening there, and what only code makes
+ *  under its tiles, laid out in the console's own frame as its other pages are. */
+function Overview() {
+    const navigate = useNavigate();
     const href = useConsoleHref();
-    const title = first ? 'What you can use' : 'More you can add';
+    const { country } = useConsole();
+    const value = useMemo<ResourcesContextValue>(
+        () => ({
+            billing: true,
+            country,
+            openKind: (kind) => {
+                const page = CONSOLE_PAGES[kind];
+                if (page === undefined) return false;
+                navigate(href(page));
+                return true;
+            },
+            more: <CodeMade />,
+        }),
+        [country, navigate, href]
+    );
     return (
-        <PageSection title={title} note="Each one is made from your code, or from its page here.">
-            <ByArea label={title} kinds={kinds} grid={MORE_GRID}>
-                {(kind) => (
-                    <Tile
-                        href={href(`resources/${kind.id}`)}
-                        mark={<KindGlyph kind={kind} quiet />}
-                        title={kind.label}
-                        detail={kind.what}
-                        wrapDetail
-                        label={kind.label}
-                        className="h-full items-start"
-                    />
-                )}
-            </ByArea>
-        </PageSection>
+        <InHostFrame.Provider value>
+            <ResourcesContext.Provider value={value}>
+                <ResourcesReads>
+                    <ResourcesView />
+                </ResourcesReads>
+            </ResourcesContext.Provider>
+        </InHostFrame.Provider>
     );
 }
 

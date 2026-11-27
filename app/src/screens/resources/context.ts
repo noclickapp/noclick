@@ -1,6 +1,6 @@
 // What whoever shows Resources hands it: values, where a slot (slots.ts) is a piece of the page. The client, the site
 // and the live frames come from the console's context it's drawn inside (useConsole).
-import { createContext, useContext } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import type { KindId } from './kinds';
 
@@ -32,6 +32,11 @@ export interface ResourcesContextValue {
     openWorkflow?: (workflow: { id: string; name: string }) => void;
     /** Hands the page's items to a command palette. */
     remember?: (items: RememberedItem[]) => void;
+    /** Opens a kind on a page of the host's own instead (the developer console's, with its user filter and actions),
+     *  returning whether it did; absent, or false, the kind opens here. */
+    openKind?: (kind: KindId) => boolean;
+    /** More the account holds, under the overview's tiles: the developer console's kinds only code makes. */
+    more?: ReactNode;
 }
 
 export const ResourcesContext = createContext<ResourcesContextValue>({ billing: true });

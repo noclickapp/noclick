@@ -25,10 +25,6 @@ import {
 import { formatCount } from '@/screens/console/lib/format';
 import type { AccountView } from '@/sdk/owner';
 
-/** The overview's order: a kind sits in one area, and the areas keep their order. */
-export const AREAS = ['Accounts and channels', 'Running code', 'Data', 'Domains and money'] as const;
-export type Area = (typeof AREAS)[number];
-
 export type ResourceKindId =
     | 'connections'
     | 'phone'
@@ -50,7 +46,6 @@ export type ResourceKindId =
 
 export interface ResourceKind {
     id: ResourceKindId;
-    area: Area;
     label: string;
     icon: LucideIcon;
     /** What it is, in one line: the overview's tile and the start of its page's lead. */
@@ -70,7 +65,6 @@ const counted = (count: number | undefined, one: string, many?: string) => ({ co
 export const RESOURCE_KINDS: readonly ResourceKind[] = [
     {
         id: 'connections',
-        area: 'Accounts and channels',
         label: 'Connections',
         icon: PlugZap,
         what: "Your users' Gmail, Slack, Stripe and more, which your code and agents act in.",
@@ -78,7 +72,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'phone',
-        area: 'Accounts and channels',
         label: 'Phone numbers',
         icon: Phone,
         what: 'Real numbers your agents answer and call from.',
@@ -86,7 +79,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'inboxes',
-        area: 'Accounts and channels',
         label: 'Inboxes',
         icon: Inbox,
         what: 'Email addresses your code and agents receive mail at and reply from.',
@@ -94,7 +86,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'channels',
-        area: 'Accounts and channels',
         label: 'Channels',
         icon: MessagesSquare,
         what: 'Chat rooms where your agents, your users and other agents talk.',
@@ -102,7 +93,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'sandboxes',
-        area: 'Running code',
         label: 'Sandboxes',
         icon: Box,
         what: 'Linux machines that run code for minutes or hours, billed by the second.',
@@ -110,7 +100,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'machines',
-        area: 'Running code',
         label: 'Machines',
         icon: Server,
         what: 'Always-on computers your agents run on, at a flat monthly price.',
@@ -119,7 +108,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'apps',
-        area: 'Running code',
         label: 'Apps',
         icon: AppWindow,
         what: 'Repos deployed to a URL, with previews, domains and schedules.',
@@ -128,7 +116,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'repos',
-        area: 'Running code',
         label: 'Repos',
         icon: GitBranch,
         what: 'Git repositories your code and agents commit to.',
@@ -137,7 +124,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'browser-profiles',
-        area: 'Running code',
         label: 'Browser profiles',
         icon: Compass,
         what: 'Signed-in browsers your agents use on sites with no API.',
@@ -145,7 +131,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'databases',
-        area: 'Data',
         label: 'Databases',
         icon: Database,
         what: 'Postgres and SQLite databases your apps and agents keep their data in.',
@@ -154,7 +139,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'storage',
-        area: 'Data',
         label: 'Storage',
         icon: HardDrive,
         what: 'Buckets of files, private by default, shared with signed links.',
@@ -162,7 +146,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'volumes',
-        area: 'Data',
         label: 'Volumes',
         icon: FolderOpen,
         what: 'Disks that keep files between runs, mounted into sandboxes and agents.',
@@ -171,7 +154,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'dicts',
-        area: 'Data',
         label: 'Key-value stores',
         icon: Braces,
         what: 'Small shared state by key, for your code and agents.',
@@ -180,7 +162,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'queues',
-        area: 'Data',
         label: 'Queues',
         icon: ListOrdered,
         what: 'Background work handed to a worker or an agent, retried until it is done.',
@@ -189,7 +170,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'secrets',
-        area: 'Data',
         label: 'Secrets',
         icon: LockKeyhole,
         what: 'Third-party keys and other values your sandboxes, agents and apps read.',
@@ -198,7 +178,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'domains',
-        area: 'Domains and money',
         label: 'Domains',
         icon: Globe,
         what: 'Domains you bought or connected, and what each one serves.',
@@ -206,7 +185,6 @@ export const RESOURCE_KINDS: readonly ResourceKind[] = [
     },
     {
         id: 'cards',
-        area: 'Domains and money',
         label: 'Cards',
         icon: CreditCard,
         what: 'Virtual cards with spending limits, for agents that buy things.',

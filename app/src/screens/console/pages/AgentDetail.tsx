@@ -66,7 +66,7 @@ import { ConsoleButton } from '../ui/Button';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { CopyButton } from '../ui/CopyButton';
 import { CodeSnippet } from '../ui/CodeSnippet';
-import { IdChip } from '../ui/IdChip';
+import { CopyIdChip, IdChip } from '../ui/IdChip';
 import { TimeCell } from '../ui/TimeCell';
 import { Money } from '../ui/Money';
 import { CapMeter } from '../ui/CapMeter';
@@ -516,7 +516,7 @@ function About({ agent, save }: { agent: Agent; save: SaveAgent }) {
                 )}
                 <A2AFact agentId={agent.id} />
                 <Fact label="ID">
-                    <IdChip id={agent.id} full />
+                    <CopyIdChip id={agent.id} />
                 </Fact>
                 <Fact label="Created">
                     <TimeCell value={agent.createdAt} tier="absolute" />

@@ -27,7 +27,8 @@ import {
     type PublicAccessInput,
     type PublicEndpoint,
 } from '@/sdk/owner';
-import { keyRevealTabs } from '@/screens/console/lib/snippets';
+import { docsUrl } from '@/screens/console/lib/site';
+import { API_KEY_ENV } from '@/sdk/source';
 import { scopeWords } from '@/screens/console/lib/scopes';
 import { formatMoney } from '@/screens/console/lib/format';
 import type { StatusLook } from '@/screens/console/lib/status';
@@ -39,14 +40,13 @@ import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { ConsoleButton } from '../ui/Button';
 import { CapMeter } from '../ui/CapMeter';
-import { CodeSnippet } from '../ui/CodeSnippet';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { CopyButton } from '../ui/CopyButton';
 import { DataTable, type Column } from '../ui/DataTable';
 import { Drawer } from '../ui/Drawer';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { PageHeader } from '../ui/PageHeader';
-import { RevealOnceSecret } from '../ui/RevealOnceSecret';
+import { SecretShownOnce } from '../ui/RevealOnceSecret';
 import { Segmented } from '../ui/Segmented';
 import { StatusPill } from '../ui/StatusPill';
 import { SWITCH_ROWS, SwitchRow } from '../ui/SwitchRow';
@@ -262,7 +262,7 @@ const LABEL = 'text-[12px] font-medium text-muted-foreground';
 
 const KEY_FIELDS: Record<string, string> = { name: 'name', scopes: 'scopes', spend_cap_usd_per_month: 'cap', user_id: 'user', expires_at: 'expires' };
 
-function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpenChange: (open: boolean) => void; onCreated: (rawKey: string) => void }) {
+function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpenChange: (open: boolean) => void; onCreated: (made: CreatedKey) => void }) {
     const { client, now } = useConsole();
     const Terms = useSlot(TERMS);
     const [keyType, setKeyType] = useState<KeyType>('secret');
@@ -356,7 +356,7 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
             invalidateV1('keys');
             if (!key.raw_key) throw new Error(`The key was created but its secret didn't come back; revoke ${key.key_prefix}… and create another.`);
             reset();
-            onCreated(key.raw_key);
+            onCreated({ name: key.name || input.name, raw: key.raw_key });
         } catch (error) {
             const { field, message } = formError(error);
             if (field && KEY_FIELDS[field]) setErrors({ [KEY_FIELDS[field]]: message });
@@ -794,8 +794,14 @@ export function orderKeys(keys: readonly KeyView[]): KeyView[] {
     return [...keys.filter((k) => k.kind === 'console'), ...keys.filter((k) => k.kind !== 'console')];
 }
 
+/** A key just made: its name, and its secret, which is shown this once. */
+interface CreatedKey {
+    name: string;
+    raw: string;
+}
+
 export default function Keys() {
-    const { client } = useConsole();
+    const { client, site } = useConsole();
     const href = useConsoleHref();
     const navigate = useNavigate();
     const allScopes = useAccount().data?.meta.scopes ?? [];
@@ -803,7 +809,7 @@ export default function Keys() {
     const [selected, setSelected] = useSearchParam('key');
     const status = statusParam === 'revoked' ? 'revoked' : 'active';
     const [creating, setCreating] = useState(false);
-    const [created, setCreated] = useState<string | null>(null);
+    const [created, setCreated] = useState<CreatedKey | null>(null);
     const [action, setAction] = useState<KeyAction>(null);
 
     const fetchPage = useCallback((cursor: string | null) => listKeys(client, { status, cursor, limit: 50 }), [client, status]);
@@ -892,21 +898,26 @@ export default function Keys() {
             <CreateKeyDialog
                 open={creating}
                 onOpenChange={setCreating}
-                onCreated={(rawKey) => {
+                onCreated={(made) => {
                     setCreating(false);
-                    setCreated(rawKey);
+                    setCreated(made);
                 }}
             />
-            <RevealOnceSecret secret={created} title="Key created" onDone={() => setCreated(null)}>
-                {(raw) => (
-                    <div className="flex flex-col gap-2">
-                        <CodeSnippet tabs={keyRevealTabs(raw)} />
-                        <p className="m-0 text-[12px] text-muted-foreground">
-                            Only the env tab holds the key; the other snippets read <span className="font-mono">$NOCLICK_API_KEY</span>.
-                        </p>
-                    </div>
-                )}
-            </RevealOnceSecret>
+            <SecretShownOnce
+                secret={created?.raw ?? null}
+                title={`${created?.name ?? 'Your key'} is ready`}
+                label="Secret key"
+                copyLabel="Copy key"
+                env={API_KEY_ENV}
+                where={
+                    <>
+                        Put it in your project&apos;s <span className="font-mono text-foreground">.env</span> as <span className="font-mono text-foreground">{API_KEY_ENV}</span>. Python and
+                        TypeScript read it from there.
+                    </>
+                }
+                guide={{ label: 'Using it from your code', href: docsUrl(site, 'guide/getting-started') }}
+                onDone={() => setCreated(null)}
+            />
             {action?.kind === 'rename' && <RenameDialog keyView={action.key} onClose={() => setAction(null)} />}
             {action?.kind === 'access' && <AccessDialog keyView={action.key} onClose={() => setAction(null)} />}
             {action?.kind === 'cap' && <CapDialog keyView={action.key} onClose={() => setAction(null)} />}

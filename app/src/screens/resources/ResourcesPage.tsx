@@ -237,7 +237,7 @@ export function ResourcesLoading() {
 export function ResourcesView() {
     const [params, setParams] = useSearchParams();
     const { items, loading, errors, now, refresh } = useResourceItems();
-    const { billing, remember } = useResources();
+    const { billing, remember, openKind, more } = useResources();
     // A command palette can open any of these by name later, from anywhere.
     useEffect(() => {
         remember?.(
@@ -445,7 +445,7 @@ export function ResourcesView() {
                             title={k.label}
                             detail={waiting ? <Skeleton data-testid={`kind-tile-${k.id}-loading`} className="h-3 w-24" /> : broken ? <span className="text-red-600 dark:text-red-400">{broken} not reachable</span> : line}
                             label={`${k.label}: ${line}`}
-                            onOpen={() => go(k.id, null, true)}
+                            onOpen={() => openKind?.(k.id) || go(k.id, null, true)}
                             testId={`kind-tile-${k.id}`}
                             trailing={
                                 waiting ? undefined : manualFor(k.id) && !list.length ? (
@@ -469,6 +469,7 @@ export function ResourcesView() {
                     );
                 })}
             </div>
+            {more}
         </PageFrame>
     );
 }

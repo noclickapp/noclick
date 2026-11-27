@@ -1,5 +1,35 @@
+import { useState } from 'react';
+import { Check, Copy } from 'lucide-react';
 import { cn } from '@/ui/utils';
 import { CopyButton } from './CopyButton';
+
+/** An object's id where its name and status lead (a drawer's or a page's header): a "Copy ID" chip that copies it,
+ *  never the 36 characters beside the status. The id itself shows on hover. */
+export function CopyIdChip({ id, className }: { id: string; className?: string }) {
+    const [copied, setCopied] = useState(false);
+    return (
+        <button
+            type="button"
+            title={id}
+            onClick={async () => {
+                try {
+                    await navigator.clipboard.writeText(id);
+                    setCopied(true);
+                    window.setTimeout(() => setCopied(false), 1500);
+                } catch (err) {
+                    console.error('Copy failed', err);
+                }
+            }}
+            className={cn(
+                'inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-foreground/[0.06] px-2.5 text-[12px] font-medium text-foreground/75 transition-colors hover:bg-foreground/[0.1] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                className
+            )}
+        >
+            {copied ? 'Copied' : 'Copy ID'}
+            {copied ? <Check aria-hidden className="h-3 w-3" /> : <Copy aria-hidden className="h-3 w-3" />}
+        </button>
+    );
+}
 
 /** An id: mono, whole, cut at its end only where its column runs out (never in
  *  the middle, so it reads the way it starts), copy on hover (always visible on
