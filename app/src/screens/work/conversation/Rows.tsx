@@ -15,6 +15,7 @@ import { useModelAccounts } from '../newAgent/catalog';
 import { clockOf, XS_BUTTON, XS_GHOST, XS_OUTLINE } from './styles';
 import { changedFiles, stepsOf, type Failure, type MarkerEntry, type NoteEntry, type TurnEntry, type UserEntry } from '@/lib/agentThread/thread';
 import { TURN_FAILED_LINE } from '@/lib/agentThread/messages';
+import { withoutAskLinks } from '@/lib/linkDisplay';
 import { PlanLimitLine } from './ModelSwitch';
 import { useSlot } from '@/slots';
 import { REPLY_MARKDOWN } from '../slots';
@@ -253,6 +254,8 @@ export function TurnView({
         </div>
     );
     const steers = turn.parts.filter((p) => p.kind === 'user');
+    // A link one of its asks draws as a card below shows there alone.
+    const said = cards && turn.reply ? withoutAskLinks(turn.reply, turn.asks) : turn.reply;
     return (
         <div className="group" data-row="turn" data-status={turn.status}>
             {running ? (
@@ -271,17 +274,17 @@ export function TurnView({
                     {turn.failure ? (
                         <>
                             {/* What it said on the way, never the platform's line its failed reply carries. */}
-                            {turn.reply && turn.reply !== TURN_FAILED_LINE && (
+                            {said && turn.reply !== TURN_FAILED_LINE && (
                                 <div className="pt-2" data-reply>
-                                    <Words text={turn.reply} />
+                                    <Words text={said} />
                                 </div>
                             )}
                             <RefusedNote failure={turn.failure} told={failureTold} onReconnect={onReconnect} />
                         </>
                     ) : (
-                        turn.reply && (
+                        said && (
                             <div className="pt-2" data-reply>
-                                <Words text={turn.reply} muted={turn.status === 'failed'} />
+                                <Words text={said} muted={turn.status === 'failed'} />
                             </div>
                         )
                     )}

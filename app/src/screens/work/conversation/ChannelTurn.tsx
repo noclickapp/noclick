@@ -12,6 +12,7 @@ import { MessageBody } from '@/screens/channels/MessageBody';
 import { authorMember, YOU } from '@/screens/channels/model';
 import type { ChannelAuthor as PostAuthor, ChannelMember } from '@/screens/channels/types';
 import { cn } from '@/ui/utils';
+import { withoutAskLinks } from '@/lib/linkDisplay';
 import { allStepsOf, stepsOf, type Failure, type Step, type TurnEntry, type UserEntry } from '@/lib/agentThread/thread';
 import { doing, Elapsed, failedStep, Shine, StepList, type ToolCalls } from './Activity';
 import { ApprovalRow, PlanCard, QuestionSummary, RefusedNote } from './Rows';
@@ -164,7 +165,8 @@ export function ChannelTurn({ entry, turn, agent, mine, header, mode, requests, 
     else if (reply)
         own = (
             <div className={cn(running && "[&_p:last-of-type]:after:ml-0.5 [&_p:last-of-type]:after:inline-block [&_p:last-of-type]:after:h-[1em] [&_p:last-of-type]:after:w-[2px] [&_p:last-of-type]:after:animate-pulse [&_p:last-of-type]:after:bg-foreground/70 [&_p:last-of-type]:after:align-[-0.15em] [&_p:last-of-type]:after:content-['']")} data-writing={running || undefined}>
-                <MessageBody text={reply} members={members} channels={NO_CHANNELS} onChannel={() => {}} />
+                {/* A link one of its asks draws as a card below shows there alone. */}
+                <MessageBody text={cards && turn ? withoutAskLinks(reply, turn.asks) : reply} members={members} channels={NO_CHANNELS} onChannel={() => {}} />
             </div>
         );
     else

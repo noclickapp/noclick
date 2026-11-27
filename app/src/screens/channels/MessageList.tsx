@@ -14,6 +14,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { ArrowRight, Check, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
 import type { AgentNeed } from '@/lib/agentNeeds';
+import { withoutAskLinks } from '@/lib/linkDisplay';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { LogoMark, MARK_IN_A_SHAPE } from '@/ui/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/ui/dropdown-menu';
@@ -719,6 +720,8 @@ export function MessageRow({
         Date.parse(msg.at) - Date.parse(prev.at) < GROUP_WINDOW_MS;
     const canReact = !msg.ephemeral && !msg.pending;
     const lit = actions.lit === msg.id;
+    // A link one of its asks draws as a row below shows there alone.
+    const words = msg.turnAsks && actions.TurnAsks ? withoutAskLinks(msg.text, msg.turnAsks.asks) : msg.text;
     return (
         <div
             className={cn(
@@ -795,7 +798,7 @@ export function MessageRow({
                         )}
                     </div>
                 )}
-                {msg.text && <MessageBody text={msg.text} members={members} channels={channels} onChannel={onChannel} muted={msg.author.type === 'system' && !msg.ephemeral} />}
+                {words && <MessageBody text={words} members={members} channels={channels} onChannel={onChannel} muted={msg.author.type === 'system' && !msg.ephemeral} />}
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
                 {msg.question && <QuestionAnswers options={msg.question.options} answer={answer} onAnswer={actions.onAnswer} />}
                 {msg.asks && msg.asks.needs.length > 0 && (author?.agentId && actions.Asks ? <actions.Asks agentId={author.agentId} needs={msg.asks.needs} /> : <NamedAsks needs={msg.asks.needs} />)}
