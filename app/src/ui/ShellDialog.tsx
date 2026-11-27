@@ -1,9 +1,10 @@
 // The app's dialog, which every popup that makes, renames, shares or deletes something is built from (and the
 // developer console's `ConsoleDialog`): the page's own surface (white in light, near-black in dark, never a lighter
 // grey) over a dimmed page, a header with an optional mark, the title in the brand face and one line under it, then
-// the body and pill buttons with no rules between them, its corners a multi-row box's (26px), and on a phone a sheet
+// the body and pill buttons with no rules between them (but a hairline where the body scrolls under the header or the
+// footer), its corners a multi-row box's (26px), and on a phone a sheet
 // from the bottom. Focus goes back to whatever opened it.
-import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { cn } from '@/ui/utils';
@@ -47,8 +48,39 @@ export interface ShellDialogProps {
     testId?: string;
 }
 
+/** Whether a scrolling body has more above or below what shows: the header and footer then draw a hairline, so nothing
+ *  reads as covered by them. */
+function useScrollEdges() {
+    const [edges, setEdges] = useState({ above: false, below: false });
+    const node = useRef<HTMLDivElement | null>(null);
+    const measure = useCallback(() => {
+        const el = node.current;
+        if (!el) return;
+        const above = el.scrollTop > 1;
+        const below = el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+        setEdges((was) => (was.above === above && was.below === below ? was : { above, below }));
+    }, []);
+    const ref = useCallback(
+        (el: HTMLDivElement | null) => {
+            node.current = el;
+            measure();
+        },
+        [measure]
+    );
+    useEffect(() => {
+        const el = node.current;
+        if (!el || typeof ResizeObserver === 'undefined') return;
+        const watch = new ResizeObserver(measure);
+        watch.observe(el);
+        for (const child of Array.from(el.children)) watch.observe(child);
+        return () => watch.disconnect();
+    });
+    return { ref, onScroll: measure, ...edges };
+}
+
 export function ShellDialog({ open, onOpenChange, title, description, mark, markTile = true, tone = 'neutral', children, footer, onSubmit, size = 'sm', dismissible = true, inline = false, onKeyDown, className, testId }: ShellDialogProps) {
     const returnFocus = useReturnFocus();
+    const scroll = useScrollEdges();
     const hold = (e: Event) => {
         if (!dismissible) e.preventDefault();
     };
@@ -60,8 +92,12 @@ export function ShellDialog({ open, onOpenChange, title, description, mark, mark
     };
     const body = (
         <>
-            {children != null && <div className="min-h-0 flex-1 overflow-y-auto px-6 py-2 text-sm">{children}</div>}
-            {footer && <div className="flex flex-wrap items-center justify-end gap-2 px-6 pb-6 pt-4">{footer}</div>}
+            {children != null && (
+                <div ref={scroll.ref} onScroll={scroll.onScroll} className={cn('min-h-0 flex-1 overflow-y-auto border-y border-transparent px-6 py-2 text-sm', scroll.above && 'border-t-border dark:border-t-foreground/[0.08]', scroll.below && footer && 'border-b-border dark:border-b-foreground/[0.08]')}>
+                    {children}
+                </div>
+            )}
+            {footer && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 px-6 pb-6 pt-4">{footer}</div>}
         </>
     );
     const content = (
@@ -82,7 +118,7 @@ export function ShellDialog({ open, onOpenChange, title, description, mark, mark
                 className
             )}
         >
-            <div className={cn('px-6 pt-6', children != null || footer ? 'pb-3' : 'pb-6', dismissible && 'pr-14')}>
+            <div className={cn('shrink-0 px-6 pt-6', children != null || footer ? 'pb-3' : 'pb-6', dismissible && 'pr-14')}>
                 <div className="flex min-w-0 items-center gap-3.5">
                     {mark && (markTile ? <span className={cn(DIALOG_MARK, MARK_TONES[tone])}>{mark}</span> : mark)}
                     <div className="min-w-0">

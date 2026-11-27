@@ -2,7 +2,7 @@
 // values are masked as you type and never shown again, checked before they're sent, and the
 // "Set values" dialog that merges them into a secret or replaces what it holds.
 import { useEffect, useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { LockKeyhole, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
 import type { Secret } from 'noclick';
@@ -141,6 +141,7 @@ export function SetValuesDialog({
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<LockKeyhole aria-hidden className="h-5 w-5" />}
             title={initialKey ? `Replace ${initialKey}` : `Set values in ${secret.name}`}
             description="Values are write-only: once saved, nobody can read one back, here or through the API. New sandboxes get them at once, agents from their next turn, apps at their next deploy."
             footer={

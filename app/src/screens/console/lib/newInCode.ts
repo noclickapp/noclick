@@ -1,8 +1,9 @@
 // What each "New …" dialog says, for everything the console shows code to make rather than a form: its mark, title
 // and line, the docs page it links to, and what its prompt asks a coding agent to set up. The code itself is the
 // kind's in `snippets.ts` (`NEW_SNIPPETS`), where the snippet test holds every place's code to both SDKs.
-import { Bot, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
+import { Bot, NotebookPen, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
 import { RESOURCE_KINDS, type ResourceKindId } from '@/screens/console/resourceKinds';
+import { machinesPolicyUrl, NOCLICK_SITE } from './site';
 import type { CoderTask, NewKind } from './snippets';
 
 export interface NewInCodeKind extends CoderTask {
@@ -132,6 +133,51 @@ export const NEW_IN_CODE: Readonly<Record<NewKind, NewInCodeKind>> = {
         guide: 'guide/dicts',
         goal: 'keep small shared state in a key-value store',
         ask: 'Ask me what it keeps track of, make the store, and use it from my code.',
+    },
+    connection: {
+        ...resource('connections'),
+        title: 'New connection',
+        description: 'An account at a service, which your code and agents use by its name. It waits for someone to sign in at its link; running the code again finds the same one.',
+        guide: 'guide/connections',
+        goal: 'connect an account my code and agents act in',
+        ask: 'Ask me which service and whose account it is, make the named connection in code, and give me its connect link to send to whoever signs in to that account. Never sign in to it yourself.',
+    },
+    secret: {
+        ...resource('secrets'),
+        title: 'New secret',
+        description: 'Values your code reads from its environment, in sandboxes, agents’ shells and apps. The code reads each from its own environment, so a value is never typed here or into a prompt.',
+        guide: 'guide/secrets',
+        goal: 'keep a value such as an API key in a NoClick secret',
+        ask: 'Ask me which values the secret holds, by name only. Read each value from this project’s environment or .env (if one is missing, ask me to add it there myself), never ask me to paste one to you, and never print, log or commit one. Then make the secret from them in code.',
+    },
+    memory: {
+        mark: NotebookPen,
+        title: 'New memory entry',
+        description: 'A note the agent keeps across conversations: every turn starts with its name and description. Saving it again replaces it.',
+        guide: 'guide/memory',
+        goal: 'seed what my agent should know',
+        ask: 'Ask me what my agent should know, then save each piece in code as a named memory entry with a one-line description of what it holds.',
+    },
+    machines: {
+        // Its page shows the dialog only while the account may ask, so the palette doesn't offer it.
+        ...resource('machines'),
+        page: undefined,
+        title: 'Ask for machines',
+        description: 'NoClick reviews each account before its first machine. A person reads the machines usage policy and says they accept it; the code records who and when.',
+        guide: 'guide/machines',
+        goal: 'ask NoClick for machines for my company',
+        ask: `Ask me for my company’s legal name, website, country and what its machines will run. Then ask me to read the machines usage policy (${machinesPolicyUrl(NOCLICK_SITE)}) and to say that I accept it for my company; don’t submit anything until I do. Submit the request in code, with my name and email as who accepted it and the moment I said so as when. The key this prompt gives you holds the machines:vetting scope it needs.`,
+        scopes: ['machines:vetting'],
+    },
+    card: {
+        // Cards are drawn in the lab alone, so the palette doesn't offer the page.
+        ...resource('cards'),
+        page: undefined,
+        title: 'New card',
+        description: 'A virtual card that spends your card balance within the limit you set. Running the code again finds the same card and sets its limits to yours.',
+        guide: 'guide/cards',
+        goal: 'issue a virtual card my agents pay with',
+        ask: 'Ask me what the card is for, its spending limit and where it may be used, then issue it in code. Never print or keep its number.',
     },
     queue: {
         ...resource('queues'),

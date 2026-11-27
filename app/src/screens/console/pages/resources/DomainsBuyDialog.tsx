@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { EMPTY_REGISTRANT, REGISTRANT_FIELDS, registrantFrom, type RegistrantDraft } from '@/lib/domainRegistrant';
 import { cn } from '@/ui/utils';
+import { Checkbox } from '@/ui/checkbox';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Domain, type DomainContact, type DomainOffer, type DomainPurchase } from 'noclick';
 import { formatMoneyFull } from '@/screens/console/lib/format';
 import type { StatusLook } from '@/screens/console/lib/status';
@@ -176,7 +178,7 @@ export function useRegistrant(active: boolean, user: string | null): { registran
                         : "It records no acceptance of the registration agreement, so the API refuses purchases with it until it's set again with agreement_accepted_at."}
                 </p>
             ) : (
-                <div className={cn('grid gap-3 rounded-lg border p-3 sm:grid-cols-2', HAIRLINE)}>
+                <div className="grid gap-3 sm:grid-cols-2">
                     {REGISTRANT_FIELDS.map((f) => (
                         <div key={f.key} className={f.wide ? 'sm:col-span-2' : undefined}>
                             <LabeledInput label={f.label} id={`registrant-${f.key}`}>
@@ -208,11 +210,11 @@ export function useRegistrant(active: boolean, user: string | null): { registran
                         </p>
                     ) : (
                         <div className="flex flex-col gap-1 sm:col-span-2">
-                            <label className="flex items-start gap-2 text-[13px]">
-                                <input type="checkbox" className="mt-0.5" checked={acceptedAt !== null} onChange={(e) => setAcceptedAt(e.target.checked ? new Date(now()) : null)} />
+                            <label className="flex items-start gap-2.5 text-[13px]">
+                                <Checkbox className="mt-0.5" checked={acceptedAt !== null} onCheckedChange={(on) => setAcceptedAt(on === true ? new Date(now()) : null)} />
                                 <span>They accepted the domain registration agreement</span>
                             </label>
-                            <p className="m-0 pl-5 text-[12px] text-muted-foreground">
+                            <p className="m-0 pl-[26px] text-[12px] text-muted-foreground">
                                 Show them{' '}
                                 {agreement.data ? (
                                     <a href={agreement.data.url} target="_blank" rel="noreferrer" className="text-foreground underline underline-offset-2">
@@ -365,23 +367,17 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
                         <div className="grid gap-3 sm:grid-cols-2">
                             <UserField value={user} onChange={setUser} />
                             <LabeledInput label="Years" id="domain-years">
-                                <select
+                                <FieldSelect
                                     id="domain-years"
-                                    className={INPUT}
-                                    value={years}
-                                    onChange={(e) => {
-                                        const next = Number(e.target.value);
+                                    value={String(years)}
+                                    onValueChange={(v) => {
+                                        const next = Number(v);
                                         setYears(next);
                                         const t = totalFor(picked, next);
                                         setMax(t != null ? String(t) : '');
                                     }}
-                                >
-                                    {termsOf(picked).map((y) => (
-                                        <option key={y} value={y}>
-                                            {y === 1 ? '1 year' : `${y} years`}
-                                        </option>
-                                    ))}
-                                </select>
+                                    options={termsOf(picked).map((y) => ({ value: String(y), label: y === 1 ? '1 year' : `${y} years` }))}
+                                />
                             </LabeledInput>
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -410,15 +406,14 @@ export function BuyDomainDialog({ defaultUser, onOpenDomain }: { defaultUser: st
                                 <p className={cn('m-0 max-h-48 overflow-y-auto whitespace-pre-wrap rounded-md border bg-foreground/[0.03] p-2 text-[12px]', HAIRLINE)}>
                                     {picked.claimsNotice}
                                 </p>
-                                {ownerAccepts ? (
-                                    <p className="m-0 mt-2 text-[13px] text-foreground">The account&apos;s owner reads it and accepts it when they approve the purchase.</p>
-                                ) : (
-                                    <label className="mt-2 flex items-start gap-2 text-[13px] text-foreground">
-                                        <input type="checkbox" className="mt-0.5" checked={acceptClaims} onChange={(e) => setAcceptClaims(e.target.checked)} />
-                                        <span>They&apos;ve seen this notice and still want the name</span>
-                                    </label>
-                                )}
+                                {ownerAccepts && <p className="m-0 mt-2 text-[13px] text-foreground">The account&apos;s owner reads it and accepts it when they approve the purchase.</p>}
                             </Notice>
+                        )}
+                        {picked.claimsNotice && !ownerAccepts && (
+                            <label className="flex items-start gap-2.5 text-[13px] text-foreground">
+                                <Checkbox className="mt-0.5" checked={acceptClaims} onCheckedChange={(on) => setAcceptClaims(on === true)} />
+                                <span>They&apos;ve seen this notice and still want the name</span>
+                            </label>
                         )}
                         {reg.fields}
                         {error !== undefined && <ErrorPanel error={error} />}

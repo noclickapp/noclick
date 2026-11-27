@@ -4,10 +4,12 @@
 // and branches, with Clone, Export to GitHub and Delete.
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
+import { GitBranch, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { fmtBytes, HAIRLINE } from '@/ui/primitives';
 import { authorName, refFor } from '@/lib/repoText';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { NeedsConnection, Repo, type Commit } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
@@ -27,6 +29,7 @@ import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PillSwitch } from '../../ui/PillTabs';
 import { Segmented } from '../../ui/Segmented';
+import { SwitchRow } from '../../ui/SwitchRow';
 import { TimeCell } from '../../ui/TimeCell';
 import { withParams } from './AppsFormat';
 import { BranchName, Tag } from './AppsParts';
@@ -165,6 +168,7 @@ function CloneDialog({ repo, open, onOpenChange }: { repo: Repo; open: boolean; 
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<GitBranch aria-hidden className="h-5 w-5" />}
             title={`Clone ${repo.name}`}
             description="Plain git over HTTPS. The URL carries a token that stops working after an hour, so keep it to yourself until then."
             footer={
@@ -180,10 +184,7 @@ function CloneDialog({ repo, open, onOpenChange }: { repo: Repo; open: boolean; 
             }
         >
             <div className="flex flex-col gap-3">
-                <label className="flex items-center gap-2 text-[13px]">
-                    <input type="checkbox" checked={write} disabled={!!url} onChange={(e) => setWrite(e.target.checked)} />
-                    Allow push
-                </label>
+                <SwitchRow label="Allow push" description="Anyone with the URL can push, not only read." checked={write} disabled={!!url} onCheckedChange={setWrite} />
                 {url && (
                     <div className="flex flex-col gap-1.5">
                         <div className={cn('flex items-start gap-2 rounded-lg border bg-foreground/[0.03] px-3 py-2', HAIRLINE)}>
@@ -243,6 +244,7 @@ function ExportDialog({ repo, open, onOpenChange }: { repo: Repo; open: boolean;
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<Upload aria-hidden className="h-5 w-5" />}
             title="Export to GitHub"
             description="Pushes every branch and its history to a new GitHub repository. This repo, and the apps that deploy it, stay as they are."
             footer={
@@ -259,17 +261,16 @@ function ExportDialog({ repo, open, onOpenChange }: { repo: Repo; open: boolean;
                 }}
             >
                 <LabeledInput label="GitHub connection" id="github-connection">
-                    <select id="github-connection" className={cn(INPUT, 'px-2 [color-scheme:light] dark:[color-scheme:dark]')} value={connectionId} onChange={(e) => setConnectionId(e.target.value)}>
-                        <option value="">{github.length || !listed ? 'Choose a connection' : 'No GitHub connection yet'}</option>
-                        {github.map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                                {c.userId ? '' : ' · account'}
-                                {c.account ? ` · ${c.account}` : ''}
-                                {c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}
-                            </option>
-                        ))}
-                    </select>
+                    <FieldSelect
+                        id="github-connection"
+                        value={connectionId}
+                        onValueChange={setConnectionId}
+                        placeholder={github.length || !listed ? 'Choose a connection' : 'No GitHub connection yet'}
+                        options={github.map((c) => ({
+                            value: c.id,
+                            label: `${c.name}${c.userId ? '' : ' · account'}${c.account ? ` · ${c.account}` : ''}${c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}`,
+                        }))}
+                    />
                 </LabeledInput>
                 {listed && !github.length && (
                     <p className="m-0 -mt-1 text-[12px] text-muted-foreground">
@@ -287,10 +288,7 @@ function ExportDialog({ repo, open, onOpenChange }: { repo: Repo; open: boolean;
                         <input id="github-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" />
                     </LabeledInput>
                 </div>
-                <label className="flex items-center gap-2 text-[13px]">
-                    <input type="checkbox" checked={isPrivate} onChange={(e) => setPrivate(e.target.checked)} />
-                    Private repository
-                </label>
+                <SwitchRow label="Private repository" description="Only people you let in on GitHub see it." checked={isPrivate} onCheckedChange={setPrivate} />
                 {error !== undefined && (
                     <div className="flex flex-col gap-2">
                         <ErrorPanel error={error} />

@@ -20,6 +20,7 @@ import { PageSection } from '../ui/PageHeader';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { ConsoleButton } from '../ui/Button';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
+import { SwitchRow } from '../ui/SwitchRow';
 import { StatusPill } from '../ui/StatusPill';
 import { TimeCell } from '../ui/TimeCell';
 import { IdChip } from '../ui/IdChip';
@@ -604,13 +605,12 @@ export function AskSection({ agent }: { agent: Agent }) {
                 <FormField label="Conversation (optional)" hint="Its key, as Conversations lists it; empty, a spawned child's task, else the one it last worked in.">
                     <input value={conversation} onChange={(e) => setConversation(e.target.value)} className={cn(inputClass, 'font-mono text-[12.5px]')} />
                 </FormField>
-                <label className="flex items-start gap-2 text-[13px] text-foreground">
-                    <input type="checkbox" checked={interject} onChange={(e) => setInterject(e.target.checked)} className="mt-[3px]" />
-                    <span>
-                        Interject
-                        <span className="block text-[12px] text-muted-foreground">Put the question into its running turn: it sees it, may change course, and answers there.</span>
-                    </span>
-                </label>
+                <SwitchRow
+                    label="Interject"
+                    description="Put the question into its running turn: it sees it, may change course, and answers there."
+                    checked={interject}
+                    onCheckedChange={setInterject}
+                />
                 <ConsoleButton type="submit" className="self-start" icon={<MessageSquareText className="h-3.5 w-3.5" />} disabled={asking || !question.trim()}>
                     {asking ? 'Asking…' : 'Ask'}
                 </ConsoleButton>

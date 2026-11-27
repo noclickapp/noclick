@@ -3,12 +3,13 @@
 // (`?webhook=`) edits what an endpoint receives, pauses it, rotates its secret, sends a
 // test event and lists its deliveries; `&delivery=` opens one with the request sent and
 // the response that came back, and redelivers it.
-import { useId, useMemo, useState, type ReactNode } from 'react';
-import { ArrowLeft, Terminal } from 'lucide-react';
+import { useMemo, useState, type ReactNode } from 'react';
+import { ArrowLeft, Bell, RotateCw, Terminal } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { HAIRLINE, ROW_HOVER, clickableRow } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Event as NoClickEvent, Webhook, type EventType, type WebhookDelivery } from 'noclick';
 import { formatCount, formatDuration, formatRelative } from '@/screens/console/lib/format';
 import { NEW_SNIPPETS, type Snippet } from '@/screens/console/lib/snippets';
@@ -31,9 +32,10 @@ import { PageHeader } from '../ui/PageHeader';
 import { RevealOnceSecret } from '../ui/RevealOnceSecret';
 import { Segmented } from '../ui/Segmented';
 import { StatusPill } from '../ui/StatusPill';
+import { SWITCH_ROWS, SwitchRow } from '../ui/SwitchRow';
 import { TimeCell } from '../ui/TimeCell';
 import { NewInCode } from '../NewInCode';
-import { ConfirmAction, errorText, Field, INPUT, PanelToolbar, Section } from './resources/shared';
+import { ConfirmAction, errorText, Field, PanelToolbar, Section } from './resources/shared';
 
 // ── what the page says in code ─────────────────────────────────────────────
 
@@ -148,64 +150,47 @@ export function EventPatterns({ patterns, max = 2, wrap = false }: { patterns: r
     );
 }
 
-function Checkbox({ id, checked, disabled, onChange, label }: { id: string; checked: boolean; disabled?: boolean; onChange: (on: boolean) => void; label: string }) {
-    return (
-        <input
-            id={id}
-            type="checkbox"
-            aria-label={label}
-            checked={checked}
-            disabled={disabled}
-            onChange={(e) => onChange(e.target.checked)}
-            className="mt-[3px] shrink-0 accent-[hsl(var(--foreground))] disabled:opacity-60"
-        />
-    );
-}
-
-/** Pick event types: everything, whole groups (`domain.*`), or single types with what each means. */
 export function EventPicker({ types, value, onChange }: { types: readonly EventType[]; value: readonly string[]; onChange: (next: string[]) => void }) {
     const groups = useMemo(() => groupEventTypes(types), [types]);
     const everything = value.includes('*');
-    const uid = useId();
     return (
-        <div className="flex flex-col gap-2">
-            <label htmlFor={`${uid}-all`} className="flex cursor-pointer items-start gap-2.5 text-[13px]">
-                <Checkbox id={`${uid}-all`} label="All events" checked={everything} onChange={(on) => onChange(on ? ['*'] : [])} />
-                <span className="flex flex-col">
-                    <span className="font-medium text-foreground">All events</span>
-                    <span className="text-[12px] text-muted-foreground">Every type, including ones added later.</span>
-                </span>
-            </label>
-            <div role="group" aria-label="Event types" className={cn('max-h-[300px] overflow-y-auto rounded-lg border', HAIRLINE)}>
+        <div className="flex flex-col gap-3">
+            <ul className={SWITCH_ROWS}>
+                <li>
+                    <SwitchRow label="All events" description="Every type, including ones added later." checked={everything} onCheckedChange={(on) => onChange(on ? ['*'] : [])} />
+                </li>
+            </ul>
+            <div role="group" aria-label="Event types" className="flex flex-col gap-4">
                 {groups.map((g) => {
                     const whole = everything || g.areas.every((a) => value.includes(wildcard(a)));
                     return (
-                        <fieldset key={g.label} className={cn('m-0 border-0 p-0 px-3 py-2.5')}>
-                            <legend className="sr-only">{g.label}</legend>
-                            <label htmlFor={`${uid}-${g.label}`} className="flex cursor-pointer items-start gap-2.5 text-[13px]">
-                                <Checkbox id={`${uid}-${g.label}`} label={`All ${g.label.toLowerCase()} events`} checked={whole} disabled={everything} onChange={(on) => onChange(togglePatterns(value, groups, { group: g }, on))} />
-                                <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
-                                    <span className="font-medium text-foreground">{g.label}</span>
-                                    <span className="font-mono text-[12px] text-muted-foreground">{g.areas.map(wildcard).join(' ')}</span>
-                                </span>
-                            </label>
-                            <ul className="m-0 mt-1.5 flex list-none flex-col gap-1.5 p-0 pl-6">
+                        <section key={g.label} aria-label={g.label}>
+                            <h4 className="m-0 text-[13px] font-medium text-foreground">{g.label}</h4>
+                            <ul className={SWITCH_ROWS}>
+                                <li>
+                                    <SwitchRow
+                                        label={`All ${g.label.toLowerCase()} events`}
+                                        description="Including ones added later."
+                                        id={g.areas.map(wildcard).join(' ')}
+                                        checked={whole}
+                                        disabled={everything}
+                                        onCheckedChange={(on) => onChange(togglePatterns(value, groups, { group: g }, on))}
+                                    />
+                                </li>
                                 {g.types.map((t) => (
                                     <li key={t.name}>
-                                        <label htmlFor={`${uid}-${t.name}`} className="flex cursor-pointer items-start gap-2.5">
-                                            <Checkbox id={`${uid}-${t.name}`} label={t.name} checked={covered(value, t.name)} disabled={everything} onChange={(on) => onChange(togglePatterns(value, groups, { type: t.name }, on))} />
-                                            <span className="flex min-w-0 flex-col">
-                                                <span className="font-mono text-[12px] text-foreground">
-                                                    {t.name}
-                                                    {!t.emitted && <span className="ml-1.5 font-sans text-[12px] text-muted-foreground">not sent yet</span>}
-                                                </span>
-                                                <span className="text-[12px] leading-snug text-muted-foreground">{t.description}</span>
-                                            </span>
-                                        </label>
+                                        <SwitchRow
+                                            label={t.description}
+                                            description={t.emitted ? undefined : 'Not sent yet.'}
+                                            id={t.name}
+                                            checked={covered(value, t.name)}
+                                            disabled={everything}
+                                            onCheckedChange={(on) => onChange(togglePatterns(value, groups, { type: t.name }, on))}
+                                        />
                                     </li>
                                 ))}
                             </ul>
-                        </fieldset>
+                        </section>
                     );
                 })}
             </div>
@@ -402,7 +387,9 @@ function EditEventsDialog({ hook, onClose }: { hook: Webhook; onClose: () => voi
             open
             onOpenChange={(o) => !o && onClose()}
             size="lg"
+            mark={<Bell aria-hidden className="h-5 w-5" />}
             title="Events this endpoint receives"
+            description="NoClick POSTs each of them here, signed, as it happens."
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>
@@ -444,13 +431,13 @@ function SendTest({ hook }: { hook: Webhook }) {
     return (
         <Section title="Send a test event">
             <div className="flex flex-wrap items-center gap-2">
-                <select aria-label="Test event type" className={cn(INPUT, 'w-auto min-w-[14rem] font-mono text-[12px]')} value={chosen} onChange={(e) => setType(e.target.value)}>
-                    {options.map((t) => (
-                        <option key={t.name} value={t.name}>
-                            {t.name}
-                        </option>
-                    ))}
-                </select>
+                <FieldSelect
+                    aria-label="Test event type"
+                    className="w-auto min-w-[14rem] max-w-full"
+                    value={chosen}
+                    onValueChange={setType}
+                    options={options.map((t) => ({ value: t.name, label: <>{t.description} <span className="font-mono text-[11.5px] text-muted-foreground">{t.name}</span></> }))}
+                />
                 <ConsoleButton disabled={busy || !chosen} onClick={() => void send()}>
                     {busy ? 'Sending…' : 'Send test'}
                 </ConsoleButton>
@@ -611,7 +598,6 @@ function WebhookDrawer({ webhookId, row, onClose, onRotated }: { webhookId: stri
 function RotateSecret({ hook, onRotated }: { hook: Webhook; onRotated: (secret: string) => void }) {
     const [open, setOpen] = useState(false);
     const [leaked, setLeaked] = useState(false);
-    const leakedId = useId();
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<unknown>(undefined);
     const rotate = async () => {
@@ -634,6 +620,7 @@ function RotateSecret({ hook, onRotated }: { hook: Webhook; onRotated: (secret: 
                 open={open}
                 onOpenChange={setOpen}
                 size="sm"
+                mark={<RotateCw aria-hidden className="h-5 w-5" />}
                 title="Rotate the signing secret?"
                 description="For a day, each delivery is signed with both the new secret and the old one, so your receiver keeps verifying while you deploy the new one."
                 footer={
@@ -647,13 +634,12 @@ function RotateSecret({ hook, onRotated }: { hook: Webhook; onRotated: (secret: 
                     </>
                 }
             >
-                <label htmlFor={leakedId} className="flex cursor-pointer items-start gap-2.5 text-[13px]">
-                    <Checkbox id={leakedId} label="The old secret leaked" checked={leaked} onChange={setLeaked} />
-                    <span className="flex flex-col">
-                        The old secret leaked
-                        <span className="text-[12px] text-muted-foreground">Stop signing with it at once. Deliveries fail to verify until you deploy the new one.</span>
-                    </span>
-                </label>
+                <SwitchRow
+                    label="The old secret leaked"
+                    description="Stop signing with it at once. Deliveries fail to verify until you deploy the new one."
+                    checked={leaked}
+                    onCheckedChange={setLeaked}
+                />
                 {error !== undefined && <ErrorPanel error={error} className="mt-3" />}
             </ConsoleDialog>
         </>

@@ -11,6 +11,7 @@ import { afterEach, expect, it } from 'vitest';
 import { DeveloperConsole } from './DeveloperConsole';
 import { AGENTS, FIXTURE_NOW, FIXTURE_NOW_MS, FIXTURE_USER, fixtureId, list, ok, type FixtureReply, type FixtureRequest, type FixtureRoute } from './fixtures/core';
 import { makeFixtureFetch } from './fixtures/fixtureFetch';
+import { pick } from '../../../test/pick';
 
 type Json = Record<string, unknown>;
 
@@ -129,12 +130,6 @@ function open(address: string, holding: Record<string, Json> = {}, lab = false, 
 }
 
 /** A `<select>`'s option by what it shows, chosen as a person would. */
-function choose(select: HTMLSelectElement, text: string) {
-    const option = [...select.options].find((o) => o.text.trim().startsWith(text));
-    if (!option) throw new Error(`No option "${text}" in ${[...select.options].map((o) => o.text).join(', ')}`);
-    fireEvent.change(select, { target: { value: option.value } });
-}
-
 it('reads an app event an agent hears through an account connected in the app as that account, and a named one by its name', async () => {
     // Its code added them (the console shows the code; the API answers each as `triggers.service._source` does).
     const event = (connection: string, through: Json, n: number): Json => ({
@@ -155,7 +150,7 @@ it('gives an agent an account connected in the app by its `credential:` ref, and
     fireEvent.click(await screen.findByRole('button', { name: 'Edit tools' }));
     const dialog = await screen.findByRole('dialog', { name: `${SUPPORT.name}'s tools` });
     const row = await within(dialog).findByText('Slack', { selector: 'span' });
-    fireEvent.click(row.closest('label')!.querySelector('input')!);
+    fireEvent.click(row.closest('label')!.querySelector('[role="checkbox"]')!);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Save tools' }));
 
     await waitFor(() => expect(console_.sent('PATCH', `/v1/agents/${SUPPORT.id}`)).toHaveLength(1));
@@ -173,7 +168,7 @@ it('gives an agent an account connected in the app by its `credential:` ref, and
 it('runs an agent on a key connected in the app by its `credential:` ref, reads it as that key, and keeps it on a move', async () => {
     const console_ = open(`agents/${CODER.id}`);
     fireEvent.click(await screen.findByRole('button', { name: 'Edit model connection' }));
-    choose(await screen.findByLabelText('Model connection'), 'Anthropic key');
+    pick(await screen.findByLabelText('Model connection'), 'Anthropic key');
     fireEvent.click(screen.getByRole('button', { name: 'Save' }));
 
     const patched = `/v1/agents/${CODER.id}`;
@@ -187,8 +182,8 @@ it('runs an agent on a key connected in the app by its `credential:` ref, reads 
 
     // OpenCode runs on an Anthropic key too, so the move keeps it.
     fireEvent.click(within(about).getByRole('button', { name: 'Edit where it runs' }));
-    fireEvent.change(within(about).getByLabelText('Runs on'), { target: { value: 'opencode' } });
-    expect((within(about).getByLabelText('Model connection') as HTMLSelectElement).value).toBe(APP_ANTHROPIC.id);
+    pick(within(about).getByLabelText('Runs on'), 'OpenCode');
+    expect(within(about).getByLabelText('Model connection').textContent).toContain('Anthropic key');
     fireEvent.click(within(about).getByRole('button', { name: 'Save' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Move to OpenCode' }));
     await waitFor(() => expect(console_.sent('PATCH', patched)).toHaveLength(2));

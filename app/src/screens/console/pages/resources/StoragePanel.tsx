@@ -4,10 +4,11 @@
 // designed, not built yet: they show only in the lab.
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { ChevronRight, FileText, Folder, Link2 } from 'lucide-react';
+import { ChevronRight, FileText, Folder, KeyRound, Link2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Bucket, type BucketObject, type S3Credentials } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
@@ -25,10 +26,11 @@ import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { SwitchRow } from '../../ui/SwitchRow';
 import { RevealOnceSecret } from '../../ui/RevealOnceSecret';
 import { Segmented } from '../../ui/Segmented';
 import { TimeCell } from '../../ui/TimeCell';
-import { errorText, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
+import { errorText, Field, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { DeleteByName, ExportSection, formatExact, formatSize, UsedByText } from './StorageShared';
 
 /** How long a copied signed link works. */
@@ -317,6 +319,7 @@ function S3AccessDialog({ bucket, open, onOpenChange, onCreated }: { bucket: Buc
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<KeyRound aria-hidden className="h-5 w-5" />}
             title={`S3 access to ${bucket.name}`}
             description="Keys for the bucket's S3-compatible endpoint. They reach this bucket only, and the secret is shown once."
             footer={
@@ -326,21 +329,9 @@ function S3AccessDialog({ bucket, open, onOpenChange, onCreated }: { bucket: Buc
             }
         >
             <div className="flex flex-col gap-3">
-                <label className="flex items-start gap-2 text-[13px]">
-                    <input type="checkbox" className="mt-0.5" checked={readOnly} onChange={(e) => setReadOnly(e.target.checked)} />
-                    <span>
-                        Read-only
-                        <span className="block text-[12px] text-muted-foreground">Keys that can list and download, but not upload or delete.</span>
-                    </span>
-                </label>
+                <SwitchRow label="Read only" description="Keys that can list and download, but not upload or delete." checked={readOnly} onCheckedChange={setReadOnly} />
                 <LabeledInput label="Valid for" id="s3-ttl">
-                    <select id="s3-ttl" className={INPUT} value={ttl} onChange={(e) => setTtl(e.target.value)}>
-                        {LIFETIMES.map((l) => (
-                            <option key={l.value} value={l.value}>
-                                {l.label}
-                            </option>
-                        ))}
-                    </select>
+                    <FieldSelect id="s3-ttl" value={ttl} onValueChange={setTtl} options={LIFETIMES.map((l) => ({ value: l.value, label: l.label }))} />
                 </LabeledInput>
                 {error !== undefined && <ErrorPanel error={error} />}
             </div>

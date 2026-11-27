@@ -84,7 +84,7 @@ export function useCopyPrompt(task: CoderTask, place: NewPlace = {}) {
         setCreating(true);
         setError(null);
         let made: SetupCode | null = null;
-        const minting = createSetupCode(client).then((code) => (made = code));
+        const minting = createSetupCode(client, task.scopes).then((code) => (made = code));
         try {
             await copyToClipboard(minting.then((code) => promptFor(code.code)));
             setSetup(made);

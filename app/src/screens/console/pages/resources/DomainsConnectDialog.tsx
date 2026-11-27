@@ -3,6 +3,7 @@
 // where that host supports it, and Verify.
 import { useReducer, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
 import { Domain } from 'noclick';
@@ -11,6 +12,7 @@ import { invalidateV1 } from '@/sdk/useV1';
 import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { SwitchRow } from '../../ui/SwitchRow';
 import { StatusPill } from '../../ui/StatusPill';
 import { UserField } from '../../ui/UserField';
 import { INPUT, LabeledInput } from './shared';
@@ -99,8 +101,9 @@ export function ConnectDomainDialog({ defaultUser, onOpenDomain }: { defaultUser
                 open={open}
                 onOpenChange={setOpen}
                 size={domain ? 'lg' : 'md'}
+                mark={<Globe aria-hidden className="h-5 w-5" />}
                 title={domain ? <span className="font-mono">{domain.name}</span> : 'Connect a domain'}
-                description={domain ? undefined : 'A domain the person already owns. It stays with its registrar; you add a few DNS records.'}
+                description={domain ? 'Add these records at its registrar. Each turns live here as the registrar serves it.' : 'A domain the person already owns. It stays with its registrar; you add a few DNS records.'}
                 footer={
                     domain ? (
                         <>
@@ -144,15 +147,12 @@ export function ConnectDomainDialog({ defaultUser, onOpenDomain }: { defaultUser
                         <p className="m-0 text-[12px] text-muted-foreground">
                             A subdomain needs one record. A bare domain serves at www, and the bare name follows with CNAME flattening or a forward.
                         </p>
-                        <label className="flex items-start gap-2 text-[13px]">
-                            <input type="checkbox" className="mt-0.5" checked={wildcard} onChange={(e) => setWildcard(e.target.checked)} />
-                            <span>
-                                Every subdomain too
-                                <span className="block text-[12px] text-muted-foreground">
-                                    Adds the <span className="font-mono">*.</span> records, so any subdomain can serve an app or send email without its own records.
-                                </span>
-                            </span>
-                        </label>
+                        <SwitchRow
+                            label="Every subdomain too"
+                            description="Adds the *. records, so any subdomain can serve an app or send email without its own records."
+                            checked={wildcard}
+                            onCheckedChange={setWildcard}
+                        />
                         {error !== undefined && <ErrorPanel error={error} />}
                     </form>
                 )}

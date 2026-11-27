@@ -2,10 +2,14 @@
 // vendor this deployment doesn't hold answers not_available, which its block shows.
 // Three compact blocks, each read on its own so one failing leaves the others.
 import { useEffect, useState, type ReactNode } from 'react';
-import { CreditCard, ExternalLink, KeyRound, Mail } from 'lucide-react';
+import { ChevronDown, CreditCard, ExternalLink, KeyRound, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { countryName } from '@/lib/countryName';
+import { getCountries } from 'libphonenumber-js';
+import { CountryFlag, CountryPicker, type CountryOption } from '@/ui/country-picker';
+import { SELECT_TRIGGER } from '@/ui/FieldSelect';
 import type { DnsRecord, EmailSetup, PaymentsSetup, Project, SentEmail, SignInProvider, SignInSetup } from 'noclick';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -15,6 +19,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { SWITCH_ROWS, SwitchRow } from '../../ui/SwitchRow';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { errorText, Field, INPUT, LabeledInput } from './shared';
@@ -182,6 +187,7 @@ function SendTestDialog({ project, open, onOpenChange }: { project: Project; ope
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<Mail aria-hidden className="h-5 w-5" />}
             title="Send a test email"
             description="Sent from the app's own address, and counted against its daily limit like any other message."
             footer={
@@ -390,6 +396,9 @@ function ClaimLink({ setup, onReopen, busy }: { setup: PaymentsSetup; onReopen: 
     );
 }
 
+/** Every country a business may be in, picked by its name. */
+const EVERY_COUNTRY: CountryOption[] = getCountries().map((code) => ({ code }));
+
 function EnablePaymentsDialog({ project, open, onOpenChange, onEnabled }: { project: Project; open: boolean; onOpenChange: (open: boolean) => void; onEnabled: (setup: PaymentsSetup) => void }) {
     const [country, setCountry] = useState('');
     const [busy, setBusy] = useState(false);
@@ -412,6 +421,7 @@ function EnablePaymentsDialog({ project, open, onOpenChange, onEnabled }: { proj
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<CreditCard aria-hidden className="h-5 w-5" />}
             title="Turn on test payments"
             description="The account can only ever be in the country of the owner’s business."
             footer={
@@ -421,9 +431,22 @@ function EnablePaymentsDialog({ project, open, onOpenChange, onEnabled }: { proj
             }
         >
             <div className="flex flex-col gap-3">
-                <LabeledInput label="Country (two letters)" id="payments-country">
-                    <input id="payments-country" className={cn(INPUT, 'w-20 font-mono uppercase')} maxLength={2} value={country} onChange={(e) => setCountry(e.target.value)} placeholder="US" />
-                </LabeledInput>
+                <div className="flex flex-col gap-1.5">
+                    <span className="text-[12px] font-medium text-muted-foreground">Country of the business</span>
+                    <CountryPicker
+                        value={code || undefined}
+                        options={EVERY_COUNTRY}
+                        onPick={setCountry}
+                        zIndexClassName="z-[80]"
+                        trigger={
+                            <button type="button" aria-label={code ? `Country: ${countryName(code)}` : 'Country'} className={cn(SELECT_TRIGGER, 'justify-start')}>
+                                <CountryFlag country={code || undefined} className="h-3.5 w-5" />
+                                <span className={cn('min-w-0 flex-1 truncate', !code && 'text-muted-foreground')}>{code ? countryName(code) : 'Choose a country'}</span>
+                                <ChevronDown aria-hidden className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                            </button>
+                        }
+                    />
+                </div>
                 {error !== undefined && <ErrorPanel error={error} />}
             </div>
         </ConsoleDialog>
@@ -544,7 +567,8 @@ function EnableSignInDialog({ project, current, open, onOpenChange, onStarted }:
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
-            title={changing ? 'Change sign-in' : 'Enable sign-in'}
+            mark={<KeyRound aria-hidden className="h-5 w-5" />}
+            title={changing ? 'Change sign-in' : 'Turn on sign-in'}
             description="This commits code to the app’s repo and deploys it."
             footer={
                 <>
@@ -558,26 +582,26 @@ function EnableSignInDialog({ project, current, open, onOpenChange, onStarted }:
             }
         >
             <div className="flex flex-col gap-4">
-                <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-                    <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Sign in with</legend>
-                    {PROVIDERS.map((p) => (
-                        <label key={p.id} className="flex cursor-pointer items-baseline gap-2 text-[13px]">
-                            <input
-                                type="checkbox"
-                                checked={providers.includes(p.id)}
-                                onChange={(e) => setProviders((list) => (e.target.checked ? [...list, p.id] : list.filter((x) => x !== p.id)))}
-                                className="translate-y-px accent-[hsl(var(--foreground))]"
-                            />
-                            <span className="font-medium">{p.label}</span>
-                            <span className="text-[12px] text-muted-foreground">{p.hint}</span>
-                        </label>
-                    ))}
-                </fieldset>
+                <section aria-label="Sign in with">
+                    <h3 className="m-0 text-[12px] font-medium text-muted-foreground">Sign in with</h3>
+                    <ul className={SWITCH_ROWS}>
+                        {PROVIDERS.map((p) => (
+                            <li key={p.id}>
+                                <SwitchRow
+                                    label={p.label}
+                                    description={p.hint}
+                                    checked={providers.includes(p.id)}
+                                    onCheckedChange={(on) => setProviders((list) => (on ? [...list, p.id] : list.filter((x) => x !== p.id)))}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                </section>
                 <LabeledInput label="Branch (optional)" id="sign-in-branch">
                     <input id="sign-in-branch" className={cn(INPUT, 'font-mono')} value={branch} onChange={(e) => setBranch(e.target.value)} placeholder="The production branch" />
                 </LabeledInput>
-                <div className={cn('rounded-md border bg-foreground/[0.02] px-3 py-2.5', HAIRLINE)}>
-                    <p className="m-0 mb-1.5 text-[12px] font-medium">What happens</p>
+                <div>
+                    <p className="m-0 mb-1.5 text-[12px] font-medium text-muted-foreground">What happens</p>
                     <ul className="m-0 flex list-disc flex-col gap-1 pl-4 text-[13px] text-muted-foreground">
                         <li>Sign-in code for the app’s framework is committed to its repo{branch.trim() ? <> on <span className="font-mono text-[12px] text-foreground">{branch.trim()}</span></> : ' on the production branch'}.</li>
                         <li>
@@ -625,7 +649,7 @@ function SignInBlock({ project }: { project: Project }) {
                         </ConsoleButton>
                     )}
                     <ConsoleButton size="sm" disabled={s.status === 'installing'} onClick={() => setEditing(true)}>
-                        {off ? 'Enable sign-in' : 'Change providers'}
+                        {off ? 'Turn on sign-in' : 'Change providers'}
                     </ConsoleButton>
                 </>
             }

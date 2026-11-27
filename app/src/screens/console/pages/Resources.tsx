@@ -3,18 +3,19 @@
 // `/resources/<kind>` is that kind's list, with the user facet (`?user=`,
 // default every user), a drawer and its actions; `/resources/<kind>/<page>` is
 // one of the kind's own pages (card issuing, funding the cards).
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { ALL_USERS, Connection } from 'noclick';
 import { formatCount } from '@/screens/console/lib/format';
 import { Tile } from '@/ui/Tile';
 import { cn } from '@/ui/utils';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { useUserParam } from '@/screens/console/hooks/useQueryState';
+import { defaultWriteUser } from '@/screens/console/lib/userFilter';
 import { useV1 } from '@/sdk/useV1';
 import type { ConsolePageProps } from '../sections';
-import { ConnectionsTable, NewConnectionDialog } from '../connections';
+import { ConnectionsTable } from '../connections';
+import { NewInCode } from '../NewInCode';
 import { AREAS, kindLead, visibleKinds, type ResourceKind, type ResourceKindId } from '../resourceKinds';
-import { ConsoleButton } from '../ui/Button';
 import { DesignedTag } from '../ui/DesignedTag';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { PageHeader, PageSection } from '../ui/PageHeader';
@@ -39,25 +40,15 @@ import { VolumesPanel } from './resources/VolumesPanel';
 import { PanelToolbar, type PanelProps } from './resources/shared';
 
 function ConnectionsPanel({ user, setUser }: PanelProps) {
-    const [connecting, setConnecting] = useState(false);
     return (
         <>
-            <PanelToolbar
-                user={user}
-                setUser={setUser}
-                action={
-                    <ConsoleButton variant="primary" onClick={() => setConnecting(true)}>
-                        New connection
-                    </ConsoleButton>
-                }
-            />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="connection" place={{ user: defaultWriteUser(user) }} />} />
             <ConnectionsTable
                 key={user}
                 userFilter={user}
                 showUser
                 empty="No connections yet. Your code creates them with Connection.from_name, or an agent asks its user for one."
             />
-            <NewConnectionDialog user={null} open={connecting} onOpenChange={setConnecting} />
         </>
     );
 }

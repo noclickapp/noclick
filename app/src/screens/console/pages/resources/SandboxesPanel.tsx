@@ -120,7 +120,7 @@ function ExecForm({ sandbox }: { sandbox: Sandbox }) {
                         type="submit"
                         disabled={busy || !command.trim()}
                     >
-                        {busy ? 'Running…' : 'Exec'}
+                        {busy ? 'Running…' : 'Run'}
                     </ConsoleButton>
                 </div>
             </form>

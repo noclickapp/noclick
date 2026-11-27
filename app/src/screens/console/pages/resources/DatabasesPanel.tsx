@@ -5,10 +5,11 @@
 // goes with it: its drawer reads it, branches and exports it.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, GitBranch, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { DateField } from '@/ui/DateField';
 import { Database, type Operation, type QueryResult, type Table, type UsedBy } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { isReadQuery } from '@/lib/tableQuery';
@@ -27,6 +28,7 @@ import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer, SHEET_SURFACE } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { SwitchRow } from '../../ui/SwitchRow';
 import { IdChip } from '../../ui/IdChip';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
@@ -66,7 +68,7 @@ function inUse(users: readonly UsedBy[]): string {
         .join(' and ');
 }
 
-/** `2026-09-26T15:20` in local time, for a datetime-local input. */
+/** `2026-09-26T15:20` in local time, as a date-and-time field (`DateField`) holds it. */
 function localInput(ms: number): string {
     const d = new Date(ms);
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -277,6 +279,7 @@ function BranchDialog({ db, open, onOpenChange, onStarted }: { db: Database; ope
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<GitBranch aria-hidden className="h-5 w-5" />}
             title={`Branch ${db.name}`}
             description="A copy that's a database of its own, with the same owner. Changes to one never reach the other."
             footer={
@@ -303,18 +306,12 @@ function BranchDialog({ db, open, onOpenChange, onStarted }: { db: Database; ope
                 </div>
                 {from === 'time' && (
                     <LabeledInput label="Time (your time zone)" id="branch-at">
-                        <input id="branch-at" type="datetime-local" className={INPUT} value={at} onChange={(e) => setAt(e.target.value)} />
+                        <DateField id="branch-at" withTime value={at} onChange={setAt} />
                     </LabeledInput>
                 )}
                 {timeError && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{timeError}</p>}
                 {db.engine === 'sqlite' && (
-                    <label className="flex items-start gap-2 text-[13px]">
-                        <input type="checkbox" className="mt-0.5" checked={postgres} onChange={(e) => setPostgres(e.target.checked)} />
-                        <span>
-                            Branch into Postgres
-                            <span className="block text-[12px] text-muted-foreground">{"The way past SQLite's 10 GB. Point your app at the branch once it's ready."}</span>
-                        </span>
-                    </label>
+                    <SwitchRow label="Branch into Postgres" description="The way past SQLite's 10 GB. Point your app at the branch once it's ready." checked={postgres} onCheckedChange={setPostgres} />
                 )}
                 {error !== undefined && <ErrorPanel error={error} />}
             </div>
@@ -416,6 +413,8 @@ function RestoreSection({ db }: { db: Database }) {
                 open={open}
                 onOpenChange={setOpen}
                 size="sm"
+                tone="danger"
+                mark={<History aria-hidden className="h-5 w-5" />}
                 title={`Restore ${db.name}`}
                 description="In place: everything written after that moment is gone. To keep it, branch at that time instead."
                 footer={
@@ -431,7 +430,7 @@ function RestoreSection({ db }: { db: Database }) {
             >
                 <div className="flex flex-col gap-2">
                     <LabeledInput label="Restore to (your time zone)" id="restore-at">
-                        <input id="restore-at" type="datetime-local" className={INPUT} value={at} onChange={(e) => setAt(e.target.value)} />
+                        <DateField id="restore-at" withTime value={at} onChange={setAt} />
                     </LabeledInput>
                     {timeError ? (
                         <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{timeError}</p>

@@ -2,10 +2,11 @@
 // browses keys by prefix with each one's expiry, opens a key's JSON value to edit or delete it,
 // adds keys, exports, clears and deletes. App bindings are designed, not built yet: lab only.
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Plus, Search } from 'lucide-react';
+import { ArrowLeft, Pencil, Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { SearchClearButton } from '@/ui/SearchClearButton';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Dict, type DictItem } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { formatRelative } from '@/screens/console/lib/format';
@@ -107,6 +108,7 @@ function KeyDialog({
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={item ? <Pencil aria-hidden className="h-5 w-5" /> : <Plus aria-hidden className="h-5 w-5" />}
             title={item ? `Edit ${item.key}` : `Add a key to ${store.name}`}
             description={item ? 'The new value replaces the old one at once, for every reader.' : 'Your code reads it with d[key] or get.'}
             footer={
@@ -123,14 +125,12 @@ function KeyDialog({
                 )}
                 <JsonField id="dict-value" label="Value (JSON)" value={text} onChange={setText} rows={item ? 8 : 5} hint='An object, a list, "a string", a number, true, false or null.' />
                 <LabeledInput label="Expires" id="dict-expiry">
-                    <select id="dict-expiry" className={INPUT} value={expiry} onChange={(e) => setExpiry(e.target.value)}>
-                        {live && <option value="keep">As it does now ({formatRelative(live, now())})</option>}
-                        {EXPIRIES.map((o) => (
-                            <option key={o.value} value={o.value}>
-                                {o.label}
-                            </option>
-                        ))}
-                    </select>
+                    <FieldSelect
+                        id="dict-expiry"
+                        value={expiry}
+                        onValueChange={setExpiry}
+                        options={[...(live ? [{ value: 'keep', label: `As it does now (${formatRelative(live, now())})` }] : []), ...EXPIRIES.map((o) => ({ value: o.value, label: o.label }))]}
+                    />
                 </LabeledInput>
                 {error !== undefined && <ErrorPanel error={error} />}
             </div>

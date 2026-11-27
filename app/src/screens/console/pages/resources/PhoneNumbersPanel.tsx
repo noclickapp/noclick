@@ -8,11 +8,12 @@
 // the lab (designed): texting the caller, and porting numbers in with the port requests (a
 // connected number is disconnected first).
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { HAIRLINE, SURFACE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { PhoneNumber, type AnswerWithOptions, type PhoneCall, type PhoneCallers } from 'noclick';
 import { NumberFinder } from '@/screens/numbers/NumberFinder';
 import { addFundsUrl } from '@/screens/console/lib/site';
@@ -37,6 +38,7 @@ import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { SwitchRow } from '../../ui/SwitchRow';
 import { Money } from '../../ui/Money';
 import { StatusPill } from '../../ui/StatusPill';
 import { UserField } from '../../ui/UserField';
@@ -295,7 +297,7 @@ function AnswerWith({
     return (
         <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-3">
-                <LabeledInput label="Transfer to (the agent's transfer_call tool; blank: none)" id="answer-transfer">
+                <LabeledInput label="Hand a call to (a number the agent may pass callers to; blank: none)" id="answer-transfer">
                     <input
                         id="answer-transfer"
                         className={cn(INPUT, 'font-mono')}
@@ -305,35 +307,30 @@ function AnswerWith({
                     />
                 </LabeledInput>
                 <LabeledInput label="Answers" id="answer-callers">
-                    <select id="answer-callers" className={INPUT} value={callers} onChange={(e) => setCallers(e.target.value as PhoneCallers)}>
-                        <option value="anyone">Anyone who calls</option>
-                        <option value="users">Only your users (a verified phone, attested by the carrier)</option>
-                        <option value="owner">Only its own user, or your account&apos;s owner</option>
-                    </select>
+                    <FieldSelect
+                        id="answer-callers"
+                        value={callers}
+                        onValueChange={(v) => setCallers(v as PhoneCallers)}
+                        options={[
+                            { value: 'anyone', label: 'Anyone who calls' },
+                            { value: 'users', label: 'Only your users (a verified phone, attested by the carrier)' },
+                            { value: 'owner', label: 'Only its own user, or your account’s owner' },
+                        ]}
+                    />
                 </LabeledInput>
                 {lab && (
-                    <label className="flex items-center gap-2 text-[13px]">
-                        <input type="checkbox" checked={texts} onChange={(e) => setTexts(e.target.checked)} />
-                        Let the agent text the caller (send_text; US carrier registration first)
-                    </label>
+                    <SwitchRow label="Let the agent text the caller" description="A US number registers with the carriers first." checked={texts} onCheckedChange={setTexts} />
                 )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-                <select
+                <FieldSelect
                     aria-label="Answering agent"
-                    className={cn(INPUT, 'w-56')}
+                    className="w-56"
                     value={agent}
-                    onChange={(e) => setAgent(e.target.value)}
-                >
-                    <option value="" disabled>
-                        Choose an agent
-                    </option>
-                    {[...agents.values()].map((a) => (
-                        <option key={a.id} value={a.id}>
-                            {a.name}
-                        </option>
-                    ))}
-                </select>
+                    onValueChange={setAgent}
+                    placeholder="Choose an agent"
+                    options={[...agents.values()].map((a) => ({ value: a.id, label: a.name }))}
+                />
                 <ConsoleButton
                     size="sm"
                     disabled={busy || !agent || !changed}
@@ -415,7 +412,7 @@ function NumberDrawer({
         <Drawer
             open={numberId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="phone_number"
+            kind="phone number"
             title={
                 number ? (
                     <span className="font-mono">{number.number}</span>
@@ -595,6 +592,7 @@ function BuyNumber({ defaultUser }: { defaultUser: string | null }) {
                 open={open}
                 onOpenChange={setOpen}
                 size="lg"
+                mark={<Phone aria-hidden className="h-5 w-5" />}
                 title="Buy a number"
                 description="Numbers in every country NoClick sells in, each at its own price: charged monthly, and once when bought where its carrier charges that."
             >

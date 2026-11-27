@@ -7,7 +7,7 @@
 // or not, what they're told and what waits, and pause and resume.
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Bot, Inbox as InboxIcon, Phone, ShieldCheck } from 'lucide-react';
+import { Bot, FlaskConical, Inbox as InboxIcon, Phone, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE, LiveDot } from '@/ui/primitives';
 import { Input } from '@/ui/input';
@@ -23,7 +23,10 @@ import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import type { ConsolePageProps } from '../sections';
-import { ConnectionsTable, NewConnectionDialog } from '../connections';
+import { ConnectionsTable } from '../connections';
+import { NewInCode } from '../NewInCode';
+import { SWITCH_ROWS, SwitchRow } from '../ui/SwitchRow';
+import { scopeWords } from '@/screens/console/lib/scopes';
 import { ConsoleButton } from '../ui/Button';
 import { CodeSnippet } from '../ui/CodeSnippet';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
@@ -395,38 +398,37 @@ function MintSessionDialog({ user, open, onOpenChange }: { user: User; open: boo
             <ConsoleDialog
                 open={open}
                 onOpenChange={onOpenChange}
-                title="Mint test session"
-                description={
-                    <>
-                        In production, mint sessions on your server; this mints one for testing your frontend.
-                    </>
-                }
+                mark={<FlaskConical aria-hidden className="h-5 w-5" />}
+                title={`Test session for ${user.id}`}
+                description="A short-lived token to try your frontend as them. In production, your server makes sessions."
+
                 footer={
                     <>
                         <ConsoleButton variant="ghost" onClick={() => onOpenChange(false)}>
                             Cancel
                         </ConsoleButton>
                         <ConsoleButton variant="primary" onClick={mint} disabled={busy}>
-                            Mint
+                            Make session
                         </ConsoleButton>
                     </>
                 }
             >
                 <div className="flex flex-col gap-4">
-                    <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                        <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Scopes</legend>
-                        {sessionScopes.map((s) => (
-                            <label key={s} className="flex cursor-pointer items-center gap-2 text-[13px]">
-                                <input
-                                    type="checkbox"
-                                    checked={chosen.includes(s)}
-                                    onChange={(e) => setScopes(e.target.checked ? [...chosen, s] : chosen.filter((x) => x !== s))}
-                                    className="accent-[hsl(var(--foreground))]"
-                                />
-                                <span className="font-mono text-[12px]">{s}</span>
-                            </label>
-                        ))}
-                    </fieldset>
+                    <section aria-label="What it may do">
+                        <h3 className="m-0 text-[12px] font-medium text-muted-foreground">What it may do</h3>
+                        <ul className={SWITCH_ROWS}>
+                            {sessionScopes.map((sc) => (
+                                <li key={sc}>
+                                    <SwitchRow
+                                        label={scopeWords(sc)}
+                                        id={sc}
+                                        checked={chosen.includes(sc)}
+                                        onCheckedChange={(on) => setScopes(on ? [...chosen, sc] : chosen.filter((x) => x !== sc))}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
                     <FormField label="Expires after (minutes)" htmlFor="session-ttl" hint="1 minute to 24 hours.">
                         <Input id="session-ttl" inputMode="numeric" className={cn(INPUT, 'w-32 tabular-nums')} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
                     </FormField>
@@ -668,7 +670,7 @@ export default function UserDetail({ rest }: ConsolePageProps) {
     const { client } = useConsole();
     const href = useConsoleHref();
     const user = useV1(`users/${id}`, () => User.get(id, { client }));
-    const [dialog, setDialog] = useState<'suspend' | 'session' | 'delete' | 'connect' | 'pause' | null>(null);
+    const [dialog, setDialog] = useState<'suspend' | 'session' | 'delete' | 'pause' | null>(null);
     const [resuming, setResuming] = useState(false);
     const u = user.data;
 
@@ -730,14 +732,12 @@ export default function UserDetail({ rest }: ConsolePageProps) {
                                 {connectBlocked}
                             </span>
                         )}
-                        <ConsoleButton variant="primary" onClick={() => setDialog('connect')} disabled={!!connectBlocked} aria-describedby={connectBlocked ? 'connect-blocked' : undefined}>
-                            New connection
-                        </ConsoleButton>
+                        <NewInCode kind="connection" place={{ user: u.id }} disabled={!!connectBlocked} aria-describedby={connectBlocked ? 'connect-blocked' : undefined} />
                         <MoreMenu
                             label="User actions"
                             items={[
                                 suspended ? { label: 'Reactivate', onSelect: () => void setStatus('active') } : { label: 'Suspend', onSelect: () => setDialog('suspend') },
-                                { label: 'Mint test session', onSelect: () => setDialog('session'), disabled: suspended, reason: SUSPENDED_REASON },
+                                { label: 'Test session', onSelect: () => setDialog('session'), disabled: suspended, reason: SUSPENDED_REASON },
                                 { label: 'Delete', danger: true, separated: true, onSelect: () => setDialog('delete') },
                             ]}
                         />
@@ -776,7 +776,6 @@ export default function UserDetail({ rest }: ConsolePageProps) {
                     </>
                 }
             />
-            <NewConnectionDialog user={u} open={dialog === 'connect'} onOpenChange={(o) => setDialog(o ? 'connect' : null)} />
             <SuspendUserDialog user={u} open={dialog === 'suspend'} onOpenChange={(o) => setDialog(o ? 'suspend' : null)} onSuspend={() => setStatus('suspended')} />
             <MintSessionDialog user={u} open={dialog === 'session'} onOpenChange={(o) => setDialog(o ? 'session' : null)} />
             <DeleteUserDialog user={u} open={dialog === 'delete'} onOpenChange={(o) => setDialog(o ? 'delete' : null)} />

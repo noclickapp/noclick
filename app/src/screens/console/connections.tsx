@@ -1,14 +1,15 @@
 // Named connections, as Resources and a user's page show them: the table
-// with each connection's status, a new connection (its link emailed to a
-// user, or just shown), a fresh link that connects or reconnects one,
-// checking one now, and deleting it.
+// with each connection's status, a fresh link that connects or reconnects one
+// (emailed to its user, or just shown), checking one now, and deleting it. A new
+// one is made in code (NewInCode's `connection`).
 import { useCallback, useState } from 'react';
+import { Link2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { credentialLabel, CredentialMark } from '@/ui/connectionMark';
 import { Input } from '@/ui/input';
 import { cn } from '@/ui/utils';
-import { Connection, NO_USER, type JsonObject, type User } from 'noclick';
+import { Connection, NO_USER, type JsonObject } from 'noclick';
 import { connectionStatus, type StatusLook } from '@/screens/console/lib/status';
 import { userLabel, type UserFilterValue } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -18,20 +19,10 @@ import { ConsoleButton } from './ui/Button';
 import { ConsoleDialog } from './ui/ConsoleDialog';
 import { CopyButton } from './ui/CopyButton';
 import { DataTable, type Column } from './ui/DataTable';
-import { ErrorPanel } from './ui/ErrorPanel';
 import { StatusPill } from './ui/StatusPill';
-import { UserField } from './ui/UserField';
+import { SwitchRow } from './ui/SwitchRow';
 import { TimeCell } from './ui/TimeCell';
 import { FormField, INPUT, MoreMenu, formError } from './pages/Users';
-
-/** The API's rule for a connection name: 1-32 lowercase letters, digits, `-` and `_`, no `__`. */
-export const CONNECTION_NAME = /^[a-z0-9][a-z0-9_-]{0,31}$/;
-
-export function nameProblem(name: string): string | null {
-    if (!name) return 'Name the connection.';
-    if (!CONNECTION_NAME.test(name) || name.includes('__')) return "Use lowercase letters, digits, - and _ (up to 32, no '__').";
-    return null;
-}
 
 export const integrationNodeType = (integration: string) => `automation-${integration}`;
 export const nodeTypeOf = (c: Connection) => integrationNodeType(c.integration ?? '');
@@ -72,156 +63,6 @@ function sentLine(emailed: boolean, undelivered: string | null): string {
     return emailed ? 'Sent. You can also copy the link.' : 'Send this link to whoever connects the account.';
 }
 
-/**
- * A new connection, pending until someone connects its account at the link.
- * On a user's page it's that user's and the link can be emailed to them;
- * elsewhere the User field says whose it is.
- */
-export function NewConnectionDialog({ user, open, onOpenChange }: { user: User | null; open: boolean; onOpenChange: (open: boolean) => void }) {
-    const { client } = useConsole();
-    const integrations = useIntegrations(open);
-    const [scope, setScope] = useState<string | null>(null);
-    const [integration, setIntegration] = useState('');
-    const [name, setName] = useState('');
-    const [named, setNamed] = useState(false);
-    const [reason, setReason] = useState('');
-    const [email, setEmail] = useState(true);
-    const [done, setDone] = useState<{ url: string; emailed: boolean; undelivered: string | null } | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
-    const canEmail = !!user?.email;
-    const close = (next: boolean) => {
-        if (!next) {
-            setScope(null);
-            setIntegration('');
-            setName('');
-            setNamed(false);
-            setReason('');
-            setEmail(true);
-            setDone(null);
-            setError(null);
-        }
-        onOpenChange(next);
-    };
-    const pick = (value: string) => {
-        setIntegration(value);
-        if (!named) setName(value);
-    };
-    const problem = nameProblem(name);
-    const create = async () => {
-        if (!integration) return setError('Pick the service to connect.');
-        if (problem) return setError(problem);
-        setBusy(true);
-        setError(null);
-        try {
-            const emailed = canEmail && email;
-            // Acts for the user it's for, so it carries that user's header.
-            const connection = await Connection.create(name, {
-                client,
-                user: user ? user.id : scope,
-                integration,
-                reason: reason.trim() || undefined,
-                sendTo: emailed ? 'user' : undefined,
-            });
-            setDone({ url: connection.connectUrl ?? '', emailed, undelivered: undeliveredReason(connection.raw.delivery) });
-            invalidateV1('connections');
-            invalidateV1('operations');
-        } catch (e) {
-            setError(formError(e).message);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <ConsoleDialog
-            open={open}
-            onOpenChange={close}
-            title="New connection"
-            description={
-                done
-                    ? sentLine(done.emailed, done.undelivered)
-                    : "A named connection your code and agents use by name. It's pending until someone connects the account at its link."
-            }
-            footer={
-                done ? (
-                    <ConsoleButton variant="primary" onClick={() => close(false)}>
-                        Done
-                    </ConsoleButton>
-                ) : (
-                    <>
-                        <ConsoleButton variant="ghost" onClick={() => close(false)}>
-                            Cancel
-                        </ConsoleButton>
-                        <ConsoleButton variant="primary" onClick={create} disabled={busy}>
-                            {busy ? 'Creating…' : canEmail && email ? 'Create and send' : 'Create'}
-                        </ConsoleButton>
-                    </>
-                )
-            }
-        >
-            {done ? (
-                <LinkShown url={done.url} />
-            ) : (
-                <div className="flex flex-col gap-3">
-                    {!user && <UserField value={scope} onChange={setScope} />}
-                    <FormField label="Integration" htmlFor="connection-integration">
-                        <select
-                            id="connection-integration"
-                            value={integration}
-                            onChange={(e) => pick(e.target.value)}
-                            className="h-9 rounded-md border border-input bg-background px-2 text-[13px] text-foreground [color-scheme:light] dark:[color-scheme:dark]"
-                        >
-                            <option value="">{integrations.loading ? 'Loading…' : 'Choose a service'}</option>
-                            {/* Model providers hold what an agent thinks with (its model connection), never tools. */}
-                            {(['app', 'model'] as const).map((kind) => {
-                                const rows = integrations.data?.filter((i) => i.kind === kind) ?? [];
-                                return (
-                                    rows.length > 0 && (
-                                        <optgroup key={kind} label={kind === 'app' ? 'Services' : 'Model providers'}>
-                                            {rows.map((i) => (
-                                                <option key={i.name} value={i.name}>
-                                                    {i.label ?? i.name}
-                                                </option>
-                                            ))}
-                                        </optgroup>
-                                    )
-                                );
-                            })}
-                        </select>
-                    </FormField>
-                    <FormField
-                        label="Name"
-                        htmlFor="connection-name"
-                        hint="What your code and agents call it, e.g. gmail or work-gmail."
-                        error={name && problem ? problem : null}
-                    >
-                        <Input
-                            id="connection-name"
-                            className={cn(INPUT, 'font-mono')}
-                            value={name}
-                            onChange={(e) => {
-                                setNamed(true);
-                                setName(e.target.value);
-                            }}
-                        />
-                    </FormField>
-                    <FormField label="Reason (optional)" htmlFor="connection-reason" hint="Shown on the connect page.">
-                        <Input id="connection-reason" className={INPUT} value={reason} onChange={(e) => setReason(e.target.value)} />
-                    </FormField>
-                    {canEmail && (
-                        <label className="flex items-center gap-2 text-[13px] text-foreground/85">
-                            <input type="checkbox" checked={email} onChange={(e) => setEmail(e.target.checked)} />
-                            Email the link to {user!.email}
-                        </label>
-                    )}
-                    {integrations.error !== undefined && <ErrorPanel error={integrations.error} onRetry={integrations.refresh} className="bg-transparent" />}
-                    {error && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
-                </div>
-            )}
-        </ConsoleDialog>
-    );
-}
-
 /** A fresh link where someone connects (or reconnects) the connection's account; a user's can be emailed to them. */
 export function ConnectLinkDialog({ connection, onClose }: { connection: Connection; onClose: () => void }) {
     const [reason, setReason] = useState('');
@@ -249,6 +90,7 @@ export function ConnectLinkDialog({ connection, onClose }: { connection: Connect
         <ConsoleDialog
             open
             onOpenChange={(o) => !o && onClose()}
+            mark={<Link2 aria-hidden className="h-5 w-5" />}
             title={`${reconnect ? 'Reconnect' : 'Connect'} ${connection.name}`}
             description={
                 done
@@ -281,12 +123,7 @@ export function ConnectLinkDialog({ connection, onClose }: { connection: Connect
                     <FormField label="Reason (optional)" htmlFor="link-reason" hint="Shown on the connect page.">
                         <Input id="link-reason" className={INPUT} value={reason} onChange={(e) => setReason(e.target.value)} />
                     </FormField>
-                    {connection.userId && (
-                        <label className="flex items-center gap-2 text-[13px] text-foreground/85">
-                            <input type="checkbox" checked={email} onChange={(e) => setEmail(e.target.checked)} />
-                            Email it to the user
-                        </label>
-                    )}
+                    {connection.userId && <SwitchRow label="Email it to the user" description="They get the link from NoClick, beside your copy." checked={email} onCheckedChange={setEmail} />}
                     {error && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
                 </div>
             )}
@@ -331,7 +168,11 @@ export function DeleteConnectionDialog({ connection, onClose }: { connection: Co
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
+            tone="danger"
+            mark={<Trash2 aria-hidden className="h-5 w-5" />}
             title={`Delete ${connection.name}?`}
+            description="Its account stops being reachable from your code and agents."
+
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>

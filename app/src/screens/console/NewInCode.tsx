@@ -1,4 +1,5 @@
-// "New …" for what's made in code: an agent, its triggers, a user, a webhook and most resources. The dialog shows the
+// "New …" for what's made in code: everything but a key (an agent, its triggers, a user, a webhook, a connection, a
+// secret, a memory entry, a card, asking for machines, the resources code makes by name). The dialog shows the
 // code that makes one, the prompt that has a coding agent write it, and the guide. Nothing here makes anything; it
 // shows up in the console once the code runs. What each kind's dialog says is NEW_IN_CODE's, its code NEW_SNIPPETS'.
 import { useState } from 'react';

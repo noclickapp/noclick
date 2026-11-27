@@ -161,7 +161,7 @@ export function HumanRequestDrawer({
         <Drawer
             open={requestId !== null}
             onOpenChange={(open) => !open && onClose()}
-            kind={view ? `human.${view.kind}` : 'human request'}
+            kind="request to a person"
             title={view ? EYEBROW[view.kind] : undefined}
             id={requestId ?? undefined}
             status={view ? <StatusPill look={humanRequestStatus(view.status)} /> : undefined}

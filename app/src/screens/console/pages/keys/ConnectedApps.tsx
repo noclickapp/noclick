@@ -5,6 +5,7 @@
 // one NoClick itself makes (its assistant's) offers Restore, which turns it back
 // on as it was.
 import { useCallback, useId, useState, type ReactNode } from 'react';
+import { RotateCcw, Unplug } from 'lucide-react';
 import { toast } from 'sonner';
 import { CAPABILITY_GROUPS, listConnectedApps, restoreConnectedApp, revokeConnectedApp, type ConnectedAppView } from '@/sdk/owner';
 import { formatMoney } from '@/screens/console/lib/format';
@@ -73,7 +74,10 @@ function AppActionDialog({ app, action, onClose }: { app: ConnectedAppView; acti
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
+            tone={action === 'restore' ? 'neutral' : 'danger'}
+            mark={action === 'restore' ? <RotateCcw aria-hidden className="h-5 w-5" /> : <Unplug aria-hidden className="h-5 w-5" />}
             title={`${verb} ${app.client.name}?`}
+            description={action === 'restore' ? 'It acts for this account again.' : 'It stops acting for this account.'}
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>

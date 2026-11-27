@@ -290,9 +290,10 @@ export interface SetupCode {
     expires_at: string;
 }
 
-/** A one-time code a coding agent trades for a key that lands in its project's .env, never in its context. */
-export async function createSetupCode(client: NoClick): Promise<SetupCode> {
-    return (await Key.setupCode({ client })).raw as unknown as SetupCode;
+/** A one-time code a coding agent trades for a key that lands in its project's .env, never in its context; the key
+ *  also holds `scopes`, ones a key with every scope doesn't. */
+export async function createSetupCode(client: NoClick, scopes?: readonly string[]): Promise<SetupCode> {
+    return (await Key.setupCode({ client, scopes: scopes?.length ? [...scopes] : undefined })).raw as unknown as SetupCode;
 }
 
 export async function updateKey(client: NoClick, keyId: string, input: UpdateKeyInput): Promise<KeyView> {

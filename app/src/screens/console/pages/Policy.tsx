@@ -10,7 +10,7 @@ import { ChevronDown, X } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
-import { HAIRLINE, SURFACE } from '@/ui/primitives';
+import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Agent, ALL_USERS, Connection, HumanRequest, Policy, Rule, type JsonObject, type PolicyVerdict } from 'noclick';
 import { BUCKET_TOOLS } from '@/sdk/source';
@@ -163,7 +163,7 @@ function PatternList({ label, hint, entries, onChange }: { label: string; hint: 
         }
     };
     return (
-        <section className={cn(SURFACE, 'p-4')}>
+        <section className={cn('border-t pt-4', HAIRLINE)}>
             <div className="mb-2 flex items-baseline justify-between gap-3">
                 <h2 className="m-0 text-[13px] font-semibold text-foreground">{label}</h2>
                 <span className="text-[12px] tabular-nums text-muted-foreground">
@@ -250,7 +250,7 @@ function Preview({ user, draft }: { user: string | null; draft: Rules }) {
     );
     const verdict = result.data?.[0];
     return (
-        <section className={cn(SURFACE, 'p-4')}>
+        <section className={cn('border-t pt-4', HAIRLINE)}>
             <h2 className="m-0 mb-2 text-[13px] font-semibold text-foreground">Preview</h2>
             <input
                 value={tool}
@@ -362,7 +362,7 @@ function ToolsAffected({ user, draft, dirty }: { user: string | null; draft: Rul
         return after.map((v, i) => ({ after: v, before: before[i] })).filter((c) => c.after.verdict !== c.before.verdict);
     });
     return (
-        <section className={cn(SURFACE, 'p-4')}>
+        <section className={cn('border-t pt-4', HAIRLINE)}>
             <h2 className="m-0 mb-1 text-[13px] font-semibold text-foreground">Tools affected</h2>
             <p className="m-0 mb-2.5 text-[12px] text-muted-foreground">
                 {`Your agents' tools whose verdict this draft changes${candidates.data?.truncated ? ` (the first ${MAX_EVALUATE_TOOLS})` : ''}.`}
@@ -433,9 +433,9 @@ function Editor({ user, saved, label }: { user: string | null; saved: Rules; lab
     };
     return (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
-            <div className="flex min-w-0 flex-col gap-3">
+            <div className="flex min-w-0 flex-col gap-5">
                 {empty && !user && (
-                    <div className={cn(SURFACE, 'p-4')}>
+                    <div className={cn('border-t pt-4', HAIRLINE)}>
                         <p className="m-0 mb-2 text-[13px] text-foreground">No rules yet: every tool runs without asking. Set them here, or from code:</p>
                         <CodeSnippet tabs={snippetTabs(POLICY_EMPTY)} />
                     </div>
@@ -443,7 +443,7 @@ function Editor({ user, saved, label }: { user: string | null; saved: Rules; lab
                 {LISTS.map(({ name, label: listLabel, hint }) => (
                     <PatternList key={name} label={listLabel} hint={hint} entries={draft[name]} onChange={(next) => setDraft((d) => ({ ...d, [name]: next }))} />
                 ))}
-                <div className={cn(SURFACE, 'p-4')}>
+                <div className={cn('border-t pt-4', HAIRLINE)}>
                     <h2 className="m-0 mb-1 text-[13px] font-semibold text-foreground">Rules with conditions</h2>
                     <p className="m-0 mb-2.5 text-[12px] text-muted-foreground">
                         A rule can hold a call only when its arguments say so, and name who approves it. Set one from code; it shows in its list here, and saving here keeps it.
@@ -459,7 +459,7 @@ function Editor({ user, saved, label }: { user: string | null; saved: Rules; lab
                     </ConsoleButton>
                 </div>
             </div>
-            <div className="flex min-w-0 flex-col gap-3">
+            <div className="flex min-w-0 flex-col gap-5">
                 <Preview user={user} draft={draft} />
                 <ToolsAffected user={user} draft={draft} dirty={dirty} />
             </div>

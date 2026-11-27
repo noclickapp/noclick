@@ -2,9 +2,10 @@
 // depth over the last day, peeks at the oldest messages without taking them, sends a test
 // message, retries or discards dead letters, exports, clears and deletes.
 import { useEffect, useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Queue, type QueueMessage } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
@@ -23,7 +24,7 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { JsonView } from '../../ui/JsonView';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
-import { ConfirmAction, errorText, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
+import { ConfirmAction, errorText, Field, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { JsonField, jsonPreview, parseJson } from './DictsQueuesShared';
 import { QueuesConsumers, QueuesDepthChart, queuesMessageLook } from './QueuesParts';
 import { DeleteByName, ExportSection, formatExact } from './StorageShared';
@@ -107,6 +108,7 @@ function SendTestDialog({ queue, open, onOpenChange }: { queue: Queue; open: boo
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<Send aria-hidden className="h-5 w-5" />}
             title={`Send a test message to ${queue.name}`}
             description={
                 agents.length
@@ -122,13 +124,7 @@ function SendTestDialog({ queue, open, onOpenChange }: { queue: Queue; open: boo
             <div className="flex flex-col gap-3">
                 <JsonField id="queue-test-body" label="Body (JSON)" value={text} onChange={setText} rows={5} hint="Up to 256 KB of JSON." />
                 <LabeledInput label="Deliver" id="queue-test-delay">
-                    <select id="queue-test-delay" className={INPUT} value={delay} onChange={(e) => setDelay(e.target.value)}>
-                        {DELAYS.map((d) => (
-                            <option key={d.value} value={d.value}>
-                                {d.label}
-                            </option>
-                        ))}
-                    </select>
+                    <FieldSelect id="queue-test-delay" value={delay} onValueChange={setDelay} options={DELAYS.map((d) => ({ value: d.value, label: d.label }))} />
                 </LabeledInput>
                 {error !== undefined && <ErrorPanel error={error} />}
             </div>

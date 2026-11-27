@@ -142,7 +142,7 @@ function ProfileDrawer({ profileId, row, onClose }: { profileId: string | null; 
         <Drawer
             open={profileId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="browser_profile"
+            kind="browser profile"
             title={profile ? <span className="font-mono">{profile.name}</span> : undefined}
             id={profileId ?? undefined}
             footer={

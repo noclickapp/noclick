@@ -9,6 +9,7 @@ import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Agent, Bucket, Connection, Database, Dict, NO_USER, Queue, Secret, type Binding, type BindingKind, type NoClick, type Project, type Schedule, type UserFilter } from 'noclick';
 import { formatTimeTooltip } from '@/screens/console/lib/format';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -109,37 +110,32 @@ function BindDialog({ project, open, onOpenChange }: { project: Project; open: b
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
-            title="Bind a resource"
-            description={`The app reads it from its environment under this name. ${NEXT_DEPLOY}`}
+            mark={<PlugZap aria-hidden className="h-5 w-5" />}
+            title="Give the app a resource"
+            description={`Its code reaches it under the name you give it here. ${NEXT_DEPLOY}`}
             footer={
                 <ConsoleButton variant="primary" disabled={busy || !valid} onClick={() => void bind()}>
-                    {busy ? 'Binding…' : 'Bind'}
+                    {busy ? 'Adding…' : 'Add'}
                 </ConsoleButton>
             }
         >
             <div className="flex flex-col gap-3">
                 <ActsFor userId={project.userId} />
-                <LabeledInput label="Name" id="binding-name">
+                <LabeledInput label="Name in its code" id="binding-name">
                     <input id="binding-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="DB" autoComplete="off" />
                 </LabeledInput>
-                <LabeledInput label="Kind" id="binding-kind">
-                    <select id="binding-kind" className={INPUT} value={kind} onChange={(e) => setKind(e.target.value as BindingKind)}>
-                        {(Object.keys(KINDS) as BindingKind[]).map((k) => (
-                            <option key={k} value={k}>
-                                {KINDS[k].label}
-                            </option>
-                        ))}
-                    </select>
+                <LabeledInput label="What it is" id="binding-kind">
+                    <FieldSelect id="binding-kind" value={kind} onValueChange={(k) => setKind(k as BindingKind)} options={(Object.keys(KINDS) as BindingKind[]).map((k) => ({ value: k, label: KINDS[k].label }))} />
                 </LabeledInput>
                 <LabeledInput label={KINDS[kind].label} id="binding-resource">
-                    <select id="binding-resource" className={INPUT} value={resourceId} onChange={(e) => setResourceId(e.target.value)} disabled={!choices.data?.length}>
-                        <option value="">{choices.loading ? 'Loading…' : choices.data?.length ? `Choose a ${KINDS[kind].label.toLowerCase()}` : `No ${KINDS[kind].label.toLowerCase()}s ${project.userId ? `for ${project.userId}` : 'in your account'}`}</option>
-                        {(choices.data ?? []).map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                    <FieldSelect
+                        id="binding-resource"
+                        value={resourceId}
+                        onValueChange={setResourceId}
+                        disabled={!choices.data?.length}
+                        placeholder={choices.loading ? 'Loading…' : choices.data?.length ? `Choose a ${KINDS[kind].label.toLowerCase()}` : `No ${KINDS[kind].label.toLowerCase()}s ${project.userId ? `for ${project.userId}` : 'in your account'}`}
+                        options={(choices.data ?? []).map((c) => ({ value: c.id, label: c.name }))}
+                    />
                 </LabeledInput>
                 {choices.error !== undefined && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errorText(choices.error)}</p>}
                 {error !== undefined && <ErrorPanel error={error} />}
@@ -347,6 +343,7 @@ function SetSecretDialog({ project, open, name: initial, onOpenChange }: { proje
         <ConsoleDialog
             open={open}
             onOpenChange={onOpenChange}
+            mark={<LockKeyhole aria-hidden className="h-5 w-5" />}
             title={initial ? `Replace ${initial}` : 'Set a secret'}
             description="Values are write-only: once saved, nobody can read one back, here or through the API."
             footer={

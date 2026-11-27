@@ -7,6 +7,7 @@ import { useEffect, useReducer, useState } from 'react';
 import { MailWarning } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Domain, type DnsRecord, type TransferCode } from 'noclick';
 import { formatMoneyFull } from '@/screens/console/lib/format';
 import { userLabel } from '@/screens/console/lib/userFilter';
@@ -170,11 +171,7 @@ function BoughtDns({ domain }: { domain: Domain }) {
                     if (value.trim()) void add();
                 }}
             >
-                <select aria-label="Record type" className={INPUT} value={type} onChange={(e) => setType(e.target.value)}>
-                    {RECORD_TYPES.map((t) => (
-                        <option key={t}>{t}</option>
-                    ))}
-                </select>
+                <FieldSelect aria-label="Record type" value={type} onValueChange={setType} options={RECORD_TYPES.map((t) => ({ value: t, label: t }))} />
                 <input aria-label="Record name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="@ or www" />
                 <input
                     aria-label="Record value"
@@ -273,23 +270,18 @@ function Renewal({ domain, onChanged }: { domain: Domain; onChanged: () => void 
                     }}
                 >
                     <LabeledInput label="Renew now" id="renew-years">
-                        <select
+                        <FieldSelect
                             id="renew-years"
-                            className={cn(INPUT, 'w-28')}
-                            value={years}
-                            onChange={(e) => {
-                                const next = Number(e.target.value);
+                            className="w-28"
+                            value={String(years)}
+                            onValueChange={(v) => {
+                                const next = Number(v);
                                 setYears(next);
                                 const cost = renewalFor(domain, next);
                                 if (cost != null) setMax(String(cost));
                             }}
-                        >
-                            {RENEW_YEARS.filter((y) => y >= term).map((y) => (
-                                <option key={y} value={y}>
-                                    {y === 1 ? '1 year' : `${y} years`}
-                                </option>
-                            ))}
-                        </select>
+                            options={RENEW_YEARS.filter((y) => y >= term).map((y) => ({ value: String(y), label: y === 1 ? '1 year' : `${y} years` }))}
+                        />
                     </LabeledInput>
                     <LabeledInput label="Most you'll pay (USD)" id="renew-max">
                         <input id="renew-max" inputMode="decimal" className={cn(INPUT, 'w-36')} value={max} onChange={(e) => setMax(e.target.value)} />

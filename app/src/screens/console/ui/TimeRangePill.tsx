@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DateField } from '@/ui/DateField';
 import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { LiveDot } from '@/ui/primitives';
@@ -27,7 +28,7 @@ function rangeLabel({ since, until }: TimeRange): string {
     return `${since ? fmt(since) : '…'} – ${until ? fmt(until) : 'now'}`;
 }
 
-/** `<input type="datetime-local">` value ↔ ISO. */
+/** A date-and-time field's value (`DateField`, local time) ↔ ISO. */
 function toLocalInput(iso: string | null): string {
     // Presets (`1d`) aren't times; Date.parse rejects them.
     const t = iso && !/^\d+[mhdw]$/.test(iso) ? Date.parse(iso) : NaN;
@@ -60,7 +61,7 @@ export function TimeRangePill({ value, onChange, live = false, className }: { va
                 <span className="whitespace-nowrap">{rangeLabel(value)}</span>
                 <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-64 p-1.5">
+            <PopoverContent align="start" className="w-72 p-1.5">
                 <div className="flex flex-col">
                     {TIME_PRESETS.map((p) => (
                         <button
@@ -78,8 +79,8 @@ export function TimeRangePill({ value, onChange, live = false, className }: { va
                     </button>
                     <div className="mt-1 flex flex-col gap-1.5 border-t border-border px-2 pb-1 pt-2">
                         <span className="text-[12px] font-medium text-muted-foreground">Custom</span>
-                        <input type="datetime-local" aria-label="From" value={from} onChange={(e) => setFrom(e.target.value)} className="h-8 rounded-md border border-input bg-background px-2 text-[12px]" />
-                        <input type="datetime-local" aria-label="To" value={to} onChange={(e) => setTo(e.target.value)} className="h-8 rounded-md border border-input bg-background px-2 text-[12px]" />
+                        <DateField withTime aria-label="From" placeholder="From" value={from} onChange={setFrom} />
+                        <DateField withTime aria-label="To" placeholder="To (now)" value={to} onChange={setTo} />
                         <ConsoleButton
                             size="sm"
                             disabled={!from}

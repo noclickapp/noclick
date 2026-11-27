@@ -188,10 +188,11 @@ class Key:
 
     @synced
     @staticmethod
-    async def setup_code(*, client: Optional[Client] = None) -> SetupCode:
+    async def setup_code(*, scopes: Optional[Sequence[str]] = None, client: Optional[Client] = None) -> SetupCode:
         """A one-time setup code (``nc_setup_...``, 30 minutes) a coding agent redeems for a key of the account
-        (``noclick setup <code>``, or ``POST /v1/setup``), so the key lands in its project, never in its context. The
-        signed-in owner's alone.
+        (``noclick setup <code>``, or ``POST /v1/setup``), so the key lands in its project, never in its context. Its
+        key holds every scope but the ones a key holds only when they're named, and also ``scopes``, any of those the
+        agent's work needs (``["machines:vetting"]``). The signed-in owner's alone.
 
         Returns:
             The code.
@@ -200,7 +201,8 @@ class Key:
 
             print(noclick.Key.setup_code().code)
         """
-        raw = await resolve_client(client).request("POST", "/v1/cli/setup_codes", user=None) or {}
+        body = {"scopes": list(scopes)} if scopes else None
+        raw = await resolve_client(client).request("POST", "/v1/cli/setup_codes", json=body, user=None) or {}
         return SetupCode(raw.get("code") or "", raw.get("key_name") or "", parse_time(raw.get("expires_at")), raw)
     @staticmethod
     async def revoke_current(*, client: Optional[Client] = None) -> None:

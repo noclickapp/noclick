@@ -603,7 +603,7 @@ function DrawerFrame({ id, onClose }: { id: string; onClose: () => void }) {
         <Drawer
             open
             onOpenChange={(open) => !open && onClose()}
-            kind={op?.kind ?? 'Operation'}
+            kind="operation"
             id={id}
             title={op?.summaryText || undefined}
             status={op ? <OperationStatusPill op={op} /> : undefined}

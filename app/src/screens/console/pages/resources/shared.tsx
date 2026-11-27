@@ -2,6 +2,7 @@
 // facet, the create action), a detail field row, the destructive confirm, the
 // read-only "acts for" line for writes on an owned resource, and error text.
 import { useContext, useState, type ReactNode } from 'react';
+import { TriangleAlert } from 'lucide-react';
 import { ConsoleContext } from '@/screens/console/hooks/useConsole';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
@@ -114,6 +115,8 @@ export function ConfirmAction({
                 open={open}
                 onOpenChange={setOpen}
                 size="sm"
+                tone="danger"
+                mark={<TriangleAlert aria-hidden className="h-5 w-5" />}
                 title={title}
                 description={description}
                 footer={

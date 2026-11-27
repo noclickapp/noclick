@@ -13,9 +13,11 @@ import { formatCount, formatMoney } from '@/screens/console/lib/format';
 import { useDebounce } from '@/lib/useDebounce';
 import { refFor } from '@/lib/agentTools';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
-import { invalidateV1, useV1 } from '@/sdk/useV1';
-import { LinkShown, connectionLook, integrationNodeType, nameProblem, nodeTypeOf, useIntegrations, useScopeConnections } from './connections';
-import { ConsoleButton } from './ui/Button';
+import { useV1 } from '@/sdk/useV1';
+import { Checkbox } from '@/ui/checkbox';
+import { FieldSelect } from '@/ui/FieldSelect';
+import { connectionLook, integrationNodeType, nodeTypeOf, useIntegrations, useScopeConnections } from './connections';
+import { NewInCodeDialog } from './NewInCode';
 
 /** Tools that aren't connections: the web on NoClick's key, and the agents capability. Every agent also has a shell (`code`), listed or not. */
 export const AGENT_CAPABILITIES = [
@@ -191,128 +193,57 @@ export function keepsModelConnection(ref: string, harness: HarnessInfo, connecti
 }
 
 /**
- * The connection a harness thinks with, from the agent's scope: those of the
- * model providers that serve it, or one made here, pending with a link where
- * someone pastes a key (or, on a user's own, signs in with their plan).
+ * The connection a harness thinks with, from the agent's scope: those of the model providers that serve it. A new one
+ * is made in code, as every connection is: its dialog shows how, and closing it reads the list again.
  */
 export function ModelConnectionField({
     harness,
     user,
     value,
     onChange,
-    stacked = false,
 }: {
     harness: HarnessInfo;
     user: string | null;
     value: string;
     onChange: (name: string) => void;
-    /** One column at every width (the detail page's narrow aside). */
-    stacked?: boolean;
 }) {
-    const { client } = useConsole();
     const id = useId();
     const connections = useScopeConnections(user);
     const catalog = useIntegrations();
-    const [creating, setCreating] = useState(false);
-    const [integration, setIntegration] = useState(harness.integrations[0] ?? '');
-    const [name, setName] = useState('');
-    const [made, setMade] = useState<Connection | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [busy, setBusy] = useState(false);
+    const [making, setMaking] = useState(false);
     const listed = (connections.data ?? []).filter((c) => harness.integrations.includes(c.integration ?? ''));
-    // The one just made is offered at once, before the scope's list is read again.
-    const options = made && !listed.some((c) => c.id === made.id) ? [...listed, made] : listed;
     const labelOf = (n: string) => catalog.data?.find((i) => i.name === n)?.label ?? n;
     const required = harness.modelConnection === 'required';
-    const plan = !!catalog.data?.find((i) => i.name === integration)?.subscription;
-    const create = async () => {
-        const connectionName = name.trim() || integration;
-        const problem = nameProblem(connectionName);
-        if (problem) return setError(problem);
-        setBusy(true);
-        setError(null);
-        try {
-            const connection = await Connection.create(connectionName, { client, user, integration });
-            invalidateV1('connections');
-            setMade(connection);
-            setCreating(false);
-            onChange(refFor(connection));
-        } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
-            setBusy(false);
-        }
-    };
     const hint = required
         ? `${harness.label ?? harness.name} thinks with this connection's key or plan: ${providersText(harness.integrations, catalog.data)}.`
         : `Optional. With a connection to ${providersText(harness.integrations, catalog.data)}, the model runs on your own key.`;
     return (
         <div className="flex flex-col gap-1.5">
-            <Field label="Model connection" hint={hint}>
-                <select value={value} onChange={(e) => onChange(e.target.value)} className={cn(inputClass, 'px-2 [color-scheme:light] dark:[color-scheme:dark]')}>
-                    <option value="">{required ? 'Choose a connection' : "None: NoClick's key"}</option>
-                    {/* Each by the ref an agent names it by: a key connected in the app by `credential:<id>`, never its name. */}
-                    {options.map((c) => (
-                        <option key={c.id} value={refFor(c)}>
-                            {c.name} · {labelOf(c.integration ?? '')}
-                            {c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}
-                        </option>
-                    ))}
-                </select>
+            <Field label="Model connection" hint={hint} htmlFor={id}>
+                <FieldSelect
+                    id={id}
+                    value={value}
+                    onValueChange={onChange}
+                    placeholder="Choose a connection"
+                    options={[
+                        ...(required ? [] : [{ value: '', label: "None: NoClick's key" }]),
+                        // Each by the ref an agent names it by: a key connected in the app by `credential:<id>`, never its name.
+                        ...listed.map((c) => ({
+                            value: refFor(c),
+                            label: `${c.name} · ${labelOf(c.integration ?? '')}${c.status !== 'connected' ? ` · ${connectionLook(c).label.toLowerCase()}` : ''}`,
+                        })),
+                    ]}
+                />
             </Field>
             {connections.error !== undefined && <span className="text-[12px] text-red-600 dark:text-red-400">Couldn&apos;t load connections.</span>}
-            {creating ? (
-                <div className={cn('flex flex-col gap-2 rounded-md border p-3', HAIRLINE)}>
-                    <div className={cn('grid gap-2', !stacked && 'sm:grid-cols-2')}>
-                        <label className="flex flex-col gap-1.5">
-                            <span className="text-[12px] font-medium text-muted-foreground">Provider</span>
-                            <select value={integration} onChange={(e) => setIntegration(e.target.value)} className={cn(inputClass, 'px-2 [color-scheme:light] dark:[color-scheme:dark]')}>
-                                {harness.integrations.map((n) => (
-                                    <option key={n} value={n}>
-                                        {labelOf(n)}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                        <label className="flex flex-col gap-1.5">
-                            <span className="text-[12px] font-medium text-muted-foreground">Connection name</span>
-                            <input value={name} onChange={(e) => setName(e.target.value)} placeholder={integration} className={cn(inputClass, 'font-mono text-[12px]')} />
-                        </label>
-                    </div>
-                    <span id={`${id}-plan`} className="text-[12px] text-muted-foreground">
-                        {!plan
-                            ? 'Its link takes an API key.'
-                            : user
-                              ? `Its link lets the user paste their ${labelOf(integration)} key or sign in with their plan.`
-                              : `Its link lets you paste your ${labelOf(integration)} key or sign in with your plan, which suits agents that work for you; an agent serving your product's users runs on a key.`}
-                    </span>
-                    {error && <span className="text-[12px] text-red-600 dark:text-red-400">{error}</span>}
-                    <div className="flex gap-1.5">
-                        <ConsoleButton size="sm" onClick={() => void create()} disabled={busy || !integration} aria-describedby={`${id}-plan`}>
-                            {busy ? 'Creating…' : 'Create connection'}
-                        </ConsoleButton>
-                        <ConsoleButton size="sm" variant="ghost" onClick={() => setCreating(false)}>
-                            Cancel
-                        </ConsoleButton>
-                    </div>
-                </div>
-            ) : (
-                <button
-                    type="button"
-                    onClick={() => setCreating(true)}
-                    className="self-start text-[12px] text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline"
-                >
-                    Create a connection
-                </button>
-            )}
-            {made?.connectUrl && (
-                <div className="flex flex-col gap-1.5">
-                    <span className="text-[12px] text-muted-foreground">
-                        {made.name} waits for {user ? 'the user' : 'you'} to connect it here. The agent can be created meanwhile; its turns wait for it.
-                    </span>
-                    <LinkShown url={made.connectUrl} />
-                </div>
-            )}
+            <button
+                type="button"
+                onClick={() => setMaking(true)}
+                className="self-start text-[12px] text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline"
+            >
+                New connection
+            </button>
+            <NewInCodeDialog kind="connection" place={{ user }} open={making} onOpenChange={setMaking} />
         </div>
     );
 }
@@ -499,7 +430,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                     {shown.map((c) => (
                         <li key={c.id}>
                             <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-[13px] hover:bg-foreground/[0.04]">
-                                <input type="checkbox" checked={value.includes(refFor(c))} onChange={() => toggle(refFor(c))} />
+                                <Checkbox checked={value.includes(refFor(c))} onCheckedChange={() => toggle(refFor(c))} />
                                 <CredentialMark credentialType={c.credentialType ?? ''} nodeType={nodeTypeOf(c)} />
                                 <span className="flex-1 font-mono text-[13px]">{c.name}</span>
                                 {c.status !== 'connected' && <span className="text-[12px] text-muted-foreground">{connectionLook(c).label.toLowerCase()}</span>}
@@ -524,7 +455,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                     {shownFree.map((i) => (
                         <li key={i.name}>
                             <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-[13px] hover:bg-foreground/[0.04]">
-                                <input type="checkbox" checked={value.includes(i.name)} onChange={() => toggle(i.name)} />
+                                <Checkbox checked={value.includes(i.name)} onCheckedChange={() => toggle(i.name)} />
                                 <CredentialMark credentialType={i.credentialTypes[0] ?? ''} nodeType={integrationNodeType(i.name)} />
                                 <span className="flex-1">{i.label ?? i.name}</span>
                                 <span className="text-[12px] text-muted-foreground">{plural(i.accountFreeOperationCount, 'operation')}</span>
@@ -540,7 +471,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                     {shownDatabases.map((d) => (
                         <li key={d.id}>
                             <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-[13px] hover:bg-foreground/[0.04]">
-                                <input type="checkbox" checked={usesDatabase(d.id)} onChange={() => toggleDatabase(d.id)} />
+                                <Checkbox checked={usesDatabase(d.id)} onCheckedChange={() => toggleDatabase(d.id)} />
                                 <span className="flex-1 font-mono text-[13px]">{d.name}</span>
                                 <span className="text-[12px] text-muted-foreground">{d.engine === 'postgres' ? 'Postgres' : 'SQLite'}</span>
                             </label>
@@ -559,7 +490,7 @@ export function ToolPicker({ value, onChange, user }: { value: string[]; onChang
                                     title={taken ? `This agent already has a tool named ${c.name}` : undefined}
                                     className={cn('flex items-center gap-2 rounded px-2 py-1 text-[13px]', taken ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-foreground/[0.04]')}
                                 >
-                                    <input type="checkbox" checked={sharedIds.has(c.id)} disabled={taken} onChange={() => toggleShared(c.id)} />
+                                    <Checkbox checked={sharedIds.has(c.id)} disabled={taken} onCheckedChange={() => toggleShared(c.id)} />
                                     <CredentialMark credentialType={c.credentialType ?? ''} nodeType={nodeTypeOf(c)} />
                                     <span className="flex-1 font-mono text-[13px]">{c.name}</span>
                                     <span className="text-[12px] text-muted-foreground">

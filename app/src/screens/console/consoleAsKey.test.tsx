@@ -135,8 +135,20 @@ const ADDRESSES = [
     'cli?code=ABCD-EFGH',
 ];
 
-/** Every New dialog, where its page's button opens it: an agent's trigger on that agent's page. */
-const NEW_DIALOGS = (Object.entries(NEW_IN_CODE) as [NewKind, NewInCodeKind][]).map(([kind, entry]) => ({ kind, entry, address: `${entry.page ?? `agents/${AGENTS[0].id}`}?new=${kind}` }));
+/** Where a dialog the palette doesn't offer opens: an agent's trigger and memory entry on its page, machines on their
+ *  page while the account hasn't asked, cards (drawn in the lab) on theirs. */
+const OPENED_AT: Partial<Record<NewKind, { address: string; set?: FixtureSet; lab?: boolean }>> = {
+    trigger: { address: `agents/${AGENTS[0].id}` },
+    memory: { address: `agents/${AGENTS[0].id}?tab=memory` },
+    machines: { address: 'resources/machines', set: 'empty' },
+    card: { address: 'resources/cards', lab: true },
+};
+
+/** Every New dialog, where its page's button opens it. */
+const NEW_DIALOGS = (Object.entries(NEW_IN_CODE) as [NewKind, NewInCodeKind][]).map(([kind, entry]) => {
+    const at = OPENED_AT[kind] ?? { address: entry.page! };
+    return { kind, entry, set: at.set ?? 'populated', lab: at.lab ?? false, address: `${at.address}${at.address.includes('?') ? '&' : '?'}new=${kind}` };
+});
 
 describe('a console acting as a key', { timeout: TEST_S }, () => {
     it.each(ADDRESSES)('asks for nothing only the owner may have at /%s', async (address) => {
@@ -145,8 +157,8 @@ describe('a console acting as a key', { timeout: TEST_S }, () => {
         expect(calls.ownerOnly).toEqual([]);
     });
 
-    it.each(NEW_DIALOGS)('shows the code that makes one at /$address, its guide, and no prompt that needs a setup code', async ({ address, entry }) => {
-        const calls = open(address);
+    it.each(NEW_DIALOGS)('shows the code that makes one at /$address, its guide, and no prompt that needs a setup code', async ({ address, entry, set, lab }) => {
+        const calls = open(address, 'key', set as FixtureSet, lab);
         await calls.settled();
         expect(calls.ownerOnly).toEqual([]);
         const dialog = screen.getByRole('dialog', { name: entry.title });
@@ -200,12 +212,13 @@ describe('a console acting as a key', { timeout: TEST_S }, () => {
         expect(anchor.getAttribute('target')).toBe('_blank');
     });
 
-    it('says who asks for machines, with a link, where the request would be made', async () => {
-        // An account that hasn't asked yet: the owner's console shows the request's form here.
+    it('shows the code that asks for machines where the request stands, and asks nothing itself', async () => {
+        // An account that hasn't asked yet: its code asks, with a key that names machines:vetting.
         const calls = open('resources/machines', 'key', 'empty');
         await calls.settled();
-        expect(await screen.findByText(ownerOnlyWhy('machineAccess'))).toBeTruthy();
-        expect(screen.getByRole('link', { name: 'Ask on NoClick' }).getAttribute('href')).toBe('https://noclick.com/dashboard/developers/resources/machines');
+        fireEvent.click(await screen.findByRole('button', { name: 'Ask for machines' }));
+        const dialog = await screen.findByRole('dialog', { name: 'Ask for machines' });
+        expect(within(dialog).getByRole('region', { name: 'Create it from your code' }).textContent).toContain('accepted_by=');
         expect(calls.made).not.toContain('POST /v1/machines/vetting');
     });
 

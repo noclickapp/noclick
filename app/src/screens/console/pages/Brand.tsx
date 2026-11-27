@@ -5,8 +5,10 @@
 // app per provider changes one provider at a time (PATCH), and a save keeps
 // them. In the lab (designed): the domain those pages and emails come from.
 import { useState, type ReactNode } from 'react';
+import { Palette } from 'lucide-react';
 import { toast } from 'sonner';
-import { HAIRLINE, SURFACE } from '@/ui/primitives';
+import { HAIRLINE } from '@/ui/primitives';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { cn } from '@/ui/utils';
 import { Brand, NoClickError, Secret } from 'noclick';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -124,7 +126,6 @@ function RedirectUri({ url }: { url: string }) {
     );
 }
 
-const SELECT = 'h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-[13px] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 /** Your own OAuth app per provider: an account secret holding CLIENT_ID and CLIENT_SECRET, one provider at a time. */
 function OAuthApps({ brand, apps, onApps }: { brand: Brand; apps: Record<string, string>; onApps: (apps: Record<string, string>) => void }) {
@@ -180,24 +181,17 @@ function OAuthApps({ brand, apps, onApps }: { brand: Brand; apps: Record<string,
                 <p className="m-0 text-[12px] text-muted-foreground">Save your brand first, then name your apps.</p>
             ) : (
                 open.length > 0 && (
-                    <div className={cn('flex flex-col gap-1.5 rounded-lg border p-2', HAIRLINE)}>
+                    <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
-                            <select aria-label="Provider" className={SELECT} value={provider} onChange={(e) => setProvider(e.target.value)}>
-                                <option value="">Provider</option>
-                                {open.map((name) => (
-                                    <option key={name} value={name}>
-                                        {providerName(name)}
-                                    </option>
-                                ))}
-                            </select>
-                            <select aria-label="App secret" className={cn(SELECT, 'font-mono')} value={secretId} onChange={(e) => setSecretId(e.target.value)}>
-                                <option value="">Secret</option>
-                                {accountSecrets.map((secret) => (
-                                    <option key={secret.id} value={secret.id}>
-                                        {secret.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <FieldSelect aria-label="Provider" className="h-8 flex-1" placeholder="Provider" value={provider} onValueChange={setProvider} options={open.map((name) => ({ value: name, label: providerName(name) }))} />
+                            <FieldSelect
+                                aria-label="App secret"
+                                className="h-8 flex-1"
+                                placeholder="Secret"
+                                value={secretId}
+                                onValueChange={setSecretId}
+                                options={accountSecrets.map((secret) => ({ value: secret.id, label: secret.name }))}
+                            />
                             <ConsoleButton size="sm" disabled={busy || !provider || !secretId} onClick={() => void change(provider, secretId)}>
                                 Add
                             </ConsoleButton>
@@ -323,7 +317,7 @@ function BrandEditor({ saved, onChanged }: { saved: Brand; onChanged: () => Prom
     return (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
             <form
-                className={cn(SURFACE, 'flex flex-col gap-4 self-start p-4')}
+                className="flex flex-col gap-4 self-start"
                 onSubmit={(e) => {
                     e.preventDefault();
                     void save();
@@ -341,14 +335,21 @@ function BrandEditor({ saved, onChanged }: { saved: Brand; onChanged: () => Prom
                 </FieldRow>
                 <FieldRow label="Accent color" htmlFor="brand-color" hint="One bar across the top of the page." error={errors.color}>
                     <div className="flex items-center gap-2">
-                        <input
-                            key={swatch ? 'set' : 'unset'}
-                            type="color"
-                            aria-label="Pick accent color"
-                            {...(swatch ? { value: swatch } : {})}
-                            onChange={(e) => set('color')(e.target.value)}
-                            className="h-9 w-10 shrink-0 cursor-pointer rounded-md border border-input bg-background p-1"
-                        />
+                        {/* The swatch is the app's; the colour it opens is the system's own picker, which no field of ours replaces. */}
+                        <label
+                            className="relative grid h-9 w-9 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full border border-input focus-within:ring-2 focus-within:ring-ring"
+                            style={swatch ? { background: swatch } : undefined}
+                        >
+                            {!swatch && <Palette aria-hidden className="h-4 w-4 text-muted-foreground" />}
+                            <input
+                                key={swatch ? 'set' : 'unset'}
+                                type="color"
+                                aria-label="Pick accent color"
+                                {...(swatch ? { value: swatch } : {})}
+                                onChange={(e) => set('color')(e.target.value)}
+                                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                            />
+                        </label>
                         <input id="brand-color" className={cn(INPUT, 'font-mono')} value={draft.color} placeholder="None" onChange={(e) => set('color')(e.target.value)} {...described('color')} />
                     </div>
                 </FieldRow>

@@ -5,12 +5,14 @@
 // when it was used and made); a key's drawer (`?key=`) holds its spend against
 // its cap, what it may call, and its actions.
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { ChevronRight, Gauge, Globe, KeyRound, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { Input } from '@/ui/input';
 import { Textarea } from '@/ui/textarea';
 import { cn } from '@/ui/utils';
+import { ChoiceList, type Choice } from '@/ui/ChoiceList';
+import { DateField } from '@/ui/DateField';
 import {
     EXPLICIT_SCOPES,
     TOKEN_SCOPE,
@@ -26,6 +28,7 @@ import {
     type PublicEndpoint,
 } from '@/sdk/owner';
 import { keyRevealTabs } from '@/screens/console/lib/snippets';
+import { scopeWords } from '@/screens/console/lib/scopes';
 import { formatMoney } from '@/screens/console/lib/format';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { useSlot } from '@/slots';
@@ -46,6 +49,7 @@ import { PageHeader } from '../ui/PageHeader';
 import { RevealOnceSecret } from '../ui/RevealOnceSecret';
 import { Segmented } from '../ui/Segmented';
 import { StatusPill } from '../ui/StatusPill';
+import { SWITCH_ROWS, SwitchRow } from '../ui/SwitchRow';
 import { UserField } from '../ui/UserField';
 import { TimeCell } from '../ui/TimeCell';
 import { FormField, INPUT, MoreMenu, formError, parseUsd, type MenuItem } from './Users';
@@ -86,19 +90,19 @@ export const SCOPE_GROUPS: readonly { label: string; covers: string; scopes: rea
     { label: 'Platform', covers: 'Workflows, and reading the values of a workflow’s variables.', scopes: ['workflows', 'workflows:variables'] },
 ];
 
-/** What each scope a key holds only when it's named does, offered beside Full access or Read-only. */
-const NAMED_SCOPE_HINTS: Record<string, string> = {
-    [TOKEN_SCOPE]: 'reads raw provider access tokens',
-    'cards:reveal': 'hands out a card’s number',
-    'webhooks:reveal': 'reads a webhook’s signing secret',
-    'agents:terminal': 'opens a coding agent’s terminal, which shows its sandbox’s keys and tokens',
-    'approvals:answer': 'approves or declines a call NoClick holds for your yes, from your code',
-    'approvals:policy': 'switches what NoClick holds for your yes, for the whole account',
-    'machines:vetting': 'asks for machines for your company, saying who accepted their usage policy and when',
-    'keys:create': 'makes keys no wider than itself, which go when it’s revoked',
-    'account:phones': 'links phone numbers to the account, each of which signs in to it',
-    'workflows:variables': 'reads the values of a workflow’s variables, which hold what its steps are given as secrets',
-    'projects:publish': 'makes an app’s code public, for anyone to clone, which can’t be recalled once cloned',
+/** Why a scope a key holds only when it's named is kept apart, under its words (`SCOPE_WORDS`). */
+const NAMED_SCOPE_WHY: Record<string, string> = {
+    [TOKEN_SCOPE]: 'The access tokens behind your users’ connected accounts, as the provider issued them.',
+    'cards:reveal': 'A card’s whole number, its expiry and its code.',
+    'webhooks:reveal': 'The secret an endpoint checks NoClick’s deliveries with.',
+    'agents:terminal': 'A coding agent’s terminal shows the keys and tokens its sandbox holds.',
+    'approvals:answer': 'Approve or decline from your code what NoClick holds for your yes.',
+    'approvals:policy': 'Switch what NoClick holds for your yes, for the whole account.',
+    'machines:vetting': 'Ask for machines for your company, saying who accepted their usage policy and when.',
+    'keys:create': 'Make keys no wider than this one, which go when it’s revoked.',
+    'account:phones': 'Each linked number signs in to the account.',
+    'workflows:variables': 'The values a workflow’s steps are given as secrets.',
+    'projects:publish': 'Anyone may clone it, and a clone can’t be recalled.',
 };
 
 /** The account's scopes as the API lists them: what a key with every scope holds (`full`, which Full access is built
@@ -112,22 +116,22 @@ const sameSet = (a: readonly string[], b: readonly string[]) => a.length === b.l
 
 /** How a key's scopes read in the table: a preset's name, else the scopes themselves. */
 export function scopeSummary(scopes: readonly string[], all: readonly string[]): { label: string } | { chips: string[] } {
-    if (scopes.includes('*')) return { label: 'Full access' };
-    if (all.length && sameSet(scopes, fullAccessScopes(all))) return { label: 'Full access (no raw tokens)' };
-    if (sameSet(scopes, READ_ONLY_SCOPES)) return { label: 'Read-only' };
+    if (scopes.includes('*')) return { label: 'Everything' };
+    if (all.length && sameSet(scopes, fullAccessScopes(all))) return { label: 'Everything' };
+    if (sameSet(scopes, READ_ONLY_SCOPES)) return { label: 'Read only' };
     return { chips: [...scopes] };
 }
 
 function ScopeCell({ scopes, all }: { scopes: readonly string[]; all: readonly string[] }) {
     const summary = scopeSummary(scopes, all);
     if ('label' in summary) return <span className="text-foreground/80">{summary.label}</span>;
-    const shown = summary.chips.slice(0, 4);
+    const shown = summary.chips.slice(0, 3);
     const rest = summary.chips.length - shown.length;
     return (
-        <span className="inline-flex min-w-0 items-center gap-1 overflow-hidden" title={summary.chips.join(', ')}>
+        <span className="inline-flex min-w-0 items-center gap-1 overflow-hidden" title={summary.chips.map((s) => `${scopeWords(s)} (${s})`).join(', ')}>
             {shown.map((s) => (
-                <span key={s} className="shrink-0 rounded bg-foreground/[0.05] px-1 font-mono text-[12px] text-foreground/80">
-                    {s}
+                <span key={s} className="shrink-0 rounded-full bg-foreground/[0.05] px-2 text-[12px] text-foreground/80">
+                    {scopeWords(s)}
                 </span>
             ))}
             {rest > 0 && <span className="shrink-0 text-[12px] tabular-nums text-muted-foreground">+{rest}</span>}
@@ -149,9 +153,9 @@ export function publishableOf(key: KeyView): (KeyView & { publishable_key: strin
 
 type KeyType = 'secret' | 'publishable';
 
-const KEY_TYPES: readonly { value: KeyType; label: string; hint: string }[] = [
-    { value: 'secret', label: 'Secret', hint: 'nk_live_: acts for this account from your server. Never put it in a page.' },
-    { value: 'publishable', label: 'Publishable', hint: 'nk_pub_: safe in a web page. Calls only public endpoints you pick, rate limited per visitor.' },
+const KEY_TYPES: readonly { value: KeyType; label: string; hint: string; prefix: string }[] = [
+    { value: 'secret', label: 'Secret', hint: 'Acts for this account from your server. Never put it in a page.', prefix: 'nk_live_' },
+    { value: 'publishable', label: 'Publishable', hint: 'Safe in a web page: it calls only the public endpoints you pick, a few times a minute per visitor.', prefix: 'nk_pub_' },
 ];
 
 /** What a publishable key may call, as typed into its form. */
@@ -198,36 +202,27 @@ function PublicEndpointPicker({ value, onChange, listed = [] }: { value: string[
     const stale = listed.filter((e) => !live.has(endpointRef(e)) && value.includes(endpointRef(e)));
     if (!endpoints.data.length && !stale.length) {
         return (
-            <p className="m-0 rounded-lg bg-foreground/[0.03] p-3 text-[13px] text-muted-foreground">
-                Nothing is public yet. Share an agent, or make a workflow&apos;s endpoint public, then give it a key.
-            </p>
+            <p className="m-0 text-[13px] text-muted-foreground">Nothing is public yet. Share an agent, or make a workflow&apos;s endpoint public, then give it a key.</p>
         );
     }
     const toggle = (ref: string, on: boolean) => onChange(on ? [...value, ref] : value.filter((x) => x !== ref));
     return (
-        <div className="flex flex-col gap-1 rounded-lg bg-foreground/[0.03] p-2">
+        <ul className={SWITCH_ROWS}>
             {[...endpoints.data, ...stale].map((e) => {
                 const ref = endpointRef(e);
                 const gone = !live.has(ref);
                 return (
-                    <label key={ref} className="flex cursor-pointer items-start gap-2.5 rounded-md px-1 py-1 text-[13px]">
-                        <input
-                            type="checkbox"
-                            aria-label={e.name ?? ref}
+                    <li key={ref}>
+                        <SwitchRow
+                            label={e.name ?? e.id}
+                            description={[gone ? 'No longer public' : endpointKind(e.kind), e.url].filter(Boolean).join(' · ')}
                             checked={value.includes(ref)}
-                            onChange={(ev) => toggle(ref, ev.target.checked)}
-                            className="mt-[3px] accent-[hsl(var(--foreground))]"
+                            onCheckedChange={(on) => toggle(ref, on)}
                         />
-                        <span className="flex min-w-0 flex-col">
-                            <span className={gone ? 'text-muted-foreground' : 'text-foreground'}>
-                                {e.name ?? <span className="font-mono text-[12px]">{e.id}</span>} <span className="text-[12px] text-muted-foreground">· {gone ? 'no longer public' : endpointKind(e.kind)}</span>
-                            </span>
-                            {e.url && <span className="truncate font-mono text-[12px] text-muted-foreground">{e.url}</span>}
-                        </span>
-                    </label>
+                    </li>
                 );
             })}
-        </div>
+        </ul>
     );
 }
 
@@ -236,7 +231,7 @@ function PublicAccessFields({ draft, onChange, errors, listed, cap }: { draft: A
     return (
         <>
             <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Public endpoints it may call</legend>
+                <legend className="mb-0.5 p-0 text-[12px] font-medium text-muted-foreground">Public endpoints it may call</legend>
                 <PublicEndpointPicker value={draft.endpoints} onChange={(endpoints) => onChange({ ...draft, endpoints })} listed={listed} />
                 {errors.endpoints && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errors.endpoints}</p>}
             </fieldset>
@@ -257,17 +252,15 @@ function PublicAccessFields({ draft, onChange, errors, listed, cap }: { draft: A
 
 type Access = 'full' | 'read' | 'custom';
 
-const ACCESS: readonly { value: Access; label: string; hint: string }[] = [
-    { value: 'full', label: 'Full access (no raw tokens)', hint: 'Every scope except those a key holds only when you name them, like raw provider tokens.' },
-    { value: 'read', label: 'Read-only', hint: 'Usage and operations.' },
-    { value: 'custom', label: 'Custom…', hint: 'Pick the scopes yourself.' },
+const ACCESS: readonly Choice<Access>[] = [
+    { value: 'full', label: 'Everything', description: 'Builds, runs and spends for this account. What reads a secret stays off unless you add it under More access.' },
+    { value: 'read', label: 'Read only', description: 'Reads usage and what ran, and changes nothing.' },
+    { value: 'custom', label: 'Choose', description: 'Pick what it may do, area by area.' },
 ];
 
-const KEY_FIELDS: Record<string, string> = { name: 'name', scopes: 'scopes', spend_cap_usd_per_month: 'cap', user_id: 'user', expires_at: 'expires' };
+const LABEL = 'text-[12px] font-medium text-muted-foreground';
 
-function isoDay(ms: number): string {
-    return new Date(ms).toISOString().slice(0, 10);
-}
+const KEY_FIELDS: Record<string, string> = { name: 'name', scopes: 'scopes', spend_cap_usd_per_month: 'cap', user_id: 'user', expires_at: 'expires' };
 
 function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpenChange: (open: boolean) => void; onCreated: (rawKey: string) => void }) {
     const { client, now } = useConsole();
@@ -280,6 +273,7 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
     const [custom, setCustom] = useState<string[]>([]);
     // Beside Full access or Read-only: scopes a key holds only when they're named, each chosen on its own.
     const [named, setNamed] = useState<string[]>([]);
+    const [more, setMore] = useState(false);
     const [user, setUser] = useState<string | null>(null);
     const [cap, setCap] = useState('');
     const [expires, setExpires] = useState('');
@@ -294,6 +288,7 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
         setAccess('full');
         setCustom([]);
         setNamed([]);
+        setMore(false);
         setUser(null);
         setCap('');
         setExpires('');
@@ -312,6 +307,7 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
     if (ungrouped.length) grouped.push({ label: 'Other', covers: 'Scopes added since this form was written.', scopes: ungrouped });
 
     const publishable = keyType === 'publishable';
+    const kind = KEY_TYPES.find((t) => t.value === keyType)!;
 
     const submitPublishable = async () => {
         const capValue = parseUsd(cap);
@@ -375,49 +371,35 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
             open={open}
             onOpenChange={close}
             size="lg"
+            mark={<KeyRound aria-hidden className="h-5 w-5" />}
             title="New key"
+            description={publishable ? 'A key a web page can carry: it calls only the public endpoints you pick.' : 'A key your server acts for this account with. You see it once, as it’s made.'}
+            onSubmit={(e) => {
+                e.preventDefault();
+                void submit();
+            }}
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={() => close(false)}>
                         Cancel
                     </ConsoleButton>
-                    <ConsoleButton variant="primary" onClick={submit} disabled={busy}>
-                        {busy ? 'Creating…' : 'Create'}
+                    <ConsoleButton type="submit" variant="primary" disabled={busy}>
+                        {busy ? 'Creating…' : 'Create key'}
                     </ConsoleButton>
                 </>
             }
         >
-            <form
-                className="flex flex-col gap-4"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    void submit();
-                }}
-            >
+            <div className="flex flex-col gap-5 pb-1">
                 <FormField label="Name" htmlFor="key-name" error={errors.name}>
                     <Input id="key-name" className={INPUT} value={name} onChange={(e) => setName(e.target.value)} placeholder={publishable ? 'booking-site' : 'backend-prod'} />
                 </FormField>
-                <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                    <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Key type</legend>
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        {KEY_TYPES.map((t) => (
-                            <label
-                                key={t.value}
-                                htmlFor={`key-type-${t.value}`}
-                                className={cn(
-                                    'flex cursor-pointer items-start gap-2.5 rounded-lg border px-3 py-2.5 text-[13px] transition-colors',
-                                    keyType === t.value ? 'border-foreground/40 bg-foreground/[0.03]' : 'border-border hover:bg-foreground/[0.02] dark:border-foreground/[0.08]'
-                                )}
-                            >
-                                <input id={`key-type-${t.value}`} type="radio" name="key-type" value={t.value} checked={keyType === t.value} onChange={() => setKeyType(t.value)} className="mt-[3px] accent-[hsl(var(--foreground))]" />
-                                <span className="flex flex-col text-foreground">
-                                    {t.label}
-                                    <span className="text-[12px] text-muted-foreground">{t.hint}</span>
-                                </span>
-                            </label>
-                        ))}
-                    </div>
-                </fieldset>
+                <div className="flex flex-col gap-1.5">
+                    <span className={LABEL}>Kind</span>
+                    <Segmented fill label="Kind of key" value={keyType} onChange={setKeyType} options={KEY_TYPES} />
+                    <p className="m-0 text-[12.5px] text-muted-foreground">
+                        {kind.hint} <span className="whitespace-nowrap font-mono text-[11.5px] text-muted-foreground/80">Starts {kind.prefix}</span>
+                    </p>
+                </div>
                 {publishable ? (
                     <PublicAccessFields
                         draft={draft}
@@ -431,82 +413,87 @@ function CreateKeyDialog({ open, onOpenChange, onCreated }: { open: boolean; onO
                     />
                 ) : (
                     <>
-                        <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                            <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Access</legend>
-                            {ACCESS.map((a) => (
-                                <label key={a.value} htmlFor={`key-access-${a.value}`} className="flex cursor-pointer items-start gap-2.5 rounded-md px-1 py-1 text-[13px]">
-                                    <input id={`key-access-${a.value}`} type="radio" name="key-access" value={a.value} checked={access === a.value} onChange={() => setAccess(a.value)} className="mt-[3px] accent-[hsl(var(--foreground))]" />
-                                    <span className="flex flex-col text-foreground">
-                                        {a.label}
-                                        <span className="text-[12px] text-muted-foreground">{a.hint}</span>
-                                    </span>
-                                </label>
-                            ))}
+                        <section aria-label="What it may do" className="flex flex-col gap-1">
+                            <h3 className={cn(LABEL, 'm-0')}>What it may do</h3>
+                            <ChoiceList label="What it may do" value={access} onChange={setAccess} options={ACCESS} className="-mx-2" />
                             {access === 'custom' && (
-                                <div className="mt-1 grid grid-cols-1 gap-3 rounded-lg bg-foreground/[0.03] p-3 sm:grid-cols-2">
+                                <div className="mt-2 flex flex-col gap-4">
                                     {grouped.map((g) => (
-                                        <div key={g.label} className="flex flex-col gap-1">
-                                            <span className="text-[12px] font-medium text-foreground">{g.label}</span>
-                                            <span className="text-[12px] text-muted-foreground">{g.covers}</span>
-                                            {g.scopes.map((s) => (
-                                                <label key={s} className="flex cursor-pointer items-center gap-2 text-[13px]">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={custom.includes(s)}
-                                                        onChange={(e) => setCustom((c) => (e.target.checked ? [...c, s] : c.filter((x) => x !== s)))}
-                                                        className="accent-[hsl(var(--foreground))]"
-                                                    />
-                                                    <span className="font-mono text-[12px]">{s}</span>
-                                                    {s === TOKEN_SCOPE && (
-                                                        <span className="inline-flex items-center gap-1 text-[12px] text-red-600 dark:text-red-400">
-                                                            <AlertTriangle className="h-3 w-3" />
-                                                            reads raw provider access tokens
-                                                        </span>
-                                                    )}
-                                                </label>
-                                            ))}
-                                        </div>
+                                        <section key={g.label} aria-label={g.label}>
+                                            <h4 className="m-0 text-[13px] font-medium text-foreground">{g.label}</h4>
+                                            <p className="m-0 text-[12.5px] text-muted-foreground">{g.covers}</p>
+                                            <ul className={cn(SWITCH_ROWS, 'mt-1')}>
+                                                {g.scopes.map((sc) => (
+                                                    <li key={sc}>
+                                                        <SwitchRow
+                                                            label={scopeWords(sc)}
+                                                            description={NAMED_SCOPE_WHY[sc]}
+                                                            id={sc}
+                                                            checked={custom.includes(sc)}
+                                                            onCheckedChange={(on) => setCustom((c) => (on ? [...c, sc] : c.filter((x) => x !== sc)))}
+                                                        />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </section>
                                     ))}
                                 </div>
                             )}
                             {access !== 'custom' && nameable.length > 0 && (
-                                <div className="mt-1 flex flex-col gap-1 rounded-lg bg-foreground/[0.03] p-3" data-named-scopes>
-                                    <span className="text-[12px] font-medium text-foreground">Also, only if you name them</span>
-                                    <span className="text-[12px] text-muted-foreground">A key never holds these unless you pick them here.</span>
-                                    {nameable.map((s) => (
-                                        <label key={s} className="flex cursor-pointer items-center gap-2 text-[13px]">
-                                            <input
-                                                type="checkbox"
-                                                checked={named.includes(s)}
-                                                onChange={(e) => setNamed((n) => (e.target.checked ? [...n, s] : n.filter((x) => x !== s)))}
-                                                className="accent-[hsl(var(--foreground))]"
-                                            />
-                                            <span className="font-mono text-[12px]">{s}</span>
-                                            {NAMED_SCOPE_HINTS[s] && <span className="text-[12px] text-muted-foreground">{NAMED_SCOPE_HINTS[s]}</span>}
-                                        </label>
-                                    ))}
+                                <div data-named-scopes className="mt-1">
+                                    <button
+                                        type="button"
+                                        aria-expanded={more}
+                                        onClick={() => setMore((m) => !m)}
+                                        className="inline-flex items-center gap-1 rounded-md py-1 text-[13px] font-medium text-foreground/85 transition-colors hover:text-foreground"
+                                    >
+                                        <ChevronRight aria-hidden className={cn('h-3.5 w-3.5 transition-transform', more && 'rotate-90')} />
+                                        More access
+                                        {named.length > 0 && <span className="text-[12px] font-normal text-muted-foreground">· {named.length} on</span>}
+                                    </button>
+                                    {more && (
+                                        <>
+                                            <p className="m-0 mt-0.5 text-[12.5px] text-muted-foreground">A key never holds these unless you turn them on here.</p>
+                                            <ul className={cn(SWITCH_ROWS, 'mt-1')}>
+                                                {nameable.map((sc) => (
+                                                    <li key={sc}>
+                                                        <SwitchRow
+                                                            label={scopeWords(sc)}
+                                                            description={NAMED_SCOPE_WHY[sc]}
+                                                            id={sc}
+                                                            checked={named.includes(sc)}
+                                                            onCheckedChange={(on) => setNamed((n) => (on ? [...n, sc] : n.filter((x) => x !== sc)))}
+                                                        />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
                                 </div>
                             )}
                             {errors.scopes && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errors.scopes}</p>}
-                        </fieldset>
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        </section>
+                        <section aria-label="Limits" className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="flex flex-col gap-1.5">
-                                <UserField label="Pin to user" value={user} onChange={setUser} />
-                                {errors.user && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errors.user}</p>}
+                                <UserField label="For one user" value={user} onChange={setUser} />
+                                {errors.user ? (
+                                    <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errors.user}</p>
+                                ) : (
+                                    <p className="m-0 text-[12px] text-muted-foreground">Acts only as them.</p>
+                                )}
                             </div>
                             <FormField label="Monthly cap (USD)" htmlFor="key-cap" error={errors.cap} hint="Blank means no cap.">
                                 <Input id="key-cap" inputMode="decimal" className={cn(INPUT, 'tabular-nums')} value={cap} onChange={(e) => setCap(e.target.value)} />
                             </FormField>
                             <FormField label="Expires" htmlFor="key-expires" error={errors.expires} hint="Blank means never.">
-                                <Input id="key-expires" type="date" min={isoDay(now() + 86_400_000)} className={INPUT} value={expires} onChange={(e) => setExpires(e.target.value)} />
+                                <DateField id="key-expires" value={expires} onChange={setExpires} placeholder="Never" fromDate={new Date(now() + 86_400_000)} />
                             </FormField>
-                        </div>
+                        </section>
                     </>
                 )}
                 {failure !== undefined && <ErrorPanel error={failure} className="bg-transparent" />}
                 <Terms action="creating a key" />
-                <button type="submit" hidden />
-            </form>
+            </div>
         </ConsoleDialog>
     );
 }
@@ -546,6 +533,7 @@ function AccessDialog({ keyView, onClose }: { keyView: KeyView; onClose: () => v
             open
             onOpenChange={(o) => !o && onClose()}
             size="lg"
+            mark={<Globe aria-hidden className="h-5 w-5" />}
             title={`What ${keyView.name} may call`}
             description="Pages using the key keep working; calls to an endpoint you untick stop at once."
             footer={
@@ -591,7 +579,9 @@ function RenameDialog({ keyView, onClose }: { keyView: KeyView; onClose: () => v
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
+            mark={<Pencil aria-hidden className="h-5 w-5" />}
             title="Rename key"
+            description="Code using the key keeps working: only what it’s called here changes."
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>
@@ -635,6 +625,7 @@ function CapDialog({ keyView, onClose }: { keyView: KeyView; onClose: () => void
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
+            mark={<Gauge aria-hidden className="h-5 w-5" />}
             title={`Monthly cap for ${keyView.name}`}
             description={keyView.kind === 'console' ? 'Caps what actions you take in this console can spend each month.' : 'Calls with this key stop once it has spent this much this month.'}
             footer={
@@ -677,7 +668,10 @@ function RevokeDialog({ keyView, onClose }: { keyView: KeyView; onClose: () => v
             open
             onOpenChange={(o) => !o && onClose()}
             size="sm"
+            tone="danger"
+            mark={<KeyRound aria-hidden className="h-5 w-5" />}
             title={`Revoke ${keyView.name}?`}
+            description="It can’t be undone: make a new key to replace it."
             footer={
                 <>
                     <ConsoleButton variant="ghost" onClick={onClose}>

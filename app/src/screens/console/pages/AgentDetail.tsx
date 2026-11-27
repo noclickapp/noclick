@@ -5,7 +5,7 @@
 // (`?tab=try`); a conversation opens in the drawer (`?conv=`).
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { AlarmClock, CalendarClock, Download, FileText, FlaskConical, GitBranch, Globe, Hash, Inbox as InboxIcon, InfinityIcon, ListOrdered, Mail, Network, Pause, Phone, Play, Plus, ShieldCheck, SquareTerminal, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
+import { AlarmClock, CalendarClock, Download, FileText, FlaskConical, GitBranch, Globe, Hash, Inbox as InboxIcon, InfinityIcon, ListOrdered, Mail, Network, Pause, Phone, Play, Plus, ShieldCheck, Wrench, SquareTerminal, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE, LiveDot, fmtBytes } from '@/ui/primitives';
 import { credentialLabel } from '@/ui/connectionMark';
@@ -83,6 +83,7 @@ import { describeCron } from './Home';
 import { useUsers } from './lookups';
 import { QueuesTriggerTitle } from './resources/QueuesParts';
 import { NewInCode } from '../NewInCode';
+import { FieldSelect } from '@/ui/FieldSelect';
 
 const DAY_MS = 86_400_000;
 const LIST_LIMIT = 200;
@@ -277,18 +278,12 @@ function HarnessFact({ agent, save }: { agent: Agent; save: SaveAgent }) {
     const label = target?.label ?? draft.harness;
     return (
         <div className="flex flex-col gap-2">
-            <select
+            <FieldSelect
                 aria-label="Runs on"
                 value={draft.harness}
-                onChange={(e) => pick(e.target.value as HarnessName)}
-                className={cn(inputClass, 'px-2 [color-scheme:light] dark:[color-scheme:dark]')}
-            >
-                {(harnesses.data ?? []).map((h) => (
-                    <option key={h.name} value={h.name}>
-                        {h.label ?? h.name}
-                    </option>
-                ))}
-            </select>
+                onValueChange={(name) => pick(name as HarnessName)}
+                options={(harnesses.data ?? []).map((h) => ({ value: h.name, label: h.label ?? h.name }))}
+            />
             {moving && target && (
                 <ModelConnectionField
                     key={target.name}
@@ -296,7 +291,6 @@ function HarnessFact({ agent, save }: { agent: Agent; save: SaveAgent }) {
                     user={agent.userId}
                     value={draft.connection}
                     onChange={(connection) => setDraft({ ...draft, connection })}
-                    stacked
                 />
             )}
             <div className="flex gap-1.5">
@@ -355,7 +349,7 @@ function ModelConnectionFact({ agent, save }: { agent: Agent; save: SaveAgent })
     if (draft !== null && harness) {
         return (
             <div className="flex flex-col gap-2">
-                <ModelConnectionField harness={harness} user={agent.userId} value={draft} onChange={setDraft} stacked />
+                <ModelConnectionField harness={harness} user={agent.userId} value={draft} onChange={setDraft} />
                 <div className="flex gap-1.5">
                     <ConsoleButton
                         size="sm"
@@ -1068,6 +1062,7 @@ function ToolsDialog({ agent, onSaved, onClose }: { agent: Agent; onSaved: (agen
         <ConsoleDialog
             open
             onOpenChange={(o) => !o && onClose()}
+            mark={<Wrench aria-hidden className="h-5 w-5" />}
             title={`${agent.name}'s tools`}
             description="Changes apply from its next turn; what its user granted it stays. Your approval rules still decide what runs without asking."
             size="lg"
@@ -1645,57 +1640,57 @@ const WHO_CHANGED: Record<string, string> = { agent: 'The agent', api: 'Your cod
 /** A memory layer read and written as the account, naming whose (`none`: the account's) so a suspended user's still loads. */
 const layerOf = (layer: string | null) => ({ userFilter: layer ?? NO_USER });
 
+/** The id that ties an entry's edit form to the Save in its drawer's footer. */
+const MEMORY_FORM = 'memory-entry-edit';
+
+/** An entry's description and content, as it is now; the drawer's footer saves it. A new entry is made in code. */
 function MemoryEditor({
     agent,
     layer,
     entry,
     onSaved,
-    onCancel,
+    onState,
 }: {
     agent: Agent;
     /** The layer's user (null: the account's). */
     layer: string | null;
-    /** The entry being edited, or null for a new one. */
-    entry: MemoryEntry | null;
+    entry: MemoryEntry;
     onSaved: (entry: MemoryEntry) => void;
-    onCancel: () => void;
+    /** Whether a save is under way, and whether the agent changed the entry since it was opened. */
+    onState: (state: { saving: boolean; stale: boolean }) => void;
 }) {
-    const [name, setName] = useState(entry?.name ?? '');
-    const [description, setDescription] = useState(entry?.description ?? '');
-    const [content, setContent] = useState(entry?.content ?? '');
-    const [saving, setSaving] = useState(false);
+    const [description, setDescription] = useState(entry.description ?? '');
+    const [content, setContent] = useState(entry.content ?? '');
     const [error, setError] = useState<unknown>(undefined);
     const save = async () => {
-        setSaving(true);
+        onState({ saving: true, stale: false });
         setError(undefined);
         try {
             // Only lands if the agent hasn't changed it since it was opened.
-            const saved = await agent.memory.save(entry ? entry.name : name.trim(), content, {
-                description: description.trim() || undefined,
-                version: entry?.version,
-                ...layerOf(layer),
-            });
+            const saved = await agent.memory.save(entry.name, content, { description: description.trim() || undefined, version: entry.version, ...layerOf(layer) });
             toast.success(`Saved ${saved.name}`);
             onSaved(saved);
+            onState({ saving: false, stale: false });
         } catch (err) {
             setError(err);
-        } finally {
-            setSaving(false);
+            onState({ saving: false, stale: err instanceof NoClickError && err.type === 'conflict' });
         }
     };
     const stale = error instanceof NoClickError && error.type === 'conflict';
     return (
-        <div className="flex flex-col gap-3">
-            {!entry && (
-                <FormField label="Name" hint="Lowercase letters, digits, dots, dashes and underscores.">
-                    <input value={name} onChange={(e) => setName(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="refunds" />
-                </FormField>
-            )}
+        <form
+            id={MEMORY_FORM}
+            className="flex flex-col gap-3"
+            onSubmit={(e) => {
+                e.preventDefault();
+                if (!stale) void save();
+            }}
+        >
             <FormField label="Description" hint="The line the agent sees every turn: say what the entry holds.">
                 <input value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} placeholder="Our refund rules" />
             </FormField>
             <FormField label="Content">
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={8} className={cn(inputClass, 'h-auto py-2 font-mono text-[13px] leading-relaxed')} />
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={10} className={cn(inputClass, 'h-auto py-2 font-mono text-[13px] leading-relaxed')} />
             </FormField>
             {stale ? (
                 <p role="alert" className="m-0 text-[13px] text-red-600 dark:text-red-400">
@@ -1704,15 +1699,7 @@ function MemoryEditor({
             ) : (
                 error !== undefined && <ErrorPanel error={error} />
             )}
-            <div className="flex gap-1.5">
-                <ConsoleButton size="sm" variant="primary" onClick={() => void save()} disabled={saving || stale || (!entry && (!name.trim() || !description.trim()))}>
-                    {saving ? 'Saving…' : entry ? 'Save' : 'Save entry'}
-                </ConsoleButton>
-                <ConsoleButton size="sm" variant="ghost" onClick={onCancel}>
-                    Cancel
-                </ConsoleButton>
-            </div>
-        </div>
+        </form>
     );
 }
 
@@ -1731,6 +1718,7 @@ function MemoryDrawer({
 }) {
     const read = useV1(`agents/${agent.id}/memory/${layer ?? 'account'}/${name}`, () => agent.memory.read(name, layerOf(layer)));
     const [editing, setEditing] = useState(false);
+    const [editState, setEditState] = useState({ saving: false, stale: false });
     const [forgetting, setForgetting] = useState(false);
     const [busy, setBusy] = useState(false);
     const reportHeld = useReportHeld(useConsole());
@@ -1759,7 +1747,16 @@ function MemoryDrawer({
             title={<span className="font-mono text-[14px]">{name}</span>}
             status={entry && <span className="text-[12px] tabular-nums text-muted-foreground">version {entry.version}</span>}
             footer={
-                entry && !editing ? (
+                entry && editing ? (
+                    <>
+                        <ConsoleButton size="sm" variant="primary" type="submit" form={MEMORY_FORM} disabled={editState.saving || editState.stale}>
+                            {editState.saving ? 'Saving…' : 'Save'}
+                        </ConsoleButton>
+                        <ConsoleButton size="sm" variant="ghost" onClick={() => setEditing(false)}>
+                            Cancel
+                        </ConsoleButton>
+                    </>
+                ) : entry ? (
                     <>
                         <ConsoleButton size="sm" onClick={() => setEditing(true)}>
                             Edit
@@ -1785,7 +1782,7 @@ function MemoryDrawer({
                         onChanged(saved, saved.name);
                         setEditing(false);
                     }}
-                    onCancel={() => setEditing(false)}
+                    onState={setEditState}
                 />
             ) : (
                 <div className="flex flex-col gap-4">
@@ -1828,7 +1825,6 @@ function Memory({ agent }: { agent: Agent }) {
     const users = useUsers();
     const [layerParam, setLayerParam] = useSearchParam('memlayer');
     const [open, setOpen] = useSearchParam('mem');
-    const [creating, setCreating] = useState(false);
     // A user's own agent has one layer, its user's; an account agent's is picked.
     const layerId = agent.userId ? null : layerParam && layerParam !== ACCOUNT_LAYER ? layerParam : null;
     const layer = agent.userId ?? layerId;
@@ -1875,9 +1871,14 @@ function Memory({ agent }: { agent: Agent }) {
                             onChange={(v) => setLayerParam(v === ACCOUNT_LAYER ? null : v)}
                         />
                     )}
-                    <ConsoleButton size="sm" icon={<Plus className="h-3.5 w-3.5" />} onClick={() => setCreating(true)}>
-                        New entry
-                    </ConsoleButton>
+                    <NewInCode
+                        kind="memory"
+                        place={{ agent: agent.name, user: agent.userId, layer: agent.userId ? null : layerId }}
+                        label="New entry"
+                        variant="soft"
+                        size="sm"
+                        icon={<Plus className="h-3.5 w-3.5" />}
+                    />
                 </>
             }
         >
@@ -1889,26 +1890,12 @@ function Memory({ agent }: { agent: Agent }) {
                 loading={memory.loading}
                 error={memory.error}
                 onRetry={() => void memory.refresh()}
-                empty={<p className="m-0 py-6 text-center text-[13px] text-muted-foreground">Nothing remembered here yet. The agent saves what it learns; you can seed notes too.</p>}
+                empty={<p className="m-0 py-6 text-center text-[13px] text-muted-foreground">Nothing remembered here yet. The agent saves what it learns; your code can seed notes too.</p>}
                 selectedId={open}
                 onRowClick={(e) => setOpen(e.name, { push: true })}
                 skeletonRows={3}
             />
             {open && <MemoryDrawer key={`${layerId ?? ''}:${open}`} agent={agent} layer={layer} name={open} onChanged={upsert} onClose={() => setOpen(null)} />}
-            {creating && (
-                <ConsoleDialog open onOpenChange={(o) => !o && setCreating(false)} title="New memory entry" description={`${agent.name} sees its name and description from its next turn.`} size="lg">
-                    <MemoryEditor
-                        agent={agent}
-                        layer={layer}
-                        entry={null}
-                        onSaved={(saved) => {
-                            upsert(saved, saved.name);
-                            setCreating(false);
-                        }}
-                        onCancel={() => setCreating(false)}
-                    />
-                </ConsoleDialog>
-            )}
         </PageSection>
     );
 }

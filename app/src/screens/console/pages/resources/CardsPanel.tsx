@@ -11,7 +11,7 @@ import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
 import { Card, type CardTransaction } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -19,6 +19,7 @@ import { usePaged } from '@/sdk/usePaged';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
+import { NewInCode } from '../../NewInCode';
 import { CapMeter } from '../../ui/CapMeter';
 import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
 import { DataTable, type Column } from '../../ui/DataTable';
@@ -31,27 +32,13 @@ import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { useOwnerOnly } from '../../ownerOnly';
 import { useAgentNames } from '../lookups';
-import { EditLimits, limitLine, merchantLabel, NewCard, RevealDetails, dollars } from './CardsDialogs';
+import { EditLimits, limitLine, merchantLabel, RevealDetails, dollars } from './CardsDialogs';
 import { FundingBanner } from './CardsFunding';
 import { CARD_PAGES, CardProgramGate } from './CardsOnboarding';
 import { ConfirmAction, errorText, Field, PanelToolbar, Section, type PanelProps } from './shared';
 
 /** How many recent charges the drawer shows. */
 const RECENT_CHARGES = 10;
-
-export const CARDS_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'card = noclick.Card.create("Office supplies", limit_usd=1500, interval="month", merchants=["office_supplies"])',
-        'print(card.last4)',
-    ].join('\n'),
-    typescript: [
-        'import { Card } from "noclick";',
-        'const card = await Card.create("Office supplies", { limitUsd: 1500, interval: "month", merchants: ["office_supplies"] });',
-        'console.log(card.last4);',
-    ].join('\n'),
-};
 
 /** Frozen by NoClick while the card balance is below zero, not by you: it pays again once funded. */
 const frozenForBalance = (card: Card) => card.status === 'frozen' && card.statusReason === 'negative_balance';
@@ -379,7 +366,7 @@ export function CardsPanel({ user, setUser }: PanelProps) {
             <PanelToolbar
                 user={user}
                 setUser={setUser}
-                action={<NewCard defaultUser={defaultWriteUser(user)} />}
+                action={<NewInCode kind="card" place={{ user: defaultWriteUser(user) }} />}
             />
             <DataTable
                 rowMenu="card"
@@ -395,7 +382,7 @@ export function CardsPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No cards yet." hint="A virtual card with a limit, for an agent that has to buy something." snippet={CARDS_EMPTY} />}
+                empty={<EmptyCode title="No cards yet." hint="A virtual card with a limit, for an agent that has to buy something." snippet={NEW_SNIPPETS.card({ user: defaultWriteUser(user) })} />}
             />
             <CardDrawer cardId={cardId} row={paged.rows.find((c) => c.id === cardId)} onClose={() => setCard(null)} />
         </>

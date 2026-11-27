@@ -4,10 +4,11 @@
 // all of them), and the port requests, each with what it waits on, a retry for a rejected one and
 // cancel until it's scheduled.
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, PhoneForwarded, PhoneIncoming } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE, SURFACE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
 import { Connection, PhoneNumber, PortRequest, type ConnectableNumber, type PortDetails, type StreetAddress } from 'noclick';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { userLabel } from '@/screens/console/lib/userFilter';
@@ -81,6 +82,7 @@ export function ConnectNumberDialog({ defaultUser, onOpenNumber }: { defaultUser
             <ConsoleDialog
                 open={open}
                 onOpenChange={setOpen}
+                mark={<PhoneIncoming aria-hidden className="h-5 w-5" />}
                 title={picked ? `Connect ${picked.number}` : 'Connect a number'}
                 description={picked ? 'It stays in your phone provider account, which bills it and its minutes.' : 'A number you keep with your own phone provider.'}
                 footer={
@@ -126,16 +128,13 @@ export function ConnectNumberDialog({ defaultUser, onOpenNumber }: { defaultUser
                         ) : (
                             connections.data && (
                                 <LabeledInput label="Phone provider connection" id="connect-number-connection">
-                                    <select id="connect-number-connection" className={INPUT} value={chosen} onChange={(e) => setConnection(e.target.value)}>
-                                        <option value="" disabled>
-                                            Choose a connection
-                                        </option>
-                                        {connections.data.map((c) => (
-                                            <option key={c.id} value={c.name}>
-                                                {c.account ? `${c.name} · ${c.account}` : c.name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <FieldSelect
+                                        id="connect-number-connection"
+                                        value={chosen}
+                                        onValueChange={setConnection}
+                                        placeholder="Choose a connection"
+                                        options={connections.data.map((c) => ({ value: c.name, label: c.account ? `${c.name} · ${c.account}` : c.name }))}
+                                    />
                                 </LabeledInput>
                             )
                         )}
@@ -282,10 +281,11 @@ export function PortNumberDialog({ defaultUser }: { defaultUser: string | null }
                 open={open}
                 onOpenChange={setOpen}
                 size={port ? 'md' : 'lg'}
+                mark={<PhoneForwarded aria-hidden className="h-5 w-5" />}
                 title={port ? `Porting ${portLabel(port)}` : 'Port a number'}
                 description={
                     port
-                        ? undefined
+                        ? 'Started. It moves once the account holder signs and the carrier schedules it.'
                         : 'Move US numbers to NoClick from their current carrier: one, or several on one account there. They keep working there until they move.'
                 }
                 footer={

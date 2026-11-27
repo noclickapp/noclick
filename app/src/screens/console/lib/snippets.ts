@@ -38,6 +38,8 @@ export interface NewPlace {
     user?: string | null;
     agent?: string;
     workspace?: string;
+    /** On an account agent's memory, the user whose own notes it goes in (none: the account's). */
+    layer?: string | null;
 }
 
 /** The most a line of a New dialog's code takes before it's broken, so the dialog never scrolls sideways. */
@@ -288,6 +290,135 @@ export const NEW_SNIPPETS = {
             'console.log(await seen.increment("refunds-today"));'
         ),
     }),
+    /** Pending until someone signs in to the account at its link, which the code prints to send them. */
+    connection: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('gmail = noclick.Connection.from_name', ['"gmail"', 'integration="gmail"', 'create_if_missing=True', ...pyUser(place)]),
+            'if not gmail.connected:',
+            '    link = gmail.connect_link(reason="to send your weekly summaries")',
+            '    print(link.url)  # send it to whoever signs in to the account'
+        ),
+        typescript: lines(
+            'import { Connection } from "noclick";',
+            '',
+            tsCall('const gmail = Connection.fromName', '"gmail"', ['integration: "gmail"', 'createIfMissing: true', ...tsUser(place)], ';'),
+            'if (!(await gmail.hydrate()).connected) {',
+            '    const link = await gmail.connectLink({ reason: "to send your weekly summaries" });',
+            '    console.log(link.url); // send it to whoever signs in to the account',
+            '}'
+        ),
+    }),
+    /** Its values come from the program's own environment, never from the code. */
+    secret: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            'import os',
+            '',
+            "# The value comes from this program's environment (its .env), never from the code.",
+            pyCall('stripe = noclick.Secret.from_name', ['"stripe"', 'values={"STRIPE_API_KEY": os.environ["STRIPE_API_KEY"]}', 'create_if_missing=True', ...pyUser(place)]),
+            'print(stripe.keys)  # its names; a value never comes back'
+        ),
+        typescript: lines(
+            'import { Secret } from "noclick";',
+            '',
+            "// The value comes from this program's environment (its .env), never from the code.",
+            tsCall('const stripe = Secret.fromName', '"stripe"', ['values: { STRIPE_API_KEY: process.env.STRIPE_API_KEY! }', 'createIfMissing: true', ...tsUser(place)], ';'),
+            'console.log((await stripe.hydrate()).keys); // its names; a value never comes back'
+        ),
+    }),
+    /** A note the agent keeps: every turn starts with its name and description. Saving it again replaces it. */
+    memory: (place: NewPlace): Snippet => {
+        const name = lit(place.agent ?? 'support');
+        const rules = 'rules = "Refund within 30 days. Over $500, ask a person first."';
+        const layer = place.layer ?? place.user;
+        return {
+            python: lines(
+                PY,
+                '',
+                pyCall('agent = noclick.Agent.from_name', [name, ...pyUser(place)]),
+                rules,
+                pyCall('entry = agent.memory.save', ['"refunds"', 'rules', 'description="Our refund rules"', ...pyUser({ user: layer })]),
+                'print(entry.version)'
+            ),
+            typescript: lines(
+                'import { Agent } from "noclick";',
+                '',
+                place.user ? tsCall('const agent = Agent.fromName', name, tsUser(place), ';') : `const agent = Agent.fromName(${name});`,
+                `const ${rules};`,
+                tsCall('const entry = await agent.memory.save', '"refunds", rules', ['description: "Our refund rules"', ...tsUser({ user: layer })], ';'),
+                'console.log(entry.version);'
+            ),
+        };
+    },
+    /** Asked once, by a key that names `machines:vetting`; acceptance of the usage policy is a person's, said to the code. */
+    machines: (): Snippet => {
+        const fields = [
+            ['company_name', 'companyName', '"Acme Inc."'],
+            ['website', 'website', '"https://acme.com"'],
+            ['country', 'country', '"US"'],
+            ['use_case', 'useCase', '"Support agents that answer customer email."'],
+            ['accept_usage_policy', 'acceptUsagePolicy', null],
+        ] as const;
+        return {
+            python: lines(
+                PY,
+                'import datetime as dt',
+                '',
+                'access = noclick.Machine.access()',
+                'if access.status in ("not_submitted", "rejected"):',
+                '    access = noclick.Machine.request_access(',
+                ...fields.map(([py, , value]) => `        ${py}=${value ?? 'True'},`),
+                '        # Who read the usage policy and said they accept it, and when they said so.',
+                '        accepted_by={"name": "Ana Lima", "email": "ana@acme.com"},',
+                '        accepted_at=dt.datetime.now(dt.timezone.utc),',
+                '    )',
+                'print(access.status, access.reason)'
+            ),
+            typescript: lines(
+                'import { Machine } from "noclick";',
+                '',
+                'let access = await Machine.access();',
+                'if (access.status === "not_submitted" || access.status === "rejected") {',
+                '    access = await Machine.requestAccess({',
+                ...fields.map(([, ts, value]) => `        ${ts}: ${value ?? 'true'},`),
+                '        // Who read the usage policy and said they accept it, and when they said so.',
+                '        acceptedBy: { name: "Ana Lima", email: "ana@acme.com" },',
+                '        acceptedAt: new Date(),',
+                '    });',
+                '}',
+                'console.log(access.status, access.reason);'
+            ),
+        };
+    },
+    card: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('card = noclick.Card.from_name', [
+                '"office-supplies"',
+                'create_if_missing=True',
+                'limit_usd=500',
+                'merchants=["office_supplies"]',
+                'require_approval_above_usd=100',
+                ...pyUser(place),
+            ]),
+            'print(card.last4)  # its last four digits; a person reveals the rest on its page'
+        ),
+        typescript: lines(
+            'import { Card } from "noclick";',
+            '',
+            tsCall('const card = Card.fromName', '"office-supplies"', [
+                'createIfMissing: true',
+                'limitUsd: 500',
+                'merchants: ["office_supplies"]',
+                'requireApprovalAboveUsd: 100',
+                ...tsUser(place),
+            ], ';'),
+            'console.log((await card.hydrate()).last4); // its last four digits only'
+        ),
+    }),
     queue: (place: NewPlace): Snippet => ({
         python: lines(
             PY,
@@ -396,14 +527,17 @@ export interface CoderTask {
     ask: string;
     /** A page of the docs, as `docsUrl` takes it: `guide/inboxes`. */
     guide: string;
+    /** Scopes the prompt's key also holds, beyond what a key with every scope (`*`) does: only what the task needs. */
+    scopes?: readonly string[];
 }
 
 /** Whose it is and where it goes, for the coding agent, from a dialog's place. */
-function placeNote({ user, agent, workspace }: NewPlace): string {
+function placeNote({ user, agent, workspace, layer }: NewPlace): string {
     return [
         agent ? ` It's for my agent ${lit(agent)}.` : '',
         workspace ? ` It goes in my workspace ${workspace}.` : '',
         user ? ` Make it as my user ${lit(user)} (my own id for them), with user=${lit(user)}.` : '',
+        layer ? ` It goes in the notes my agent keeps for my user ${lit(layer)}, with user=${lit(layer)}.` : '',
     ].join('');
 }
 
@@ -534,6 +668,7 @@ const PLACES: Readonly<Record<string, NewPlace>> = {
     '': { agent: 'support' },
     '.user': { user: 'acme', agent: 'support' },
     '.workspace': { workspace: 'wsp_01', user: 'acme' },
+    '.layer': { agent: 'support', layer: 'acme' },
 };
 
 /** Every snippet, for the compile check: the static ones, each kind's New in every place, and the made ones. */

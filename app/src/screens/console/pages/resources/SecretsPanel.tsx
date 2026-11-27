@@ -1,4 +1,5 @@
-// Secrets: named environment values for sandboxes, agents' shells and (designed) apps. The table and drawer (`?secret=`) show key names,
+// Secrets: named environment values for sandboxes, agents' shells and (designed) apps, made in code from the program's
+// own environment. The table and drawer (`?secret=`) show key names,
 // never values; the drawer sets values (merge or replace) through a masked dialog, removes
 // a key, lists who reads the secret, shows the code that uses it, and deletes it.
 import { useEffect, useState } from 'react';
@@ -7,47 +8,24 @@ import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Secret, type UsedBy } from 'noclick';
-import { snippetTabs, type Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS, snippetTabs, type Snippet } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { CodeSnippet } from '../../ui/CodeSnippet';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
-import { ConfirmAction, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
-import { emptyRow, rowsToValues, SetValuesDialog, ValueRows, type ValueRow } from './SecretsValues';
+import { ConfirmAction, Field, PanelToolbar, Section, type PanelProps } from './shared';
+import { SetValuesDialog } from './SecretsValues';
 import { UsesList, UsesSummary, type ResourceUse } from './VolumesSecretsShared';
-
-export const SECRETS_EMPTY: Snippet = {
-    python: [
-        'import os',
-        '',
-        'import noclick',
-        '',
-        'openai = noclick.Secret.from_name(',
-        '    "openai", values={"OPENAI_API_KEY": os.environ["OPENAI_API_KEY"]}, create_if_missing=True,',
-        ')',
-        'with noclick.Sandbox.create(secrets=[openai]) as sb:',
-        '    print(sb.exec("env | cut -d= -f1 | grep OPENAI").stdout)   # the name; the value stays in the sandbox',
-    ].join('\n'),
-    typescript: [
-        'import { Sandbox, Secret } from "noclick";',
-        '',
-        'const openai = Secret.fromName("openai", { values: { OPENAI_API_KEY: "sk-..." }, createIfMissing: true });',
-        'const sb = await Sandbox.create({ secrets: [openai] });',
-        'console.log((await sb.exec("env | cut -d= -f1 | grep OPENAI")).stdout);',
-        'await sb.terminate();',
-    ].join('\n'),
-};
 
 /** The code that puts `name`'s keys in a sandbox's environment and an agent's shell, acting for its user. */
 export function secretUseSnippet(name: string, key: string, userId: string | null): Snippet {
@@ -227,72 +205,6 @@ function SecretDrawer({ secretId, row, onClose }: { secretId: string | null; row
     );
 }
 
-function CreateSecret({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [rows, setRows] = useState<ValueRow[]>([emptyRow()]);
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const values = rowsToValues(rows);
-    // Values are optional (someone can set them later), but a half-filled row isn't.
-    const untouched = rows.every((r) => !r.key && !r.value);
-    const valid = !!name.trim() && (untouched || values !== null);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const secret = await Secret.create(name.trim(), { client, user, values: values ?? undefined });
-            setRows([emptyRow()]);
-            setOpen(false);
-            invalidateV1('secrets');
-            invalidateV1('account');
-            toast(`Created ${secret.name}`, { description: secret.keys.length ? 'Values are write-only: only the key names show from now on.' : 'Set its values from its page when you have them.' });
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setRows([emptyRow()]);
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New secret
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New secret"
-                description="Values your code reads from its environment, in sandboxes, agents' shells and apps. For an account at a service NoClick integrates with, use a connection instead."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !valid} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-4">
-                    <LabeledInput label="Name" id="secret-name">
-                        <input id="secret-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="openai" autoComplete="off" />
-                    </LabeledInput>
-                    <ValueRows rows={rows} onChange={setRows} />
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function SecretsPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [secretId, setSecret] = useSearchParam('secret');
@@ -313,7 +225,7 @@ export function SecretsPanel({ user, setUser }: PanelProps) {
     ];
     return (
         <>
-            <PanelToolbar user={user} setUser={setUser} action={<CreateSecret defaultUser={defaultWriteUser(user)} />} />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="secret" place={{ user: defaultWriteUser(user) }} />} />
             <DataTable
                 rowMenu="secret"
                 label="Secrets"
@@ -328,7 +240,7 @@ export function SecretsPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No secrets yet." hint="API keys and other values your sandboxes, agents and apps read from their environment." snippet={SECRETS_EMPTY} />}
+                empty={<EmptyCode title="No secrets yet." hint="API keys and other values your sandboxes, agents and apps read from their environment." snippet={NEW_SNIPPETS.secret({ user: defaultWriteUser(user) })} />}
             />
             <SecretDrawer
                 secretId={secretId}

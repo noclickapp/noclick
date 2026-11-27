@@ -1,21 +1,20 @@
-// The Cards panel's dialogs: issue a card, edit its limits and merchants, and
+// The Cards panel's dialogs: edit a card's limits and merchants (a card is issued in code), and
 // reveal its number behind a confirm that says the reveal is audited. A reveal is
 // a link to the page where the card issuer's own element shows the number: the
 // console never holds the number itself.
 import { useState, type ReactNode } from 'react';
-import { ArrowUpRight, Eye } from 'lucide-react';
+import { ArrowUpRight, CreditCard, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
+import { FieldSelect } from '@/ui/FieldSelect';
+import { Switch } from '@/ui/switch';
+import { SettingsRow } from '@/screens/settings/parts';
 import { Card, type CardDetails, type CardInterval } from 'noclick';
-import { useConsole } from '@/screens/console/hooks/useConsole';
-import { invalidateV1 } from '@/sdk/useV1';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { ErrorPanel } from '../../ui/ErrorPanel';
-import { UserField } from '../../ui/UserField';
-import { useAgentNames } from '../lookups';
 import { ActsFor, INPUT, LabeledInput } from './shared';
 
 /** The merchant categories the console offers; a card may hold others, set from code. */
@@ -50,12 +49,17 @@ function LimitFields({ limit, onLimit, interval, onInterval }: { limit: string; 
                 <input id="card-limit" inputMode="decimal" className={INPUT} value={limit} onChange={(e) => onLimit(e.target.value)} placeholder="1500" />
             </LabeledInput>
             <LabeledInput label="Per" id="card-interval">
-                <select id="card-interval" className={INPUT} value={interval} onChange={(e) => onInterval(e.target.value as CardInterval)}>
-                    <option value="transaction">Charge</option>
-                    <option value="day">Day</option>
-                    <option value="month">Month</option>
-                    <option value="all_time">All time</option>
-                </select>
+                <FieldSelect
+                    id="card-interval"
+                    value={interval}
+                    onValueChange={(v) => onInterval(v as CardInterval)}
+                    options={[
+                        { value: 'transaction', label: 'Charge' },
+                        { value: 'day', label: 'Day' },
+                        { value: 'month', label: 'Month' },
+                        { value: 'all_time', label: 'All time' },
+                    ]}
+                />
             </LabeledInput>
         </div>
     );
@@ -106,119 +110,12 @@ function ThresholdField({ value, onChange }: { value: string; onChange: (v: stri
 /** A fresh number for every checkout, each taking one charge (designed). */
 function SingleUseField({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
     return (
-        <label className="flex items-start gap-2 text-[13px]">
-            <input type="checkbox" className="mt-0.5" checked={value} onChange={(e) => onChange(e.target.checked)} />
-            <span>
-                Single use
-                <span className="block text-[12px] text-muted-foreground">Every checkout gets a fresh number that takes one charge, all within the limit.</span>
-            </span>
-        </label>
-    );
-}
-
-export function NewCard({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const agents = useAgentNames();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [limit, setLimit] = useState('');
-    const [period, setPeriod] = useState<CardInterval>('month');
-    const [merchants, setMerchants] = useState<string[]>([]);
-    const [agent, setAgent] = useState('');
-    const [threshold, setThreshold] = useState('');
-    const [singleUse, setSingleUse] = useState(false);
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    // An agent pays with a card of its own user, or an account card.
-    const eligible = [...agents.values()].filter((a) => a.userId === null || a.userId === user);
-    const valid = name.trim() !== '' && positive(limit) && (threshold.trim() === '' || positive(threshold));
-    const reset = () => {
-        setUser(defaultUser);
-        setName('');
-        setLimit('');
-        setPeriod('month');
-        setMerchants([]);
-        setAgent('');
-        setThreshold('');
-        setSingleUse(false);
-        setError(undefined);
-    };
-    const issue = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const card = await Card.create(name.trim(), {
-                client,
-                user,
-                limitUsd: Number(limit),
-                interval: period,
-                merchants: merchants.length ? merchants : undefined,
-                agent: agent || undefined,
-                requireApprovalAboveUsd: threshold.trim() ? Number(threshold) : undefined,
-                singleUse: singleUse || undefined,
-            });
-            setOpen(false);
-            invalidateV1('cards');
-            invalidateV1('account');
-            toast(`Issued ${card.name} (•••• ${card.last4})`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    reset();
-                    setOpen(true);
-                }}
-            >
-                New card
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="Issue a card"
-                description="A virtual card that spends your card balance, within the limit you set."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !valid} onClick={() => void issue()}>
-                        {busy ? 'Issuing…' : 'Issue card'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <UserField
-                        value={user}
-                        onChange={(next) => {
-                            setUser(next);
-                            if (agent && ![...agents.values()].some((a) => a.id === agent && (a.userId === null || a.userId === next))) setAgent('');
-                        }}
-                    />
-                    <LabeledInput label="Name" id="card-name">
-                        <input id="card-name" className={INPUT} value={name} onChange={(e) => setName(e.target.value)} placeholder="Office supplies" />
-                    </LabeledInput>
-                    <LimitFields limit={limit} onLimit={setLimit} interval={period} onInterval={setPeriod} />
-                    <MerchantPicker value={merchants} onChange={setMerchants} />
-                    <LabeledInput label="Agent that pays with it" id="card-agent">
-                        <select id="card-agent" className={INPUT} value={agent} onChange={(e) => setAgent(e.target.value)}>
-                            <option value="">No agent</option>
-                            {eligible.map((a) => (
-                                <option key={a.id} value={a.id}>
-                                    {a.name}
-                                </option>
-                            ))}
-                        </select>
-                    </LabeledInput>
-                    <ThresholdField value={threshold} onChange={setThreshold} />
-                    <SingleUseField value={singleUse} onChange={setSingleUse} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
+        <SettingsRow
+            className="min-h-0 px-0 py-1"
+            label={<span className="text-[13.5px]">Single use</span>}
+            description="Every checkout gets a fresh number that takes one charge, all within the limit."
+            control={<Switch aria-label="Single use" checked={value} onCheckedChange={onChange} />}
+        />
     );
 }
 
@@ -268,6 +165,7 @@ export function EditLimits({ card, onSaved }: { card: Card; onSaved: () => void 
             <ConsoleDialog
                 open={open}
                 onOpenChange={setOpen}
+                mark={<CreditCard aria-hidden className="h-5 w-5" />}
                 title={`Edit ${card.name}`}
                 description="Changes apply from the next charge."
                 footer={
