@@ -350,8 +350,9 @@ export interface MessageActions {
     lit?: string | null;
     /** Its author's name opens them (the chat's channel card: the agent, to edit). */
     onAuthor?: (author: ChannelMember) => void;
-    /** Post an answer to an agent's question as yours (a tap on one of its answers). */
-    onAnswer?: (text: string) => void;
+    /** Post an answer to an agent's question as yours (a tap on one of its answers), in `channelId` where the answer
+     *  names another channel (a welcome post's first task, posted where its agent works). */
+    onAnswer?: (text: string, channelId?: string) => void;
     /** What connects an agent's asks under its message (what it needs before it can start), where the page can. */
     Asks?: ComponentType<{ agentId: string; needs: AgentNeed[] }>;
     /** What draws what an agent's turn left waiting on a person under its reply (an account, an OK, a payment). */
@@ -644,7 +645,7 @@ function NamedAsks({ needs }: { needs: AgentNeed[] }) {
 
 /** An agent's question's answers as pills: a tap posts that answer as yours. Once you've said something next, the pick
  *  reads back (or nothing, when you answered in your own words). */
-function QuestionAnswers({ options, answer, onAnswer }: { options: ChannelQuestionOption[]; answer?: string; onAnswer?: (text: string) => void }) {
+function QuestionAnswers({ options, answer, onAnswer }: { options: ChannelQuestionOption[]; answer?: string; onAnswer?: (text: string, channelId?: string) => void }) {
     if (answer !== undefined) {
         const picked = options.find((o) => o.reply === answer);
         return picked ? (
@@ -661,7 +662,7 @@ function QuestionAnswers({ options, answer, onAnswer }: { options: ChannelQuesti
                     key={o.label}
                     type="button"
                     disabled={!onAnswer}
-                    onClick={() => onAnswer?.(o.reply)}
+                    onClick={() => (o.channelId ? onAnswer?.(o.reply, o.channelId) : onAnswer?.(o.reply))}
                     className="inline-flex h-8 items-center rounded-full bg-foreground/[0.06] px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-foreground/[0.08] transition-colors hover:bg-foreground/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                 >
                     {o.label}

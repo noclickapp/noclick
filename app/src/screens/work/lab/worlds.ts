@@ -16,12 +16,14 @@ import { fakeWork as fakeWorkAgents } from '../agents/fixtures/workAgents';
 import { AGENT_ID, catalogRoutes, COMMANDS, fakeWorkAgent, settingsFor } from '../conversation/fixtures/workAgent';
 import { busyHistory, busyLive, liveOperation } from '../conversation/fixtures/scenes';
 import { ROBLOX_CHANNEL, forAppsRoutes, type AgentForAppsState } from '../fixtures/agentForApps';
+import { seedTemplateWelcome, templateRoutes } from '../templates/fixtures';
 
 /** Where a scene's agents come from: the spaces' own three (`spaces`), five at work (`agents`; `agents_raced`, where
  *  NoClick changes the first one's instructions while you edit them), one mid-turn (`session`), or the spaces' with the
  *  agent an agents page made in its channel of your own (`agent_for_apps`, waiting on what it needs;
- *  `agent_for_apps_ready`, saying hello). */
-export type LabWorld = 'spaces' | 'agents' | 'agents_raced' | 'session' | 'agent_for_apps' | 'agent_for_apps_ready';
+ *  `agent_for_apps_ready`, saying hello), or the spaces' with a space template just added (`template_added`: its
+ *  space, its channels and #noclick's welcome post). Any world answers a template's dry run and add. */
+export type LabWorld = 'spaces' | 'agents' | 'agents_raced' | 'session' | 'agent_for_apps' | 'agent_for_apps_ready' | 'template_added';
 
 export interface Lab {
     client: NoClick;
@@ -143,6 +145,13 @@ const refusedToKey = (method: string, path: string) => {
  *  operations only the owner may make are refused (screens/console/ownerOnly.ts), as the API refuses them. */
 export function labWorld(world: LabWorld, actsAs: 'owner' | 'key' = 'owner', observe?: Observe): Lab {
     const spaces = fakeWork();
+    if (world === 'template_added') seedTemplateWelcome(spaces);
+    const template = templateRoutes(spaces, { settleAfterMs: 1500 });
+    const templateLayer: Fetch = async (input, init) => {
+        const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+        const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as Json) : {};
+        return template.answer(init?.method ?? 'GET', url.pathname, body) ?? Response.json({ error: { type: 'not_found', message: `No route for ${url.pathname}` } }, { status: 404 });
+    };
     const agents = fakeWorkAgents({ coordinator: true, now: Date.now(), instructionsRaced: world === 'agents_raced' });
     const session = world === 'session' ? agentMidTurn() : null;
     const parts = sessionParts(agents);
@@ -156,7 +165,7 @@ export function labWorld(world: LabWorld, actsAs: 'owner' | 'key' = 'owner', obs
         const method = init?.method ?? 'GET';
         if (actsAs === 'key' && refusedToAccountKey(method, url.pathname)) return Promise.resolve(refusedToKey(method, url.pathname));
         const fixtures = ownsIt ? [owner, spaces.fetch, agents.fetch] : [spaces.fetch, ...(owner ? [owner] : []), agents.fetch];
-        return first([...(appState ? [forAppsLayer(appState, spaces.fetch)] : []), ...new Set(fixtures), parts, account], input, init);
+        return first([templateLayer, ...(appState ? [forAppsLayer(appState, spaces.fetch)] : []), ...new Set(fixtures), parts, account], input, init);
     };
     const fetch: Fetch = (input, init) => {
         const answered = answer(input, init);

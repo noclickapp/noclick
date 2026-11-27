@@ -941,6 +941,80 @@ class Workspace(_Object):
         return SpaceTemplate._from(raw, client=self._client, user=self._call_scope())
 
     @synced
+    @classmethod
+    async def from_template(cls, source: Any, *, name: Optional[str] = None,
+                            leave_out: Optional[Sequence[Dict[str, Any]]] = None,
+                            cap_usd_per_month: Optional[float] = None, connections: Optional[Dict[str, str]] = None,
+                            secrets: Optional[Dict[str, Dict[str, str]]] = None,
+                            app_secrets: Optional[Dict[str, str]] = None, dry_run: bool = False,
+                            client: Optional[Client] = None) -> Any:
+        """Add a space template as a new space of yours: its channels, agents (with their instructions, skills and
+        memories), automations, data stores and app, each made in your account, all of it or none. Each account it
+        uses is one you have (never asked again) or waits for you to connect, and the space's ``#noclick`` opens on a
+        welcome post saying what arrived, a row to connect each account left and a first task to tap. Only the
+        account adds one.
+
+        Args:
+            source: The template's address (its origin URL, or a ``noclick.com/deploy?repo=`` link naming it), or one
+                of your repos holding a ``space.json`` (a ``Repo``, its id or its name).
+            name: The new space's name (the template's own, numbered past one you have, when left out).
+            leave_out: Parts that stay out, each ``{"kind": "agent", "name": "Designer"}`` (``{"kind": "app"}`` for
+                its app): leave out every channel to bring just the agents.
+            cap_usd_per_month: What its agents may spend together in a month, shared out as their budgets (the
+                template's own when left out).
+            connections: Which of your connected accounts each integration uses, by integration (the newest of its
+                kind when left out).
+            secrets: Values for the secrets it asks for, by name: ``{"unsplash": {"UNSPLASH_ACCESS_KEY": "..."}}``.
+            app_secrets: Values for the secrets its app's ``noclick.json`` asks you to set.
+            dry_run: Say what it would make and ask, making nothing.
+
+        Returns:
+            A ``TemplateAdd`` operation whose ``wait()`` gives a ``TemplateAdded``; with ``dry_run``, its
+            ``TemplatePlan``.
+
+        Usage::
+
+            plan = noclick.Workspace.from_template(address, dry_run=True)
+            print(plan.summary, plan.cap["usd_per_month"])
+            added = noclick.Workspace.from_template(address, secrets={"unsplash": {"UNSPLASH_ACCESS_KEY": key}}).wait()
+            print(added.workspace_name, added.waiting)
+        """
+        from .space_template import template_answer, template_body
+
+        raw = await resolve_client(client).request("POST", "/v1/workspaces/from_template", json=template_body(
+            source, leave_out=leave_out, cap_usd_per_month=cap_usd_per_month, connections=connections,
+            secrets=secrets, app_secrets=app_secrets, dry_run=dry_run, name=name), user=None) or {}
+        return template_answer(raw, client=client, user=None)
+
+    @synced
+    async def add_template(self, source: Any, *, leave_out: Optional[Sequence[Dict[str, Any]]] = None,
+                           cap_usd_per_month: Optional[float] = None, connections: Optional[Dict[str, str]] = None,
+                           secrets: Optional[Dict[str, Dict[str, str]]] = None,
+                           app_secrets: Optional[Dict[str, str]] = None, dry_run: bool = False) -> Any:
+        """Add a space template to this space, beside what's there: its channels carry the template's word
+        (``#social-ideas``), an agent whose name you have already carries it too (``Social Writer``); nothing you
+        have is reused or merged. ``leave_out`` names the parts that stay out. Otherwise as
+        ``Workspace.from_template``.
+
+        Returns:
+            A ``TemplateAdd`` operation whose ``wait()`` gives a ``TemplateAdded``; with ``dry_run``, its
+            ``TemplatePlan``.
+
+        Usage::
+
+            lumen = noclick.Workspace.from_name("Lumen Coffee")
+            plan = lumen.add_template(address, leave_out=[{"kind": "app"}], dry_run=True)
+            print([(p.name, p.named) for p in plan.parts if p.included])
+            lumen.add_template(address, leave_out=[{"kind": "app"}]).wait()
+        """
+        from .space_template import template_answer, template_body
+
+        raw = await self._request("POST", f"{await self._id_path()}/template/add", json=template_body(
+            source, leave_out=leave_out, cap_usd_per_month=cap_usd_per_month, connections=connections,
+            secrets=secrets, app_secrets=app_secrets, dry_run=dry_run)) or {}
+        return template_answer(raw, client=self._client, user=self._call_scope())
+
+    @synced
     async def noclick_agent(self) -> SpaceNoClick:
         """The space's own NoClick (an account's own spaces have one; the personal space's is the account's own
         NoClick), made the first time it's asked for: put it in a channel by its ``agent_id``.

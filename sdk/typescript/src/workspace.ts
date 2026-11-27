@@ -21,6 +21,8 @@ import { resolveClient } from "./client.ts";
 import { Repo } from "./repo.ts";
 import { resolveScope } from "./scope.ts";
 import { Session } from "./session.ts";
+import { templateAnswer, templateBody } from "./spaceTemplate.ts";
+import type { TemplateAdd, TemplateOptions, TemplatePlan } from "./spaceTemplate.ts";
 import { trashed } from "./trash.ts";
 import type { TrashItem } from "./trash.ts";
 import { User } from "./user.ts";
@@ -739,6 +741,49 @@ export class Workspace extends ApiObject {
       leftOut: asList(raw.left_out) as { what: string; why: string }[], never: asList(raw.never) as string[],
       files: num(raw.files) ?? 0, commitSha: str(asObject(raw.commit).sha), summary: str(raw.summary) ?? "", raw,
     };
+  }
+
+  /**
+   * Add a space template to this space, beside what's there: its channels carry the template's word
+   * (`#social-ideas`), an agent whose name you have already carries it too ("Social Writer"); nothing you have is
+   * reused or merged. `leaveOut` names the parts that stay out (every channel out brings just the agents). Otherwise
+   * as `Workspace.fromTemplate`.
+   *
+   *     const plan = await lumen.addTemplate(address, { leaveOut: [{ kind: "app" }], dryRun: true });
+   *     console.log(plan.parts.filter((p) => p.included).map((p) => p.named));
+   *     await (await lumen.addTemplate(address, { leaveOut: [{ kind: "app" }] })).wait();
+   */
+  async addTemplate(source: string | ApiObject, options: TemplateOptions & { dryRun: true }): Promise<TemplatePlan>;
+  async addTemplate(source: string | ApiObject, options?: TemplateOptions & { dryRun?: false }): Promise<TemplateAdd>;
+  async addTemplate(source: string | ApiObject, options: TemplateOptions = {}): Promise<TemplatePlan | TemplateAdd> {
+    const raw = await this._request<JsonObject>("POST", `${await this.path()}/template/add`, {
+      json: await templateBody(source, options),
+    });
+    return templateAnswer(asObject(raw), { client: this._client, user: this._callScope() });
+  }
+
+  /**
+   * Add a space template as a new space of yours: its channels, agents (with their instructions, skills and
+   * memories), automations, data stores and app, each made in your account, all of it or none. Each account it uses
+   * is one you have (never asked again) or waits for you to connect, and the space's `#noclick` opens on a welcome
+   * post saying what arrived, a row to connect each account left and a first task to tap. `source` is the template's
+   * address (its origin URL, or a `noclick.com/deploy?repo=` link naming it) or one of your repos holding a
+   * `space.json`. Resolves to a `TemplateAdd` whose `wait()` gives a `TemplateAdded`; with `dryRun: true`, to its
+   * `TemplatePlan`. Only the account adds one.
+   *
+   *     const plan = await Workspace.fromTemplate(address, { dryRun: true });
+   *     console.log(plan.summary, plan.cap.usdPerMonth, plan.connections.filter((a) => !a.connected));
+   *     const added = await (await Workspace.fromTemplate(address, {
+   *       secrets: { unsplash: { UNSPLASH_ACCESS_KEY: key } },
+   *     })).wait();
+   */
+  static async fromTemplate(source: string | ApiObject, options: TemplateOptions & { name?: string; dryRun: true }): Promise<TemplatePlan>;
+  static async fromTemplate(source: string | ApiObject, options?: TemplateOptions & { name?: string; dryRun?: false }): Promise<TemplateAdd>;
+  static async fromTemplate(source: string | ApiObject, options: TemplateOptions & { name?: string } = {}): Promise<TemplatePlan | TemplateAdd> {
+    const raw = asObject(await resolveClient(options.client).request("POST", "/v1/workspaces/from_template", {
+      json: await templateBody(source, options, compact({ name: options.name })), user: null,
+    }));
+    return templateAnswer(raw, { client: options.client, user: null });
   }
 
   /**

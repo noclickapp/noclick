@@ -392,7 +392,10 @@ function ChannelPaneBody({
         onCopyLink: (id) => linkTo(id),
         onSeePins: () => tabs.setView('pins'),
         onOpenMessage: (id) => tabs.open(id),
-        onAnswer: (text) => void channels.post(channel.id, text, []).catch((e) => toast.error(errorText(e))),
+        onAnswer: (text, channelId) => {
+            void channels.post(channelId ?? channel.id, text, []).catch((e) => toast.error(errorText(e)));
+            if (channelId && channelId !== channel.id) onOpenChannel(channelId);
+        },
         // What an agent made on an agents page still needs, connected from its message.
         Asks: NeedPills,
         TurnAsks,

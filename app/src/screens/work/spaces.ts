@@ -73,7 +73,8 @@ export interface Spaces {
     personalId: string | null;
     /** Your personal space as a space people can join (its workspace, made the first time): its id. */
     sharePersonal(): Promise<string>;
-    refresh(): void;
+    /** Read them again; resolves once they're read. */
+    refresh(): Promise<void>;
     create(name: string, logo?: File): Promise<WorkSpace>;
     /** Rename it, and give it a new logo when one is picked, through the space's own client. */
     update(space: WorkSpace, name: string, logo: File | undefined, via: NoClick): Promise<void>;
@@ -115,7 +116,7 @@ export function useSpaces(): Spaces {
                     throw new Error(errorText(e));
                 }
             },
-            refresh: () => void refresh(),
+            refresh: () => refresh(),
             create: async (name, logo) => {
                 try {
                     let made = await Workspace.create(name, { client, user: null });

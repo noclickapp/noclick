@@ -29,6 +29,7 @@ GET /v1/agents/agt_roblox
 GET /v1/agents/states
 GET /v1/browsers
 GET /v1/channels
+GET /v1/channels/ch_1/messages
 GET /v1/channels/ch_launch/bookmarks
 GET /v1/channels/ch_launch/files
 GET /v1/channels/ch_launch/links
@@ -43,6 +44,12 @@ GET /v1/channels/ch_roblox/links
 GET /v1/channels/ch_roblox/messages
 GET /v1/channels/ch_roblox/pins
 GET /v1/channels/ch_roblox/triggers
+GET /v1/channels/ch_social_noclick/bookmarks
+GET /v1/channels/ch_social_noclick/files
+GET /v1/channels/ch_social_noclick/links
+GET /v1/channels/ch_social_noclick/messages
+GET /v1/channels/ch_social_noclick/pins
+GET /v1/channels/ch_social_noclick/triggers
 GET /v1/channels/dm_priya/bookmarks
 GET /v1/channels/dm_priya/files
 GET /v1/channels/dm_priya/links
@@ -75,6 +82,10 @@ GET /v1/workspaces/ws_noclick/noclick
 GET /v1/workspaces/ws_noclick/questions
 GET /v1/workspaces/ws_noclick/resources
 GET /v1/workspaces/ws_noclick/summary
+GET /v1/workspaces/ws_social
+GET /v1/workspaces/ws_social/invites
+GET /v1/workspaces/ws_social/noclick
+GET /v1/workspaces/ws_social/questions
 GET /v1/workspaces/ws_wirefern/noclick
 PATCH /v1/agents/a0000000-0000-4000-8000-000000000001
 POST /v1/channels
@@ -84,3 +95,5 @@ POST /v1/channels/dm_priya/read
 POST /v1/connections/anthropic-plan/verify
 POST /v1/connections/claude/verify
 POST /v1/delete_previews
+POST /v1/workspaces/from_template
+POST /v1/workspaces/ws_noclick/template/add

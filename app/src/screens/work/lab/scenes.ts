@@ -5,6 +5,7 @@ import { id as agentId } from '../agents/fixtures/workAgents';
 import { AGENT_ID } from '../conversation/fixtures/workAgent';
 import { IN_USE } from '../profile/fixtures/instructions';
 import { ROBLOX_CHANNEL_ID } from '../fixtures/agentForApps';
+import { SOCIAL_NOCLICK, SOCIAL_SPACE, TEMPLATE_ADDRESS } from '../templates/fixtures';
 import type { LabStep } from '@/ui/lab/steps';
 import type { LabWorld } from './worlds';
 
@@ -35,6 +36,9 @@ export const SCENES: readonly LabScene[] = [
     { id: 'threads', title: 'Threads you follow', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'threads' } },
     { id: 'agent-for-apps-waiting', title: 'An agents page’s agent in its channel, waiting on what it needs', group: 'Spaces', world: 'agent_for_apps', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
     { id: 'agent-for-apps-ready', title: 'An agents page’s agent in its channel, saying hello', group: 'Spaces', world: 'agent_for_apps_ready', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
+    { id: 'template-new', title: 'A space template’s page of asks, as a new space', group: 'Spaces', world: 'spaces', place: { space: 'home', template: TEMPLATE_ADDRESS } },
+    { id: 'template-into', title: 'A space template’s page of asks, into a space you have', group: 'Spaces', world: 'spaces', place: { ...SPACE, template: TEMPLATE_ADDRESS, into: 'ws_noclick' } },
+    { id: 'template-welcome', title: 'A space template just added: its #noclick welcome post', group: 'Spaces', world: 'template_added', place: { space: SOCIAL_SPACE, channel: SOCIAL_NOCLICK } },
     { id: 'dms', title: 'DMs', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'dms' } },
     { id: 'dm', title: 'A DM', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'dms', channel: 'dm_priya' } },
     { id: 'resources', title: 'Resources', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources' } },

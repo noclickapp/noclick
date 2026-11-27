@@ -199,7 +199,8 @@ async def deploy(source: Any, *, dry_run: bool = False, ref: Optional[str] = Non
 
     Never a private repository, a URL with a login, an ``ssh://`` or ``git@`` address, or another account's repo:
     push a private one to a repo of yours with git and deploy that. What can't deploy is refused before anything is
-    made. Needs the ``apps`` and ``repos`` scopes.
+    made. Needs the ``apps`` and ``repos`` scopes. A space template's address is added as a new space instead, as
+    ``Workspace.from_template`` adds it (a ``TemplatePlan``, or a ``TemplateAdd`` operation).
 
     Returns:
         A ``RepoDeploy`` operation whose ``wait()`` gives a ``DeployResult`` (the app's ``url``, where its key
@@ -236,6 +237,10 @@ async def deploy(source: Any, *, dry_run: bool = False, ref: Optional[str] = Non
     if dry_run:
         body["dry_run"] = True
     raw = await resolve_client(client).request("POST", "/v1/deploys", json=body, user=scope)
+    if raw.get("object") in ("space_template_plan", "space_template_add"):
+        from .space_template import template_answer
+
+        return template_answer(raw, client=client, user=scope)
     if dry_run:
         return DeployPlan._from(raw)
     return RepoDeploy._from_payload(raw.get("operation"), client=client, user=scope, kind="repo.deploy",

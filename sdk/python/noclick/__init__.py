@@ -600,6 +600,13 @@ from .skill import (
     SkillLink,
     SkillVersion,
 )
+from .space_template import (
+    TemplateAccount,
+    TemplateAdd,
+    TemplateAdded,
+    TemplatePart,
+    TemplatePlan,
+)
 from .step_type import (
     StepOutputShape,
     StepSettingsCheck,
@@ -935,6 +942,11 @@ __all__ = [
     "WorkspaceResource",
     "SpaceQuestion",
     "SpaceTemplate",
+    "TemplateAccount",
+    "TemplateAdd",
+    "TemplateAdded",
+    "TemplatePart",
+    "TemplatePlan",
     "Inbox",
     "InboxMessage",
     "InboxReply",

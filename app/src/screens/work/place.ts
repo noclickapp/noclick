@@ -55,6 +55,10 @@ export interface WorkPlace {
     /** The Resources view's own place (a kind, an item), its to read and write. */
     res: string | null;
     item: string | null;
+    /** A space template's page of asks in the main pane: its address, or one of your repos by name. */
+    template: string | null;
+    /** Where that template goes: a space of yours (its workspace id); none, a new space. */
+    into: string | null;
 }
 
 type Param = (typeof WORK_PARAMS)[number];
@@ -76,6 +80,8 @@ export function readPlace(params: URLSearchParams): WorkPlace {
         subagent: params.get('sub'),
         res: params.get('res'),
         item: params.get('item'),
+        template: params.get('template'),
+        into: params.get('into'),
     };
 }
 
@@ -103,7 +109,18 @@ export function withPlace(params: URLSearchParams, change: PlaceChange): URLSear
     write('sub', change.subagent);
     write('res', change.res);
     write('item', change.item);
+    write('template', change.template);
+    write('into', change.into);
     return next;
+}
+
+/** A space template's page of asks in Work, from outside it (a gallery's card, a Deploy on NoClick link): aimed at
+ *  `spaceId` (a space of yours) where you came from one, else at a new space. */
+export const templatePlace = (source: string, spaceId?: string | null) => withPlace(new URLSearchParams(), { template: source, into: spaceId ?? null, space: spaceId ?? null });
+
+/** Open a space template's page of asks in Work. */
+export function openTemplateInWork(source: string, spaceId?: string | null): void {
+    standing(WORK_ADDRESS).go(templatePlace(source, spaceId));
 }
 
 /** Open an agent in Work from outside it (a card, Resources): its session, with its profile beside, where it's

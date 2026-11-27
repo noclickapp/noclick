@@ -39,7 +39,7 @@ PAGE_OF_MODULE = {
     "export": "ExportBundle",
     "mcp_server": "McpServer", "project": "Project", "repo": "Repo", "trigger": "Triggers", "webhook": "Webhook",
     "workflow": "Workflow", "volume": "Volume", "dicts": "Dict", "queues": "Queue", "secret": "Secret",
-    "coordination": "Agent", "workspace": "Channel", "machine": "Machine",
+    "coordination": "Agent", "workspace": "Channel", "space_template": "Channel", "machine": "Machine",
     "region": "Region", "_attachment": "Agent", "_feedback": "feedback", "trash": "TrashItem", "versions": "Secret",
     "memory": "Memory", "terminal": "Agent", "live": "Project", "skill": "Skill", "compute": "compute",
     "agent_move": "AgentMove", "estimate": "estimate", "deploy": "deploy", "workflow_resources": "Workflow", "_watch": "watch",

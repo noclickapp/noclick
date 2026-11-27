@@ -118,6 +118,8 @@ export interface ChannelMessage {
 export interface ChannelQuestionOption {
     label: string;
     reply: string;
+    /** The channel a tap posts in, where it isn't the question's own. */
+    channelId?: string;
 }
 
 /** `by` added or removed `members`. `by` is null when NoClick did it (a member left the space, its automation's step

@@ -987,6 +987,17 @@ export type {
   SkillVersion,
 } from "./skill.ts";
 export {
+  TemplateAdd,
+} from "./spaceTemplate.ts";
+export type {
+  TemplateAccount,
+  TemplateAdded,
+  TemplateOptions,
+  TemplatePart,
+  TemplatePlan,
+  TemplateSecret,
+} from "./spaceTemplate.ts";
+export {
   checkStepSettings,
   stepOutputShape,
   stepType,

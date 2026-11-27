@@ -46,6 +46,7 @@ import { dropAccountNoClick, EARLIER_NOCLICK_CHANNEL, giveSpaceNoClick, homeHold
 import { ASKED_TITLE, SpaceQuestionsPanel, useSpaceQuestions } from './questions';
 import { usePickerAgents } from './channels/pickerAgents';
 import { SaveTemplateDialog } from './SaveTemplateDialog';
+import { AddTemplatePage } from './templates/AddTemplatePage';
 import { SpaceHeader } from './SpaceHeader';
 import { ArchivedBanner, SpaceSettingsDialog, unarchiveSpace, type SpaceAsk } from './spaceSettings';
 import { isSpaceKind, kindOf, prefetchSpaceShare } from './resources/space/data';
@@ -548,8 +549,20 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     // ── what's open ─────────────────────────────────────────────────────────
     const dmOther = channel?.kind === 'dm' ? otherIn(channel) : null;
     const dmPerson = dmOther ? (people.people.find((p) => p.userId === (dmOther.userId ?? dmOther.id)) ?? null) : null;
-    const main =
-        place.machine && agentOpen ? (
+    const main = place.template ? (
+        <AddTemplatePage
+            source={place.template}
+            target={place.into}
+            spaces={spaces.spaces}
+            onTarget={(id) => go({ into: id }, { replace: true })}
+            // Its space is opened once your spaces are read again with it, or Work would open another in its place.
+            onAdded={(added) =>
+                void spaces.refresh().then(() =>
+                    go({ template: null, into: null, space: added.workspaceId, view: 'home', channel: added.channelId, thread: null, agent: null, machine: false, panel: null })
+                )
+            }
+        />
+    ) : place.machine && agentOpen ? (
             <MachinePage agentId={agentOpen} file={place.file} onFile={(file) => go({ file }, { replace: true })} onBack={() => go({ machine: false })} />
         ) : place.view === 'resources' ? (
             // Home's (`space.id` is HOME_SPACE) are its agents in no space and what the account has for them.
@@ -733,11 +746,13 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
 
     if (phone) {
         // A phone shows the list, or one thing open over it.
-        const screen = panel ?? (place.machine || (place.view === 'resources' ? place.res : place.channel || place.agent) ? main : null);
+        const screen = panel ?? (place.template || place.machine || (place.view === 'resources' ? place.res : place.channel || place.agent) ? main : null);
         // The bar's way back over what doesn't draw its own (a channel, a thread and the machine page do).
         const shownAgent = (agents.data ?? []).find((a) => a.id === place.agent);
         const agentName = shownAgent ? nameOf(shownAgent, noclicks) : 'Agent';
-        const phoneBack = !screen ? null : place.thread || place.machine || (place.subagent && !panel) || (!panel && place.view !== 'agents' && place.view !== 'resources') ? null : panel ? (
+        const phoneBack = !screen ? null : place.template && !panel ? (
+            <PhoneBarBack label="Back" onBack={() => go({ template: null, into: null })} />
+        ) : place.thread || place.machine || (place.subagent && !panel) || (!panel && place.view !== 'agents' && place.view !== 'resources') ? null : panel ? (
             <PhoneBarBack label="Back" title={<span className="truncate">{place.panel === 'profile' ? agentName : place.panel === 'questions' ? ASKED_TITLE : `Members of ${space.name}`}</span>} onBack={() => go({ panel: null })} />
         ) : place.view === 'resources' ? (
             <PhoneBarBack label={place.item && isSpaceKind(place.res) ? kindOf(place.res).label : 'Resources'} onBack={() => go(place.item ? { item: null } : { res: null })} />

@@ -171,7 +171,11 @@ function membershipOf(event: Raw, who?: Perspective): ChannelMembership {
 /** An agent's question's answers, from its message's `question` event: each a label and the reply a tap posts. */
 function questionOf(event: Raw): NonNullable<ChannelMessage['question']> {
     const options = Array.isArray(event.options) ? (event.options as Raw[]) : [];
-    return { options: options.flatMap((o) => (typeof o.label === 'string' && typeof o.reply === 'string' ? [{ label: o.label, reply: o.reply }] : [])) };
+    return {
+        options: options.flatMap((o) =>
+            typeof o.label === 'string' && typeof o.reply === 'string' ? [{ label: o.label, reply: o.reply, ...(typeof o.channel_id === 'string' ? { channelId: o.channel_id } : {}) }] : []
+        ),
+    };
 }
 
 /** What an agent still needs, from its message's `connect` event: each of its apps' accounts, and its model. */
@@ -203,6 +207,8 @@ function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 
         ...(event?.type === 'question' ? { question: questionOf(event) } : {}),
         ...(event?.type === 'connect' ? { asks: asksOf(event) } : {}),
         ...(event?.type === 'asks' ? { turnAsks: turnAsksOf(event, (by) => seenBy(authorOf(by), who)) ?? undefined } : {}),
+        // A welcome post asks for accounts and offers a first task beside them.
+        ...(event?.type === 'asks' && Array.isArray(event.options) ? { question: questionOf(event) } : {}),
         ...(event?.type === 'automation' ? { automation: { workflowId: rawText(event.workflow_id) } } : {}),
     };
 }
