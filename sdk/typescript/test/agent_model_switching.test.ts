@@ -24,7 +24,7 @@ test("its rule reads back, and is sent as the API takes it", async () => {
   const patch = api.on("PATCH", "/v1/agents/ag_1", json({ ...AGENT, model_switching: { mode: "stay", allowed: null } }));
   const atlas = nc.Agent.fromId("ag_1");
   await atlas.refresh();
-  assert.deepEqual(atlas.modelSwitching, { mode: "switch", allowed: null });
+  assert.deepEqual(atlas.modelSwitching, { mode: "switch", allowed: null, harness: "same" });
   assert.deepEqual(atlas.switchedFrom, { connection: "claude-work", name: "claude-work", window: "five_hour", resetsAt: "2026-11-17T15:20:00+00:00" });
   // Only what's given is sent, so the rule's other part stays as it is: never a mode it wasn't given.
   await atlas.update({ modelSwitching: { mode: "stay" } });
@@ -33,6 +33,8 @@ test("its rule reads back, and is sent as the API takes it", async () => {
   assert.deepEqual(patch.last.body, { model_switching: { allowed: ["claude-personal", "kestrel-api"] } });
   await atlas.update({ modelSwitching: { allowed: null } });
   assert.deepEqual(patch.last.body, { model_switching: { allowed: null } });
+  await atlas.update({ modelSwitching: { harness: "any" } });
+  assert.deepEqual(patch.last.body, { model_switching: { harness: "any" } });
   await atlas.update({ modelSwitching: null });
   assert.deepEqual(patch.last.body, { model_switching: null });
 });
