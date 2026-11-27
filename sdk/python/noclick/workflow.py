@@ -287,7 +287,9 @@ class StepConversation:
 class WorkflowTemplate:
     """A workflow's place in NoClick's template library (``Workflow.template``): whether it's
     ``published``, its ``title``, ``slug``, ``description`` and page (``public_url``) when it is,
-    and the ``draft_title`` and ``draft_description`` saved for it before it's published."""
+    with where NoClick's review of it stands (``listing``: ``in_review``, ``listed`` in the
+    gallery, or ``not_listed`` with the ``listing_reason``), and the ``draft_title`` and
+    ``draft_description`` saved for it before it's published."""
 
     published: bool
     title: Optional[str]
@@ -296,6 +298,8 @@ class WorkflowTemplate:
     public_url: Optional[str]
     draft_title: Optional[str]
     draft_description: Optional[str]
+    listing: Optional[str] = None
+    listing_reason: Optional[str] = None
     raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
 
     @classmethod
@@ -305,7 +309,7 @@ class WorkflowTemplate:
         draft = raw.get("draft") if isinstance(raw.get("draft"), dict) else {}
         return cls(bool(raw.get("published")), template.get("title"), template.get("slug"),
                    template.get("description"), template.get("public_url"), draft.get("title"),
-                   draft.get("description"), raw)
+                   draft.get("description"), template.get("listing"), template.get("listing_reason"), raw)
 
 
 @dataclass(frozen=True)
