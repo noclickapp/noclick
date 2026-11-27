@@ -1,7 +1,8 @@
 // What an agent's turn left waiting on a person, under its message in a channel (the message's asks): the chat's own
 // asks, drawn the same. Accounts to connect over their links, which anyone in the channel may connect (as the link
 // allows), each folding to who connected it and which account once NoClick says so; a call held for the owner's OK,
-// answered here by the owner alone (everyone else sees it waiting on them); a link that pays for the account.
+// answered here by the owner alone (everyone else sees it waiting on them); a link that pays for the account; a
+// secret's values, typed in here by the account alone.
 import { useSlot } from '@/slots';
 import type { TurnAsk } from '@/lib/turnAsks';
 import type { ChannelMessage } from '@/screens/channels/types';
@@ -9,6 +10,7 @@ import { CONNECT_LINK } from '../slots';
 import type { ConnectedAccount } from './inline/setup';
 import { PaymentAsk } from './moneyLinks';
 import { ApprovalAsk, type ApprovalTold } from './PlatformCards';
+import { SecretAsk } from './SecretAsk';
 import type { ConnectAsk } from './toolCardRegistry';
 
 type Of<K extends TurnAsk['kind']> = Extract<TurnAsk, { kind: K }>;
@@ -16,7 +18,8 @@ type Of<K extends TurnAsk['kind']> = Extract<TurnAsk, { kind: K }>;
 /** Someone the channel named, as a line says them: you, after the channel's reading (`seenBy`), else their name. */
 const said = (by: { type: string; id: string | null; name: string }) => (by.type === 'account' && !by.id ? 'You' : by.name);
 
-export function ChannelAsks({ message, answersApprovals, onConnected }: { message: ChannelMessage; answersApprovals: boolean; onConnected: (askId: string) => void }) {
+/** `forAccount`: the reader is the account, who answers an OK and types in a secret's values. */
+export function ChannelAsks({ message, forAccount, onConnected }: { message: ChannelMessage; forAccount: boolean; onConnected: (askId: string) => void }) {
     const { Rows } = useSlot(CONNECT_LINK);
     const all = message.turnAsks?.asks ?? [];
     const connects = all.filter((a): a is Of<'connect'> => a.kind === 'connect');
@@ -36,11 +39,13 @@ export function ChannelAsks({ message, answersApprovals, onConnected }: { messag
                         approvalId={ask.approvalId}
                         told={{ action: ask.summary, price: ask.price as ApprovalTold['price'], impact: null, status: 'pending', terms: [] }}
                         heldOperationId={ask.id}
-                        mayAnswer={answersApprovals}
+                        mayAnswer={forAccount}
                         settled={ask.state}
                     />
                 ) : ask.kind === 'payment' ? (
                     <PaymentAsk key={ask.id} label={ask.label} priceUsd={ask.priceUsd} billingPeriod={ask.billingPeriod} url={ask.url} state={ask.state} />
+                ) : ask.kind === 'secret' ? (
+                    <SecretAsk key={ask.id} id={ask.id} name={ask.name} keys={ask.keys} reason={ask.reason} state={ask.state} mayAnswer={forAccount} />
                 ) : null
             )}
         </div>

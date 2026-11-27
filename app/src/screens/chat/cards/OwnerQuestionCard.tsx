@@ -15,6 +15,7 @@ import { openMachineFile } from '@/screens/work/place';
 import { useSlot } from '@/slots';
 import { useClient } from '@/sdk/client';
 import { QUESTION_PICK, QUESTION_STEP } from '../slots';
+import { KeyFields } from './SecretAsk';
 import { list, str, type CoordinatorToolCall } from '@/lib/toolCalls';
 import { cn } from '@/ui/utils';
 
@@ -66,12 +67,7 @@ function FileAnswer({ file, disabled, onAnswer }: { file: FileQuestion; disabled
             }}
         >
             {keys.length ? (
-                keys.map((k) => (
-                    <label key={k} className="flex items-center gap-2">
-                        <span className="w-[40%] min-w-0 truncate font-mono text-[12.5px] text-foreground/85">{k}</span>
-                        <input type="password" autoComplete="off" aria-label={k} value={values[k] ?? ''} onChange={(e) => setValues((v) => ({ ...v, [k]: e.target.value }))} className={cn(FIELD, 'h-9 flex-1 font-mono text-[13px]')} />
-                    </label>
-                ))
+                <KeyFields keys={keys} values={values} onChange={setValues} />
             ) : (
                 <textarea aria-label={`${fileName(file.path)}’s text`} value={text} onChange={(e) => setText(e.target.value)} rows={5} spellCheck={false} placeholder={`What goes in ${fileName(file.path)}`} className={cn(FIELD, 'h-auto py-2.5 font-mono text-[12.5px]')} />
             )}

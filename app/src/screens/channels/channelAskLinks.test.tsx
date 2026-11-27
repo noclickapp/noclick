@@ -41,7 +41,7 @@ it('draws an ask’s link once, as its row, and keeps a link no row draws', () =
                 onChannel={() => undefined}
                 onReact={() => undefined}
                 onDismiss={() => undefined}
-                actions={{ TurnAsks: ({ message }) => <ChannelAsks message={message} answersApprovals={false} onConnected={() => undefined} /> }}
+                actions={{ TurnAsks: ({ message }) => <ChannelAsks message={message} forAccount={false} onConnected={() => undefined} /> }}
             />
         </TooltipProvider>
     );

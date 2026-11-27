@@ -35,7 +35,7 @@ it('reads a template as a new space: its parts, what it costs, its cap, its acco
     expect(rows().slice(0, 4)).toEqual([
         'Writer | Plans and drafts posts in the brand’s voice',
         'Designer | Makes the images · needs Canva',
-        'Scheduler | Posts at the best times · needs Instagram, LinkedIn and Twitter',
+        'Scheduler | Posts at the best times · needs Instagram, LinkedIn and X',
         '#ideas | Writer',
     ]);
     // No ticks on a new space: everything comes.

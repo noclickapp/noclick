@@ -116,7 +116,7 @@ const AFTER = /[.,;:!?'"*_~]+$/;
 export function withoutAskLinks(text: string, asks: readonly TurnAsk[]): string {
     // Where a link leads, by its path (its token's there), whatever host it's written with.
     const pageOf = (href: string) => parse(href.startsWith('/') ? `https://noclick.com${href}` : href)?.pathname.replace(/\/+$/, '') || null;
-    const drawn = new Set(asks.map((a) => pageOf(a.kind === 'approval' ? `/approve/${a.approvalId}` : a.url)).filter(Boolean));
+    const drawn = new Set(asks.flatMap((a) => (a.kind === 'secret' ? [] : [pageOf(a.kind === 'approval' ? `/approve/${a.approvalId}` : a.url)])).filter(Boolean));
     if (!drawn.size) return text;
     const strip = (line: string, keepWords: boolean) =>
         line.replace(LINK, (match: string, lead: string, words?: string, linked?: string, angled?: string, bare?: string) => {

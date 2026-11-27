@@ -10,12 +10,15 @@ export const TEMPLATE_ADDRESS = 'https://api.noclick.com/v1/public/git/3f2a1b0c-
 export const TEMPLATE_OPERATION = 'op_template_add';
 export const SOCIAL_SPACE = 'ws_social';
 export const SOCIAL_NOCLICK = 'ch_social_noclick';
-/** The welcome post's connect links, by their token: each one's account and what it's for. */
-export const TEMPLATE_LINKS: Record<string, { label: string; credentialType: string; reason: string }> = {
-    op_link_canva: { label: 'Canva', credentialType: 'canva_mcp', reason: 'For Designer' },
-    op_link_instagram: { label: 'Instagram', credentialType: 'instagram_login', reason: 'For Scheduler and Monday plan' },
-    op_link_twitter: { label: 'Twitter', credentialType: 'twitter_oauth', reason: 'For Scheduler' },
+/** The welcome post's connect links, by their token: each one's account (named as the canvas names its app) and what
+ *  it's for. */
+export const TEMPLATE_LINKS: Record<string, { integration: string; label: string; credentialType: string; reason: string }> = {
+    op_link_canva: { integration: 'canva', label: 'Canva', credentialType: 'canva_mcp', reason: 'For Designer' },
+    op_link_instagram: { integration: 'instagram', label: 'Instagram', credentialType: 'instagram_login', reason: 'For Scheduler and Monday plan' },
+    op_link_twitter: { integration: 'twitter', label: 'X', credentialType: 'twitter_oauth', reason: 'For Scheduler' },
 };
+/** The secret the welcome post asks for: made empty by the add and read by Designer. */
+export const TEMPLATE_SECRET = 'sec_social_unsplash';
 
 const PARTS = (into: boolean): Json[] => {
     const writer = into ? 'Social Writer' : 'Writer';
@@ -52,7 +55,7 @@ export function templatePlan(into: { id: string; name: string } | null, leftOut:
             { integration: 'canva', label: 'Canva', node_type: 'automation-canva', for: ['Designer'], connected: null },
             { integration: 'instagram', label: 'Instagram', node_type: 'automation-instagram', for: ['Scheduler', 'Monday plan'], connected: null },
             { integration: 'linkedin', label: 'LinkedIn', node_type: 'automation-linkedin', for: ['Scheduler'], connected: { ref: 'credential:cr_linkedin', name: 'Rowan’s LinkedIn', id: 'credential:cr_linkedin' } },
-            { integration: 'twitter', label: 'Twitter', node_type: 'automation-twitter', for: ['Scheduler'], connected: null },
+            { integration: 'twitter', label: 'X', node_type: 'automation-twitter', for: ['Scheduler'], connected: null },
         ],
         secrets: [{ name: 'unsplash', keys: ['UNSPLASH_ACCESS_KEY'], description: 'Stock photos', for: ['Designer'], held: null, given: false }],
         cap: { usd_per_month: 40, from: 'template', agents: [{ name: agents[0], usd_per_month: 15 }] },
@@ -107,7 +110,8 @@ export function seedTemplateWelcome(work: FakeWork): void {
         channel('ch_social_drafts', 'drafts', 'Drafts and their images.', [agentMember(agents[0].id, 'Writer', 0), agentMember(agents[1].id, 'Designer', 1)]),
         channel('ch_social_scheduled', 'scheduled', 'What goes out, and how it did.', [agentMember(agents[2].id, 'Scheduler', 0)])
     );
-    const links = Object.entries(TEMPLATE_LINKS).map(([id, l]) => ({ id, kind: 'connect', label: l.label, credential_type: l.credentialType, reason: l.reason, url: `https://noclick.test/credential/provide/${id}`, expires_at: null, integration: l.label.toLowerCase() }));
+    const links = Object.entries(TEMPLATE_LINKS).map(([id, l]) => ({ id, kind: 'connect', label: l.label, credential_type: l.credentialType, reason: l.reason, url: `https://noclick.test/credential/provide/${id}`, expires_at: null, integration: l.integration }));
+    const secret = { kind: 'secret', id: TEMPLATE_SECRET, name: 'unsplash', keys: ['UNSPLASH_ACCESS_KEY'], reason: 'For Designer' };
     const message = (id: string, channelId: string, author: Json, text: string, secondsAgo: number, event: Json | null = null) => ({
         object: 'channel_message', id, channel_id: channelId, author, text, mentions: [], created_at: at(secondsAgo), attachments: [], reactions: [], reply_count: 0, last_reply_at: null, reply_authors: [], pinned: null, thread_id: null, also_in_channel: false, following: false, unread_replies: 0, event,
     });
@@ -116,13 +120,13 @@ export function seedTemplateWelcome(work: FakeWork): void {
             'msg_welcome',
             SOCIAL_NOCLICK,
             { type: 'agent', id: noclick.id, name: noclick.name },
-            'Rowan added Social media team: Writer, Designer and Scheduler in #ideas, #drafts and #scheduled, the brand-voice skill, the brand memory, the Monday plan automation and the app content-calendar (live at https://content-calendar.noclick.site). Its agents stop at $40 a month. Connect Canva, Instagram and Twitter so Designer and Scheduler can start and the Monday plan can run. Add unsplash in Resources → Secrets when you want it.',
+            'Rowan added Social media team: Writer, Designer and Scheduler in #ideas, #drafts and #scheduled, the brand-voice skill, the brand memory, the Monday plan automation and the app content-calendar (live at https://content-calendar.noclick.site). Its agents stop at $40 a month.',
             20,
             {
                 type: 'asks',
                 turn: TEMPLATE_OPERATION,
                 asked_by: null,
-                asks: links,
+                asks: [...links, secret],
                 options: [{ label: 'Plan this week’s posts', reply: 'Plan this week’s posts from last week’s results.', channel: 'ideas', channel_id: 'ch_social_ideas' }],
             }
         ),
@@ -152,13 +156,15 @@ const ADDED: Json = {
     agents: [{ id: 'agt_social_writer', name: 'Writer' }, { id: 'agt_social_designer', name: 'Designer' }, { id: 'agt_social_scheduler', name: 'Scheduler' }],
     channels: [{ id: 'ch_social_ideas', name: 'ideas' }, { id: 'ch_social_drafts', name: 'drafts' }, { id: 'ch_social_scheduled', name: 'scheduled' }],
     app: { project_id: 'prj_calendar', name: 'content-calendar', url: 'https://content-calendar.noclick.site', to_reveal: [] },
-    waiting: [{ integration: 'canva', label: 'Canva' }, { integration: 'instagram', label: 'Instagram' }, { integration: 'twitter', label: 'Twitter' }],
+    waiting: [{ integration: 'canva', label: 'Canva' }, { integration: 'instagram', label: 'Instagram' }, { integration: 'twitter', label: 'X' }],
+    secrets: [{ id: TEMPLATE_SECRET, name: 'unsplash', keys: ['UNSPLASH_ACCESS_KEY'], for: ['Designer'] }],
 };
 
 const TEMPLATE_ROUTE = /^\/v1\/workspaces\/(?:from_template|([^/]+)\/template\/add)$/;
 
 /** The template's routes over the spaces' fixture: the dry run, the add (which settles once `settle` is called, or at
- *  once when `settleAt` is 0) and its operation's reads. Null for any other call. */
+ *  once when `settleAt` is 0), its operation's reads and its secret's values typed in (its welcome row read filled
+ *  from then on, as the API reads it). Null for any other call. */
 export function templateRoutes(work: FakeWork, options: { settleAfterMs?: number } = {}) {
     let state: 'none' | 'running' | 'succeeded' = 'none';
     const settle = () => {
@@ -178,6 +184,14 @@ export function templateRoutes(work: FakeWork, options: { settleAfterMs?: number
             return Response.json({ object: 'space_template_add', template: plan.template, workspace: plan.target, operation: operation('running') }, { status: 202 });
         }
         if (method === 'GET' && path.startsWith(`/v1/operations/${TEMPLATE_OPERATION}`) && state !== 'none') return Response.json(operation(state, state === 'succeeded' ? ADDED : null));
+        if (method === 'PATCH' && path === `/v1/secrets/${TEMPLATE_SECRET}`) {
+            for (const m of work.messages.get(SOCIAL_NOCLICK) ?? []) {
+                const event = m.event as { asks?: Json[] } | null;
+                for (const ask of event?.asks ?? []) if (ask.id === TEMPLATE_SECRET) ask.state = 'succeeded';
+            }
+            const keys = Object.keys((body.values as Json | undefined) ?? {});
+            return Response.json({ object: 'secret', id: TEMPLATE_SECRET, name: 'unsplash', keys, user_id: null, used_by: [{ kind: 'agent', id: 'agt_social_designer', name: 'Designer', binding: null }], moved_from: null, created_at: at(30), updated_at: at(0) });
+        }
         return null;
     };
     return { answer, settle };

@@ -33,8 +33,8 @@ export function cardCallOf(step: Step): CoordinatorToolCall | null {
 }
 
 /** An ask as the call that made it would have answered it, so the chat's own card draws it (an account to connect
- *  over its link, a call held for an OK, a link to pay). */
-function askAnswer(ask: TurnAsk): JsonObject {
+ *  over its link, a call held for an OK, a link to pay). A secret to type in is a channel post's alone, no call's. */
+function askAnswer(ask: Exclude<TurnAsk, { kind: 'secret' }>): JsonObject {
     if (ask.kind === 'connect') {
         return { status: 'awaiting_human', operation_id: ask.id, response: { object: 'connect_link', url: ask.url, credential_type: ask.credentialType } };
     }
@@ -45,6 +45,7 @@ function askAnswer(ask: TurnAsk): JsonObject {
 /** The turn's asks that none of its calls' answers names (one made outside NoClick's tools), as calls for their cards. */
 function askCalls(turn: TurnEntry, named: string): CoordinatorToolCall[] {
     return turn.asks
+        .filter((ask): ask is Exclude<TurnAsk, { kind: 'secret' }> => ask.kind !== 'secret')
         .filter((ask) => !named.includes(ask.id) && !(ask.kind === 'approval' && named.includes(ask.approvalId)))
         .map((ask) => ({
             id: `${turn.key}:ask:${ask.id}`,

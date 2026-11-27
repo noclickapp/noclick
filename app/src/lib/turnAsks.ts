@@ -1,7 +1,8 @@
 // What an agent's turn left waiting on a person, as its message in a channel carries it (the platform's `asks`
-// event): accounts to connect over their links, calls held for the owner's OK and links that pay, each with how it
-// settled once it has (`state`: the operation's own status), an account that landed with which it is and who said
-// they connected it. Who asked is the person whose post the turn answered.
+// event): accounts to connect over their links, calls held for the owner's OK, links that pay and secrets whose values
+// the account types in, each with how it settled once it has (`state`: the operation's own status, or a secret's
+// `succeeded` once it holds its keys), an account that landed with which it is and who said they connected it. Who
+// asked is the person whose post the turn answered.
 
 /** Someone as the channel names them (an author's shape). */
 export interface AskBy {
@@ -13,7 +14,8 @@ export interface AskBy {
 export type TurnAsk =
     | { kind: 'connect'; id: string; credentialType: string; label: string; url: string; reason: string | null; state: string | null; account: string | null; by: AskBy | null }
     | { kind: 'approval'; id: string; approvalId: string; summary: string; price: { amount_usd: number; [key: string]: unknown } | null; state: string | null }
-    | { kind: 'payment'; id: string; label: string; priceUsd: number | null; billingPeriod: string | null; url: string; state: string | null };
+    | { kind: 'payment'; id: string; label: string; priceUsd: number | null; billingPeriod: string | null; url: string; state: string | null }
+    | { kind: 'secret'; id: string; name: string; keys: string[]; reason: string | null; state: string | null };
 
 export interface TurnAsks {
     turn: string;
@@ -39,6 +41,10 @@ function askOf(raw: Raw, named: (by: Raw) => AskBy): TurnAsk | null {
     }
     if (raw.kind === 'payment' && text(raw.url)) {
         return { kind: 'payment', id, label: text(raw.label) ?? 'A payment', priceUsd: typeof raw.price_usd === 'number' ? raw.price_usd : null, billingPeriod: text(raw.billing_period), url: text(raw.url)!, state };
+    }
+    const keys = Array.isArray(raw.keys) ? raw.keys.flatMap((k) => text(k) ?? []) : [];
+    if (raw.kind === 'secret' && text(raw.name) && keys.length) {
+        return { kind: 'secret', id, name: text(raw.name)!, keys, reason: text(raw.reason), state };
     }
     return null;
 }

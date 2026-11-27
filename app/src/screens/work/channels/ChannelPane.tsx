@@ -161,11 +161,11 @@ function ChannelPaneBody({
     const typists = useChannelTypists(transport, channel.id, own ? 'account' : (viewer.id ?? ''));
     const typing = useTypingSignal(transport, channel.id);
     const line = workingLineOf({ channelId: channel.id, members: mentionable, busy, states: own ? states.data : undefined, messages, typists });
-    // What an agent's turn left waiting on a person, under its reply: an OK is the account's owner's to give.
+    // What an agent's turn left waiting on a person, under its reply: an OK, and a secret's values, are the account's.
     const TurnAsks = useMemo(() => {
         const said = (askId: string, messageId: string) => transport.askConnected(channel.id, messageId, askId).catch((e) => console.warn('[channels] saying who connected failed:', e));
         return function ChannelTurnAsks({ message }: { message: ChannelMessage }) {
-            return <ChannelAsks message={message} answersApprovals={own} onConnected={(askId) => void said(askId, message.id)} />;
+            return <ChannelAsks message={message} forAccount={own}onConnected={(askId) => void said(askId, message.id)} />;
         };
     }, [transport, channel.id, own]);
     const schedules = useChannelSchedules(transport, channel.id);
