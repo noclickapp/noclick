@@ -178,7 +178,7 @@ function asksOf(event: Raw): NonNullable<ChannelMessage['asks']> {
     return { needs: (Array.isArray(event.needs) ? event.needs : []).flatMap((n) => needOf(n) ?? []) };
 }
 
-function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question' | 'asks'> {
+function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question' | 'asks' | 'automation'> {
     const count = rawCount(raw.reply_count);
     const pinned = raw.pinned && typeof raw.pinned === 'object' ? (raw.pinned as Raw) : null;
     const event = raw.event && typeof raw.event === 'object' ? (raw.event as Raw) : null;
@@ -201,6 +201,7 @@ function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 
         ...(event?.type === 'membership' ? { membership: membershipOf(event, who) } : {}),
         ...(event?.type === 'question' ? { question: questionOf(event) } : {}),
         ...(event?.type === 'connect' ? { asks: asksOf(event) } : {}),
+        ...(event?.type === 'automation' ? { automation: { workflowId: rawText(event.workflow_id) } } : {}),
     };
 }
 

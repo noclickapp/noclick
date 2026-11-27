@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/ui/tooltip';
 import { useLongPress } from '@/ui/useLongPress';
 import { cn } from '@/ui/utils';
+import { AutomationMark } from '@/ui/glyphs';
 import { BUTTON_SECONDARY } from '@/ui/buttons';
 import { ShellDialog } from '@/ui/ShellDialog';
 import { MessageAttachments } from './attachments';
@@ -142,10 +143,11 @@ function NoClickAvatar() {
     );
 }
 
-function AppAvatar() {
+/** An app's event, or an automation's post (drawn with the automation's own mark). */
+function AppAvatar({ automation }: { automation?: boolean }) {
     return (
         <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full bg-foreground/[0.07]">
-            <Plug className="h-4 w-4 text-foreground/70" strokeWidth={1.75} />
+            {automation ? <AutomationMark className="h-[18px] w-[18px]" /> : <Plug className="h-4 w-4 text-foreground/70" strokeWidth={1.75} />}
         </span>
     );
 }
@@ -750,7 +752,7 @@ export function MessageRow({
                 ) : noclick ? (
                     <NoClickAvatar />
                 ) : app ? (
-                    <AppAvatar />
+                    <AppAvatar automation={!!msg.automation} />
                 ) : author && actions.onAuthor ? (
                     // The face is a pointer shortcut; the name beside it is the control a keyboard or reader uses.
                     <button type="button" tabIndex={-1} aria-hidden onClick={() => actions.onAuthor?.(author)} className="block rounded-full">

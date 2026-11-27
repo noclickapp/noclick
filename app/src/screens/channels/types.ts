@@ -107,6 +107,8 @@ export interface ChannelMessage {
     question?: { options: ChannelQuestionOption[] };
     /** What an agent still needs before it can start (an agents page made it): each to connect from its message. */
     asks?: { needs: AgentNeed[] };
+    /** An automation's post (a Post to Channel step), its author the automation. */
+    automation?: { workflowId: string | null };
 }
 
 /** One answer to an agent's question: what its button says, and what a tap posts as you. */

@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Check, Hash, Plus, Search, Trash2, UsersRound } from 'lucide-react';
-import { Agent, Bucket, Channel, Connection, Database, Machine, Project, Repo } from 'noclick';
+import { Agent, Bucket, Channel, Connection, Database, Machine, Project, Repo, Workflow } from 'noclick';
 import { BUTTON_DANGER, BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { WorkspaceTile } from '@/screens/channels/workspaces';
 import { FIELD_LABEL } from '@/ui/fields';
@@ -47,6 +47,9 @@ function useAccountItems(kind: SpaceKind): { loading: boolean; items: Candidate[
                 return (await Bucket.list({ client })).map((b) => make(b.id, b.name, 'Bucket'));
             case 'code':
                 return (await Repo.list({ client })).map((r) => make(r.id, r.name, 'Repository'));
+            case 'automations':
+                // The account's own: one shared with it, or another account pays for, isn't its to share.
+                return (await Workflow.list({ client })).filter((w) => w.access === 'owner').map((w) => make(w.id, w.name, w.description ?? 'Automation'));
             case 'machines':
                 // The account's own: a user's machine is theirs, never a space's.
                 return (await Machine.list({ client })).map((m) => make(m.id, m.name, [m.kind === 'own' ? 'Computer of yours' : 'Machine kept on', m.status].join(' · ')));
@@ -174,6 +177,7 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
             ask: pane.share.home ? 'Connect an account for my agents.' : `Connect an account for the ${space} space’s agents.`,
         },
         code: { about: 'NoClick makes a repository for the account; share it here and its agents check it out on their machines.', ask: `Make a repository for the ${space} space.` },
+        automations: { about: 'NoClick builds an automation from what you describe: what starts it, the steps it takes and where it reports.', ask: `Build an automation for the ${space} space.` },
         websites: { about: 'NoClick builds a site from what you describe and publishes it at its own address.', ask: `Build a small website for the ${space} space and publish it.` },
         databases: { about: 'A database the account owns, which agents here query through their tools.', ask: `Make a database for the ${space} space’s agents.` },
         files: { about: 'A bucket of files the account owns, shared with this space.', ask: `Make a shared folder of files for the ${space} space.` },

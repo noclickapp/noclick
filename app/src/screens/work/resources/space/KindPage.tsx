@@ -1,7 +1,8 @@
 // One kind of what a space has, as a list: its rows (each opening its page; an agent's opens its profile), who here
 // uses each, and the ways to get more (make one, or add one the account already has). Home lists every one of the
-// account's, so it has nothing to add and nothing to say about sharing.
-import { Plus } from 'lucide-react';
+// account's, so it has nothing to add and nothing to say about sharing. An automation says how its last run went and
+// runs from its row, for whoever here may run it.
+import { Play, Plus } from 'lucide-react';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
 import { AgentRing } from '../../agents/AgentRing';
 import { HarnessMark, harnessLabel } from '../../agents/harness';
@@ -15,7 +16,10 @@ import { AGENTS_NOT_ENABLED, placeSize, placeState, placeUp, useAgentsOnMachines
 import type { HarnessName } from 'noclick';
 import { installedAs, installedLine } from '@/screens/resources/secrets';
 import { movedLine } from '@/lib/movedFrom';
-import { kindOf, levelWords, LINK_KIND, ownMachine, type SpaceKind, type Thing } from './data';
+import { relTime } from '@/lib/formatters';
+import { useWorkClient } from '../../client';
+import { runAutomation } from './actions';
+import { kindOf, levelWords, LINK_KIND, ownMachine, RUNS_IT, type SpaceKind, type Thing } from './data';
 import { Group } from './Overview';
 import { MovedSignIns } from './SignIns';
 import { Also, Crumbs, Empty, List, Owned, plural, Row, UsedBy, type RowProps } from './parts';
@@ -26,6 +30,7 @@ const ABOUT: Record<SpaceKind, string> = {
     machines: 'Where this space’s agents run: each agent’s one cloud sandbox, shared by everyone talking to it, a machine kept on, or a computer of yours. A machine shared with this space is one its people see, and can put its agents on where you let them.',
     skills: 'What this space’s agents follow. Each is the account’s, so a change reaches every agent that uses it, here and elsewhere.',
     memories: 'What this space’s agents read, and add to where you let them. Each agent also keeps its own.',
+    automations: 'Automations shared with this space: its people see how each ran, and run or change it where you let them. Each runs on the account’s accounts and money.',
     connections: 'Accounts shared with everyone here, and the ones only an agent uses.',
     secrets: 'The keys and tokens this space’s agents hold, by name and where each is installed, and which came over when an agent moved from a computer. A value is never shown.',
     channels: 'Where this space’s people and agents talk.',
@@ -50,6 +55,48 @@ const HOME_ABOUT: Partial<Record<SpaceKind, string>> = {
 export function sharedLine(t: Thing): string {
     if (!t.link) return 'Only its agents';
     return `Shared with everyone here · ${levelWords(t.link.kind, t.link.membersLevel).toLowerCase()}`;
+}
+
+/** An automation's last run in a few words ("Last run failed: …" is `failed`), then when it runs next; nothing where
+ *  whoever reads the space doesn't see its runs. */
+export function runLine(t: Thing, now: string): { text: string; failed: boolean } {
+    const run = t.automation?.lastRun;
+    if (run === undefined) return { text: '', failed: false };
+    const last = !run
+        ? 'No run yet'
+        : run.status === 'running'
+          ? 'Running now'
+          : run.status === 'failed'
+            ? `Last run failed${run.error ? `: ${run.error}` : ''}`
+            : `Ran ${run.at ? relTime(run.at, now) : ''}`.trim();
+    const next = t.automation?.nextRun ? `next ${relTime(t.automation.nextRun, now)}` : null;
+    return { text: [last, next].filter(Boolean).join(' · '), failed: run?.status === 'failed' };
+}
+
+/** Whether whoever reads the space runs the automation: the account, or someone it's shared with to run. */
+export const runsIt = (t: Thing) => !!t.automation?.level && RUNS_IT.includes(t.automation.level);
+
+/** Runs it now: a page's pill, or a row's, its words left out where the row is narrow. */
+export function RunNowButton({ spaceId, t, onPage }: { spaceId: string; t: Thing; onPage?: boolean }) {
+    const client = useWorkClient();
+    return (
+        <button
+            type="button"
+            aria-label={`Run ${t.name} now`}
+            onClick={(e) => {
+                e.stopPropagation();
+                void runAutomation(client, spaceId, t);
+            }}
+            className={
+                onPage
+                    ? BUTTON_SECONDARY
+                    : 'inline-flex h-7 w-7 shrink-0 items-center justify-center gap-1.5 rounded-full text-[12.5px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] @xl:w-auto @xl:px-3 dark:ring-foreground/[0.14]'
+            }
+        >
+            <Play className={onPage ? 'h-4 w-4' : 'h-3 w-3'} strokeWidth={onPage ? 1.9 : 2.2} />
+            <span className={onPage ? undefined : 'hidden @xl:inline'}>Run now</span>
+        </button>
+    );
 }
 
 /** The agents outside this space that use it too: their spaces, so a change made here reaches them. */
@@ -266,6 +313,22 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[] }) {
             );
         case 'channels':
             return <List>{things.map((t) => row(t, { sub: 'Channel', cols: <UsedBy pane={pane} agentIds={t.usedBy} /> }))}</List>;
+        case 'automations': {
+            const slot = things.some(runsIt) ? 'w-7 @xl:w-[96px]' : undefined;
+            return (
+                <List>
+                    {things.map((t) => {
+                        const line = runLine(t, pane.now);
+                        return row(t, {
+                            sub: line.failed ? line.text : [line.text, sharedLine(t)].filter(Boolean).join(' · '),
+                            attention: line.failed,
+                            slot,
+                            trailing: runsIt(t) ? <RunNowButton spaceId={pane.spaceId} t={t} /> : null,
+                        });
+                    })}
+                </List>
+            );
+        }
         default: {
             const answers = kind === 'numbers' || kind === 'email';
             return (

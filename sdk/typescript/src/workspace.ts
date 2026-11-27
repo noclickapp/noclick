@@ -207,14 +207,15 @@ export class WorkspaceInvite {
 }
 
 /** What a workspace can share with its people. */
-export type WorkspaceResourceKind = "connection" | "app" | "database" | "files" | "repo" | "skill" | "memory" | "machine";
+export type WorkspaceResourceKind = "connection" | "app" | "database" | "files" | "repo" | "skill" | "memory" | "machine" | "automation";
 
 /**
  * One of your account's resources shared with a workspace: every person in it reaches it at `membersLevel` (its
  * admins and members) or `guestsLevel` (its guests), and `levels` are the kind's, lowest first (`agents`: through
  * its agents only). `level` is what you hold through it (the account: its highest). A machine is shared for agents to
  * run on: at `run` the workspace's agents run there and its people see it, at `use` they may also move its agents onto
- * it and off it; its shell and files stay yours.
+ * it and off it; its shell and files stay yours. An automation (one of your workflows) is seen with its runs at
+ * `runs`, also run at `run` (members' default) and also changed at `edit`, its runs billed to you.
  */
 export class WorkspaceResource {
   readonly raw: JsonObject;

@@ -1,12 +1,13 @@
 // What each change to a space's resources does: an agent joins or leaves the space; anything else is shared with its
 // people or taken back (agents that hold it as their own keep it); a level changes what its people get; a delete is
 // account-wide, to the trash, after the platform's own preview. A connection or a secret is removed for good instead:
-// its access ends everywhere (a secret comes off each agent that holds it first). Each says what happened and offers
-// it back where it can come back.
+// its access ends everywhere (a secret comes off each agent that holds it first). An automation runs from here, at
+// the level its people hold, and is deleted only from Automations. Each says what happened and offers it back where
+// it can come back.
 import { toast } from 'sonner';
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { invalidateV1 } from '@/sdk/useV1';
-import { Agent, Channel, TrashItem, Workspace, previewDelete as previewDeletion, type NoClick } from 'noclick';
+import { Agent, Channel, TrashItem, Workflow, Workspace, previewDelete as previewDeletion, type NoClick } from 'noclick';
 import { renameKnowledge } from '@/screens/resources/knowledge';
 import { removeSecret, SECRETS_KEY } from '@/screens/resources/secrets';
 import { AGENTS_KEY } from '../../agents/reads';
@@ -70,6 +71,7 @@ export function deleteRefusal(t: Thing, owner?: string): string | null {
     if (t.kind === 'memories' && t.knowledge?.kind === 'memory' && t.knowledge.agentId) return `It goes with ${owner ?? 'its agent'}; delete ${owner ?? 'the agent'} to delete it`;
     if (t.kind === 'machines' && t.place?.kind !== 'own') return t.machine?.agentId ? 'It goes with its agent' : 'It stops by itself';
     if (t.kind === 'numbers' || t.kind === 'email') return 'Released from its page in Resources';
+    if (t.kind === 'automations') return 'Deleted from Automations';
     return null;
 }
 
@@ -155,6 +157,25 @@ export async function changeLevel(client: NoClick, spaceId: string, link: SpaceL
     } catch (error) {
         failed('Couldn’t change what people here get', error);
     }
+}
+
+/** Runs an automation now, as its Run does, billed to the account; once the run ends the space reads its last run
+ *  again. */
+export async function runAutomation(client: NoClick, spaceId: string, t: Thing): Promise<void> {
+    let run: Awaited<ReturnType<Workflow['run']>>;
+    try {
+        run = await Workflow.fromId(t.ref, { client }).run();
+    } catch (error) {
+        failed(`Couldn’t run ${titleFor(t)}`, error);
+        return;
+    }
+    readSpaceAgain(spaceId);
+    toast(`${titleFor(t)} is running`, { description: 'Its last run here says how it went once it ends.' });
+    // Its end, else ten minutes on (one that waits on a person ends later, and the tab reads it on coming back).
+    void run.wait({ timeoutS: 600 }).then(
+        () => readSpaceAgain(spaceId),
+        () => readSpaceAgain(spaceId)
+    );
 }
 
 export async function renameThing(client: NoClick, spaceId: string, t: Thing, name: string): Promise<void> {

@@ -206,7 +206,7 @@ class WorkspaceInvite:
         return await self._call("POST", "/rotate")
 
 
-RESOURCE_KINDS = ("connection", "app", "database", "files", "repo", "skill", "memory", "machine")
+RESOURCE_KINDS = ("connection", "app", "database", "files", "repo", "skill", "memory", "machine", "automation")
 
 
 @dataclass(frozen=True)
@@ -216,7 +216,9 @@ class WorkspaceResource:
     ``levels`` are its kind's, lowest first (``agents``: through its agents only), and
     ``level`` what you hold through it. A machine is shared for agents to run on: at
     ``run`` the workspace's agents run there and its people see it, at ``use`` they may
-    also move its agents onto it and off it; its shell and files stay yours."""
+    also move its agents onto it and off it; its shell and files stay yours. An
+    automation (one of your workflows) is seen with its runs at ``runs``, also run at
+    ``run`` (members' default) and also changed at ``edit``, its runs billed to you."""
 
     id: str
     workspace_id: str
@@ -813,7 +815,7 @@ class Workspace(_Object):
         person in it gets it at ``members_level`` (the kind's default when left out) or, a
         guest, ``guests_level`` (``none``), and anyone who joins later. ``kind`` is one of
         ``connection``, ``app``, ``database``, ``files``, ``repo``, ``skill``, ``memory``,
-        ``machine``; a connection is shared by its id.
+        ``machine``, ``automation`` (a workflow); a connection is shared by its id.
 
         Returns:
             The shared resource.
@@ -822,6 +824,7 @@ class Workspace(_Object):
 
             acme.share("database", orders_db, members_level="read")
             acme.share("machine", dev_box, members_level="use")   # its people place agents there
+            acme.share("automation", monday_plan)                  # its people see and run it
         """
         if kind not in RESOURCE_KINDS:
             raise ValueError(f"kind must be one of {RESOURCE_KINDS}, not {kind!r}")

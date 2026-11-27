@@ -29,6 +29,8 @@ export interface WorkContextValue {
     openPage?: (page: OtherPage, params?: Record<string, string | null>) => void;
     /** Opens one step of a workflow on its canvas (a trigger's "Open step"); absent, it isn't offered. */
     openWorkflowStep?: (workflowId: string, stepId: string) => void;
+    /** Opens a workflow on its canvas (an automation a space shares); absent, it isn't offered. */
+    openWorkflow?: (workflow: { id: string; name: string }) => void;
     /** A command palette: Work hands it its places, and Home's Find opens it; absent, there's no Find. */
     palette?: { remember: (entries: PaletteEntry[]) => void; open: () => void };
 }

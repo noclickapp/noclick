@@ -7,8 +7,9 @@
 // Home (`HOME_SPACE`) is read the same way from the account's own reads, since no space summarises it: its agents are
 // every agent of the account, as home's Agents tab lists them (each saying which spaces it's in), and it has every
 // machine, skill, memory, connection and secret of the account, each with the agents that use it, shared with no one.
-import { useMemo } from 'react';
-import { BookOpen, Brain, AppWindow, Database, FileText, FolderGit2, Hash, KeyRound, Mail, Phone, Plug, Server, UsersRound, type LucideIcon } from 'lucide-react';
+import { useMemo, type ComponentType } from 'react';
+import { BookOpen, Brain, AppWindow, Database, FileText, FolderGit2, Hash, KeyRound, Mail, Phone, Plug, Server, UsersRound } from 'lucide-react';
+import { AutomationMark } from '@/ui/glyphs';
 import { invalidateV1, prefetchV1 } from '@/sdk/useV1';
 import { Connection, Workspace, WorkspaceResource, type Agent, type NoClick, type WorkspaceResourceKind } from 'noclick';
 import { listCompute, listMemories, listOwnComputers, listSkills, type Compute, type Knowledge } from '@/screens/resources/knowledge';
@@ -22,8 +23,8 @@ import { fixWordCasing } from '@/lib/credentialLabels';
 import { refFor } from '@/lib/agentTools';
 import { COMPUTE_KEY, OWN_KEY, placeName, placeUp, type Place } from '../machines';
 
-export type SpaceKind = 'agents' | 'machines' | 'skills' | 'memories' | 'connections' | 'secrets' | 'channels' | 'code' | 'websites' | 'databases' | 'files' | 'numbers' | 'email';
-export const SPACE_KINDS: readonly SpaceKind[] = ['agents', 'machines', 'skills', 'memories', 'connections', 'secrets', 'channels', 'code', 'websites', 'databases', 'files', 'numbers', 'email'];
+export type SpaceKind = 'agents' | 'machines' | 'skills' | 'memories' | 'automations' | 'connections' | 'secrets' | 'channels' | 'code' | 'websites' | 'databases' | 'files' | 'numbers' | 'email';
+export const SPACE_KINDS: readonly SpaceKind[] = ['agents', 'machines', 'skills', 'memories', 'automations', 'connections', 'secrets', 'channels', 'code', 'websites', 'databases', 'files', 'numbers', 'email'];
 /** Home's: what its agents work with. What a space shares with its people (channels, code, sites…) it has none of. */
 export const HOME_KINDS: readonly SpaceKind[] = ['agents', 'machines', 'skills', 'memories', 'connections', 'secrets'];
 /** The kinds the space's summary doesn't list: its machines come apart, its secrets are what its agents hold. */
@@ -31,9 +32,10 @@ type OwnRead = 'agents' | 'machines' | 'secrets';
 const isSummaryKind = (k: SpaceKind): k is Exclude<SpaceKind, OwnRead> => k !== 'agents' && k !== 'machines' && k !== 'secrets';
 
 /** What a space shares with its people: each kind as a link names it. */
-export type LinkKind = 'connection' | 'app' | 'database' | 'files' | 'repo' | 'skill' | 'memory' | 'machine';
+export type LinkKind = 'connection' | 'app' | 'database' | 'files' | 'repo' | 'skill' | 'memory' | 'machine' | 'automation';
 export const LINK_KIND: Partial<Record<SpaceKind, LinkKind>> = {
     machines: 'machine',
+    automations: 'automation',
     connections: 'connection',
     websites: 'app',
     databases: 'database',
@@ -43,12 +45,16 @@ export const LINK_KIND: Partial<Record<SpaceKind, LinkKind>> = {
     memories: 'memory',
 };
 
+/** A kind's mark: a line icon, or the one mark NoClick draws in colour, an automation's. */
+export type KindIcon = ComponentType<{ className?: string; strokeWidth?: number }>;
+
 /** Each kind as the tab names it; `make` is its way to make one here (none for secrets, which an agent's own page holds). */
-export const KINDS: { id: SpaceKind; label: string; icon: LucideIcon; group: 'work' | 'know' | 'reach'; noun: [string, string]; make?: string }[] = [
+export const KINDS: { id: SpaceKind; label: string; icon: KindIcon; group: 'work' | 'know' | 'reach'; noun: [string, string]; make?: string }[] = [
     { id: 'agents', label: 'Agents', icon: UsersRound, group: 'work', noun: ['agent', 'agents'], make: 'New agent' },
     { id: 'machines', label: 'Machines', icon: Server, group: 'work', noun: ['machine', 'machines'], make: 'New machine' },
     { id: 'skills', label: 'Skills', icon: BookOpen, group: 'know', noun: ['skill', 'skills'], make: 'New skill' },
     { id: 'memories', label: 'Memories', icon: Brain, group: 'know', noun: ['memory', 'memories'], make: 'New memory' },
+    { id: 'automations', label: 'Automations', icon: AutomationMark, group: 'reach', noun: ['automation', 'automations'], make: 'New automation' },
     { id: 'connections', label: 'Connections', icon: Plug, group: 'reach', noun: ['connection', 'connections'], make: 'Connect an account' },
     { id: 'secrets', label: 'Secrets', icon: KeyRound, group: 'reach', noun: ['secret', 'secrets'] },
     { id: 'channels', label: 'Channels', icon: Hash, group: 'reach', noun: ['channel', 'channels'], make: 'New channel' },
@@ -113,6 +119,19 @@ export interface SummaryItem {
     guestsLevel: string | null;
     /** The agents here that use it. */
     usedBy: string[];
+    /** What its people hold through it (the account: its highest). */
+    level: string | null;
+    /** An automation's last run and next one, where its people read its runs. */
+    lastRun?: LastRun | null;
+    nextRun?: string | null;
+}
+/** An automation's last run, whoever started it: `at` when it ended, else when it started. */
+export interface LastRun {
+    id: string;
+    /** `running`, `succeeded` or `failed`. */
+    status: string;
+    at: string | null;
+    error: string | null;
 }
 export interface SummaryAgent {
     id: string;
@@ -144,6 +163,8 @@ export interface SpaceSummary {
     items: Record<Exclude<SpaceKind, OwnRead>, SummaryItem[]>;
 }
 
+const toLastRun = (r: Wire): LastRun => ({ id: text(r.id), status: text(r.status), at: maybe(r.at), error: maybe(r.error) });
+
 const toItem = (i: Wire): SummaryItem => ({
     id: text(i.id),
     ref: text(i.ref) || text(i.id),
@@ -152,6 +173,8 @@ const toItem = (i: Wire): SummaryItem => ({
     membersLevel: maybe(i.members_level),
     guestsLevel: maybe(i.guests_level),
     usedBy: rows(i.used_by).map(String),
+    level: maybe(i.level),
+    ...('last_run' in i ? { lastRun: i.last_run ? toLastRun(obj(i.last_run)) : null, nextRun: maybe(i.next_run) } : {}),
 });
 
 export function toSummary(raw: Wire): SpaceSummary {
@@ -226,10 +249,15 @@ export async function setLevels(client: NoClick, link: SpaceLink, levels: { memb
 const LEVEL_WORDS: Record<string, string> = { none: 'None', agents: 'Through agents only', use: 'Can use', view: 'View', read: 'Read', add: 'Read and add', write: 'Read and write' };
 /** A machine's: its people see it, then may also put the space's agents on it. Its shell stays yours either way. */
 const MACHINE_WORDS: Record<string, string> = { run: 'See it', use: 'Put agents on it' };
+/** An automation's: its people see its runs, then also run it, then also change it. */
+const AUTOMATION_WORDS: Record<string, string> = { runs: 'See runs', run: 'Run', edit: 'Run and edit' };
+/** The levels of an automation at which its people run it (`run`, `edit`). */
+export const RUNS_IT: readonly string[] = ['run', 'edit'];
 
 /** A level as people read it: a database reached through agents is queried through them. */
 export function levelWords(kind: LinkKind, level: string): string {
     if (kind === 'machine' && MACHINE_WORDS[level]) return MACHINE_WORDS[level];
+    if (kind === 'automation' && AUTOMATION_WORDS[level]) return AUTOMATION_WORDS[level];
     if (kind === 'database' && level === 'agents') return 'Query through agents';
     return LEVEL_WORDS[level] ?? level;
 }
@@ -254,6 +282,8 @@ export interface Thing {
     secret?: SecretItem;
     /** Where a move carried it from (a connection or a secret), when it came over with one. */
     movedFrom?: MovedFrom | null;
+    /** An automation: what its people here hold of it, and its runs where they read them. */
+    automation?: Pick<SummaryItem, 'level' | 'lastRun' | 'nextRun'>;
 }
 
 export const thingKey = (kind: SpaceKind, ref: string) => `${kind}:${ref}`;
@@ -364,7 +394,7 @@ function homeSummary({ agents, states, compute, knowledge, connections }: { agen
         if (!agentIds.length) return kept ? [{ id: c.id, kind: 'machine', machineId: c.id, agentId: null, state: c.status }] : [];
         return agentIds.map((agentId) => ({ id: c.id, kind: kept ? 'machine' : 'sandbox', machineId: kept ? c.id : null, agentId, state: c.status }));
     });
-    const item = (ref: string, name: string, usedBy: string[]): SummaryItem => ({ id: ref, ref, name, linked: false, membersLevel: null, guestsLevel: null, usedBy: [...new Set(usedBy)].filter((a) => ids.has(a)) });
+    const item = (ref: string, name: string, usedBy: string[]): SummaryItem => ({ id: ref, ref, name, linked: false, membersLevel: null, guestsLevel: null, usedBy: [...new Set(usedBy)].filter((a) => ids.has(a)), level: null });
     const known = (k: Knowledge) => item(k.id, k.name ?? '', knowledge.usersOf(k).map((u) => u.agent.id));
     const none = Object.fromEntries(SPACE_KINDS.filter(isSummaryKind).map((k) => [k, [] as SummaryItem[]])) as SpaceSummary['items'];
     const count = (state: string) => agentItems.filter((a) => a.state === state).length;
@@ -472,6 +502,7 @@ export function useSpaceShare(spaceId: string): SpaceShare {
                     link: linkOf(kind, i.ref),
                     usedBy: [...i.usedBy],
                     knowledge: kind === 'memories' || kind === 'skills' ? knowledge.find(i.ref) : undefined,
+                    automation: kind === 'automations' ? { level: i.level, lastRun: i.lastRun, nextRun: i.nextRun } : undefined,
                 }))
             ),
         ];

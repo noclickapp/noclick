@@ -6,7 +6,7 @@
 // in no space and what the account has for them: nothing in it is shared with people, and each item can be shared with
 // a space from its menu.
 import { useMemo, useState, type ReactNode } from 'react';
-import { LayoutGrid, type LucideIcon } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { invalidateV1 } from '@/sdk/useV1';
 import { staleReads } from '@/sdk/staleReads';
 import type { NoClick } from 'noclick';
@@ -25,7 +25,7 @@ import { useWorkNav } from '../nav';
 import { RES_OVERVIEW, useWorkPlace } from '../place';
 import { useKnowledgeFrames } from './knowledge/store';
 import { renameThing } from './space/actions';
-import { GROUPS, isSpaceKind, KINDS, readSpaceAgain, SPACES_KEY, useConnections, useSpaceShare, type SpaceKind, type Thing } from './space/data';
+import { GROUPS, isSpaceKind, KINDS, readSpaceAgain, SPACES_KEY, useConnections, useSpaceShare, type KindIcon, type SpaceKind, type Thing } from './space/data';
 import { AddDialog, CreateDialog, DeleteDialog, ShareDialog } from './space/dialogs';
 import { ItemPage } from './space/ItemPage';
 import { KindPage } from './space/KindPage';
@@ -55,8 +55,8 @@ function useSpaceFrames(spaceId: string): void {
             return;
         }
         for (const prefix of staleReads(frame)) invalidateV1(prefix);
-        // A skill, memory or machine moving changes the space's counts too.
-        if (frame.kind === 'skill' || frame.kind === 'memory' || frame.kind === 'machine' || frame.kind === 'sandbox') readSpaceAgain(spaceId);
+        // A skill, memory or machine moving changes the space's counts too, and a workflow an automation's.
+        if (frame.kind === 'skill' || frame.kind === 'memory' || frame.kind === 'machine' || frame.kind === 'sandbox' || frame.kind === 'workflow') readSpaceAgain(spaceId);
     });
     useWorkFrames('platform:coding_agent', () => readSpaceAgain(spaceId));
     useWorkFrames('platform:channel', (frame) => {
@@ -106,7 +106,7 @@ export function SpaceResourcesNav({ spaceId }: { spaceId: string }) {
     // A phone shows this list alone, so nothing in it is open, and the overview opens over it as the kinds do.
     const phone = useInPhoneShell();
     const broken = new Set((connections.data ?? []).filter((c) => c.status === 'disconnected').flatMap((c) => [c.id, refFor(c)]));
-    const row = (current: boolean, icon: LucideIcon, label: string, figure: ReactNode, onClick: () => void) => {
+    const row = (current: boolean, icon: KindIcon, label: string, figure: ReactNode, onClick: () => void) => {
         const Icon = icon;
         return (
             <button

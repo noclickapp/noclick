@@ -39,6 +39,8 @@ export const SCENES: readonly LabScene[] = [
     { id: 'dm', title: 'A DM', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'dms', channel: 'dm_priya' } },
     { id: 'resources', title: 'Resources', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources' } },
     { id: 'resources-item', title: 'A shared resource', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources', res: 'code', item: 'code:rep_site' } },
+    { id: 'resources-automations', title: 'Automations in a space', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources', res: 'automations' } },
+    { id: 'resources-automation', title: 'An automation in a space', group: 'Spaces', world: 'spaces', place: { ...SPACE, show: 'resources', res: 'automations', item: 'automations:wf_monday_plan' } },
     { id: 'members-people', title: 'Members: people', group: 'Members', world: 'spaces', place: { ...SPACE, panel: 'people' } },
     { id: 'members-agents', title: 'Members: agents', group: 'Members', world: 'spaces', place: { ...SPACE, panel: 'agents' } },
     { id: 'members-access', title: 'Members: what they reach', group: 'Members', world: 'spaces', place: { ...SPACE, panel: 'access' } },

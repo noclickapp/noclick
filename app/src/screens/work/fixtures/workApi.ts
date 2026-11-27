@@ -201,6 +201,8 @@ function seed() {
     const links: Json[] = [
         { object: 'workspace_resource', id: 'lnk_repo', workspace_id: 'ws_noclick', kind: 'repo', ref: 'rep_site', name: 'site', members_level: 'write', guests_level: 'read', levels: ['none', 'agents', 'read', 'write'], added_by: ACCOUNT, added_at: at(900) },
         { object: 'workspace_resource', id: 'lnk_db', workspace_id: 'ws_noclick', kind: 'database', ref: 'db_orders', name: 'orders', members_level: 'agents', guests_level: 'none', levels: ['none', 'agents', 'read', 'write'], added_by: ACCOUNT, added_at: at(800) },
+        { object: 'workspace_resource', id: 'lnk_plan', workspace_id: 'ws_noclick', kind: 'automation', ref: 'wf_monday_plan', name: 'Monday plan', members_level: 'run', guests_level: 'none', levels: ['none', 'agents', 'runs', 'run', 'edit'], added_by: ACCOUNT, added_at: at(700) },
+        { object: 'workspace_resource', id: 'lnk_digest', workspace_id: 'ws_noclick', kind: 'automation', ref: 'wf_weekly_digest', name: 'Weekly sales digest', members_level: 'runs', guests_level: 'none', levels: ['none', 'agents', 'runs', 'run', 'edit'], added_by: ACCOUNT, added_at: at(650) },
     ];
     return { workspaces, channels, messages, bookmarks, invites, links };
 }
@@ -502,6 +504,17 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
                         channels: { items: channels.filter((c) => c.workspace_id === wid && c.kind !== 'dm').map((c) => item(c.id, c.id, c.name)) },
                         code: { items: linked('repo') },
                         databases: { items: linked('database') },
+                        // Each automation's last run and its next, as the account reads them.
+                        automations: {
+                            items: linked('automation').map((i) => ({
+                                ...i,
+                                level: 'edit',
+                                used_by: [],
+                                ...(i.ref === 'wf_monday_plan'
+                                    ? { last_run: { id: 'run_plan', status: 'failed', at: at(60 * 24 * 4), error: 'Instagram isn’t connected' }, next_run: at(-60 * 24 * 3) }
+                                    : { last_run: { id: 'run_digest', status: 'succeeded', at: at(60 * 20), error: null }, next_run: at(-60 * 28) }),
+                            })),
+                        },
                         ...Object.fromEntries(['skills', 'memories', 'connections', 'websites', 'files', 'numbers', 'email'].map((k) => [k, empty])),
                     },
                 });

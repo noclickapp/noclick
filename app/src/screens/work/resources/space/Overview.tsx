@@ -81,6 +81,7 @@ export function Overview(pane: Pane) {
     };
     const names = (k: SpaceKind, max = 2) => few(share.of(k).map(titleFor), max);
     const broken = share.of('connections').find((t) => pane.connections.get(t.ref)?.status === 'disconnected');
+    const failing = share.of('automations').find((t) => t.automation?.lastRun?.status === 'failed');
     const skillUsers = [...new Set(share.of('skills').flatMap((t) => t.usedBy))];
     const memories = share.of('memories');
     const ownMemories = memories.filter((t) => t.knowledge?.kind === 'memory' && t.knowledge.agentId).length;
@@ -174,6 +175,7 @@ export function Overview(pane: Pane) {
                 </Group>
                 <Group title={GROUPS.reach}>
                     <div className={cn('grid gap-2.5 @lg:grid-cols-2', !share.home && '@4xl:grid-cols-3')}>
+                        {tile('automations', failing ? `${failing.name} failed` : names('automations'), !!failing)}
                         {tile('connections', broken ? `${broken.name} isn’t working` : names('connections'), !!broken)}
                         {tile('secrets', moved.length ? `${moved.length} moved from ${few(hosts)}` : `Held by ${few(holders) || 'no agent'}`)}
                         {tile('channels', names('channels', 1))}

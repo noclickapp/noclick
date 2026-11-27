@@ -1,10 +1,11 @@
 // One item's own page in a space's Resources tab, the anatomy of the app's account and resource pages: the way back,
 // its name, its facts, then sections. Links go where things live: an agent to its profile, a channel to the channel,
 // a machine to its machine page. A skill or memory is its own page, with the space's menu beside the way back. A
-// connection or a secret says where a move carried it from, and its Remove ends its access everywhere. Home's pages say
-// nothing of sharing: nobody else is in a home.
+// connection or a secret says where a move carried it from, and its Remove ends its access everywhere. An automation
+// says how it last ran and when it runs next, runs from here for whoever may, and opens on its canvas for the account.
+// Home's pages say nothing of sharing: nobody else is in a home.
 import { useState, type ReactNode } from 'react';
-import { ArrowUpRight, Hash, Server, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Hash, Server, Trash2, Workflow as WorkflowIcon } from 'lucide-react';
 import { Channel, type Connection } from 'noclick';
 import { installedAs, installedFacts, installedLine } from '@/screens/resources/secrets';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
@@ -14,14 +15,17 @@ import { cn } from '@/ui/utils';
 import { AgentRing } from '../../agents/AgentRing';
 import { useAgentFaces, useWorkV1 } from '../../agents/reads';
 import { useWorkClient } from '../../client';
+import { useWork } from '../../context';
 import { useWorkNav } from '../../nav';
+import { useWorkViewer } from '../../viewer';
+import { dateLabel, relTime } from '@/lib/formatters';
 import { PageHead } from '@/ui/PageHead';
 import { KnowledgePage } from '../knowledge/KnowledgePage';
 import { AgentFace } from '../knowledge/parts';
 import { MachineBody, placeKind } from '../machines';
 import { addToSpace, removedForGood, shareable, titleFor } from './actions';
 import { appName, kindOf, levelWords, thingKey, type Thing } from './data';
-import { ReconnectButton, sharedLine } from './KindPage';
+import { ReconnectButton, RunNowButton, runsIt, sharedLine } from './KindPage';
 import { Crumbs, Facts, LevelMenu, List, markOf, NameInput, PageRow, ThingMenu } from './parts';
 import { ACCOUNT_KIND, type Pane } from './pane';
 
@@ -53,6 +57,8 @@ export function ItemPage(props: Pane & { t: Thing }) {
                 return <SecretBody {...props} />;
             case 'channels':
                 return <ChannelBody {...props} />;
+            case 'automations':
+                return <AutomationBody {...props} />;
             case 'machines':
                 return (
                     <>
@@ -88,8 +94,10 @@ function pageSubtitle(t: Thing, pane: Pane): string {
     }
 }
 
-function PagePrimary({ t, accountPage, ask }: Pane & { t: Thing }) {
+function PagePrimary(props: Pane & { t: Thing }) {
+    const { t, accountPage, ask } = props;
     const nav = useWorkNav();
+    if (t.kind === 'automations') return <AutomationActions {...props} />;
     if (removedForGood(t))
         return (
             <button type="button" onClick={() => ask({ kind: 'delete', key: t.key })} className={cn(BUTTON_SECONDARY, 'hover:text-red-600 dark:hover:text-red-400')}>
@@ -347,6 +355,51 @@ function ChannelBody(props: Pane & { t: Thing }) {
                     <p className="text-[14px] text-muted-foreground">No agent yet. @-mention one in the channel to add it.</p>
                 )}
             </Section>
+        </>
+    );
+}
+
+/** An automation's page actions: Run now for whoever may, and its canvas for the account. */
+function AutomationActions({ t, spaceId }: Pane & { t: Thing }) {
+    const { openWorkflow } = useWork();
+    const viewer = useWorkViewer();
+    return (
+        <>
+            {runsIt(t) && <RunNowButton spaceId={spaceId} t={t} onPage />}
+            {openWorkflow && viewer.type === 'account' && (
+                <button type="button" onClick={() => openWorkflow({ id: t.ref, name: t.name })} className={BUTTON_SECONDARY}>
+                    <WorkflowIcon className="h-4 w-4" strokeWidth={1.75} />
+                    Open on its canvas
+                </button>
+            )}
+        </>
+    );
+}
+
+/** How an automation last ran (whoever started it) and when a schedule runs it next, where its people read its runs;
+ *  then what this space's people get of it. */
+function AutomationBody(props: Pane & { t: Thing }) {
+    const { t, now } = props;
+    const run = t.automation?.lastRun;
+    const last = !run
+        ? 'None yet'
+        : run.status === 'running'
+          ? 'Running now'
+          : `${run.status === 'failed' ? 'Failed' : 'Succeeded'}${run.at ? ` ${relTime(run.at, now)}` : ''}${run.status === 'failed' && run.error ? `: ${run.error}` : ''}`;
+    const next = t.automation?.nextRun;
+    return (
+        <>
+            {run !== undefined && (
+                <Section title="Runs">
+                    <Facts
+                        rows={[
+                            ['Last run', <span key="last" className={run?.status === 'failed' ? 'text-red-600 dark:text-red-400' : undefined}>{last}</span>],
+                            ['Next run', next ? dateLabel(next) : 'Not on a schedule'],
+                        ]}
+                    />
+                </Section>
+            )}
+            {!props.share.home && <InSpaceSection pane={props} t={t} />}
         </>
     );
 }
