@@ -410,6 +410,15 @@ export const routes: FixtureRoute[] = [
         },
     },
     {
+        // One connection by id or name (Logs reads the one a failure names, to make it a new link).
+        method: 'GET',
+        path: '/v1/connections/:ref',
+        reply: (r) => {
+            const c = connectionByRef(r);
+            return c ? ok(c) : apiError(404, 'not_found', `No connection '${r.params.ref}'.`);
+        },
+    },
+    {
         method: 'DELETE',
         path: '/v1/connections/:ref',
         reply: (r) => {

@@ -752,9 +752,13 @@ export {
   Operation,
 } from "./operation.ts";
 export type {
+  FailedOn,
+  FailureFilters,
   KindScopedFilters,
   NamedWorkstream,
   OperationEvent,
+  OperationFailure,
+  OperationFailures,
   OperationFilters,
   OperationProgress,
   OperationStage,

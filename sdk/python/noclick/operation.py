@@ -74,19 +74,68 @@ class OperationSummary:
     raw: Dict[str, Any] = dc_field(repr=False)
 
 
+@dataclass(frozen=True)
+class OperationFailure:
+    """One cause of failures (``Operation.failures()``): ``count`` failed operations between ``first_at`` and
+    ``last_at`` that failed the same way, on the same thing (one cap used up, one connection disconnected).
+    ``failed_on`` is what their fix acts on (``Operation.failed_on``). ``error`` is the latest one's,
+    ``operation_id`` that operation; ``cause`` is the key their views carry and ``Operation.list(cause=)`` takes. Up
+    to ten of the agents, users and keys they touched, beside how many."""
+
+    cause: str
+    count: int
+    first_at: Any
+    last_at: Any
+    failed_on: Optional[Dict[str, Any]]
+    error: Optional[Error]
+    operation_id: str
+    kinds: List[str]
+    agent_ids: List[str]
+    agent_count: int
+    user_ids: List[Optional[str]]
+    user_count: int
+    key_ids: List[str]
+    key_count: int
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
+@dataclass(frozen=True)
+class OperationFailures:
+    """``Operation.failures()``: each cause, the one that failed most lately first; ``total`` counts every failure
+    matched, and ``has_more`` says causes past the limit were left out."""
+
+    causes: List[OperationFailure]
+    total: int
+    has_more: bool
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+
 Many = Union[None, str, Sequence[str]]
 
 
 async def _filter_params(
     kind: Many, status: Many, status_not: Many, agent: Any, key: Optional[str],
-    created_after: Any, created_before: Any, updated_after: Any,
+    created_after: Any, created_before: Any, updated_after: Any, cause: Optional[str] = None,
 ) -> Dict[str, Any]:
     return {
         "kind": csv(kind), "status": csv(status), "status_not": csv(status_not),
         "agent_id": await ref_id(agent), "key_id": key,
         "created_after": iso_time(created_after), "created_before": iso_time(created_before),
-        "updated_after": iso_time(updated_after),
+        "updated_after": iso_time(updated_after), "cause": cause,
     }
+
+
+def _failure(raw: Dict[str, Any]) -> OperationFailure:
+    error = raw.get("error")
+    return OperationFailure(
+        cause=str(raw["cause"]), count=int(raw["count"]), first_at=parse_time(raw.get("first_at")),
+        last_at=parse_time(raw.get("last_at")), failed_on=raw.get("failed_on"),
+        error=error_from_payload(error, default=OperationFailed) if error else None,
+        operation_id=str(raw["operation_id"]), kinds=list(raw.get("kinds") or []),
+        agent_ids=list(raw.get("agent_ids") or []), agent_count=int(raw.get("agent_count") or 0),
+        user_ids=list(raw.get("user_ids") or []), user_count=int(raw.get("user_count") or 0),
+        key_ids=list(raw.get("key_ids") or []), key_count=int(raw.get("key_count") or 0), raw=raw,
+    )
 
 
 def _with_kinds(filters: Dict[str, Any], kinds: Sequence[str], method: str) -> Dict[str, Any]:
@@ -149,6 +198,20 @@ class Operation(_Object):
         doc="The workstream its work belongs to, as it reads now (``{\"id\", \"name\"}``: a renamed one by its new "
         "name, a merged one as the one it joined); ``None`` when its work named none. A single operation's view and "
         "``Operation.list()`` name it.",
+    )
+    cause: Optional[str] = field(
+        "cause",
+        doc="Why a failed one failed, as one key: its error's type and reason and what its fix acts on (the cap "
+        "that stopped it, the connection it couldn't use). Operations that failed the same way share it; "
+        "``Operation.failures()`` groups by it and ``Operation.list(cause=)`` takes it. On the list and a read of "
+        "one; ``None`` unless it failed.",
+    )
+    failed_on: Optional[Dict[str, Any]] = field(
+        "failed_on",
+        doc="What a failed one's fix acts on, by id: the cap that stopped it (``{\"object\": \"cap\", \"scope\": "
+        "\"user\", \"id\": \"acme\"}``, its scope ``key``, ``user``, ``agent``, ``project`` or ``account``), a "
+        "``connection``, the ``account``'s funds or plan, a paused ``user``, an ``app``, a ``workflow`` or an "
+        "``agent``; ``None`` when it's NoClick's own to fix, or it didn't fail. On the list and a read of one.",
     )
     started_at: Any = field("started_at", parse_time)
     finished_at: Any = field("finished_at", parse_time)
@@ -215,12 +278,13 @@ class Operation(_Object):
     async def list(
         cls, *, kind: Many = None, status: Many = None, status_not: Many = None, agent: Any = None,
         key: Optional[str] = None, created_after: Any = None, created_before: Any = None,
-        updated_after: Any = None, limit: Optional[int] = None, user_filter: Any = None,
-        user: Any = AMBIENT, client: Optional[Client] = None,
+        updated_after: Any = None, cause: Optional[str] = None, limit: Optional[int] = None,
+        user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> List["Operation"]:
         """Operations matching the filters, newest first (or the first ``limit``).
         ``status="live"`` means every non-terminal status; ``key`` is a key id or
-        prefix (``nk_live_ab12``); ``agent`` an ``Agent`` or id.
+        prefix (``nk_live_ab12``); ``agent`` an ``Agent`` or id; ``cause`` the failed
+        ones of one cause (an ``OperationFailure``'s, from ``failures()``).
 
         Returns:
             Every matching operation, fetched page by page.
@@ -243,7 +307,9 @@ class Operation(_Object):
 
                 failed = noclick.Operation.list(status="failed", user_filter=noclick.ALL_USERS, limit=20)
         """
-        params = await _filter_params(kind, status, status_not, agent, key, created_after, created_before, updated_after)
+        params = await _filter_params(
+            kind, status, status_not, agent, key, created_after, created_before, updated_after, cause,
+        )
         return await list_all(
             "/v1/operations", lambda raw, scope: Operation._new(raw=raw, client=client, user=scope),
             params=params, user=user, user_filter=user_filter, limit=limit, client=client,
@@ -254,8 +320,8 @@ class Operation(_Object):
     async def list_page(
         cls, *, cursor: Optional[str] = None, limit: Optional[int] = None, kind: Many = None, status: Many = None,
         status_not: Many = None, agent: Any = None, key: Optional[str] = None, created_after: Any = None,
-        created_before: Any = None, updated_after: Any = None, user_filter: Any = None,
-        user: Any = AMBIENT, client: Optional[Client] = None,
+        created_before: Any = None, updated_after: Any = None, cause: Optional[str] = None,
+        user_filter: Any = None, user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> Page:
         """One page of matching operations; pass ``next_cursor`` back as ``cursor``.
 
@@ -272,7 +338,9 @@ class Operation(_Object):
                     break
                 page = noclick.Operation.list_page(status="failed", limit=100, cursor=page.next_cursor)
         """
-        params = await _filter_params(kind, status, status_not, agent, key, created_after, created_before, updated_after)
+        params = await _filter_params(
+            kind, status, status_not, agent, key, created_after, created_before, updated_after, cause,
+        )
         return await list_page(
             "/v1/operations", lambda raw, scope: Operation._new(raw=raw, client=client, user=scope),
             params=params, user=user, user_filter=user_filter, cursor=cursor, limit=limit, client=client,
@@ -283,8 +351,8 @@ class Operation(_Object):
     async def summary(
         cls, *, kind: Many = None, status: Many = None, status_not: Many = None, agent: Any = None,
         key: Optional[str] = None, created_after: Any = None, created_before: Any = None,
-        updated_after: Any = None, user_filter: Any = None, user: Any = AMBIENT,
-        client: Optional[Client] = None,
+        updated_after: Any = None, cause: Optional[str] = None, user_filter: Any = None,
+        user: Any = AMBIENT, client: Optional[Client] = None,
     ) -> OperationSummary:
         """How many operations match the same filters, by status.
 
@@ -297,11 +365,50 @@ class Operation(_Object):
             print(counts.total, counts.by_status["running"], counts.by_status["awaiting_human"])
         """
         scope, user_id = await read_scope(user, user_filter)
-        params = await _filter_params(kind, status, status_not, agent, key, created_after, created_before, updated_after)
+        params = await _filter_params(
+            kind, status, status_not, agent, key, created_after, created_before, updated_after, cause,
+        )
         raw = await resolve_client(client).request(
             "GET", "/v1/operations/summary", params={**params, "user_id": user_id}, user=scope,
         ) or {}
         return OperationSummary(int(required_number(raw, "total")), dict(raw.get("by_status") or {}), raw)
+
+    @synced
+    @classmethod
+    async def failures(
+        cls, *, kind: Many = None, agent: Any = None, key: Optional[str] = None, created_after: Any = None,
+        created_before: Any = None, limit: Optional[int] = None, user_filter: Any = None, user: Any = AMBIENT,
+        client: Optional[Client] = None,
+    ) -> OperationFailures:
+        """The failed operations matching the filters, grouped by why they failed: one cap used up or one
+        connection disconnected fails every run behind it the same way, and each is one ``OperationFailure``
+        with how many, since when, the latest error and what it touched. ``limit`` caps how many causes (50).
+
+        Returns:
+            Each cause, the one that failed most lately first; ``total`` counts every failure matched.
+
+        Usage:
+            What failed in the last day, and why::
+
+                from datetime import datetime, timedelta, timezone
+
+                yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+                found = noclick.Operation.failures(created_after=yesterday, user_filter=noclick.ALL_USERS)
+                for cause in found.causes:
+                    print(cause.count, cause.error, cause.error.next_step)
+
+            Then the runs behind one of them::
+
+                runs = noclick.Operation.list(cause=found.causes[0].cause, user_filter=noclick.ALL_USERS)
+        """
+        scope, user_id = await read_scope(user, user_filter)
+        params = await _filter_params(kind, None, None, agent, key, created_after, created_before, None)
+        raw = await resolve_client(client).request(
+            "GET", "/v1/operations/failures", params={**params, "user_id": user_id, "limit": limit}, user=scope,
+        ) or {}
+        return OperationFailures(
+            [_failure(c) for c in raw.get("data") or []], int(raw.get("total") or 0), bool(raw.get("has_more")), raw,
+        )
 
     @classmethod
     def from_id(cls, operation_id: str, *, client: Optional[Client] = None, user: Any = AMBIENT) -> "Operation":

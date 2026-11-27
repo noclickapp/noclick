@@ -1,12 +1,14 @@
 // Runs: everything the account's calls started, filtered by one `?q=` query
 // (the shortcut, user facet and time pill write its tokens), live while any
 // row is running, with the run drawer on `?op=`. Logs shows it as its first
-// view and `/logs/{id}` as a page; the agent and user pages reuse it with
-// their id pinned.
+// view, under what failed in its time grouped by cause (Failures.tsx), and
+// `/logs/{id}` as a page; the agent and user pages reuse it with their id pinned.
 import { useMemo, useRef } from 'react';
 import { Link } from 'react-router';
 import { ALL_USERS, Operation } from 'noclick';
-import { formatCount, formatDuration, truncateId } from '@/screens/console/lib/format';
+import type { FixPlace } from '@/screens/console/lib/failureFix';
+import { failureWords } from '@/screens/console/lib/failures';
+import { formatCount, truncateId } from '@/screens/console/lib/format';
 import {
     OPERATIONS_QUERY,
     getToken,
@@ -45,6 +47,7 @@ import {
     useOperation,
     type ConsoleNames,
 } from './OperationDrawer';
+import { FailureGroups, useFixPlace } from './Failures';
 
 export const OPERATIONS_EMPTY_TITLE = 'Nothing has run yet. Runs appear when you message an agent, request a connection or ask a person.';
 
@@ -61,14 +64,27 @@ function shortcutOf(parsed: ParsedQuery): string | null {
     return status.length === 1 && (status[0] === 'live' || status[0] === 'failed') ? status[0] : null;
 }
 
-/** A preview (a detail page's "recent") leaves out Kind, Wait and Cost so Summary keeps its room in a narrow column. */
-const PREVIEW_HIDDEN = new Set(['kind', 'wait', 'cost']);
+/** A preview (a detail page's "recent") shows how long each run took and leaves out Cost, so Summary keeps its room in
+ *  a narrow column; Logs' own list shows what each run cost and why a failed one failed, its timings being in its
+ *  drawer. */
+const LOGS_ONLY = new Set(['cost']);
+const PREVIEW_ONLY = new Set(['duration']);
 
-function columns(names: ConsoleNames, showCost: boolean, preview: boolean): Column<Operation>[] {
+function columns(names: ConsoleNames, place: FixPlace, preview: boolean): Column<Operation>[] {
     const cols: Column<Operation>[] = [
         { id: 'status', header: 'Status', className: 'w-[7.5rem] sm:w-[11rem]', cell: (op) => <OperationStatusPill op={op} /> },
-        { id: 'summary', header: 'Summary', cell: (op) => <span className="text-foreground">{op.summaryText || op.kind}</span> },
-        { id: 'kind', header: 'Kind', priority: 2, width: '9.5rem', cell: (op) => <span className="font-mono text-[12px] text-muted-foreground">{op.kind}</span> },
+        {
+            id: 'summary',
+            header: 'Summary',
+            cell: (op) => (
+                <span className="flex min-w-0 flex-col">
+                    <span className="truncate text-foreground">{op.summaryText || op.kind}</span>
+                    {!preview && op.status === 'failed' && op.raw.error != null && (
+                        <span className="truncate text-[12px] text-muted-foreground">{failureWords(op.error, op.failedOn, null, place).what}</span>
+                    )}
+                </span>
+            ),
+        },
         {
             id: 'source',
             header: 'Source',
@@ -76,13 +92,29 @@ function columns(names: ConsoleNames, showCost: boolean, preview: boolean): Colu
             width: '11rem',
             cell: (op) => <SourceCell names={names} agentId={op.agentId} userId={op.userId} keyId={op.keyId} />,
         },
-        { id: 'created', header: 'Created', priority: 2, width: '7rem', cell: (op) => <TimeCell value={op.createdAt} className="text-foreground/70 dark:text-foreground/50" /> },
-        { id: 'wait', header: 'Wait', priority: 3, align: 'right', width: '5rem', cell: (op) => <span className="tabular-nums">{op.waitMs ? formatDuration(op.waitMs) : ''}</span> },
+        { id: 'cost', header: 'Cost', priority: 2, align: 'right', width: '5.5rem', cell: (op) => (operationCost(op) === null ? '' : <Money usd={operationCost(op)} />) },
+        { id: 'created', header: 'When', priority: 2, align: 'right', width: '7rem', cell: (op) => <TimeCell value={op.createdAt} className="text-foreground/70 dark:text-foreground/50" /> },
         { id: 'duration', header: 'Duration', priority: 2, align: 'right', width: '8rem', cell: (op) => <span className="tabular-nums">{durationText(op)}</span> },
     ];
-    if (showCost) cols.push({ id: 'cost', header: 'Cost', priority: 3, align: 'right', width: '5.5rem', cell: (op) => (operationCost(op) === null ? '' : <Money usd={operationCost(op)} />) });
-    return preview ? cols.filter((c) => !PREVIEW_HIDDEN.has(c.id)) : cols;
+    return cols.filter((c) => !(preview ? LOGS_ONLY : PREVIEW_ONLY).has(c.id));
 }
+
+/** What Logs' "Failed in …" covers: the page's own filters and time, the last day when it names none. */
+function failureWindow(options: Record<string, unknown>, since: string | null, until: string | null, anchor: number): { options: Record<string, unknown>; title: string } {
+    const kept = Object.fromEntries(Object.entries(options).filter(([k]) => !NOT_A_WINDOW.has(k)));
+    const title = until ? 'Failed in this time' : since ? (SINCE_TITLES[since] ?? `Failed since ${since}`) : SINCE_TITLES['1d'];
+    return { options: since ? kept : { ...kept, createdAfter: new Date(anchor - DAY_MS) }, title };
+}
+
+/** The list's filters the failures read leaves out: they are all failed, and `cause` picks one of them. */
+const NOT_A_WINDOW = new Set(['status', 'statusNot', 'updatedAfter', 'cause']);
+const DAY_MS = 86_400_000;
+const SINCE_TITLES: Record<string, string> = {
+    '1h': 'Failed in the last hour',
+    '1d': 'Failed in the last day',
+    '1w': 'Failed in the last week',
+    '30d': 'Failed in the last 30 days',
+};
 
 function expand(statuses: readonly string[]): Set<string> {
     return new Set(statuses.flatMap((s) => (s === 'live' ? [...LIVE_OPERATION_STATUSES] : [s])));
@@ -109,12 +141,15 @@ export interface OperationsViewProps {
     limit?: number;
     /** The "View all →" target when the view is a preview. */
     viewAllHref?: string;
+    /** What failed in the page's time, grouped by cause with each one's fix, above the list (Logs). */
+    failures?: boolean;
 }
 
-export function OperationsView({ pinned = '', controls = true, limit = 50, viewAllHref }: OperationsViewProps) {
+export function OperationsView({ pinned = '', controls = true, limit = 50, viewAllHref, failures = false }: OperationsViewProps) {
     const { client, now } = useConsole();
     const account = useAccount().data;
     const names = useConsoleNames();
+    const fixPlace = useFixPlace();
     const [, setOp] = useSearchParam('op');
     const query = useConsoleQuery(OPERATIONS_QUERY);
     const q = controls ? query.q : '';
@@ -146,10 +181,26 @@ export function OperationsView({ pinned = '', controls = true, limit = 50, viewA
         pollMs: live.polling ? 5000 : undefined,
     });
 
-    const kinds = getToken(parsed, 'kind');
-    const showCost = kinds?.length === 1 && kinds[0] === 'agent.message';
     const filtered = query.parsed.tokens.length > 0 || !!pinned;
     const range: TimeRange = { since: getToken(query.parsed, 'since')?.[0] ?? null, until: getToken(query.parsed, 'until')?.[0] ?? null };
+    const cause = getToken(query.parsed, 'cause')?.[0] ?? null;
+    // Read once the list first loaded, and again when a run newly fails in it (a reload of the list keeps the newest).
+    const loaded = useRef(false);
+    if (key && !paged.loading) loaded.current = true;
+    const newestFailed = useRef({ at: 0, id: '' });
+    for (const op of live.rows) {
+        const at = op.updatedAt?.getTime() ?? 0;
+        if (op.status === 'failed' && at > newestFailed.current.at) newestFailed.current = { at, id: op.id };
+    }
+    const failing =
+        failures && controls && key && loaded.current ? { ...failureWindow(mapped.options, range.since, range.until, anchor), version: newestFailed.current.id } : null;
+    // "See the runs": the list shows one cause's failures in the same time.
+    const see = (picked: string | null) => {
+        let next = setQueryToken(query.q, 'cause', picked ? [picked] : null);
+        next = setQueryToken(next, 'status', picked ? ['failed'] : null);
+        if (picked && !range.since && !range.until) next = setQueryToken(next, 'since', ['1d']);
+        query.setQ(next);
+    };
 
     const empty = filtered ? (
         <p className="m-0 py-8 text-center text-[13px] text-muted-foreground">No runs match these filters.</p>
@@ -159,6 +210,11 @@ export function OperationsView({ pinned = '', controls = true, limit = 50, viewA
 
     return (
         <div className="flex min-w-0 flex-col gap-3">
+            {failing && (
+                <div className="mb-3">
+                    <FailureGroups window={failing} selected={cause} onSee={see} />
+                </div>
+            )}
             {controls && (
                 <>
                     <div className="flex flex-wrap items-start gap-2">
@@ -209,7 +265,7 @@ export function OperationsView({ pinned = '', controls = true, limit = 50, viewA
             )}
             <DataTable
                 label="Runs"
-                columns={columns(names, showCost, !controls)}
+                columns={columns(names, fixPlace, !controls)}
                 rows={live.rows}
                 getRowId={(op) => op.id}
                 loading={paged.loading || waiting}
@@ -254,6 +310,8 @@ export function OperationPage({ id }: { id: string }) {
             <div className="max-w-3xl">
                 <OperationDetail id={id} state={state} />
             </div>
+            {/* The runs stopped the same way open beside it. */}
+            <OperationDrawerHost />
         </>
     );
 }

@@ -425,7 +425,7 @@ export default function Logs({ rest }: ConsolePageProps) {
             ) : view === 'tool-calls' ? (
                 <ToolCallsView key="tool-calls" />
             ) : (
-                <OperationsView key="runs" />
+                <OperationsView key="runs" failures />
             )}
             <HumanRequestDrawer requestId={reqId} onClose={() => setReq(null)} />
         </>

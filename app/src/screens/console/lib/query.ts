@@ -207,13 +207,15 @@ export const OPERATION_STATUSES = [
     'expired',
 ] as const;
 
-/** `Operation.listPage` / `Operation.summary`. `kind:` values come from `meta.operation_kinds`. */
+/** `Operation.listPage` / `Operation.summary`. `kind:` values come from `meta.operation_kinds`; `cause:` is a cause of
+ *  failures Logs groups them by (Logs' "See the runs" writes it). */
 export const OPERATIONS_QUERY: QuerySchema = {
     kind: { option: 'kind' },
     status: { option: 'status', negate: 'statusNot', values: [...OPERATION_STATUSES, 'live'] },
     user: USER,
     key: KEY,
     agent: AGENT,
+    cause: { option: 'cause', single: true },
     since: { kind: 'time', option: 'createdAfter', values: TIME_PRESETS },
     until: { kind: 'time', option: 'createdBefore' },
 };

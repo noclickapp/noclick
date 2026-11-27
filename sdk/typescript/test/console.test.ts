@@ -214,6 +214,35 @@ test("Operation.summary and the console view fields", async () => {
   assert.deepEqual(op.transitions.map((t) => [t.status, t.by]), [["queued", null], ["canceled", "owner"]]);
 });
 
+test("Operation.failures groups by cause, and the list reads one cause", async () => {
+  const { api } = setup();
+  const failures = api.on("GET", "/v1/operations/failures", json({
+    object: "operation_failures", total: 3, has_more: false, data: [{
+      object: "operation_failure", cause: "9c1f2a7b3e04d5aa", count: 3,
+      first_at: "2026-09-25T09:52:00Z", last_at: "2026-09-25T12:30:00Z",
+      failed_on: { object: "cap", scope: "user", id: "globex" },
+      error: { type: "spend_cap_exceeded", message: "The user's spend cap of $20 this month is used up.", next_step: "Raise it.", scope: "user", scope_id: "globex", cap: 20 },
+      operation_id: "op_3", kinds: ["agent.message"], agent_ids: ["ag_1"], agent_count: 1,
+      user_ids: ["globex"], user_count: 1, key_ids: [], key_count: 0,
+    }],
+  }));
+  const found = await nc.Operation.failures({ createdAfter: "2026-09-25T00:00:00Z", agent: "ag_1", userFilter: nc.ALL_USERS, limit: 10 });
+  const q = failures.last.query;
+  assert.deepEqual([q.get("created_after"), q.get("agent_id"), q.get("limit"), q.get("status"), q.get("cause")], ["2026-09-25T00:00:00Z", "ag_1", "10", null, null]);
+  const [cap] = found.causes;
+  assert.deepEqual([found.total, found.hasMore, cap.count, cap.userIds, cap.operationId], [3, false, 3, ["globex"], "op_3"]);
+  assert.ok(cap.error instanceof nc.SpendCapExceeded);
+  assert.equal(cap.error?.details.scope_id, "globex");
+  assert.equal(cap.lastAt?.toISOString(), "2026-09-25T12:30:00.000Z");
+  assert.deepEqual(cap.failedOn, { object: "cap", scope: "user", id: "globex" });
+
+  const listed = api.on("GET", "/v1/operations", json(listing([operation({ status: "failed", cause: cap.cause, failed_on: cap.raw.failed_on })])));
+  const [op] = await nc.Operation.list({ cause: cap.cause, userFilter: nc.ALL_USERS });
+  assert.equal(listed.last.query.get("cause"), cap.cause);
+  assert.equal(op.cause, cap.cause);
+  assert.deepEqual(op.failedOn, cap.failedOn);
+});
+
 test("an operation recorded before timings existed reads null timings", async () => {
   const { api } = setup();
   api.on("GET", "/v1/operations/op_1", json(operation({ events: [], wait_ms: null, run_ms: null, held_ms: null })));

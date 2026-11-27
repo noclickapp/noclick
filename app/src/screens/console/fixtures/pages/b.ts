@@ -76,11 +76,48 @@ interface OpSeed {
     error?: Json | null;
 }
 
+/** NoClick's own failures: no agent's settings fix them (the API groups them by the kind of work). */
+const NOCLICKS_OWN = new Set(['platform_error', 'upstream_error', 'request_timeout', 'rate_limited']);
+
+/** What a failure's fix acts on, as the API works it out (`operations_store._FIXED_ON`). */
+function fixedOn(seed: OpSeed): string {
+    const e = seed.error ?? {};
+    const of = (key: string) => (typeof e[key] === 'string' ? (e[key] as string) : typeof seed.input[key] === 'string' ? (seed.input[key] as string) : null);
+    if (e.type === 'spend_cap_exceeded') return `cap/${e.scope ?? ''}/${e.scope_id ?? ''}`;
+    if (e.type === 'spending_paused') return `user/${e.user_id ?? ''}`;
+    if (typeof e.connection === 'string') return `connection/${e.connection}`;
+    if (e.type === 'payment_required' || e.type === 'plan_required') return 'account';
+    if (of('project_id')) return `app/${of('project_id')}`;
+    if (of('workflow_id')) return `workflow/${of('workflow_id')}`;
+    if (seed.agent && !NOCLICKS_OWN.has(String(e.type))) return `agent/${seed.agent.id}`;
+    return `kind/${seed.kind}`;
+}
+
+/** The API's `failed_on` (`operations_store.failed_on`). */
+function failedOn(fixed: string): Json | null {
+    if (fixed.startsWith('kind/')) return null;
+    const [head, ...rest] = fixed.split('/');
+    if (head === 'cap') return { object: 'cap', scope: rest[0] || null, id: rest.slice(1).join('/') || null };
+    return { object: head, id: rest.join('/') || null };
+}
+
+/** A failure's cause: one token for every failure of the same type and reason on the same thing. */
+function causeOf(seed: OpSeed): string {
+    const key = `${seed.error?.type ?? ''}|${seed.error?.reason ?? ''}|${fixedOn(seed)}`;
+    const half = (seed0: number) => {
+        let h = seed0;
+        for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619) >>> 0;
+        return h.toString(16).padStart(8, '0');
+    };
+    return half(2166136261) + half(2654435761);
+}
+
 function operation(seed: OpSeed): Json {
     const events = seed.events;
     const created = seed.createdAt ?? events[0].at;
     const last = events[events.length - 1];
     const started = events.find((e) => e.status === 'running')?.at ?? null;
+    const failed = seed.status === 'failed';
     return {
         object: 'operation',
         id: fixtureId(4, seed.n),
@@ -93,6 +130,8 @@ function operation(seed: OpSeed): Json {
         input: seed.input,
         result: seed.result ?? null,
         error: seed.error ?? null,
+        cause: failed ? causeOf(seed) : null,
+        failed_on: failed ? failedOn(fixedOn(seed)) : null,
         created_at: created,
         updated_at: last ? last.at : created,
         started_at: started,
@@ -112,6 +151,31 @@ const TIMELINE_EVENTS = [
     { status: 'succeeded', at: plus(TIMELINE_START, 124_340) },
 ];
 const PLAIN_START = at(40 * MIN);
+
+/** What three of globex's turns stopped at: its $20 cap (`spend.check`'s refusal, scope `user`). */
+const GLOBEX_CAP = {
+    type: 'spend_cap_exceeded',
+    message: "The user's spend cap of $20 this month is used up ($20.4100 spent).",
+    next_step: "Raise the user's spend_cap_usd_per_month (PATCH /v1/users/globex), or wait until it resets on 2026-10-01.",
+    scope: 'user',
+    scope_id: GLOBEX.id,
+    cap: 20,
+    spent: 20.41,
+    resets_at: '2026-10-01T00:00:00Z',
+};
+
+/** What the concierge's turns stopped at: the account's Claude key out of credits at Anthropic (connection 8). */
+const CLAUDE_OUT_OF_CREDITS = {
+    type: 'payment_required',
+    reason: 'provider_out_of_funds',
+    message: 'Your Claude account has no API credits.',
+    next_step: "Add funds to the anthropic account behind the 'claude' connection, or connect another key.",
+    connection: 'claude',
+    connection_name: 'claude',
+    integration: 'anthropic',
+    provider: 'anthropic',
+    billing_url: 'https://platform.claude.com/settings/billing',
+};
 
 export const OPERATIONS: Json[] = newestFirst([
     operation({
@@ -173,14 +237,86 @@ export const OPERATIONS: Json[] = newestFirst([
             { status: 'failed', at: at(3 * HOUR - 80) },
         ],
         input: { agent_id: SUPPORT.id, text: 'Refund the duplicate charge on invoice 1042', conversation: 'c-refund' },
+        error: GLOBEX_CAP,
+    }),
+    operation({
+        n: 11,
+        kind: 'agent.message',
+        status: 'failed',
+        summary: 'Refund order 88',
+        agent: SUPPORT,
+        user: GLOBEX,
+        events: [
+            { status: 'queued', at: at(2 * HOUR) },
+            { status: 'failed', at: at(2 * HOUR - 60) },
+        ],
+        input: { agent_id: SUPPORT.id, text: 'Refund order 88', conversation: 'c-refund-88' },
+        error: GLOBEX_CAP,
+    }),
+    operation({
+        n: 12,
+        kind: 'agent.message',
+        status: 'failed',
+        summary: 'Chase invoice 1051',
+        agent: SUPPORT,
+        user: GLOBEX,
+        events: [
+            { status: 'queued', at: at(2 * HOUR + 4 * MIN) },
+            { status: 'failed', at: at(2 * HOUR + 4 * MIN - 70) },
+        ],
+        input: { agent_id: SUPPORT.id, text: 'Chase invoice 1051', conversation: 'c-chase-1051' },
+        error: GLOBEX_CAP,
+    }),
+    operation({
+        n: 13,
+        kind: 'agent.message',
+        status: 'failed',
+        summary: 'Find a table for six on Saturday',
+        agent: CONCIERGE,
+        user: ACME,
+        events: [
+            { status: 'queued', at: at(5 * HOUR) },
+            { status: 'running', at: at(5 * HOUR - 200) },
+            { status: 'failed', at: at(5 * HOUR - 2_100) },
+        ],
+        input: { agent_id: CONCIERGE.id, text: 'Find a table for six on Saturday', conversation: 'c-saturday' },
+        error: CLAUDE_OUT_OF_CREDITS,
+    }),
+    operation({
+        n: 14,
+        kind: 'agent.message',
+        status: 'failed',
+        summary: 'Move the 7pm booking to 8pm',
+        agent: CONCIERGE,
+        user: ACME,
+        events: [
+            { status: 'queued', at: at(6 * HOUR) },
+            { status: 'running', at: at(6 * HOUR - 180) },
+            { status: 'failed', at: at(6 * HOUR - 1_900) },
+        ],
+        input: { agent_id: CONCIERGE.id, text: 'Move the 7pm booking to 8pm', conversation: 'c-move-7pm' },
+        error: CLAUDE_OUT_OF_CREDITS,
+    }),
+    operation({
+        n: 15,
+        kind: 'agent.message',
+        status: 'failed',
+        summary: 'Email the refund receipt to it@globex.test',
+        agent: SUPPORT,
+        user: GLOBEX,
+        events: [
+            { status: 'queued', at: at(7 * HOUR) },
+            { status: 'running', at: at(7 * HOUR - 150) },
+            { status: 'failed', at: at(7 * HOUR - 3_400) },
+        ],
+        input: { agent_id: SUPPORT.id, text: 'Email the refund receipt to it@globex.test', conversation: 'c-receipt' },
         error: {
-            type: 'spend_cap_exceeded',
-            message: "User globex's spend cap of $20 this month is used up ($20.4100 spent).",
-            next_step: 'Raise the cap with PATCH /v1/users/{id}, or wait until Oct 1.',
-            scope: 'user',
-            cap: 20,
-            spent: 20.41,
-            resets_at: '2026-10-01T00:00:00Z',
+            type: 'credential_disconnected',
+            message: "The 'gmail' connection (Gmail) is disconnected.",
+            next_step: 'Reconnect it in the NoClick app (Connections) or with a connect link (POST .../connect_links), which keeps the same account, or remove it in the app.',
+            connection: 'gmail',
+            integration: 'gmail',
+            credential_type: 'gmail_oauth',
         },
     }),
     operation({
@@ -244,12 +380,12 @@ export const OPERATIONS: Json[] = newestFirst([
         summary: 'npm run build',
         key: ANALYTICS_KEY,
         events: [
-            { status: 'queued', at: at(26 * HOUR) },
-            { status: 'running', at: at(26 * HOUR - 300) },
-            { status: 'failed', at: at(26 * HOUR - 64_000) },
+            { status: 'queued', at: at(20 * HOUR) },
+            { status: 'running', at: at(20 * HOUR - 300) },
+            { status: 'failed', at: at(20 * HOUR - 64_000) },
         ],
         input: { sandbox_id: fixtureId(7, 90), command: 'npm run build', timeout_s: 600 },
-        error: { type: 'server_error', reason: 'interrupted', message: 'The sandbox stopped before the command finished.', next_step: 'Run it again.' },
+        error: { type: 'platform_error', reason: 'interrupted', message: 'NoClick restarted while this was running, so it stopped before it finished.', next_step: 'Start it again if it still needs doing; it may have partly run.' },
     }),
     operation({
         n: 9,
@@ -952,8 +1088,43 @@ function operationRows(r: FixtureRequest): Json[] {
             keyMatches(q.get('key_id'), o.key_id) &&
             after(q.get('created_after'), o.created_at) &&
             before(q.get('created_before'), o.created_at) &&
-            after(q.get('updated_after'), o.updated_at)
+            after(q.get('updated_after'), o.updated_at) &&
+            (!q.get('cause') || (o.status === 'failed' && o.cause === q.get('cause')))
     );
+}
+
+/** `GET /v1/operations/failures`: the failed rows the list's filters keep, one entry per cause, the latest first. */
+function failures(r: FixtureRequest): FixtureReply {
+    if (r.set === 'error') return PAGE_ERROR;
+    const rows = r.set === 'populated' ? operationRows(r).filter((o) => o.status === 'failed') : [];
+    const causes = new Map<string, Json[]>();
+    for (const o of rows) causes.set(String(o.cause), [...(causes.get(String(o.cause)) ?? []), o]);
+    const distinct = (ops: Json[], key: string) => [...new Set(ops.map((o) => o[key]).filter((v) => v != null))] as string[];
+    const data = [...causes.entries()].map(([cause, ops]) => {
+        const times = ops.map((o) => String(o.created_at)).sort();
+        const agents = distinct(ops, 'agent_id');
+        const users = distinct(ops, 'user_id');
+        const keys = distinct(ops, 'key_id');
+        return {
+            object: 'operation_failure',
+            cause,
+            count: ops.length,
+            first_at: times[0],
+            last_at: times[times.length - 1],
+            failed_on: ops[0].failed_on,
+            error: ops[0].error,
+            operation_id: ops[0].id,
+            kinds: distinct(ops, 'kind').sort(),
+            agent_ids: agents,
+            agent_count: agents.length,
+            user_ids: users,
+            user_count: users.length,
+            key_ids: keys,
+            key_count: keys.length,
+        };
+    });
+    const limit = Number(r.query.get('limit') ?? 50);
+    return ok({ object: 'operation_failures', data: data.slice(0, limit), total: rows.length, has_more: data.length > limit });
 }
 
 /** `gmail.*` or an exact name, over the dotted form. */
@@ -1035,6 +1206,7 @@ function agentById(id: string) {
 export const routes: readonly FixtureRoute[] = [
     { method: 'GET', path: '/v1/operations', reply: (r) => paged(r, operationRows(r)) },
     { method: 'GET', path: '/v1/operations/summary', reply: (r) => summarize(r, operationRows(r)) },
+    { method: 'GET', path: '/v1/operations/failures', reply: failures },
     { method: 'GET', path: '/v1/operations/:id', reply: (r) => detail(r, findOperation(r.params.id), 'operation') },
     // The long-poll answers at once here: the fixture's operations don't move.
     { method: 'GET', path: '/v1/operations/:id/wait', reply: (r) => detail(r, findOperation(r.params.id), 'operation') },

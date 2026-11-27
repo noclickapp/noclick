@@ -79,6 +79,37 @@ def test_operation_summary_and_view_fields(api, client):
     assert [(t.status, t.by) for t in op.transitions] == [("queued", None), ("canceled", "owner")]
 
 
+def test_failures_group_by_cause_and_the_list_reads_one_cause(api, client):
+    failures = api.get("/v1/operations/failures").respond(json={
+        "object": "operation_failures", "total": 3, "has_more": False, "data": [{
+            "object": "operation_failure", "cause": "9c1f2a7b3e04d5aa", "count": 3,
+            "first_at": "2026-09-25T09:52:00Z", "last_at": "2026-09-25T12:30:00Z",
+            "failed_on": {"object": "cap", "scope": "user", "id": "globex"},
+            "error": {"type": "spend_cap_exceeded", "message": "The user's spend cap of $20 this month is used up.",
+                      "next_step": "Raise it.", "scope": "user", "scope_id": "globex", "cap": 20},
+            "operation_id": "op_3", "kinds": ["agent.message"], "agent_ids": ["ag_1"], "agent_count": 1,
+            "user_ids": ["globex"], "user_count": 1, "key_ids": [], "key_count": 0,
+        }],
+    })
+    found = nc.Operation.failures(created_after="2026-09-25T00:00:00Z", agent="ag_1", user_filter=nc.ALL_USERS,
+                                  limit=10)
+    params = failures.calls.last.request.url.params
+    assert (params["created_after"], params["agent_id"], params["limit"]) == ("2026-09-25T00:00:00Z", "ag_1", "10")
+    assert "status" not in params and "cause" not in params
+    [cap] = found.causes
+    assert (found.total, found.has_more, cap.count, cap.user_ids, cap.operation_id) == (3, False, 3, ["globex"], "op_3")
+    assert isinstance(cap.error, nc.SpendCapExceeded) and cap.error.details["scope_id"] == "globex"
+    assert cap.last_at == datetime.datetime(2026, 9, 25, 12, 30, tzinfo=UTC)
+    assert cap.failed_on == {"object": "cap", "scope": "user", "id": "globex"}
+
+    listed = api.get("/v1/operations").respond(
+        json=listing(operation(status="failed", cause=cap.cause, failed_on=cap.failed_on)),
+    )
+    [op] = nc.Operation.list(cause=cap.cause, user_filter=nc.ALL_USERS)
+    assert listed.calls.last.request.url.params["cause"] == cap.cause
+    assert (op.cause, op.failed_on) == (cap.cause, cap.failed_on)
+
+
 def test_an_operation_recorded_before_timings_reads_null_timings(api, client):
     api.get("/v1/operations/op_1").respond(json=operation(events=[], wait_ms=None, run_ms=None, held_ms=None))
     op = nc.Operation.from_id("op_1").hydrate()

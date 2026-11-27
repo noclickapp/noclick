@@ -30,6 +30,7 @@ import { PillSwitch } from '../ui/PillTabs';
 import { TimeCell } from '../ui/TimeCell';
 import { ExecutionTimeline, shouldShowTimeline, type TimelineTick } from '../ui/ExecutionTimeline';
 import { useOwnerOnly } from '../ownerOnly';
+import { FailedRun } from './Failures';
 
 // ── names ──────────────────────────────────────────────────────────────────
 
@@ -252,20 +253,14 @@ function addressee(to: unknown): string {
     return text(t.email) ?? text(t.phone) ?? (t.user ? 'The user' : 'Someone');
 }
 
+/** The error as the API answered it: its type, its message and the rest whole (its next step is for code: what a
+ *  person does about it leads the run, `FailedRun`). */
 function ErrorOutput({ error }: { error: JsonObject }) {
-    const { type, message, next_step: nextStep, ...details } = error;
-    const cap = type === 'spend_cap_exceeded' && typeof details.cap === 'number';
+    const { type, message, ...details } = error;
     return (
         <div className="flex flex-col gap-2">
             <p className="m-0 font-mono text-[12px] text-red-600 dark:text-red-400">{String(type ?? 'error')}</p>
             {text(message) && <p className="m-0 text-sm text-foreground">{String(message)}</p>}
-            {cap && (
-                <p className="m-0 text-[13px] text-foreground">
-                    Stopped by the {String(details.scope ?? 'spend')} cap: <Money usd={Number(details.spent)} /> spent of <Money usd={Number(details.cap)} />
-                    {text(details.resets_at) && <> · resets {formatAbsolute(String(details.resets_at)).replace(/, \d\d:\d\d:\d\d$/, '')}</>}
-                </p>
-            )}
-            {text(nextStep) && <p className="m-0 text-[13px] text-muted-foreground">{String(nextStep)}</p>}
             {Object.keys(details).length > 0 && <JsonView value={details} />}
         </div>
     );
@@ -464,6 +459,7 @@ export function OperationDetail({ id, state }: { id: string; state: V1State<Oper
 
     return (
         <div className="flex flex-col gap-5">
+            {op.status === 'failed' && op.raw.error != null && <FailedRun op={op} />}
             <section aria-label="Time">
                 {events.length && shouldShowTimeline(events) ? (
                     <ExecutionTimeline
@@ -603,7 +599,7 @@ function DrawerFrame({ id, onClose }: { id: string; onClose: () => void }) {
         <Drawer
             open
             onOpenChange={(open) => !open && onClose()}
-            kind="operation"
+            kind="Run"
             id={id}
             title={op?.summaryText || undefined}
             status={op ? <OperationStatusPill op={op} /> : undefined}

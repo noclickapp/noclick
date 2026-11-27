@@ -65,6 +65,84 @@ export interface OperationFilters extends ReadOptions {
   createdBefore?: Date | string;
   /** Rows changed since (for polling). */
   updatedAfter?: Date | string;
+  /** The failed ones of one cause (an `OperationFailure`'s `cause`, from `Operation.failures()`). */
+  cause?: string;
+}
+
+/** What `Operation.failures()` filters on: the list's filters but status (they're the failed ones). */
+export type FailureFilters = Omit<OperationFilters, "status" | "statusNot" | "updatedAfter" | "cause"> & { limit?: number };
+
+/**
+ * What a failure's fix acts on, by id: the cap that stopped it (`object` `"cap"`, its `scope` `key`, `user`, `agent`,
+ * `project` or `account`), a `connection`, the `account`'s funds or plan, a paused `user`, an `app`, a `workflow` or
+ * an `agent`.
+ */
+export interface FailedOn {
+  object: "cap" | "connection" | "account" | "user" | "app" | "workflow" | "agent";
+  id: string | null;
+  scope?: "key" | "user" | "agent" | "project" | "account" | null;
+}
+
+/**
+ * One cause of failures (`Operation.failures()`): `count` failed operations between `firstAt` and `lastAt` that failed
+ * the same way, on the same thing (one cap used up, one connection disconnected). `failedOn` is what their fix acts on
+ * (null when it's NoClick's own to fix). `error` is the latest one's, `operationId` that operation; `cause` is the key
+ * their views carry and `Operation.list({ cause })` takes. Up to ten of the agents, users and keys they touched,
+ * beside how many.
+ */
+export interface OperationFailure {
+  cause: string;
+  count: number;
+  firstAt: Date | null;
+  lastAt: Date | null;
+  failedOn: FailedOn | null;
+  error: NoClickError | null;
+  operationId: string;
+  kinds: string[];
+  agentIds: string[];
+  agentCount: number;
+  userIds: (string | null)[];
+  userCount: number;
+  keyIds: string[];
+  keyCount: number;
+  raw: JsonObject;
+}
+
+/** `Operation.failures()`: each cause, the one that failed most lately first; `total` counts every failure matched. */
+export interface OperationFailures {
+  causes: OperationFailure[];
+  total: number;
+  /** Causes past the limit were left out. */
+  hasMore: boolean;
+  raw: JsonObject;
+}
+
+const strings = (value: unknown): string[] => (Array.isArray(value) ? value.map(String) : []);
+
+function toFailedOn(value: unknown): FailedOn | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as JsonObject;
+  return { object: String(raw.object) as FailedOn["object"], id: str(raw.id), ...("scope" in raw ? { scope: str(raw.scope) as FailedOn["scope"] } : {}) };
+}
+
+function toFailure(raw: JsonObject): OperationFailure {
+  return {
+    cause: String(raw.cause),
+    count: num(raw.count) ?? 0,
+    firstAt: parseTime(raw.first_at),
+    lastAt: parseTime(raw.last_at),
+    failedOn: toFailedOn(raw.failed_on),
+    error: raw.error ? errorFromPayload(raw.error, { fallback: OperationFailed }) : null,
+    operationId: String(raw.operation_id),
+    kinds: strings(raw.kinds),
+    agentIds: strings(raw.agent_ids),
+    agentCount: num(raw.agent_count) ?? 0,
+    userIds: Array.isArray(raw.user_ids) ? raw.user_ids.map((u) => (u == null ? null : String(u))) : [],
+    userCount: num(raw.user_count) ?? 0,
+    keyIds: strings(raw.key_ids),
+    keyCount: num(raw.key_count) ?? 0,
+    raw,
+  };
 }
 
 /** Filters for a subclass whose reads are pinned to its own kinds. */
@@ -94,6 +172,7 @@ async function filterQuery(filters: OperationFilters): Promise<Record<string, Qu
     created_after: isoTime(filters.createdAfter),
     created_before: isoTime(filters.createdBefore),
     updated_after: isoTime(filters.updatedAfter),
+    cause: filters.cause,
   };
 }
 
@@ -198,6 +277,30 @@ export class Operation<T = unknown> extends ApiObject {
     return { total: requiredNumber(raw, "total"), byStatus: asObject(raw.by_status) as Record<OperationStatus, number>, raw };
   }
 
+  /**
+   * The failed operations matching the filters, grouped by why they failed: one cap used up or one connection
+   * disconnected fails every run behind it the same way, and each is one `OperationFailure` with how many, since when,
+   * the latest error and what it touched. `limit` caps how many causes (50).
+   *
+   *     const yesterday = new Date(Date.now() - 86_400_000);
+   *     const found = await Operation.failures({ createdAfter: yesterday, userFilter: ALL_USERS });
+   *     for (const cause of found.causes) console.log(cause.count, cause.error?.message, cause.error?.nextStep);
+   *     const runs = await Operation.list({ cause: found.causes[0].cause, userFilter: ALL_USERS });
+   */
+  static async failures(options: FailureFilters = {}): Promise<OperationFailures> {
+    const { user, userId } = await readScope(options);
+    const raw = asObject(await resolveClient(options.client).request("GET", "/v1/operations/failures", {
+      query: { ...(await filterQuery(options)), user_id: userId, limit: options.limit },
+      user,
+    }));
+    return {
+      causes: (Array.isArray(raw.data) ? (raw.data as JsonObject[]) : []).map(toFailure),
+      total: num(raw.total) ?? 0,
+      hasMore: raw.has_more === true,
+      raw,
+    };
+  }
+
   /** A lazy reference to an operation by id. */
   static fromId<T = unknown>(operationId: string, options: CallOptions = {}): Operation<T> {
     return new Operation<T>({ hints: { id: operationId }, client: options.client, user: options.user });
@@ -250,6 +353,18 @@ export class Operation<T = unknown> extends ApiObject {
   /** The failure as a `NoClickError` (null unless it failed). */
   get error(): NoClickError | null {
     return errorOf(this.raw);
+  }
+  /**
+   * Why a failed one failed, as one key: its error's type and reason and what its fix acts on (the cap that stopped
+   * it, the connection it couldn't use). Operations that failed the same way share it; `Operation.failures()` groups
+   * by it and `Operation.list({ cause })` takes it. On the list and a read of one; null unless it failed.
+   */
+  get cause(): string | null {
+    return str(this._known("cause"));
+  }
+  /** What a failed one's fix acts on (`FailedOn`); null when it's NoClick's own to fix, or it didn't fail. On the list and a read of one. */
+  get failedOn(): FailedOn | null {
+    return toFailedOn(this._known("failed_on"));
   }
   /** Whether the operation reached a terminal status. */
   get done(): boolean {

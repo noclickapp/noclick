@@ -381,6 +381,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "notifications_list": ["Get Notifications", "GET", "read"],
     "notifications_update": ["Update Notifications", "PATCH", "write"],
     "operations_cancel": ["Cancel Operation", "POST", "destructive"],
+    "operations_failures_list": ["List Operation Failures", "GET", "read"],
     "operations_get": ["Get Operation", "GET", "read"],
     "operations_list": ["List Operations", "GET", "read"],
     "operations_summary": ["Operations Summary", "GET", "read"],

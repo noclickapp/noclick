@@ -480,6 +480,8 @@ from .notifications import (
 from .operation import (
     Operation,
     OperationEvent,
+    OperationFailure,
+    OperationFailures,
     OperationSummary,
     OperationTransition,
 )
@@ -758,6 +760,8 @@ __all__ = [
     "Operation",
     "OperationEvent",
     "OperationSummary",
+    "OperationFailure",
+    "OperationFailures",
     "OperationTransition",
     "ToolCall",
     "ToolCallSummary",
