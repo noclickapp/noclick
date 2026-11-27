@@ -450,6 +450,51 @@ class AgentToolAccess:
 
 
 @dataclass(frozen=True)
+class AgentInstructionsVersion:
+    """One version of an agent's instructions (``agent.instructions_history()``): the text it held, what it changed
+    from the version before as a unified diff's hunks (``diff``, None for the oldest kept), who made it and when.
+    ``source`` is ``app`` (its owner on NoClick's pages), ``canvas``, ``coordinator`` (NoClick's assistant), ``agent``
+    (another agent's turn), ``api`` (code), ``restore`` or ``baseline`` (as it was when versions began to be kept);
+    ``author`` its ``user_id`` and ``key_id``; ``said`` what the owner said that an agent's turn made it on."""
+
+    version: int
+    instructions: str
+    diff: Optional[str]
+    added: int
+    removed: int
+    source: str
+    author: Optional[Dict[str, Any]]
+    said: Optional[str]
+    restored_from: Optional[int]
+    changed_at: Any
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "AgentInstructionsVersion":
+        return cls(int(raw["version"]), raw.get("instructions") or "", raw.get("diff"), int(raw.get("added") or 0),
+                   int(raw.get("removed") or 0), raw.get("source") or "", raw.get("author"), raw.get("said"),
+                   raw.get("restored_from"), parse_time(raw.get("changed_at")))
+
+
+@dataclass(frozen=True)
+class AgentInstructions:
+    """An agent's instructions as they stand, their ``digest`` (what ``update(instructions=..., if_instructions=...)``
+    names them by), and the versions in which they changed, newest first, the first the ones in use, kept
+    ``kept_days`` days."""
+
+    instructions: str
+    digest: str
+    versions: List[AgentInstructionsVersion]
+    kept_days: int
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "AgentInstructions":
+        return cls(raw.get("instructions") or "", raw.get("digest") or "",
+                   [AgentInstructionsVersion._from(v) for v in raw.get("versions") or []], int(raw.get("kept_days") or 0),
+                   raw)
+
+
+@dataclass(frozen=True)
 class HarnessModel:
     """A model a harness offers, by the ``id`` its ``model=`` takes. One model reached
     several ways is a row per way, each with its ``route`` (``maker``, ``openrouter``,
@@ -3077,6 +3122,7 @@ class Agent(_Object):
         model_switching: Any = UNSET,
         secrets: Any = UNSET,
         approvals: Any = UNSET,
+        if_instructions: Any = UNSET,
     ) -> "Agent":
         """Change fields. Grants its user gave it are kept. A new ``harness`` without
         a ``model`` takes that harness's default model, and each conversation carries
@@ -3112,7 +3158,10 @@ class Agent(_Object):
         ``budget_for_run=True`` with ``budget_usd_per_month`` sets that budget for one run alone (its turn under
         way, else its next one): the budget it replaced comes
         back once that run ends, however it ends, and ``budget_restore`` says what comes back meanwhile. A budget
-        set without it stands until changed.
+        set without it stands until changed. ``if_instructions`` is the ``digest`` of the instructions a change of
+        ``instructions`` was made on (``instructions_history()``): it's refused with ``Conflict``, whose
+        ``instructions`` are them as they are now, when they changed since, and nothing changes. The instructions
+        before stay a version to read and restore.
 
         Returns:
             This agent, updated. A field you leave out is unchanged, and changes apply from its next turn.
@@ -3176,6 +3225,8 @@ class Agent(_Object):
         }
         if budget_for_run:
             changes["budget_for_run"] = True
+        if if_instructions is not UNSET:
+            changes["if_instructions"] = if_instructions
         if network is not UNSET:
             changes["network"] = network_wire(network)
         if turn_limits is not UNSET:
@@ -3225,6 +3276,28 @@ class Agent(_Object):
         raw = await self._ensure()
         self._raw = await self._request("GET", f"/v1/agents/{raw['id']}")
         return [AgentGrant._from(g) for g in self._raw.get("grants") or []]
+
+    @synced
+    async def instructions_history(self, *, limit: Optional[int] = None) -> AgentInstructions:
+        """Its instructions as they stand and the versions in which they changed, newest first.
+
+        Returns:
+            Each version's text, its diff from the one before, who made it and, for a change an agent made on the
+            owner's message, their words (``said``). ``digest`` names what you read: a change made on it is safe from
+            one made meanwhile with ``update(instructions=..., if_instructions=history.digest)``, and restoring a
+            version is that update with its ``instructions``.
+
+        Usage::
+
+            writer = noclick.Agent.from_name("writer")
+            history = writer.instructions_history()
+            print(history.versions[0].diff)
+            writer.update(instructions=history.versions[1].instructions, if_instructions=history.digest)
+        """
+        raw = await self._ensure()
+        params = {"limit": limit} if limit is not None else None
+        return AgentInstructions._from(await self._request("GET", f"/v1/agents/{raw['id']}/instructions",
+                                                            params=params))
 
     @synced
     async def tool_access(self) -> AgentToolAccess:

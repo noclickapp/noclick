@@ -1201,6 +1201,56 @@ export interface AgentToolApp {
 }
 
 /**
+ * One version of an agent's instructions (`agent.instructionsHistory()`): the text it held, what it changed from the
+ * version before as a unified diff's hunks (`diff`, null for the oldest kept), who made it and when. `source` is
+ * `app` (its owner on NoClick's pages), `canvas`, `coordinator` (NoClick's assistant), `agent` (another agent's
+ * turn), `api` (code), `restore` or `baseline` (as it was when versions began to be kept); `said` is what the owner
+ * said that an agent's turn made it on.
+ */
+export interface AgentInstructionsVersion {
+  version: number;
+  instructions: string;
+  diff: string | null;
+  added: number;
+  removed: number;
+  source: string;
+  author: { userId: string; keyId: string | null } | null;
+  said: string | null;
+  restoredFrom: number | null;
+  changedAt: Date | null;
+}
+
+/**
+ * An agent's instructions as they stand, their `digest` (what `update({ instructions, ifInstructions })` names them
+ * by), and the versions in which they changed, newest first, the first the ones in use, kept `keptDays` days.
+ */
+export interface AgentInstructions {
+  instructions: string;
+  digest: string;
+  versions: AgentInstructionsVersion[];
+  keptDays: number;
+  raw: JsonObject;
+}
+
+function toInstructions(raw: JsonObject): AgentInstructions {
+  const version = (v: JsonObject): AgentInstructionsVersion => {
+    const author = v.author && typeof v.author === "object" ? (v.author as JsonObject) : null;
+    return {
+      version: Number(v.version), instructions: String(v.instructions ?? ""), diff: str(v.diff),
+      added: Number(v.added ?? 0), removed: Number(v.removed ?? 0), source: String(v.source ?? ""),
+      author: author ? { userId: String(author.user_id), keyId: str(author.key_id) } : null,
+      said: str(v.said), restoredFrom: typeof v.restored_from === "number" ? v.restored_from : null,
+      changedAt: parseTime(v.changed_at),
+    };
+  };
+  return {
+    instructions: String(raw.instructions ?? ""), digest: String(raw.digest ?? ""),
+    versions: (Array.isArray(raw.versions) ? (raw.versions as JsonObject[]) : []).map(version),
+    keptDays: Number(raw.kept_days ?? 0), raw,
+  };
+}
+
+/**
  * What an agent may do with each app it reaches (`agent.toolAccess()`). `mode` is `restricted` when it's kept to the
  * apps its rules turn on; `listed` when its `tools` are a list rather than everything, whose `rules` are what that
  * list amounts to.
@@ -2829,6 +2879,11 @@ export class Agent extends ApiObject {
       budgetUsdPerMonth?: number | null;
       budgetForRun?: boolean;
       modelConnection?: string | Connection | null;
+      /**
+       * The `digest` of the instructions this change was made on (`instructionsHistory()`): new `instructions` are
+       * refused with a `Conflict` whose `details.instructions` are them as they are now, when they changed since.
+       */
+      ifInstructions?: string;
     } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "card" | "machine" |
       "memories" | "skills" | "turnLimits" | "secrets"> & AgentApprovalsOption,
   ): Promise<this> {
@@ -2839,6 +2894,7 @@ export class Agent extends ApiObject {
         skills: await skillLinks(changes.skills, { client: this._client, user: this._callScope() }),
         name: changes.name,
         instructions: changes.instructions,
+        if_instructions: changes.ifInstructions,
         model: changes.model,
         harness: changes.harness,
         model_connection: await modelConnectionRef(changes.modelConnection, this._callScope()),
@@ -2878,6 +2934,22 @@ export class Agent extends ApiObject {
     const raw = await this._ensure();
     this._raw = await this._request<JsonObject>("GET", `/v1/agents/${raw.id}`);
     return (Array.isArray(this._raw.grants) ? (this._raw.grants as JsonObject[]) : []).map(toGrant);
+  }
+
+  /**
+   * Its instructions as they stand and the versions in which they changed, newest first: each one's text, its diff
+   * from the one before, who made it and, for a change an agent made on the owner's message, their words. A change
+   * made on what you read stays safe with `update({ instructions, ifInstructions: history.digest })`; restoring a
+   * version is that update with its `instructions`.
+   *
+   *     const history = await writer.instructionsHistory();
+   *     await writer.update({ instructions: history.versions[1].instructions, ifInstructions: history.digest });
+   */
+  async instructionsHistory(options: { limit?: number } = {}): Promise<AgentInstructions> {
+    const raw = await this._ensure();
+    return toInstructions(await this._request<JsonObject>("GET", `/v1/agents/${raw.id}/instructions`, {
+      query: { limit: options.limit },
+    }));
   }
 
   /**

@@ -5,6 +5,7 @@
 import { workFixtureClient } from '../../fixtures/client';
 import type { NoClick } from 'noclick';
 import { firstSentence } from '../reads';
+import { instructionsFixture } from '../../profile/fixtures/instructions';
 import { machineRoutes, machineStock, type MachineStock } from '../../machine/fixtures/machineStock';
 import { machineWorldRoutes, runningNoClick, sampleDisk, type DiskEntry, type VettingStatus } from '../../machine/fixtures/machineWorld';
 
@@ -225,6 +226,8 @@ export interface FakeWork {
     vetting: { value: Json };
     /** Each machine's disk, by absolute path, as its Files lists it. */
     disks: Map<string, Map<string, DiskEntry>>;
+    /** NoClick changes an agent's instructions, as a chat with NoClick on the owner's word would (`said`). */
+    changeInstructions: (agentId: string, text: string, said?: string | null) => void;
     /** Fails the next request matching `method path`, once. */
     failNext: (method: string, path: string, status?: number, message?: string) => void;
     /** Someone signs in at a connection's link: it's connected to `account`, its link spent. */
@@ -334,7 +337,7 @@ export function toolAccessOf(agent: Json): Json {
     };
 }
 
-export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'running' | 'stopped'; now?: number; coordinator?: boolean; spaceNoClick?: boolean; helper?: boolean; machinesEnabled?: boolean; moved?: boolean | 'sign-ins'; pairingForms?: boolean; triggersApi?: 'v2'; machineHosts?: 'two' | 'one'; vetting?: VettingStatus; answerAfter?: (method: string, path: string, query: URLSearchParams) => Promise<void> | undefined } = {}): FakeWork {
+export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'running' | 'stopped'; now?: number; coordinator?: boolean; spaceNoClick?: boolean; helper?: boolean; machinesEnabled?: boolean; moved?: boolean | 'sign-ins'; pairingForms?: boolean; triggersApi?: 'v2'; machineHosts?: 'two' | 'one'; vetting?: VettingStatus; instructionsRaced?: boolean; answerAfter?: (method: string, path: string, query: URLSearchParams) => Promise<void> | undefined } = {}): FakeWork {
     // The clock its times are read against: the tests' fixed one, or the preview's own.
     const clock = options.now ?? NOW;
     /** A fresh code's pairing, as the API answers it once (a read later carries neither the code nor its command). */
@@ -360,6 +363,7 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
         docker: false, sandbox_size: null, app_testing: 'by_itself', app_testing_usd_per_hour: s.harness === 'sdk' || s.machine ? null : 0.44,
         ...(i === 0 ? { skills: [{ id: 'sk-1', pin: null }, { id: 'sk-2', pin: null }], memories: [{ id: 'mem-team', writes: true }] } : {}),
     }));
+    const instructions = instructionsFixture(agents, clock, { raced: options.instructionsRaced });
     const states: Json[] = seeds.map((s, i) => ({
         agent_id: id(i + 1), name: s.name, noclick: false, harness: s.harness, state: s.state, conversation: s.state === 'idle' ? null : 'main',
         now: s.now ? { ...s.now, since: ago(s.now.since) } : null,
@@ -903,13 +907,19 @@ export function fakeWork(options: { count?: 5 | 40; keys?: Keys; sandbox?: 'runn
         requests.push({ method, path: url.pathname, query: url.searchParams, body });
         // A test's latency: the request answers once this settles, as it stands then.
         await options.answerAfter?.(method, url.pathname, url.searchParams);
-        return routes(method, url.pathname, url.searchParams, body, raw);
+        const [, agentId, rest = ''] = /^\/v1\/agents\/([^/]+)(\/.*)?$/.exec(url.pathname) ?? [];
+        const agent = agentId ? agents.find((a) => a.id === agentId) : undefined;
+        const told = agent && (await instructions.answer(method, agent, rest, body));
+        if (told) return told;
+        const { if_instructions: _named, ...changes } = body;
+        return routes(method, url.pathname, url.searchParams, changes, raw);
     };
 
     return {
         client: workFixtureClient(fetch),
         fetch,
         requests,
+        changeInstructions: instructions.change,
         agents,
         states,
         triggers,

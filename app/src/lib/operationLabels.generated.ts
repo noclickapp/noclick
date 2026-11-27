@@ -49,6 +49,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "agents_for_apps_create": ["Agent For Apps", "POST", "write"],
     "agents_get": ["Get Agent", "GET", "read"],
     "agents_grants_delete": ["Revoke Grant", "DELETE", "destructive"],
+    "agents_instructions_list": ["Get Instructions", "GET", "read"],
     "agents_jobs_list": ["List Jobs", "GET", "read"],
     "agents_list": ["List Agents", "GET", "read"],
     "agents_memory": ["List Memory", "GET", "read"],

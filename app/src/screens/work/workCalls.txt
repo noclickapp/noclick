@@ -20,6 +20,7 @@ GET /v1/agents/a0000000-0000-4000-8000-000000000001/conversations/main/sandbox
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/conversations/main/sandbox/files
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/conversations/main/settings
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/conversations/main/tool_servers
+GET /v1/agents/a0000000-0000-4000-8000-000000000001/instructions
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/tool_access
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/triggers
 GET /v1/agents/a0000000-0000-4000-8000-000000000001/wakeups
@@ -75,6 +76,7 @@ GET /v1/workspaces/ws_noclick/questions
 GET /v1/workspaces/ws_noclick/resources
 GET /v1/workspaces/ws_noclick/summary
 GET /v1/workspaces/ws_wirefern/noclick
+PATCH /v1/agents/a0000000-0000-4000-8000-000000000001
 POST /v1/channels
 POST /v1/channels/ch_launch/messages/l4/read
 POST /v1/channels/ch_roblox/read

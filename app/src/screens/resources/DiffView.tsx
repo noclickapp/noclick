@@ -24,7 +24,7 @@ const NUMBER: Record<DiffLineKind, string> = {
 
 const MARK: Record<DiffLineKind, string> = { add: '+', del: '−', ctx: '', note: '' };
 
-function Hunk({ hunk, language }: { hunk: DiffHunk; language: string }) {
+function Hunk({ hunk, language, wrap }: { hunk: DiffHunk; language: string; wrap: boolean }) {
     // A note ("No newline at end of file") is no code: its row is blank to the highlighter.
     const code = hunk.lines.map((line) => (line.kind === 'note' ? '' : line.text)).join('\n');
     return (
@@ -40,7 +40,7 @@ function Hunk({ hunk, language }: { hunk: DiffHunk; language: string }) {
                 style={CODE_THEME}
                 PreTag="table"
                 CodeTag="tbody"
-                customStyle={{ margin: 0, padding: 0, background: 'transparent', display: 'table', width: 'max-content', minWidth: '100%', borderCollapse: 'collapse', overflow: 'visible', fontSize: 12.5, lineHeight: 1.65 }}
+                customStyle={{ margin: 0, padding: 0, background: 'transparent', display: 'table', width: wrap ? '100%' : 'max-content', minWidth: '100%', tableLayout: wrap ? 'fixed' : 'auto', borderCollapse: 'collapse', overflow: 'visible', fontSize: 12.5, lineHeight: 1.65 }}
                 codeTagProps={{ style: { fontFamily: CODE_BASE.fontFamily } }}
                 renderer={({ rows, stylesheet, useInlineStyles }) =>
                     hunk.lines.map((line, i) => (
@@ -56,7 +56,7 @@ function Hunk({ hunk, language }: { hunk: DiffHunk; language: string }) {
                             >
                                 {MARK[line.kind]}
                             </td>
-                            <td className="pr-6">
+                            <td className={cn('pr-6', wrap && 'whitespace-pre-wrap break-words')}>
                                 {line.kind === 'note' ? (
                                     <span className="italic text-muted-foreground">{line.text}</span>
                                 ) : rows[i] ? (
@@ -75,14 +75,15 @@ function Hunk({ hunk, language }: { hunk: DiffHunk; language: string }) {
     );
 }
 
-export function DiffView({ patch, path }: { patch: string; path: string }) {
+/** `wrap`: a long line wraps in place, as prose reads (an agent's instructions), rather than scrolling as code does. */
+export function DiffView({ patch, path, wrap = false }: { patch: string; path: string; wrap?: boolean }) {
     const hunks = useMemo(() => parseUnifiedDiff(patch), [patch]);
     if (!hunks.length) return <p className="px-4 py-6 text-[13.5px] text-muted-foreground">No lines changed: only the file itself (its mode, or an empty file).</p>;
     const language = languageFor(path);
     return (
         <div className="overflow-x-auto scrollbar-subtle" data-testid="diff">
             {hunks.map((hunk, i) => (
-                <Hunk key={i} hunk={hunk} language={language} />
+                <Hunk key={i} hunk={hunk} language={language} wrap={wrap} />
             ))}
         </div>
     );

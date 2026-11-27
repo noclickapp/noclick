@@ -57,6 +57,8 @@ export type {
   AgentForAppsNeed,
   AgentGrant,
   AgentHistoryOptions,
+  AgentInstructions,
+  AgentInstructionsVersion,
   AgentListOptions,
   AgentMovedFrom,
   AgentOrigin,

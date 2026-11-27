@@ -46,9 +46,9 @@ async function open(scene: LabScene, actsAs: 'owner' | 'key') {
         initialEntries: [`/work?${new URLSearchParams(scene.place)}`],
     });
     render(<RouterProvider router={router} />);
-    // A scene that clicks through to a menu or a dialog has made its clicks once that's open.
+    // A scene that clicks through to a menu, a dialog or what else it opens has made its clicks once that's open.
     const last = scene.steps?.at(-1);
-    if (last) await waitFor(() => expect(document.querySelector('item' in last ? '[role="dialog"]' : '[role="menu"]')).toBeTruthy());
+    if (last) await waitFor(() => expect(document.querySelector(scene.opens ?? ('item' in last ? '[role="dialog"]' : '[role="menu"]'))).toBeTruthy());
     // Settled once no new call has appeared for well past the channels' own wait before reading again what a change
     // named (a read, its change, and the read that change asks for come in turn).
     let seen = -1;

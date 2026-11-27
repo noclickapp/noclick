@@ -173,7 +173,7 @@ export function AttachDialog({ agentId, onClose, onCreated, initialTab = 'skill'
     );
 }
 
-function Sheet({ children, onClose, testId }: { children: ReactNode; onClose: () => void; testId?: string }) {
+export function Sheet({ children, onClose, testId }: { children: ReactNode; onClose: () => void; testId?: string }) {
     return (
         <>
             <div className="fixed inset-0 z-[65] bg-foreground/[0.08] dark:bg-background/60" onClick={onClose} aria-hidden />

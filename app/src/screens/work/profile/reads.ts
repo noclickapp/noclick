@@ -45,6 +45,10 @@ export const rereadToolServers = (agentId: string, conversation: string | null) 
 export const useAgentToolServers = (agentId: string, conversation: string | null = null) =>
     useWorkV1(key(agentId, `tools:${conversation ?? ''}:servers`), (client) => agent(client, agentId).toolServers({ conversation: conversation ?? undefined }));
 
+/** Its instructions as they stand, their digest, and the versions in which they changed (read again with the agent). */
+export const instructionsKey = (agentId: string) => key(agentId, 'instructions');
+export const useInstructions = (agentId: string) => useWorkV1(instructionsKey(agentId), (client) => agent(client, agentId).instructionsHistory());
+
 /** What it may do with each app it reaches, app by app (its Tools tab). */
 export const toolAccessKey = (agentId: string) => key(agentId, 'access');
 export const useToolAccess = (agentId: string) => useWorkV1(toolAccessKey(agentId), (client) => agent(client, agentId).toolAccess());

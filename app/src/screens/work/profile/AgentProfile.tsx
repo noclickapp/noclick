@@ -34,6 +34,7 @@ import { AppTestingSetting } from './AppTesting';
 import { CitedAuthoritySetting } from './CitedAuthority';
 import { AgentCarried } from './carried';
 import { AgentFacts } from './facts';
+import { InstructionsUnderName } from './instructions';
 import { ToolServers } from './toolServers';
 import { rereadAgent, useAgent, useAgentChannels, useAgentProfileFrames, useAgentSpaces, useMonthSpend } from './reads';
 import { TriggersTab } from '../triggers/TriggersTab';
@@ -204,7 +205,7 @@ function About({ agent, onOpenMachine, onOpenChannel, onTriggers }: { agent: Age
         <div className="px-5 pb-8 pt-6">
             <AgentRing member={face} status={entry?.status ?? 'idle'} size={80} />
             <EditableAgentName agent={agent} name={name} className="mt-4 text-[21px] font-semibold leading-tight tracking-[-0.01em]" />
-            {facts.role && <p className="mt-1 text-sm leading-snug text-muted-foreground">{facts.role}</p>}
+            <InstructionsUnderName agent={agent} name={name} role={facts.role} kept={facts.noclick} />
             {/* Its old name still reaches it, so it's said once, under the new one. */}
             {!facts.noclick && agent.formerNames.length > 0 && <p className="mt-1 text-xs text-muted-foreground">Formerly {agent.formerNames[0]}</p>}
             {entry && (

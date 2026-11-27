@@ -17,10 +17,11 @@ import { AGENT_ID, catalogRoutes, COMMANDS, fakeWorkAgent, settingsFor } from '.
 import { busyHistory, busyLive, liveOperation } from '../conversation/fixtures/scenes';
 import { ROBLOX_CHANNEL, forAppsRoutes, type AgentForAppsState } from '../fixtures/agentForApps';
 
-/** Where a scene's agents come from: the spaces' own three (`spaces`), five at work (`agents`), one mid-turn
- *  (`session`), or the spaces' with the agent an agents page made in its channel of your own (`agent_for_apps`, waiting on
- *  what it needs; `agent_for_apps_ready`, saying hello). */
-export type LabWorld = 'spaces' | 'agents' | 'session' | 'agent_for_apps' | 'agent_for_apps_ready';
+/** Where a scene's agents come from: the spaces' own three (`spaces`), five at work (`agents`; `agents_raced`, where
+ *  NoClick changes the first one's instructions while you edit them), one mid-turn (`session`), or the spaces' with the
+ *  agent an agents page made in its channel of your own (`agent_for_apps`, waiting on what it needs;
+ *  `agent_for_apps_ready`, saying hello). */
+export type LabWorld = 'spaces' | 'agents' | 'agents_raced' | 'session' | 'agent_for_apps' | 'agent_for_apps_ready';
 
 export interface Lab {
     client: NoClick;
@@ -142,12 +143,12 @@ const refusedToKey = (method: string, path: string) => {
  *  operations only the owner may make are refused (screens/console/ownerOnly.ts), as the API refuses them. */
 export function labWorld(world: LabWorld, actsAs: 'owner' | 'key' = 'owner', observe?: Observe): Lab {
     const spaces = fakeWork();
-    const agents = fakeWorkAgents({ coordinator: true, now: Date.now() });
+    const agents = fakeWorkAgents({ coordinator: true, now: Date.now(), instructionsRaced: world === 'agents_raced' });
     const session = world === 'session' ? agentMidTurn() : null;
     const parts = sessionParts(agents);
     const account = makeFixtureFetch({ set: 'populated', actsAs });
     const appState: AgentForAppsState | null = world === 'agent_for_apps' ? 'waiting' : world === 'agent_for_apps_ready' ? 'ready' : null;
-    const owner: Fetch | null = world === 'agents' ? agents.fetch : (session?.fetch ?? null);
+    const owner: Fetch | null = world === 'agents' || world === 'agents_raced' ? agents.fetch : (session?.fetch ?? null);
     const answer: Fetch = (input, init) => {
         const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
         // An agent's channels are the agent fixture's; a space's are the spaces'.

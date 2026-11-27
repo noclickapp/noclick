@@ -3,6 +3,7 @@
 // draws the lab's index and is what a screenshot of every view walks.
 import { id as agentId } from '../agents/fixtures/workAgents';
 import { AGENT_ID } from '../conversation/fixtures/workAgent';
+import { IN_USE } from '../profile/fixtures/instructions';
 import { ROBLOX_CHANNEL_ID } from '../fixtures/agentForApps';
 import type { LabStep } from '@/ui/lab/steps';
 import type { LabWorld } from './worlds';
@@ -15,6 +16,8 @@ export interface LabScene {
     /** Work's place: its params as the address keeps them. */
     place: Record<string, string>;
     steps?: LabStep[];
+    /** What its steps end on, where that's no menu or dialog: a selector for it. */
+    opens?: string;
 }
 
 const SPACE = { space: 'ws_noclick' };
@@ -22,6 +25,8 @@ const SPACE = { space: 'ws_noclick' };
 const HOME_AGENTS = { space: 'home', show: 'agents' };
 const PROFILE = { ...HOME_AGENTS, agent: agentId(1), panel: 'profile' };
 const SPACE_MENU: LabStep = { press: '[data-testid="space-menu"]' };
+const INSTRUCTIONS_EDIT: LabStep = { click: '[data-testid="agent-instructions"] [data-action="edit"]' };
+const EDITED = IN_USE.replace('Answer customers in #support', 'Answer customers in #support and on WhatsApp');
 
 export const SCENES: readonly LabScene[] = [
     { id: 'home', title: 'Home', group: 'Spaces', world: 'spaces', place: SPACE },
@@ -44,6 +49,42 @@ export const SCENES: readonly LabScene[] = [
     { id: 'agents', title: 'Agents', group: 'Agents', world: 'agents', place: HOME_AGENTS },
     { id: 'session', title: 'A session, with what works beside it', group: 'Agents', world: 'session', place: { ...HOME_AGENTS, agent: AGENT_ID } },
     { id: 'profile', title: 'Profile', group: 'Agents', world: 'agents', place: PROFILE },
+    {
+        id: 'profile-instructions',
+        title: 'Profile: its instructions',
+        group: 'Agents',
+        world: 'agents',
+        place: PROFILE,
+        steps: [{ button: 'Show all' }],
+        opens: '[data-testid="instructions-history"] li',
+    },
+    {
+        id: 'profile-instructions-edit',
+        title: 'Profile: editing its instructions',
+        group: 'Agents',
+        world: 'agents',
+        place: PROFILE,
+        steps: [INSTRUCTIONS_EDIT],
+        opens: '[data-testid="instructions-edit"] textarea:not([disabled])',
+    },
+    {
+        id: 'profile-instructions-version',
+        title: 'Profile: what a version of its instructions changed',
+        group: 'Agents',
+        world: 'agents',
+        place: PROFILE,
+        steps: [{ button: 'Show all' }, { click: '[data-testid="instructions-history"] li:nth-child(2) button[aria-expanded]' }],
+        opens: '[data-testid="instructions-history"] [data-testid="diff"]',
+    },
+    {
+        id: 'profile-instructions-changed',
+        title: 'Profile: its instructions changed while you edit',
+        group: 'Agents',
+        world: 'agents_raced',
+        place: PROFILE,
+        steps: [INSTRUCTIONS_EDIT, { type: '[data-testid="instructions-edit"] textarea:not([disabled])', text: EDITED }, { button: 'Save' }],
+        opens: '[data-testid="instructions-changed"]',
+    },
     { id: 'profile-triggers', title: 'Profile: triggers', group: 'Agents', world: 'agents', place: { ...PROFILE, ptab: 'triggers' } },
     { id: 'profile-tools', title: 'Profile: tools', group: 'Agents', world: 'agents', place: { ...PROFILE, ptab: 'tools' } },
     { id: 'profile-files', title: 'Profile: files', group: 'Agents', world: 'agents', place: { ...PROFILE, ptab: 'files' } },
