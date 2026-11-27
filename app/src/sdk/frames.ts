@@ -6,7 +6,8 @@ export interface PlatformAgentEvent {
     agent_id: string;
     /** turn: a turn of its started, moved on (waiting on a person included) or settled; step: it reported a tool call;
      *  tool_servers: one conversation's tool servers moved; wakeups: a loop of one conversation was set, came round,
-     *  changed or stopped; definition: it was changed (renamed, say); session: everyone talking to it now shares
+     *  changed or stopped; definition: it was made, changed (renamed, say), deleted or brought back; session: everyone
+     *  talking to it now shares
      *  another conversation, cleared or resumed. */
     change: 'turn' | 'step' | 'tool_servers' | 'wakeups' | 'definition' | 'session';
     /** The conversation a tool_servers or wakeups change is about, and a turn's, when it is one of the account's own
@@ -59,6 +60,13 @@ export interface PlatformUsageEvent {
     at: string | null;
 }
 
+/** Calls were added to the account's tool-call log (an agent's, an MCP client's, a connection's operation run from
+ *  code): one frame a burst, naming none of them. A page showing the log reads the newer ones. */
+export interface PlatformToolCallsEvent {
+    /** When it was said; none where the host doesn't know. */
+    at: string | null;
+}
+
 /** A platform resource the account owns moved (a domain registered, a deployment went ready, a repo's branch moved, a
  *  call answered or ended, a call held for approval or the approval answered, and so on): the pages showing it read
  *  it again. */
@@ -99,8 +107,8 @@ export interface PlatformResourceEvent {
         | 'popups'
         /** A number was linked to the account or unlinked (`id` the account's). */
         | 'phones'
-        /** An operation that reports itself live moved a stage or ended (`status` the operation's): a repository
-         *  deploy, a connect link's sign-in. */
+        /** An operation was made, started, moved its step or stage, printed lines (at most a frame a second between
+         *  moves), waits on a person, or ended (`status` the operation's). */
         | 'operation'
         /** Something was shared with the account's person (`status` the access, `parent_id` the resource; GET
          *  /v1/shares/{id}). */

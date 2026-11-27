@@ -47,6 +47,9 @@ export function staleReads(frame: Pick<PlatformResourceEvent, 'kind' | 'id' | 'p
             return ['resources:skills', 'work:agents'];
         case 'memory':
             return ['resources:memories', 'work:agents'];
+        case 'operation':
+            // It moved (a stage, a line, an end): its own read and all read under it (its tool calls, its updates).
+            return [`operations/${frame.id}`];
         case 'connection':
             // Connected, connected again, renamed or gone: every list of connections (Connections', the console's) and its
             // own read.

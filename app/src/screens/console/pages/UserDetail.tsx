@@ -19,6 +19,7 @@ import { userPath } from '@/screens/console/lib/userFilter';
 import { snippetTabs, userCodeSnippet } from '@/screens/console/lib/snippets';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
@@ -330,7 +331,10 @@ function Uses({ user }: { user: User }) {
 function Now({ user }: { user: User }) {
     const { client } = useConsole();
     const [, setOp] = useSearchParam('op');
-    const running = useV1(`operations?user-running=${user.id}`, () => Operation.listPage({ client, status: 'live', userFilter: user.id, limit: 20 }), { pollMs: 10_000 });
+    // Read again as an operation starts, waits or ends (its frames, ConsoleProviders); the backstop only while missed.
+    const running = useV1(`operations?user-running=${user.id}`, () => Operation.listPage({ client, status: 'live', userFilter: user.id, limit: 20 }), {
+        backstopMs: BACKSTOP_POLL_MS,
+    });
     const rows = running.data?.data ?? [];
     return (
         <PageSection title="Now" count={rows.length}>

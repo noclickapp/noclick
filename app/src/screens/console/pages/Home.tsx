@@ -20,6 +20,7 @@ import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/
 import { usePaged, type PagedState } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { useV1, type V1State } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { Quickstart } from '../Quickstart';
 import { purposeOf, toolEntryText, useAgentMonthSpend } from '../agentParts';
 import { NewInCodeDialog, useNewParam } from '../NewInCode';
@@ -470,9 +471,10 @@ function McpServers({ servers }: { servers: Servers }) {
 /** Everything Home reads, once the account has agents: the agents (and automations), the MCP servers. */
 function HomeBody({ onCreate }: { onCreate: () => void }) {
     const { client } = useConsole();
-    // Each tile says what its agent is doing now, so the list itself stays fresh.
+    // Each tile says what its agent is doing now: an agent's turns and changes are frames that read the list again
+    // (ConsoleProviders); the backstop only while frames are missed.
     const paged = usePaged('agents?home', (cursor) => Agent.listPage({ client, userFilter: ALL_USERS, cursor, limit: 50 }), (a) => a.id, {
-        pollMs: 15_000,
+        backstopMs: BACKSTOP_POLL_MS,
     });
     const agents: AgentRowsData = { paged, spentOf: useAgentMonthSpend(paged.rows), failed: useAgentFailures() };
     const servers: Servers = useV1('mcp_servers?home', () => McpServer.listPage({ client, userFilter: ALL_USERS, limit: 50 }));

@@ -122,7 +122,8 @@ class WatchChange:
     id: str
     at: Any
     object: str
-    #: Its id; None for a ``coding_agent`` change that may be any of them, and for ``usage`` (the account was charged).
+    #: Its id; None for a ``coding_agent`` change that may be any of them, for ``usage`` (the account was charged) and
+    #: for ``tool_calls`` (a tool call was recorded).
     object_id: Optional[str]
     #: Its status as its read gave it then (advisory: the read is the truth); None once it's gone.
     status: Optional[str] = None

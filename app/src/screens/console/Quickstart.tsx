@@ -17,6 +17,7 @@ import { INSTALL_TABS, OPERATIONS_EMPTY, coderKeyName, coderPrompt, envExport, s
 import { NEW_IN_CODE } from '@/screens/console/lib/newInCode';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { CodeSnippet } from './ui/CodeSnippet';
 import { ConsoleButton } from './ui/Button';
 import { OwnerOnlyNote } from './ui/OwnerOnlyNote';
@@ -25,7 +26,6 @@ import { useOwnerOnly } from './ownerOnly';
 import { TERMS } from './slots';
 
 export const QUICKSTART_KEY_NAME = 'quickstart';
-export const FIRST_AGENT_POLL_MS = 5_000;
 
 /**
  * Put `text` on the clipboard. A promise is handed to the clipboard inside the
@@ -220,7 +220,8 @@ function FirstAgentWatch() {
     const account = useAccount();
     const href = useConsoleHref();
     const known = (account.data?.counts.agents ?? 0) > 0;
-    const first = useV1(known ? null : 'agents?first', () => Agent.listPage({ client, userFilter: ALL_USERS, limit: 1 }), { pollMs: FIRST_AGENT_POLL_MS });
+    // An agent made anywhere is a frame that reads it again (ConsoleProviders); the backstop only while frames are missed.
+    const first = useV1(known ? null : 'agents?first', () => Agent.listPage({ client, userFilter: ALL_USERS, limit: 1 }), { backstopMs: BACKSTOP_POLL_MS });
     const found = (first.data?.data.length ?? 0) > 0;
     const { refresh } = account;
     useEffect(() => {

@@ -24,6 +24,7 @@ import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/
 import { useConsoleQuery, useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { usePaged } from '@/sdk/usePaged';
 import { useV1 } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { useLiveOperations } from '@/screens/console/hooks/useLiveOperations';
 import { HeaderChip, PageHeader } from '../ui/PageHeader';
 import { DataTable, type Column } from '../ui/DataTable';
@@ -160,25 +161,29 @@ export function OperationsView({ pinned = '', controls = true, limit = 50, viewA
     const mapped = queryToOptions(parsed, OPERATIONS_QUERY, { now: anchor, agents: agents.handles });
     const waiting = !agents.loaded;
     const blocked = waiting || mapped.errors.length > 0 || mapped.ambiguous.length > 0;
-    const key = blocked ? null : `operations?${optionsKey(mapped.options)}&limit=${limit}`;
+    // Not under `operations?`, which an operation's status moving reads again (ConsoleProviders): this list merges each
+    // change in itself, loaded-more rows included.
+    const key = blocked ? null : `operations:list?${optionsKey(mapped.options)}&limit=${limit}`;
 
     const paged = usePaged(key, (cursor) => Operation.listPage({ client, ...mapped.options, cursor, limit }), (op) => op.id);
-    // The poll asks without the status filter: a shown row that finished no longer
-    // matches `status:live`, yet its change must still land. New rows must match it.
+    // The changes are asked for without the status filter: a shown row that finished no
+    // longer matches `status:live`, yet its change must still land. New rows must match it.
     const { status, statusNot, ...unfiltered } = mapped.options as { status?: string[]; statusNot?: string[] } & Record<string, unknown>;
     const shown = useRef<ReadonlySet<string>>(new Set());
     const live = useLiveOperations({
         rows: paged.rows,
         resetKey: key ?? '',
-        enabled: controls,
-        poll: async (updatedAfter) =>
+        enabled: controls && key !== null,
+        reread: paged.refresh,
+        changedSince: async (updatedAfter) =>
             (await Operation.listPage({ client, ...unfiltered, updatedAfter, limit: 100 })).data.filter(
                 (op) => shown.current.has(op.id) || statusPasses(op.status, status, statusNot)
             ),
     });
     shown.current = new Set(live.rows.map((op) => op.id));
+    // Read again as an operation starts, waits or ends (ConsoleProviders); the backstop only while frames are missed.
     const summary = useV1(controls && key ? `operations/summary?${optionsKey(mapped.options)}` : null, () => Operation.summary({ client, ...mapped.options }), {
-        pollMs: live.polling ? 5000 : undefined,
+        backstopMs: BACKSTOP_POLL_MS,
     });
 
     const filtered = query.parsed.tokens.length > 0 || !!pinned;
@@ -247,7 +252,7 @@ export function OperationsView({ pinned = '', controls = true, limit = 50, viewA
                         )}
                         <TimeRangePill
                             value={range}
-                            live={live.polling && !range.until}
+                            live={live.running && !range.until}
                             onChange={(next) => query.setQ(setQueryToken(setQueryToken(query.q, 'since', next.since ? [next.since] : null), 'until', next.until ? [next.until] : null))}
                         />
                     </div>

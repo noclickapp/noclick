@@ -4,7 +4,7 @@
 // one segmented control apart (`/logs/tool-calls`, `/logs/requests`,
 // `/logs/events`). `/logs/{id}` is one run
 // as a page. The views are reused by the agent and user pages with an id pinned.
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { Check, Info, Pause, Play } from 'lucide-react';
 import { ALL_USERS, ApiRequest, ToolCall } from 'noclick';
@@ -25,6 +25,7 @@ import { useConsoleQuery, useSearchParam, type ConsoleQuery } from '@/screens/co
 import { usePaged } from '@/sdk/usePaged';
 import { useV1 } from '@/sdk/useV1';
 import { mergeById } from '@/screens/console/hooks/useLiveOperations';
+import { useReadOnFrames } from '@/screens/console/hooks/liveReads';
 import { logViews, type ConsolePageProps, type LogView } from '../sections';
 import { PageHeader } from '../ui/PageHeader';
 import { DataTable, type Column } from '../ui/DataTable';
@@ -46,7 +47,6 @@ import { OperationPage, OperationsView } from './Operations';
 
 export const TOOL_CALLS_NOTE = "Direct /v1/connections/*/operations/*/run calls aren't tied to a key in this log; the API requests view has the key.";
 export const TOOL_CALLS_EMPTY_TITLE = "No tool calls yet. They appear when your code runs a connection's operation or a toolkit, or an agent uses a tool.";
-const TAIL_MS = 5000;
 
 function optionsKey(options: Record<string, unknown>): string {
     return Object.entries(options)
@@ -156,8 +156,15 @@ export function ToolCallsView({ pinned = '' }: ToolCallsViewProps) {
     const paged = usePaged(key, (cursor) => ToolCall.listPage({ client, ...log.mapped.options, cursor, limit: 50 }), (c) => c.id);
     const [paused, setPaused] = useState(false);
     const tailing = !!key && !paused && !log.range.until;
-    const tail = useTail(key, paged.rows, tailing, log.anchor, async (since) => (await ToolCall.listPage({ client, ...log.mapped.options, since, limit: 100 })).data);
-    const summary = useV1(key ? `tool_calls/summary?${log.optionsKey}` : null, () => ToolCall.summary({ client, ...log.mapped.options }), { pollMs: tailing ? TAIL_MS : undefined });
+    const summary = useV1(key ? `tool_calls/summary?${log.optionsKey}` : null, () => ToolCall.summary({ client, ...log.mapped.options }));
+    const tail = useTail(
+        key,
+        paged.rows,
+        tailing,
+        log.anchor,
+        async (since) => (await ToolCall.listPage({ client, ...log.mapped.options, since, limit: 100 })).data,
+        summary.refresh
+    );
     const [callId, setCallId] = useSearchParam('call');
     const open = callId ? tail.find((c) => c.id === callId) : undefined;
     const filtered = log.query.parsed.tokens.length > 0 || !!pinned;
@@ -241,34 +248,36 @@ export function ToolCallsView({ pinned = '' }: ToolCallsViewProps) {
 }
 
 /**
- * Newer rows prepended every 5s while tailing; changing the filters starts over.
- * With no rows yet, the tail asks from `start` (when this query was set).
+ * Newer rows prepended, with the count read again, each time a `tool_calls` frame says calls were recorded (the
+ * backstop while frames are missed); changing the filters starts over. With no rows yet, the tail asks from `start`
+ * (when this query was set).
  */
-function useTail<T extends { id: string; createdAt: Date | null }>(key: string | null, rows: T[], enabled: boolean, start: number, poll: (since: Date) => Promise<T[]>): T[] {
+function useTail<T extends { id: string; createdAt: Date | null }>(
+    key: string | null,
+    rows: T[],
+    enabled: boolean,
+    start: number,
+    newer: (since: Date) => Promise<T[]>,
+    recount: () => Promise<void>
+): T[] {
     const [fresh, setFresh] = useState<{ key: string | null; rows: T[] }>({ key, rows: [] });
     const merged = mergeById(rows, fresh.key === key ? fresh.rows : []);
-    const latest = useRef({ merged, poll, key, start });
-    latest.current = { merged, poll, key, start };
-    useEffect(() => {
-        if (!enabled) return;
-        const timer = window.setInterval(async () => {
-            if (document.hidden) return;
-            const { merged: current, poll: fetchNewer, key: at, start: from } = latest.current;
+    const latest = useRef({ merged, newer, recount, key, start });
+    latest.current = { merged, newer, recount, key, start };
+    useReadOnFrames(
+        'platform:tool_calls',
+        () => true,
+        async () => {
+            const { merged: current, newer: fetchNewer, recount: count, key: at, start: from } = latest.current;
             const newest = current.reduce<number | null>((max, r) => {
                 const t = r.createdAt?.getTime();
                 return t != null && (max === null || t > max) ? t : max;
             }, null);
-            let got: T[];
-            try {
-                got = await fetchNewer(new Date(newest ?? from));
-            } catch (err) {
-                console.warn('Tool call tail failed', err);
-                return;
-            }
+            const [got] = await Promise.all([fetchNewer(new Date(newest ?? from)), count()]);
             if (got.length) setFresh((prev) => ({ key: at, rows: mergeById(prev.key === at ? prev.rows : [], got) }));
-        }, TAIL_MS);
-        return () => window.clearInterval(timer);
-    }, [enabled]);
+        },
+        enabled
+    );
     return merged;
 }
 

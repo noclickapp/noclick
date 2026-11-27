@@ -22,6 +22,7 @@ import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
@@ -1139,14 +1140,15 @@ function Uses({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) => voi
 
 // ── recent runs ────────────────────────────────────────────────────────────
 
-/** The turns it's taking now, read again every 10 seconds; nothing while it takes none. Each opens its run. */
+/** The turns it's taking now, read again as a turn starts, waits or ends (its operation's frames); nothing while it takes
+ *  none. Each opens its run. */
 function RunningNow({ agent }: { agent: Agent }) {
     const { client } = useConsole();
     const [, setOp] = useSearchParam('op');
     const running = useV1(
         `operations?agent-running=${agent.id}`,
         () => Operation.listPage({ client, kind: 'agent.message', agent: agent.id, status: 'live', userFilter: ALL_USERS, limit: 20 }),
-        { pollMs: 10_000 }
+        { backstopMs: BACKSTOP_POLL_MS }
     );
     const rows = running.data?.data ?? [];
     if (!rows.length) return null;

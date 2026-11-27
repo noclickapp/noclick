@@ -17,6 +17,7 @@ import { getToken, type AgentHandle, type ParsedQuery, type QueryError } from '@
 import { userPath } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
+import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
 import { useReportHeld } from '@/sdk/held';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { Drawer } from '../ui/Drawer';
@@ -371,15 +372,14 @@ function Output({ op, onConversation }: { op: Operation; onConversation?: string
 
 // ── the detail ─────────────────────────────────────────────────────────────
 
-const TERMINAL_POLL_MS = 5000;
-
-/** One operation, re-read every 5s while it isn't done. The drawer's header and body share it. */
+/** One operation, read again each time its frame says it moved (a status, a stage, a line it printed, its end:
+ *  ConsoleProviders), and on the backstop while it runs and frames are missed. The drawer's header and body share it. */
 export function useOperation(id: string) {
     const { client } = useConsole();
-    const [pollMs, setPollMs] = useState<number | undefined>(undefined);
-    const state = useV1(`operations/${id}`, () => Operation.fromId(id, { client, user: null }).hydrate(), { pollMs });
+    const [backstopMs, setBackstopMs] = useState<number | undefined>(undefined);
+    const state = useV1(`operations/${id}`, () => Operation.fromId(id, { client, user: null }).hydrate(), { backstopMs });
     const live = !!state.data && !state.data.done;
-    useEffect(() => setPollMs(live ? TERMINAL_POLL_MS : undefined), [live]);
+    useEffect(() => setBackstopMs(live ? BACKSTOP_POLL_MS : undefined), [live]);
     return state;
 }
 
@@ -446,11 +446,10 @@ export function OperationDetail({ id, state }: { id: string; state: V1State<Oper
         try {
             const updated = await Operation.fromId(op.id, { client, user: null }).cancel();
             state.mutate(updated);
-            invalidateV1('operations?');
-            invalidateV1('operations/summary');
+            invalidateV1('operations');
             toast.success('Operation canceled');
         } catch (err) {
-            if (reportHeld(err, 'Cancel the operation', () => (invalidateV1('operations?'), invalidateV1('operations/summary'), state.refresh()))) return;
+            if (reportHeld(err, 'Cancel the operation', () => (invalidateV1('operations'), state.refresh()))) return;
             toast.error(err instanceof Error ? err.message : String(err), { description: err instanceof NoClickError ? (err.nextStep ?? undefined) : undefined });
         } finally {
             setCanceling(false);

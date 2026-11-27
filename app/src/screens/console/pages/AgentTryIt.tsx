@@ -14,6 +14,7 @@ import { operationStatus } from '@/screens/console/lib/status';
 import { agentMessageSnippet, snippetTabs } from '@/screens/console/lib/snippets';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1 } from '@/sdk/useV1';
+import { useReadOnFrames } from '@/screens/console/hooks/liveReads';
 import { UserField } from '../ui/UserField';
 import { StatusPill } from '../ui/StatusPill';
 import { Money } from '../ui/Money';
@@ -34,7 +35,8 @@ interface Turn {
     error: NoClickError | Error | null;
 }
 
-const FOLLOW_S = 5;
+/** One long-poll window: what moves before the turn ends (a step, a hold) is its frame's to say. */
+const FOLLOW_S = 50;
 
 /** Tool names as the console writes them everywhere: `gmail.send_email`, not the wire's `gmail__send_email`. */
 export function dottedTool(name: string): string {
@@ -123,16 +125,35 @@ export function AgentTryIt({ agent }: { agent: Agent }) {
         if (alive.current) setTurns((all) => all.map((t, i) => (i === index ? { ...t, ...patch } : t)));
     };
 
-    // The server's long-poll answers when the turn ends or after FOLLOW_S, so a
-    // turn costs at most one read per FOLLOW_S however long a hold lasts.
-    const follow = async (index: number, op: Operation<AgentReply>) => {
-        while (alive.current && !TERMINAL_STATUSES.has(op.status as string)) {
-            try {
-                await op.wait({ timeoutS: FOLLOW_S });
-            } catch (err) {
-                if (!(err instanceof OperationTimeout)) break; // it ended badly: the read below says how
+    // Turns still going, by operation id: each frame naming one reads it again for its status and step.
+    const going = useRef(new Map<string, { index: number; op: Operation<AgentReply> }>());
+    useReadOnFrames(
+        'platform:resource',
+        (frame) => frame.kind === 'operation' && going.current.has(frame.id),
+        async () => {
+            for (const { index, op } of [...going.current.values()]) {
+                await op.refresh();
+                if (!TERMINAL_STATUSES.has(op.status as string)) update(index, { status: op.status as string, step: op.step });
             }
-            update(index, { status: op.status as string, step: op.step });
+        },
+        turns.some((t) => !t.reply && !t.error)
+    );
+
+    // The server's long-poll answers the moment the turn ends, else after FOLLOW_S, so
+    // a turn costs one read per FOLLOW_S however long a hold lasts.
+    const follow = async (index: number, op: Operation<AgentReply>) => {
+        going.current.set(op.id, { index, op });
+        try {
+            while (alive.current && !TERMINAL_STATUSES.has(op.status as string)) {
+                try {
+                    await op.wait({ timeoutS: FOLLOW_S });
+                } catch (err) {
+                    if (!(err instanceof OperationTimeout)) break; // it ended badly: the read below says how
+                }
+                update(index, { status: op.status as string, step: op.step });
+            }
+        } finally {
+            going.current.delete(op.id);
         }
         if (!alive.current) return;
         // The finished operation, read once through the SDK for its typed reply or error.

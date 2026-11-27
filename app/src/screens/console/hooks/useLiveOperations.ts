@@ -1,22 +1,15 @@
-// Live refresh for operation lists: while any shown row is non-terminal, poll
-// every 5s for rows changed since the newest update seen and merge them in.
-// The poll ignores the page's status filter, or a row that finishes under
-// `status:live` would never come back and would poll forever.
-import { useEffect, useRef, useState } from 'react';
+// Live operation lists: each operation's frame (made, started, a stage, a line it printed, its end) has the list ask
+// for the rows changed since the newest update it shows, and merge them in: a shown row updates in place, wherever it
+// was loaded, and a new one that matches the page's filters goes on top. The ask ignores the page's status filter, or
+// a row that finishes under `status:live` would never come back. A list showing nothing reads its first page again.
+import { useRef, useState } from 'react';
 import { LIVE_OPERATION_STATUSES } from '@/screens/console/lib/status';
+import { useReadOnFrames } from './liveReads';
 
 /** A list's status filter as the SDK options carry it (`live` = non-terminal). */
 export interface StatusFilter {
     status?: unknown;
     statusNot?: unknown;
-}
-
-/** The page's list options without its status filter: what a live poll sends. */
-export function withoutStatus<O extends StatusFilter>(options: O): Omit<O, 'status' | 'statusNot'> {
-    const rest: Partial<O> = { ...options };
-    delete rest.status;
-    delete rest.statusNot;
-    return rest as Omit<O, 'status' | 'statusNot'>;
 }
 
 function statusList(value: unknown): string[] | null {
@@ -72,52 +65,45 @@ function newestUpdate(rows: readonly LiveRow[]): Date | null {
 
 export interface LiveOperationsOptions<T extends LiveRow> {
     rows: readonly T[];
-    /** Changes when the page's filters change; polled rows from other filters are dropped. */
+    /** Changes when the page's filters change; rows asked for under other filters are dropped. */
     resetKey: string;
-    /** Rows matching the page's filters EXCEPT status (`withoutStatus(options)`), with `updatedAfter` set. */
-    poll: (updatedAfter: Date) => Promise<T[]>;
-    /** The page's status filter: a row first seen by the poll joins only if it matches; shown rows always update. */
+    /** Rows matching the page's filters EXCEPT status, with `updatedAfter` set. */
+    changedSince: (updatedAfter: Date) => Promise<T[]>;
+    /** With no row shown to ask after: the list's first page read again. */
+    reread: () => Promise<void>;
+    /** The page's status filter: a row first seen by the ask joins only if it matches; shown rows always update. */
     statusFilter?: StatusFilter;
     enabled?: boolean;
-    intervalMs?: number;
 }
 
+/** The list's rows with each change merged in, and whether any of them still runs. */
 export function useLiveOperations<T extends LiveRow>({
     rows,
     resetKey,
-    poll,
+    changedSince,
+    reread,
     statusFilter = {},
     enabled = true,
-    intervalMs = 5000,
-}: LiveOperationsOptions<T>): { rows: T[]; polling: boolean } {
+}: LiveOperationsOptions<T>): { rows: T[]; running: boolean } {
     const [changes, setChanges] = useState<{ key: string; rows: T[] }>({ key: resetKey, rows: [] });
     const merged = mergeById(rows, changes.key === resetKey ? changes.rows : []);
-    const polling = enabled && merged.some((r) => LIVE_OPERATION_STATUSES.has(r.status));
-    const latest = useRef({ merged, poll, resetKey, statusFilter });
-    latest.current = { merged, poll, resetKey, statusFilter };
+    const latest = useRef({ merged, changedSince, reread, resetKey, statusFilter });
+    latest.current = { merged, changedSince, reread, resetKey, statusFilter };
 
-    useEffect(() => {
-        if (!polling) return;
-        const timer = window.setInterval(async () => {
-            if (document.hidden) return;
-            const { merged: current, poll: fetchChanges, resetKey: key, statusFilter: filter } = latest.current;
+    useReadOnFrames(
+        'platform:resource',
+        (frame) => frame.kind === 'operation',
+        async () => {
+            const { merged: current, changedSince: ask, reread: readAgain, resetKey: key, statusFilter: filter } = latest.current;
             const since = newestUpdate(current);
-            if (!since) return;
-            let got: T[];
-            try {
-                got = await fetchChanges(since);
-            } catch (err) {
-                // One missed tick; the next one asks again from the same point.
-                console.warn('Live operations poll failed', err);
-                return;
-            }
+            if (!since) return readAgain();
+            const got = await ask(since);
             const shown = new Set(current.map((r) => r.id));
             const admitted = got.filter((r) => shown.has(r.id) || matchesStatus(r.status, filter));
-            if (!admitted.length) return;
-            setChanges((prev) => ({ key, rows: mergeById(prev.key === key ? prev.rows : [], admitted) }));
-        }, intervalMs);
-        return () => window.clearInterval(timer);
-    }, [polling, intervalMs]);
+            if (admitted.length) setChanges((prev) => ({ key, rows: mergeById(prev.key === key ? prev.rows : [], admitted) }));
+        },
+        enabled
+    );
 
-    return { rows: merged, polling };
+    return { rows: merged, running: merged.some((r) => LIVE_OPERATION_STATUSES.has(r.status)) };
 }

@@ -39,7 +39,7 @@ function toLocalInput(iso: string | null): string {
 
 /**
  * The time range. The pinging live dot shows here, and only when the range
- * ends at now and the page is polling: the one animated dot a page may have.
+ * ends at now and the page follows what's still moving: the one animated dot a page may have.
  */
 export function TimeRangePill({ value, onChange, live = false, className }: { value: TimeRange; onChange: (range: TimeRange) => void; live?: boolean; className?: string }) {
     const [open, setOpen] = useState(false);

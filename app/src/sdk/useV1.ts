@@ -3,11 +3,12 @@
 // clients (the app's and a fixture lab's) never mix.
 //
 // Where the account's change stream follows a client (watchLive.ts), the stream says what to read again: a page coming
-// back into view reads nothing of its own accord, since the stream carries on from its last change (or says reset).
+// back into view reads nothing of its own accord, since the stream carries on from its last change (or says reset),
+// and a read's backstop (`backstopMs`) keeps no timer.
 //
 // A host can keep a client's reads in this browser between visits (`keepReads`, per account): the reads a screen marks
 // (`keepRead`) open on what they read last, as old as can be, and read again behind it.
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { JsonObject, NoClick, Page } from 'noclick';
 import { useProvidedClient } from '@/sdk/client';
 import { keepFor, keepWhenLeaving, readKept } from '@/lib/kept';
@@ -24,6 +25,9 @@ export interface V1State<T> {
 
 export interface V1Options {
     pollMs?: number;
+    /** Read again this often only while the account's change stream doesn't follow the client (it's off, or the host
+     *  has none), when the frames that say this read moved are missed. No timer while it follows. */
+    backstopMs?: number;
     enabled?: boolean;
     /** The client to read with; the one a `ClientProvider` above gives by default. */
     client?: NoClick;
@@ -210,13 +214,26 @@ export function readsRestored(client: object): Promise<void> {
 // ── Following ────────────────────────────────────────────────────────────────
 
 const followed = new WeakSet<object>();
+const followListeners = new Set<() => void>();
 
 /** Whether the account's change stream follows `client` (watchLive.ts): while it does, a view coming back into view
  *  reads nothing again by itself, because the stream carries on from its last change, re-reading what moved, or says
  *  reset. */
 export function followReads(client: object, on: boolean): void {
+    if (on === followed.has(client)) return;
     if (on) followed.add(client);
     else followed.delete(client);
+    followListeners.forEach((listener) => listener());
+}
+
+function onFollow(changed: () => void): () => void {
+    followListeners.add(changed);
+    return () => void followListeners.delete(changed);
+}
+
+/** Whether the account's change stream follows `client`, now and as that changes. */
+export function useFollowed(client: object): boolean {
+    return useSyncExternalStore(onFollow, () => followed.has(client), () => false);
 }
 
 // ── Reads ────────────────────────────────────────────────────────────────────
@@ -325,6 +342,8 @@ export function useV1<T>(key: string | null, fn: (signal: AbortSignal) => Promis
     }));
     const seq = useRef(0);
     const lastFocusRun = useRef(0);
+    const following = useFollowed(client);
+    const every = options.pollMs ?? (following ? undefined : options.backstopMs);
 
     // A new key shows its own cached value, never the previous key's.
     const current = state.key === key ? state : { key, data: shown(key), error: undefined, pending: active };
@@ -375,10 +394,10 @@ export function useV1<T>(key: string | null, fn: (signal: AbortSignal) => Promis
         if (!takers) held.set(key, (takers = new Set()));
         const take = () => setState((s) => (s.key === key && s.data === undefined ? { ...s, data: cache.get(key)?.data as T | undefined } : s));
         takers.add(take);
-        const timer = options.pollMs
+        const timer = every
             ? window.setInterval(() => {
                   if (!document.hidden) void read(true);
-              }, options.pollMs)
+              }, every)
             : undefined;
         return () => {
             window.removeEventListener('focus', onFocus);
@@ -389,7 +408,7 @@ export function useV1<T>(key: string | null, fn: (signal: AbortSignal) => Promis
             if (!takers!.size) held!.delete(key);
             if (timer !== undefined) window.clearInterval(timer);
         };
-    }, [active, key, read, options.pollMs, client, cache]);
+    }, [active, key, read, every, client, cache]);
 
     const mutate = useCallback(
         (data: T) => {

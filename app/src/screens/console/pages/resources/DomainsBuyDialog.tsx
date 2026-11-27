@@ -94,9 +94,10 @@ export function PurchaseProgress({
 }) {
     const { client, lab } = useConsole();
     const [finished, setFinished] = useState(false);
-    // A platform:resource frame re-reads it as it moves (ConsoleProviders); the poll is the backstop.
+    // A platform:resource frame re-reads it as it moves (ConsoleProviders); the backstop only while frames are missed.
     const domain = useV1(purchase.domainId ? `domains/${purchase.domainId}` : null, () => Domain.get(purchase.domainId!, { client }), {
-        pollMs: finished ? undefined : lab ? LAB_PROGRESS_POLL_MS : BACKSTOP_POLL_MS,
+        pollMs: !finished && lab ? LAB_PROGRESS_POLL_MS : undefined,
+        backstopMs: finished ? undefined : BACKSTOP_POLL_MS,
     });
     const status = domain.data?.status ?? purchase.status;
     const steps = purchase.status === 'awaiting_human' ? [APPROVAL, ...tail] : tail;
