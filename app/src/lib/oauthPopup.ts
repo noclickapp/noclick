@@ -88,6 +88,49 @@ export function openTabForLater(options: SignInWindowOptions = {}): SignInWindow
     };
 }
 
+/** Calls `onClosed` once the person has closed a sign-in window: it reads closed and they're back on this page (it
+ *  regains focus or comes back into view, or they click or type in it). A sign-in page that sets
+ *  Cross-Origin-Opener-Policy cuts its window off from this page, which from then on reads it as closed while the
+ *  person is still signing in there, so a closed reading alone ends nothing. Returns what stops the watch. */
+export function whenClosed(signIn: Window, onClosed: () => void): () => void {
+    // Whether the person is on this page. Opening the window took them away from it.
+    let here = false;
+    const check = () => {
+        let closed: boolean;
+        try {
+            closed = signIn.closed;
+        } catch {
+            closed = true;
+        }
+        if (!here || !closed) return;
+        stop();
+        onClosed();
+    };
+    const back = () => {
+        here = true;
+        check();
+    };
+    const away = () => {
+        here = false;
+    };
+    const seen = () => (document.visibilityState === 'visible' ? back() : away());
+    const poll = setInterval(check, 500);
+    window.addEventListener('focus', back);
+    window.addEventListener('blur', away);
+    window.addEventListener('pointerdown', back, true);
+    window.addEventListener('keydown', back, true);
+    document.addEventListener('visibilitychange', seen);
+    function stop() {
+        clearInterval(poll);
+        window.removeEventListener('focus', back);
+        window.removeEventListener('blur', away);
+        window.removeEventListener('pointerdown', back, true);
+        window.removeEventListener('keydown', back, true);
+        document.removeEventListener('visibilitychange', seen);
+    }
+    return stop;
+}
+
 /** For a click whose sign-in is only known after an await (an embedded app asking for an account): opens a sign-in
  *  popup now, while the click counts, for the next sign-in window to take. The returned release closes it if nothing
  *  took it. */
