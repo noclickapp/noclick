@@ -36,6 +36,10 @@ export const BILLING = slot<SectionBody>('settings.billing', BillingStandard);
  *  and live frames the page is drawn under. */
 export const NOTIFICATIONS = slot<SectionBody>('settings.notifications', NotificationsSection);
 
+/** In Notifications, notifications on this device: a host whose app sends them to browsers (Web Push) draws turning
+ *  them on and off. Nobody stands there. */
+export const NOTIFICATIONS_DEVICE = slot<SectionBody>('settings.notifications.device', null);
+
 /** Developer: the way into the developer console. The standard opens it at the address of the console context the
  *  page is drawn in. */
 export const DEVELOPER = slot<SectionBody>('settings.developer', DeveloperSection);

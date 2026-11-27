@@ -200,6 +200,7 @@ describe('the app', () => {
             'settings.developer.olderKeys',
             'settings.members',
             'settings.notifications',
+            'settings.notifications.device',
             'settings.phone',
             'settings.popups',
             'settings.skills',

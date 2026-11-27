@@ -106,3 +106,18 @@ test("AccountPhones.linkCode mints the account's code", async () => {
   assert.deepEqual(await nc.asUser("user_42", () => nc.AccountPhones.linkCode()), { code: "NC-7Q4M", expiresIn: 540 });
   assert.equal(minted.last.headers.get("NoClick-User"), null);
 });
+
+test("AccountPush turns a browser's notifications on with its subscription, lists them and turns one off", async () => {
+  const { api } = setup();
+  const device = { object: "push_device", id: "pd_1", device: "iPhone", endpoint: "https://web.push.apple.com/QG", created_at: "2026-11-27T09:00:00+00:00", last_sent_at: null };
+  const read = api.on("GET", "/v1/account/push", json({ object: "push", configured: true, public_key: "BNqS", devices: [device] }));
+  const add = api.on("POST", "/v1/account/push", json(device, { status: 201 }));
+  const remove = api.on("DELETE", "/v1/account/push/pd_1", json({ object: "push_device", id: "pd_1", deleted: true }));
+  const push = await nc.asUser("user_42", () => nc.AccountPush.get());
+  assert.deepEqual([push.configured, push.publicKey, push.devices.map((d) => [d.id, d.device])], [true, "BNqS", [["pd_1", "iPhone"]]]);
+  const added = await nc.AccountPush.add({ endpoint: device.endpoint, keys: { p256dh: "BCVx", auth: "BTBZ" } }, { device: "iPhone" });
+  assert.deepEqual(add.last.body, { endpoint: device.endpoint, keys: { p256dh: "BCVx", auth: "BTBZ" }, device: "iPhone" });
+  await nc.AccountPush.remove(added.id);
+  assert.equal(remove.calls.length, 1);
+  assert.equal(read.last.headers.get("NoClick-User"), null);
+});

@@ -1,11 +1,15 @@
-// Settings → Notifications: the email alerts NoClick sends the account's owner, one switch a category. The same
-// preferences decide every send and the one-click unsubscribe link each alert email carries. `NotificationsView` draws
-// what it's told; `NotificationsSection` is the section with its read (reads.ts).
+// Settings → Notifications: notifications on this device where a host sends them (its slot), and the email alerts
+// NoClick sends the account's owner, one switch a category. The same preferences decide every send and the one-click
+// unsubscribe link each alert email carries. `NotificationsView` draws what it's told; `NotificationsSection` is the
+// section with its read (reads.ts).
+import type { ReactNode } from 'react';
+import { useSlot } from '@/slots';
 import { cn } from '@/ui/utils';
 import { Switch } from '@/ui/switch';
 import notificationCategories from './notificationCategories.json';
 import { SettingsGroup, SettingsHeader, SettingsRow } from './parts';
 import { useNotificationPrefs } from './reads';
+import { NOTIFICATIONS_DEVICE } from './slots';
 
 /** Whether each category's emails are on, by its key; a category not named is on. */
 export type NotificationPrefs = Record<string, boolean>;
@@ -21,9 +25,9 @@ export interface NotificationCategory {
  *  `notificationCategories.json`, which the backend's own list of categories is held to. */
 export const NOTIFICATION_CATEGORIES: readonly NotificationCategory[] = notificationCategories;
 
-/** The section: its header and a switch per category, each on until it's read off. `prefs` null while they're read:
- *  the switches wait, dimmed. */
-export function NotificationsView({ prefs, onToggle }: { prefs: NotificationPrefs | null; onToggle: (key: string, enabled: boolean) => void }) {
+/** The section: its header, a switch per category, each on until it's read off, then what this device shows
+ *  (`device`). `prefs` null while they're read: the switches wait, dimmed. */
+export function NotificationsView({ prefs, onToggle, device }: { prefs: NotificationPrefs | null; onToggle: (key: string, enabled: boolean) => void; device?: ReactNode }) {
     const isLoading = prefs === null;
     return (
         <div>
@@ -41,6 +45,7 @@ export function NotificationsView({ prefs, onToggle }: { prefs: NotificationPref
                     />
                 ))}
             </SettingsGroup>
+            {device}
         </div>
     );
 }
@@ -48,5 +53,6 @@ export function NotificationsView({ prefs, onToggle }: { prefs: NotificationPref
 /** The section with its read: the client and live frames its host hands it. */
 export function NotificationsSection() {
     const { prefs, toggle } = useNotificationPrefs();
-    return <NotificationsView prefs={prefs} onToggle={(key, enabled) => void toggle(key, enabled)} />;
+    const Device = useSlot(NOTIFICATIONS_DEVICE);
+    return <NotificationsView prefs={prefs} onToggle={(key, enabled) => void toggle(key, enabled)} device={Device ? <Device /> : null} />;
 }

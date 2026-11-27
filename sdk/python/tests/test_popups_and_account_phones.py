@@ -103,3 +103,20 @@ def test_a_key_without_the_scope_raises_permission_denied(api, client):
         "type": "permission_denied", "message": "This key lacks the 'account:phones' scope"}})
     with pytest.raises(nc.PermissionDenied):
         nc.AccountPhones.get()
+
+
+def test_account_push_turns_a_browsers_notifications_on_lists_them_and_turns_one_off(api, client):
+    device = {"object": "push_device", "id": "pd_1", "device": "iPhone", "endpoint": "https://web.push.apple.com/QG",
+              "created_at": "2026-11-27T09:00:00+00:00", "last_sent_at": None}
+    read = api.get("/v1/account/push").respond(json={"object": "push", "configured": True, "public_key": "BNqS",
+                                                     "devices": [device]})
+    add = api.post("/v1/account/push").respond(201, json=device)
+    remove = api.delete("/v1/account/push/pd_1").respond(json={"object": "push_device", "id": "pd_1", "deleted": True})
+    with nc.as_user("user_42"):
+        push = nc.AccountPush.get()
+    assert (push.configured, push.public_key, [(d.id, d.device) for d in push.devices]) == (True, "BNqS", [("pd_1", "iPhone")])
+    added = nc.AccountPush.add({"endpoint": device["endpoint"], "keys": {"p256dh": "BCVx", "auth": "BTBZ"}}, device="iPhone")
+    assert body(add.calls.last.request) == {"endpoint": device["endpoint"], "keys": {"p256dh": "BCVx", "auth": "BTBZ"},
+                                            "device": "iPhone"}
+    nc.AccountPush.remove(added.id)
+    assert remove.call_count == 1 and "NoClick-User" not in read.calls.last.request.headers
