@@ -300,7 +300,7 @@ function ChangedMeanwhile({ theirs, onKeepMine, onUseTheirs }: { theirs: AgentIn
     const change = theirs.versions[0];
     const when = change?.changedAt ? ago(change.changedAt) : 'just now';
     return (
-        <div className="mb-3 rounded-2xl bg-amber-500/[0.08] px-4 py-3.5 dark:bg-amber-400/[0.08]" data-testid="instructions-changed" role="status">
+        <div className="mb-3 rounded-2xl bg-foreground/[0.05] px-4 py-3.5" data-testid="instructions-changed" role="status">
             <p className="text-sm font-medium">
                 {change ? whoMade(change).replace(', on your word', '') : 'Someone'} changed them {when}, while you were editing.
             </p>
