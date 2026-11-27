@@ -297,9 +297,11 @@ export function useChannels(transport: ChannelsTransport, openId: string | null)
                 // (typing.ts): none of them moves what this holds.
                 return;
             } else {
-                // New messages move unread counts and who's busy; a channel's own change moves the lists.
+                // New messages move unread counts and who's busy; a channel's own change moves the lists. One that
+                // names a message the timeline holds changed it (an ask on it settled): it's read again.
                 pending.lists = true;
                 if (loaded && change.kind !== 'workspace') pending.fresh.add(id);
+                if (change.kind === 'message') reread(id, change.messageId);
             }
             timer ??= setTimeout(flush, SETTLE_MS);
         };

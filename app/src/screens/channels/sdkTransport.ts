@@ -12,6 +12,7 @@ import type { PlatformChannelEvent, PlatformChannelTypingEvent } from '@/sdk/fra
 import { errorText } from '@/screens/console/pages/resources/shared';
 import { heldCallOf } from '@/sdk/held';
 import { needOf } from '@/lib/agentNeeds';
+import { turnAsksOf } from '@/lib/turnAsks';
 import {
     Agent,
     Channel as PlatformChannel,
@@ -178,7 +179,7 @@ function asksOf(event: Raw): NonNullable<ChannelMessage['asks']> {
     return { needs: (Array.isArray(event.needs) ? event.needs : []).flatMap((n) => needOf(n) ?? []) };
 }
 
-function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question' | 'asks' | 'automation'> {
+function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 'threadId' | 'alsoInChannel' | 'pinned' | 'event' | 'membership' | 'question' | 'asks' | 'turnAsks' | 'automation'> {
     const count = rawCount(raw.reply_count);
     const pinned = raw.pinned && typeof raw.pinned === 'object' ? (raw.pinned as Raw) : null;
     const event = raw.event && typeof raw.event === 'object' ? (raw.event as Raw) : null;
@@ -201,6 +202,7 @@ function threadOf(raw: Raw, who?: Perspective): Pick<ChannelMessage, 'thread' | 
         ...(event?.type === 'membership' ? { membership: membershipOf(event, who) } : {}),
         ...(event?.type === 'question' ? { question: questionOf(event) } : {}),
         ...(event?.type === 'connect' ? { asks: asksOf(event) } : {}),
+        ...(event?.type === 'asks' ? { turnAsks: turnAsksOf(event, (by) => seenBy(authorOf(by), who)) ?? undefined } : {}),
         ...(event?.type === 'automation' ? { automation: { workflowId: rawText(event.workflow_id) } } : {}),
     };
 }
@@ -318,6 +320,7 @@ export function platformTransport(client: NoClick, { sendTyping, person }: Trans
             said(async () => attachmentOf(await channel(channelId).upload(file, { name: file.name, mimeType: file.type || undefined, voice: !!clip, peaks: clip?.peaks }))),
         post: (channelId, text, attachmentIds) => said(async () => message(await channel(channelId).post(text, { files: attachmentIds }))),
         react: (channelId, messageId, emoji, on) => said(async () => message(await (on ? channel(channelId).react(messageId, emoji) : channel(channelId).unreact(messageId, emoji)))),
+        askConnected: (channelId, messageId, askId) => said(async () => void (await channel(channelId).askConnected(messageId, askId))),
         createWorkspace: (name, logo) =>
             said(async () => {
                 const made = await Workspace.create(name, { client, user: null });

@@ -16,7 +16,7 @@
 import { ArrowUpRight, CreditCard, Globe, ShieldCheck, Trash2 } from 'lucide-react';
 import { useContext, useEffect, useState, type ReactNode } from 'react';
 import { standing, useSlot } from '@/slots';
-import { GlyphTile, InlineCard, PILL_PRIMARY, PILL_QUIET, Receipt, Status } from '@/ui/chat/primitives';
+import { AskCard, AskMark, AskRow, InlineCard, PILL_PRIMARY, PILL_QUIET, Receipt, Status } from '@/ui/chat/primitives';
 import { NodeMark } from '@/ui/primitives';
 import { MemberAvatar } from '@/screens/channels/avatars';
 import { hueFor, seatMembers } from '@/screens/channels/model';
@@ -69,7 +69,7 @@ function jobError(job: CoordinatorJob | undefined): string | undefined {
 // ── A purchase or a deletion to approve ──────────────────────────────────────
 
 /** What the tool itself answered, until the page's read says how it stands now. */
-function asAnswered(call: CoordinatorToolCall): Pick<ApprovalView, 'action' | 'price' | 'impact'> & { status: ApprovalView['status']; expiresAt?: string; terms: string[] } {
+function asAnswered(call: CoordinatorToolCall): ApprovalTold {
     const price = obj(call.result, 'price');
     return {
         action: str(call.result, 'summary') ?? 'What NoClick asked to do',
@@ -80,6 +80,9 @@ function asAnswered(call: CoordinatorToolCall): Pick<ApprovalView, 'action' | 'p
         terms: list(call.result, 'accepting').filter((t): t is string => typeof t === 'string'),
     };
 }
+
+/** What an approval was asked as (the held call's own words, its price, what a deletion takes), until it's read. */
+export type ApprovalTold = Pick<ApprovalView, 'action' | 'price' | 'impact'> & { status: ApprovalView['status']; expiresAt?: string; terms: string[] };
 
 function WhatGoes({ impact }: { impact: ApprovalImpact }) {
     return (
@@ -116,9 +119,28 @@ function AfterApproval({ action, used, operationId }: { action: string; used: bo
 }
 
 export function PlatformApprovalCard({ call }: { call: CoordinatorToolCall }) {
-    const approvalId = str(call.result, 'approval_id') ?? '';
-    const review = usePlatformApproval(approvalId);
-    const told = asAnswered(call);
+    return <ApprovalAsk approvalId={str(call.result, 'approval_id') ?? ''} told={asAnswered(call)} heldOperationId={heldOperationOf(call)} />;
+}
+
+/** A purchase or a deletion held for the owner's OK, as one ask's row: what it does, its price, and Decline and
+ *  Approve right here for the account's signed-in owner (read and answered on /v1, as its page does); what a
+ *  deletion takes and the terms a person ticks on its page, under it. Where the reader isn't who answers it (a
+ *  channel's other people: `mayAnswer` false) it reads as waiting on the owner, settled by NoClick's word of how it
+ *  went (`settled`, the held call's status) rather than the approval's own read. */
+export function ApprovalAsk({
+    approvalId,
+    told,
+    heldOperationId,
+    mayAnswer = true,
+    settled,
+}: {
+    approvalId: string;
+    told: ApprovalTold;
+    heldOperationId?: string;
+    mayAnswer?: boolean;
+    settled?: string | null;
+}) {
+    const review = usePlatformApproval(mayAnswer ? approvalId : '');
     const live = review.approval;
     const action = live?.action || told.action;
     const price = live ? live.price : told.price;
@@ -130,9 +152,11 @@ export function PlatformApprovalCard({ call }: { call: CoordinatorToolCall }) {
     // NoClick's approval page, wherever the link the tool answered points.
     const page = approvalUrl(useSite(), approvalId);
     // Only the account's signed-in owner answers it here; a key opens its page.
-    const answers = useOwnerOnly()('approvals');
+    const answers = useOwnerOnly()('approvals') && mayAnswer;
 
-    if (status === 'approved' || status === 'used') return <AfterApproval action={action} used={status === 'used'} operationId={heldOperationOf(call)} />;
+    if (settled === 'succeeded') return <Receipt>Approved · {action}</Receipt>;
+    if (settled) return <Receipt tone="info">Not approved, so nothing happened · {action}</Receipt>;
+    if (status === 'approved' || status === 'used') return <AfterApproval action={action} used={status === 'used'} operationId={heldOperationId} />;
     if (status === 'declined') return <Receipt tone="info">Declined · nothing happened: {action}</Receipt>;
     if (status === 'expired') return <Receipt tone="info">Nobody approved it in time, so nothing happened: {action}</Receipt>;
     if (status === 'canceled') return <Receipt tone="info">Withdrawn · nothing happened: {action}</Receipt>;
@@ -143,65 +167,67 @@ export function PlatformApprovalCard({ call }: { call: CoordinatorToolCall }) {
             <ArrowUpRight className="h-3.5 w-3.5" />
         </a>
     );
-    // Approving with terms ticks a box per term, which only the page has; so does an approval this tab can't read here.
-    const onPage = terms.length > 0 || review.unreadable || !answers;
     const ready = !!live && !review.answering;
+    const decline = (
+        <button type="button" className={PILL_QUIET} disabled={!ready} onClick={() => review.decide('decline')}>
+            Decline
+        </button>
+    );
+    // Approving with terms ticks a box per term, which only the page has; so does an approval this tab can't read here.
     let actions: ReactNode;
-    if (onPage) {
+    if (!mayAnswer) actions = <Status state="idle">Waiting for the owner’s OK</Status>;
+    else if (terms.length > 0 || review.unreadable || !answers) {
         actions = (
             <>
+                {terms.length > 0 && answers && decline}
                 {open(!answers ? 'Review on NoClick' : terms.length ? 'Review terms and approve' : 'Open to approve', PILL_PRIMARY)}
-                {terms.length > 0 && answers && (
-                    <button type="button" className={PILL_QUIET} disabled={!ready} onClick={() => review.decide('decline')}>
-                        Decline
-                    </button>
-                )}
             </>
         );
     } else {
         actions = (
             <>
+                {decline}
                 <button type="button" className={PILL_PRIMARY} disabled={!ready} onClick={() => review.decide('approve')}>
                     Approve
                 </button>
-                <button type="button" className={PILL_QUIET} disabled={!ready} onClick={() => review.decide('decline')}>
-                    Decline
-                </button>
-                {open('Details', PILL_QUIET)}
             </>
         );
     }
     const Icon = impact ? Trash2 : price ? CreditCard : ShieldCheck;
+    const whose = mayAnswer ? 'your' : 'the owner’s';
+    const more = mayAnswer && (price?.terms || impact || terms.length > 0 || review.failure || (!live && !review.unreadable));
     return (
-        <InlineCard
-            lead={
-                <GlyphTile>
-                    <Icon className="h-4 w-4" />
-                </GlyphTile>
-            }
-            title={heldAskOf({ action, price, impact, operation: live?.operation, arguments: live?.arguments, subject: live?.subject }).title}
-            meta={price ? `${priceLabel(price)} · waiting for your OK` : 'Waiting for your OK'}
-            actions={actions}
-        >
-            {price?.terms || impact || terms.length || review.failure || !live ? (
-                <div className="space-y-2">
-                    {price?.terms && <p className="text-[13px] leading-relaxed text-muted-foreground">{price.terms}</p>}
-                    {impact && <WhatGoes impact={impact} />}
-                    {terms.length > 0 && (
-                        <p className="text-[13px] leading-relaxed text-muted-foreground" data-testid="platform-approval-terms">
-                            Approving accepts {terms.join(' and ')}. You read and tick each on the approval page; NoClick never accepts terms for you.
-                        </p>
-                    )}
-                    {!live && !review.unreadable && <Status state="working">Checking it’s still waiting</Status>}
-                    {review.failure && (
-                        <p className="text-[13px] text-red-600 dark:text-red-400">
-                            {review.failure.message}
-                            {review.failure.next_step ? ` ${review.failure.next_step}` : ''}
-                        </p>
-                    )}
-                </div>
-            ) : null}
-        </InlineCard>
+        <AskCard testId="platform-approval">
+            <AskRow
+                lead={
+                    <AskMark>
+                        <Icon />
+                    </AskMark>
+                }
+                title={heldAskOf({ action, price, impact, operation: live?.operation, arguments: live?.arguments, subject: live?.subject }).title}
+                detail={price ? `${priceLabel(price)} · waiting for ${whose} OK` : `Waiting for ${whose} OK`}
+                action={actions}
+            >
+                {more ? (
+                    <div className="space-y-2">
+                        {price?.terms && <p className="text-[13px] leading-relaxed text-muted-foreground">{price.terms}</p>}
+                        {impact && <WhatGoes impact={impact} />}
+                        {terms.length > 0 && (
+                            <p className="text-[13px] leading-relaxed text-muted-foreground" data-testid="platform-approval-terms">
+                                Approving accepts {terms.join(' and ')}. You read and tick each on the approval page; NoClick never accepts terms for you.
+                            </p>
+                        )}
+                        {!live && !review.unreadable && <Status state="working">Checking it’s still waiting</Status>}
+                        {review.failure && (
+                            <p className="text-[13px] text-red-600 dark:text-red-400">
+                                {review.failure.message}
+                                {review.failure.next_step ? ` ${review.failure.next_step}` : ''}
+                            </p>
+                        )}
+                    </div>
+                ) : null}
+            </AskRow>
+        </AskCard>
     );
 }
 

@@ -6,7 +6,7 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { ChatReference } from '@/lib/agentThread/messages';
 import type { Thread } from '@/lib/agentThread/thread';
 import type { CoordinatorJobs } from '@/lib/threadJobs';
-import { HandedLinksProvider, turnCalls, useHandedLinks, type HandedLinks } from '@/screens/work/conversation/cards';
+import { turnCalls } from '@/screens/work/conversation/cards';
 import type { SessionControls } from '@/screens/work/conversation/sessionControls';
 import type { ConversationState } from '@/screens/work/hooks/useAgentThread';
 import type { ThreadTurn } from './useAgentsAtWork';
@@ -36,14 +36,14 @@ export function useChatThread(): ChatThread {
     return thread;
 }
 
-/** The thread's turns as the work they started is read from them: each turn's calls (and the connect links its reply
- *  hands over, `handed`), and what the person asked in the message it answers (a trigger's isn't theirs). */
-export function threadTurns(thread: Thread, handed?: HandedLinks): ThreadTurn[] {
+/** The thread's turns as the work they started is read from them: each turn's calls (and what it left waiting on a
+ *  person), and what the person asked in the message it answers (a trigger's isn't theirs). */
+export function threadTurns(thread: Thread): ThreadTurn[] {
     const turns: ThreadTurn[] = [];
     let asked: string | null = null;
     for (const e of thread.entries) {
         if (e.kind === 'user') asked = e.trigger && !e.author ? null : e.text;
-        else if (e.kind === 'turn') turns.push({ asked, calls: turnCalls(e, handed) });
+        else if (e.kind === 'turn') turns.push({ asked, calls: turnCalls(e) });
     }
     return turns;
 }
@@ -62,14 +62,9 @@ export function ChatThreadProvider({
     referenceDisplay: ReferenceDisplay;
     children: ReactNode;
 }) {
-    const handed = useHandedLinks(state.thread);
-    const turns = useMemo(() => threadTurns(state.thread, handed), [state.thread, handed]);
+    const turns = useMemo(() => threadTurns(state.thread), [state.thread]);
     const calls = useMemo(() => turns.flatMap((t) => t.calls), [turns]);
     const jobs = state.followJobs(calls, state.thread.entries.length);
     const value = useMemo(() => ({ state, session, sessions, turns, jobs, referenceDisplay }), [state, session, sessions, turns, jobs, referenceDisplay]);
-    return (
-        <ChatThreadContext.Provider value={value}>
-            <HandedLinksProvider value={handed}>{children}</HandedLinksProvider>
-        </ChatThreadContext.Provider>
-    );
+    return <ChatThreadContext.Provider value={value}>{children}</ChatThreadContext.Provider>;
 }

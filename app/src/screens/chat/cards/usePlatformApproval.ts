@@ -32,6 +32,8 @@ export function usePlatformApproval(approvalId: string) {
     // Reads overlap (a frame, a focus): the newest one started is the one kept.
     const latest = useRef(0);
     const load = useCallback(async () => {
+        // None to read: a channel's card for someone who doesn't answer it reads nothing.
+        if (!approvalId) return;
         const mine = ++latest.current;
         try {
             const view = await readApproval(client, approvalId);

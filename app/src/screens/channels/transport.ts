@@ -47,6 +47,8 @@ export interface ChannelsTransport {
     post(channelId: string, text: string, attachmentIds: string[]): Promise<ChannelMessage>;
     /** Add (`on`) or take back your reaction; returns the message. */
     react(channelId: string, messageId: string, emoji: string, on: boolean): Promise<ChannelMessage>;
+    /** You connected the account `askId` on an agent's message asked for: its row names you. */
+    askConnected(channelId: string, messageId: string, askId: string): Promise<void>;
     createWorkspace(name: string, logo?: File): Promise<ChannelWorkspace>;
     createChannel(input: { workspaceId: string | null; name: string; topic: string; agents: AgentChoice[]; people?: string[] }): Promise<Channel>;
     updateChannel(channelId: string, changes: { name?: string; topic?: string; mode?: ChannelMode }): Promise<Channel>;

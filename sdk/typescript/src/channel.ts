@@ -1198,6 +1198,16 @@ export class Channel extends ApiObject {
     return toMessage(asObject(await this._request("DELETE", `${await this.path()}/messages/${threadRef(message)}/follow`)));
   }
 
+  /**
+   * Say you connected the account an agent's `message` asks for (the id of one of its `event.asks` of kind
+   * `connect`): the ask names you from now on, the first to say so kept. Refused until it's connected; returns the
+   * message.
+   */
+  async askConnected(message: ChannelMessage | string, askId: string): Promise<ChannelMessage> {
+    const path = `${await this.path()}/messages/${messageRef(message)}/asks/${encodeURIComponent(askId)}/connected`;
+    return toMessage(asObject(await this._request("POST", path)));
+  }
+
   /** Pin a message, as your account or `as` a member (at most 100 a channel); the room is told once. */
   async pin(message: ChannelMessage | string, options: { as?: ChannelPostAs } = {}): Promise<ChannelMessage> {
     const as = options.as === undefined ? undefined : await wireMember(options.as, await this.namesUsers(options.as));

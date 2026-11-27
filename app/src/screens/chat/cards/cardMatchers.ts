@@ -44,19 +44,6 @@ export function connectLinkOf(call: CoordinatorToolCall): { url: string; credent
     return { url, credentialType, reason: str(obj(call.args, 'arguments'), 'reason') ?? str(call.args, 'reason') };
 }
 
-const PROVIDE_LINK = /https?:\/\/[^\s<>()[\]"'`]+\/credential\/provide\/([\w-]+)/g;
-
-/** The request a connect link opens: its token, the last part of its provide page's address. */
-export function provideToken(url: string | undefined): string | undefined {
-    return url ? /\/credential\/provide\/([\w-]+)/.exec(url)?.[1] : undefined;
-}
-
-/** The connect links a reply hands the person (NoClick's provide pages it names), each once, by their tokens: however
- *  the link was made (a NoClick tool, or the agent's own shell calling the API), the reply is where it's handed over. */
-export function handedLinkTokens(text: string | null | undefined): string[] {
-    return [...new Set([...(text ?? '').matchAll(PROVIDE_LINK)].map((m) => m[1]))];
-}
-
 export function isConnectLink(call: CoordinatorToolCall): boolean {
     return !!connectLinkOf(call);
 }

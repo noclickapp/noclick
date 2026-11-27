@@ -7,7 +7,7 @@ import type { SavedGraph } from '@/lib/graphPreview';
 import { cn } from '@/ui/utils';
 import { Canvas } from '@/ui/chat/canvas';
 import { FreshCheck, ProgressMotion, Swap } from '@/ui/chat/motion';
-import { InlineCard, listOf, LiveDot, PILL_QUIET, Receipt, Row, Rows, Status } from '@/ui/chat/primitives';
+import { AskCard, InlineCard, listOf, LiveDot, PILL_QUIET, Receipt, Row, Rows, Status } from '@/ui/chat/primitives';
 import { WORKING_MARK } from '../../slots';
 
 /** What a connect-time check said of an account, as the app's connections report it (the fields read here). */
@@ -62,11 +62,13 @@ export function ConnectAppsCard({ title, meta, apps }: { title: ReactNode; meta?
     );
 }
 
-/** An account that's in: who it is, and what the connect-time check said when it just ran here. */
+/** An account that's in: who it is, what the connect-time check said when it just ran here, and who connected it
+ *  where others may have (a channel: "Priya", "You"). */
 export interface ConnectedAccount {
     name: string;
     account?: string;
     verification?: ConnectionCheck | null;
+    by?: string;
 }
 
 /** A key nothing could check is saved, never shown as working. */
@@ -75,20 +77,10 @@ const savedOnly = (verification?: ConnectionCheck | null) => !!verification && u
 /** What the check proved (their customers, their channels), else the account itself. */
 const accountLine = ({ account, verification }: ConnectedAccount) => verdictSummary(verification) ?? account;
 
-/** The accounts a turn asks to connect, as one card: a row each (its mark, its name, how it connects and the one button
- *  that does it), counted as they land. Once every one is in, the card folds to `ConnectedSummary`. */
-export function ConnectAccountsCard({ total, done, meta, children }: { total: number; done: number; meta?: ReactNode; children: ReactNode }) {
-    return (
-        <InlineCard
-            title={total === 1 ? 'Connect an account' : `Connect ${total} accounts`}
-            meta={meta}
-            aside={total > 1 && <span className="text-[12.5px] tabular-nums text-muted-foreground">{`${done} of ${total} done`}</span>}
-        >
-            <div data-testid="coordinator-connect">
-                <Rows className="-mb-1">{children}</Rows>
-            </div>
-        </InlineCard>
-    );
+/** The accounts a turn asks to connect, as one card of asks: a row each (its mark, its name, what it's for and the one
+ *  button that connects it). Once every one is in, the card folds to `ConnectedSummary`. */
+export function ConnectAccountsCard({ children }: { children: ReactNode }) {
+    return <AskCard testId="coordinator-connect">{children}</AskCard>;
 }
 
 /** What a test finds an account's row by. */
@@ -114,26 +106,30 @@ export function ConnectedRow({ mark, connected }: { mark: ReactNode; connected: 
     );
 }
 
-/** Every account in, in one line. */
+/** Every account in, in one line, saying who connected them where they all had one person. */
 export function ConnectedSummary({ accounts }: { accounts: ConnectedAccount[] }) {
     if (accounts.length === 1) return <ConnectedReceipt {...accounts[0]} />;
     const saved = accounts.filter((a) => savedOnly(a.verification)).map((a) => a.name);
     const connected = accounts.filter((a) => !savedOnly(a.verification)).map((a) => a.name);
     if (!connected.length) return <Receipt tone="info">{listOf(saved)} saved, not verified yet · the first run will tell</Receipt>;
+    const by = accounts.every((a) => a.by && a.by === accounts[0].by) ? accounts[0].by : undefined;
     return (
         <Receipt>
-            {listOf(connected)} {connected.length === 1 ? 'is' : 'are'} connected{saved.length ? ` · ${listOf(saved)} saved, not verified yet` : ''}
+            {by ? `${by} connected ${listOf(connected)}` : `${listOf(connected)} ${connected.length === 1 ? 'is' : 'are'} connected`}
+            {saved.length ? ` · ${listOf(saved)} saved, not verified yet` : ''}
         </Receipt>
     );
 }
 
-/** A connected account in one line: what the connect-time check proved when it just ran here, else the account itself. */
-export function ConnectedReceipt({ name, account, verification }: ConnectedAccount) {
+/** A connected account in one line: who connected it where that's said, then what the connect-time check proved when
+ *  it just ran here, else the account itself. */
+export function ConnectedReceipt({ name, account, verification, by }: ConnectedAccount) {
     if (savedOnly(verification)) return <Receipt tone="info">{name} saved, not verified yet · the first run will tell</Receipt>;
     const line = accountLine({ name, account, verification });
     return (
         <Receipt>
-            {name} connected{line ? ` · ${line}` : ''}
+            {by ? `${by} connected ${name}` : `${name} connected`}
+            {line ? ` · ${line}` : ''}
         </Receipt>
     );
 }

@@ -36,6 +36,7 @@ import { useChannelTypists, useTypingSignal } from '@/screens/channels/typing';
 import { WorkingLine, workingLineOf, type LineTarget } from './WorkingLine';
 import { useWorkViewer } from '../viewer';
 import { NeedPills } from '../agents/needs';
+import { ChannelAsks } from '@/screens/chat/cards/ChannelAsks';
 
 const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer.types).includes('Files');
 /** Every command where whoever shows Work hands asks to NoClick (`ask`): /remind and /automate are asks. */
@@ -160,6 +161,13 @@ function ChannelPaneBody({
     const typists = useChannelTypists(transport, channel.id, own ? 'account' : (viewer.id ?? ''));
     const typing = useTypingSignal(transport, channel.id);
     const line = workingLineOf({ channelId: channel.id, members: mentionable, busy, states: own ? states.data : undefined, messages, typists });
+    // What an agent's turn left waiting on a person, under its reply: an OK is the account's owner's to give.
+    const TurnAsks = useMemo(() => {
+        const said = (askId: string, messageId: string) => transport.askConnected(channel.id, messageId, askId).catch((e) => console.warn('[channels] saying who connected failed:', e));
+        return function ChannelTurnAsks({ message }: { message: ChannelMessage }) {
+            return <ChannelAsks message={message} answersApprovals={own} onConnected={(askId) => void said(askId, message.id)} />;
+        };
+    }, [transport, channel.id, own]);
     const schedules = useChannelSchedules(transport, channel.id);
     const closed = channel.status === 'closed';
     const dm = channel.kind === 'dm';
@@ -387,6 +395,7 @@ function ChannelPaneBody({
         onAnswer: (text) => void channels.post(channel.id, text, []).catch((e) => toast.error(errorText(e))),
         // What an agent made on an agents page still needs, connected from its message.
         Asks: NeedPills,
+        TurnAsks,
         // An author's name and face open them: an agent's profile, a person's DM.
         onAuthor: onMember,
         lit,

@@ -8,7 +8,7 @@
 // one line. A question to someone else only shows that it waits on them.
 import { FileKey, MessageCircleQuestion } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { GlyphTile, InlineCard, PILL_PRIMARY, PILL_QUIET, PILL_SECONDARY, Receipt, Status } from '@/ui/chat/primitives';
+import { AskCard, AskMark, AskRow, PILL_PRIMARY, PILL_QUIET, PILL_SECONDARY, Receipt, Status } from '@/ui/chat/primitives';
 import { FIELD } from '@/ui/fields';
 import { useHumanRequest, type FileQuestion, type OwnerAnswer } from '@/screens/humans/useHumanRequest';
 import { openMachineFile } from '@/screens/work/place';
@@ -108,8 +108,9 @@ export function OwnerQuestion({ requestId, asked: askedBefore, offered = [] }: O
     const { question, unreadable, answering, failure, answer } = useHumanRequest(useClient(), requestId);
     const Pick = useSlot(QUESTION_PICK);
     const Step = useSlot(QUESTION_STEP);
-    // An answer that isn't one of the options, written under the card.
+    // An answer that isn't one of the options, written under the card; a file's values, typed in once asked for.
     const [inWords, setInWords] = useState(false);
+    const [entering, setEntering] = useState(false);
     const asked = question?.message || askedBefore || 'A question';
     const options = question ? question.options : offered;
     const status = question?.status ?? 'pending';
@@ -144,17 +145,33 @@ export function OwnerQuestion({ requestId, asked: askedBefore, offered = [] }: O
     const file = question?.file ?? null;
     // A pick's choices are the account's, picked from all of it below rather than from the first few as buttons.
     const choices = !pick && !fillsStep && !file && options && options.length > 0 ? options : null;
+    const detail = !mine
+        ? 'Waiting for their answer'
+        : file
+          ? `Goes into ${file.path} · never shown again`
+          : choices
+            ? 'Tap an answer, or reply in your own words'
+            : 'Waiting for your answer';
     return (
         <div data-testid="owner-question">
-            <InlineCard
-                lead={
-                    <GlyphTile>{file ? <FileKey className="h-4 w-4" /> : <MessageCircleQuestion className="h-4 w-4" />}</GlyphTile>
-                }
-                title={asked}
-                meta={mine ? 'Waiting for your answer' : 'Waiting for their answer'}
-                actions={
-                    mine && choices ? (
-                        <>
+            <AskCard>
+                <AskRow
+                    wrap
+                    lead={<AskMark>{file ? <FileKey /> : <MessageCircleQuestion />}</AskMark>}
+                    title={asked}
+                    detail={detail}
+                    action={
+                        mine && file && !entering ? (
+                            <button type="button" className={PILL_PRIMARY} disabled={!ready} onClick={() => setEntering(true)}>
+                                Enter
+                            </button>
+                        ) : undefined
+                    }
+                >
+                    {!question ? (
+                        <Status state="working">Checking it’s still waiting</Status>
+                    ) : mine && choices ? (
+                        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Answers">
                             {choices.map((choice, i) => (
                                 <button key={choice} type="button" className={i === 0 ? PILL_PRIMARY : PILL_SECONDARY} disabled={!ready} onClick={() => void answer({ choice })}>
                                     {choice}
@@ -165,27 +182,22 @@ export function OwnerQuestion({ requestId, asked: askedBefore, offered = [] }: O
                                     Something else
                                 </button>
                             )}
-                        </>
-                    ) : undefined
-                }
-            >
-                {!question ? <Status state="working">Checking it’s still waiting</Status> : null}
-                {mine && pick && (
-                    <div className="mt-3" data-testid="owner-question-pick">
-                        <Pick pick={pick} question={asked} onAnswer={(choice) => void answer({ choice })} />
-                    </div>
-                )}
-                {mine && file && (
-                    <div className="mt-3" data-testid="owner-question-file">
-                        <FileAnswer file={file} disabled={!ready} onAnswer={(given) => void answer(given)} />
-                    </div>
-                )}
-                {mine && question && fillsStep && (
-                    <div className="mt-3" data-testid="owner-question-step">
-                        <Step question={question} onAnswer={(given) => void answer(given)} disabled={!ready} />
-                    </div>
-                )}
-            </InlineCard>
+                        </div>
+                    ) : mine && pick ? (
+                        <div data-testid="owner-question-pick">
+                            <Pick pick={pick} question={asked} onAnswer={(choice) => void answer({ choice })} />
+                        </div>
+                    ) : mine && file && entering ? (
+                        <div data-testid="owner-question-file">
+                            <FileAnswer file={file} disabled={!ready} onAnswer={(given) => void answer(given)} />
+                        </div>
+                    ) : mine && fillsStep ? (
+                        <div data-testid="owner-question-step">
+                            <Step question={question} onAnswer={(given) => void answer(given)} disabled={!ready} />
+                        </div>
+                    ) : null}
+                </AskRow>
+            </AskCard>
             {/* A written answer stands under the card, never inside it. */}
             {mine && !pick && !fillsStep && !file && (!choices || inWords) && question && (
                 <div className="mt-2.5 max-w-[560px]">

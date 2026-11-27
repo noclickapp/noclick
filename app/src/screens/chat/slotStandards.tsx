@@ -1,18 +1,19 @@
 // What stands in the Chat page's slots (slots.ts) when no host fills them: each a whole way to do the thing over the
 // platform API and NoClick's own pages, never a gap.
 import { useState } from 'react';
-import { ArrowUpRight, KeyRound, Wallet } from 'lucide-react';
+import { ArrowUpRight, Wallet } from 'lucide-react';
 import { standing } from '@/slots';
 import { openTabForLater } from '@/lib/oauthPopup';
 import { str, type CoordinatorToolCall } from '@/lib/toolCalls';
 import { addFundsUrl, NOCLICK_SITE, workflowUrl } from '@/screens/console/lib/site';
-import { InlineCard, LiveDot, PILL_PRIMARY, PILL_QUIET, Receipt } from '@/ui/chat/primitives';
+import { AskCard, AskMark, InlineCard, LiveDot, PILL_PRIMARY, PILL_QUIET, Receipt, Row, Status } from '@/ui/chat/primitives';
 import { FIELD } from '@/ui/fields';
 import { CONNECTION_MARK } from '@/ui/slots';
 import { cn } from '@/ui/utils';
 import { connectLinkOf } from './cards/cardMatchers';
 import { connectAsksOf, useCoordinatorJob, type ConnectAsk } from './cards/toolCardRegistry';
-import type { BuildQuestionProps, ChatPlaces, ConnectAccountProps, QuestionPickProps, QuestionStepProps } from './slots';
+import { ConnectedSummary, type ConnectedAccount } from './cards/inline/setup';
+import type { BuildQuestionProps, ChatPlaces, ConnectAccountProps, ConnectRowsProps, QuestionPickProps, QuestionStepProps } from './slots';
 import { useSite } from './site';
 
 export { emailOnNoClick, textOnNoClick } from './connect/onNoClick';
@@ -111,26 +112,35 @@ export function OutOfFundsLink() {
 /** An account's name as a card says it: an AI company's for an `agent_…` key, else its service's. */
 const accountName = (type: string) => standing(CONNECTION_MARK).aiCompany(type) ?? standing(CONNECTION_MARK).label(type);
 
-/** One account to connect: its link's page on NoClick, then connected once the operation it waits on settles. */
-function AskRow({ ask }: { ask: Pick<ConnectAsk, 'credentialType' | 'url' | 'message' | 'operationId'> }) {
+type LinkAsk = Pick<ConnectAsk, 'credentialType' | 'url' | 'message' | 'operationId'>;
+
+/** One account to connect, as a row: its app, what it's for, and Connect, its link's page on NoClick; connected
+ *  once the operation it waits on settles, or `landed` says it is. */
+function LinkRow({ ask, landed }: { ask: LinkAsk; landed?: ConnectedAccount }) {
     const { job } = useCoordinatorJob(ask.operationId);
+    const { Mark } = standing(CONNECTION_MARK);
     const name = accountName(ask.credentialType);
-    const done = str(job, 'status') === 'succeeded' || str(job, 'status') === 'completed';
+    const done = !!landed || str(job, 'status') === 'succeeded' || str(job, 'status') === 'completed';
     return (
-        <Receipt
-            tone="info"
-            lead={<KeyRound className="h-4 w-4 shrink-0 text-foreground/60" />}
-            action={
-                done ? undefined : (
-                    <a href={ask.url} {...external} className={cn(PILL_QUIET, 'h-7')}>
-                        Connect on NoClick
+        <Row
+            lead={
+                <AskMark>
+                    <Mark credentialType={ask.credentialType} size="sm" />
+                </AskMark>
+            }
+            title={name}
+            detail={done ? (landed?.account ?? 'Connected') : (ask.message ?? `Connect your ${name} account`)}
+            aside={
+                done ? (
+                    <Status state="done">Connected</Status>
+                ) : (
+                    <a href={ask.url} {...external} className={PILL_PRIMARY}>
+                        Connect
                         <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                 )
             }
-        >
-            {done ? `${name} connected` : (ask.message ?? `Connect ${name}`)}
-        </Receipt>
+        />
     );
 }
 
@@ -139,23 +149,40 @@ export function ConnectAsksLinks({ call, turn }: { call: CoordinatorToolCall; tu
     const asks = connectAsksOf(turn ?? [call]);
     if (asks[0]?.id !== call.id) return null;
     return (
-        <div className="flex flex-col gap-1.5" data-testid="coordinator-connect">
+        <AskCard testId="coordinator-connect">
             {asks.map((ask) => (
-                <AskRow key={ask.id} ask={ask} />
+                <LinkRow key={ask.id} ask={ask} />
             ))}
-        </div>
+        </AskCard>
     );
 }
 
 export function ConnectAccountLink({ type, url, message, operationId }: ConnectAccountProps) {
-    return <AskRow ask={{ credentialType: type, url, message, operationId }} />;
+    return (
+        <AskCard testId="coordinator-connect">
+            <LinkRow ask={{ credentialType: type, url, message, operationId }} />
+        </AskCard>
+    );
 }
 
 /** An AI company's account for an agent's model, on its link's page on NoClick (where its plan's sign-in is). */
 export function ConnectPlansLinks({ call }: { call: CoordinatorToolCall }) {
     const link = connectLinkOf(call);
     if (!link) return null;
-    return <AskRow ask={{ credentialType: link.credentialType, url: link.url, message: link.reason, operationId: str(call.result, 'operation_id') }} />;
+    return <ConnectAccountLink type={link.credentialType} url={link.url} message={link.reason} startedAt={call.startedAt} operationId={str(call.result, 'operation_id')} />;
+}
+
+/** The accounts an agent's message in a channel asks for, each on its link's page on NoClick; once all are in, one
+ *  line saying who connected them. */
+export function ConnectRowsLinks({ asks, landed }: ConnectRowsProps) {
+    if (asks.every((ask) => landed[ask.id])) return <ConnectedSummary accounts={asks.map((ask) => ({ ...landed[ask.id], name: accountName(ask.credentialType) }))} />;
+    return (
+        <AskCard testId="coordinator-connect">
+            {asks.map((ask) => (
+                <LinkRow key={ask.id} ask={ask} landed={landed[ask.id]} />
+            ))}
+        </AskCard>
+    );
 }
 
 const search = (params: Record<string, string | null>) => new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => !!entry[1])).toString();

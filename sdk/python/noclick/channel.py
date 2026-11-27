@@ -1515,6 +1515,21 @@ class Channel(_Object):
             "POST", f"{await self._id_path()}/messages/{_thread_id(message)}/follow") or {})
 
     @synced
+    async def ask_connected(self, message: Any, ask_id: str) -> ChannelMessage:
+        """Say you connected the account an agent's ``message`` asks for (the id of one of its ``event["asks"]`` of
+        kind ``connect``): the ask names you from now on, the first to say so kept. Refused until it's connected.
+
+        Returns:
+            The message.
+
+        Usage::
+
+            room.ask_connected(message_id, ask_id)
+        """
+        return ChannelMessage._from(await self._request(
+            "POST", f"{await self._id_path()}/messages/{_message_id(message)}/asks/{ask_id}/connected") or {})
+
+    @synced
     async def unfollow(self, message: Any) -> ChannelMessage:
         """Stop following ``message``'s thread, until you post in it or are @mentioned there.
 

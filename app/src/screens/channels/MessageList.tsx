@@ -353,6 +353,8 @@ export interface MessageActions {
     onAnswer?: (text: string) => void;
     /** What connects an agent's asks under its message (what it needs before it can start), where the page can. */
     Asks?: ComponentType<{ agentId: string; needs: AgentNeed[] }>;
+    /** What draws what an agent's turn left waiting on a person under its reply (an account, an OK, a payment). */
+    TurnAsks?: ComponentType<{ message: ChannelMessage }>;
 }
 
 /** The emoji a person reaches for most, first in the hover bar as in Slack. */
@@ -797,6 +799,7 @@ export function MessageRow({
                 {msg.attachments.length ? <MessageAttachments attachments={msg.attachments} /> : null}
                 {msg.question && <QuestionAnswers options={msg.question.options} answer={answer} onAnswer={actions.onAnswer} />}
                 {msg.asks && msg.asks.needs.length > 0 && (author?.agentId && actions.Asks ? <actions.Asks agentId={author.agentId} needs={msg.asks.needs} /> : <NamedAsks needs={msg.asks.needs} />)}
+                {msg.turnAsks && actions.TurnAsks && <actions.TurnAsks message={msg} />}
                 {author && handoffs.length > 0 && <Handoffs from={author} to={handoffs} user={user} />}
                 {canReact && msg.reactions.length > 0 && <Reactions reactions={msg.reactions} onReact={(emoji) => onReact(msg.id, emoji)} />}
                 {actions.onThread && !msg.threadId && <RepliesBar msg={msg} members={members} user={user} onOpen={() => actions.onThread?.(msg.id)} />}

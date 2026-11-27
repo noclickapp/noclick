@@ -11,6 +11,7 @@
 // the account ran out carries what its card draws.
 import { needOf, type AgentNeed } from '@/lib/agentNeeds';
 import { outOfFundsOf, readMessage, turnEndText, type ChatReference } from './messages';
+import { askList, type TurnAsk } from '../turnAsks';
 import type {
     AgentEvent, AgentStep, AgentStepDiff, AgentStepKind, Attachment, DiffStat, HarnessRequest, JsonObject, Message, MessageChannel, MessageSubagent, MessageTrigger, MessageVia, StepCategory, StepGroup, StepLabel, StepProgress, StepTests,
     TurnSummary,
@@ -205,6 +206,9 @@ export interface TurnEntry {
     announced: JsonObject[];
     /** NoClick turned it down because the account ran out: what its card draws (Add funds, the invite link). */
     outOfFunds: JsonObject | null;
+    /** What it left waiting on a person, as its result keeps them (an account to connect, an OK, a payment), whatever
+     *  made them: each a card under its reply. */
+    asks: TurnAsk[];
     /** Its harness's reads and searches folded, as the platform folds them (a `group` moment says each change). */
     groups: StepGroup[];
     /** What its harness did, once it ended. */
@@ -505,6 +509,7 @@ function settledTurn(m: Message, at: number, startedAt: number, key: string): Tu
         failure: m.raw.failed === true ? failureOf(m.raw.failure) : null,
         announced: [],
         outOfFunds: outOfFundsOf(m.raw.out_of_funds) ?? null,
+        asks: askList(m.raw.asks),
         groups: m.groups ?? [],
         summary: m.summary ?? null,
     };
@@ -605,6 +610,7 @@ export function runningTurn(operationId: string | null, at: number): TurnEntry {
         failure: null,
         announced: [],
         outOfFunds: null,
+        asks: [],
         groups: [],
         summary: null,
     };
@@ -766,6 +772,7 @@ function withReply(thread: Thread, event: AgentEvent, at: number): Thread {
         downloading: null,
         failure: failed ? (failureOf(event.raw.failure) ?? turn.failure) : null,
         outOfFunds: outOfFundsOf(event.raw.out_of_funds) ?? turn.outOfFunds,
+        asks: askList(event.raw.asks).length ? askList(event.raw.asks) : turn.asks,
     };
     return replace(next, settled);
 }
@@ -1011,8 +1018,10 @@ export function applyEvent(thread: Thread, event: AgentEvent, at: number, follow
         }
         case 'turn_end': {
             if (!event.operationId) return thread;
-            const turn = event.summary && thread.entries.find((e): e is TurnEntry => e.kind === 'turn' && e.operationId === event.operationId);
-            const told = turn ? replace(thread, { ...turn, summary: event.summary ?? null }) : thread;
+            // What it did and what it left waiting on a person, said as it ended.
+            const asks = askList(event.raw.asks);
+            const turn = (event.summary || asks.length) && thread.entries.find((e): e is TurnEntry => e.kind === 'turn' && e.operationId === event.operationId);
+            const told = turn ? replace(thread, { ...turn, summary: event.summary ?? turn.summary, asks: asks.length ? asks : turn.asks }) : thread;
             return closed(told, event.operationId, event.status, event.text, at, following);
         }
         case 'group': {

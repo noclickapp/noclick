@@ -83,6 +83,45 @@ export function Row({ lead, title, detail, aside, className, testId }: { lead?: 
     );
 }
 
+// ── What a person is asked for ───────────────────────────────────────────────
+
+/** The tile an ask's row leads with, 32px so every row's words start in line: an app's mark, or a glyph for what
+ *  NoClick asks (a value, an OK, an answer, a payment). */
+export function AskMark({ children }: { children: ReactNode }) {
+    return <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-foreground/[0.06] text-foreground/80 dark:bg-foreground/[0.08] [&>svg]:h-4 [&>svg]:w-4">{children}</span>;
+}
+
+/** Something a person is asked for (an account to connect, a value, an OK, an answer, a payment), the same in the
+ *  chat and in a channel: one card of rows (`AskRow`), each its mark, what it is, one line of why or what it costs,
+ *  and its action on the right. Done, an ask folds to a `Receipt`. */
+export function AskCard({ children, testId }: { children: ReactNode; testId?: string }) {
+    return (
+        <section className={cn(CARD, 'px-4')} data-testid={testId}>
+            <Rows>{children}</Rows>
+        </section>
+    );
+}
+
+/** One ask's row; what answering it takes (answers to tap, a value to type, what a deletion takes) stands under it,
+ *  in line with its words. Its action stands beside the words, or under them where it would squeeze them (a phone). */
+export function AskRow({ lead, title, detail, action, children, testId, wrap = false }: { lead: ReactNode; title: ReactNode; detail?: ReactNode; action?: ReactNode; children?: ReactNode; testId?: string; wrap?: boolean }) {
+    return (
+        <div data-testid={testId}>
+            <div className="flex min-h-[52px] flex-wrap items-center gap-x-3 gap-y-2 py-2">
+                <div className="flex min-w-[min(100%,13rem)] flex-1 items-center gap-3">
+                    <span className="shrink-0">{lead}</span>
+                    <div className="min-w-0 flex-1">
+                        <div className={cn('text-[14px] text-foreground', wrap ? 'leading-snug' : 'truncate')}>{title}</div>
+                        {detail && <div className={cn('text-[12.5px] text-muted-foreground', wrap ? 'mt-0.5 leading-snug' : 'truncate')}>{detail}</div>}
+                    </div>
+                </div>
+                {action && <div className="ml-auto flex shrink-0 items-center gap-2">{action}</div>}
+            </div>
+            {children && <div className="pb-3 sm:pl-11">{children}</div>}
+        </div>
+    );
+}
+
 /** A finished card's whole story in one line: what happened, and the one thing you might do next. */
 export function Receipt({ lead, children, action, tone = 'done' }: { lead?: ReactNode; children: ReactNode; action?: ReactNode; tone?: 'done' | 'info' }) {
     return (

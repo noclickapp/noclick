@@ -9,12 +9,14 @@ import type { OwnerAnswer, OwnerPick, OwnerQuestion } from '@/screens/humans/use
 import type { TextApp } from '@/ui/AppTile';
 import type { HeldApproval } from './atWork/types';
 import type { CanvasOf, NewestCard } from './cards/canvases';
-import type { CardEntry, ConnectAskOf, ToolCard } from './cards/toolCardRegistry';
+import type { CardEntry, ConnectAsk, ConnectAskOf, ToolCard } from './cards/toolCardRegistry';
+import type { ConnectedAccount } from './cards/inline/setup';
 import {
     AnswerOnNoClick,
     ConnectAccountLink,
     ConnectAsksLinks,
     ConnectPlansLinks,
+    ConnectRowsLinks,
     OutOfFundsLink,
     PickInWords,
     StepOnNoClick,
@@ -104,6 +106,16 @@ export interface ConnectAccountProps {
     operationId?: string;
 }
 
+export interface ConnectRowsProps {
+    /** The accounts an agent's message in a channel asks for (``asks`` of kind connect), on its links. */
+    asks: ConnectAsk[];
+    /** Those NoClick says are in, by the ask's id: which account, and who connected it. */
+    landed: Readonly<Record<string, ConnectedAccount>>;
+    /** How the reader is named once they connect one here ("You"), and the way to say they did. */
+    connectedBy: string;
+    onConnected: (askId: string) => void;
+}
+
 export interface ConnectLinkParts {
     /** The turn's asks to connect, on one card (drawn under the first that asked). */
     Asks: ToolCard;
@@ -111,11 +123,13 @@ export interface ConnectLinkParts {
     Account: ComponentType<ConnectAccountProps>;
     /** An AI company's account for an agent's model, offered as its plan's sign-in where it has one. */
     Plans: ToolCard;
+    /** The accounts an agent's message in a channel asks for, which anyone there may connect. */
+    Rows: ComponentType<ConnectRowsProps>;
 }
 
 /** Connecting an account a card asks for. The standard opens the link's page on NoClick in a new tab, and the card
- *  says connected once the operation the link waits on settles. */
-export const CONNECT_LINK = slot<ConnectLinkParts>('chat.connect.link', { Asks: ConnectAsksLinks, Account: ConnectAccountLink, Plans: ConnectPlansLinks });
+ *  says connected once the operation the link waits on settles (in a channel, once NoClick says so). */
+export const CONNECT_LINK = slot<ConnectLinkParts>('chat.connect.link', { Asks: ConnectAsksLinks, Account: ConnectAccountLink, Plans: ConnectPlansLinks, Rows: ConnectRowsLinks });
 
 // ── the Beside ──────────────────────────────────────────────────────────────
 

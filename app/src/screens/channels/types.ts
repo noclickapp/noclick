@@ -3,6 +3,7 @@
 // workspaces (members, mentions-or-all mode, author {type, id, name}, files,
 // reactions), as the page draws them.
 import type { AgentNeed } from '@/lib/agentNeeds';
+import type { TurnAsks } from '@/lib/turnAsks';
 
 /** An agent's colour: its avatar, and how its name reads when @-mentioned. */
 export type AgentHue = 'sky' | 'violet' | 'pink' | 'fuchsia' | 'emerald' | 'blue' | 'purple' | 'teal';
@@ -107,6 +108,8 @@ export interface ChannelMessage {
     question?: { options: ChannelQuestionOption[] };
     /** What an agent still needs before it can start (an agents page made it): each to connect from its message. */
     asks?: { needs: AgentNeed[] };
+    /** What the agent's turn left waiting on a person (an account to connect, an OK, a payment), as rows under it. */
+    turnAsks?: TurnAsks;
     /** An automation's post (a Post to Channel step), its author the automation. */
     automation?: { workflowId: string | null };
 }
