@@ -255,6 +255,9 @@ def test_workspace_lists_reads_writes_links_and_deletes_files(api, client):
     request = files.calls.last.request
     assert request.url.params["conversation"] == "ticket-1841"
     assert request.headers["NoClick-User"] == "user_42"  # captured where the workspace was made
+    assert "path" not in request.url.params
+    workspace.files(path="shots")
+    assert files.calls.last.request.url.params["path"] == "shots"
 
     assert workspace.read("report.csv") == b"region,total\n"
     assert read.calls.last.request.url.params["path"] == "report.csv"

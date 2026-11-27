@@ -215,6 +215,9 @@ test("a workspace lists, reads, writes, links and deletes a conversation's files
   assert.deepEqual([report.path, report.sizeBytes, report.url], ["report.csv", 2048, "https://files.test/r"]);
   assert.equal(files.last.query.get("conversation"), "ticket-1841");
   assert.equal(files.last.headers.get("NoClick-User"), "user_42"); // captured where it was made
+  assert.equal(files.last.query.get("path"), null);
+  await workspace.files({ path: "shots" });
+  assert.equal(files.last.query.get("path"), "shots");
   assert.equal(new TextDecoder().decode(await workspace.read("report.csv")), "region,total\n");
   assert.equal(read.last.query.get("path"), "report.csv");
   assert.equal((await workspace.write("notes.md", "hello")).path, "notes.md");

@@ -262,6 +262,7 @@ export interface WorkspaceFile {
   path: string;
   sizeBytes: number;
   modifiedAt: Date | null;
+  /** A download link for about an hour; null for a file read where the agent runs. */
   url: string | null;
   raw: JsonObject;
 }
@@ -303,9 +304,13 @@ export class AgentWorkspace {
     });
   }
 
-  /** Every file in the workspace, each with a download `url` (empty until the agent writes one). */
-  async files(): Promise<WorkspaceFile[]> {
-    return (asList(await this.call("GET", "")) as JsonObject[]).map(toWorkspaceFile);
+  /**
+   * Every file in the workspace, or under `path` (one of its folders), each with a download `url` (empty until the
+   * agent writes one). Listed where a coding agent's sandbox, or its container on a machine, runs while it runs,
+   * with `url` null (read it with `read`); a workspace that can't be read now throws `Conflict` saying so.
+   */
+  async files(options: { path?: string } = {}): Promise<WorkspaceFile[]> {
+    return (asList(await this.call("GET", "", { query: { path: options.path } })) as JsonObject[]).map(toWorkspaceFile);
   }
 
   /** Read one file's bytes; a missing file throws `NotFound`. */

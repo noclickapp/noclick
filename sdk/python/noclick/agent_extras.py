@@ -351,8 +351,8 @@ class AgentMemory:
 
 @dataclass(frozen=True)
 class WorkspaceFile:
-    """A file in an agent's workspace for one conversation (``AgentWorkspace``).
-    ``url`` downloads it without a key for about an hour."""
+    """A file in an agent's workspace (``AgentWorkspace``). ``url`` downloads it without a key for about an hour;
+    None for one read where the agent runs (its sandbox or its container on a machine: read it with ``read``)."""
 
     path: str
     size_bytes: int
@@ -395,12 +395,14 @@ class AgentWorkspace:
         )
 
     @synced
-    async def files(self) -> List[WorkspaceFile]:
-        """Every file in the workspace.
+    async def files(self, path: Optional[str] = None) -> List[WorkspaceFile]:
+        """Every file in the workspace, or under ``path``, one of its folders. While a coding agent's sandbox, or
+        its container on a machine, runs, they're listed there; a workspace that can't be read now (on a machine
+        that keeps it on its disk, while the agent's container is stopped) raises ``noclick.Conflict`` saying so.
 
         Returns:
             Each file's ``path`` (relative to ``/workspace``), size, when it last changed and a download ``url``.
-            An empty list for a conversation whose agent hasn't written anything.
+            An empty list for an agent that hasn't written anything.
 
         Usage::
 
@@ -408,7 +410,7 @@ class AgentWorkspace:
             for file in support.workspace().files():
                 print(file.path, file.size_bytes, file.url)
         """
-        response = await self._call("GET", "") or {}
+        response = await self._call("GET", "", params={"path": path} if path else {}) or {}
         return [WorkspaceFile._from(row) for row in response.get("data") or []]
 
     @synced
