@@ -67,7 +67,6 @@ export function forAppsMessages(state: AgentForAppsState): Json[] {
             options: [
                 { label: 'Show my experience', reply: 'Show me my experience in Roblox.' },
                 { label: 'Show my data stores', reply: 'Show me my data stores in Roblox.' },
-                { label: 'Show my data store entries', reply: 'Show me my data store entries in Roblox.' },
             ],
         }
     );

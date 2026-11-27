@@ -34,6 +34,6 @@ describe('an agents page’s agent in its channel', () => {
         expect(within(asks).getByText('Model connected')).toBeTruthy();
         expect(within(asks).queryByRole('button')).toBeNull();
         const taps = screen.getByRole('group', { name: 'Answers' });
-        expect(within(taps).getAllByRole('button').map((b) => b.textContent)).toEqual(['Show my experience', 'Show my data stores', 'Show my data store entries']);
+        expect(within(taps).getAllByRole('button').map((b) => b.textContent)).toEqual(['Show my experience', 'Show my data stores']);
     });
 });
