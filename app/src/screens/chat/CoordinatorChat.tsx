@@ -10,6 +10,7 @@ import { NotFound, type JsonObject, type NoClick } from 'noclick';
 import type { ChatReference } from '@/lib/agentThread/messages';
 import { setupSubject } from '@/lib/agentThread/thread';
 import { useWorkFrames, WorkLiveContext, type WorkLive } from '@/sdk/live';
+import { readsRestored } from '@/sdk/useV1';
 import { ConversationBrowserView } from '@/screens/work/browser/BrowserView';
 import { ConversationBrowserProvider, useConversationBrowser } from '@/screens/work/browser/useConversationBrowser';
 import { WorkClientContext } from '@/screens/work/client';
@@ -54,6 +55,8 @@ function useCoordinatorSession(client: NoClick, agent: ReturnType<typeof coordin
     const [read, setRead] = useState(0);
     useEffect(() => {
         let left = false;
+        // The session this browser kept, drawn while it's read again.
+        void readsRestored(client).then(() => !left && setSession((s) => s ?? knownSession(client)));
         readCoordinatorSession(client).then(
             (s) => !left && (setSession(s), setError(null)),
             (e: unknown) => {

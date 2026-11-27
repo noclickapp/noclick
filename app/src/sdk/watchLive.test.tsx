@@ -136,6 +136,38 @@ describe('a reset', () => {
     });
 });
 
+describe('coming back into view', () => {
+    it('reads nothing again while the stream follows the client (it says what moved), and again once the stream is off', async () => {
+        const fake = fakeWatch();
+        const own = new NoClick({ apiKey: 'sk_test_made_up', baseUrl: 'https://api.noclick.test', maxRetries: 0 });
+        const live = liveFromWatch(sdkLive(own, { watch: fake.watch }), { backstopMs: null });
+        live.on('platform:resource', () => undefined);
+        const read = vi.fn(async () => 1);
+        function View() {
+            useV1('account', read, { client: own });
+            return null;
+        }
+        render(<View />);
+        await waitFor(() => expect(read).toHaveBeenCalledTimes(1));
+        const shown = () => act(() => {
+            window.dispatchEvent(new Event('focus'));
+            document.dispatchEvent(new Event('visibilitychange'));
+        });
+
+        // A socket that opened without carrying on: what's shown is read again, once, whoever else asks for it.
+        fake.send({ type: 'ready', resumed: false });
+        await waitFor(() => expect(read).toHaveBeenCalledTimes(2));
+        shown();
+        await new Promise((done) => setTimeout(done, 100));
+        expect(read).toHaveBeenCalledTimes(2);
+
+        fake.refuse();
+        await waitFor(() => expect(fake.opened).toHaveLength(1));
+        shown();
+        await waitFor(() => expect(read).toHaveBeenCalledTimes(3));
+    });
+});
+
 /** A source the test moves by hand. */
 function handSource() {
     const listeners = new Set<(m: LiveMessage) => void>();

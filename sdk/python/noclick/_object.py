@@ -193,6 +193,22 @@ class _Object:
         """The server's JSON for this object (hydrates if needed)."""
         return self._sync_raw()
 
+    @classmethod
+    def from_json(cls: type[T], raw: Dict[str, Any], *, client: Optional[Client] = None, user: Any = AMBIENT) -> T:
+        """The object as its ``raw`` was (kept in a store, say), without reading it: what it shows is as of
+        then, and ``refresh()`` reads it again.
+
+        Returns:
+            An object of this class, holding ``raw``. It sends nothing.
+
+        Usage::
+
+            kept = noclick.Domain.from_name("acmebooking.com").raw
+            domain = noclick.Domain.from_json(kept)
+            print(domain.name, domain.refresh().status)
+        """
+        return cls._new(raw=raw, client=client, user=user)
+
     @synced
     async def hydrate(self: T) -> T:
         """Load the object from the server if it hasn't been yet.

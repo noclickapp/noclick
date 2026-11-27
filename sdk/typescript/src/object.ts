@@ -187,6 +187,16 @@ export abstract class ApiObject {
   toJSON(): JsonObject {
     return this._raw ?? this._hints;
   }
+
+  /**
+   * The object as its `toJSON()` gave it (kept in a browser's storage, say), without reading it: what it shows is as
+   * of then, and `refresh()` reads it again.
+   *
+   *     const domain = Domain.fromJSON(kept, { client });
+   */
+  static fromJSON<T extends ApiObject>(this: { prototype: T }, raw: JsonObject, options: CallOptions = {}): T {
+    return new (this as unknown as new (init: ObjectInit) => T)({ raw, client: options.client, user: options.user });
+  }
 }
 
 const UUID_RE = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;

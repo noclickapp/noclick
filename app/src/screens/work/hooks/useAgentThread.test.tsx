@@ -6,13 +6,25 @@
 // say something; a page that can read the history by name draws it before the agent's lookup answers.
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WorkProviders } from '../agents/fixtures/providers';
 import { AGENT_ID, fakeWorkAgent } from '../conversation/fixtures/workAgent';
 import { TURN_FAILED_LINE } from '@/lib/agentThread/messages';
 import { Agent, type Attachment } from 'noclick';
 import { toMessage } from '@/sdk/source';
+import { keepReads } from '@/sdk/useV1';
 import { useAgentThread } from './useAgentThread';
+
+// This browser's storage, in memory (IndexedDB clones what it keeps).
+const stored = vi.hoisted(() => new Map<string, unknown>());
+vi.mock('@/lib/indexeddb', () => ({
+    valtioCache: {
+        get: async (key: string) => stored.get(key) ?? null,
+        set: async (key: string, value: unknown) => void stored.set(key, structuredClone(value)),
+        delete: async (key: string) => stored.delete(key),
+        clear: async () => stored.clear(),
+    },
+}));
 
 afterEach(cleanup);
 
@@ -63,6 +75,43 @@ describe('useAgentThread', () => {
         await waitFor(() => expect(result.current.working).toBe(false));
         await act(async () => void (await result.current.send({ text: '', files: [pdf] })));
         expect((fake.requests.filter((r) => r.method === 'POST' && r.path.endsWith('/messages')).at(-1)!.body as { text: string }).text).toBe('(Files attached.)');
+    });
+
+    it('opens on the thread this browser kept for the account, and isn’t ready to send from it until it’s read again', async () => {
+        const said = [
+            { role: 'user', text: 'Book the venue', created_at: at(0) },
+            { role: 'assistant', text: 'Booked for Friday.', created_at: at(1) },
+        ];
+        const before = fakeWorkAgent({ histories: { main: said } });
+        keepReads(before.client, 'acct_1');
+        const first = open(before);
+        await waitFor(() => expect(first.result.current.ready).toBe(true));
+        window.dispatchEvent(new Event('pagehide'));
+        first.unmount();
+        await waitFor(() => expect([...stored.keys()]).toEqual(['kept:acct_1:reads']));
+
+        // The next visit: a new page whose history read hasn't answered yet.
+        const after = fakeWorkAgent({ histories: { main: [...said, { role: 'user', text: 'And dinner after?', created_at: at(2) }] } });
+        keepReads(after.client, 'acct_1');
+        let release = () => undefined as void;
+        const held = new Promise<void>((done) => (release = done));
+        const second = open(after, (client) => {
+            const agent = Agent.fromId(AGENT_ID, { client });
+            const history = agent.history.bind(agent);
+            return Object.assign(agent, { history: async (...args: Parameters<typeof history>) => (await held, history(...args)) });
+        });
+        await waitFor(() => expect(turns(second.result)).toMatchObject([{ reply: 'Booked for Friday.' }]));
+        expect(second.result.current.ready).toBe(false);
+        release();
+        await waitFor(() => expect(second.result.current.ready).toBe(true));
+        expect(users(second.result).map((u) => u.text)).toEqual(['Book the venue', 'And dinner after?']);
+
+        // Another account signed in here draws nothing the first one kept.
+        const other = fakeWorkAgent({ histories: { main: [] } });
+        keepReads(other.client, 'acct_2');
+        const third = open(other, (client) => Object.assign(Agent.fromId(AGENT_ID, { client }), { hydrate: () => new Promise<never>(() => undefined) }));
+        await new Promise((done) => setTimeout(done, 300));
+        expect(third.result.current.thread.entries).toEqual([]);
     });
 
     it('draws the history read by name before the agent’s lookup answers', async () => {

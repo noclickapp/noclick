@@ -7,8 +7,10 @@
 // dedup are structural, and optimistic rollback restores the slice (so the derived
 // tree recomputes consistently).
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
+    keepBrowser,
+    restoreBrowser,
     browserStore,
     ensureScope,
     setCurrentScope,
@@ -31,6 +33,17 @@ import {
 } from './workflowBrowserStore';
 import { installFakeBrowserClient, listed, listing, settle as flush } from './fakeBrowserClient';
 
+// This browser's storage, in memory (IndexedDB clones what it keeps).
+const stored = vi.hoisted(() => new Map<string, unknown>());
+vi.mock('@/lib/indexeddb', () => ({
+    valtioCache: {
+        get: async (key: string) => stored.get(key) ?? null,
+        set: async (key: string, value: unknown) => void stored.set(key, structuredClone(value)),
+        delete: async (key: string) => stored.delete(key),
+        getAllKeys: async () => [...stored.keys()],
+    },
+}));
+
 let api: ReturnType<typeof installFakeBrowserClient>;
 
 beforeEach(() => {
@@ -42,6 +55,33 @@ afterEach(() => api.teardown());
 const wf = (id: string, name: string, is_owner = true): WorkflowApp => ({ id, name, description: '', is_owner });
 // The newest root listing asked for in a scope.
 const rootListing = (org?: string) => api.last('GET', '/v1/workflows', { folder_id: 'top', organization_id: org });
+
+describe('workflowBrowserStore — kept in this browser', () => {
+    it('opens the next visit on what was listed, for the same account only, and the page’s own read replaces it', async () => {
+        setCurrentScope('personal');
+        fetchTree('personal');
+        rootListing().answer(listing([listed('w1', 'Morning brief')]));
+        api.last('GET', '/v1/workflows/folders', { organization_id: undefined, shared_with_me: undefined }).answer(listing([]));
+        await vi.waitFor(() => expect(browserStore.scopes['personal'].foldersLoaded).toBe(true));
+        keepBrowser('acct_1');
+        await vi.waitFor(() => expect(stored.size).toBe(1));
+
+        // The next visit, before anything is read.
+        __resetBrowserStoreForTests();
+        await restoreBrowser('acct_2');
+        expect(browserStore.scopes['personal']).toBeUndefined();
+        await restoreBrowser('acct_1');
+        expect(browserStore.scopes['personal'].foldersLoaded).toBe(true);
+        expect(browserStore.scopes['personal'].workflows[''].map((w) => w.name)).toEqual(['Morning brief']);
+
+        // The page reads it again as it mounts; what it reads stands, and nothing kept lands over it.
+        fetchTree('personal');
+        rootListing().answer(listing([listed('w2', 'Evening digest')]));
+        await flush();
+        await restoreBrowser('acct_1');
+        expect(browserStore.scopes['personal'].workflows[''].map((w) => w.name)).toEqual(['Evening digest']);
+    });
+});
 
 describe('workflowBrowserStore — loading the root', () => {
     it('asks for the root workflows beside the folder tree, not after it answers', async () => {

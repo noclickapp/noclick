@@ -46,7 +46,7 @@ export default function Developers() {
             home="/"
             country={country}
             user={user}
-            onSignOut={() => void signOut(account?.id)}
+            onSignOut={() => void signOut()}
             live={live}
         />
     );

@@ -71,7 +71,7 @@ export function useWorkflowBrowserData(scopeId: string) {
     const slice = (snap.scopes[scopeId] ?? EMPTY_SLICE) as unknown as ScopeSlice;
     const shared = snap.shared as unknown as SharedResources;
 
-    // Once: clear any poisoned pre-refactor IndexedDB cache. The store itself is in-memory only. What changes
+    // Once: clear any poisoned pre-refactor IndexedDB cache (what a host keeps now is per account). What changes
     // elsewhere reaches the store through its host's live source (`WORKFLOWS_LIVE`).
     useEffect(() => {
         void sweepLegacyCache();

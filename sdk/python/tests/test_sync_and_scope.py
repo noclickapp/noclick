@@ -34,6 +34,17 @@ def test_sync_and_aio_return_the_same_thing(api, client):
     assert sync_user == aio_user and sync_user.raw == aio_user.raw
 
 
+def test_an_object_kept_as_its_raw_comes_back_without_a_read_and_reads_again_on_refresh(api, client):
+    route = api.get(f"/v1/users/{USER_ID}")
+    route.respond(json=user_row(status="active"))
+    kept = nc.User.get(USER_ID).raw
+    route.respond(json=user_row(status="suspended"))
+    again = nc.User.from_json(kept)
+    assert type(again) is nc.User and route.call_count == 1
+    assert (again.id, again.status) == (USER_ID, "active")
+    assert again.refresh().status == "suspended"
+
+
 async def test_aio_runs_on_the_callers_loop(api, client):
     api.get(f"/v1/users/{USER_ID}").respond(json=user_row())
     user = await nc.User.get.aio(USER_ID)

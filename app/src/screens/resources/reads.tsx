@@ -13,7 +13,7 @@ import { errorText } from '@/screens/console/pages/resources/shared';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { useSlot } from '@/slots';
 import { BACKSTOP_POLL_MS } from '@/sdk/staleReads';
-import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
+import { asPage, invalidateV1, keepRead, useV1, type V1State } from '@/sdk/useV1';
 import { KINDS, type KindId } from './kinds';
 import type { ResourceItem } from './model';
 import { PlatformResourcesContext, type PlatformResources } from './platform';
@@ -42,6 +42,16 @@ import { PlatformBody, PlatformObjects, type PlatformObject } from './PlatformBo
 
 /** One page of each list is what Resources shows; the console pages past it. */
 const LIST_LIMIT = 100;
+
+// The overview opens on what it listed last in this browser (where the host keeps reads), and reads it all again.
+keepRead('resources:domains', asPage((raw, client) => Domain.fromJSON(raw, { client, user: null })));
+keepRead('resources:projects', asPage((raw, client) => Project.fromJSON(raw, { client, user: null })));
+keepRead('resources:databases', asPage((raw, client) => Database.fromJSON(raw, { client, user: null })));
+keepRead('resources:buckets', asPage((raw, client) => Bucket.fromJSON(raw, { client, user: null })));
+keepRead('resources:repos', asPage((raw, client) => Repo.fromJSON(raw, { client, user: null })));
+keepRead('resources:inboxes', asPage((raw, client) => Inbox.fromJSON(raw, { client, user: null })));
+keepRead('resources:trash', asPage((raw, client) => TrashItem.fromJSON(raw, { client, user: null })));
+keepRead('resources:users', asPage((raw, client) => User.fromJSON(raw, { client, user: null })));
 /** A deploy of an app's production that hasn't settled. */
 const BUILDING = new Set(['queued', 'building']);
 

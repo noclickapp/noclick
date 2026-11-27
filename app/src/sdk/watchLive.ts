@@ -1,12 +1,15 @@
 // The account's change stream (the SDK's `watch`, asked for through the app's own client) as the live frames screens
 // follow (@/sdk/live): one stream per client, opened when something follows it and closed a little after nothing does.
 // Each change becomes the frame its views already read again on, and a reset (or a socket that opened without carrying
-// on from the last change, the first one included) a `reset`: what's shown is read again. While the stream isn't live
-// (opening, reconnecting, or not offered here: an API whose stream is off refuses the token), a host can have what's
-// shown read again every minute instead, and the stream is asked for again every few minutes, so it turns on by itself.
+// on from the last change, the first one included) a `reset`: every read of the client that's shown is read again.
+// While it follows a client, the stream is what says to read again: a page coming back into view reads nothing of its
+// own accord (useV1's `followReads`), since the stream carries on from its last change or says reset. While the stream
+// isn't live (not offered here: an API whose stream is off refuses the token), a host can have what's shown read again
+// every minute instead, and the stream is asked for again every few minutes, so it turns on by itself.
 import { watch as sdkWatch, type NoClick, type WatchChange, type WatchStatus, type WatchTyping } from 'noclick';
 import type { PlatformAgentEvent, PlatformChannelEvent, PlatformCodingAgentEvent, PlatformResourceEvent } from '@/sdk/frames';
 import { BACKSTOP_MS, createWorkLive, resetEvery, type WorkFrames, type WorkLive } from '@/sdk/live';
+import { followReads, invalidateV1 } from '@/sdk/useV1';
 
 /** What the stream says: an object changed, someone is typing, or read everything again. */
 export type LiveMessage = WatchChange | WatchTyping | { type: 'reset' };
@@ -41,9 +44,13 @@ export function sdkLive(client: NoClick, options: { watch?: typeof sdkWatch } = 
     const setStatus = (next: LiveStatus) => {
         if (next === status) return;
         status = next;
+        followReads(client, next !== 'off' && next !== 'stopped');
         statusListeners.forEach((listener) => listener(next));
     };
-    const emit = (message: LiveMessage) => listeners.forEach((listener) => listener(message));
+    const emit = (message: LiveMessage) => {
+        if (message.type === 'reset') invalidateV1('');
+        listeners.forEach((listener) => listener(message));
+    };
 
     const start = () => {
         if (running || retry) return;

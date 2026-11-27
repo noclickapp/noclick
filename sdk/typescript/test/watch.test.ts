@@ -529,3 +529,44 @@ test("a connection that stayed up starts the backoff again", async (t) => {
   assert.ok(backoffs[3] >= 2_500, `the fourth drop in a row waits a later step: ${backoffs}`);
   assert.ok(backoffs[4] <= 750, `after a connection that stayed up, the first step again: ${backoffs}`);
 });
+
+test("a page coming back into view asks its socket at once, and replaces one that doesn't answer, resuming after its last change", async (t) => {
+  FakeSocket.opened = [];
+  const waits = noWaits(t);
+  let now = 1_000_000;
+  t.mock.method(Date, "now", () => now);
+  const page = Object.assign(new EventTarget(), { visibilityState: "visible" });
+  (globalThis as { document?: unknown }).document = page;
+  t.after(() => delete (globalThis as { document?: unknown }).document);
+  const { api } = setup();
+  api.on("POST", "/v1/watch/tokens", json(TOKEN(1), { status: 201 }), json(TOKEN(2), { status: 201 }));
+  const controller = new AbortController();
+  t.after(() => controller.abort());
+  const run = (async () => {
+    for await (const _ of nc.watch({ WebSocket: FakeSocket as unknown as typeof WebSocket, signal: controller.signal })) { /* reading */ }
+  })();
+  const socket = await opened(1);
+  socket.receive({ type: "ready", resumed: false });
+  socket.receive({ type: "change", id: "c_7", object: "deployment", object_id: "dep_1" });
+  await tick();
+
+  // It answers in time: kept.
+  now += 60_000;
+  page.dispatchEvent(new Event("visibilitychange"));
+  assert.equal(socket.sent.at(-1), "ping");
+  now += 100;
+  socket.receive("pong");
+  await tick();
+  assert.equal(socket.closedWith, undefined);
+  assert.ok(waits.includes(3_000), "it gives the answer a few seconds");
+
+  // The phone cut it while the page was hidden: no answer, so it's dropped at once and another opens after c_7.
+  now += 60_000;
+  page.dispatchEvent(new Event("visibilitychange"));
+  await tick();
+  assert.equal(socket.closedWith, 4000);
+  const next = await opened(2);
+  assert.match(next.url, /after=c_7/);
+  controller.abort();
+  await run;
+});

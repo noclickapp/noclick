@@ -14,17 +14,18 @@
 // touch A's slice — there is no code path that puts A's data into B's slice, so
 // cross-scope contamination and stale-on-switch are unrepresentable, not guarded.
 //
-// The store is IN-MEMORY ONLY (per session). Scope slices live in this module
-// singleton, so switching orgs within a session is instant; a hard reload
-// refetches. We deliberately do NOT persist to IndexedDB — that cache was the
-// original contamination vector (see the sweep at the bottom). Data is otherwise
-// local-only (no YJS/Redis/collab/streaming); this module is fully contained to
-// the workflow-browser surface.
+// Scope slices live in this module singleton, so switching orgs within a session is
+// instant. A host can keep them in this browser between visits (`keepBrowser`,
+// `restoreBrowser`): one copy per account (@/lib/kept), holding each scope's slice
+// under its scope, so the page opens on what it listed last and refetches it. The
+// old per-path IndexedDB cache, keyed by neither, was a contamination vector (see the
+// sweep at the bottom).
 
-import { proxy, ref } from 'valtio';
+import { proxy, ref, snapshot } from 'valtio';
 import { type NoClick, Workflow } from 'noclick';
 import { resolveAgentModelKind } from '@/lib/harnessBrand';
 import { valtioCache } from '@/lib/indexeddb';
+import { keepFor, readKept } from '@/lib/kept';
 import { buildGraphPreview, type GraphPreview } from '@/lib/graphPreview';
 
 // ─── Public types (re-exported by useWorkflowBrowserData for consumers) ─────────
@@ -805,17 +806,52 @@ export function moveFolders(scopeId: string, folderIds: string[], toParentId: st
     s.folders = tree;
 }
 
+// ─── Kept in this browser ───────────────────────────────────────────────────────
+//
+// Each loaded scope's slice and the shared-with-me lists, per account: the next visit
+// draws them at once, and the page refetches every scope it shows as it mounts
+// (useWorkflowBrowserData), so a kept list never stands for long.
+
+const KEPT_VERSION = 1;
+
+interface KeptBrowser {
+    scopes: Record<string, Pick<ScopeSlice, 'folders' | 'workflows' | 'tier' | 'hiddenSharedCount'>>;
+    shared: SharedResources;
+}
+
+// A card's preview stays out of valtio's proxies, as a fetched one does.
+const withPreviews = (workflows: WorkflowApp[]) => workflows.map((w) => (w.graph_preview ? { ...w, graph_preview: ref(w.graph_preview) } : w));
+
+/** Puts what this browser kept for `account` in every scope (and the shared lists) the page hasn't loaded yet. */
+export async function restoreBrowser(account: string): Promise<void> {
+    const kept = await readKept<KeptBrowser>(account, 'automations', KEPT_VERSION);
+    if (!kept) return;
+    for (const [scopeId, slice] of Object.entries(kept.scopes)) {
+        const s = ensureScope(scopeId);
+        if (s.foldersLoaded || '' in s.workflows) continue;
+        const workflows = Object.fromEntries(Object.entries(slice.workflows).map(([folder, list]) => [folder, withPreviews(list)]));
+        Object.assign(s, { ...slice, workflows, foldersLoaded: true });
+    }
+    if (!browserStore.shared.loaded && kept.shared.loaded) browserStore.shared = { ...kept.shared, workflows: withPreviews(kept.shared.workflows) };
+}
+
+/** Keeps every scope the page has loaded, and the shared lists, for `account`. */
+export function keepBrowser(account: string): void {
+    const { scopes, shared } = snapshot(browserStore);
+    const loaded = Object.entries(scopes).filter(([, s]) => s.foldersLoaded);
+    const kept: KeptBrowser = {
+        scopes: Object.fromEntries(loaded.map(([id, s]) => [id, { folders: s.folders, workflows: s.workflows, tier: s.tier, hiddenSharedCount: s.hiddenSharedCount }])),
+        shared,
+    } as KeptBrowser;
+    // Plain data: IndexedDB clones it.
+    if (loaded.length) keepFor(account, 'automations', KEPT_VERSION, JSON.parse(JSON.stringify(kept)));
+}
+
 // ─── One-time legacy cache sweep ────────────────────────────────────────────────
 //
-// The store is intentionally IN-MEMORY ONLY (per session). Scope slices live in
-// this module singleton, so switching orgs within a session is instant and a full
-// reload refetches. We deliberately do NOT persist to IndexedDB: the old per-path
-// cache was the contamination vector — it held cross-scope-poisoned data and,
-// lacking a user dimension in its key, could even surface one user's list to the
-// next on a shared browser. Not persisting makes both classes impossible by
-// construction, at the cost of a refetch (not a stale render) after a hard reload.
-//
-// We still sweep the pre-refactor keys once, so any already-poisoned cache from a
+// The old per-path cache held cross-scope-poisoned data and, lacking a user
+// dimension in its key, could surface one user's list to the next on a shared
+// browser. We sweep the pre-refactor keys once, so any already-poisoned cache from a
 // previous version is cleared on upgrade rather than lingering unread.
 let sweptLegacy = false;
 export async function sweepLegacyCache() {

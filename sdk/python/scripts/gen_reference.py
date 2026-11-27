@@ -763,9 +763,9 @@ def _common_members() -> Dict[str, Any]:
     entry = class_entry(mod, base, set())
     methods = []
     for m in entry["methods"]:
-        if m["kind"] == "method":
-            methods.append({**m, "signature": m["signature"].replace("__object.", "obj.").replace("-> T", "-> Self"),
-                            "returns": "Self"})
+        if m["kind"] in ("method", "classmethod"):
+            call = m["signature"].replace("noclick._Object.", "Object.").replace("__object.", "obj.")
+            methods.append({**m, "signature": call.replace("-> T", "-> Self"), "returns": "Self"})
     return {"doc": to_markdown(mod.doc), "attributes": entry["attributes"], "methods": methods}
 
 

@@ -139,6 +139,9 @@ const WATCH_CLOSE = { renew: 4000, refused: 4401, tooMany: 4429 } as const;
 const WATCH_PROTOCOL = "noclick.watch";
 
 const PING_MS = 30_000;
+// A page coming back into view asks its socket at once, and drops it unless it answers this soon: a phone may have cut
+// the connection while the page was hidden without a close the page could hear.
+const SHOWN_ANSWER_MS = 3_000;
 const BACKOFF_MS = [500, 1_000, 2_000, 5_000, 10_000, 30_000];
 // A connection that stayed up this long after `ready` starts the backoff again; one that drops sooner keeps it
 // climbing, so a socket cut right after it opens isn't retried twice a second forever.
@@ -223,7 +226,8 @@ export class WatchRefused extends NoClickError {
  * Follow your objects' changes until `signal` aborts or you stop reading. Reconnects by itself (a new token each
  * time), resuming after the last change it gave you; it throws only what can't be fixed by trying again: the token
  * call refused (a revoked key, a scope the key lacks, a deployment where watching isn't available) or the room
- * refusing two fresh tokens in a row (`WatchRefused`).
+ * refusing two fresh tokens in a row (`WatchRefused`). In a page, coming back into view checks the socket at once and
+ * replaces one that doesn't answer within seconds (a phone may cut it while the page is hidden).
  *
  * A change can be lost (a deploy, a dropped connection, a busy second), and nothing says so but these: read again
  * what you show on `reset`, on a `ready` that didn't resume, and on a slow timer of your own if it must never be stale.
@@ -254,6 +258,7 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
   let refusedInARow = 0;
   let socket: WebSocket | null = null;
   let pinger: ReturnType<typeof setInterval> | null = null;
+  let unwatchShown: (() => void) | null = null;
   const sleep = (ms: number) => new Promise<void>((resolve) => {
     const timer = setTimeout(resolve, ms);
     options.signal?.addEventListener("abort", () => { clearTimeout(timer); resolve(); }, { once: true });
@@ -275,13 +280,36 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
       socket = ws;
       let lastHeard = Date.now();
       const secret = token.token;
+      // Dropped at once, not on its close: a connection that's gone may never send one.
+      const drop = () => {
+        ws.onclose = null;
+        ws.onmessage = null;
+        ws.close(4000, "no answer");
+        push({ close: { code: 4000, reason: "no answer" } });
+      };
       ws.onopen = () => {
         // The token is the first frame (headers and URLs reach logs); the room answers `ready` once it checks out.
         ws.send(JSON.stringify({ type: "auth", token: secret }));
         pinger = setInterval(() => {
-          if (Date.now() - lastHeard > 2 * PING_MS) ws.close(4000, "no answer");
+          if (Date.now() - lastHeard > 2 * PING_MS) drop();
           else ws.send("ping");
         }, PING_MS);
+      };
+      const page = (globalThis as { document?: Document }).document;
+      let checking: ReturnType<typeof setTimeout> | null = null;
+      const onShown = () => {
+        if (page?.visibilityState !== "visible" || (ws.readyState ?? 1) !== 1 || checking) return;
+        const asked = Date.now();
+        ws.send("ping");
+        checking = setTimeout(() => {
+          checking = null;
+          if (lastHeard < asked) drop();
+        }, SHOWN_ANSWER_MS);
+      };
+      page?.addEventListener("visibilitychange", onShown);
+      unwatchShown = () => {
+        page?.removeEventListener("visibilitychange", onShown);
+        if (checking) clearTimeout(checking);
       };
       ws.onmessage = (event: MessageEvent) => {
         lastHeard = Date.now();
@@ -308,6 +336,8 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
         if ("close" in item) {
           if (pinger) clearInterval(pinger);
           pinger = null;
+          unwatchShown?.();
+          unwatchShown = null;
           socket = null;
           const { code, reason } = item.close;
           if (ready && Date.now() - readyAt >= STABLE_MS) failures = 0;
@@ -343,6 +373,7 @@ export async function* watch(options: WatchOptions = {}): AsyncGenerator<WatchMe
   } finally {
     options.signal?.removeEventListener("abort", onAbort);
     if (pinger) clearInterval(pinger);
+    unwatchShown?.();
     socket?.close(1000);
     status("stopped");
   }

@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { NoClick } from 'noclick';
 import { WorkLiveContext, type WorkLive } from '@/sdk/live';
+import { keepWhenLeaving } from '@/lib/kept';
 import { heldBy } from '@/screens/channels/useChannels';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { WorkClientContext } from './client';
@@ -35,18 +36,7 @@ export function WorkScreen({ client, live, keptAs, user, work = {} }: WorkScreen
             open = false;
         };
     }, [restored, keptAs, client, own]);
-    useEffect(() => {
-        if (keptAs === null) return;
-        const keep = () => keepWork(keptAs, client, own);
-        const onHidden = () => document.visibilityState === 'hidden' && keep();
-        window.addEventListener('pagehide', keep);
-        document.addEventListener('visibilitychange', onHidden);
-        return () => {
-            window.removeEventListener('pagehide', keep);
-            document.removeEventListener('visibilitychange', onHidden);
-            keep();
-        };
-    }, [keptAs, client, own]);
+    useEffect(() => (keptAs === null ? undefined : keepWhenLeaving(() => keepWork(keptAs, client, own))), [keptAs, client, own]);
     if (!restored) return <WorkLoading />;
     return (
         <WorkContext.Provider value={work}>

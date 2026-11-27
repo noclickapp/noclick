@@ -6,7 +6,7 @@
 // fails for no reason a person can act on, on the failure line its history keeps.
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Agent, APIConnectionError, NoClickError, NotFound, Operation, OperationFailed, OperationTimeout, PaymentRequired, RequestTimeout, ServerError, UpstreamError, type AgentCommands, type AgentEvent, type AgentStep, type Attachment, type ConversationChanges, type ConversationSettings, type HarnessRequest, type Message, type MessageSubagent, type NoClick, type RequestDecision } from 'noclick';
-import { peekV1, readV1 } from '@/sdk/useV1';
+import { keepRead, peekV1, readsRestored, readV1 } from '@/sdk/useV1';
 import { useReportHeld } from '@/sdk/held';
 import { operationFollower, PushedOperations } from '@/sdk/useFollowedOperations';
 import type { ThreadJobs } from '@/lib/threadJobs';
@@ -134,6 +134,12 @@ function keep(client: NoClick, key: string, value: Kept): void {
 
 /** Where a conversation's thread is read, once for whoever shows it or reads it ahead (Work's `prefetchConversation`). */
 export const threadKey = (key: string, conversation: string) => `work:agent:${key}:thread:${conversation}`;
+// A conversation opens on what this browser kept of its newest messages (where the host keeps reads), and reads it again.
+const KEPT_ENTRIES = 60;
+keepRead((k) => k.startsWith('work:agent:') && k.includes(':thread:'), {
+    store: (thread: Thread) => ({ ...thread, entries: thread.entries.slice(-KEPT_ENTRIES) }),
+    revive: (stored: unknown) => stored as Thread,
+});
 
 /** A conversation's thread as the server holds it: its history, what its harness asks, and the turn it may still run. */
 export async function readThread(client: NoClick, agent: Agent, conversation: string): Promise<Thread> {
@@ -218,19 +224,29 @@ export function useAgentThread(caller: Agent, conversation: string | null, { key
     useEffect(() => {
         const stop = new AbortController();
         const { signal } = stop;
-        const seeded = conversation ? (keptFor(client).get(keptKey)?.thread ?? peekV1<Thread>(client, threadKey(key, conversation))) : undefined;
-        setThread(seeded ?? EMPTY_THREAD);
-        setReady(!!seeded);
+        const at = conversation ? threadKey(key, conversation) : null;
+        // Shown on this page already (kept here, or read ahead): drawn, and ready to send to, at once.
+        const seen = at ? (keptFor(client).get(keptKey)?.thread ?? peekV1<Thread>(client, at, false)) : undefined;
+        // What this browser kept of an earlier visit: drawn at once, but nothing's sent from it until it's read again.
+        let kept = !seen && at ? peekV1<Thread>(client, at) : undefined;
+        setThread(seen ?? kept ?? EMPTY_THREAD);
+        setReady(!!seen);
         setQueued([]);
-        if (!conversation || !loaded) return;
+        if (!conversation || !at || !loaded) return;
+        if (!seen && !kept) {
+            void readsRestored(client).then(() => {
+                kept = peekV1<Thread>(client, at);
+                if (kept && !signal.aborted) setThread((t) => (t === EMPTY_THREAD ? kept! : t));
+            });
+        }
         void (async () => {
             // Read by name beside the lookup, it's drawn the moment it answers; the whole read stands over it.
-            if (!seeded && readFirst && !caller.isHydrated) {
+            if (!seen && readFirst && !caller.isHydrated) {
                 void readFirst().then((early) => {
-                    if (early && !signal.aborted) setThread((t) => (t === EMPTY_THREAD ? { ...EMPTY_THREAD, entries: fromHistory(early) } : t));
+                    if (early && !signal.aborted) setThread((t) => (t === EMPTY_THREAD || t === kept ? { ...EMPTY_THREAD, entries: fromHistory(early) } : t));
                 });
             }
-            const read = await readV1(client, threadKey(key, conversation), () => loaded.then(() => readThread(client, caller, conversation)));
+            const read = await readV1(client, at, () => loaded.then(() => readThread(client, caller, conversation)));
             if (signal.aborted) return;
             setThread(read);
             setReady(true);

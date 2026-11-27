@@ -61,14 +61,11 @@ function useStatus() {
     return useV1('status', (signal) => readAccountStatus(client, signal), { client });
 }
 
-/** The account's plan as the platform API names it, and signing out of this app (forgetting what it kept of the
- *  account in this browser first). */
+/** The account's plan as the platform API names it, and signing out of this app (forgetting what it kept in this
+ *  browser first). */
 export const accountOnApp: AccountSession = {
     usePlan: () => useStatus().data?.plan?.name ?? null,
-    useSignOut: () => {
-        const account = useStatus().data?.account.id;
-        return () => void signOut(account);
-    },
+    useSignOut: () => () => void signOut(),
 };
 
 // ── the command palette ─────────────────────────────────────────────────────

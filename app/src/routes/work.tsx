@@ -57,7 +57,7 @@ export default function WorkRoute() {
             user: { id: account?.id ?? '', email: account?.email ?? null },
             now: Date.now,
             lab: false,
-            signOut: () => void signOut(account?.id),
+            signOut: () => void signOut(),
             live: null,
         }),
         [client, api, country, account?.id, account?.email]
