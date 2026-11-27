@@ -28,6 +28,10 @@ class TemplatePart:
     named: str
     line: Optional[str]
     needs: List[str]
+    #: A channel's agents, by the names they'll have.
+    members: List[str]
+    #: A channel's schedules' messages.
+    schedules: List[str]
     included: bool
     raw: Dict[str, Any] = dc_field(repr=False)
 
@@ -69,6 +73,8 @@ class TemplatePlan:
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "TemplatePlan":
         parts = [TemplatePart(p["kind"], p["name"], p.get("as") or p["name"], p.get("line"), list(p.get("needs") or []),
+                              [str(m) for m in p.get("members") or []],
+                              [s for s in p.get("schedules") or [] if isinstance(s, str)],
                               bool(p.get("included")), p) for p in raw.get("parts") or []]
         accounts = [TemplateAccount(c["integration"], c.get("label") or c["integration"], c.get("node_type"),
                                     list(c.get("for") or []), c.get("connected"), c)
