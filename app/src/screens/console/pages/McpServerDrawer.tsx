@@ -1,7 +1,7 @@
-// A hosted MCP server, opened from Home with `?mcp=`: its URL (copy, rotate),
-// what it serves, and its clients, with the two stories kept apart as the
-// product does: is the server ready (its tools resolve), and has a client
-// connected (and seen them all). Delete asks for the name. Changes act in the
+// A hosted MCP server, opened from Home with `?mcp=`, with the two stories kept
+// apart as the product does: is the server ready (its tools resolve: its status,
+// and what's wrong when none do), and has a client connected (and seen them all:
+// its Clients). Then its URL (copy, rotate), and what it serves folded last. Delete asks for the name. Changes act in the
 // server's own user, as every console change does.
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -19,6 +19,7 @@ import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { CopyButton } from '../ui/CopyButton';
 import { DataTable, type Column } from '../ui/DataTable';
 import { Drawer } from '../ui/Drawer';
+import { Folded, Problem } from '../ui/DrawerParts';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { StatusPill } from '../ui/StatusPill';
 import { TimeCell } from '../ui/TimeCell';
@@ -144,43 +145,12 @@ function RotateServer({ act, onRotated, onClose }: { act: McpServer; onRotated: 
     );
 }
 
-/** The two stories side by side: the server's tools, and its clients. */
-function Readiness({ server, clients }: { server: McpServer; clients: McpClient[] | undefined }) {
-    const behind = (clients ?? []).filter((c) => c.toolCount !== null && c.toolCount < server.toolCount).length;
-    const story = (title: string, look: StatusLook, line: string) => (
-        <div className={cn('flex min-w-0 flex-col gap-1 rounded-lg border px-3 py-2.5', HAIRLINE)}>
-            <span className="text-[12px] text-muted-foreground">{title}</span>
-            <StatusPill look={look} />
-            <span className="text-[12px] text-muted-foreground">{line}</span>
-        </div>
-    );
-    const clientLook: StatusLook | null = !clients
-        ? null
-        : clients.length
-          ? { label: 'Connected', reason: plural(clients.length, 'client'), glyph: 'check', tone: 'ink' }
-          : { label: 'Waiting', reason: 'no client yet', glyph: 'waiting', tone: 'ink' };
-    return (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {story(
-                'Server',
-                mcpServerLook(server),
-                server.toolCount > 0 ? 'NoClick serves its tools; calls act in its connections, under your approval rules.' : "None of its tools resolve: a connection it names isn't connected."
-            )}
-            {clientLook ? (
-                story(
-                    'Clients',
-                    clientLook,
-                    !clients!.length
-                        ? 'Most clients connect when a session starts: open a new chat after adding the URL.'
-                        : behind
-                          ? `${plural(behind, 'client')} listed its tools before you added more; they see the rest in their next session.`
-                          : 'Every client has seen all of its tools.'
-                )
-            ) : (
-                <div aria-busy className="h-[74px] animate-pulse rounded-lg bg-foreground/[0.04]" />
-            )}
-        </div>
-    );
+/** How its clients stand, in a line: none yet, some behind on its tools, or all caught up. */
+function clientsLine(server: McpServer, clients: McpClient[]): string {
+    const behind = clients.filter((c) => c.toolCount !== null && c.toolCount < server.toolCount).length;
+    if (!clients.length) return 'No client has connected yet. Most clients connect when a session starts: open a new chat after adding the URL.';
+    if (behind) return `${plural(behind, 'client')} listed its tools before you added more; they see the rest in their next session.`;
+    return `${plural(clients.length, 'client')} connected, each with all of its tools.`;
 }
 
 export function McpServerDrawer({ serverId, row, onClose }: { serverId: string; row?: McpServer; onClose: () => void }) {
@@ -219,6 +189,24 @@ export function McpServerDrawer({ serverId, row, onClose }: { serverId: string; 
                 <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />
             ) : (
                 <div className="flex flex-col gap-6">
+                    {server.toolCount === 0 && (
+                        <Problem title="None of its tools resolve">A connection it names isn&apos;t connected, so a client that connects sees no tools.</Problem>
+                    )}
+                    <Section title="Clients">
+                        {clients.data && <p className="m-0 mb-2 text-[12px] text-muted-foreground">{clientsLine(server, clients.data)}</p>}
+                        {(!clients.data || clients.data.length > 0) && (
+                            <DataTable
+                                label="Clients"
+                                columns={clientColumns(server.toolCount)}
+                                rows={clients.data ?? []}
+                                getRowId={(c) => `${c.name}@${c.version ?? ''}`}
+                                loading={!clients.data && clients.error === undefined}
+                                error={clients.error}
+                                onRetry={() => void clients.refresh()}
+                                skeletonRows={2}
+                            />
+                        )}
+                    </Section>
                     <Section title="URL">
                         <div className={cn('flex items-center gap-2 rounded-lg border bg-foreground/[0.03] px-3 py-2', HAIRLINE)}>
                             <span className="min-w-0 flex-1 break-all font-mono text-[12px] text-foreground/90">{server.url}</span>
@@ -231,35 +219,23 @@ export function McpServerDrawer({ serverId, row, onClose }: { serverId: string; 
                             </ConsoleButton>
                         </div>
                     </Section>
-                    <Readiness server={server} clients={clients.data} />
-                    <dl className="m-0">
-                        <Field label="User">{server.userId ? <span>{server.userId}</span> : 'Your account'}</Field>
-                        <Field label="Serves">
-                            <span className="flex flex-wrap gap-1">
-                                {server.tools.map((t, i) => (
-                                    <span key={i} className="rounded-md bg-foreground/[0.05] px-1.5 py-[1px] font-mono text-[12px] text-foreground/85">
-                                        {toolEntryText(t)}
-                                    </span>
-                                ))}
-                            </span>
-                        </Field>
-                        <Field label="Created">
-                            <TimeCell value={server.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
-                    <Section title="Clients">
-                        <DataTable
-                            label="Clients"
-                            columns={clientColumns(server.toolCount)}
-                            rows={clients.data ?? []}
-                            getRowId={(c) => `${c.name}@${c.version ?? ''}`}
-                            loading={!clients.data && clients.error === undefined}
-                            error={clients.error}
-                            onRetry={() => void clients.refresh()}
-                            empty={<p className="m-0 py-5 text-center text-[13px] text-muted-foreground">No client has connected yet.</p>}
-                            skeletonRows={2}
-                        />
-                    </Section>
+                    <Folded title="Details: what it serves, its user">
+                        <dl className="m-0">
+                            <Field label="Serves">
+                                <span className="flex flex-wrap gap-1">
+                                    {server.tools.map((t, i) => (
+                                        <span key={i} className="rounded-md bg-foreground/[0.05] px-1.5 py-[1px] font-mono text-[12px] text-foreground/85">
+                                            {toolEntryText(t)}
+                                        </span>
+                                    ))}
+                                </span>
+                            </Field>
+                            <Field label="User">{server.userId ? <span>{server.userId}</span> : 'Your account'}</Field>
+                            <Field label="Created">
+                                <TimeCell value={server.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
             {rotating && server && (

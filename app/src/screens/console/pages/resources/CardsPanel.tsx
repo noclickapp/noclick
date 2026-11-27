@@ -1,10 +1,10 @@
 // Cards: virtual cards with limits, for agents that buy things. Designed, not
 // built yet: shown only in the lab.
 // The banner is where card issuing stands until it's active, then the card
-// balance; the drawer (`?card=`) shows the limits and merchants (edited in one
-// dialog), recent charges (a held one links to its approval), reveals the number
-// behind an audited confirm, and freezes, unfreezes or closes the card. A card
-// NoClick froze for a balance below zero links to funding instead of unfreezing.
+// balance; the drawer (`?card=`) leads with what it spent against its limit, then recent charges (a held one links to
+// its approval), the limits and merchants (edited in one dialog), the number behind an audited confirm, and who pays
+// with it folded last; it freezes, unfreezes or closes the card. A card NoClick froze for a balance below zero says so
+// first and links to funding instead of unfreezing.
 import { useEffect, useState } from 'react';
 import { Snowflake } from 'lucide-react';
 import { Link } from 'react-router';
@@ -24,6 +24,7 @@ import { CapMeter } from '../../ui/CapMeter';
 import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote, Problem, Spend } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Money } from '../../ui/Money';
@@ -176,6 +177,9 @@ function FreezeToggle({ card, onChanged }: { card: Card; onChanged: () => void }
     );
 }
 
+/** What the card's limit counts spend over, as the drawer's spend line names it. */
+const SPENT_OVER: Record<string, string> = { transaction: 'This month', day: 'Today', month: 'This month', all_time: 'Spent in all' };
+
 function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Card; onClose: () => void }) {
     const { client } = useConsole();
     const agents = useAgentNames();
@@ -199,20 +203,26 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
         <Drawer
             open={cardId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="card"
+            kind="Card"
             title={card?.name}
             id={cardId ?? undefined}
-            status={card ? <StatusPill look={cardStatus(card)} /> : undefined}
+            status={
+                card ? (
+                    <>
+                        <StatusPill look={cardStatus(card)} />
+                        <HeaderNote>
+                            <span className="font-mono">
+                                {brandLabel(card.brand)} •••• {card.last4}
+                            </span>{' '}
+                            · expires {expiry(card)}
+                        </HeaderNote>
+                    </>
+                ) : undefined
+            }
             footer={
                 open ? (
                     <>
-                        {frozenForBalance(card) ? (
-                            <Link to={href(CARD_PAGES.funding)} className={consoleButtonClass('soft')}>
-                                Fund your cards
-                            </Link>
-                        ) : (
-                            <FreezeToggle card={card} onChanged={changed} />
-                        )}
+                        {!frozenForBalance(card) && <FreezeToggle card={card} onChanged={changed} />}
                         <ConfirmAction
                             label="Close card"
                             title={`Close ${card.name}?`}
@@ -230,49 +240,33 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
         >
             {!card && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {card && (
-                <div className="flex flex-col gap-5">
-                    {frozenForBalance(card) && (
-                        <p className="m-0 flex items-start gap-2 text-[13px] text-muted-foreground">
-                            <Snowflake aria-hidden className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground" />
-                            <span>
-                                <span className="font-medium text-foreground">Frozen: card balance below zero.</span> NoClick froze every card; this one pays again once the balance is funded.
-                            </span>
-                        </p>
-                    )}
-                    <dl className="m-0">
-                        <Field label="Card">
-                            <span className="font-mono text-[12px]">
-                                {brandLabel(card.brand)} •••• {card.last4}
-                            </span>
-                            <span className="text-muted-foreground"> · expires {expiry(card)}</span>
-                        </Field>
-                        <Field label="User">{userLabel(card.userId)}</Field>
-                        <Field label="Agent">
-                            {card.agentId ? (
-                                <Link to={href(`agents/${card.agentId}`)} className="underline-offset-2 hover:underline">
-                                    {agents.get(card.agentId)?.name ?? card.agentId}
+                <div className="flex flex-col gap-6">
+                    {open && frozenForBalance(card) && (
+                        <Problem
+                            title="Frozen: the card balance is below zero"
+                            action={
+                                <Link to={href(CARD_PAGES.funding)} className={consoleButtonClass('soft', 'sm')}>
+                                    Fund your cards
                                 </Link>
-                            ) : (
-                                <span className="text-muted-foreground">No agent: your code pays with it</span>
-                            )}
-                        </Field>
-                        <Field label="Issued">
-                            <TimeCell value={card.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
+                            }
+                        >
+                            NoClick froze every card; this one pays again once the balance is funded.
+                        </Problem>
+                    )}
+                    <div className="flex flex-col gap-1">
+                        <Spend label={SPENT_OVER[card.interval ?? 'month'] ?? 'This month'}>
+                            {card.interval === 'transaction' ? <Money usd={card.spentUsd} /> : <Spent card={card} className="w-full" />}
+                        </Spend>
+                        {card.resetsAt && (
+                            <p className="m-0 text-right text-[12px] text-muted-foreground">
+                                Starts over <TimeCell value={card.resetsAt} />
+                            </p>
+                        )}
+                    </div>
+                    <RecentCharges card={card} />
                     <Section title="Limits">
                         <dl className="m-0">
                             <Field label="Limit">{limitLine(card.limitUsd, card.interval)}</Field>
-                            <Field label={card.interval === 'transaction' ? 'Spent' : 'Spent so far'}>
-                                <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                    <Spent card={card} className="min-w-[10rem]" />
-                                    {card.resetsAt && (
-                                        <span className="text-[12px] text-muted-foreground">
-                                            Starts over <TimeCell value={card.resetsAt} />
-                                        </span>
-                                    )}
-                                </span>
-                            </Field>
                             <Field label="Merchants">
                                 {card.merchants?.length ? (
                                     <span role="list" aria-label="Merchants" className="flex flex-wrap gap-1">
@@ -303,7 +297,6 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
                             </div>
                         )}
                     </Section>
-                    <RecentCharges card={card} />
                     {open && (
                         <Section title="Card number">
                             {ownerCan('cardReveal') ? (
@@ -318,6 +311,23 @@ function CardDrawer({ cardId, row, onClose }: { cardId: string | null; row?: Car
                             )}
                         </Section>
                     )}
+                    <Folded title="Details: who pays with it, its user, when it was issued">
+                        <dl className="m-0">
+                            <Field label="Agent">
+                                {card.agentId ? (
+                                    <Link to={href(`agents/${card.agentId}`)} className="underline-offset-2 hover:underline">
+                                        {agents.get(card.agentId)?.name ?? card.agentId}
+                                    </Link>
+                                ) : (
+                                    <span className="text-muted-foreground">No agent: your code pays with it</span>
+                                )}
+                            </Field>
+                            <Field label="User">{userLabel(card.userId)}</Field>
+                            <Field label="Issued">
+                                <TimeCell value={card.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

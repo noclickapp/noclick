@@ -1,6 +1,7 @@
 // Channels: rooms where a user, your agents and remote (A2A) agents talk.
-// The drawer (`?channel=`) tails the messages with the API's own long poll
-// (pausable), posts as the account, closes the channel, and lists what it's
+// The drawer (`?channel=`) leads with what it spent against its budget, then
+// tails the messages with the API's own long poll (pausable), posts as the
+// account, lists its members, closes the channel, and lists what it's
 // subscribed to, whose events post as the app's messages. The workspace rail
 // (`?workspace=`) narrows the list to one workspace. It lists the channel's
 // schedules, each posting a message in the room as the account.
@@ -23,6 +24,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { CapMeter } from '../../ui/CapMeter';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, Spend } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { StatusPill } from '../../ui/StatusPill';
@@ -300,7 +302,7 @@ function ChannelDrawer({
         <Drawer
             open={channelId !== null}
             onOpenChange={(open) => !open && onClose()}
-            kind="channel"
+            kind="Channel"
             title={channel?.name}
             id={channelId ?? undefined}
             status={
@@ -335,36 +337,12 @@ function ChannelDrawer({
                 />
             )}
             {channel && (
-                <div className="flex flex-col gap-5">
-                    <dl className="m-0">
-                        <Field label="Mode">
-                            <span className="font-mono text-[12px]">
-                                {channel.mode}
-                            </span>
-                        </Field>
-                        <Field label="User">
-                            {userLabel(channel.userId)}
-                        </Field>
-                        {channel.workspaceId && (
-                            <Field label="Workspace">
-                                <WorkspaceName id={channel.workspaceId} />
-                            </Field>
-                        )}
-                        <Field label="Spend">
-                            <CapMeter
-                                spent={money(channel.raw.spent_usd)}
-                                cap={money(channel.raw.budget_usd)}
-                                noCapLabel
-                                className="w-48 items-start"
-                            />
-                        </Field>
-                        <Field label="Created">
-                            <TimeCell
-                                value={channel.createdAt}
-                                tier="absolute"
-                            />
-                        </Field>
-                    </dl>
+                <div className="flex flex-col gap-6">
+                    {/* A channel's budget is for its whole life, not a month. */}
+                    <Spend label="Spent">
+                        <CapMeter spent={money(channel.raw.spent_usd)} cap={money(channel.raw.budget_usd)} noCapLabel className={money(channel.raw.budget_usd) == null ? undefined : 'w-full'} />
+                    </Spend>
+                    <Messages channel={channel} />
                     <Section title="Members">
                         <ul className="m-0 flex list-none flex-col gap-1 p-0 text-[13px]">
                             {channel.members.map((m) => (
@@ -389,7 +367,29 @@ function ChannelDrawer({
                     </Section>
                     <Schedules channel={channel} />
                     <ChannelSubscriptions channel={channel} />
-                    <Messages channel={channel} />
+                    <Folded title="Details: who it wakes, its user and workspace">
+                        <dl className="m-0">
+                            <Field label="Mode">
+                                <span className="font-mono text-[12px]">
+                                    {channel.mode}
+                                </span>
+                            </Field>
+                            <Field label="User">
+                                {userLabel(channel.userId)}
+                            </Field>
+                            {channel.workspaceId && (
+                                <Field label="Workspace">
+                                    <WorkspaceName id={channel.workspaceId} />
+                                </Field>
+                            )}
+                            <Field label="Created">
+                                <TimeCell
+                                    value={channel.createdAt}
+                                    tier="absolute"
+                                />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

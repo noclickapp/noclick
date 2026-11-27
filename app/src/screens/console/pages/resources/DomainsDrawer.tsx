@@ -1,7 +1,8 @@
 // A domain's drawer (`?domain=`): what it waits on first (the registrant confirming
-// their email, an approval, a transfer in, records to add), the facts, its DNS (records to
-// add for a connected domain, which can also transfer in; moving a transferred one's DNS
-// to NoClick; the editable zone NoClick hosts), what it serves, renewal, transfer out, and
+// their email, an approval, a transfer in, records to add), what it costs (its renewal, or
+// nothing for one connected), what it serves, its DNS (records to add for a connected
+// domain, which can also transfer in; moving a transferred one's DNS to NoClick; the
+// editable zone NoClick hosts), renewal, transfer out, the facts folded last, and
 // Disconnect for a connected one.
 import { useEffect, useReducer, useState } from 'react';
 import { MailWarning } from 'lucide-react';
@@ -18,6 +19,7 @@ import { HeldCallNotice } from '@/ui/HeldCallNotice';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { ConsoleButton } from '../../ui/Button';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, Spend } from '../../ui/DrawerParts';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Money } from '../../ui/Money';
 import { Segmented } from '../../ui/Segmented';
@@ -373,7 +375,7 @@ export function DomainDrawer({ domainId, row, onClose }: { domainId: string | nu
         <Drawer
             open={domainId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="domain"
+            kind="Domain"
             title={domain ? <span className="font-mono">{domain.name}</span> : undefined}
             id={domainId ?? undefined}
             status={domain ? <StatusPill look={domainLook(domain, now())} /> : undefined}
@@ -397,45 +399,27 @@ export function DomainDrawer({ domainId, row, onClose }: { domainId: string | nu
             {!domain && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {!domain && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {domain && (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-6">
                     <Notices domain={domain} />
-                    <dl className="m-0">
-                        <Field label="Source">
-                            {sourceLabel(domain)} {dayLabel(domain.createdAt)}
-                            {registered && <span className="text-muted-foreground">{" · registered in the person's name"}</span>}
-                        </Field>
-                        <Field label="User">{userLabel(domain.userId)}</Field>
-                        {registered && (
-                            <>
-                                <Field label="Expires">
-                                    {dayLabel(domain.expiresAt)}
-                                    {daysUntil(domain.expiresAt, now()) !== null && <span className="text-muted-foreground"> · in {daysUntil(domain.expiresAt, now())} days</span>}
-                                </Field>
-                                <Field label="Renewable until">{dayLabel(domain.renewableUntil)}</Field>
-                                <Field label="Registrant">
-                                    {registrant ? (
-                                        <>
-                                            {registrant.organization ? `${registrant.organization} (${registrant.name})` : registrant.name}
-                                            <span className="text-muted-foreground">{` · ${registrant.email}`}</span>
-                                        </>
-                                    ) : (
-                                        <span className="text-muted-foreground">—</span>
-                                    )}
-                                </Field>
-                                <Field label="Renewal">
-                                    {domain.renewalUsd != null ? (
-                                        `${formatMoneyFull(domain.renewalUsd)} ${everyLabel(domain.renewalYears ?? 1)}`
-                                    ) : (
-                                        <span className="text-muted-foreground">—</span>
-                                    )}
-                                </Field>
-                            </>
+                    <Spend label={registered ? 'Renews' : 'Costs'}>
+                        {!registered ? (
+                            <span className="text-muted-foreground">Included: it&apos;s registered elsewhere</span>
+                        ) : domain.renewalUsd != null ? (
+                            <span>
+                                {formatMoneyFull(domain.renewalUsd)} {everyLabel(domain.renewalYears ?? 1)}
+                                <span className="text-muted-foreground">
+                                    {' '}
+                                    · next {dayLabel(domain.expiresAt)}
+                                    {daysUntil(domain.expiresAt, now()) !== null && `, in ${daysUntil(domain.expiresAt, now())} days`}
+                                </span>
+                            </span>
+                        ) : (
+                            <span className="text-muted-foreground">{dayLabel(domain.expiresAt)}</span>
                         )}
-                        <Field label="Serves">
-                            <ServesLinks serves={domain.serves} empty="Nothing yet: point an app or an inbox at it" />
-                        </Field>
-                        {domain.wildcard && <Field label="Subdomains">{`Every subdomain too (*.${domain.name})`}</Field>}
-                    </dl>
+                    </Spend>
+                    <Section title="Serves">
+                        <ServesLinks serves={domain.serves} empty="Nothing yet: point an app or an inbox at it" />
+                    </Section>
                     {copiedHere && (
                         <Section title="Copied from its old DNS host">
                             <p className="m-0 mb-2 text-[12px] text-muted-foreground">
@@ -463,11 +447,36 @@ export function DomainDrawer({ domainId, row, onClose }: { domainId: string | nu
                     )}
                     {registered && <Renewal domain={domain} onChanged={rerender} />}
                     {registered && <TransferOut domain={domain} />}
-                    {registered && (
-                        <p className="m-0 text-[12px] text-muted-foreground">
-                            A domain registered through NoClick is never deleted: turn off auto-renew to let it lapse, or transfer it out.
-                        </p>
-                    )}
+                    <Folded title={registered ? 'Details: where it came from, registrant, its user' : 'Details: where it came from, its user'}>
+                        <dl className="m-0">
+                            <Field label="Source">
+                                {sourceLabel(domain)} {dayLabel(domain.createdAt)}
+                                {registered && <span className="text-muted-foreground">{" · registered in the person's name"}</span>}
+                            </Field>
+                            <Field label="User">{userLabel(domain.userId)}</Field>
+                            {registered && (
+                                <>
+                                    <Field label="Renewable until">{dayLabel(domain.renewableUntil)}</Field>
+                                    <Field label="Registrant">
+                                        {registrant ? (
+                                            <>
+                                                {registrant.organization ? `${registrant.organization} (${registrant.name})` : registrant.name}
+                                                <span className="text-muted-foreground">{` · ${registrant.email}`}</span>
+                                            </>
+                                        ) : (
+                                            <span className="text-muted-foreground">—</span>
+                                        )}
+                                    </Field>
+                                </>
+                            )}
+                            {domain.wildcard && <Field label="Subdomains">{`Every subdomain too (*.${domain.name})`}</Field>}
+                        </dl>
+                        {registered && (
+                            <p className="m-0 text-[12px] text-muted-foreground">
+                                A domain registered through NoClick is never deleted: turn off auto-renew to let it lapse, or transfer it out.
+                            </p>
+                        )}
+                    </Folded>
                 </div>
             )}
         </Drawer>

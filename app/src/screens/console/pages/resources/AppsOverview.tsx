@@ -1,44 +1,36 @@
-// The Apps drawer's Overview, Domains and Logs tabs: what the app is, what a push deploys and who opens its previews
-// (each a PATCH, with a link to make for a private preview and a way to stop every link made), how each instance runs
-// in a container (`AppsContainer`), and what it spent
-// this month against its budget (with what stops its paid calls, and a budget
-// dialog); the domains that serve it, added (with the records a connected one
-// needs) and removed; and the lines it printed while serving.
+// The Apps drawer's Overview, Domains and Logs tabs. The Overview reads in the console's order: what it spent this month
+// against its budget (a budget dialog beside it; what stops its paid calls leads every tab, `AppProblem`), its last few
+// deploys, where it serves, and folded under one line what's set once: its repo, runtime and region, what a push deploys
+// and who opens its previews (each a PATCH, with a link to make for a private preview and a way to stop every link made),
+// and how each instance runs in a container (`AppsContainer`). Domains lists the domains that serve it, added (with the
+// records a connected one needs) and removed; Logs, the lines it printed while serving.
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
+import { clickableRow, ROW_HOVER } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Repo, type DeployOnPush, type Domain, type PreviewAccess, type Project } from 'noclick';
 import { formatCount, formatDuration, formatMoney } from '@/screens/console/lib/format';
 import { userLabel } from '@/screens/console/lib/userFilter';
+import { addFundsUrl } from '@/screens/console/lib/site';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
-import { ConsoleButton } from '../../ui/Button';
-import { CapMeter } from '../../ui/CapMeter';
+import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
+import { capLabel } from '../../ui/CapMeter';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
+import { Folded, Problem, Spend } from '../../ui/DrawerParts';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { AppContainer } from './AppsContainer';
-import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, NOT_DEPLOYED, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel } from './AppsFormat';
-import { AppsLogLines, AppUrl, BranchName, Choice, PreviewLinkMaker } from './AppsParts';
+import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel, withParams } from './AppsFormat';
+import { AppsLogLines, AppUrl, BranchName, Choice, hostOf, PreviewLinkMaker } from './AppsParts';
 import { DnsRecordList, domainLook, sourceLabel } from './DomainsParts';
 import { domainName, isDomainName, servedNames, stopServing, useAddAppDomain, type ServedName } from './appDomains';
 import { ConfirmAction, errorText, Field, INPUT, LabeledInput, Section } from './shared';
-
-/** One of the month's figures: a label over its value, no box. */
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
-    return (
-        <div className="flex min-w-0 flex-col gap-0.5">
-            <span className="text-[12px] text-muted-foreground">{label}</span>
-            <span className="truncate text-[14px] font-medium tabular-nums text-foreground">{value}</span>
-            {hint && <span className="truncate text-[12px] text-muted-foreground">{hint}</span>}
-        </div>
-    );
-}
 
 /** The first of the month after `periodStart`, when budgets and caps reset. */
 function resetDay(periodStart: Date | null): string {
@@ -110,65 +102,81 @@ function BudgetDialog({ project, open, onOpenChange }: { project: Project; open:
     );
 }
 
-/** An app's month: one read, shared by its drawer's header (is anything failing?) and its Overview. */
+/** How many deploys the Overview lists; the Deployments tab has the rest. */
+const RECENT_DEPLOYS = 3;
+
+/** An app's month: one read, shared by what stops its paid calls (above every tab) and its Overview. */
 export function useAppUsage(project: Project | undefined) {
     return useV1(project ? `projects/${project.id}/usage` : null, () => project!.usage());
 }
 
 export type AppUsage = ReturnType<typeof useAppUsage>;
 
-function Usage({ project, usage }: { project: Project; usage: AppUsage }) {
+/** What stops the app's paid calls, in words above every tab, with its fix: its budget, its user's cap, or funds. */
+export function AppProblem({ project, usage }: { project: Project; usage: AppUsage }) {
+    const { site } = useConsole();
+    const href = useConsoleHref();
     const [editing, setEditing] = useState(false);
     const u = usage.data;
-    const limit = u ? limitText(u.limitedBy, { name: project.name, userId: project.userId, budgetUsd: formatMoney(u.budgetUsd) }) : null;
-    const byType = u ? Object.entries(u.byType).sort(([, a], [, b]) => b - a) : [];
+    const limit = u ? limitText(u.limitedBy, { userId: project.userId, budgetUsd: u.budgetUsd == null ? '' : capLabel(u.budgetUsd) }) : null;
+    if (!u || !limit) return null;
+    const fix =
+        u.limitedBy === 'project' ? (
+            <ConsoleButton size="sm" onClick={() => setEditing(true)}>
+                Raise budget
+            </ConsoleButton>
+        ) : u.limitedBy === 'user' && project.userId ? (
+            <Link to={href(`users/${project.userId}`)} className={consoleButtonClass('soft', 'sm')}>
+                Raise {project.userId}&apos;s cap
+            </Link>
+        ) : u.limitedBy === 'account' ? (
+            <a href={addFundsUrl(site)} target="_blank" rel="noreferrer" className={consoleButtonClass('soft', 'sm')}>
+                Add funds
+            </a>
+        ) : null;
     return (
-        <Section
-            title={
-                <span className="flex items-center justify-between gap-2">
-                    <span>This month</span>
-                    <ConsoleButton size="sm" onClick={() => setEditing(true)}>
+        <>
+            <Problem title={`Paid calls stopped: ${limit}`} action={fix}>
+                Pages still load and it reads its data; writes, email, AI and agent turns fail until {resetDay(u.periodStart)}. Each refusal is in its runtime log.
+            </Problem>
+            <BudgetDialog project={project} open={editing} onOpenChange={setEditing} />
+        </>
+    );
+}
+
+/** What it spent this month against its budget, what it served, and where the money went. */
+function AppSpend({ project, usage }: { project: Project; usage: AppUsage }) {
+    const [editing, setEditing] = useState(false);
+    const u = usage.data;
+    const byType = u ? Object.entries(u.byType).sort(([, a], [, b]) => b - a) : [];
+    if (usage.error !== undefined) return <ErrorPanel error={usage.error} onRetry={() => void usage.refresh()} />;
+    if (!u) return <div aria-busy className="h-12 animate-pulse rounded-lg bg-foreground/[0.04]" />;
+    return (
+        <section aria-label="This month" className="flex flex-col gap-2">
+            <Spend
+                spent={u.usd}
+                cap={u.budgetUsd}
+                action={
+                    <ConsoleButton size="sm" variant="ghost" onClick={() => setEditing(true)}>
                         {project.budgetUsdPerMonth == null ? 'Set budget' : 'Change budget'}
                     </ConsoleButton>
-                </span>
-            }
-        >
-            {usage.error !== undefined ? (
-                <ErrorPanel error={usage.error} onRetry={() => void usage.refresh()} />
-            ) : !u ? (
-                <div aria-busy className="grid grid-cols-3 gap-6">
-                    {[0, 1, 2].map((i) => (
-                        <span key={i} className="h-12 animate-pulse rounded-lg bg-foreground/[0.04]" />
+                }
+            />
+            <p className="m-0 text-[12px] text-muted-foreground">
+                {formatCount(u.requests)} requests · {formatDuration(u.cpuMs)} of CPU time
+            </p>
+            {byType.length > 0 && (
+                <ul aria-label="Spend by type" className="m-0 list-none p-0">
+                    {byType.map(([type, usd]) => (
+                        <li key={type} className="flex items-center justify-between gap-3 py-1 text-[13px]">
+                            <span className="text-muted-foreground">{spendTypeLabel(type)}</span>
+                            <span className="tabular-nums text-foreground">{formatMoney(usd)}</span>
+                        </li>
                     ))}
-                </div>
-            ) : (
-                <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-3 gap-6">
-                        <Stat label="Requests" value={formatCount(u.requests)} />
-                        <Stat label="Compute" value={formatDuration(u.cpuMs)} hint="CPU time" />
-                        <Stat label="Spend" value={formatMoney(u.usd)} hint={u.budgetUsd == null ? 'No budget of its own' : 'Everything it spent'} />
-                    </div>
-                    {u.budgetUsd != null && <CapMeter spent={u.usd} cap={u.budgetUsd} className="w-full" />}
-                    {limit && (
-                        <p role="status" className="m-0 rounded-lg border border-red-600/25 bg-red-600/[0.06] px-3 py-2 text-[13px] text-foreground dark:border-red-400/25 dark:bg-red-400/[0.08]">
-                            <span className="font-medium text-red-600 dark:text-red-400">Paid calls are failing. </span>
-                            {limit} It keeps serving pages and reading its data; writes, email, AI and agent turns fail until {resetDay(u.periodStart)}, or until the limit is raised. Each refusal is in its runtime log.
-                        </p>
-                    )}
-                    {byType.length > 0 && (
-                        <ul aria-label="Spend by type" className={'m-0 list-none p-0'}>
-                            {byType.map(([type, usd]) => (
-                                <li key={type} className="flex items-center justify-between gap-3 py-1.5 text-[13px]">
-                                    <span className="text-muted-foreground">{spendTypeLabel(type)}</span>
-                                    <span className="tabular-nums text-foreground">{formatMoney(usd)}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                </ul>
             )}
             <BudgetDialog project={project} open={editing} onOpenChange={setEditing} />
-        </Section>
+        </section>
     );
 }
 
@@ -261,69 +269,113 @@ function PreviewAccessSetting({ project }: { project: Project }) {
     );
 }
 
+/** Its last few deployments, each opening in the Deployments tab: what a push or a deploy did lately. */
+function RecentDeploys({ project }: { project: Project }) {
+    const [, setParams] = useSearchParams();
+    // The Deployments tab's own read, so switching to it reads nothing again.
+    const deployments = useV1(`projects/${project.id}/deployments`, () => project.deployments({ limit: 50 }));
+    const show = (deployment: string | null) =>
+        setParams((prev) => withParams(prev, { tab: 'deployments', deployment }), { replace: true, preventScrollReset: true });
+    const rows = (deployments.data ?? []).slice(0, RECENT_DEPLOYS);
+    return (
+        <Section
+            title={
+                <span className="flex items-center justify-between gap-2">
+                    <span>Recent deploys</span>
+                    {rows.length > 0 && (
+                        <ConsoleButton size="sm" variant="ghost" onClick={() => show(null)}>
+                            All deployments
+                        </ConsoleButton>
+                    )}
+                </span>
+            }
+        >
+            {deployments.error !== undefined ? (
+                <ErrorPanel error={deployments.error} onRetry={() => void deployments.refresh()} />
+            ) : deployments.loading ? (
+                <div aria-busy className="h-20 animate-pulse rounded-lg bg-foreground/[0.04]" />
+            ) : rows.length === 0 ? (
+                <p className="m-0 text-[13px] text-muted-foreground">Not deployed yet.</p>
+            ) : (
+                <ul aria-label="Recent deploys" className="m-0 list-none p-0">
+                    {rows.map((d) => (
+                        <li key={d.id} {...clickableRow(() => show(d.id))} className={cn('-mx-2 flex cursor-pointer items-center gap-3 rounded-md px-2 py-2', ROW_HOVER)}>
+                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                                <span className="truncate text-[13px] text-foreground">{d.commitMessage || `Deploy of ${d.branch}`}</span>
+                                <span className="truncate text-[12px] text-muted-foreground" title={d.error ?? undefined}>
+                                    <span className="font-mono">{d.commit?.slice(0, 7) ?? d.branch}</span> · <TimeCell value={d.createdAt} />
+                                    {d.status === 'failed' && d.error ? (
+                                        <span className="text-red-600 dark:text-red-400"> · {d.error}</span>
+                                    ) : (
+                                        d.environment === 'preview' && ` · preview of ${d.branch}`
+                                    )}
+                                </span>
+                            </span>
+                            <StatusPill look={deploymentLook({ status: d.status, startedBy: d.startedBy })} className="shrink-0" />
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </Section>
+    );
+}
+
+/** Where it answers: its URL first (to copy), then every other name that serves it. */
+function ServesAt({ project }: { project: Project }) {
+    const names = [...new Set([hostOf(project.url), ...project.domainNames, project.hostname])];
+    return (
+        <Section title="Serves at">
+            <ul aria-label="Serves at" className="m-0 list-none p-0">
+                {names.map((name, i) => (
+                    <li key={name} className="flex min-h-8 items-center gap-1 text-[13px]">
+                        <AppUrl url={`https://${name}`} />
+                        {i === 0 && <CopyButton value={project.url} label="Copy the URL" />}
+                    </li>
+                ))}
+            </ul>
+        </Section>
+    );
+}
+
 export function AppOverview({ project, usage }: { project: Project; usage: AppUsage }) {
     const { client } = useConsole();
     const href = useConsoleHref();
     const regions = useRegions();
     const repoId = project.repoId;
     const repo = useV1(`repos/${repoId}`, () => Repo.get(repoId ?? '', { client, user: project.userId }), { enabled: repoId !== null });
-    const production = project.production;
-    const ownUrl = `https://${project.hostname}`;
     return (
-        <div className="flex flex-col gap-5">
-            <dl className="m-0">
-                <Field label="URL">
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                        <span className="inline-flex max-w-full items-center gap-1">
-                            <AppUrl url={project.url} />
-                            <CopyButton value={project.url} label="Copy the URL" />
-                        </span>
-                        {project.url !== ownUrl && <span className="truncate text-[12px] text-muted-foreground">Also at {project.hostname}</span>}
-                    </span>
-                </Field>
-                <Field label="Production">
-                    {production ? (
-                        <span className="flex min-w-0 flex-col gap-0.5">
-                            <StatusPill look={deploymentLook(production)} />
-                            <span className="truncate text-[12px] text-muted-foreground">
-                                <span className="font-mono">{production.commit?.slice(0, 7)}</span>
-                                {production.commitMessage ? ` · ${production.commitMessage}` : ''} · <TimeCell value={production.createdAt} />
-                                {production.startedBy === 'push' && ' · on push'}
+        <div className="flex flex-col gap-6">
+            <AppSpend project={project} usage={usage} />
+            <RecentDeploys project={project} />
+            <ServesAt project={project} />
+            <Folded title={repoId !== null ? 'Details: repo, runtime, region, deploys on push, previews, container' : 'Details: where it’s published from, runtime, region'}>
+                <dl className="m-0">
+                    {repoId !== null ? (
+                        <Field label="Repo">
+                            <span className="inline-flex items-center gap-2">
+                                <Link to={href('resources/repos', { repo: repoId })} className="text-foreground hover:underline">
+                                    {repo.data?.name ?? project.name}
+                                </Link>
+                                <BranchName name={project.productionBranch} className="text-muted-foreground" />
                             </span>
-                        </span>
+                        </Field>
                     ) : (
-                        <StatusPill look={NOT_DEPLOYED} />
+                        <Field label="Published from">{publishedFrom(project)}</Field>
                     )}
-                </Field>
-                {repoId !== null ? (
-                    <Field label="Repo">
-                        <span className="inline-flex items-center gap-2">
-                            <Link to={href('resources/repos', { repo: repoId })} className="text-foreground hover:underline">
-                                {repo.data?.name ?? project.name}
-                            </Link>
-                            <BranchName name={project.productionBranch} className="text-muted-foreground" />
-                        </span>
+                    <Field label="Runtime">{RUNTIMES.find((r) => r.value === project.runtime)?.label ?? project.runtime}</Field>
+                    <Field label="Framework">{project.framework ? frameworkLabel(project.framework) : <span className="text-muted-foreground">Detected from the repo at each build</span>}</Field>
+                    <Field label="Region">{regionLabel(project.region, regions.data)}</Field>
+                    <Field label="User">
+                        <span className={project.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(project.userId)}</span>
                     </Field>
-                ) : (
-                    <Field label="Published from">{publishedFrom(project)}</Field>
-                )}
-                <Field label="Runtime">{RUNTIMES.find((r) => r.value === project.runtime)?.label ?? project.runtime}</Field>
-                <Field label="Framework">{project.framework ? frameworkLabel(project.framework) : <span className="text-muted-foreground">Detected from the repo at each build</span>}</Field>
-                <Field label="Region">{regionLabel(project.region, regions.data)}</Field>
-                <Field label="Domains">
-                    {project.domainNames.length ? <span>{project.domainNames.join(', ')}</span> : <span className="text-muted-foreground">None yet</span>}
-                </Field>
-                <Field label="User">
-                    <span className={project.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(project.userId)}</span>
-                </Field>
-                <Field label="Created">
-                    <TimeCell value={project.createdAt} tier="absolute" />
-                </Field>
-            </dl>
-            {repoId !== null && <DeployOnPushSetting project={project} />}
-            {repoId !== null && <PreviewAccessSetting project={project} />}
-            {repoId !== null && <AppContainer project={project} />}
-            <Usage project={project} usage={usage} />
+                    <Field label="Created">
+                        <TimeCell value={project.createdAt} tier="absolute" />
+                    </Field>
+                </dl>
+                {repoId !== null && <DeployOnPushSetting project={project} />}
+                {repoId !== null && <PreviewAccessSetting project={project} />}
+                {repoId !== null && <AppContainer project={project} />}
+            </Folded>
         </div>
     );
 }

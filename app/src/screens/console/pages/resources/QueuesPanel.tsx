@@ -1,6 +1,6 @@
-// Queues: durable background work, delivered at least once. The drawer (`?queue=`) charts the
-// depth over the last day, peeks at the oldest messages without taking them, sends a test
-// message, retries or discards dead letters, exports, clears and deletes.
+// Queues: durable background work, delivered at least once. The drawer (`?queue=`) says what waits beside its name and
+// leads with its dead letters when it has any, then charts the depth over the last day, peeks at the oldest messages
+// without taking them, sends a test message, retries or discards dead letters, exports, clears and deletes.
 import { useEffect, useState } from 'react';
 import { ChevronRight, Send } from 'lucide-react';
 import { toast } from 'sonner';
@@ -19,6 +19,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote, Problem } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { JsonView } from '../../ui/JsonView';
@@ -288,9 +289,16 @@ function QueueDrawer({ queueId, row, onClose }: { queueId: string | null; row?: 
         <Drawer
             open={queueId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="queue"
+            kind="Queue"
             title={queue?.name}
             id={queueId ?? undefined}
+            status={
+                queue ? (
+                    <HeaderNote>
+                        {formatExact(queue.depth)} waiting · {formatExact(queue.inFlight)} in flight
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 queue ? (
                     <DeleteByName
@@ -318,27 +326,11 @@ function QueueDrawer({ queueId, row, onClose }: { queueId: string | null; row?: 
             {!queue && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {queue && (
                 <div key={queue.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="Waiting">
-                            <span className="tabular-nums">{formatExact(queue.depth)}</span>
-                        </Field>
-                        <Field label="In flight">
-                            <span className="tabular-nums">{formatExact(queue.inFlight)}</span>
-                        </Field>
-                        <Field label="Dead letters">
-                            <span className={cn('tabular-nums', queue.deadLetterCount > 0 && 'text-red-600 dark:text-red-400')}>{formatExact(queue.deadLetterCount)}</span>
-                        </Field>
-                        <Field label="Tries">
-                            Up to {queue.maxAttempts} per message <span className="text-muted-foreground">(max_attempts)</span>
-                        </Field>
-                        <Field label="Consumers">
-                            <QueuesConsumers users={queue.usedBy} links />
-                        </Field>
-                        <Field label="User">{userLabel(queue.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={queue.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
+                    {queue.deadLetterCount > 0 && (
+                        <Problem title={`${queue.deadLetterCount === 1 ? '1 message' : `${formatExact(queue.deadLetterCount)} messages`} failed ${queue.maxAttempts} tries`}>
+                            Each waits under Dead letters with why it failed: retry it once that&apos;s fixed, or discard it.
+                        </Problem>
+                    )}
                     <DepthSection queue={queue} />
                     <MessagesSection queue={queue} />
                     <DeadLettersSection queue={queue} />
@@ -359,6 +351,20 @@ function QueueDrawer({ queueId, row, onClose }: { queueId: string | null; row?: 
                         </div>
                     </Section>
                     <ExportSection what="JSON Lines: every message, dead letters too, one per line with its status." start={() => queue.export()} />
+                    <Folded title="Details: tries, what reads it, its user">
+                        <dl className="m-0">
+                            <Field label="Tries">
+                                Up to {queue.maxAttempts} per message <span className="text-muted-foreground">(max_attempts)</span>
+                            </Field>
+                            <Field label="Consumers">
+                                <QueuesConsumers users={queue.usedBy} links />
+                            </Field>
+                            <Field label="User">{userLabel(queue.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={queue.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

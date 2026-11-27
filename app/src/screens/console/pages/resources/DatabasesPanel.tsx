@@ -1,6 +1,7 @@
 // Databases: SQL databases your apps
-// and agents keep their data in. The drawer (`?database=`) shows the schema, runs a
-// read-only select, lists branches, restores to a time, exports, and deletes. The
+// and agents keep their data in. The drawer (`?database=`) says what it holds beside its status, then shows the schema,
+// runs a read-only select, lists branches, restores to a time and exports, its migrations and what uses it folded last,
+// and deletes. The
 // database an automation keeps its tables in is written only by the automation and
 // goes with it: its drawer reads it, branches and exports it.
 import { useEffect, useState } from 'react';
@@ -26,6 +27,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer, SHEET_SURFACE } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { SwitchRow } from '../../ui/SwitchRow';
@@ -478,11 +480,22 @@ function DatabaseDrawer({ databaseId, row, rows, onOpen, onClose }: { databaseId
         <Drawer
             open={databaseId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="database"
+            kind="Database"
             wide
             title={db?.name}
             id={databaseId ?? undefined}
-            status={db ? <StatusPill look={databaseStatus(db.status)} /> : undefined}
+            status={
+                db ? (
+                    <>
+                        <StatusPill look={databaseStatus(db.status)} />
+                        <HeaderNote>
+                            {ENGINE_LABEL[db.engine] ?? db.engine} · {formatSize(db.sizeBytes)}
+                            {db.engine === 'sqlite' && ' of 10 GB'}
+                            {db.tableCount != null && ` · ${db.tableCount === 1 ? '1 table' : `${formatExact(db.tableCount)} tables`}`}
+                        </HeaderNote>
+                    </>
+                ) : undefined
+            }
             footer={
                 db?.workflow ? (
                     <span className="text-[13px] text-muted-foreground">Its automation keeps its tables here: they change in the automation, and go when it’s deleted.</span>
@@ -510,37 +523,33 @@ function DatabaseDrawer({ databaseId, row, rows, onOpen, onClose }: { databaseId
             {!db && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {db && (
                 <div key={db.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="Engine">{ENGINE_LABEL[db.engine] ?? db.engine}</Field>
-                        <Field label="Size">
-                            <span className="tabular-nums">{formatSize(db.sizeBytes)}</span>
-                            {db.engine === 'sqlite' && <span className="text-muted-foreground"> of 10 GB</span>}
-                        </Field>
-                        <Field label="Tables">{formatExact(db.tableCount)}</Field>
-                        <Field label="Migrations">
-                            <MigrationsLine db={db} />
-                        </Field>
-                        <Field label="Used by">
-                            <UsedByText users={db.usedBy} />
-                        </Field>
-                        {db.workflow?.name && <Field label="Tables of">The {db.workflow.name} automation</Field>}
-                        {db.parentId && (
-                            <Field label="Branch of">
-                                <button type="button" onClick={() => onOpen(db.parentId!)} className="text-foreground underline-offset-2 hover:underline">
-                                    {parent?.name ?? <IdChip id={db.parentId} />}
-                                </button>
-                            </Field>
-                        )}
-                        <Field label="User">{userLabel(db.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={db.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
                     <SchemaSection db={db} schema={schema} onQuery={setSql} />
                     <QuerySection db={db} sql={sql} setSql={setSql} table={schema.data?.[0]?.name} />
                     <BranchesSection db={db} onOpen={onOpen} />
                     {!db.workflow && <RestoreSection db={db} />}
                     <ExportSection what={`A SQL dump of the schema and data, loadable into any ${ENGINE_LABEL[db.engine] ?? ''} database.`} start={() => db.export()} />
+                    <Folded title="Details: migrations, what uses it, its user">
+                        <dl className="m-0">
+                            <Field label="Migrations">
+                                <MigrationsLine db={db} />
+                            </Field>
+                            <Field label="Used by">
+                                <UsedByText users={db.usedBy} />
+                            </Field>
+                            {db.workflow?.name && <Field label="Tables of">The {db.workflow.name} automation</Field>}
+                            {db.parentId && (
+                                <Field label="Branch of">
+                                    <button type="button" onClick={() => onOpen(db.parentId!)} className="text-foreground underline-offset-2 hover:underline">
+                                        {parent?.name ?? <IdChip id={db.parentId} />}
+                                    </button>
+                                </Field>
+                            )}
+                            <Field label="User">{userLabel(db.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={db.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

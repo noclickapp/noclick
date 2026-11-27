@@ -1,8 +1,8 @@
 // Inboxes: email addresses your code or agents receive mail at. The drawer
-// (`?inbox=`) lists what arrived, newest first, opens one message in full and
-// replies to its sender; Delete retires the address. An inbox shows its name
-// and whose mail wakes its agent, and each message the agent turn it woke, or
-// why it woke none. In the lab (designed): the email thread's conversation.
+// (`?inbox=`) says which agent its mail wakes beside its address (to copy), lists
+// what arrived, newest first, opens one message in full and replies to its sender,
+// and folds its name and whose mail wakes the agent last; Delete retires the
+// address. Each message shows the agent turn it woke, or why it woke none. In the lab (designed): the email thread's conversation.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { ArrowLeft, Paperclip } from 'lucide-react';
@@ -29,6 +29,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { CopyButton } from '../../ui/CopyButton';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { TimeCell } from '../../ui/TimeCell';
@@ -314,15 +315,27 @@ function InboxDrawer({
         <Drawer
             open={inboxId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="inbox"
+            kind="Inbox"
             title={
                 inbox ? (
-                    <span className="font-mono text-[14px]">
-                        {inbox.address}
+                    <span className="inline-flex max-w-full items-center gap-1">
+                        <span className="min-w-0 break-all font-mono text-[14px]">
+                            {inbox.address}
+                        </span>
+                        <CopyButton value={inbox.address} label="Copy address" />
                     </span>
                 ) : undefined
             }
             id={inboxId ?? undefined}
+            status={
+                inbox ? (
+                    <HeaderNote>
+                        {inbox.agentId
+                            ? `Wakes ${agents.get(inbox.agentId)?.name ?? inbox.agentId}`
+                            : 'Wakes no agent: your code reads its mail'}
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 inbox ? (
                     <ConfirmAction
@@ -354,44 +367,7 @@ function InboxDrawer({
                 />
             )}
             {inbox && !open && (
-                <div className="flex flex-col gap-5">
-                    <dl className="m-0">
-                        <Field label="Address">
-                            <span className="inline-flex items-center gap-1 font-mono text-[12px]">
-                                {inbox.address}
-                                <CopyButton
-                                    value={inbox.address}
-                                    label="Copy address"
-                                />
-                            </span>
-                        </Field>
-                        {inbox.name && (
-                            <Field label="Name">
-                                <span className="font-mono text-[12px]">{inbox.name}</span>
-                            </Field>
-                        )}
-                        <Field label="Wakes">
-                            {inbox.agentId ? (
-                                (agents.get(inbox.agentId)?.name ??
-                                inbox.agentId)
-                            ) : (
-                                <span className="text-muted-foreground">
-                                    No agent
-                                </span>
-                            )}
-                        </Field>
-                        {inbox.agentId && (
-                            <Field label="Mail from">
-                                {SENDERS_LABEL[inbox.senders ?? 'anyone']}
-                            </Field>
-                        )}
-                        <Field label="User">
-                            {userLabel(inbox.userId)}
-                        </Field>
-                        <Field label="Created">
-                            <TimeCell value={inbox.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
+                <div className="flex flex-col gap-6">
                     <Section title="Messages">
                         {messages.error !== undefined ? (
                             <ErrorPanel
@@ -470,6 +446,20 @@ function InboxDrawer({
                             </p>
                         )}
                     </Section>
+                    <Folded title="Details: its name, whose mail wakes it, its user">
+                        <dl className="m-0">
+                            {inbox.name && (
+                                <Field label="Name">
+                                    <span className="font-mono text-[12px]">{inbox.name}</span>
+                                </Field>
+                            )}
+                            {inbox.agentId && <Field label="Mail from">{SENDERS_LABEL[inbox.senders ?? 'anyone']}</Field>}
+                            <Field label="User">{userLabel(inbox.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={inbox.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

@@ -1,6 +1,7 @@
 // Sandboxes: disposable machines for running code, billed per second. The
-// drawer (`?sandbox=`) shows its lifetime, runs a command, reads a file by
-// path, lists its background execs, and terminates it.
+// drawer (`?sandbox=`) shows its lifetime and when it ends, lists its background
+// execs, runs a command, reads a file by path, folds its shape and region last,
+// and terminates it.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { HAIRLINE } from '@/ui/primitives';
@@ -24,6 +25,7 @@ import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { ExecutionTimeline } from '../../ui/ExecutionTimeline';
@@ -350,14 +352,21 @@ function SandboxDrawer({
         <Drawer
             open={sandboxId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="sandbox"
+            kind="Sandbox"
             title={r ? `${r.image} sandbox` : undefined}
             id={sandboxId ?? undefined}
             status={
                 sandbox ? (
-                    <StatusPill
-                        look={sandboxStatus(sandbox.status, r?.end_reason)}
-                    />
+                    <>
+                        <StatusPill
+                            look={sandboxStatus(sandbox.status, r?.end_reason)}
+                        />
+                        {live(sandbox.status) && sandbox.expiresAt && (
+                            <HeaderNote>
+                                {sandboxShape(sandbox)} · ends {formatRelative(sandbox.expiresAt, now())}
+                            </HeaderNote>
+                        )}
+                    </>
                 ) : undefined
             }
             footer={
@@ -384,64 +393,56 @@ function SandboxDrawer({
                 />
             )}
             {sandbox && r && (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-6">
                     <ExecutionTimeline
                         events={sandboxEvents(sandbox)}
                         now={now()}
                     />
-                    <dl className="m-0">
-                        <Field label="Shape">{sandboxShape(sandbox)}</Field>
-                        {hosts && (
-                            <Field label="Reaches only">
-                                <span className="font-mono text-[12px]">{hosts.join(', ')}</span>
-                            </Field>
-                        )}
-                        <Field label="Region">{regionLabel(sandbox.region, regions)}</Field>
-                        <Field label="User">
-                            {userLabel(sandbox.userId)}
-                        </Field>
-                        <Field label="Created">
-                            <TimeCell value={r.created_at} tier="absolute" />
-                        </Field>
-                        {live(sandbox.status) ? (
-                            <Field label="Expires">
-                                <TimeCell
-                                    value={sandbox.expiresAt}
-                                    tier="absolute"
-                                />{' '}
-                                <span className="text-muted-foreground">
-                                    (
-                                    {sandbox.expiresAt
-                                        ? formatRelative(
-                                              sandbox.expiresAt,
-                                              now()
-                                          )
-                                        : 'unknown'}
-                                    )
-                                </span>
-                            </Field>
-                        ) : (
-                            <Field label="Ended">
-                                <TimeCell
-                                    value={r.terminated_at}
-                                    tier="absolute"
-                                />
-                                {r.end_reason && (
-                                    <span className="text-muted-foreground">
-                                        {' '}
-                                        · {r.end_reason}
-                                    </span>
-                                )}
-                            </Field>
-                        )}
-                    </dl>
+                    <ExecHistory sandbox={sandbox} />
                     {sandbox.status === 'running' && (
                         <>
                             <ExecForm sandbox={sandbox} />
                             <FileReader sandbox={sandbox} />
                         </>
                     )}
-                    <ExecHistory sandbox={sandbox} />
+                    <Folded title="Details: its shape, network, region and user">
+                        <dl className="m-0">
+                            <Field label="Shape">{sandboxShape(sandbox)}</Field>
+                            {hosts && (
+                                <Field label="Reaches only">
+                                    <span className="font-mono text-[12px]">{hosts.join(', ')}</span>
+                                </Field>
+                            )}
+                            <Field label="Region">{regionLabel(sandbox.region, regions)}</Field>
+                            <Field label="User">
+                                {userLabel(sandbox.userId)}
+                            </Field>
+                            <Field label="Created">
+                                <TimeCell value={r.created_at} tier="absolute" />
+                            </Field>
+                            {live(sandbox.status) ? (
+                                <Field label="Expires">
+                                    <TimeCell
+                                        value={sandbox.expiresAt}
+                                        tier="absolute"
+                                    />
+                                </Field>
+                            ) : (
+                                <Field label="Ended">
+                                    <TimeCell
+                                        value={r.terminated_at}
+                                        tier="absolute"
+                                    />
+                                    {r.end_reason && (
+                                        <span className="text-muted-foreground">
+                                            {' '}
+                                            · {r.end_reason}
+                                        </span>
+                                    )}
+                                </Field>
+                            )}
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

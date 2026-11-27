@@ -24,6 +24,7 @@ import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PillSwitch } from '../../ui/PillTabs';
@@ -34,7 +35,7 @@ import { AppBindings, AppSchedules, AppSecrets, AppSettings } from './AppsConfig
 import { AppDeployments, useDeploy } from './AppsDeployments';
 import { deploymentLook, NOT_DEPLOYED, withParams } from './AppsFormat';
 import { AppUrl } from './AppsParts';
-import { AppDomains, AppLogs, AppOverview, useAppUsage } from './AppsOverview';
+import { AppDomains, AppLogs, AppOverview, AppProblem, useAppUsage } from './AppsOverview';
 import { ConfirmAction, errorText, PanelToolbar, type PanelProps } from './shared';
 
 const TABS = [
@@ -114,28 +115,36 @@ function AppDrawer({ appId, row, onClose }: { appId: string | null; row?: Projec
         if (project) recordRecent({ type: 'app', id: project.id, label: project.name, path: 'resources/apps', params: { app: project.id } });
     }, [project?.id]); // eslint-disable-line react-hooks/exhaustive-deps
     const production = project?.production;
-    // What's wrong leads: an app whose paid calls are failing says so in its header, not only in its Overview.
+    // What's wrong leads every tab: an app whose paid calls are failing says so above them, with its fix.
     const usage = useAppUsage(project);
-    const look = usage.data?.limitedBy
-        ? ({ label: 'Paid calls failing', reason: usage.data.limitedBy === 'project' ? 'budget used up' : usage.data.limitedBy === 'user' ? 'user cap' : 'balance', glyph: 'cross', tone: 'failure' } as const)
-        : production
-          ? deploymentLook(production)
-          : NOT_DEPLOYED;
     return (
         <Drawer
             open={appId !== null}
             onOpenChange={(open) => !open && onClose()}
-            kind="app"
+            kind="App"
             wide
             title={project?.name}
             id={appId ?? undefined}
-            status={project ? <StatusPill look={look} /> : undefined}
+            status={
+                project ? (
+                    <>
+                        <StatusPill look={production ? deploymentLook(production) : NOT_DEPLOYED} />
+                        {production && (
+                            <HeaderNote>
+                                <span className="font-mono">{production.commit?.slice(0, 7)}</span> · <TimeCell value={production.createdAt} />
+                                {production.startedBy === 'push' && ' · on push'}
+                            </HeaderNote>
+                        )}
+                    </>
+                ) : undefined
+            }
             footer={project ? <AppFooter project={project} onDeleted={onClose} /> : undefined}
         >
             {!project && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {!project && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {project && (
                 <div className="flex flex-col gap-5">
+                    <AppProblem project={project} usage={usage} />
                     <PillSwitch label="App" tabs={tabs} value={active} onChange={setTab} />
                     {active === 'overview' && <AppOverview project={project} usage={usage} />}
                     {active === 'deployments' && <AppDeployments project={project} />}

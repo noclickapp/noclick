@@ -1,5 +1,5 @@
 // Browser profiles: one person's sign-ins, which its user's browsers and
-// agents browse with. The drawer (`?profile=`) lists the sites it is signed
+// agents browse with. The drawer (`?profile=`) says when it was last used, lists the sites it is signed
 // in to (each can be forgotten), asks a person to sign in to another in a live
 // browser, shows recent browser sessions (live ones link to the live view), and
 // deletes the profile.
@@ -18,6 +18,7 @@ import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { Money } from '../../ui/Money';
@@ -142,9 +143,16 @@ function ProfileDrawer({ profileId, row, onClose }: { profileId: string | null; 
         <Drawer
             open={profileId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="browser profile"
+            kind="Browser profile"
             title={profile ? <span className="font-mono">{profile.name}</span> : undefined}
             id={profileId ?? undefined}
+            status={
+                profile ? (
+                    <HeaderNote>
+                        {sites.length ? `Signed in to ${sites.length === 1 ? '1 site' : `${sites.length} sites`}` : 'Signed in nowhere yet'} · last used <TimeCell value={profile.lastUsedAt} empty="never" />
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 profile ? (
                     <ConfirmAction
@@ -164,16 +172,7 @@ function ProfileDrawer({ profileId, row, onClose }: { profileId: string | null; 
         >
             {!profile && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {profile && (
-                <div className="flex flex-col gap-5">
-                    <dl className="m-0">
-                        <Field label="User">{userLabel(profile.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={profile.createdAt} tier="absolute" />
-                        </Field>
-                        <Field label="Last used">
-                            <TimeCell value={profile.lastUsedAt} empty="Never" />
-                        </Field>
-                    </dl>
+                <div className="flex flex-col gap-6">
                     <Section title="Signed in to">
                         {sites.length ? (
                             <ul aria-label="Signed in to" className={cn('m-0 -mx-3 mb-2 list-none p-0', HAIRLINE)}>
@@ -199,9 +198,17 @@ function ProfileDrawer({ profileId, row, onClose }: { profileId: string | null; 
                         <SignInToSite profile={profile} />
                     </Section>
                     <Sessions profile={profile} />
-                    <p className="m-0 text-[12px] text-muted-foreground">
-                        {"A profile counts as a credential: it's kept encrypted with its user, never exported, and used only by that user's browsers and agents."}
-                    </p>
+                    <Folded title="Details: its user, when it was made">
+                        <dl className="m-0">
+                            <Field label="User">{userLabel(profile.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={profile.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                        <p className="m-0 text-[12px] text-muted-foreground">
+                            {"A profile counts as a credential: it's kept encrypted with its user, never exported, and used only by that user's browsers and agents."}
+                        </p>
+                    </Folded>
                 </div>
             )}
         </Drawer>

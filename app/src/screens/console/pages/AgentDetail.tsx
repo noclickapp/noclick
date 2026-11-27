@@ -73,6 +73,7 @@ import { CapMeter } from '../ui/CapMeter';
 import { StatusPill } from '../ui/StatusPill';
 import { DataTable, type Column } from '../ui/DataTable';
 import { Drawer } from '../ui/Drawer';
+import { HeaderNote, Spend } from '../ui/DrawerParts';
 import { FacetSelect } from '../ui/FacetSelect';
 import { JsonView } from '../ui/JsonView';
 import { conversationParam, parseConversationParam } from './OperationDrawer';
@@ -1250,11 +1251,9 @@ async function readThread(agent: Agent, userId: string | null, conversation: str
     return await agent.history(conversation, { userFilter: userId ?? NO_USER });
 }
 
-/** What a conversation's model calls came to, and who holds it; a handed-off one goes back to the agent here. */
+/** What a conversation cost and who holds it, at the top of its drawer; a handed-off one goes back to the agent here. */
 function ConversationState({ agent, conversation, onHandedBack }: { agent: Agent; conversation: Conversation; onHandedBack: () => void }) {
     const [busy, setBusy] = useState(false);
-    const look = conversationStatus(conversation.status, conversation.handedOffTo);
-    if (!look && !conversation.modelUsage) return null;
     const handBack = async () => {
         setBusy(true);
         try {
@@ -1267,17 +1266,16 @@ function ConversationState({ agent, conversation, onHandedBack }: { agent: Agent
             setBusy(false);
         }
     };
+    // Its status is the drawer's header; what it means, and the way back, lead here.
+    const waiting = conversationStatus(conversation.status, conversation.handedOffTo) !== null;
     return (
-        <dl className={cn('m-0 mb-4 border-b pb-3', HAIRLINE)}>
-            {look && (
-                <div className="flex min-h-8 flex-wrap items-center justify-between gap-2 py-1">
-                    <span className="flex min-w-0 items-center gap-2">
-                        <StatusPill look={look} />
-                        <span className="text-[13px] text-muted-foreground">
-                            {conversation.status === 'handed_off'
-                                ? `${agent.name} stays quiet while ${conversation.handedOffTo ?? 'the person'} answers from their page.`
-                                : 'A turn waits on a person: its question, an approval or a sign-in.'}
-                        </span>
+        <div className={cn('mb-6 flex flex-col gap-2 border-b pb-4', HAIRLINE)}>
+            {waiting && (
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="min-w-0 text-[13px] text-muted-foreground">
+                        {conversation.status === 'handed_off'
+                            ? `${agent.name} stays quiet while ${conversation.handedOffTo ?? 'the person'} answers from their page.`
+                            : 'A turn waits on a person: its question, an approval or a sign-in.'}
                     </span>
                     {conversation.status === 'handed_off' && (
                         <ConsoleButton size="sm" variant="soft" onClick={() => void handBack()} disabled={busy}>
@@ -1286,16 +1284,18 @@ function ConversationState({ agent, conversation, onHandedBack }: { agent: Agent
                     )}
                 </div>
             )}
+            <Spend label="Cost">
+                <span>
+                    <Money usd={conversation.costUsd} />
+                    {conversation.turns != null && <span className="text-muted-foreground"> over {conversation.turns === 1 ? '1 turn' : `${conversation.turns} turns`}</span>}
+                </span>
+            </Spend>
             {conversation.modelUsage && (
-                <div className="flex items-baseline gap-3 py-1">
-                    <dt className="w-24 shrink-0 text-[12px] text-muted-foreground">Model</dt>
-                    <dd className="m-0 text-[13px] tabular-nums text-foreground">
-                        {modelUsageText(conversation.modelUsage)}
-                        <span className="text-muted-foreground">, on its model connection</span>
-                    </dd>
-                </div>
+                <p className="m-0 text-right text-[12px] tabular-nums text-muted-foreground">
+                    {modelUsageText(conversation.modelUsage)}, on its model connection
+                </p>
             )}
-        </dl>
+        </div>
     );
 }
 
@@ -1358,7 +1358,20 @@ function Conversations({ agent }: { agent: Agent }) {
                     onOpenChange={(o) => !o && setConv(null)}
                     kind="Conversation"
                     title={row?.title ?? <span className="font-mono text-[14px]">{open.conversation}</span>}
-                    status={<span className="text-[12px] text-muted-foreground">{userLabel(open.userId)}</span>}
+                    status={
+                        <>
+                            {row && conversationStatus(row.status, row.handedOffTo) && <StatusPill look={conversationStatus(row.status, row.handedOffTo)!} />}
+                            <HeaderNote>
+                                {userLabel(open.userId)}
+                                {row?.lastActivity && (
+                                    <>
+                                        {' · last message '}
+                                        <TimeCell value={row.lastActivity} />
+                                    </>
+                                )}
+                            </HeaderNote>
+                        </>
+                    }
                 >
                     {row && <ConversationState agent={agent} conversation={row} onHandedBack={() => void paged.refresh()} />}
                     <Transcript agent={agent} userId={open.userId} conversation={open.conversation} person={row?.handedOffTo ?? null} />
@@ -1745,7 +1758,13 @@ function MemoryDrawer({
             onOpenChange={(o) => !o && onClose()}
             kind="Memory entry"
             title={<span className="font-mono text-[14px]">{name}</span>}
-            status={entry && <span className="text-[12px] tabular-nums text-muted-foreground">version {entry.version}</span>}
+            status={
+                entry && (
+                    <HeaderNote>
+                        Version {entry.version} · {WHO_CHANGED[entry.updatedBy ?? ''] ? `${WHO_CHANGED[entry.updatedBy ?? '']} changed it` : 'Changed'} <TimeCell value={entry.updatedAt} />
+                    </HeaderNote>
+                )
+            }
             footer={
                 entry && editing ? (
                     <>
@@ -1790,9 +1809,6 @@ function MemoryDrawer({
                     <pre aria-label="Content" className={cn('m-0 whitespace-pre-wrap break-words rounded-lg border bg-foreground/[0.03] px-3 py-2.5 font-mono text-[13px] leading-relaxed text-foreground/90', HAIRLINE)}>
                         {entry.content || '(empty)'}
                     </pre>
-                    <p className="m-0 text-[12px] text-muted-foreground">
-                        {WHO_CHANGED[entry.updatedBy ?? ''] ?? 'Changed'} changed it <TimeCell value={entry.updatedAt} />.
-                    </p>
                 </div>
             )}
             {forgetting && entry && (

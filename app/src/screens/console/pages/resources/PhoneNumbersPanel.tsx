@@ -1,9 +1,8 @@
 // Phone numbers: numbers your agents answer and call from. Buying is the app's own purchase flow over /v1 (any country
 // numbers are sold in, each at its own price, confirmed in its row with what's charged now); the drawer
-// (`?number=`) routes inbound calls to an agent, places a call, lists calls
-// with their transcripts both ways, and releases the number; a number shows its
-// name, its source and recording, and what its answering agent may do
-// (transfer the call, answer only your users). Numbers kept with your own phone
+// (`?number=`) leads with who answers it and what it costs, then its recent calls with their transcripts and costs
+// both ways, routes inbound calls to an agent (and what it may do: transfer the call, answer only your users), places
+// a call, folds its name, source and recording under one line, and releases the number. Numbers kept with your own phone
 // provider are connected (PhoneNumbersBring; Disconnect instead of Release). In
 // the lab (designed): texting the caller, and porting numbers in with the port requests (a
 // connected number is disconnected first).
@@ -36,6 +35,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, Spend } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { SwitchRow } from '../../ui/SwitchRow';
@@ -107,12 +107,12 @@ function CallRow({ call }: { call: PhoneCall }) {
                     {inbound ? call.fromNumber : call.to}
                 </span>
                 <StatusPill look={callLook(call.status)} />
-                <span className="ml-auto tabular-nums text-muted-foreground">
+                <span className="ml-auto hidden whitespace-nowrap tabular-nums text-muted-foreground sm:inline">
                     {call.seconds != null
                         ? formatDuration(call.seconds * 1000)
                         : '—'}
                 </span>
-                <Money usd={call.costUsd} className="w-16 text-right" />
+                <Money usd={call.costUsd} className="ml-auto w-16 shrink-0 text-right sm:ml-0" />
             </button>
             {open && (
                 <div className="px-3 pb-3 pl-9 text-[13px]">
@@ -385,6 +385,7 @@ function NumberDrawer({
     onClose: () => void;
 }) {
     const { client, lab } = useConsole();
+    const agents = useAgentNames();
     const fetched = useV1(
         numberId && !row ? `phone_numbers/${numberId}` : null,
         () => PhoneNumber.get(numberId!, { client })
@@ -408,17 +409,29 @@ function NumberDrawer({
                 params: { number: number.id },
             });
     }, [number?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    const answers = number?.agentId ? (agents.get(number.agentId)?.name ?? number.agentId) : null;
     return (
         <Drawer
             open={numberId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="phone number"
+            kind="Phone number"
             title={
                 number ? (
                     <span className="font-mono">{number.number}</span>
                 ) : undefined
             }
             id={numberId ?? undefined}
+            status={
+                number ? (
+                    <StatusPill
+                        look={
+                            answers
+                                ? { label: `Answered by ${answers}`, glyph: 'filled', tone: 'ink' }
+                                : { label: 'No agent answers it', glyph: 'muted', tone: 'muted' }
+                        }
+                    />
+                ) : undefined
+            }
             footer={
                 number && number.source === 'connected' ? (
                     <ConfirmAction
@@ -456,62 +469,20 @@ function NumberDrawer({
                 />
             )}
             {number && (
-                <div className="flex flex-col gap-5">
-                    <dl className="m-0">
-                        {number.name && (
-                            <Field label="Name">
-                                <span className="font-mono text-[12px]">{number.name}</span>
-                            </Field>
+                <div className="flex flex-col gap-6">
+                    <Spend label="Costs">
+                        {number.source === 'connected' ? (
+                            <span className="text-muted-foreground">
+                                Your phone provider bills the number and its minutes; NoClick bills the agent&apos;s time on calls.
+                            </span>
+                        ) : (
+                            <span>
+                                <Money usd={number.monthlyUsd} full /> a month
+                                <span className="text-muted-foreground">, plus what each call costs</span>
+                            </span>
                         )}
-                        <Field label="User">
-                            {userLabel(number.userId)}
-                        </Field>
-                        <Field label="Source">
-                            {numberSource(number)}
-                            {number.connection && (
-                                <span className="text-muted-foreground">
-                                    {' · through '}
-                                    <span className="font-mono text-[12px] text-foreground">{number.connection}</span>
-                                    {', your phone provider account'}
-                                </span>
-                            )}
-                        </Field>
-                        <Field label="Recording">
-                            <RecordCalls number={number} onChanged={setUpdated} />
-                        </Field>
-                        <Field label="Monthly">
-                            {number.source === 'connected' ? (
-                                <span className="text-muted-foreground">
-                                    Your phone provider bills the number and its minutes; NoClick bills only what it adds: the agent&apos;s time on calls.
-                                </span>
-                            ) : (
-                                <Money usd={number.monthlyUsd} full />
-                            )}
-                        </Field>
-                        <Field label={numberSource(number)}>
-                            <TimeCell
-                                value={number.createdAt}
-                                tier="absolute"
-                            />
-                        </Field>
-                    </dl>
-                    {lab && number.source === 'connected' && (
-                        <Section title="Port it to NoClick">
-                            <p className="m-0 text-[13px] text-muted-foreground">
-                                To move the number itself to NoClick, disconnect it first, then port it in with Port a number. For one kept with
-                                Twilio, the account name is &quot;Twilio, Inc.&quot;, the account number the last 8 characters of your Account SID, and
-                                the PIN comes from Twilio&apos;s support.
-                            </p>
-                        </Section>
-                    )}
-                    <Section title="Inbound calls reach">
-                        <AnswerWith number={number} onChanged={setUpdated} />
-                    </Section>
-                    <PlaceCall number={number} />
-                    <Section title="Calls">
-                        <p className="m-0 mb-2 text-[12px] text-muted-foreground">
-                            Calls this number answered and placed, newest first.
-                        </p>
+                    </Spend>
+                    <Section title="Recent calls">
                         {calls.error !== undefined ? (
                             <ErrorPanel
                                 error={calls.error}
@@ -525,10 +496,7 @@ function NumberDrawer({
                         ) : calls.data?.length ? (
                             <ul
                                 aria-label="Calls"
-                                className={cn(
-                                    'm-0 list-none rounded-lg border p-0',
-                                    HAIRLINE
-                                )}
+                                className="m-0 -mx-3 list-none p-0"
                             >
                                 {calls.data.map((c) => (
                                     <CallRow
@@ -539,10 +507,54 @@ function NumberDrawer({
                             </ul>
                         ) : (
                             <p className="m-0 text-[13px] text-muted-foreground">
-                                No calls yet.
+                                No calls yet: the calls it answers and places show here, each with what it cost.
                             </p>
                         )}
                     </Section>
+                    <Section title="Inbound calls reach">
+                        <AnswerWith number={number} onChanged={setUpdated} />
+                    </Section>
+                    <PlaceCall number={number} />
+                    <Folded title="Details: name, user, where it's from, recording">
+                        <dl className="m-0">
+                            {number.name && (
+                                <Field label="Name">
+                                    <span className="font-mono text-[12px]">{number.name}</span>
+                                </Field>
+                            )}
+                            <Field label="User">
+                                {userLabel(number.userId)}
+                            </Field>
+                            <Field label="Source">
+                                {numberSource(number)}
+                                {number.connection && (
+                                    <span className="text-muted-foreground">
+                                        {' · through '}
+                                        <span className="font-mono text-[12px] text-foreground">{number.connection}</span>
+                                        {', your phone provider account'}
+                                    </span>
+                                )}
+                            </Field>
+                            <Field label="Recording">
+                                <RecordCalls number={number} onChanged={setUpdated} />
+                            </Field>
+                            <Field label={numberSource(number)}>
+                                <TimeCell
+                                    value={number.createdAt}
+                                    tier="absolute"
+                                />
+                            </Field>
+                        </dl>
+                        {lab && number.source === 'connected' && (
+                            <Section title="Port it to NoClick">
+                                <p className="m-0 text-[13px] text-muted-foreground">
+                                    To move the number itself to NoClick, disconnect it first, then port it in with Port a number. For one kept with
+                                    Twilio, the account name is &quot;Twilio, Inc.&quot;, the account number the last 8 characters of your Account SID, and
+                                    the PIN comes from Twilio&apos;s support.
+                                </p>
+                            </Section>
+                        )}
+                    </Folded>
                 </div>
             )}
         </Drawer>

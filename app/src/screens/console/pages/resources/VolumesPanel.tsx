@@ -1,7 +1,7 @@
 // Volumes: persistent filesystems that sandboxes and agents mount. The drawer
-// (`?volume=`, the folder in `&path=`) browses the files a folder at a time and
-// downloads one, lists who mounts it, shows the code that mounts it in a sandbox and an
-// agent, exports, and deletes (type the name).
+// (`?volume=`, the folder in `&path=`) says what it holds beside its name, browses the
+// files a folder at a time and downloads one, lists who mounts it, exports, folds the code
+// that mounts it in a sandbox and an agent last, and deletes (type the name).
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
@@ -17,6 +17,7 @@ import { NewInCode } from '../../NewInCode';
 import { CodeSnippet } from '../../ui/CodeSnippet';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { TimeCell } from '../../ui/TimeCell';
@@ -89,9 +90,16 @@ function VolumeDrawer({ volumeId, row, onClose }: { volumeId: string | null; row
         <Drawer
             open={volumeId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="volume"
+            kind="Volume"
             title={volume?.name}
             id={volumeId ?? undefined}
+            status={
+                volume ? (
+                    <HeaderNote>
+                        {formatSize(volume.sizeBytes)} in {volume.fileCount === 1 ? '1 file' : `${formatExact(volume.fileCount)} files`}
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 volume ? (
                     <DeleteByName
@@ -119,27 +127,23 @@ function VolumeDrawer({ volumeId, row, onClose }: { volumeId: string | null; row
             {!volume && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {volume && (
                 <div key={volume.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="Size">
-                            <span className="tabular-nums">{formatSize(volume.sizeBytes)}</span>
-                        </Field>
-                        <Field label="Files">
-                            <span className="tabular-nums">{formatExact(volume.fileCount)}</span>
-                        </Field>
-                        <Field label="User">{userLabel(volume.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={volume.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
                     <VolumeFiles volume={volume} path={path || '/'} onPath={(p) => setPath(p === '/' ? null : p)} />
                     <Section title="Mounted by">
                         <UsesList uses={uses} label={`Mounts of ${volume.name}`} empty="Nothing mounts it right now. Agents that list it, and sandboxes while they run, show here." />
                     </Section>
-                    <Section title="Mount it">
-                        <p className="m-0 mb-2 text-[12px] text-muted-foreground">Read-write at the path you choose. What a sandbox or an agent&apos;s turn writes is saved when it ends.</p>
-                        <CodeSnippet tabs={snippetTabs(volumeMountSnippet(volume.name, volume.mountedBy[0]?.path ?? '/data', volume.userId))} />
-                    </Section>
                     <ExportSection what="Every file in its folders, with an index of their sizes and times, at a link valid 7 days." start={() => volume.export()} />
+                    <Folded title="Details: its user, the code that mounts it">
+                        <dl className="m-0">
+                            <Field label="User">{userLabel(volume.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={volume.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                        <Section title="Mount it">
+                            <p className="m-0 mb-2 text-[12px] text-muted-foreground">Read-write at the path you choose. What a sandbox or an agent&apos;s turn writes is saved when it ends.</p>
+                            <CodeSnippet tabs={snippetTabs(volumeMountSnippet(volume.name, volume.mountedBy[0]?.path ?? '/data', volume.userId))} />
+                        </Section>
+                    </Folded>
                 </div>
             )}
         </Drawer>

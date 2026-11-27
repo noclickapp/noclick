@@ -1,5 +1,6 @@
-// The human request drawer (`/logs?req=<request id>`), read-only: the whole
-// request, who it waits on, and where it's answered. The console builds and
+// The human request drawer (`/logs?req=<request id>`), read-only: who it waits
+// on and where it's answered (or what they answered) first, then the whole
+// request, and who asked, when and how it was sent folded last. The console builds and
 // watches; a person answers in the product (through the SDK) or from the link
 // they were sent, never here. An approval also says what's being approved: the
 // operation as the service labels it, its arguments, and for an agent's call
@@ -17,6 +18,7 @@ import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { answerSummary, EYEBROW, type HumanRequestAnswer, type HumanRequestKind, type HumanRequestStatus } from '@/screens/humans/HumanRequestView';
 import { ANSWERED_ELSEWHERE, conversationParam } from './OperationDrawer';
 import { Drawer } from '../ui/Drawer';
+import { Folded } from '../ui/DrawerParts';
 import { ErrorPanel } from '../ui/ErrorPanel';
 import { IdChip } from '../ui/IdChip';
 import { JsonView } from '../ui/JsonView';
@@ -161,7 +163,7 @@ export function HumanRequestDrawer({
         <Drawer
             open={requestId !== null}
             onOpenChange={(open) => !open && onClose()}
-            kind="request to a person"
+            kind="Request to a person"
             title={view ? EYEBROW[view.kind] : undefined}
             id={requestId ?? undefined}
             status={view ? <StatusPill look={humanRequestStatus(view.status)} /> : undefined}
@@ -169,7 +171,37 @@ export function HumanRequestDrawer({
             {!view && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {!view && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {view && (
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-6">
+                    {view.status === 'pending' && (
+                        <p className="m-0 text-[13px] text-muted-foreground">
+                            {view.kind === 'hand_off' && view.url ? (
+                                <>
+                                    {waitingOn} has the conversation and replies from{' '}
+                                    <a href={view.url} target="_blank" rel="noreferrer" className="text-foreground hover:underline">
+                                        its page
+                                    </a>
+                                    {", until it's handed back."}
+                                </>
+                            ) : (
+                                <>
+                                    Waiting on {waitingOn === 'You' ? 'a person' : waitingOn}
+                                    {view.expires_at && (
+                                        <>
+                                            ; it expires <TimeCell value={view.expires_at} />
+                                        </>
+                                    )}
+                                    . {view.kind !== 'hand_off' && ANSWERED_ELSEWHERE}
+                                </>
+                            )}
+                        </p>
+                    )}
+                    {view.answer && (
+                        <p className="m-0 text-[13px] text-foreground">
+                            {answerSummary(view.answer, view.answered_by === 'owner' ? 'You' : waitingOn)}
+                            {view.answered_by && <span className="text-muted-foreground"> · {ANSWERED_BY[view.answered_by]}</span>}
+                        </p>
+                    )}
+
                     <section>
                         {approval?.label && <p className="m-0 mb-0.5 text-[13px] font-medium text-foreground">{approval.label}</p>}
                         {summary?.tool && <p className="m-0 mb-1 font-mono text-[12px] text-foreground">{summary.tool}</p>}
@@ -200,7 +232,7 @@ export function HumanRequestDrawer({
                         <section className="flex flex-col gap-2">
                             <h3 className="m-0 text-[14px] font-semibold tracking-[-0.01em] text-foreground">{view.approval ? 'Arguments' : 'Details'}</h3>
                             {scalarArgs.length > 0 && (
-                                <dl className={cn('m-0 rounded-lg border px-3 py-1', HAIRLINE)}>
+                                <dl className="m-0">
                                     {scalarArgs.map(([k, v]) => (
                                         <Field key={k} label={k}>
                                             <span className="whitespace-pre-wrap break-words">{String(v)}</span>
@@ -212,54 +244,30 @@ export function HumanRequestDrawer({
                         </section>
                     )}
 
-                    <dl className="m-0">
-                        <Field label="To">{waitingOn}</Field>
-                        <Field label="User">{userLabel(view.approval?.user_id ?? view.user_id)}</Field>
-                        {conversationHref && (
-                            <Field label="Conversation">
-                                <Link to={conversationHref} className="hover:underline">
-                                    <span className="font-mono text-[12px]">{approval!.conversation}</span>{' '}
-                                    <span className="text-muted-foreground">with {approval!.agent!.name}</span>
+                    <Folded title="Who asked, when, and how it was sent">
+                        <dl className="m-0">
+                            <Field label="To">{waitingOn}</Field>
+                            <Field label="User">{userLabel(view.approval?.user_id ?? view.user_id)}</Field>
+                            {conversationHref && (
+                                <Field label="Conversation">
+                                    <Link to={conversationHref} className="hover:underline">
+                                        <span className="font-mono text-[12px]">{approval!.conversation}</span>{' '}
+                                        <span className="text-muted-foreground">with {approval!.agent!.name}</span>
+                                    </Link>
+                                </Field>
+                            )}
+                            <Field label="Requested by">{view.requested_by?.key_name ?? <span className="text-muted-foreground">Unknown</span>}</Field>
+                            <Field label="Asked">
+                                <TimeCell value={view.created_at} tier="absolute" />
+                            </Field>
+                            {view.delivered_via.length > 0 && <Field label="Delivered by">{view.delivered_via.join(', ')}</Field>}
+                            <Field label="Operation">
+                                <Link to={href('logs', { op: view.operation_id })} className="inline-flex hover:underline">
+                                    <IdChip id={view.operation_id} />
                                 </Link>
                             </Field>
-                        )}
-                        <Field label="Requested by">{view.requested_by?.key_name ?? <span className="text-muted-foreground">Unknown</span>}</Field>
-                        <Field label="Asked">
-                            <TimeCell value={view.created_at} tier="absolute" />
-                        </Field>
-                        {view.status === 'pending' && (
-                            <Field label="Expires">
-                                <TimeCell value={view.expires_at} />
-                            </Field>
-                        )}
-                        {view.delivered_via.length > 0 && <Field label="Delivered by">{view.delivered_via.join(', ')}</Field>}
-                        {view.answer && (
-                            <Field label="Answer">
-                                {answerSummary(view.answer, view.answered_by === 'owner' ? 'You' : waitingOn)}
-                                {view.answered_by && <span className="text-muted-foreground"> · {ANSWERED_BY[view.answered_by]}</span>}
-                            </Field>
-                        )}
-                        <Field label="Operation">
-                            <Link to={href('logs', { op: view.operation_id })} className="inline-flex hover:underline">
-                                <IdChip id={view.operation_id} />
-                            </Link>
-                        </Field>
-                    </dl>
-
-                    {view.kind === 'hand_off' && view.status === 'pending' && view.url && (
-                        <p className={cn('m-0 border-t pt-3 text-[13px] text-muted-foreground', HAIRLINE)}>
-                            {waitingOn} has the conversation and replies from{' '}
-                            <a href={view.url} target="_blank" rel="noreferrer" className="text-foreground hover:underline">
-                                its page
-                            </a>
-                            {", until it's handed back."}
-                        </p>
-                    )}
-                    {view.kind !== 'hand_off' && view.status === 'pending' && (
-                        <p className={cn('m-0 border-t pt-3 text-[13px] text-muted-foreground', HAIRLINE)}>
-                            Waiting on {waitingOn === 'You' ? 'a person' : waitingOn}. {ANSWERED_ELSEWHERE}
-                        </p>
-                    )}
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

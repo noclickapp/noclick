@@ -1,7 +1,7 @@
 // Secrets: named environment values for sandboxes, agents' shells and (designed) apps, made in code from the program's
 // own environment. The table and drawer (`?secret=`) show key names,
-// never values; the drawer sets values (merge or replace) through a masked dialog, removes
-// a key, lists who reads the secret, shows the code that uses it, and deletes it.
+// never values; the drawer says when its values were set, sets values (merge or replace) through a masked dialog,
+// removes a key, lists who reads the secret, folds the code that uses it last, and deletes it.
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
@@ -20,6 +20,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { CodeSnippet } from '../../ui/CodeSnippet';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { TimeCell } from '../../ui/TimeCell';
@@ -153,9 +154,16 @@ function SecretDrawer({ secretId, row, onClose }: { secretId: string | null; row
         <Drawer
             open={secretId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="secret"
+            kind="Secret"
             title={secret?.name}
             id={secretId ?? undefined}
+            status={
+                secret ? (
+                    <HeaderNote>
+                        {secret.keys.length === 1 ? '1 key' : `${secret.keys.length} keys`} · values set <TimeCell value={secret.updatedAt} />
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 secret ? (
                     <ConfirmAction
@@ -182,23 +190,22 @@ function SecretDrawer({ secretId, row, onClose }: { secretId: string | null; row
             {!secret && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {secret && (
                 <div key={secret.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="User">{userLabel(secret.userId)}</Field>
-                        <Field label="Values set">
-                            <TimeCell value={secret.updatedAt} tier="absolute" />
-                        </Field>
-                        <Field label="Created">
-                            <TimeCell value={secret.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
                     <KeysSection secret={secret} onChanged={(saved) => setUpdated({ secret: saved })} />
                     <Section title="Used by">
                         <UsesList uses={uses} label={`What uses ${secret.name}`} empty="Nothing uses it yet. Agents that list it, apps that bind it and running sandboxes show here." />
                     </Section>
-                    <Section title="Use it">
-                        <p className="m-0 mb-2 text-[12px] text-muted-foreground">Each key becomes an environment variable. When two secrets hold the same key, the later one in the list wins.</p>
-                        <CodeSnippet tabs={snippetTabs(secretUseSnippet(secret.name, secret.keys[0] ?? 'API_KEY', secret.userId))} />
-                    </Section>
+                    <Folded title="Details: its user, the code that uses it">
+                        <dl className="m-0">
+                            <Field label="User">{userLabel(secret.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={secret.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                        <Section title="Use it">
+                            <p className="m-0 mb-2 text-[12px] text-muted-foreground">Each key becomes an environment variable. When two secrets hold the same key, the later one in the list wins.</p>
+                            <CodeSnippet tabs={snippetTabs(secretUseSnippet(secret.name, secret.keys[0] ?? 'API_KEY', secret.userId))} />
+                        </Section>
+                    </Folded>
                 </div>
             )}
         </Drawer>

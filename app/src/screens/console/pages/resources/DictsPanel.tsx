@@ -1,5 +1,5 @@
-// Dicts: key-value stores for small state your code and agents share. The drawer (`?dict=`)
-// browses keys by prefix with each one's expiry, opens a key's JSON value to edit or delete it,
+// Dicts: key-value stores for small state your code and agents share. The drawer (`?dict=`) says what it holds beside
+// its name, browses keys by prefix with each one's expiry, opens a key's JSON value to edit or delete it,
 // adds keys, exports, clears and deletes. App bindings are designed, not built yet: lab only.
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Pencil, Plus, Search } from 'lucide-react';
@@ -21,6 +21,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { JsonView } from '../../ui/JsonView';
@@ -284,9 +285,9 @@ function KeysSection({ store, onCleared }: { store: Dict; onCleared: () => void 
             </div>
             <Section title="Clear">
                 <div className="flex flex-wrap items-center gap-3">
-                    <p className="m-0 min-w-0 flex-1 text-[13px] text-muted-foreground">Remove every key at once. The dict stays, empty, with its bindings.</p>
+                    <p className="m-0 min-w-0 flex-1 text-[13px] text-muted-foreground">Remove every key at once. The store stays, empty, with its bindings.</p>
                     <ConfirmAction
-                        label="Clear dict"
+                        label="Clear store"
                         title={`Clear ${store.name}?`}
                         description={`All ${formatExact(store.keyCount)} keys are removed now, for every reader, and can't be brought back. Export it first to keep a copy.`}
                         confirmLabel="Clear every key"
@@ -330,13 +331,20 @@ function DictDrawer({ dictId, row, onClose }: { dictId: string | null; row?: Dic
         <Drawer
             open={dictId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="dict"
+            kind="Key-value store"
             title={store?.name}
             id={dictId ?? undefined}
+            status={
+                store ? (
+                    <HeaderNote>
+                        {cleared ? 'Empty' : `${store.keyCount === 1 ? '1 key' : `${formatExact(store.keyCount)} keys`} · ${formatSize(store.sizeBytes)}`}
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 store ? (
                     <DeleteByName
-                        label="Delete dict"
+                        label="Delete store"
                         name={store.name}
                         description={
                             store.usedBy.length
@@ -358,25 +366,21 @@ function DictDrawer({ dictId, row, onClose }: { dictId: string | null; row?: Dic
             {!store && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {store && (
                 <div key={store.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="Keys">
-                            <span className="tabular-nums">{cleared ? '0' : formatExact(store.keyCount)}</span>
-                        </Field>
-                        <Field label="Size">
-                            <span className="tabular-nums">{cleared ? '0 B' : formatSize(store.sizeBytes)}</span>
-                        </Field>
-                        {lab && (
-                            <Field label="Bound to">
-                                <UsedByText users={store.usedBy} />
-                            </Field>
-                        )}
-                        <Field label="User">{userLabel(store.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={store.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
                     <KeysSection store={store} onCleared={() => setCleared(true)} />
                     <ExportSection what="JSON Lines: one key, its value and its expiry per line, as of one moment." start={() => store.export()} />
+                    <Folded title={lab ? 'Details: what binds it, its user' : 'Details: its user, when it was made'}>
+                        <dl className="m-0">
+                            {lab && (
+                                <Field label="Bound to">
+                                    <UsedByText users={store.usedBy} />
+                                </Field>
+                            )}
+                            <Field label="User">{userLabel(store.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={store.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>
@@ -418,7 +422,7 @@ export function DictsPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No dicts yet." hint="Small shared state: what's been handled, counters, locks, a cache that empties itself." snippet={NEW_SNIPPETS.dict({ user: defaultWriteUser(user) })} />}
+                empty={<EmptyCode title="No key-value stores yet." hint="Small shared state: what's been handled, counters, locks, a cache that empties itself." snippet={NEW_SNIPPETS.dict({ user: defaultWriteUser(user) })} />}
             />
             <DictDrawer dictId={dictId} row={paged.rows.find((d) => d.id === dictId)} onClose={() => setDict(null)} />
         </>

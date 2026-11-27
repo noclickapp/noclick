@@ -1,6 +1,7 @@
-// Storage: buckets of files by key. The drawer (`?bucket=`, the folder in `&prefix=`)
-// browses the files a level at a time and copies a signed link to one, switches the
-// bucket public or private, exports, and deletes. S3 keys and new-file notifications are
+// Storage: buckets of files by key. The drawer (`?bucket=`, the folder in `&prefix=`) says
+// who reads it and what it holds beside its name, browses the files a level at a time and
+// copies a signed link to one, switches the bucket public or private, exports, folds what
+// uses it and its region last, and deletes. S3 keys and new-file notifications are
 // designed, not built yet: they show only in the lab.
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
@@ -24,6 +25,7 @@ import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { SwitchRow } from '../../ui/SwitchRow';
@@ -353,9 +355,16 @@ function BucketDrawer({ bucketId, row, onClose }: { bucketId: string | null; row
         <Drawer
             open={bucketId !== null}
             onOpenChange={(o) => !o && onClose()}
-            kind="bucket"
+            kind="Bucket"
             title={bucket?.name}
             id={bucketId ?? undefined}
+            status={
+                bucket ? (
+                    <HeaderNote>
+                        {bucket.public ? 'Public' : 'Private'} · {formatSize(bucket.sizeBytes)} in {bucket.objectCount === 1 ? '1 file' : `${formatExact(bucket.objectCount)} files`}
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={
                 bucket ? (
                     <DeleteByName
@@ -383,45 +392,42 @@ function BucketDrawer({ bucketId, row, onClose }: { bucketId: string | null; row
             {!bucket && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {bucket && (
                 <div key={bucket.id} className="flex flex-col gap-6">
-                    <dl className="m-0">
-                        <Field label="Access">{bucket.public ? 'Public' : 'Private'}</Field>
-                        <Field label="Size">
-                            <span className="tabular-nums">{formatSize(bucket.sizeBytes)}</span>
-                        </Field>
-                        <Field label="Files">
-                            <span className="tabular-nums">{formatExact(bucket.objectCount)}</span>
-                        </Field>
-                        <Field label="Used by">
-                            <UsedByText users={bucket.usedBy} />
-                        </Field>
-                        <Field label="Region">{bucket.region ?? '—'}</Field>
-                        {lab && <Field label="New files">
-                            {bucket.notifications.length ? (
-                                <span className="flex flex-col">
-                                    {bucket.notifications.map((n) => (
-                                        <span key={`${n.queue}:${n.prefix ?? ''}`}>
-                                            Put on queue <span className="font-mono text-[12px]">{n.queue}</span>
-                                            {n.prefix && (
-                                                <span className="text-muted-foreground">
-                                                    {' '}
-                                                    when under <span className="font-mono text-[12px]">{n.prefix}</span>
-                                                </span>
-                                            )}
-                                        </span>
-                                    ))}
-                                </span>
-                            ) : (
-                                <span className="text-muted-foreground">Tell nobody</span>
-                            )}
-                        </Field>}
-                        <Field label="User">{userLabel(bucket.userId)}</Field>
-                        <Field label="Created">
-                            <TimeCell value={bucket.createdAt} tier="absolute" />
-                        </Field>
-                    </dl>
                     <FilesSection bucket={bucket} prefix={prefix ?? ''} onPrefix={(p) => setPrefix(p || null)} />
                     <AccessSection bucket={bucket} onChanged={setUpdated} />
                     <ExportSection what="Every file at its key, with an index of each one's type and metadata, at a link valid 7 days." start={() => bucket.export()} />
+                    <Folded title="Details: what uses it, its region and user">
+                        <dl className="m-0">
+                            <Field label="Used by">
+                                <UsedByText users={bucket.usedBy} />
+                            </Field>
+                            <Field label="Region">{bucket.region ?? '—'}</Field>
+                            {lab && (
+                                <Field label="New files">
+                                    {bucket.notifications.length ? (
+                                        <span className="flex flex-col">
+                                            {bucket.notifications.map((n) => (
+                                                <span key={`${n.queue}:${n.prefix ?? ''}`}>
+                                                    Put on queue <span className="font-mono text-[12px]">{n.queue}</span>
+                                                    {n.prefix && (
+                                                        <span className="text-muted-foreground">
+                                                            {' '}
+                                                            when under <span className="font-mono text-[12px]">{n.prefix}</span>
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            ))}
+                                        </span>
+                                    ) : (
+                                        <span className="text-muted-foreground">Tell nobody</span>
+                                    )}
+                                </Field>
+                            )}
+                            <Field label="User">{userLabel(bucket.userId)}</Field>
+                            <Field label="Created">
+                                <TimeCell value={bucket.createdAt} tier="absolute" />
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

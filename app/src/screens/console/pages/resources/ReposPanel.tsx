@@ -1,7 +1,8 @@
 // Code repos: Git repositories your code and agents commit to. The table shows each repo's
 // last commit and the apps that deploy it, and New repo shows the code that makes one; the drawer
-// (`?repo=`, its tab in `?tab=`, the branch it reads in `?branch=`) browses files, commits
-// and branches, with Clone, Export to GitHub and Delete.
+// (`?repo=`, its tab in `?tab=`, the branch it reads in `?branch=`) says when it was last committed to beside its name,
+// browses files, commits and branches, folds its default branch, size and apps last, with Clone, Export to GitHub and
+// Delete.
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { GitBranch, Upload } from 'lucide-react';
@@ -25,6 +26,7 @@ import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
+import { Folded, HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PillSwitch } from '../../ui/PillTabs';
@@ -349,40 +351,43 @@ function RepoDrawer({ repoId, row, onClose }: { repoId: string | null; row?: Rep
         <Drawer
             open={repoId !== null}
             onOpenChange={(open) => !open && onClose()}
-            kind="repo"
+            kind="Repo"
             title={repo?.name}
             id={repoId ?? undefined}
+            status={
+                repo ? (
+                    <HeaderNote>
+                        {last ? (
+                            <>
+                                Last commit <TimeCell value={last.createdAt} /> · {commitLine(last)}
+                            </>
+                        ) : (
+                            'No commits yet'
+                        )}
+                    </HeaderNote>
+                ) : undefined
+            }
             footer={repo ? <RepoFooter repo={repo} onDeleted={onClose} /> : undefined}
         >
             {!repo && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {!repo && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {repo && (
-                <div className="flex flex-col gap-5">
-                    <dl className="m-0">
-                        <Field label="Default branch">
-                            <BranchName name={repo.defaultBranch} />
-                        </Field>
-                        <Field label="Last commit">
-                            {last ? (
-                                <span className="text-[13px]">
-                                    {last.message}{' '}
-                                    <span className="text-muted-foreground">
-                                        · {commitLine(last)} · <TimeCell value={last.createdAt} />
-                                    </span>
-                                </span>
-                            ) : (
-                                <span className="text-muted-foreground">None yet</span>
-                            )}
-                        </Field>
-                        <Field label="Size">{repo.sizeBytes != null ? fmtBytes(repo.sizeBytes) : '—'}</Field>
-                        <Field label="Used by">
-                            <UsedBy repo={repo} />
-                        </Field>
-                        <Field label="User">
-                            <span className={repo.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(repo.userId)}</span>
-                        </Field>
-                    </dl>
+                <div className="flex flex-col gap-6">
                     <RepoTabs repo={repo} active={active} setTab={setTab} />
+                    <Folded title="Details: default branch, size, the apps that deploy it">
+                        <dl className="m-0">
+                            <Field label="Default branch">
+                                <BranchName name={repo.defaultBranch} />
+                            </Field>
+                            <Field label="Size">{repo.sizeBytes != null ? fmtBytes(repo.sizeBytes) : '—'}</Field>
+                            <Field label="Used by">
+                                <UsedBy repo={repo} />
+                            </Field>
+                            <Field label="User">
+                                <span className={repo.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(repo.userId)}</span>
+                            </Field>
+                        </dl>
+                    </Folded>
                 </div>
             )}
         </Drawer>

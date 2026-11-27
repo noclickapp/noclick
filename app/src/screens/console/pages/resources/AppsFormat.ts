@@ -90,11 +90,11 @@ const SPEND_TYPES: Record<string, string> = {
 
 export const spendTypeLabel = (id: string) => SPEND_TYPES[id] ?? id;
 
-/** What stops an app's paid calls, in one sentence, or null while they go through. */
-export function limitText(limitedBy: string | null, app: { name: string; userId: string | null; budgetUsd: string }): string | null {
-    if (limitedBy === 'project') return `${app.name}'s ${app.budgetUsd} monthly budget is used up.`;
-    if (limitedBy === 'user') return `Its user ${app.userId} reached their monthly spend cap.`;
-    if (limitedBy === 'account') return "Your account's balance is used up.";
+/** What stops an app's paid calls (`this month's $20 budget is used up`), or null while they go through. */
+export function limitText(limitedBy: string | null, app: { userId: string | null; budgetUsd: string }): string | null {
+    if (limitedBy === 'project') return `this month's ${app.budgetUsd} budget is used up`;
+    if (limitedBy === 'user') return `its user ${app.userId} reached their monthly spend cap`;
+    if (limitedBy === 'account') return "your account's balance is used up";
     return null;
 }
 
