@@ -1,16 +1,15 @@
 // @vitest-environment happy-dom
-// An app's container settings are shown in its drawer with what its warm instances cost idle, and changed in a dialog
+// An app's container settings are shown on its page with what its warm instances cost idle, and changed in a dialog
 // that sends only what changed: a refusal shows under the setting it names, a saved change reads back priced, and
 // the settings go back to their defaults when asked.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { ALL_USERS } from 'noclick';
 import { afterEach, expect, it } from 'vitest';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import { fixtureConsole } from '@/screens/console/fixtures/context';
-import { list, type FixtureRequest } from '@/screens/console/fixtures/core';
+import { list, ok, type FixtureRequest } from '@/screens/console/fixtures/core';
 import { BOOKING_APP_ID, PROJECTS, patchApp } from '@/screens/console/fixtures/pages/e_build';
-import { AppsPanel } from './AppsPanel';
+import { AppPage } from './AppPage';
 
 afterEach(cleanup);
 
@@ -19,6 +18,7 @@ function open(patched: unknown[]) {
     let app = { ...PROJECTS.find((p) => p.id === BOOKING_APP_ID)!, runtime: 'container', framework: 'docker' };
     const routes = [
         { method: 'GET' as const, path: '/v1/projects', reply: () => list([app]) },
+        { method: 'GET' as const, path: `/v1/projects/${BOOKING_APP_ID}`, reply: () => ok(app) },
         {
             method: 'PATCH' as const,
             path: '/v1/projects/:id',
@@ -31,9 +31,9 @@ function open(patched: unknown[]) {
         },
     ];
     render(
-        <MemoryRouter initialEntries={[`/resources/apps?app=${BOOKING_APP_ID}`]}>
+        <MemoryRouter initialEntries={[`/resources/apps/${BOOKING_APP_ID}`]}>
             <ConsoleProviders value={fixtureConsole({ routes })}>
-                <AppsPanel user={ALL_USERS} setUser={() => undefined} />
+                <AppPage id={BOOKING_APP_ID} />
             </ConsoleProviders>
         </MemoryRouter>
     );

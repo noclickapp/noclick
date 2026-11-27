@@ -38,7 +38,7 @@ export function Drawer({
     /** The header carries the status; nothing below repeats it. */
     status?: ReactNode;
     expandHref?: string;
-    /** Room for an object with many views (an app's tabs). */
+    /** Room for a deep object (a database's tables). */
     wide?: boolean;
     children: ReactNode;
     footer?: ReactNode;

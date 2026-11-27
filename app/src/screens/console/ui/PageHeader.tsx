@@ -36,13 +36,16 @@ export const LEAD = 'text-[14px] leading-relaxed text-foreground/75 dark:text-fo
 
 /**
  * `section` titles a section's own page with its label and purpose; a page
- * passes `purpose` when it has a live line to say instead ("2 running now").
+ * passes `purpose` when it has a live line to say instead ("2 running now"). A
+ * thing's own page puts how it stands right under its name (`status`: a pill
+ * and one more fact, its address or what it's for).
  */
 export function PageHeader({
     section,
     title,
     purpose,
     crumbs,
+    status,
     chips,
     actions,
     className,
@@ -51,6 +54,7 @@ export function PageHeader({
     title?: ReactNode;
     purpose?: ReactNode;
     crumbs?: Crumb[];
+    status?: ReactNode;
     chips?: ReactNode;
     actions?: ReactNode;
     className?: string;
@@ -84,6 +88,7 @@ export function PageHeader({
                     {actions}
                 </div>
             </div>
+            {status && <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">{status}</div>}
             {line && <p className={cn('m-0 mt-1.5 max-w-3xl', LEAD)}>{line}</p>}
             {chips && <div className="mt-2.5 flex flex-wrap items-center gap-2">{chips}</div>}
         </header>

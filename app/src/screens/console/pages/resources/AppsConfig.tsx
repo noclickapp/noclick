@@ -1,8 +1,7 @@
-// The Apps drawer's Bindings, Secrets and Schedules tabs: what the running app is given by name (bind and unbind; an agent
-// too, which the app then talks to as itself), plain settings with their values,
-// secret names with when each was set (values are write-only), and its cron jobs
-// in plain English with why one paused or last failed, pause, resume, run now
-// and delete.
+// What an app is given, on its page: what the running app reads by name (bind and unbind; an agent too, which the app
+// then talks to as itself), its environment (plain settings with their values, secret names with when each was set:
+// values are write-only), and its cron jobs in plain English with why one paused or last failed, pause, resume, run
+// now and delete.
 import { useEffect, useState, type ReactNode } from 'react';
 import { Bot, Braces, Database as DatabaseIcon, HardDrive, ListOrdered, LockKeyhole, PlugZap, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router';
@@ -18,6 +17,7 @@ import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { PageSection } from '../../ui/PageHeader';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { describeCron, lastRunLook, scheduleLook, SCHEDULES_EMPTY, zoneLabel } from './AppsFormat';
@@ -181,19 +181,17 @@ export function AppBindings({ project }: { project: Project }) {
     const [binding, setBinding] = useState(false);
     const rows = bindings.data ?? [];
     return (
-        <Section
-            title={
-                <Header
-                    title="Bindings"
-                    action={
-                        <ConsoleButton size="sm" onClick={() => setBinding(true)}>
-                            Bind
-                        </ConsoleButton>
-                    }
-                />
+        <PageSection
+            id="bindings"
+            title="Bindings"
+            count={rows.length}
+            right={
+                <ConsoleButton size="sm" onClick={() => setBinding(true)}>
+                    Bind
+                </ConsoleButton>
             }
+            note="What the app reads by name: databases, buckets, dicts, queues, secrets, connections, and agents it talks to as itself. Previews get the same ones."
         >
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">What the app reads by name: databases, buckets, dicts, queues, secrets, connections, and agents it talks to as itself. Previews get the same ones.</p>
             {bindings.error !== undefined ? (
                 <ErrorPanel error={bindings.error} onRetry={() => void bindings.refresh()} />
             ) : bindings.loading ? (
@@ -208,7 +206,7 @@ export function AppBindings({ project }: { project: Project }) {
                 </ul>
             )}
             <BindDialog project={project} open={binding} onOpenChange={setBinding} />
-        </Section>
+        </PageSection>
     );
 }
 
@@ -536,10 +534,12 @@ export function AppSchedules({ project }: { project: Project }) {
     const schedules = useV1(`projects/${project.id}/schedules`, () => project.schedules());
     const rows = schedules.data ?? [];
     return (
-        <Section title="Schedules">
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">
-                NoClick POSTs each path on its schedule, signed. When 5 runs in a row fail the same way, over at least 30 minutes, a schedule pauses itself until you resume it.
-            </p>
+        <PageSection
+            id="schedules"
+            title="Schedules"
+            count={rows.length}
+            note="NoClick POSTs each path on its schedule, signed. When 5 runs in a row fail the same way, over at least 30 minutes, a schedule pauses itself until you resume it."
+        >
             {schedules.error !== undefined ? (
                 <ErrorPanel error={schedules.error} onRetry={() => void schedules.refresh()} />
             ) : schedules.loading ? (
@@ -553,6 +553,6 @@ export function AppSchedules({ project }: { project: Project }) {
                     ))}
                 </ul>
             )}
-        </Section>
+        </PageSection>
     );
 }

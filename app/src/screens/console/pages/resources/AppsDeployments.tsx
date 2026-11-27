@@ -1,24 +1,28 @@
-// An app's deployments in the Apps drawer, newest first with the production one marked and those a push started tagged
-// (a push that couldn't deploy shows why). One opens (`?deployment=`) with its
-// build or runtime log and the actions it allows: Promote, Cancel, Redeploy.
+// An app's deploys on its page: the latest few as a list (each commit, what it says, its status, production or which
+// preview, when; a failed one says why), all of them on asking. One opens in a drawer (`?deployment=`) with its build
+// or runtime log and the actions it allows: Promote, Cancel, Redeploy.
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
-import { clickableRow, ROW_HOVER } from '@/ui/primitives';
-import { cn } from '@/ui/utils';
 import { Deployment, type Project } from 'noclick';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useReportHeld } from '@/sdk/held';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { ConsoleButton } from '../../ui/Button';
+import { DataTable, type Column } from '../../ui/DataTable';
+import { Drawer } from '../../ui/Drawer';
+import { HeaderNote, Problem } from '../../ui/DrawerParts';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { PageSection } from '../../ui/PageHeader';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { deploymentLook, deployOnPushOptions } from './AppsFormat';
 import { AppsLogLines, AppUrl, BranchName, PreviewLinkMaker, Tag } from './AppsParts';
 import { errorText, Field, Section } from './shared';
+
+/** How many deploys the page lists before "Show all". */
+const RECENT = 5;
 
 /** Start a deploy from the console: a toast, and the list re-read. */
 export function useDeploy(project: Project) {
@@ -57,25 +61,29 @@ function DeploymentActions({ project, deployment, onChanged }: { project: Projec
     };
     const live = deployment.status === 'queued' || deployment.status === 'building';
     return (
-        <div className="flex flex-wrap items-center gap-2">
+        <>
             {deployment.status === 'ready' && !deployment.production && (
-                <ConsoleButton size="sm" variant="primary" disabled={acting} onClick={() => void act(() => deployment.promote(), `Promoting ${deployment.branch} to production`, `Promote ${deployment.branch}`)}>
+                <ConsoleButton variant="primary" disabled={acting} onClick={() => void act(() => deployment.promote(), `Promoting ${deployment.branch} to production`, `Promote ${deployment.branch}`)}>
                     {deployment.branch === project.productionBranch ? 'Roll back to this' : 'Promote to production'}
                 </ConsoleButton>
             )}
             {live && (
-                <ConsoleButton size="sm" disabled={acting} onClick={() => void act(async () => onChanged(await deployment.cancel()), 'Deployment canceled', 'Cancel the deployment')}>
+                <ConsoleButton disabled={acting} onClick={() => void act(async () => onChanged(await deployment.cancel()), 'Deployment canceled', 'Cancel the deployment')}>
                     Cancel
                 </ConsoleButton>
             )}
-            <ConsoleButton size="sm" disabled={busy} onClick={() => void deploy({ branch: deployment.branch, commit: deployment.commit ?? undefined })}>
+            <ConsoleButton disabled={busy} onClick={() => void deploy({ branch: deployment.branch, commit: deployment.commit ?? undefined })}>
                 Redeploy
             </ConsoleButton>
-        </div>
+        </>
     );
 }
 
-function DeploymentDetail({ project, deploymentId, row, onBack }: { project: Project; deploymentId: string; row?: Deployment; onBack: () => void }) {
+/** Where a deploy went: production, or which branch's preview. */
+const where = (d: Deployment) => (d.environment === 'production' ? 'production' : `preview of ${d.branch}`);
+
+/** One deploy in a drawer: why it failed, what it is, its log, and what can be done with it. */
+function DeploymentDrawer({ project, deploymentId, row, onClose }: { project: Project; deploymentId: string; row?: Deployment; onClose: () => void }) {
     const { client } = useConsole();
     const fetched = useV1(row ? null : `deployments/${deploymentId}`, () => Deployment.get(deploymentId, { client, user: project.userId }));
     const [changed, setChanged] = useState<Deployment | null>(null);
@@ -83,54 +91,29 @@ function DeploymentDetail({ project, deploymentId, row, onBack }: { project: Pro
     const [kind, setKind] = useState<'build' | 'runtime'>('build');
     const logs = useV1(deployment ? `deployments/${deployment.id}/logs?${kind}` : null, () => deployment!.logs({ kind }));
     return (
-        <div className="flex flex-col gap-4">
-            <ConsoleButton variant="ghost" size="sm" className="self-start" onClick={onBack} icon={<ArrowLeft className="h-3.5 w-3.5" />}>
-                All deployments
-            </ConsoleButton>
+        <Drawer
+            open
+            onOpenChange={(open) => !open && onClose()}
+            kind="Deployment"
+            title={deployment ? deployment.commitMessage || `Deploy of ${deployment.branch}` : undefined}
+            id={deploymentId}
+            status={
+                deployment ? (
+                    <>
+                        <StatusPill look={deploymentLook(deployment)} />
+                        <HeaderNote>
+                            {where(deployment)} · <TimeCell value={deployment.createdAt} />
+                        </HeaderNote>
+                    </>
+                ) : undefined
+            }
+            footer={deployment ? <DeploymentActions project={project} deployment={deployment} onChanged={setChanged} /> : undefined}
+        >
             {!deployment && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
             {!deployment && fetched.error === undefined && <div aria-busy className="h-32 animate-pulse rounded-lg bg-foreground/[0.04]" />}
             {deployment && (
-                <>
-                    <dl className="m-0">
-                        <Field label="Status">
-                            <StatusPill look={deploymentLook(deployment)} />
-                        </Field>
-                        <Field label="Branch">
-                            <span className="inline-flex items-center gap-2">
-                                <BranchName name={deployment.branch} />
-                                {deployment.production && <Tag>Production</Tag>}
-                            </span>
-                        </Field>
-                        <Field label="Commit">
-                            <span className="font-mono text-[12px]">{deployment.commit?.slice(0, 7) ?? '—'}</span>
-                            {deployment.commitMessage && <span className="text-muted-foreground"> · {deployment.commitMessage}</span>}
-                        </Field>
-                        <Field label="URL">{deployment.url ? <AppUrl url={deployment.url} /> : <span className="text-muted-foreground">None: it isn’t serving</span>}</Field>
-                        {project.previewAccess === 'link' && deployment.status === 'ready' && deployment.environment === 'preview' && deployment.url && (
-                            <Field label="Private link">
-                                <PreviewLinkMaker project={project} branch={deployment.branch} />
-                            </Field>
-                        )}
-                        <Field label="Started">
-                            <TimeCell value={deployment.createdAt} tier="absolute" />
-                            <span className="text-muted-foreground"> · {deployment.startedBy === 'push' ? `by a push to ${deployment.branch}` : 'by a deploy'}</span>
-                        </Field>
-                        <Field label="Environment">
-                            {deployment.environment === 'production' ? 'Production' : 'Preview'}
-                            <span className="text-muted-foreground"> · built with {deployment.environment === 'production' ? 'production' : 'preview'} secrets</span>
-                        </Field>
-                        {deployment.readyAt && (
-                            <Field label="Ready">
-                                <TimeCell value={deployment.readyAt} tier="absolute" />
-                            </Field>
-                        )}
-                    </dl>
-                    {deployment.error && (
-                        <p role="alert" className="m-0 rounded-lg border border-red-600/30 bg-red-500/[0.06] px-3 py-2 text-[13px] text-red-600 dark:border-red-400/30 dark:text-red-400">
-                            {deployment.error}
-                        </p>
-                    )}
-                    <DeploymentActions project={project} deployment={deployment} onChanged={setChanged} />
+                <div className="flex flex-col gap-6">
+                    {deployment.error && <Problem title={deployment.status === 'failed' ? 'It didn’t deploy' : 'Its last attempt failed'}>{deployment.error}</Problem>}
                     <Section
                         title={
                             <span className="flex items-center justify-between gap-2">
@@ -159,56 +142,109 @@ function DeploymentDetail({ project, deploymentId, row, onBack }: { project: Pro
                             />
                         )}
                     </Section>
-                </>
+                    <dl className="m-0">
+                        <Field label="Branch">
+                            <span className="inline-flex items-center gap-2">
+                                <BranchName name={deployment.branch} />
+                                {deployment.production && <Tag>Production</Tag>}
+                            </span>
+                        </Field>
+                        <Field label="Commit">
+                            <span className="font-mono text-[12px]">{deployment.commit?.slice(0, 7) ?? '—'}</span>
+                        </Field>
+                        <Field label="URL">{deployment.url ? <AppUrl url={deployment.url} /> : <span className="text-muted-foreground">None: it isn’t serving</span>}</Field>
+                        {project.previewAccess === 'link' && deployment.status === 'ready' && deployment.environment === 'preview' && deployment.url && (
+                            <Field label="Private link">
+                                <PreviewLinkMaker project={project} branch={deployment.branch} />
+                            </Field>
+                        )}
+                        <Field label="Started">
+                            <TimeCell value={deployment.createdAt} tier="absolute" />
+                            <span className="text-muted-foreground"> · {deployment.startedBy === 'push' ? `by a push to ${deployment.branch}` : 'by a deploy'}</span>
+                        </Field>
+                        <Field label="Environment">
+                            {deployment.environment === 'production' ? 'Production' : 'Preview'}
+                            <span className="text-muted-foreground"> · built with {deployment.environment === 'production' ? 'production' : 'preview'} secrets</span>
+                        </Field>
+                        {deployment.readyAt && (
+                            <Field label="Ready">
+                                <TimeCell value={deployment.readyAt} tier="absolute" />
+                            </Field>
+                        )}
+                    </dl>
+                </div>
             )}
-        </div>
+        </Drawer>
     );
 }
 
-export function AppDeployments({ project }: { project: Project }) {
-    const [selected, setSelected] = useSearchParam('deployment');
+const COLUMNS: Column<Deployment>[] = [
+    {
+        id: 'message',
+        header: 'Message',
+        cell: (d) => (
+            <span className="flex min-w-0 flex-col">
+                <span className="truncate">{d.commitMessage || `Deploy of ${d.branch}`}</span>
+                {d.status === 'failed' && d.error ? (
+                    <span className="truncate text-[12px] text-red-600 dark:text-red-400" title={d.error}>
+                        {d.error}
+                    </span>
+                ) : (
+                    <span className="truncate text-[12px] text-muted-foreground md:hidden">
+                        <span className="font-mono">{d.commit?.slice(0, 7) ?? d.branch}</span> · <TimeCell value={d.createdAt} />
+                    </span>
+                )}
+            </span>
+        ),
+    },
+    { id: 'commit', header: 'Commit', priority: 3, width: '5.5rem', cell: (d) => <span className="font-mono text-[12px]">{d.commit?.slice(0, 7) ?? '—'}</span> },
+    { id: 'status', header: 'Status', width: '9.5rem', cell: (d) => <StatusPill look={deploymentLook({ status: d.status, startedBy: d.startedBy })} /> },
+    { id: 'where', header: 'Where', priority: 2, width: '10rem', cell: (d) => <span className="truncate">{where(d)}</span> },
+    { id: 'when', header: 'When', priority: 2, width: '5.5rem', align: 'right', cell: (d) => <TimeCell value={d.createdAt} /> },
+];
+
+/** Its latest deploys, newest first; every one it keeps on asking. */
+export function AppDeploys({ project }: { project: Project }) {
+    const [open, setOpen] = useSearchParam('deployment');
+    const [all, setAll] = useState(false);
     const deployments = useV1(`projects/${project.id}/deployments`, () => project.deployments({ limit: 50 }));
-    if (selected) return <DeploymentDetail project={project} deploymentId={selected} row={deployments.data?.find((d) => d.id === selected)} onBack={() => setSelected(null)} />;
     const rows = deployments.data ?? [];
+    const shown = all ? rows : rows.slice(0, RECENT);
+    const onPush = project.deployOnPush !== 'off' ? ` ${deployOnPushOptions(project.productionBranch).find((o) => o.value === project.deployOnPush)!.sentence}` : '';
     return (
-        <Section title="Deployments">
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">
-                A deploy of <span className="font-mono">{project.productionBranch}</span> goes live at the app’s URL; every other branch gets a preview URL of its own.
-                {project.deployOnPush !== 'off' && ` ${deployOnPushOptions(project.productionBranch).find((o) => o.value === project.deployOnPush)!.sentence}`}
-            </p>
-            {deployments.error !== undefined ? (
-                <ErrorPanel error={deployments.error} onRetry={() => void deployments.refresh()} />
-            ) : deployments.loading ? (
-                <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />
-            ) : rows.length === 0 ? (
-                <p className="m-0 text-[13px] text-muted-foreground">Not deployed yet. Deploy {project.productionBranch} to put the app online.</p>
-            ) : (
-                <ul aria-label="Deployments" className={'m-0 list-none p-0'}>
-                    {rows.map((d) => (
-                        <li key={d.id} {...clickableRow(() => setSelected(d.id))} className={cn('-mx-2 flex cursor-pointer items-center gap-3 rounded-md px-2 py-2.5', ROW_HOVER)}>
-                            <StatusPill look={deploymentLook({ status: d.status, startedBy: d.startedBy })} className="w-[6.5rem] shrink-0" />
-                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                                <span className="flex min-w-0 items-center gap-2">
-                                    <BranchName name={d.branch} />
-                                    {d.production && <Tag>Production</Tag>}
-                                    {d.startedBy === 'push' && <Tag>On push</Tag>}
-                                </span>
-                                <span className="truncate text-[12px] text-muted-foreground">
-                                    <span className="font-mono">{d.commit?.slice(0, 7)}</span>
-                                    {d.commitMessage ? ` · ${d.commitMessage}` : ''}
-                                </span>
-                                {d.status === 'failed' && d.startedBy === 'push' && d.error && (
-                                    <span className="truncate text-[12px] text-red-600 dark:text-red-400" title={d.error}>
-                                        {d.error}
-                                    </span>
-                                )}
-                            </span>
-                            {d.url && d.status === 'ready' && <AppUrl url={d.url} className="hidden max-w-[14rem] min-w-0 items-center gap-1 text-[12px] text-foreground/70 hover:text-foreground hover:underline md:inline-flex" />}
-                            <TimeCell value={d.createdAt} className="w-16 shrink-0 text-right text-[12px] text-muted-foreground" />
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </Section>
+        <PageSection
+            id="deploys"
+            title="Recent deploys"
+            count={rows.length}
+            right={
+                rows.length > RECENT && (
+                    <ConsoleButton size="sm" variant="ghost" onClick={() => setAll(!all)}>
+                        {all ? 'Show fewer' : `Show all ${rows.length}`}
+                    </ConsoleButton>
+                )
+            }
+            note={
+                project.published ? undefined : (
+                    <>
+                        A deploy of <span className="font-mono">{project.productionBranch}</span> goes live at the app’s URL; every other branch gets a preview URL of its own.{onPush}
+                    </>
+                )
+            }
+        >
+            <DataTable
+                label="Deployments"
+                columns={COLUMNS}
+                rows={shown}
+                getRowId={(d) => d.id}
+                loading={deployments.loading}
+                error={deployments.error}
+                onRetry={() => void deployments.refresh()}
+                onRowClick={(d) => setOpen(d.id, { push: true })}
+                selectedId={open}
+                skeletonRows={3}
+                empty={<p className="m-0 py-6 text-center text-[13px] text-muted-foreground">Not deployed yet. Deploy {project.productionBranch} to put the app online.</p>}
+            />
+            {open && <DeploymentDrawer key={open} project={project} deploymentId={open} row={rows.find((d) => d.id === open)} onClose={() => setOpen(null)} />}
+        </PageSection>
     );
 }

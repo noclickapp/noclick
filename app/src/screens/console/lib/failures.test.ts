@@ -81,7 +81,7 @@ describe('failureWords', () => {
 
     it('opens what a run failed on where its error names no fix', () => {
         const build = words(error('build_failed', 'Build step failure.', { deployment_id: 'dep_1' }), { object: 'app', id: 'app_1' }, 1);
-        expect(build.fix?.href).toBe('/developers/resources/apps?app=app_1&tab=deployments&deployment=dep_1');
+        expect(build.fix?.href).toBe('/developers/resources/apps/app_1?deployment=dep_1');
         const step = words(error('platform_error', "Step 'sheets' failed: bad range.", { reason: 'run_failed' }), { object: 'workflow', id: 'wf_1' });
         expect([step.what, step.fix?.label, step.fix?.href]).toEqual(['3 runs failed at a step', 'Open the workflow', 'https://noclick.com/dashboard?workflow=wf_1']);
         const refused = words(error('invalid_request', "The connection holds a ChatGPT plan, which doesn't run 'gpt-6'."), { object: 'agent', id: 'ag_2' }, 1);

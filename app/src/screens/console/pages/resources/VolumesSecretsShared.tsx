@@ -9,6 +9,7 @@ import { truncateId } from '@/screens/console/lib/format';
 import { userLabel } from '@/screens/console/lib/userFilter';
 import { useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { useAgentNames } from '../lookups';
+import { appPath } from './AppsFormat';
 
 /** A mount (`detail` = its path) or a use (`detail` = an app's binding name). */
 export interface ResourceUse {
@@ -48,7 +49,7 @@ export function UsesList({ uses, label, empty }: { uses: readonly ResourceUse[];
                 const meta = KINDS[u.kind] ?? KINDS.agent;
                 const Icon = meta.icon;
                 const target =
-                    u.kind === 'agent' ? href(`agents/${u.id}`) : u.kind === 'sandbox' ? href('resources/sandboxes', { sandbox: u.id }) : href('resources/apps', { app: u.id });
+                    u.kind === 'agent' ? href(`agents/${u.id}`) : u.kind === 'sandbox' ? href('resources/sandboxes', { sandbox: u.id }) : href(appPath(u.id));
                 const userId = u.kind === 'agent' ? agents.get(u.id)?.userId : undefined;
                 return (
                     <li key={`${u.kind}:${u.id}:${u.detail}`} className="flex min-w-0 items-center gap-3 py-2.5">

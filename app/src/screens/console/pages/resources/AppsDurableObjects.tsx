@@ -1,4 +1,4 @@
-// The console app drawer's Durable Objects, after its bindings: the same list as the app's page in Resources
+// An app's Durable Objects on its page, after its bindings: the same list as the app's page in Resources
 // (screens/resources/AppDurableObjects), read with the console's own client, its deletion previewed through
 // previewDelete as Resources previews it. An app that declares none shows nothing.
 import { useMemo } from 'react';
@@ -8,7 +8,7 @@ import { DurableObjectsList, useDurableObjects } from '@/screens/resources/AppDu
 import { costText, type DeletePreview, type TrashRestore } from '@/screens/resources/durableObjects';
 import { impactOf } from '@/screens/resources/platform';
 import { useConsole } from '../../hooks/useConsole';
-import { Section } from './shared';
+import { PageSection } from '../../ui/PageHeader';
 
 export function AppDurableObjectsSection({ project }: { project: Project }) {
     const { client } = useConsole();
@@ -28,15 +28,12 @@ export function AppDurableObjectsSection({ project }: { project: Project }) {
     if (!classes ? read.error === undefined : classes.length === 0) return null;
     const cost = classes ? costText(classes.cost) : null;
     return (
-        <Section
-            title={
-                <span className="flex items-baseline gap-2">
-                    Durable Objects{cost && <span className="text-[12px] font-normal tabular-nums text-muted-foreground">{cost}</span>}
-                </span>
-            }
+        <PageSection
+            title="Durable Objects"
+            right={cost && <span className="text-[13px] tabular-nums text-muted-foreground">{cost}</span>}
+            note="Each class its code declares, in each environment. Their data survives releases; deleting a class moves it to the trash for 30 days."
         >
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">Each class its code declares, in each environment. Their data survives releases; deleting a class moves it to the trash for 30 days.</p>
             <DurableObjectsList project={project} read={read} preview={preview} restore={restore} />
-        </Section>
+        </PageSection>
     );
 }

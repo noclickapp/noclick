@@ -114,6 +114,9 @@ export function lastRunLook(status: string | null): StatusLook {
 /** A schedule's `tz` in words: `user` fires on the app's user's own clock, wherever they are. */
 export const zoneLabel = (tz: string) => (tz === 'user' ? "the user's timezone" : tz);
 
+/** An app's own page, under Apps in Resources: every link to an app opens it. */
+export const appPath = (id: string) => `resources/apps/${encodeURIComponent(id)}`;
+
 /** Several params in one write: react-router's updater reads the params of this render, so two writes in a row drop the first. */
 export function withParams(prev: URLSearchParams, changes: Record<string, string | null>): URLSearchParams {
     const out = new URLSearchParams(prev);

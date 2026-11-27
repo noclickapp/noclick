@@ -7,6 +7,7 @@
 // (NoClick's own failures); the error's words then say what happened.
 import { CredentialDisconnected, NeedsConnection, NoClickError, PaymentRequired, PlanRequired, PolicyDenied, SpendCapExceeded, SpendingPaused, type FailedOn } from 'noclick';
 import type { HrefParams } from '@/screens/console/hooks/useConsole';
+import { appPath } from '../pages/resources/AppsFormat';
 import { addFundsUrl, billingSettingsUrl, pricingUrl, workflowUrl } from './site';
 import { userPath } from './userFilter';
 
@@ -77,7 +78,7 @@ function capFix(error: SpendCapExceeded, place: FixPlace): FailureFix {
             break;
         case 'project': {
             const app = detail(error, 'project_id') ?? id;
-            if (app) return raise('project', href('resources/apps', { app }), app);
+            if (app) return raise('project', href(appPath(app)), app);
             break;
         }
     }
@@ -93,8 +94,8 @@ function failedOnFix(error: NoClickError | null, on: FailedOn | null, place: Fix
         case 'app': {
             const deployment = error ? detail(error, 'deployment_id') : undefined;
             return deployment
-                ? { label: 'See the build log', href: place.href('resources/apps', { app: on.id, tab: 'deployments', deployment }), external: false }
-                : { label: 'Open the app', href: place.href('resources/apps', { app: on.id }), external: false };
+                ? { label: 'See the build log', href: place.href(appPath(on.id), { deployment }), external: false }
+                : { label: 'Open the app', href: place.href(appPath(on.id)), external: false };
         }
         case 'workflow':
             return { label: 'Open the workflow', href: workflowUrl(place.site, on.id), external: true };

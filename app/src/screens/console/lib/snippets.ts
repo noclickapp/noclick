@@ -632,6 +632,19 @@ export function agentCodeSnippet(name: string, user: string | null): Snippet {
     };
 }
 
+/** An app's page: deploy its production branch and wait for its URL. */
+export function appCodeSnippet(name: string, user: string | null): Snippet {
+    return {
+        python: lines(PY, '', `app = noclick.Project.from_name(${lit(name)}${user ? `, user=${lit(user)}` : ''})`, 'print(app.deploy().wait().url)'),
+        typescript: lines(
+            'import { Project } from "noclick";',
+            '',
+            `const app = Project.fromName(${lit(name)}${user ? `, { user: ${lit(user)} }` : ''});`,
+            'console.log((await (await app.deploy()).wait()).url);'
+        ),
+    };
+}
+
 /** A user's page: act for them, here to give them a connection and send its link. */
 export function userCodeSnippet(userId: string): Snippet {
     return {
@@ -676,5 +689,7 @@ export const ALL_SNIPPETS: Readonly<Record<string, Snippet>> = {
     agentMessageAccount: agentMessageSnippet({ agentId: 'a1b2c3d4-0000-4000-8000-000000000001', text: 'hi', user: null, conversation: null }),
     agentCode: agentCodeSnippet('support', null),
     agentCodeUser: agentCodeSnippet('support', 'acme'),
+    appCode: appCodeSnippet('booking', null),
+    appCodeUser: appCodeSnippet('booking', 'acme'),
     userCode: userCodeSnippet('acme'),
 };

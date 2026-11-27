@@ -81,14 +81,21 @@ export function ConfirmAction({
     description,
     confirmLabel,
     onConfirm,
+    open: shown,
+    onOpenChange,
 }: {
     label: string;
     title: string;
     description: ReactNode;
     confirmLabel: string;
     onConfirm: () => Promise<void>;
+    /** Opened from elsewhere (a `⋯` menu's item): no button of its own. */
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }) {
-    const [open, setOpen] = useState(false);
+    const [own, setOwn] = useState(false);
+    const open = shown ?? own;
+    const setOpen = onOpenChange ?? setOwn;
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<unknown>(undefined);
     const reportHeld = useReportHeld(useContext(ConsoleContext));
@@ -108,9 +115,11 @@ export function ConfirmAction({
     };
     return (
         <>
-            <ConsoleButton variant="danger" size="sm" onClick={() => setOpen(true)}>
-                {label}
-            </ConsoleButton>
+            {shown === undefined && (
+                <ConsoleButton variant="danger" size="sm" onClick={() => setOpen(true)}>
+                    {label}
+                </ConsoleButton>
+            )}
             <ConsoleDialog
                 open={open}
                 onOpenChange={setOpen}

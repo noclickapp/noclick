@@ -13,6 +13,7 @@ import { useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { ConsoleButton } from '../../ui/Button';
 import { CopyButton } from '../../ui/CopyButton';
 import { StatusPill } from '../../ui/StatusPill';
+import { appPath } from './AppsFormat';
 
 const DAY_MS = 86_400_000;
 
@@ -143,7 +144,7 @@ export function ServesLinks({ serves, empty = 'Nothing yet' }: { serves: readonl
             {each.map((s) => {
                 // `brand`: the account's approval, question and hand-off pages.
                 const Icon = s.kind === 'inbox' ? InboxIcon : s.kind === 'brand' ? Palette : AppWindow;
-                const to = s.kind === 'inbox' ? href('resources/inboxes', { inbox: s.id }) : s.kind === 'brand' ? href('settings/brand') : href('resources/apps', { app: s.id });
+                const to = s.kind === 'inbox' ? href('resources/inboxes', { inbox: s.id }) : s.kind === 'brand' ? href('settings/brand') : href(appPath(s.id));
                 return (
                     <Link key={`${s.kind}:${s.id}`} to={to} onClick={(e) => e.stopPropagation()} className="inline-flex min-w-0 items-center gap-1 text-foreground underline-offset-2 hover:underline">
                         <Icon aria-hidden className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

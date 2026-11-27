@@ -13,13 +13,27 @@ export function capLabel(cap: number): string {
 /**
  * The only cap bar: "$12.30 of $50" over ink, red at or past 100%. Past 100%
  * the fill runs to the end with an overflow tick and the percentage, since a
- * cap is checked before work starts. No cap → just the spend.
+ * cap is checked before work starts. No cap → just the spend. `large` leads a
+ * page's aside: the figure big and first, the bar under it.
  */
-export function CapMeter({ spent, cap, noCapLabel = false, className }: { spent: number | null | undefined; cap: number | null | undefined; noCapLabel?: boolean; className?: string }) {
+export function CapMeter({
+    spent,
+    cap,
+    noCapLabel = false,
+    large = false,
+    className,
+}: {
+    spent: number | null | undefined;
+    cap: number | null | undefined;
+    noCapLabel?: boolean;
+    large?: boolean;
+    className?: string;
+}) {
+    const figure = large && 'text-[22px] font-semibold tracking-[-0.02em]';
     if (cap == null) {
         return (
             <span className={cn('inline-flex items-baseline gap-1.5', className)}>
-                <Money usd={spent} />
+                <Money usd={spent} className={cn(figure)} />
                 {noCapLabel && <span className="text-[12px] text-muted-foreground">No cap</span>}
             </span>
         );
@@ -29,9 +43,9 @@ export function CapMeter({ spent, cap, noCapLabel = false, className }: { spent:
     const past = ratio !== null && ratio > 1;
     return (
         <span className={cn('inline-flex min-w-[7rem] flex-col gap-1', className)}>
-            <span className="inline-flex flex-wrap items-baseline justify-end gap-x-1 tabular-nums">
-                <Money usd={spent} className={cn(over && 'text-red-600 dark:text-red-400')} />
-                <span className="text-muted-foreground">of {capLabel(cap)}</span>
+            <span className={cn('inline-flex flex-wrap items-baseline gap-x-1 tabular-nums', large ? 'justify-start' : 'justify-end')}>
+                <Money usd={spent} className={cn(figure, over && 'text-red-600 dark:text-red-400')} />
+                <span className={cn('text-muted-foreground', large && 'text-[13px]')}>of {capLabel(cap)}</span>
                 {past && Number.isFinite(ratio) && (
                     <span className="inline-flex items-center gap-0.5 text-[12px] font-medium text-red-600 dark:text-red-400" title={CAP_NOTE}>
                         {formatPercent(ratio as number)}

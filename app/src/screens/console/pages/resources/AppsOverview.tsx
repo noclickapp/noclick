@@ -1,13 +1,12 @@
-// The Apps drawer's Overview, Domains and Logs tabs. The Overview reads in the console's order: what it spent this month
-// against its budget (a budget dialog beside it; what stops its paid calls leads every tab, `AppProblem`), its last few
-// deploys, where it serves, and folded under one line what's set once: its repo, runtime and region, what a push deploys
-// and who opens its previews (each a PATCH, with a link to make for a private preview and a way to stop every link made),
-// and how each instance runs in a container (`AppsContainer`). Domains lists the domains that serve it, added (with the
-// records a connected one needs) and removed; Logs, the lines it printed while serving.
+// What an app's page shows besides its deploys and what it's given: what stops its paid calls (`AppProblem`, first),
+// what it spent this month against its budget (a budget dialog beside it) and where the money went, the facts set once
+// (`AppFacts`: its repo, runtime, region, user), how it deploys (what a push deploys, who opens its previews, each a
+// PATCH, with a link to make for a private preview and a way to stop every link made, and how each instance runs in a
+// container, `AppsContainer`), the domains that serve it, added (with the records a connected one needs) and removed,
+// and the lines it printed while serving.
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link } from 'react-router';
 import { toast } from 'sonner';
-import { clickableRow, ROW_HOVER } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Repo, type DeployOnPush, type Domain, type PreviewAccess, type Project } from 'noclick';
 import { formatCount, formatDuration, formatMoney } from '@/screens/console/lib/format';
@@ -18,19 +17,22 @@ import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
 import { capLabel } from '../../ui/CapMeter';
+import { BudgetDialog } from '../../ui/BudgetDialog';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
-import { CopyButton } from '../../ui/CopyButton';
-import { Folded, Problem, Spend } from '../../ui/DrawerParts';
+import { AsideSection, Fact, Facts, MonthSpend } from '../../ui/Detail';
+import { Problem } from '../../ui/DrawerParts';
+import { CopyIdChip } from '../../ui/IdChip';
 import { ErrorPanel } from '../../ui/ErrorPanel';
+import { PageSection } from '../../ui/PageHeader';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { AppContainer } from './AppsContainer';
-import { deploymentLook, deployOnPushOptions, frameworkLabel, limitText, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel, withParams } from './AppsFormat';
-import { AppsLogLines, AppUrl, BranchName, Choice, hostOf, PreviewLinkMaker } from './AppsParts';
+import { deployOnPushOptions, frameworkLabel, limitText, PREVIEW_ACCESS, RUNTIMES, spendTypeLabel } from './AppsFormat';
+import { AppsLogLines, BranchName, Choice, PreviewLinkMaker } from './AppsParts';
 import { DnsRecordList, domainLook, sourceLabel } from './DomainsParts';
 import { domainName, isDomainName, servedNames, stopServing, useAddAppDomain, type ServedName } from './appDomains';
-import { ConfirmAction, errorText, Field, INPUT, LabeledInput, Section } from './shared';
+import { ConfirmAction, errorText, INPUT, LabeledInput } from './shared';
 
 /** The first of the month after `periodStart`, when budgets and caps reset. */
 function resetDay(periodStart: Date | null): string {
@@ -38,81 +40,34 @@ function resetDay(periodStart: Date | null): string {
     return new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 
-function BudgetDialog({ project, open, onOpenChange }: { project: Project; open: boolean; onOpenChange: (open: boolean) => void }) {
-    const [text, setText] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const current = project.budgetUsdPerMonth;
-    useEffect(() => {
-        if (!open) return;
-        setText(current == null ? '' : String(current));
-        setError(null);
-    }, [open, current]);
-    const amount = Number(text.trim());
-    const valid = text.trim() !== '' && Number.isFinite(amount) && amount >= 0;
-    const save = async (budget: number | null) => {
-        setBusy(true);
-        setError(null);
-        try {
-            await project.update({ budgetUsdPerMonth: budget });
-            invalidateV1('projects');
-            invalidateV1(`projects/${project.id}/usage`);
-            toast(budget == null ? `${project.name} has no budget of its own now` : `${project.name} may spend ${formatMoney(budget)} a month`);
-            onOpenChange(false);
-        } catch (e) {
-            setError(errorText(e));
-        } finally {
-            setBusy(false);
-        }
-    };
+function AppBudgetDialog({ project, open, onOpenChange }: { project: Project; open: boolean; onOpenChange: (open: boolean) => void }) {
     return (
-        <ConsoleDialog
+        <BudgetDialog
             open={open}
             onOpenChange={onOpenChange}
-            title="Monthly budget"
+            current={project.budgetUsdPerMonth}
             description={`The most ${project.name} may spend in a calendar month: hosting and builds, its calls to what it's bound to, email, AI and agent turns. At the budget it keeps serving, and its paid calls fail until the month turns; at twice it its pages pause too.`}
-            footer={
-                <>
-                    {/* An app with code always has a budget; only one NoClick publishes may have none. */}
-                    {current != null && project.published && (
-                        <ConsoleButton disabled={busy} onClick={() => void save(null)}>
-                            Remove budget
-                        </ConsoleButton>
-                    )}
-                    <ConsoleButton variant="primary" disabled={busy || !valid} onClick={() => void save(amount)}>
-                        {busy ? 'Saving…' : 'Save'}
-                    </ConsoleButton>
-                </>
-            }
-        >
-            <form
-                className="flex flex-col gap-3"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    if (valid) void save(amount);
-                }}
-            >
-                <LabeledInput label="Budget in USD" id="app-budget">
-                    <input id="app-budget" className={cn(INPUT, 'tabular-nums')} inputMode="decimal" value={text} onChange={(e) => setText(e.target.value)} placeholder="25" autoComplete="off" />
-                </LabeledInput>
-                <p className="m-0 text-[12px] text-muted-foreground">{project.userId ? `It counts toward ${project.userId}'s cap too.` : 'It counts toward your account’s balance like everything else.'}</p>
-                {error && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{error}</p>}
-            </form>
-        </ConsoleDialog>
+            note={project.userId ? `It counts toward ${project.userId}'s cap too.` : 'It counts toward your account’s balance like everything else.'}
+            // An app with code always has a budget; only one NoClick publishes may have none.
+            removable={project.published}
+            onSave={async (budget) => {
+                await project.update({ budgetUsdPerMonth: budget });
+                invalidateV1('projects');
+                invalidateV1(`projects/${project.id}/usage`);
+                toast(budget == null ? `${project.name} has no budget of its own now` : `${project.name} may spend ${formatMoney(budget)} a month`);
+            }}
+        />
     );
 }
 
-/** How many deploys the Overview lists; the Deployments tab has the rest. */
-const RECENT_DEPLOYS = 3;
-
-/** An app's month: one read, shared by what stops its paid calls (above every tab) and its Overview. */
+/** An app's month: one read, shared by what stops its paid calls and its spend. */
 export function useAppUsage(project: Project | undefined) {
     return useV1(project ? `projects/${project.id}/usage` : null, () => project!.usage());
 }
 
 export type AppUsage = ReturnType<typeof useAppUsage>;
 
-/** What stops the app's paid calls, in words above every tab, with its fix: its budget, its user's cap, or funds. */
+/** What stops the app's paid calls, in words at the top of its page, with its fix: its budget, its user's cap, or funds. */
 export function AppProblem({ project, usage }: { project: Project; usage: AppUsage }) {
     const { site } = useConsole();
     const href = useConsoleHref();
@@ -139,34 +94,33 @@ export function AppProblem({ project, usage }: { project: Project; usage: AppUsa
             <Problem title={`Paid calls stopped: ${limit}`} action={fix}>
                 Pages still load and it reads its data; writes, email, AI and agent turns fail until {resetDay(u.periodStart)}. Each refusal is in its runtime log.
             </Problem>
-            <BudgetDialog project={project} open={editing} onOpenChange={setEditing} />
+            <AppBudgetDialog project={project} open={editing} onOpenChange={setEditing} />
         </>
     );
 }
 
-/** What it spent this month against its budget, what it served, and where the money went. */
-function AppSpend({ project, usage }: { project: Project; usage: AppUsage }) {
+/** What it spent this month against its budget and what it served, then where the money went. */
+export function AppSpend({ project, usage }: { project: Project; usage: AppUsage }) {
     const [editing, setEditing] = useState(false);
     const u = usage.data;
     const byType = u ? Object.entries(u.byType).sort(([, a], [, b]) => b - a) : [];
     if (usage.error !== undefined) return <ErrorPanel error={usage.error} onRetry={() => void usage.refresh()} />;
-    if (!u) return <div aria-busy className="h-12 animate-pulse rounded-lg bg-foreground/[0.04]" />;
+    if (!u) return <div aria-busy className="h-24 animate-pulse rounded-lg bg-foreground/[0.04]" />;
     return (
-        <section aria-label="This month" className="flex flex-col gap-2">
-            <Spend
-                spent={u.usd}
-                cap={u.budgetUsd}
-                action={
-                    <ConsoleButton size="sm" variant="ghost" onClick={() => setEditing(true)}>
-                        {project.budgetUsdPerMonth == null ? 'Set budget' : 'Change budget'}
-                    </ConsoleButton>
-                }
-            />
+        <MonthSpend
+            spent={u.usd}
+            cap={u.budgetUsd}
+            action={
+                <ConsoleButton size="sm" variant="ghost" onClick={() => setEditing(true)}>
+                    {project.budgetUsdPerMonth == null ? 'Set budget' : 'Change budget'}
+                </ConsoleButton>
+            }
+        >
             <p className="m-0 text-[12px] text-muted-foreground">
                 {formatCount(u.requests)} requests · {formatDuration(u.cpuMs)} of CPU time
             </p>
             {byType.length > 0 && (
-                <ul aria-label="Spend by type" className="m-0 list-none p-0">
+                <ul aria-label="Spend by type" className="m-0 mt-1 list-none p-0">
                     {byType.map(([type, usd]) => (
                         <li key={type} className="flex items-center justify-between gap-3 py-1 text-[13px]">
                             <span className="text-muted-foreground">{spendTypeLabel(type)}</span>
@@ -175,8 +129,8 @@ function AppSpend({ project, usage }: { project: Project; usage: AppUsage }) {
                     ))}
                 </ul>
             )}
-            <BudgetDialog project={project} open={editing} onOpenChange={setEditing} />
-        </section>
+            <AppBudgetDialog project={project} open={editing} onOpenChange={setEditing} />
+        </MonthSpend>
     );
 }
 
@@ -269,114 +223,61 @@ function PreviewAccessSetting({ project }: { project: Project }) {
     );
 }
 
-/** Its last few deployments, each opening in the Deployments tab: what a push or a deploy did lately. */
-function RecentDeploys({ project }: { project: Project }) {
-    const [, setParams] = useSearchParams();
-    // The Deployments tab's own read, so switching to it reads nothing again.
-    const deployments = useV1(`projects/${project.id}/deployments`, () => project.deployments({ limit: 50 }));
-    const show = (deployment: string | null) =>
-        setParams((prev) => withParams(prev, { tab: 'deployments', deployment }), { replace: true, preventScrollReset: true });
-    const rows = (deployments.data ?? []).slice(0, RECENT_DEPLOYS);
+/** How it deploys: what a push deploys, who opens its previews, and how each instance runs in a container. */
+export function AppHowItDeploys({ project }: { project: Project }) {
     return (
-        <Section
-            title={
-                <span className="flex items-center justify-between gap-2">
-                    <span>Recent deploys</span>
-                    {rows.length > 0 && (
-                        <ConsoleButton size="sm" variant="ghost" onClick={() => show(null)}>
-                            All deployments
-                        </ConsoleButton>
-                    )}
-                </span>
-            }
-        >
-            {deployments.error !== undefined ? (
-                <ErrorPanel error={deployments.error} onRetry={() => void deployments.refresh()} />
-            ) : deployments.loading ? (
-                <div aria-busy className="h-20 animate-pulse rounded-lg bg-foreground/[0.04]" />
-            ) : rows.length === 0 ? (
-                <p className="m-0 text-[13px] text-muted-foreground">Not deployed yet.</p>
-            ) : (
-                <ul aria-label="Recent deploys" className="m-0 list-none p-0">
-                    {rows.map((d) => (
-                        <li key={d.id} {...clickableRow(() => show(d.id))} className={cn('-mx-2 flex cursor-pointer items-center gap-3 rounded-md px-2 py-2', ROW_HOVER)}>
-                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                                <span className="truncate text-[13px] text-foreground">{d.commitMessage || `Deploy of ${d.branch}`}</span>
-                                <span className="truncate text-[12px] text-muted-foreground" title={d.error ?? undefined}>
-                                    <span className="font-mono">{d.commit?.slice(0, 7) ?? d.branch}</span> · <TimeCell value={d.createdAt} />
-                                    {d.status === 'failed' && d.error ? (
-                                        <span className="text-red-600 dark:text-red-400"> · {d.error}</span>
-                                    ) : (
-                                        d.environment === 'preview' && ` · preview of ${d.branch}`
-                                    )}
-                                </span>
-                            </span>
-                            <StatusPill look={deploymentLook({ status: d.status, startedBy: d.startedBy })} className="shrink-0" />
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </Section>
+        <PageSection title="How it deploys">
+            <div className="flex flex-col gap-6">
+                <DeployOnPushSetting project={project} />
+                <PreviewAccessSetting project={project} />
+                <AppContainer project={project} />
+            </div>
+        </PageSection>
     );
 }
 
-/** Where it answers: its URL first (to copy), then every other name that serves it. */
-function ServesAt({ project }: { project: Project }) {
-    const names = [...new Set([hostOf(project.url), ...project.domainNames, project.hostname])];
-    return (
-        <Section title="Serves at">
-            <ul aria-label="Serves at" className="m-0 list-none p-0">
-                {names.map((name, i) => (
-                    <li key={name} className="flex min-h-8 items-center gap-1 text-[13px]">
-                        <AppUrl url={`https://${name}`} />
-                        {i === 0 && <CopyButton value={project.url} label="Copy the URL" />}
-                    </li>
-                ))}
-            </ul>
-        </Section>
-    );
-}
-
-export function AppOverview({ project, usage }: { project: Project; usage: AppUsage }) {
+/** The facts set once: where it comes from, how and where it runs, whom it's for, and its ID. */
+export function AppFacts({ project }: { project: Project }) {
     const { client } = useConsole();
     const href = useConsoleHref();
     const regions = useRegions();
     const repoId = project.repoId;
     const repo = useV1(`repos/${repoId}`, () => Repo.get(repoId ?? '', { client, user: project.userId }), { enabled: repoId !== null });
+    const runtime = RUNTIMES.find((r) => r.value === project.runtime)?.label ?? project.runtime;
     return (
-        <div className="flex flex-col gap-6">
-            <AppSpend project={project} usage={usage} />
-            <RecentDeploys project={project} />
-            <ServesAt project={project} />
-            <Folded title={repoId !== null ? 'Details: repo, runtime, region, deploys on push, previews, container' : 'Details: where it’s published from, runtime, region'}>
-                <dl className="m-0">
-                    {repoId !== null ? (
-                        <Field label="Repo">
-                            <span className="inline-flex items-center gap-2">
-                                <Link to={href('resources/repos', { repo: repoId })} className="text-foreground hover:underline">
-                                    {repo.data?.name ?? project.name}
-                                </Link>
-                                <BranchName name={project.productionBranch} className="text-muted-foreground" />
-                            </span>
-                        </Field>
-                    ) : (
-                        <Field label="Published from">{publishedFrom(project)}</Field>
-                    )}
-                    <Field label="Runtime">{RUNTIMES.find((r) => r.value === project.runtime)?.label ?? project.runtime}</Field>
-                    <Field label="Framework">{project.framework ? frameworkLabel(project.framework) : <span className="text-muted-foreground">Detected from the repo at each build</span>}</Field>
-                    <Field label="Region">{regionLabel(project.region, regions.data)}</Field>
-                    <Field label="User">
-                        <span className={project.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(project.userId)}</span>
-                    </Field>
-                    <Field label="Created">
-                        <TimeCell value={project.createdAt} tier="absolute" />
-                    </Field>
-                </dl>
-                {repoId !== null && <DeployOnPushSetting project={project} />}
-                {repoId !== null && <PreviewAccessSetting project={project} />}
-                {repoId !== null && <AppContainer project={project} />}
-            </Folded>
-        </div>
+        <AsideSection title="About">
+            <Facts>
+                {repoId !== null ? (
+                    <Fact row label="Repo">
+                        <span className="inline-flex min-w-0 flex-wrap items-center gap-x-2">
+                            <Link to={href('resources/repos', { repo: repoId })} className="text-foreground hover:underline">
+                                {repo.data?.name ?? project.name}
+                            </Link>
+                            <BranchName name={project.productionBranch} className="text-muted-foreground" />
+                        </span>
+                    </Fact>
+                ) : (
+                    <Fact row label="Published from">
+                        {publishedFrom(project)}
+                    </Fact>
+                )}
+                <Fact row label="Runs on">
+                    {project.framework ? `${runtime} · ${frameworkLabel(project.framework)}` : runtime}
+                </Fact>
+                <Fact row label="Region">
+                    {regionLabel(project.region, regions.data)}
+                </Fact>
+                <Fact row label="User">
+                    <span className={project.userId ? undefined : 'text-muted-foreground'}>{userLabel(project.userId)}</span>
+                </Fact>
+                <Fact row label="Created">
+                    <TimeCell value={project.createdAt} tier="absolute" />
+                </Fact>
+                <Fact row label="ID">
+                    <CopyIdChip id={project.id} />
+                </Fact>
+            </Facts>
+        </AsideSection>
     );
 }
 
@@ -498,19 +399,20 @@ export function AppDomains({ project }: { project: Project }) {
     const [adding, setAdding] = useState(false);
     const rows = servedNames(domains.data ?? [], project.id);
     return (
-        <Section
-            title={
-                <span className="flex items-center justify-between gap-2">
-                    <span>Domains</span>
-                    <ConsoleButton size="sm" onClick={() => setAdding(true)}>
-                        Add domain
-                    </ConsoleButton>
-                </span>
+        <PageSection
+            id="domains"
+            title="Domains"
+            right={
+                <ConsoleButton size="sm" onClick={() => setAdding(true)}>
+                    Add domain
+                </ConsoleButton>
+            }
+            note={
+                <>
+                    The app always serves at <span className="text-foreground">{project.hostname}</span>; each domain here serves it too.
+                </>
             }
         >
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">
-                The app always serves at <span className="text-foreground">{project.hostname}</span>; each domain here serves it too.
-            </p>
             {domains.error !== undefined ? (
                 <ErrorPanel error={domains.error} onRetry={() => void domains.refresh()} />
             ) : domains.loading ? (
@@ -525,7 +427,7 @@ export function AppDomains({ project }: { project: Project }) {
                 </ul>
             )}
             <AddDomainDialog project={project} open={adding} onOpenChange={setAdding} />
-        </Section>
+        </PageSection>
     );
 }
 
@@ -537,29 +439,28 @@ export function AppLogs({ project }: { project: Project }) {
     const [level, setLevel] = useState<LevelFilter>('all');
     const logs = useV1(`projects/${project.id}/logs?${level}`, () => project.logs({ level: level === 'all' ? undefined : level, limit: 200 }));
     return (
-        <Section
-            title={
-                <span className="flex items-center justify-between gap-2">
-                    <span>Runtime log</span>
-                    <span className="flex items-center gap-2">
-                        <Segmented
-                            label="Level"
-                            value={level}
-                            onChange={setLevel}
-                            options={[
-                                { value: 'all', label: 'All' },
-                                { value: 'warn', label: 'Warnings' },
-                                { value: 'error', label: 'Errors' },
-                            ]}
-                        />
-                        <ConsoleButton size="sm" variant="ghost" onClick={() => void logs.refresh()}>
-                            Refresh
-                        </ConsoleButton>
-                    </span>
-                </span>
+        <PageSection
+            id="logs"
+            title="What it printed"
+            note="Its runtime log while serving, oldest first. Lines are kept 7 days."
+            right={
+                <>
+                    <Segmented
+                        label="Level"
+                        value={level}
+                        onChange={setLevel}
+                        options={[
+                            { value: 'all', label: 'All' },
+                            { value: 'warn', label: 'Warnings' },
+                            { value: 'error', label: 'Errors' },
+                        ]}
+                    />
+                    <ConsoleButton size="sm" variant="ghost" onClick={() => void logs.refresh()}>
+                        Refresh
+                    </ConsoleButton>
+                </>
             }
         >
-            <p className="m-0 mb-2 text-[12px] text-muted-foreground">What the app printed while serving, oldest first. Lines are kept 7 days.</p>
             {logs.error !== undefined ? (
                 <ErrorPanel error={logs.error} onRetry={() => void logs.refresh()} />
             ) : logs.loading ? (
@@ -567,6 +468,6 @@ export function AppLogs({ project }: { project: Project }) {
             ) : (
                 <AppsLogLines lines={logs.data ?? []} label="Runtime log" empty={level === 'all' ? 'Nothing printed in the last 7 days.' : 'No lines at this level in the last 7 days.'} />
             )}
-        </Section>
+        </PageSection>
     );
 }

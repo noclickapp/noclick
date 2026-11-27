@@ -1,23 +1,22 @@
 // @vitest-environment happy-dom
-// An app's previews are made private from its drawer: the choice is saved at once, saying what the API adds to it,
+// An app's previews are made private from its page: the choice is saved at once, saying what the API adds to it,
 // and a private preview's link is made when asked and shown to copy, from the Overview and from the preview's own
 // deployment; every link made so far can be stopped beside it, which puts away the one shown.
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { ALL_USERS } from 'noclick';
 import { afterEach, expect, it } from 'vitest';
 import { ConsoleProviders } from '@/screens/console/ConsoleProviders';
 import { fixtureConsole } from '@/screens/console/fixtures/context';
 import { ok, type FixtureRequest } from '@/screens/console/fixtures/core';
 import { BOOKING_APP_ID, PROJECTS } from '@/screens/console/fixtures/pages/e_build';
-import { AppsPanel } from './AppsPanel';
+import { AppPage } from './AppPage';
 
 afterEach(cleanup);
 
 const NOT_YET = 'Its previews stay public until NoClick’s front door is updated.';
 const STOPPED = 'Every link to its previews made before now stops opening them within 30 seconds.';
 
-function open(path: string, patched: Record<string, unknown>[], revoked: string[] = []) {
+function open(patched: Record<string, unknown>[], revoked: string[] = []) {
     const booking = PROJECTS.find((p) => p.id === BOOKING_APP_ID)!;
     const routes = [
         {
@@ -40,9 +39,9 @@ function open(path: string, patched: Record<string, unknown>[], revoked: string[
         { method: 'GET' as const, path: `/v1/projects/${BOOKING_APP_ID}`, reply: () => ok({ ...booking, preview_access: patched.length ? 'link' : 'public' }) },
     ];
     render(
-        <MemoryRouter initialEntries={[path]}>
+        <MemoryRouter initialEntries={[`/resources/apps/${BOOKING_APP_ID}`]}>
             <ConsoleProviders value={fixtureConsole({ routes })}>
-                <AppsPanel user={ALL_USERS} setUser={() => undefined} />
+                <AppPage id={BOOKING_APP_ID} />
             </ConsoleProviders>
         </MemoryRouter>
     );
@@ -50,7 +49,7 @@ function open(path: string, patched: Record<string, unknown>[], revoked: string[
 
 it('keeps previews to a link, and makes one to copy', async () => {
     const patched: Record<string, unknown>[] = [];
-    open(`/resources/apps?app=${BOOKING_APP_ID}`, patched);
+    open(patched);
     const previews = await screen.findByRole('group', { name: 'Previews' });
     expect(previews.textContent).toContain('Anyone with the URL');
     fireEvent.click(await screen.findByRole('button', { name: 'Link only' }));
@@ -65,7 +64,7 @@ it('keeps previews to a link, and makes one to copy', async () => {
 it('stops every link made so far, once confirmed, and puts away the one shown', async () => {
     const patched: Record<string, unknown>[] = [];
     const revoked: string[] = [];
-    open(`/resources/apps?app=${BOOKING_APP_ID}`, patched, revoked);
+    open(patched, revoked);
     fireEvent.click(await screen.findByRole('button', { name: 'Link only' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Make a preview link' }));
     await screen.findByText(/^https:\/\/new-form--booking\.noclick\.site\/\?preview=p2~/);

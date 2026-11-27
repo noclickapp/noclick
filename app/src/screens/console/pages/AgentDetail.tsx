@@ -1,13 +1,15 @@
-// One agent, in the anatomy every detail page shares, in one column: what it's
-// doing now and what it cost, its recent runs, what it uses and what wakes it,
-// the code that messages it, then the facts set once (model, region, ID, share
-// link) folded under Details. "Try it" swaps the body for a live conversation
-// (`?tab=try`); a conversation opens in the drawer (`?conv=`).
+// One agent, in the anatomy it shares with an app's page: how it stands and what it's for under its name; on the left
+// what it's working on and taking now, its recent runs, what it uses, what wakes it and its instructions; on the right its month's
+// spend, the facts set once (where and on what it runs, ID, share link) and the code that messages it. Its
+// conversations, its memory and Try it are pages under it (`?tab=`), each with the way back above its title; a
+// conversation and a memory entry open in a drawer (`?conv=`, `?mem=`).
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { AlarmClock, CalendarClock, Download, FileText, FlaskConical, GitBranch, Globe, Hash, Inbox as InboxIcon, InfinityIcon, ListOrdered, Mail, Network, Pause, Phone, Play, Plus, ShieldCheck, Wrench, SquareTerminal, UserRound, Webhook, Zap, type LucideIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE, LiveDot, fmtBytes } from '@/ui/primitives';
+import { PhoneBarBack, useInPhoneShell } from '@/ui/phoneBar';
+import { useIsMobile } from '@/ui/useIsMobile';
 import { credentialLabel } from '@/ui/connectionMark';
 import { cn } from '@/ui/utils';
 import { ALL_USERS, Agent, Agents, Inbox, NO_USER, NoClickError, Operation, PhoneNumber, Policy, Repo, Secret, Usage, Volume, type AgentGrant, type AgentTrigger, type Conversation, type HarnessName, type IntegrationOperation, type JsonObject, type MemoryEntry, type Message, type PolicyVerdict, type Rehearsal } from 'noclick';
@@ -44,7 +46,6 @@ import {
     inputClass,
     keepsModelConnection,
     modelUsageText,
-    parseBudget,
     personLabel,
     personToolOf,
     purposeOf,
@@ -57,19 +58,18 @@ import {
     useScopeDatabases,
 } from '../agentParts';
 import { connectionLook, nodeTypeOf, useIntegrations, useScopeConnections } from '../connections';
-import { PageHeader, PageSection } from '../ui/PageHeader';
-import { PillTabs } from '../ui/PillTabs';
-import { AsideSection, DETAIL_PAGE, Disclosure, Fact, Facts } from '../ui/Detail';
+import { PageActions, PageHeader, PageSection } from '../ui/PageHeader';
+import { AsideSection, Fact, Facts, MonthSpend, ThingPage } from '../ui/Detail';
+import { BudgetDialog } from '../ui/BudgetDialog';
 import { MoreMenu, copyId } from '../ui/MoreMenu';
 import { ErrorPanel } from '../ui/ErrorPanel';
-import { ConsoleButton } from '../ui/Button';
+import { ConsoleButton, consoleButtonClass } from '../ui/Button';
 import { ConsoleDialog } from '../ui/ConsoleDialog';
 import { CopyButton } from '../ui/CopyButton';
 import { CodeSnippet } from '../ui/CodeSnippet';
 import { CopyIdChip, IdChip } from '../ui/IdChip';
 import { TimeCell } from '../ui/TimeCell';
 import { Money } from '../ui/Money';
-import { CapMeter } from '../ui/CapMeter';
 import { StatusPill } from '../ui/StatusPill';
 import { DataTable, type Column } from '../ui/DataTable';
 import { Drawer } from '../ui/Drawer';
@@ -188,7 +188,7 @@ function A2AFact({ agentId }: { agentId: string }) {
     const url = card.data?.url;
     if (!url) return null;
     return (
-        <Fact label="Agent-to-agent URL">
+        <Fact row label="Agent-to-agent URL">
             <span className="inline-flex max-w-full items-center gap-1" title={url}>
                 <span className="truncate">{url.replace(/^https:\/\//, '')}</span>
                 <CopyButton value={url} label="Copy agent-to-agent URL" />
@@ -414,71 +414,61 @@ function saverFor(agent: Agent, onSaved: (agent: Agent) => void): SaveAgent {
     };
 }
 
-/** This month's spend, against its budget when it has one; the budget is edited here. */
-function BudgetFact({ agent, save }: { agent: Agent; save: SaveAgent }) {
+/** This month's spend against its budget, which is changed here: a budgeted agent's counts the agents it spawns. */
+function AgentSpend({ agent, save }: { agent: Agent; save: SaveAgent }) {
     const spent = useAgentSpend(agent);
+    const [editing, setEditing] = useState(false);
     return (
-        <Fact label="This month">
-            <Editable
-                label="Monthly budget"
-                value={agent.budgetUsdPerMonth == null ? '' : String(agent.budgetUsdPerMonth)}
-                placeholder="No budget"
-                parse={parseBudget}
-                display={
-                    agent.budgetUsdPerMonth == null ? (
-                        <span>
-                            <Money usd={spent} /> <span className="text-muted-foreground">with no monthly budget</span>
-                        </span>
-                    ) : (
-                        <span className="flex flex-col gap-1">
-                            <CapMeter spent={spent} cap={agent.budgetUsdPerMonth} className="w-full" />
-                            <span className="text-[12px] text-muted-foreground">The budget counts the agents it spawns.</span>
-                        </span>
-                    )
-                }
-                onSave={(v) => save({ budgetUsdPerMonth: v as number | null })}
+        <MonthSpend
+            spent={spent}
+            cap={agent.budgetUsdPerMonth}
+            action={
+                <ConsoleButton size="sm" variant="ghost" onClick={() => setEditing(true)}>
+                    {agent.budgetUsdPerMonth == null ? 'Set budget' : 'Change budget'}
+                </ConsoleButton>
+            }
+        >
+            <p className="m-0 text-[12px] text-muted-foreground">{agent.budgetUsdPerMonth == null ? 'No monthly budget.' : 'The budget counts the agents it spawns.'}</p>
+            <BudgetDialog
+                open={editing}
+                onOpenChange={setEditing}
+                current={agent.budgetUsdPerMonth}
+                description={`The most ${agent.name} and the agents it spawns may spend in a calendar month. At the budget its turns stop until the month turns.`}
+                removable
+                onSave={(budget) => save({ budgetUsdPerMonth: budget })}
             />
-        </Fact>
+        </MonthSpend>
     );
 }
 
-/** The facts set once: its instructions, how and where it runs, whom it serves, and its addresses. */
+/** The facts set once: how and where it runs, whom it serves, and its addresses. */
 function About({ agent, save }: { agent: Agent; save: SaveAgent }) {
     const href = useConsoleHref();
     const parent = useParent(agent);
     const harness = useHarnesses().data?.find((h) => h.name === agent.harness);
     const regions = useRegions().data;
     return (
-        <section aria-label="About">
-            <Facts className="grid gap-x-10 sm:grid-cols-2">
-                <Fact label="Instructions" className="sm:col-span-2">
-                    <Editable
-                        label="Instructions"
-                        multiline
-                        value={agent.instructions ?? ''}
-                        display={<p className="m-0 line-clamp-5 whitespace-pre-wrap text-foreground/85">{agent.instructions}</p>}
-                        onSave={(v) => save({ instructions: String(v) })}
-                    />
-                </Fact>
-                <Fact label="Runs on">
+        <AsideSection title="About">
+            <Facts>
+                <Fact row label="Runs on">
                     <HarnessFact agent={agent} save={save} />
                 </Fact>
-                <Fact label="Model">
+                <Fact row label="Model">
                     <Editable
                         label="Model"
                         value={agent.model ?? ''}
                         input={(draft, setDraft) => <ModelPicker ariaLabel="Model" harness={harness} value={draft} onChange={setDraft} />}
-                        display={<span className="break-all">{agent.model ?? "The harness's default"}</span>}
+                        display={agent.model ? <span>{agent.model.split('/').flatMap((part, i) => (i ? ['/', <wbr key={i} />, part] : [part]))}</span> : <span className="text-muted-foreground">The harness&apos;s default</span>}
                         onSave={(v) => save({ model: String(v) })}
                     />
                 </Fact>
-                <Fact label="Model connection">
+                <Fact row label="Model connection">
                     <ModelConnectionFact agent={agent} save={save} />
                 </Fact>
-                <Fact label="Region">
+                <Fact row label="Region">
                     <span className={agent.region ? undefined : 'text-muted-foreground'}>{regionLabel(agent.region, regions)}</span>
                 </Fact>
-                <Fact label="Timezone">
+                <Fact row label="Timezone">
                     <Editable
                         label="Timezone"
                         value={agent.timezone ?? ''}
@@ -488,7 +478,7 @@ function About({ agent, save }: { agent: Agent; save: SaveAgent }) {
                         onSave={(v) => save({ timezone: v as string | null })}
                     />
                 </Fact>
-                <Fact label="Serves">
+                <Fact row label="Serves">
                     {agent.userId ? (
                         <Link to={href(userPath(agent.userId))} className={LINK}>
                             {agent.userId}
@@ -498,7 +488,7 @@ function About({ agent, save }: { agent: Agent; save: SaveAgent }) {
                     )}
                 </Fact>
                 {agent.parentId && (
-                    <Fact label="Gets work from">
+                    <Fact row label="Gets work from">
                         {parent ? (
                             <Link to={href(`agents/${parent.id}`)} className={LINK}>
                                 {parent.name}
@@ -510,31 +500,34 @@ function About({ agent, save }: { agent: Agent; save: SaveAgent }) {
                 )}
                 {agent.expiresAt && (
                     // Past its time to live an agent is expired, and readable for 30 days before it's deleted.
-                    <Fact label={agent.status === 'expired' ? 'Expired' : 'Expires'}>
+                    <Fact row label={agent.status === 'expired' ? 'Expired' : 'Expires'}>
                         <TimeCell value={agent.expiresAt} />
                     </Fact>
                 )}
                 <A2AFact agentId={agent.id} />
-                <Fact label="ID">
-                    <CopyIdChip id={agent.id} />
-                </Fact>
-                <Fact label="Created">
+                <Fact row label="Created">
                     <TimeCell value={agent.createdAt} tier="absolute" />
                 </Fact>
+                <Fact row label="ID">
+                    <CopyIdChip id={agent.id} />
+                </Fact>
             </Facts>
-        </section>
+        </AsideSection>
     );
 }
 
-/** What it is beyond what it does, folded under one heading until asked for. */
-function Details({ agent, save }: { agent: Agent; save: SaveAgent }) {
+/** What it's told to do, whole, edited in place. */
+function Instructions({ agent, save }: { agent: Agent; save: SaveAgent }) {
     return (
-        <Disclosure title="Details" hint="Instructions, model, region, ID and share link" className="mt-12">
-            <div className="flex flex-col gap-8">
-                <About agent={agent} save={save} />
-                <ShareLinkSection agent={agent} />
-            </div>
-        </Disclosure>
+        <PageSection title="Instructions">
+            <Editable
+                label="Instructions"
+                multiline
+                value={agent.instructions ?? ''}
+                display={<p className="m-0 line-clamp-[12] whitespace-pre-wrap text-[14px] leading-relaxed text-foreground/85">{agent.instructions}</p>}
+                onSave={(v) => save({ instructions: String(v) })}
+            />
+        </PageSection>
     );
 }
 
@@ -1144,23 +1137,49 @@ function Uses({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) => voi
     );
 }
 
-// ── now ────────────────────────────────────────────────────────────────────
+// ── recent runs ────────────────────────────────────────────────────────────
 
-/** What it's doing: its running turns, the last day's, and what the month cost against its budget. */
-function Now({ agent, save }: { agent: Agent; save: SaveAgent }) {
-    const { client, now } = useConsole();
-    const href = useConsoleHref();
+/** The turns it's taking now, read again every 10 seconds; nothing while it takes none. Each opens its run. */
+function RunningNow({ agent }: { agent: Agent }) {
+    const { client } = useConsole();
     const [, setOp] = useSearchParam('op');
-    const since = useMemo(() => new Date(now() - DAY_MS), []); // eslint-disable-line react-hooks/exhaustive-deps
     const running = useV1(
         `operations?agent-running=${agent.id}`,
         () => Operation.listPage({ client, kind: 'agent.message', agent: agent.id, status: 'live', userFilter: ALL_USERS, limit: 20 }),
         { pollMs: 10_000 }
     );
-    const day = useV1(`operations/summary?agent-1d=${agent.id}`, () => Operation.summary({ client, kind: 'agent.message', agent: agent.id, createdAfter: since, userFilter: ALL_USERS }));
     const rows = running.data?.data ?? [];
+    if (!rows.length) return null;
+    return (
+        <PageSection title="Running now" count={rows.length}>
+            <ul aria-label="Running now" className="m-0 list-none p-0">
+                {rows.map((op) => (
+                    <li key={op.id}>
+                        <button
+                            type="button"
+                            onClick={() => setOp(op.id, { push: true })}
+                            className="-mx-3 flex w-[calc(100%+1.5rem)] items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-foreground/[0.03]"
+                        >
+                            <LiveDot className="scale-75" />
+                            <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{op.summaryText || 'A turn'}</span>
+                            <span className="hidden shrink-0 text-[13px] text-muted-foreground sm:inline">{userLabel(op.userId)}</span>
+                            <TimeCell value={op.createdAt} className="shrink-0 text-[13px] text-muted-foreground" />
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </PageSection>
+    );
+}
+
+/** Its latest turns, under how many it took in the last day and how many failed. */
+function RecentRuns({ agent }: { agent: Agent }) {
+    const { client, now } = useConsole();
+    const href = useConsoleHref();
+    const since = useMemo(() => new Date(now() - DAY_MS), []); // eslint-disable-line react-hooks/exhaustive-deps
+    const day = useV1(`operations/summary?agent-1d=${agent.id}`, () => Operation.summary({ client, kind: 'agent.message', agent: agent.id, createdAfter: since, userFilter: ALL_USERS }));
     const failed = day.data?.byStatus.failed ?? 0;
-    const lastDay = day.data && (
+    const note = day.data && (
         <>
             {plural(day.data.total, 'turn')} in the last day
             {failed > 0 && (
@@ -1175,40 +1194,8 @@ function Now({ agent, save }: { agent: Agent; save: SaveAgent }) {
         </>
     );
     return (
-        <PageSection title="Now" count={rows.length}>
-            {running.error !== undefined && !running.data ? (
-                <ErrorPanel error={running.error} onRetry={() => void running.refresh()} />
-            ) : !running.data ? (
-                <div aria-busy className="h-10 animate-pulse rounded-lg bg-foreground/[0.03]" />
-            ) : rows.length ? (
-                <>
-                    <ul aria-label="Running now" className={'m-0 list-none p-0'}>
-                        {rows.map((op) => (
-                            <li key={op.id}>
-                                <button
-                                    type="button"
-                                    onClick={() => setOp(op.id, { push: true })}
-                                    className="-mx-3 flex w-[calc(100%+1.5rem)] items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-foreground/[0.03]"
-                                >
-                                    <LiveDot className="scale-75" />
-                                    <span className="min-w-0 flex-1 truncate text-[14px] text-foreground">{op.summaryText || 'A turn'}</span>
-                                    <span className="hidden shrink-0 text-[13px] text-muted-foreground sm:inline">{userLabel(op.userId)}</span>
-                                    <TimeCell value={op.createdAt} className="shrink-0 text-[13px] text-muted-foreground" />
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                    {lastDay && <p className="m-0 mt-3 text-[14px] text-foreground/80">{lastDay}</p>}
-                </>
-            ) : (
-                <p className="m-0 text-[14px] text-foreground/80">
-                    Nothing running right now.{lastDay && ' '}
-                    {lastDay}
-                </p>
-            )}
-            <Facts className="mt-4 max-w-sm">
-                <BudgetFact agent={agent} save={save} />
-            </Facts>
+        <PageSection title="Recent runs" note={note}>
+            <OperationsView pinned={`kind:agent.message agent:${agent.id}`} controls={false} limit={6} viewAllHref={href('logs', { q: `kind:agent.message agent:${agent.id}` })} />
         </PageSection>
     );
 }
@@ -1325,7 +1312,6 @@ function Transcript({ agent, userId, conversation, person = null }: { agent: Age
 }
 
 function Conversations({ agent }: { agent: Agent }) {
-    const { lab } = useConsole();
     const paged = usePaged(
         `agents/${agent.id}/conversations`,
         (cursor) => agent.conversationsPage({ userFilter: ALL_USERS, cursor, limit: 10 }),
@@ -1335,7 +1321,7 @@ function Conversations({ agent }: { agent: Agent }) {
     const open = conv ? parseConversationParam(conv) : null;
     const row = conv ? paged.rows.find((c) => conversationParam(c.userId, c.conversation) === conv) : undefined;
     return (
-        <PageSection title="Conversations" count={paged.rows.length} note={lab ? 'Open one for its transcript and the files it worked on in it.' : undefined}>
+        <>
             <DataTable
                 label="Conversations"
                 columns={conversationColumns()}
@@ -1378,7 +1364,7 @@ function Conversations({ agent }: { agent: Agent }) {
                     <WorkspaceFiles agent={agent} userId={open.userId} conversation={open.conversation} />
                 </Drawer>
             )}
-        </PageSection>
+        </>
     );
 }
 
@@ -1604,7 +1590,7 @@ function Triggers({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) =>
     };
     return (
         <PageSection
-            title="Triggers"
+            title="Wakes it"
             count={rows.length}
             note={
                 agent.paused
@@ -1868,36 +1854,21 @@ function Memory({ agent }: { agent: Agent }) {
     ];
     const layers = [{ value: ACCOUNT_LAYER, label: 'Account' }, ...users.map((u) => ({ value: u.id, label: u.id }))];
     return (
-        <PageSection
-            title="Memory"
-            count={rows.length}
-            note={
-                agent.userId
-                    ? 'Named notes it keeps across conversations. Every turn starts with each name and description; it reads a note when it needs it.'
-                    : 'Named notes it keeps across conversations. The account’s notes are read in every user’s conversations; what it learns from a user stays in notes of that user’s own.'
-            }
-            right={
-                <>
-                    {!agent.userId && (
-                        <FacetSelect
-                            label="Notes of"
-                            value={layerId ?? ACCOUNT_LAYER}
-                            options={layers}
-                            anyLabel={null}
-                            onChange={(v) => setLayerParam(v === ACCOUNT_LAYER ? null : v)}
-                        />
-                    )}
-                    <NewInCode
-                        kind="memory"
-                        place={{ agent: agent.name, user: agent.userId, layer: agent.userId ? null : layerId }}
-                        label="New entry"
-                        variant="soft"
-                        size="sm"
-                        icon={<Plus className="h-3.5 w-3.5" />}
-                    />
-                </>
-            }
-        >
+        <>
+            <PageActions>
+                <NewInCode
+                    kind="memory"
+                    place={{ agent: agent.name, user: agent.userId, layer: agent.userId ? null : layerId }}
+                    label="New entry"
+                    variant="soft"
+                    icon={<Plus className="h-3.5 w-3.5" />}
+                />
+            </PageActions>
+            {!agent.userId && (
+                <div className="mb-4">
+                    <FacetSelect label="Notes of" value={layerId ?? ACCOUNT_LAYER} options={layers} anyLabel={null} onChange={(v) => setLayerParam(v === ACCOUNT_LAYER ? null : v)} />
+                </div>
+            )}
             <DataTable
                 label="Memory"
                 columns={columns}
@@ -1912,7 +1883,7 @@ function Memory({ agent }: { agent: Agent }) {
                 skeletonRows={3}
             />
             {open && <MemoryDrawer key={`${layerId ?? ''}:${open}`} agent={agent} layer={layer} name={open} onChanged={upsert} onClose={() => setOpen(null)} />}
-        </PageSection>
+        </>
     );
 }
 
@@ -2222,103 +2193,134 @@ function DeleteAgent({ agent, open, onOpenChange }: { agent: Agent; open: boolea
     );
 }
 
-/**
- * An agent's page, one anatomy: Overview says what it's doing now, what it did
- * lately, what wakes it, what it uses and the code that calls it; its
- * conversations and memory have tabs of their own, and Try it holds every way
- * to talk to it from here (a turn, a side question, a test run).
- */
-const AGENT_TABS = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'conversations', label: 'Conversations' },
-    { id: 'memory', label: 'Memory' },
-    { id: 'try', label: 'Try it' },
-] as const;
-type AgentTab = (typeof AGENT_TABS)[number]['id'];
+/** Its pages besides its own: each opens under it, with the way back above its title. */
+const VIEWS = {
+    conversations: { label: 'Conversations', what: 'Each conversation it has had, by whom. Open one for its transcript and the files it worked on in it.' },
+    memory: {
+        label: 'Memory',
+        what: 'Named notes it keeps across conversations. Every turn starts with each name and description; it reads a note when it needs it.',
+    },
+    try: { label: 'Try it', what: 'Talk to it from here: a turn in a conversation, a question asked beside one, or a test run where a simulated world answers its tools.' },
+} as const;
+type AgentView = keyof typeof VIEWS;
 
 export default function AgentDetail({ rest }: ConsolePageProps) {
     const id = rest[0];
     const { client } = useConsole();
     const href = useConsoleHref();
+    const navigate = useNavigate();
+    const inPhone = useInPhoneShell();
+    const phone = useIsMobile();
     const [params] = useSearchParams();
     const state = useV1(`agents/${id}`, () => Agent.fromId(id, { client, user: null }).hydrate());
     const [deleting, setDeleting] = useState(false);
     const agent = state.data;
-    // A conversation or a memory entry opened by link lands on its tab.
-    const tab: AgentTab = AGENT_TABS.find((t) => t.id === params.get('tab'))?.id ?? (params.get('conv') ? 'conversations' : params.get('mem') || params.get('memlayer') ? 'memory' : 'overview');
+    // A conversation or a memory entry opened by link lands on its page.
+    const asked = params.get('tab');
+    const view: AgentView | null = asked && asked in VIEWS ? (asked as AgentView) : params.get('conv') ? 'conversations' : params.get('mem') || params.get('memlayer') ? 'memory' : null;
 
     useEffect(() => {
         if (agent) recordRecent({ type: 'agent', id: agent.id, label: agent.name, path: `agents/${agent.id}` });
     }, [agent?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const crumbs = [{ label: 'Home', href: href('') }];
+    const own = href(`agents/${id}`);
+    const at = (v: AgentView) => href(`agents/${id}`, { tab: v });
+    // The way back: to Home from the agent, to the agent from one of its pages.
+    const up = view ? { label: agent?.name ?? truncateId(id), href: own } : { label: 'Home', href: href('') };
+    const back = inPhone && <PhoneBarBack label={up.label} onBack={() => navigate(up.href)} />;
+    const crumbs = inPhone ? undefined : view ? [{ label: 'Home', href: href('') }, up] : [up];
     if (!agent) {
         return (
-            <div className={DETAIL_PAGE}>
-                <PageHeader crumbs={crumbs} title={truncateId(id)} />
+            <>
+                {back}
+                <PageHeader crumbs={crumbs} title={view ? VIEWS[view].label : truncateId(id)} />
                 {state.error !== undefined ? <ErrorPanel error={state.error} onRetry={() => void state.refresh()} /> : <div aria-busy className="h-40 animate-pulse rounded-xl bg-foreground/[0.04]" />}
-            </div>
+            </>
         );
     }
     const onSaved = (a: Agent) => state.mutate(a);
     const save = saverFor(agent, onSaved);
+    if (view) {
+        return (
+            <>
+                {back}
+                <PageHeader crumbs={crumbs} title={VIEWS[view].label} purpose={view === 'memory' && !agent.userId ? `${VIEWS.memory.what} The account’s notes are read in every user’s conversations; what it learns from a user stays in notes of that user’s own.` : VIEWS[view].what} />
+                {view === 'conversations' ? (
+                    <Conversations agent={agent} />
+                ) : view === 'memory' ? (
+                    <Memory agent={agent} />
+                ) : (
+                    <>
+                        <AgentTryIt agent={agent} />
+                        {agent.status !== 'expired' && <AskSection agent={agent} />}
+                        <TestRuns agent={agent} />
+                    </>
+                )}
+            </>
+        );
+    }
+    const purpose = purposeOf(agent);
     return (
-        <div className={DETAIL_PAGE}>
+        <>
+            {back}
             <PageHeader
                 crumbs={crumbs}
                 title={agent.name}
-                purpose={purposeOf(agent) || undefined}
-                chips={
+                status={
                     <>
                         <AgentLiveChips agent={agent} />
                         {agent.paused && <StatusPill look={{ label: 'Paused', reason: 'no trigger wakes it', glyph: 'hollow', tone: 'muted' }} />}
+                        {purpose && <span className="min-w-0">· {purpose}</span>}
                     </>
                 }
                 actions={
-                    <MoreMenu
-                        label="More actions"
-                        items={[
-                            { label: 'Copy ID', onSelect: () => void copyId(agent.id) },
-                            { label: 'Delete agent', danger: true, separated: true, onSelect: () => setDeleting(true) },
-                        ]}
-                    />
+                    <>
+                        {!phone && (
+                            <Link to={at('conversations')} className={consoleButtonClass('soft')}>
+                                Conversations
+                            </Link>
+                        )}
+                        <Link to={at('try')} className={consoleButtonClass('primary')}>
+                            Try it
+                        </Link>
+                        <MoreMenu
+                            label="More actions"
+                            items={[
+                                ...(phone ? [{ label: 'Conversations', onSelect: () => navigate(at('conversations')) }] : []),
+                                { label: 'Memory', onSelect: () => navigate(at('memory')) },
+                                { label: 'Copy ID', onSelect: () => void copyId(agent.id) },
+                                { label: 'Delete agent', danger: true, separated: true, onSelect: () => setDeleting(true) },
+                            ]}
+                        />
+                    </>
                 }
             />
-            <PillTabs
-                label={`${agent.name} views`}
-                className="-mt-3 mb-8"
-                active={tab}
-                tabs={AGENT_TABS.map((t) => ({ id: t.id, label: t.label, href: href(`agents/${agent.id}`, t.id === 'overview' ? {} : { tab: t.id }) }))}
+            <ThingPage
+                spend={<AgentSpend agent={agent} save={save} />}
+                main={
+                    <>
+                        <TaskSection agent={agent} />
+                        <RunningNow agent={agent} />
+                        <RecentRuns agent={agent} />
+                        <ChildrenSection agent={agent} />
+                        {((agent.childCount ?? 0) > 0 || coordinates(agent)) && <JobsSection agent={agent} />}
+                        <Uses agent={agent} onSaved={onSaved} />
+                        <Triggers agent={agent} onSaved={onSaved} />
+                        <WakeupsSection agent={agent} />
+                        <Instructions agent={agent} save={save} />
+                    </>
+                }
+                aside={
+                    <>
+                        <About agent={agent} save={save} />
+                        <ShareLinkSection agent={agent} />
+                        <AsideSection title="Message it from your code">
+                            <CodeSnippet tabs={snippetTabs(agentCodeSnippet(agent.name, agent.userId))} />
+                        </AsideSection>
+                    </>
+                }
             />
-            {tab === 'try' ? (
-                <>
-                    <AgentTryIt agent={agent} />
-                    {agent.status !== 'expired' && <AskSection agent={agent} />}
-                    <TestRuns agent={agent} />
-                </>
-            ) : tab === 'conversations' ? (
-                <Conversations agent={agent} />
-            ) : tab === 'memory' ? (
-                <Memory agent={agent} />
-            ) : (
-                <>
-                    <Now agent={agent} save={save} />
-                    <TaskSection agent={agent} />
-                    <ChildrenSection agent={agent} />
-                    {((agent.childCount ?? 0) > 0 || coordinates(agent)) && <JobsSection agent={agent} />}
-                    <WakeupsSection agent={agent} />
-                    <PageSection title="Recent runs">
-                        <OperationsView pinned={`kind:agent.message agent:${agent.id}`} controls={false} limit={6} viewAllHref={href('logs', { q: `kind:agent.message agent:${agent.id}` })} />
-                    </PageSection>
-                    <Uses agent={agent} onSaved={onSaved} />
-                    <Triggers agent={agent} onSaved={onSaved} />
-                    <PageSection title="Code" note="Message it from your code. Each user gets their own conversations with it.">
-                        <CodeSnippet tabs={snippetTabs(agentCodeSnippet(agent.name, agent.userId))} />
-                    </PageSection>
-                    <Details agent={agent} save={save} />
-                </>
-            )}
             {deleting && <DeleteAgent agent={agent} open onOpenChange={setDeleting} />}
-        </div>
+        </>
     );
 }

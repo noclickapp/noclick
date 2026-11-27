@@ -2,9 +2,10 @@
 // what it costs reads the same wherever it's looked at; under its tiles, the kinds only code makes. A kind the console
 // has a page of its own for (its user facet, IDs and actions) opens there: `/resources/<kind>` is that kind's list,
 // with the user facet (`?user=`, default every user), a drawer and its actions; `/resources/<kind>/<page>` is one of
-// the kind's own pages (card issuing, funding the cards).
+// the kind's own pages (card issuing, funding the cards), or an app's own page (`/resources/apps/<id>`). One of the
+// app's items the console has a page for (`?kind=apps&resource=`, an agent's) opens that page.
 import { useMemo, type ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { InHostFrame } from '@/ui/PageFrame';
 import { Tile, TILE_GRID } from '@/ui/Tile';
 import { ResourcesContext, type ResourcesContextValue } from '@/screens/resources/context';
@@ -20,6 +21,8 @@ import { NewInCode } from '../NewInCode';
 import { kindLead, visibleKinds, type ResourceKind, type ResourceKindId } from '../resourceKinds';
 import { DesignedTag } from '../ui/DesignedTag';
 import { PageHeader } from '../ui/PageHeader';
+import { AppPage } from './resources/AppPage';
+import { appPath } from './resources/AppsFormat';
 import { AppsPanel } from './resources/AppsPanel';
 import { BrowserProfilesPanel } from './resources/BrowserProfilesPanel';
 import { CardsFundingPage } from './resources/CardsFunding';
@@ -153,12 +156,19 @@ function CodeMade() {
     );
 }
 
+/** The console's own page for one of the app's items: an app's, an agent's. */
+const ITEM_PAGES: Partial<Record<KindId, (id: string) => string>> = {
+    apps: appPath,
+    agents: (id) => `agents/${encodeURIComponent(id)}`,
+};
+
 /** The overview: the app's Resources, its kinds the console has a page for opening there, and what only code makes
  *  under its tiles, laid out in the console's own frame as its other pages are. */
 function Overview() {
     const navigate = useNavigate();
     const href = useConsoleHref();
     const { country } = useConsole();
+    const [params] = useSearchParams();
     const value = useMemo<ResourcesContextValue>(
         () => ({
             billing: true,
@@ -173,6 +183,9 @@ function Overview() {
         }),
         [country, navigate, href]
     );
+    const item = params.get('resource');
+    const itemPage = item ? ITEM_PAGES[params.get('kind') as KindId] : undefined;
+    if (item && itemPage) return <Navigate replace to={href(itemPage(item))} />;
     return (
         <InHostFrame.Provider value>
             <ResourcesContext.Provider value={value}>
@@ -194,6 +207,7 @@ export default function Resources({ rest }: ConsolePageProps) {
     if (!kind) return <PageHeader crumbs={crumbs} title="Not found" purpose={`There's no resource called "${rest[0]}".`} />;
     // Only the lab lists a designed kind, and its pages say that they are designs.
     const designed = kind.designed ? <DesignedTag what="this kind" /> : undefined;
+    if (rest[1] && kind.id === 'apps') return <AppPage id={rest[1]} />;
     if (rest[1]) {
         const kindCrumbs = [...crumbs, { label: kind.label, href: href(`resources/${kind.id}`) }];
         const page = KIND_PAGES[kind.id]?.find((p) => p.id === rest[1]);

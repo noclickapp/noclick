@@ -1,173 +1,35 @@
-// Apps: a repo deployed to a URL, on the edge or container runtime, or an
-// automation's interface NoClick published. The table shows each app's
-// production deployment; the drawer (`?app=`, its tab in `?tab=`) holds the
-// app's deployments, domains, bindings, secrets, schedules, logs and services,
-// with Deploy, Export and Move to trash; the apps in the trash list under the
-// table, each restorable or purged. A published interface has no code of its
-// own: its drawer keeps its deployments, domains and logs, and its automation
-// publishes and unpublishes it.
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+// Apps: a repo deployed to a URL, on the edge or container runtime, or an automation's interface NoClick published. The
+// table shows each app's production deployment, and an app opens on a page of its own (`AppPage`); the apps in the
+// trash list under the table, each restorable or purged. An address from when an app opened in a drawer here
+// (`?app=`, its tab in `?tab=`, a deployment in `?deployment=`) opens that page.
+import { useState } from 'react';
+import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import { ALL_USERS, NO_USER, Project, TrashItem } from 'noclick';
 import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
-import { useConsole } from '@/screens/console/hooks/useConsole';
+import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
-import { useSearchParam } from '@/screens/console/hooks/useQueryState';
-import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { TrashSection } from '@/screens/resources/TrashSection';
 import type { TrashEntry } from '@/screens/resources/platform';
-import { AppDurableObjectsSection } from './AppsDurableObjects';
 import { NewInCode } from '../../NewInCode';
-import { ConsoleButton } from '../../ui/Button';
 import { DataTable, type Column } from '../../ui/DataTable';
-import { Drawer } from '../../ui/Drawer';
-import { HeaderNote } from '../../ui/DrawerParts';
 import { EmptyCode } from '../../ui/EmptyCode';
-import { ErrorPanel } from '../../ui/ErrorPanel';
-import { PillSwitch } from '../../ui/PillTabs';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
-import { AppServicesSection } from './AppServicesSection';
-import { AppBindings, AppSchedules, AppSecrets, AppSettings } from './AppsConfig';
-import { AppDeployments, useDeploy } from './AppsDeployments';
-import { deploymentLook, NOT_DEPLOYED, withParams } from './AppsFormat';
+import { appPath, deploymentLook, NOT_DEPLOYED } from './AppsFormat';
 import { AppUrl } from './AppsParts';
-import { AppDomains, AppLogs, AppOverview, AppProblem, useAppUsage } from './AppsOverview';
-import { ConfirmAction, errorText, PanelToolbar, type PanelProps } from './shared';
+import { errorText, PanelToolbar, type PanelProps } from './shared';
 
-const TABS = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'deployments', label: 'Deployments' },
-    { id: 'domains', label: 'Domains' },
-    { id: 'bindings', label: 'Bindings' },
-    { id: 'secrets', label: 'Environment' },
-    { id: 'schedules', label: 'Schedules' },
-    { id: 'logs', label: 'Logs' },
-    { id: 'services', label: 'Services' },
-] as const;
+/** The drawer's tabs, as the sections of the app's page they became. */
+const TAB_SECTIONS: Record<string, string> = { deployments: 'deploys', domains: 'domains', bindings: 'bindings', secrets: 'environment', schedules: 'schedules', logs: 'logs', services: 'services' };
 
-type TabId = (typeof TABS)[number]['id'];
-
-/** What a published interface's drawer shows: it has no code, so nothing to bind, configure or schedule. */
-const PUBLISHED_TABS: readonly TabId[] = ['overview', 'deployments', 'domains', 'logs'];
-
-function AppFooter({ project, onDeleted }: { project: Project; onDeleted: () => void }) {
-    if (project.published) {
-        return <span className="text-[13px] text-muted-foreground">Its automation publishes it: publish it again or unpublish it from the automation’s Interface tab.</span>;
-    }
-    return <RepoAppFooter project={project} onDeleted={onDeleted} />;
-}
-
-function RepoAppFooter({ project, onDeleted }: { project: Project; onDeleted: () => void }) {
-    const { deploy, busy } = useDeploy(project);
-    const [exporting, setExporting] = useState(false);
-    const exportApp = async () => {
-        setExporting(true);
-        try {
-            await project.export();
-            toast('Export started. The bundle link appears in Logs when it’s ready.');
-        } catch (e) {
-            toast(errorText(e));
-        } finally {
-            setExporting(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton variant="primary" disabled={busy} onClick={() => void deploy({})}>
-                {busy ? 'Deploying…' : `Deploy ${project.productionBranch}`}
-            </ConsoleButton>
-            <ConsoleButton disabled={exporting} onClick={() => void exportApp()}>
-                Export
-            </ConsoleButton>
-            <span className="flex-1" />
-            <ConfirmAction
-                label="Move to trash"
-                title={`Move ${project.name} to the trash?`}
-                description="It goes offline at once. Its releases, deployments, schedules, secrets and bindings are kept, and its domains remembered: restoring it within 30 days serves it again where it was, with no build. The repo, databases and buckets it used are kept."
-                confirmLabel="Move to trash"
-                onConfirm={async () => {
-                    await project.delete();
-                    invalidateV1('projects');
-                    invalidateV1('trash');
-                    invalidateV1('account');
-                    toast(`Moved ${project.name} to the trash`);
-                    onDeleted();
-                }}
-            />
-        </>
-    );
-}
-
-function AppDrawer({ appId, row, onClose }: { appId: string | null; row?: Project; onClose: () => void }) {
-    const { client } = useConsole();
-    const [params, setParams] = useSearchParams();
-    const tab = params.get('tab');
-    const setTab = (id: string) => setParams((prev) => withParams(prev, { tab: id === 'overview' ? null : id, deployment: null }), { replace: true, preventScrollReset: true });
-    const fetched = useV1(appId && !row ? `projects/${appId}` : null, () => Project.get(appId!, { client }));
-    const project = row ?? fetched.data;
-    const tabs = project?.published ? TABS.filter((t) => PUBLISHED_TABS.includes(t.id)) : TABS;
-    const active: TabId = tabs.some((t) => t.id === tab) ? (tab as TabId) : 'overview';
-    useEffect(() => {
-        if (project) recordRecent({ type: 'app', id: project.id, label: project.name, path: 'resources/apps', params: { app: project.id } });
-    }, [project?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-    const production = project?.production;
-    // What's wrong leads every tab: an app whose paid calls are failing says so above them, with its fix.
-    const usage = useAppUsage(project);
-    return (
-        <Drawer
-            open={appId !== null}
-            onOpenChange={(open) => !open && onClose()}
-            kind="App"
-            wide
-            title={project?.name}
-            id={appId ?? undefined}
-            status={
-                project ? (
-                    <>
-                        <StatusPill look={production ? deploymentLook(production) : NOT_DEPLOYED} />
-                        {production && (
-                            <HeaderNote>
-                                <span className="font-mono">{production.commit?.slice(0, 7)}</span> · <TimeCell value={production.createdAt} />
-                                {production.startedBy === 'push' && ' · on push'}
-                            </HeaderNote>
-                        )}
-                    </>
-                ) : undefined
-            }
-            footer={project ? <AppFooter project={project} onDeleted={onClose} /> : undefined}
-        >
-            {!project && fetched.error !== undefined && <ErrorPanel error={fetched.error} onRetry={() => void fetched.refresh()} />}
-            {!project && fetched.error === undefined && <div aria-busy className="h-40 animate-pulse rounded-lg bg-foreground/[0.04]" />}
-            {project && (
-                <div className="flex flex-col gap-5">
-                    <AppProblem project={project} usage={usage} />
-                    <PillSwitch label="App" tabs={tabs} value={active} onChange={setTab} />
-                    {active === 'overview' && <AppOverview project={project} usage={usage} />}
-                    {active === 'deployments' && <AppDeployments project={project} />}
-                    {active === 'domains' && <AppDomains project={project} />}
-                    {active === 'bindings' && (
-                        <div className="flex flex-col gap-6">
-                            <AppBindings project={project} />
-                            <AppDurableObjectsSection project={project} />
-                        </div>
-                    )}
-                    {active === 'secrets' && (
-                        <div className="flex flex-col gap-6">
-                            <AppSettings project={project} />
-                            <AppSecrets project={project} />
-                        </div>
-                    )}
-                    {active === 'schedules' && <AppSchedules project={project} />}
-                    {active === 'logs' && <AppLogs project={project} />}
-                    {active === 'services' && <AppServicesSection project={project} />}
-                </div>
-            )}
-        </Drawer>
-    );
+/** Where an address from the drawer opens on the app's page: its deployment drawer, or the section its tab became. */
+export function appPageAddress(params: URLSearchParams): { path: string; params: Record<string, string>; hash: string } {
+    const deployment = params.get('deployment');
+    const section = TAB_SECTIONS[params.get('tab') ?? ''];
+    return { path: appPath(params.get('app')!), params: deployment ? { deployment } : {}, hash: section ? `#${section}` : '' };
 }
 
 /** The apps in the trash the page's user filter shows, each restorable or purged now. */
@@ -199,8 +61,9 @@ function AppsTrash({ user }: { user: string }) {
 
 export function AppsPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
-    const [appId, setApp] = useSearchParam('app');
-    const [, setParams] = useSearchParams();
+    const href = useConsoleHref();
+    const navigate = useNavigate();
+    const [params] = useSearchParams();
     const place = { user: defaultWriteUser(user) };
     const paged = usePaged(`projects?${user}`, (cursor) => Project.listPage({ client, userFilter: user, cursor, limit: 50 }), (p) => p.id);
     const columns: Column<Project>[] = [
@@ -254,7 +117,10 @@ export function AppsPanel({ user, setUser }: PanelProps) {
             cell: (p) => <span className={p.userId ? 'text-foreground/85' : 'text-muted-foreground'}>{userLabel(p.userId)}</span>,
         },
     ];
-    const close = () => setParams((prev) => withParams(prev, { app: null, tab: null, deployment: null }), { replace: true, preventScrollReset: true });
+    if (params.get('app')) {
+        const to = appPageAddress(params);
+        return <Navigate replace to={`${href(to.path, to.params)}${to.hash}`} />;
+    }
     return (
         <>
             <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="app" place={place} />} />
@@ -267,15 +133,13 @@ export function AppsPanel({ user, setUser }: PanelProps) {
                 loading={paged.loading}
                 error={paged.error}
                 onRetry={() => void paged.refresh()}
-                onRowClick={(p) => setApp(p.id, { push: true })}
-                selectedId={appId}
+                onRowClick={(p) => navigate(href(appPath(p.id)))}
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
                 empty={<EmptyCode title="No apps yet." hint="An app deploys a repo to a URL, with previews, domains, secrets and schedules." snippet={NEW_SNIPPETS.app(place)} />}
             />
             <AppsTrash user={user} />
-            <AppDrawer appId={appId} row={paged.rows.find((p) => p.id === appId)} onClose={close} />
         </>
     );
 }

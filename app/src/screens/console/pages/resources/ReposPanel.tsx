@@ -33,7 +33,7 @@ import { PillSwitch } from '../../ui/PillTabs';
 import { Segmented } from '../../ui/Segmented';
 import { SwitchRow } from '../../ui/SwitchRow';
 import { TimeCell } from '../../ui/TimeCell';
-import { withParams } from './AppsFormat';
+import { appPath, withParams } from './AppsFormat';
 import { BranchName, Tag } from './AppsParts';
 import { RepoFiles } from './ReposFiles';
 import { ConfirmAction, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
@@ -64,7 +64,7 @@ function UsedBy({ repo }: { repo: Repo }) {
     return (
         <span className="inline-flex min-w-0 flex-wrap gap-x-2">
             {repo.usedBy.map((u) => (
-                <Link key={u.id} to={href('resources/apps', { app: u.id })} onClick={(e) => e.stopPropagation()} className="truncate text-foreground hover:underline">
+                <Link key={u.id} to={href(appPath(u.id))} onClick={(e) => e.stopPropagation()} className="truncate text-foreground hover:underline">
                     {u.name}
                 </Link>
             ))}
