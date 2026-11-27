@@ -34,6 +34,8 @@ export const SCENES: readonly LabScene[] = [
     { id: 'channel', title: 'A channel', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'ch_launch' } },
     { id: 'thread', title: 'A thread beside its channel', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'ch_launch', thread: 'l4' } },
     { id: 'threads', title: 'Threads you follow', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'threads' } },
+    { id: 'templates', title: 'Templates: NoClick’s gallery', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'templates' } },
+    { id: 'template-page', title: 'A template’s page in the gallery', group: 'Spaces', world: 'spaces', place: { ...SPACE, channel: 'templates', listing: 'social-media-team' } },
     { id: 'agent-for-apps-waiting', title: 'An agents page’s agent in its channel, waiting on what it needs', group: 'Spaces', world: 'agent_for_apps', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
     { id: 'agent-for-apps-ready', title: 'An agents page’s agent in its channel, saying hello', group: 'Spaces', world: 'agent_for_apps_ready', place: { space: 'home', channel: ROBLOX_CHANNEL_ID } },
     { id: 'template-new', title: 'A space template’s page of asks, as a new space', group: 'Spaces', world: 'spaces', place: { space: 'home', template: TEMPLATE_ADDRESS } },

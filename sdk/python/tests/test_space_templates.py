@@ -61,3 +61,30 @@ def test_a_template_goes_into_a_space_you_have(api, client):
     plan = nc.Workspace.from_id("ws_9").add_template("social-media-team", dry_run=True)
     assert body(into.calls.last.request) == {"source": {"repo": "social-media-team"}, "dry_run": True}
     assert plan.target["name"] == "Lumen Coffee"
+
+
+LISTED = {
+    "object": "space_template_listing", "slug": "support-desk", "name": "Support desk", "job": "support",
+    "description": "Sorts every new ticket.", "address": ADDRESS, "by_noclick": True,
+    "agents": [{"name": "Triage", "role": "Tags each ticket", "harness": "sdk", "channels": ["inbox"],
+                "instructions": "Read every ticket."}],
+    "channels": [{"name": "inbox", "topic": "Every new ticket.", "members": ["Triage"], "schedules": []}],
+    "skills": [], "memories": [], "automations": [], "stores": [], "app": None,
+    "asks": {"connections": [{"integration": "zendesk", "label": "Zendesk", "node_type": "automation-zendesk",
+                              "for": ["Triage"]}], "secrets": []},
+    "budget": {"usd_per_month": 25, "agents": [{"name": "Triage", "usd_per_month": 25}]},
+    "estimate": {"monthly_usd": 0, "lines": []}, "pictures": [],
+    "conversations": [{"channel": "inbox", "messages": [{"from": "Triage", "text": "Ticket #4821, tagged."}]}],
+    "repository": {"name": "template-support-desk", "commit": "abc123"},
+}
+
+
+def test_the_gallerys_templates_are_read_with_no_key_each_as_its_card_and_its_page(api, client):
+    listed = api.get("/v1/public/templates").respond(json={"object": "list", "data": [LISTED], "jobs": ["support"]})
+    api.get("/v1/public/templates/support-desk").respond(json=LISTED)
+    [card] = nc.TemplateListing.list()
+    assert "authorization" not in listed.calls.last.request.headers
+    assert (card.name, card.job, card.address, card.by_noclick) == ("Support desk", "support", ADDRESS, True)
+    assert card.connections[0]["label"] == "Zendesk" and card.budget["usd_per_month"] == 25
+    page = nc.TemplateListing.get("support-desk")
+    assert page.agents[0]["instructions"] == "Read every ticket." and page.repository["name"] == "template-support-desk"

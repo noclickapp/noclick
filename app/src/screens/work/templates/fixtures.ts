@@ -2,6 +2,7 @@
 // team (three agents, three channels, a skill, a memory, an automation and an app), its dry run for a new space and
 // for a space you have, and its add, which makes the space and its #noclick welcome post in the spaces' fixture and
 // says so over the live stream.
+import { galleryRoutes } from '@/screens/templates/fixtures';
 import type { FakeWork } from '../fixtures/workApi';
 
 type Json = Record<string, unknown>;
@@ -163,8 +164,8 @@ const ADDED: Json = {
 const TEMPLATE_ROUTE = /^\/v1\/workspaces\/(?:from_template|([^/]+)\/template\/add)$/;
 
 /** The template's routes over the spaces' fixture: the dry run, the add (which settles once `settle` is called, or at
- *  once when `settleAt` is 0), its operation's reads and its secret's values typed in (its welcome row read filled
- *  from then on, as the API reads it). Null for any other call. */
+ *  once when `settleAt` is 0), its operation's reads, its secret's values typed in (its welcome row read filled
+ *  from then on, as the API reads it), and the gallery. Null for any other call. */
 export function templateRoutes(work: FakeWork, options: { settleAfterMs?: number } = {}) {
     let state: 'none' | 'running' | 'succeeded' = 'none';
     const settle = () => {
@@ -192,7 +193,7 @@ export function templateRoutes(work: FakeWork, options: { settleAfterMs?: number
             const keys = Object.keys((body.values as Json | undefined) ?? {});
             return Response.json({ object: 'secret', id: TEMPLATE_SECRET, name: 'unsplash', keys, user_id: null, used_by: [{ kind: 'agent', id: 'agt_social_designer', name: 'Designer', binding: null }], moved_from: null, created_at: at(30), updated_at: at(0) });
         }
-        return null;
+        return galleryRoutes(method, path);
     };
     return { answer, settle };
 }

@@ -72,6 +72,8 @@ GET /v1/me/workspaces
 GET /v1/memories
 GET /v1/operations
 GET /v1/operations/op-live
+GET /v1/public/templates
+GET /v1/public/templates/social-media-team
 GET /v1/secrets
 GET /v1/skills
 GET /v1/usage/series

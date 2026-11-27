@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "name": "about",
+      "description": "Who the brand is and who it's for",
+      "content": "Not written yet. Ask the team, in a sentence or two: what the business is, who its customers are, and what it wants its posts to do (bring people in, sell online, stay in touch). Then replace this with what they say."
+    },
+    {
+      "name": "look",
+      "description": "The brand's colours, fonts and assets",
+      "content": "Not written yet. Ask the team for the brand's colours (hex codes), fonts and where its logo and photos are in Canva, then replace this with what they say."
+    }
+  ]
+}

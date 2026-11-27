@@ -988,8 +988,11 @@ export type {
 } from "./skill.ts";
 export {
   TemplateAdd,
+  TemplateListing,
 } from "./spaceTemplate.ts";
 export type {
+  ListedAgent,
+  ListedPicture,
   TemplateAccount,
   TemplateAdded,
   TemplateOptions,

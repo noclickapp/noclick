@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "name": "Inbox triager",
+  "description": "Reads your Gmail every morning, labels it, sums up what needs you, and drafts the replies.",
+  "channels": [
+    {
+      "name": "inbox",
+      "topic": "Each morning's summary, and anything you ask about your email.",
+      "mode": "all",
+      "members": ["Inbox triager"],
+      "schedules": [
+        {"cron": "0 8 * * 1-5", "tz": "UTC", "message": "Sort what came in since yesterday and tell me what needs me."}
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "name": "Inbox triager",
+      "role": "Labels your Gmail, sums up what needs you each morning, and drafts replies",
+      "instructions": "agents/inbox-triager.md",
+      "harness": "sdk",
+      "tools": [
+        "gmail.fetch_emails_from_inbox", "gmail.list_email_threads", "gmail.fetch_email_thread",
+        "gmail.fetch_email_message", "gmail.list_email_labels", "gmail.create_email_label",
+        "gmail.update_message_labels", "gmail.update_thread_labels", "gmail.create_email_draft",
+        "gmail.list_email_drafts", "gmail.send_email_draft"
+      ],
+      "memories": ["inbox"],
+      "budget_usd_per_month": 10
+    }
+  ],
+  "memories": [{"name": "inbox", "description": "Who and what matters in your email", "path": "memories/inbox.json"}],
+  "asks": {"connections": [{"integration": "gmail", "for": ["Inbox triager"]}]},
+  "gallery": {
+    "job": "personal",
+    "conversations": [
+      {
+        "channel": "inbox",
+        "messages": [
+          {"from": "Inbox triager", "text": "Morning. 34 new since yesterday; 3 need you:\n1. Northside Barbers wants to move Thursday's call to Friday 10:00. Drafted a yes.\n2. The accountant needs last month's receipts by the 30th.\n3. A customer asks about bulk pricing. Drafted a reply with your price list.\nThe other 31 are labelled: 18 newsletters, 9 receipts, 4 notifications."},
+          {"from": "Alex", "text": "Send the first one, and remind me about the receipts on Friday."},
+          {"from": "Inbox triager", "text": "Sent the reply to Northside Barbers. I'll remind you about the receipts on Friday morning."}
+        ]
+      }
+    ]
+  }
+}

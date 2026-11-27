@@ -1,4 +1,5 @@
-// Home's list, as Slack's: find a conversation, the threads you follow, the channels you starred, your own sections of
+// Home's list, as Slack's: find a conversation, the threads you follow, NoClick's template gallery (in a space you can
+// add one to), the channels you starred, your own sections of
 // the space's channels, then the rest under Channels and + to start one. A channel is bold with a count where
 // something's unread, and an @ count where something @-mentions you; one you muted is quiet (dim, never bold, a
 // bell-off) until something mentions you; a closed one is dim behind a lock, after the open ones. With none yet while
@@ -10,14 +11,14 @@
 // its row's menu, which a keyboard and a phone reach too. Starred, each section and Channels fold on their own;
 // folded, a list still shows the channels with something for you and the one that's open.
 import { useState, type DragEvent } from 'react';
-import { BellOff, Hash, Lock, MessageSquareText, Search } from 'lucide-react';
+import { BellOff, Hash, LayoutTemplate, Lock, MessageSquareText, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useInPhoneShell } from '@/ui/phoneBar';
 import type { Channel } from '@/screens/channels/types';
 import type { Intent } from '@/ui/useIntent';
 import { useWork } from '../context';
 import { cn } from '@/ui/utils';
-import { THREADS } from '../place';
+import { TEMPLATES, THREADS } from '../place';
 import { searchTextClass } from '@/ui/SearchField';
 import { Count, FIND_PILL, LIST_CURRENT, LIST_ROW, MentionCount } from '../ui';
 import { DropLine, FoldHeader, lowerHalf, MoveMenu, SectionNameField, useDrag, usePressAndHold, type Dragged, type DropAt } from './SectionParts';
@@ -52,6 +53,7 @@ export function HomeList({
     loading = false,
     openId,
     threads,
+    templates = false,
     onOpen,
     onNewChannel,
     onStar,
@@ -63,10 +65,12 @@ export function HomeList({
     workspaceId: string | null;
     /** More are on their way (the first read, or a channel being made): with none yet, it waits rather than says so. */
     loading?: boolean;
-    /** What's open: a channel's id or `THREADS`. */
+    /** What's open: a channel's id, `THREADS` or `TEMPLATES`. */
     openId: string | null;
     /** Threads you follow with replies you haven't read; null where threads aren't read. */
     threads: number | null;
+    /** Whether the space lists its template gallery (where you can add one: a space of your own). */
+    templates?: boolean;
     onOpen: (id: string) => void;
     onNewChannel: (() => void) | null;
     /** Star a channel for yourself, or take its star off: a starred one moved into a section loses its star. */
@@ -271,6 +275,18 @@ export function HomeList({
                     <MessageSquareText className="h-4 w-4 shrink-0 text-foreground/70" strokeWidth={1.75} />
                     <span className="min-w-0 flex-1 truncate">Threads</span>
                     {threads > 0 && openId !== THREADS && <Count n={threads} />}
+                </button>
+            )}
+            {templates && (
+                <button
+                    type="button"
+                    onClick={() => onOpen(TEMPLATES)}
+                    aria-current={openId === TEMPLATES ? 'page' : undefined}
+                    data-testid="home-templates"
+                    className={cn(LIST_ROW, 'h-8 pl-2.5 text-[14px] max-md:h-10 max-md:pl-2 max-md:text-[16px]', openId === TEMPLATES ? cn(LIST_CURRENT, 'font-medium text-foreground') : 'text-foreground/75 hover:text-foreground')}
+                >
+                    <LayoutTemplate className="h-4 w-4 shrink-0 text-foreground/70" strokeWidth={1.75} />
+                    <span className="min-w-0 flex-1 truncate">Templates</span>
                 </button>
             )}
             <div className="h-3" />

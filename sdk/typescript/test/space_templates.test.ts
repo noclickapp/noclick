@@ -58,3 +58,30 @@ test("a template goes into a space you have", async () => {
   assert.deepEqual(into.last.body, { source: { repo: "social-media-team" }, dry_run: true });
   assert.equal(plan.target.name, "Lumen Coffee");
 });
+
+const LISTED = {
+  object: "space_template_listing", slug: "support-desk", name: "Support desk", description: "Sorts every new ticket.", job: "support",
+  address: ADDRESS, by_noclick: true, listed_at: "2026-11-27T10:00:00Z",
+  agents: [{ name: "Triage", role: "Tags each ticket", harness: "sdk", channels: ["inbox"], instructions: "Read every ticket." }],
+  channels: [{ name: "inbox", topic: "Every new ticket.", members: ["Triage"], schedules: [] }],
+  skills: [], memories: [], automations: [], stores: [], app: null,
+  asks: { connections: [{ integration: "zendesk", label: "Zendesk", node_type: "automation-zendesk", for: ["Triage"] }], secrets: [] },
+  budget: { usd_per_month: 25, from: "template", agents: [{ name: "Triage", usd_per_month: 25 }] },
+  estimate: { monthly_usd: 0, lines: [], at_cost: true }, pictures: [{ url: "https://api.test/p/0", caption: null, frame: "phone" }],
+  conversations: [{ channel: "inbox", messages: [{ from: "Triage", text: "Ticket #4821, tagged." }] }],
+  repository: { name: "template-support-desk", commit: "abc123" },
+};
+
+test("the gallery's templates are read with no key, each as its card and its page", async () => {
+  const { api } = setup();
+  const list = api.on("GET", "/v1/public/templates", json({ object: "list", data: [LISTED], jobs: ["support"] }));
+  api.on("GET", "/v1/public/templates/support-desk", json(LISTED));
+  await nc.TemplateListing.list({ client: new nc.NoClick({ apiKey: "", baseUrl: "https://api.test", fetch: api.fetch }) });
+  assert.equal(list.last.headers.get("authorization"), null);
+  const [card] = await nc.TemplateListing.list();
+  assert.deepEqual([card.name, card.job, card.address, card.byNoClick], ["Support desk", "support", ADDRESS, true]);
+  assert.deepEqual(card.connections.map((c) => [c.label, c.nodeType, c.usedBy]), [["Zendesk", "automation-zendesk", ["Triage"]]]);
+  assert.deepEqual([card.budget.usdPerMonth, card.estimate.monthlyUsd, card.pictures[0].frame], [25, 0, "phone"]);
+  const page = await nc.TemplateListing.get("support-desk");
+  assert.deepEqual([page.agents[0].instructions, page.conversations[0].messages[0].from, page.repository?.name], ["Read every ticket.", "Triage", "template-support-desk"]);
+});

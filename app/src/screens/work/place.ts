@@ -23,6 +23,8 @@ const PROFILE_TABS: readonly ProfileTab[] = ['triggers', 'tools', 'files', 'acti
 export const HOME_SPACE = 'home';
 /** Home's list of every thread you follow, in a channel's place. */
 export const THREADS = 'threads';
+/** Home's template gallery, in a channel's place. */
+export const TEMPLATES = 'templates';
 /** The space's NoClick channel, whichever it is, in a channel's place (a link from Chat): opened once it's found. */
 export const NOCLICK_HERE = WORK_NOCLICK_CHANNEL;
 /** The Agents view's draft of a new agent, in an agent's place. */
@@ -34,7 +36,7 @@ export interface WorkPlace {
     /** The space's id (`HOME_SPACE` for your channels in none); null until the page picks one. */
     space: string | null;
     view: WorkView;
-    /** Home: a channel's id or `THREADS`; DMs: a DM's channel id. */
+    /** Home: a channel's id, `THREADS` or `TEMPLATES`; DMs: a DM's channel id. */
     channel: string | null;
     /** The message whose thread is open beside its channel. */
     thread: string | null;
@@ -59,6 +61,8 @@ export interface WorkPlace {
     template: string | null;
     /** Where that template goes: a space of yours (its workspace id); none, a new space. */
     into: string | null;
+    /** In Home's template gallery: the template whose page is open, by its slug. */
+    listing: string | null;
 }
 
 type Param = (typeof WORK_PARAMS)[number];
@@ -82,6 +86,7 @@ export function readPlace(params: URLSearchParams): WorkPlace {
         item: params.get('item'),
         template: params.get('template'),
         into: params.get('into'),
+        listing: params.get('listing'),
     };
 }
 
@@ -111,6 +116,8 @@ export function withPlace(params: URLSearchParams, change: PlaceChange): URLSear
     write('item', change.item);
     write('template', change.template);
     write('into', change.into);
+    // A template's page is open only in the gallery: leaving it for a channel closes the page too.
+    write('listing', change.listing !== undefined ? change.listing : change.channel !== undefined ? null : undefined);
     return next;
 }
 

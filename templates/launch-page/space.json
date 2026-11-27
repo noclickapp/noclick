@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "Launch page",
+  "description": "A one-page site for what you're launching: what it is, why it matters, and a way to hear when it's out. Yours to change.",
+  "app": {"path": "site"},
+  "gallery": {
+    "job": "marketing",
+    "pictures": [
+      {"path": "gallery/laptop.webp", "caption": "The page on a laptop", "frame": "laptop"},
+      {"path": "gallery/phone.webp", "caption": "The same page on a phone", "frame": "phone"}
+    ]
+  }
+}

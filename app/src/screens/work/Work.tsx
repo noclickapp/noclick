@@ -37,7 +37,7 @@ import { AgentConversation, AgentOpening, AgentProfile, AgentsList, MachinePage,
 import { InviteDialog } from './people/InviteDialog';
 import { peopleKey, readPeople, useSpacePeople } from './people/members';
 import { MembersPanel, presenceOf, roleLabel } from './people/MembersPanel';
-import { HOME_SPACE, NEW_AGENT, NOCLICK_HERE, THREADS, useWorkPlace, type WorkPlace, type WorkView } from './place';
+import { HOME_SPACE, NEW_AGENT, NOCLICK_HERE, TEMPLATES, THREADS, useWorkPlace, type WorkPlace, type WorkView } from './place';
 import { SpaceRail, ViewBar, ViewRail, type ViewCounts } from './rails';
 import { lastChannel, lastSpace, lastSpot, rememberOpened, rememberSpace, rememberSpot, spotOf, type Spot } from './remember';
 import { AgentsEmpty, DmsEmpty, HomeEmpty } from './empty';
@@ -47,6 +47,7 @@ import { ASKED_TITLE, SpaceQuestionsPanel, useSpaceQuestions } from './questions
 import { usePickerAgents } from './channels/pickerAgents';
 import { SaveTemplateDialog } from './SaveTemplateDialog';
 import { AddTemplatePage } from './templates/AddTemplatePage';
+import { TemplatesPane } from './templates/TemplatesPane';
 import { SpaceHeader } from './SpaceHeader';
 import { ArchivedBanner, SpaceSettingsDialog, unarchiveSpace, type SpaceAsk } from './spaceSettings';
 import { isSpaceKind, kindOf, prefetchSpaceShare } from './resources/space/data';
@@ -107,7 +108,8 @@ function openingDm(dms: Channel[], spaceId: string): Channel | null {
 }
 
 /** What's open in Home or DMs, for its history to load. */
-const openIdOf = (place: WorkPlace) => ((place.view === 'home' || place.view === 'dms') && place.channel && place.channel !== THREADS && place.channel !== NOCLICK_HERE ? place.channel : null);
+const openIdOf = (place: WorkPlace) =>
+    (place.view === 'home' || place.view === 'dms') && place.channel && place.channel !== THREADS && place.channel !== TEMPLATES && place.channel !== NOCLICK_HERE ? place.channel : null;
 
 /** The personal space's NoClick channel, made the first time Work finds none there (`makeHomeNoClickChannel`) once
  *  it's `ready` (the spaces read, so where Work opens is settled), through the page's channels so it's listed the
@@ -488,6 +490,10 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const meIn = (author: Pick<ChannelAuthor, 'type' | 'id'>) => author.type === 'account' && !author.id;
     const authorName = (author: ChannelAuthor) => (meIn(author) ? 'You' : (authorMember(author, channel?.members ?? []) ?? { name: author.name }).name);
     const manages = space.role === 'owner' || space.role === 'admin';
+    // A template is added by the account to a space of its own (only the owner adds): its Home lists the gallery, and
+    // an add from there aims at it (your personal space, at a new space).
+    const addsTemplates = space.own && !space.archived;
+    const templateInto = space.id === HOME_SPACE ? null : space.workspaceId;
     const [spaceAsk, setSpaceAsk] = useState<SpaceAsk | null>(null);
     const [savingTemplate, setSavingTemplate] = useState(false);
 
@@ -512,8 +518,9 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
                 channels={spaceChannels}
                 workspaceId={space.workspaceId}
                 loading={homeLoading}
-                openId={place.channel === THREADS ? THREADS : (channel?.id ?? null)}
+                openId={place.channel === THREADS || place.channel === TEMPLATES ? place.channel : (channel?.id ?? null)}
                 threads={followed.threads ? followed.unread : 0}
+                templates={addsTemplates}
                 onOpen={(id) => go({ channel: id, thread: null })}
                 ahead={channelAhead}
                 onNewChannel={newChannel}
@@ -580,6 +587,16 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             ) : place.agent ? null : (
                 <AgentsEmpty spaceId={space.workspaceId} onOpen={(id) => nav.openAgent(id)} onNew={nav.newAgent} />
             )
+        ) : place.view === 'home' && place.channel === TEMPLATES && addsTemplates ? (
+            <TemplatesPane
+                listing={place.listing}
+                spaceName={space.name}
+                into={templateInto}
+                phone={phone}
+                onBack={back}
+                onOpen={(slug) => go({ listing: slug })}
+                onAdd={(address) => go({ template: address, into: templateInto })}
+            />
         ) : place.view === 'home' && place.channel === THREADS ? (
             <ThreadsPane followed={followed} nameOf={authorName} phone={phone} onBack={back} onOpen={(channelId, parentId) => nav.openChannel(channelId, { thread: parentId })} />
         ) : channel ? (

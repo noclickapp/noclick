@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "name": "help-docs",
+      "description": "Where the help docs are",
+      "content": "Not written yet. Ask the team which Notion pages hold the help docs (shipping, returns, refunds, how-tos), then replace this with their titles."
+    },
+    {
+      "name": "policies",
+      "description": "Refunds, returns and what the team decides",
+      "content": "Not written yet. Ask the team for the refund and return rules (how long, what's covered) and who decides on exceptions, then replace this with what they say. Until then, every refund goes to #escalations."
+    }
+  ]
+}

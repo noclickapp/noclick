@@ -12,8 +12,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field as dc_field
 from typing import Any, Dict, List, Mapping, Optional, Sequence
+from urllib.parse import quote
 
+from ._client import Client, resolve_client
 from ._object import compact, field
+from ._sync import synced
 from .operation import Operation, register_result
 
 
@@ -153,3 +156,78 @@ def template_answer(raw: Dict[str, Any], *, client: Any, user: Any) -> Any:
         return TemplatePlan._from(raw)
     return TemplateAdd._from_payload(raw.get("operation"), client=client, user=user, kind="workspace.template_add",
                                      reader=_read_added)
+
+
+@dataclass(frozen=True)
+class TemplateListing:
+    """A space template in NoClick's gallery, as its card and page show it: who you get (``agents``, each with its
+    job and the channels it works in), what it adds, what it asks for (``connections`` by integration, ``secrets`` by
+    name), what it costs (``estimate``: its app and data stores a month, at cost; ``budget``: where its agents stop),
+    its ``pictures`` (its own screenshots, each drawn in NoClick's laptop or phone frame) and the ``address`` it's
+    added from. Listed only once NoClick reviewed it; read with no key. A page's read (``get``) also carries each
+    agent's instructions, the example ``conversations`` and the ``repository`` it comes from."""
+
+    slug: str
+    name: str
+    description: Optional[str]
+    job: Optional[str]
+    address: str
+    by_noclick: bool
+    agents: List[Dict[str, Any]]
+    channels: List[Dict[str, Any]]
+    skills: List[Dict[str, Any]]
+    memories: List[Dict[str, Any]]
+    automations: List[Dict[str, Any]]
+    stores: List[Dict[str, Any]]
+    app: Optional[Dict[str, Any]]
+    connections: List[Dict[str, Any]]
+    secrets: List[Dict[str, Any]]
+    budget: Dict[str, Any]
+    estimate: Dict[str, Any]
+    pictures: List[Dict[str, Any]]
+    conversations: List[Dict[str, Any]]
+    repository: Optional[Dict[str, Any]]
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "TemplateListing":
+        asks = raw.get("asks") or {}
+        parts = [list(raw.get(k) or []) for k in ("agents", "channels", "skills", "memories", "automations", "stores")]
+        return cls(raw["slug"], raw["name"], raw.get("description"), raw.get("job"), raw["address"],
+                   bool(raw.get("by_noclick")), *parts, raw.get("app"), list(asks.get("connections") or []),
+                   list(asks.get("secrets") or []), dict(raw.get("budget") or {}), dict(raw.get("estimate") or {}),
+                   list(raw.get("pictures") or []), list(raw.get("conversations") or []), raw.get("repository"), raw)
+
+    @synced
+    @classmethod
+    async def list(cls, *, client: Optional[Client] = None) -> List["TemplateListing"]:
+        """Every template in NoClick's gallery, NoClick's own first. Needs no key.
+
+        Returns:
+            Each as its card shows it (no instructions or conversations: ``get`` reads those).
+
+        Usage::
+
+            for listed in noclick.TemplateListing.list():
+                print(listed.name, listed.estimate["monthly_usd"], listed.address)
+        """
+        raw = await resolve_client(client).request("GET", "/v1/public/templates", user=None, anonymous=True)
+        return [cls._from(item) for item in raw.get("data") or []]
+
+    @synced
+    @classmethod
+    async def get(cls, slug: str, *, client: Optional[Client] = None) -> "TemplateListing":
+        """One template in the gallery by its ``slug``, as its page shows it. Raises ``noclick.NotFound`` for one
+        that isn't listed. Needs no key.
+
+        Returns:
+            The template with its agents' instructions, its example conversations and the repository it comes from.
+
+        Usage::
+
+            listed = noclick.TemplateListing.get("social-media-team")
+            plan = noclick.Workspace.from_template(listed.address, dry_run=True)
+        """
+        raw = await resolve_client(client).request("GET", f"/v1/public/templates/{quote(slug, safe='')}", user=None,
+                                                   anonymous=True)
+        return cls._from(raw)

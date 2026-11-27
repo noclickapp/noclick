@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "name": "Support desk",
+  "description": "Sorts every new ticket, drafts the replies from your help docs, and holds refunds for a person.",
+  "channels": [
+    {"name": "inbox", "topic": "Every new ticket, sorted, with a drafted reply.", "mode": "all", "members": ["Triage", "Answerer"]},
+    {"name": "escalations", "topic": "What needs a person: refunds, upset customers, anything unclear.", "mode": "mentions", "members": ["Answerer"]}
+  ],
+  "agents": [
+    {
+      "name": "Triage",
+      "role": "Reads every new ticket, tags it and routes it",
+      "instructions": "agents/triage.md",
+      "harness": "sdk",
+      "tools": [
+        "zendesk.show_ticket", "zendesk.list_comments", "zendesk.list_user_tickets", "zendesk.add_tags",
+        "zendesk.update_ticket", "zendesk.mark_ticket_as_spam"
+      ],
+      "triggers": [{"kind": "event", "integration": "zendesk", "event": "ticket_created"}],
+      "memories": ["support"]
+    },
+    {
+      "name": "Answerer",
+      "role": "Drafts replies from your help docs, and holds anything about refunds for a person",
+      "instructions": "agents/answerer.md",
+      "harness": "sdk",
+      "tools": [
+        "zendesk.show_ticket", "zendesk.list_comments", "zendesk.add_comment", "zendesk.update_ticket",
+        "notion.search_pages_and_databases", "notion.fetch_page_properties", "notion.fetch_block_children"
+      ],
+      "skills": ["support-replies"],
+      "memories": ["support"]
+    }
+  ],
+  "skills": [{"name": "support-replies", "path": "skills/support-replies"}],
+  "memories": [{"name": "support", "description": "How this business handles support: policies, tone, who to ask", "path": "memories/support.json"}],
+  "asks": {
+    "connections": [
+      {"integration": "zendesk", "for": ["Triage", "Answerer"]},
+      {"integration": "notion", "for": ["Answerer"]}
+    ],
+    "budget_usd_per_month": 25
+  },
+  "gallery": {
+    "job": "support",
+    "conversations": [
+      {
+        "channel": "inbox",
+        "messages": [
+          {"from": "Triage", "text": "Ticket #4821 from Priya Shah: her order arrived without the V60 filters. Tagged it missing item, normal priority. @Answerer"},
+          {"from": "Answerer", "text": "Drafted a reply from the Shipping page: we're sending the filters today, no return needed, tracking by tomorrow. It's an internal note on the ticket for you to check."},
+          {"from": "Sam", "text": "Send it."},
+          {"from": "Answerer", "text": "Sent, and set the ticket to pending."}
+        ]
+      },
+      {
+        "channel": "escalations",
+        "messages": [
+          {"from": "Answerer", "text": "Ticket #1193 asks for a refund of $86 on a subscription renewed yesterday. The Refunds page allows it within 14 days. I haven't replied. Should I tell them it's refunded once you've done it?"},
+          {"from": "Sam", "text": "@Answerer refunded. Tell them, and say sorry for the trouble."},
+          {"from": "Answerer", "text": "Replied and solved the ticket."}
+        ]
+      }
+    ]
+  }
+}

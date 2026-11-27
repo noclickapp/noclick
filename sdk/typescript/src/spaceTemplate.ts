@@ -9,6 +9,7 @@
  *     console.log(added.workspaceId, added.channelId);
  */
 
+import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { asList, asObject, compact, num, refId, str } from "./object.ts";
 import type { ApiObject, JsonObject, ObjectInit } from "./object.ts";
@@ -215,6 +216,116 @@ export async function templateBody(source: string | ApiObject, options: Template
     cap_usd_per_month: options.capUsdPerMonth, connections: options.connections, secrets: options.secrets,
     app_secrets: options.appSecrets, dry_run: options.dryRun ? true : undefined, ...more,
   });
+}
+
+/** An agent a listed template adds: its job, the channels it works in, and (a page's read) its instructions. */
+export interface ListedAgent {
+  name: string;
+  role: string | null;
+  harness: string;
+  channels: string[];
+  instructions: string | null;
+}
+
+/** One of a listed template's own screenshots, drawn in NoClick's `laptop` or `phone` frame. */
+export interface ListedPicture {
+  url: string;
+  caption: string | null;
+  frame: "laptop" | "phone";
+}
+
+const names = (list: unknown) => asList(list).map(String);
+
+/**
+ * A space template in NoClick's gallery, as its card and page show it: who you get (`agents`, each with its job and
+ * the channels it works in), what it adds, what it asks for (`connections` by integration, `secrets` by name), what it
+ * costs (`estimate`: its app and data stores a month, at cost; `budget`: where its agents stop), its `pictures` and
+ * the `address` it's added from. Listed only once NoClick reviewed it; read with no key. A page's read (`get`) also
+ * carries each agent's instructions, the example `conversations` and the `repository` it comes from.
+ *
+ *     const templates = await TemplateListing.list();
+ *     const plan = await Workspace.fromTemplate(templates[0].address, { dryRun: true });
+ */
+export class TemplateListing {
+  readonly slug: string;
+  readonly name: string;
+  readonly description: string | null;
+  /** The job it's filed under: `marketing`, `sales`, `support`, `operations`, `engineering` or `personal`. */
+  readonly job: string | null;
+  /** Its address, which `Workspace.fromTemplate` and `addTemplate` take. */
+  readonly address: string;
+  readonly byNoClick: boolean;
+  readonly agents: ListedAgent[];
+  readonly channels: { name: string; topic: string | null; members: string[]; schedules: string[] }[];
+  readonly skills: { name: string; description: string; lines: string[] }[];
+  readonly memories: { name: string; description: string | null; entries: { name: string; description: string }[] }[];
+  readonly automations: { name: string; description: string | null; steps: { type: string; label: string | null }[] }[];
+  readonly stores: { kind: string; name: string }[];
+  readonly app: { path: string; runtime: string | null; framework: string | null } | null;
+  readonly connections: { integration: string; label: string; nodeType: string | null; usedBy: string[] }[];
+  readonly secrets: { name: string; description: string | null; usedBy: string[] }[];
+  readonly budget: { usdPerMonth: number | null; agents: { name: string; usdPerMonth: number | null }[] };
+  readonly estimate: { monthlyUsd: number; lines: { kind: string; name: string | null; label: string | null; usd: number }[] };
+  readonly pictures: ListedPicture[];
+  readonly conversations: { channel: string; messages: { from: string; text: string }[] }[];
+  readonly repository: { name: string; commit: string } | null;
+  readonly raw: JsonObject;
+
+  /** @internal */
+  constructor(raw: JsonObject) {
+    const asks = asObject(raw.asks);
+    const budget = asObject(raw.budget);
+    const estimate = asObject(raw.estimate);
+    const app = raw.app ? asObject(raw.app) : null;
+    const repository = raw.repository ? asObject(raw.repository) : null;
+    const each = <T>(list: unknown, read: (o: JsonObject) => T): T[] => asList(list).map((x) => read(asObject(x)));
+    this.slug = String(raw.slug);
+    this.name = String(raw.name);
+    this.description = str(raw.description);
+    this.job = str(raw.job);
+    this.address = String(raw.address);
+    this.byNoClick = raw.by_noclick === true;
+    this.agents = each(raw.agents, (a) => ({
+      name: String(a.name), role: str(a.role), harness: str(a.harness) ?? "sdk", channels: names(a.channels), instructions: str(a.instructions),
+    }));
+    this.channels = each(raw.channels, (c) => ({ name: String(c.name), topic: str(c.topic), members: names(c.members), schedules: names(c.schedules) }));
+    this.skills = each(raw.skills, (s) => ({ name: String(s.name), description: str(s.description) ?? "", lines: names(s.lines) }));
+    this.memories = each(raw.memories, (m) => ({
+      name: String(m.name), description: str(m.description), entries: each(m.entries, (e) => ({ name: String(e.name), description: str(e.description) ?? "" })),
+    }));
+    this.automations = each(raw.automations, (a) => ({
+      name: String(a.name), description: str(a.description), steps: each(a.steps, (s) => ({ type: String(s.type), label: str(s.label) })),
+    }));
+    this.stores = each(raw.stores, (s) => ({ kind: String(s.kind), name: String(s.name) }));
+    this.app = app ? { path: String(app.path), runtime: str(app.runtime), framework: str(app.framework) } : null;
+    this.connections = each(asks.connections, (c) => ({
+      integration: String(c.integration), label: str(c.label) ?? String(c.integration), nodeType: str(c.node_type), usedBy: names(c.for),
+    }));
+    this.secrets = each(asks.secrets, (s) => ({ name: String(s.name), description: str(s.description), usedBy: names(s.for) }));
+    this.budget = { usdPerMonth: num(budget.usd_per_month) ?? null, agents: each(budget.agents, (a) => ({ name: String(a.name), usdPerMonth: num(a.usd_per_month) ?? null })) };
+    this.estimate = { monthlyUsd: num(estimate.monthly_usd) ?? 0, lines: each(estimate.lines, (l) => ({ kind: String(l.kind), name: str(l.name), label: str(l.label), usd: num(l.usd) ?? 0 })) };
+    this.pictures = each(raw.pictures, (p) => ({ url: String(p.url), caption: str(p.caption), frame: p.frame === "phone" ? "phone" : "laptop" }));
+    this.conversations = each(raw.conversations, (c) => ({
+      channel: String(c.channel), messages: each(c.messages, (m) => ({ from: String(m.from), text: String(m.text) })),
+    }));
+    this.repository = repository ? { name: String(repository.name), commit: String(repository.commit) } : null;
+    this.raw = raw;
+  }
+
+  /** Every template in NoClick's gallery, NoClick's own first, each as its card shows it. Needs no key (a client that
+   *  holds one sends it, which the gallery ignores). */
+  static async list(options: { client?: NoClick } = {}): Promise<TemplateListing[]> {
+    const client = resolveClient(options.client);
+    const raw = asObject(await client.request("GET", "/v1/public/templates", { user: null, anonymous: !client.apiKey }));
+    return asList(raw.data).map((item) => new TemplateListing(asObject(item)));
+  }
+
+  /** One template in the gallery by its `slug`, as its page shows it; `NotFound` for one that isn't listed. Needs no key. */
+  static async get(slug: string, options: { client?: NoClick } = {}): Promise<TemplateListing> {
+    const client = resolveClient(options.client);
+    const path = `/v1/public/templates/${encodeURIComponent(slug)}`;
+    return new TemplateListing(asObject(await client.request("GET", path, { user: null, anonymous: !client.apiKey })));
+  }
 }
 
 /** @internal A dry run's `TemplatePlan`, else the `TemplateAdd` doing it. */

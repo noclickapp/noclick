@@ -604,6 +604,7 @@ from .space_template import (
     TemplateAccount,
     TemplateAdd,
     TemplateAdded,
+    TemplateListing,
     TemplatePart,
     TemplatePlan,
 )
@@ -945,6 +946,7 @@ __all__ = [
     "TemplateAccount",
     "TemplateAdd",
     "TemplateAdded",
+    "TemplateListing",
     "TemplatePart",
     "TemplatePlan",
     "Inbox",

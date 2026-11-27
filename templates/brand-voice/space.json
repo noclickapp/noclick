@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "name": "Brand voice",
+  "description": "A skill that has any of your agents write in your brand's own voice: plain, specific and warm.",
+  "skills": [{"name": "brand-voice", "path": "skills/brand-voice"}],
+  "gallery": {"job": "marketing"}
+}
