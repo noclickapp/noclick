@@ -14,10 +14,14 @@ import { legacyKeysUrl } from '@/screens/console/lib/site';
 import { userPath } from '@/screens/console/lib/userFilter';
 import { consoleHref, useConsole } from '@/screens/console/hooks/useConsole';
 import { useRecent } from '@/screens/console/hooks/useRecent';
+import { NEW_IN_CODE } from '@/screens/console/lib/newInCode';
 import { OVERLAY } from './ui/ConsoleDialog';
 import { READABLE_PLACEHOLDERS } from './ui/tokens';
 import { useOwnerOnly } from './ownerOnly';
 import { destinations } from './sections';
+
+/** The New dialogs a page opens, which the palette offers as actions. */
+const NEW_ACTIONS = Object.entries(NEW_IN_CODE).flatMap(([kind, { title, page }]) => (page === undefined ? [] : [{ kind, title, page }]));
 
 export const OPEN_CONSOLE_PALETTE = 'noclick:developers-palette';
 
@@ -211,15 +215,24 @@ export function ConsolePalette() {
                   },
               ]
             : [];
-    // "New agent" shows the code that makes one (`?new=agent` on Home), as Home's button does.
-    const actions: Item[] = !needle || 'new agent'.includes(needle) || needle.startsWith('new') || needle.startsWith('create')
-        ? [{ id: 'action:new-agent', group: 'Actions', label: 'New agent', hint: 'Code', href: consoleHref(basePath, '', { new: 'agent' }), icon: <Plus className="h-4 w-4" /> }]
-        : [];
+    // A New dialog shows the code that makes one (`?new=<kind>` on its page), as the page's button does: New agent
+    // with nothing typed, each that the words name ("new inbox", "inbox", "create a queue").
+    const wanted = needle.replace(/^(new|create)\b\s*(an?\s+)?/, '');
+    const actions = NEW_ACTIONS.filter(({ kind, title }) => (needle ? title.toLowerCase().includes(wanted) : kind === 'agent')).map<Item>(({ kind, title, page }) => ({
+        id: `action:new-${kind}`,
+        group: 'Actions',
+        label: title,
+        hint: 'Code',
+        href: consoleHref(basePath, page, { new: kind }),
+        icon: <Plus className="h-4 w-4" />,
+    }));
     // The way back to the app, as the account menu has it.
     const app: Item[] = !needle || 'noclick app'.includes(needle) || needle.startsWith('back')
         ? [{ id: 'nav:app', group: 'Navigation', label: 'NoClick app', href: home, icon: <LogoMark className="h-4 w-4 opacity-60" alt="" /> }]
         : [];
-    const items = [...goto, ...actions, ...recents, ...nav, ...app];
+    // Asked for ("new …", or nothing yet), the actions lead; otherwise the places the words name do.
+    const asked = wanted !== needle || !needle;
+    const items = asked ? [...goto, ...actions, ...recents, ...nav, ...app] : [...goto, ...recents, ...nav, ...actions, ...app];
 
     const run = (item: Item | undefined) => {
         if (!item?.href) return;

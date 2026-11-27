@@ -8,7 +8,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Browser, BrowserProfile, NO_USER } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -24,27 +24,12 @@ import { Money } from '../../ui/Money';
 import { StatusPill } from '../../ui/StatusPill';
 import { TimeCell } from '../../ui/TimeCell';
 import { useAgentNames } from '../lookups';
-import { ForgetSite, NewProfile, SignInToSite } from './BrowserDialogs';
+import { ForgetSite, SignInToSite } from './BrowserDialogs';
+import { NewInCode } from '../../NewInCode';
 import { ConfirmAction, Field, PanelToolbar, Section, type PanelProps } from './shared';
 
 /** How many recent sessions the drawer shows. */
 const RECENT_SESSIONS = 5;
-
-export const BROWSER_PROFILES_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'profile = noclick.BrowserProfile.from_name("ana-work", create_if_missing=True, user="user_42")',
-        'login = profile.login("https://portal.example.com", reason="to download your invoices")',
-        'print(login.url)',
-    ].join('\n'),
-    typescript: [
-        'import { BrowserProfile } from "noclick";',
-        'const profile = BrowserProfile.fromName("ana-work", { createIfMissing: true, user: "user_42" });',
-        'const login = await profile.login("https://portal.example.com", { reason: "to download your invoices" });',
-        'console.log(login.url);',
-    ].join('\n'),
-};
 
 export function browserStatus(status: string): StatusLook {
     switch (status) {
@@ -255,7 +240,7 @@ export function BrowserProfilesPanel({ user, setUser }: PanelProps) {
             <PanelToolbar
                 user={user}
                 setUser={setUser}
-                action={<NewProfile defaultUser={defaultWriteUser(user)} />}
+                action={<NewInCode kind="browser-profile" place={{ user: defaultWriteUser(user) }} label="New profile" />}
             />
             <DataTable
                 rowMenu="profile"
@@ -275,7 +260,7 @@ export function BrowserProfilesPanel({ user, setUser }: PanelProps) {
                     <EmptyCode
                         title="No browser profiles yet."
                         hint="A person signs in to a site once, in a live browser; your agents then use the site as them."
-                        snippet={BROWSER_PROFILES_EMPTY}
+                        snippet={NEW_SNIPPETS['browser-profile']({ user: defaultWriteUser(user) })}
                     />
                 }
             />

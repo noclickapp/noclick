@@ -253,17 +253,6 @@ const noQueue = apiError(404, 'not_found', 'No such queue.');
 const dictRoutes: FixtureRoute[] = [
     { method: 'GET', path: '/v1/dicts', reply: (r) => listed(r, DICTS) },
     { method: 'GET', path: '/v1/dicts/:id', reply: (r) => (dict(r) ? ok(dict(r)) : noDict) },
-    {
-        method: 'POST',
-        path: '/v1/dicts',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name: string };
-            const user = r.headers.get('NoClick-User');
-            const taken = DICTS.find((d) => d.name === body.name && d.user_id === user);
-            if (taken) return apiError(409, 'conflict', `A dict named ${body.name} already exists.`, 'Use Dict.from_name to reach it, or pick another name.', { existing_id: taken.id });
-            return ok({ ...DICTS[1], id: dictId(9), name: body.name, key_count: 0, size_bytes: 0, used_by: [], user_id: user, created_at: NOW });
-        },
-    },
     { method: 'GET', path: '/v1/dicts/:id/items', reply: (r) => (dict(r) ? listItems(r, r.params.id) : noDict) },
     {
         method: 'GET',
@@ -334,19 +323,6 @@ const dictRoutes: FixtureRoute[] = [
 const queueRoutes: FixtureRoute[] = [
     { method: 'GET', path: '/v1/queues', reply: (r) => listed(r, QUEUES) },
     { method: 'GET', path: '/v1/queues/:id', reply: (r) => (queue(r) ? ok(queue(r)) : noQueue) },
-    {
-        method: 'POST',
-        path: '/v1/queues',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name: string; max_attempts?: number };
-            const user = r.headers.get('NoClick-User');
-            const taken = QUEUES.find((q) => q.name === body.name && q.user_id === user);
-            if (taken) return apiError(409, 'conflict', `A queue named ${body.name} already exists.`, 'Use Queue.from_name to reach it, or pick another name.', { existing_id: taken.id });
-            const attempts = body.max_attempts ?? 5;
-            if (attempts < 1 || attempts > 100) return apiError(400, 'invalid_request', 'max_attempts is 1 to 100.', undefined, { field: 'max_attempts' });
-            return ok({ ...QUEUES[1], id: queueId(9), name: body.name, max_attempts: attempts, used_by: [], user_id: user, created_at: NOW });
-        },
-    },
     {
         method: 'PATCH',
         path: '/v1/queues/:id',

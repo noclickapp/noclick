@@ -6,13 +6,14 @@ import { ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/ui/utils';
 import { Queue, type QueueMessage } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
@@ -21,34 +22,11 @@ import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { JsonView } from '../../ui/JsonView';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { ConfirmAction, errorText, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { JsonField, jsonPreview, parseJson } from './DictsQueuesShared';
 import { QueuesConsumers, QueuesDepthChart, queuesMessageLook } from './QueuesParts';
 import { DeleteByName, ExportSection, formatExact } from './StorageShared';
-
-export const QUEUES_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'jobs = noclick.Queue.from_name("invoices", create_if_missing=True)',
-        'jobs.put({"invoice": "INV-1042"})',
-        'for msg in jobs.iterate(lease_s=60):',
-        '    print("Sending", msg.body["invoice"])',
-        '    msg.ack()',
-    ].join('\n'),
-    typescript: [
-        'import { Queue } from "noclick";',
-        '',
-        'const jobs = Queue.fromName("invoices", { createIfMissing: true });',
-        'await jobs.put({ invoice: "INV-1042" });',
-        'for await (const msg of jobs.iterate({ leaseS: 60 })) {',
-        '  console.log("Sending", msg.body);',
-        '  await msg.ack();',
-        '}',
-    ].join('\n'),
-};
 
 /** Messages the drawer peeks at, and the day of depth it charts. */
 const PEEK = 10;
@@ -391,76 +369,6 @@ function QueueDrawer({ queueId, row, onClose }: { queueId: string | null; row?: 
     );
 }
 
-function CreateQueue({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [attempts, setAttempts] = useState('5');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const tries = Number(attempts);
-    const triesOk = Number.isInteger(tries) && tries >= 1 && tries <= 100;
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const queue = await Queue.create(name.trim(), { client, user, maxAttempts: tries });
-            setOpen(false);
-            invalidateV1('queues');
-            invalidateV1('account');
-            toast(`Created ${queue.name}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setAttempts('5');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New queue
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New queue"
-                description="Your code reaches it by name, as its user: Queue.from_name."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim() || !triesOk} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <LabeledInput label="Name" id="queue-name">
-                        <input id="queue-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="invoices" autoComplete="off" />
-                    </LabeledInput>
-                    <div className="flex flex-col gap-1.5">
-                        <LabeledInput label="Tries per message" id="queue-attempts">
-                            <input id="queue-attempts" type="number" min={1} max={100} className={cn(INPUT, 'w-28 tabular-nums')} value={attempts} onChange={(e) => setAttempts(e.target.value)} />
-                        </LabeledInput>
-                        <span className={cn('text-[12px]', triesOk ? 'text-muted-foreground' : 'text-red-600 dark:text-red-400')}>
-                            {triesOk ? 'After this many failed deliveries a message becomes a dead letter.' : 'A whole number from 1 to 100.'}
-                        </span>
-                    </div>
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function QueuesPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [queueId, setQueue] = useSearchParam('queue');
@@ -487,7 +395,7 @@ export function QueuesPanel({ user, setUser }: PanelProps) {
     ];
     return (
         <>
-            <PanelToolbar user={user} setUser={setUser} action={<CreateQueue defaultUser={defaultWriteUser(user)} />} />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="queue" place={{ user: defaultWriteUser(user) }} />} />
             <DataTable
                 rowMenu="queue"
                 label="Queues"
@@ -502,7 +410,7 @@ export function QueuesPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No queues yet." hint="Work handed from your app to a worker or an agent, retried until it's done." snippet={QUEUES_EMPTY} />}
+                empty={<EmptyCode title="No queues yet." hint="Work handed from your app to a worker or an agent, retried until it's done." snippet={NEW_SNIPPETS.queue({ user: defaultWriteUser(user) })} />}
             />
             <QueueDrawer queueId={queueId} row={paged.rows.find((q) => q.id === queueId)} onClose={() => setQueue(null)} />
         </>

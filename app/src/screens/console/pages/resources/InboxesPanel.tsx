@@ -15,7 +15,7 @@ import {
 } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Inbox, type InboxMessage, type InboxSenders } from 'noclick';
-import { INBOXES_EMPTY } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { useChanged } from '@/lib/useChanged';
@@ -24,27 +24,17 @@ import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { Textarea } from '@/ui/textarea';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { conversationParam } from '../OperationDrawer';
 import { useAgentNames } from '../lookups';
-import {
-    ConfirmAction,
-    errorText,
-    Field,
-    INPUT,
-    LabeledInput,
-    PanelToolbar,
-    Section,
-    type PanelProps,
-} from './shared';
+import { ConfirmAction, errorText, Field, PanelToolbar, Section, type PanelProps } from './shared';
 
 /** Whose mail wakes an inbox's agent. */
 export const SENDERS_LABEL: Record<InboxSenders, string> = {
@@ -486,130 +476,12 @@ function InboxDrawer({
     );
 }
 
-function CreateInbox({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const agents = useAgentNames();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [localPart, setLocalPart] = useState('');
-    const [agent, setAgent] = useState('');
-    const [name, setName] = useState('');
-    const [senders, setSenders] = useState<InboxSenders>('anyone');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const inbox = await Inbox.create({
-                client,
-                user,
-                localPart: localPart.trim() || undefined,
-                agent: agent || undefined,
-                name: name.trim() || undefined,
-                senders: agent && senders !== 'anyone' ? senders : undefined,
-            });
-            setOpen(false);
-            invalidateV1('inboxes');
-            invalidateV1('account');
-            toast(`Created ${inbox.address}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setSenders('anyone');
-                    setOpen(true);
-                }}
-            >
-                New inbox
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New inbox"
-                footer={
-                    <ConsoleButton
-                        variant="primary"
-                        disabled={busy}
-                        onClick={() => void create()}
-                    >
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <UserField value={user} onChange={setUser} />
-                    <LabeledInput label="Name (optional, what your code calls it)" id="inbox-name">
-                        <input
-                            id="inbox-name"
-                            className={cn(INPUT, 'font-mono')}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="support"
-                        />
-                    </LabeledInput>
-                    <LabeledInput
-                        label="Address (before the @, optional)"
-                        id="inbox-local-part"
-                    >
-                        <input
-                            id="inbox-local-part"
-                            className={cn(INPUT, 'font-mono')}
-                            value={localPart}
-                            onChange={(e) => setLocalPart(e.target.value)}
-                            placeholder="Generated"
-                        />
-                    </LabeledInput>
-                    <LabeledInput
-                        label="Wake an agent on each message"
-                        id="inbox-agent"
-                    >
-                        <select
-                            id="inbox-agent"
-                            className={INPUT}
-                            value={agent}
-                            onChange={(e) => setAgent(e.target.value)}
-                        >
-                            <option value="">No agent</option>
-                            {[...agents.values()].map((a) => (
-                                <option key={a.id} value={a.id}>
-                                    {a.name}
-                                </option>
-                            ))}
-                        </select>
-                    </LabeledInput>
-                    {agent && (
-                        <LabeledInput label="Whose mail wakes it" id="inbox-senders">
-                            <select id="inbox-senders" className={INPUT} value={senders} onChange={(e) => setSenders(e.target.value as InboxSenders)}>
-                                {(Object.keys(SENDERS_LABEL) as InboxSenders[]).map((k) => (
-                                    <option key={k} value={k}>
-                                        {SENDERS_LABEL[k]}
-                                    </option>
-                                ))}
-                            </select>
-                        </LabeledInput>
-                    )}
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function InboxesPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const account = useAccount().data;
     const agents = useAgentNames();
     const [inboxId, setInbox] = useSearchParam('inbox');
+    const place = { user: defaultWriteUser(user) };
     const paged = usePaged(
         `inboxes?${user}`,
         (cursor) =>
@@ -684,9 +556,7 @@ export function InboxesPanel({ user, setUser }: PanelProps) {
                         ? `${account.counts.inboxes} of ${account.limits.inboxes_max} inboxes`
                         : null
                 }
-                action={
-                    <CreateInbox defaultUser={defaultWriteUser(user)} />
-                }
+                action={<NewInCode kind="inbox" place={place} />}
             />
             <DataTable
                 rowMenu="inbox"
@@ -706,7 +576,7 @@ export function InboxesPanel({ user, setUser }: PanelProps) {
                     <EmptyCode
                         title="No inboxes yet."
                         hint="An inbox is an email address your code or an agent receives mail at."
-                        snippet={INBOXES_EMPTY}
+                        snippet={NEW_SNIPPETS.inbox(place)}
                     />
                 }
             />

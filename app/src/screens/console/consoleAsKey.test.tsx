@@ -4,15 +4,18 @@
 // and the fixtures refuse them the same way, 403 `permission_denied`, so a page that still asked would show the
 // refusal. This opens every page of the console as a key and fails on any such request, then checks what a key's
 // console says and leaves out where the owner's has those things.
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { DEFAULT_BASE_URL, NoClick } from 'noclick';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router';
-import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi, type MockInstance } from 'vitest';
 import { DeveloperConsole } from './DeveloperConsole';
 import { openConsolePalette } from './ConsolePalette';
 import { AGENTS, FIXTURE_NOW_MS, FIXTURE_USER, KEYS, USERS, type FixtureSet } from './fixtures/core';
 import { makeFixtureFetch } from './fixtures/fixtureFetch';
+import { LAB_SETUP_CODE } from './fixtures/pages/a';
 import { TRY_IT_OPERATION_ID } from './fixtures/pages/b';
+import { NEW_IN_CODE, type NewInCodeKind } from './lib/newInCode';
+import type { NewKind } from './lib/snippets';
 import { CARDS } from './fixtures/pages/h_identity';
 import { BOOKING_APP_ID } from './fixtures/pages/e_build';
 import { isOwnerOnly, OWNER_ONLY, OWNER_ONLY_OPERATIONS, ownerOnlyWhy, type OwnerOnlyRow } from './ownerOnly';
@@ -124,7 +127,6 @@ const ADDRESSES = [
     ...visibleKinds(false).map((kind) => `resources/${kind.id}`),
     `agents/${AGENTS[0].id}`,
     `users/${USERS[0].id}`,
-    '?new=agent',
     `logs?op=${TRY_IT_OPERATION_ID}`,
     `logs/${TRY_IT_OPERATION_ID}`,
     `resources/apps?app=${BOOKING_APP_ID}&tab=bindings`,
@@ -133,11 +135,24 @@ const ADDRESSES = [
     'cli?code=ABCD-EFGH',
 ];
 
+/** Every New dialog, where its page's button opens it: an agent's trigger on that agent's page. */
+const NEW_DIALOGS = (Object.entries(NEW_IN_CODE) as [NewKind, NewInCodeKind][]).map(([kind, entry]) => ({ kind, entry, address: `${entry.page ?? `agents/${AGENTS[0].id}`}?new=${kind}` }));
+
 describe('a console acting as a key', { timeout: TEST_S }, () => {
     it.each(ADDRESSES)('asks for nothing only the owner may have at /%s', async (address) => {
         const calls = open(address);
         await calls.settled();
         expect(calls.ownerOnly).toEqual([]);
+    });
+
+    it.each(NEW_DIALOGS)('shows the code that makes one at /$address, its guide, and no prompt that needs a setup code', async ({ address, entry }) => {
+        const calls = open(address);
+        await calls.settled();
+        expect(calls.ownerOnly).toEqual([]);
+        const dialog = screen.getByRole('dialog', { name: entry.title });
+        expect(within(dialog).getByRole('region', { name: 'Create it from your code' }).textContent).toContain('import noclick');
+        expect(within(dialog).getByRole('link', { name: /guide/ }).getAttribute('href')).toBe(`https://noclick.com/docs/${entry.guide}`);
+        expect(within(dialog).queryByRole('button', { name: 'Copy prompt' })).toBeNull();
     });
 
     it('would be caught asking: the owner’s console does make those calls, and a key is refused them', async () => {
@@ -224,6 +239,19 @@ describe('a console acting as a key', { timeout: TEST_S }, () => {
         expect(calls.made.filter((call) => call.startsWith('GET /v1/objects/'))).toEqual([]);
     });
 
+    it('opens a page’s New dialog from the palette when asked for, and leads with places otherwise', async () => {
+        const calls = open('');
+        await calls.settled();
+        act(() => openConsolePalette());
+        const search = await screen.findByPlaceholderText('Go to a section');
+        fireEvent.change(search, { target: { value: 'us' } });
+        expect(screen.getAllByRole('option')[0].textContent).not.toContain('New user');
+        fireEvent.change(search, { target: { value: 'new inbox' } });
+        expect(screen.getAllByRole('option')[0].textContent).toContain('New inbox');
+        fireEvent.keyDown(search, { key: 'Enter' });
+        expect(await screen.findByRole('dialog', { name: 'New inbox' })).toBeTruthy();
+    });
+
     it('names something the console does for every row of what only the owner can do', () => {
         for (const row of Object.values(OWNER_ONLY) as OwnerOnlyRow[]) {
             // A row with no operation is something the API doesn't offer at all, and says so.
@@ -240,5 +268,34 @@ describe('the owner’s console', { timeout: TEST_S }, () => {
         await calls.settled();
         expect(screen.getByRole('navigation', { name: 'Developer console' }).textContent).toContain('API keys');
         expect(await screen.findByText('Copy prompt')).toBeTruthy();
+    });
+
+    it('copies a prompt that has a coding agent make what the dialog makes, as the user the list shows', async () => {
+        // The clipboard takes the prompt as the promise the click hands it (Safari's rule), and writes it once its code is made.
+        const copied: string[] = [];
+        vi.stubGlobal('ClipboardItem', class {
+            constructor(readonly items: Record<string, Promise<Blob>>) {}
+        });
+        const write = vi.spyOn(navigator.clipboard, 'write').mockImplementation(async ([item]) => {
+            copied.push(await (await (item as unknown as { items: Record<string, Promise<Blob>> }).items['text/plain']).text());
+        });
+        onTestFinished(() => {
+            write.mockRestore();
+            vi.unstubAllGlobals();
+        });
+        const calls = open('resources/inboxes?user=acme&new=inbox', 'owner');
+        await calls.settled();
+        const dialog = screen.getByRole('dialog', { name: 'New inbox' });
+        // The code makes it for that user too.
+        expect(within(dialog).getByRole('region', { name: 'Create it from your code' }).textContent).toContain('user="acme"');
+        fireEvent.click(within(dialog).getByRole('button', { name: 'Copy prompt' }));
+        await waitFor(() => expect(copied).toHaveLength(1));
+        const [prompt] = copied;
+        expect(calls.made).toContain('POST /v1/cli/setup_codes');
+        expect(prompt).toContain(`-d code=${LAB_SETUP_CODE} >> .env`);
+        expect(prompt).toContain(`help me ${NEW_IN_CODE.inbox.goal}.`);
+        expect(prompt).toContain(`3. ${NEW_IN_CODE.inbox.ask} Make it as my user "acme"`);
+        expect(prompt).toContain(`/docs/${NEW_IN_CODE.inbox.guide}.`);
+        expect(await within(dialog).findByText(/^Copied\./)).toBeTruthy();
     });
 });

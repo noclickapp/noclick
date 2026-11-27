@@ -9,8 +9,8 @@ import { ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { Database, type DatabaseEngine, type Operation, type QueryResult, type Table, type UsedBy } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { Database, type Operation, type QueryResult, type Table, type UsedBy } from 'noclick';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { isReadQuery } from '@/lib/tableQuery';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { formatRelative } from '@/screens/console/lib/format';
@@ -20,6 +20,7 @@ import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1, type V1State } from '@/sdk/useV1';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
@@ -29,27 +30,9 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { IdChip } from '../../ui/IdChip';
 import { Segmented } from '../../ui/Segmented';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { errorText, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { DeleteByName, ExportSection, formatExact, formatSize, UsedByText } from './StorageShared';
-
-export const DATABASES_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'db = noclick.Database.from_name("orders", create_if_missing=True)',
-        'db.execute("create table if not exists orders (id text primary key, item text, qty integer)")',
-        'print(db.query("select count(*) as n from orders").rows[0]["n"])',
-    ].join('\n'),
-    typescript: [
-        'import { Database } from "noclick";',
-        '',
-        'const db = Database.fromName("orders", { createIfMissing: true });',
-        'await db.execute("create table if not exists orders (id text primary key, item text, qty integer)");',
-        'console.log((await db.query("select count(*) as n from orders")).rows[0].n);',
-    ].join('\n'),
-};
 
 /** Point-in-time history by engine, as the design keeps it. */
 const HISTORY_DAYS: Record<string, number> = { sqlite: 30, postgres: 7 };
@@ -565,80 +548,6 @@ function DatabaseDrawer({ databaseId, row, rows, onOpen, onClose }: { databaseId
     );
 }
 
-function CreateDatabase({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [engine, setEngine] = useState<DatabaseEngine>('sqlite');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const db = await Database.create(name.trim(), { client, user, engine });
-            setOpen(false);
-            invalidateV1('databases');
-            invalidateV1('account');
-            toast(`Created ${db.name}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New database
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New database"
-                description="Your code reaches it by name, as its user: Database.from_name."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <LabeledInput label="Name" id="database-name">
-                        <input id="database-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="orders" autoComplete="off" />
-                    </LabeledInput>
-                    <div className="flex flex-col gap-1.5">
-                        <span className="text-[12px] font-medium text-muted-foreground">Engine</span>
-                        <Segmented
-                            label="Engine"
-                            value={engine}
-                            onChange={setEngine}
-                            options={[
-                                { value: 'sqlite', label: 'SQLite' },
-                                { value: 'postgres', label: 'Postgres' },
-                            ]}
-                        />
-                        <span className="text-[12px] text-muted-foreground">
-                            {engine === 'sqlite' ? 'Costs almost nothing while idle; up to 10 GB, then branch into Postgres.' : 'For large data, many writers, and tools that connect over the wire.'}
-                        </span>
-                    </div>
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function DatabasesPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [databaseId, setDatabase] = useSearchParam('database');
@@ -677,7 +586,7 @@ export function DatabasesPanel({ user, setUser }: PanelProps) {
             <PanelToolbar
                 user={user}
                 setUser={setUser}
-                action={<CreateDatabase defaultUser={defaultWriteUser(user)} />}
+                action={<NewInCode kind="database" place={{ user: defaultWriteUser(user) }} />}
             />
             <DataTable
                 rowMenu="database"
@@ -693,7 +602,7 @@ export function DatabasesPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No databases yet." hint="A SQL database for an app or an agent: SQLite by default, Postgres when you outgrow it." snippet={DATABASES_EMPTY} />}
+                empty={<EmptyCode title="No databases yet." hint="A SQL database for an app or an agent: SQLite by default, Postgres when you outgrow it." snippet={NEW_SNIPPETS.database({ user: defaultWriteUser(user) })} />}
             />
             <DatabaseDrawer
                 databaseId={databaseId}

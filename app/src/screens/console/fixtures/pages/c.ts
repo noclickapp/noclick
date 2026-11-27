@@ -1108,14 +1108,6 @@ const resourceRoutes: FixtureRoute[] = [
         path: '/v1/sandboxes/:id',
         reply: (r) => found(SANDBOXES.map((s) => ({ ...s, status: 'terminated', end_reason: 'deleted', terminated_at: new Date(FIXTURE_NOW_MS).toISOString() })).find((s) => s.id === r.params.id), 'sandbox'),
     },
-    {
-        method: 'POST',
-        path: '/v1/sandboxes',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { image?: string; timeout_s?: number; region?: string };
-            return ok({ ...SANDBOXES[0], id: rid(400, 9), image: body.image ?? 'python', timeout_s: body.timeout_s ?? 600, region: body.region ?? 'eu', user_id: r.headers.get('NoClick-User'), created_at: new Date(FIXTURE_NOW_MS).toISOString() });
-        },
-    },
 ];
 
 /**

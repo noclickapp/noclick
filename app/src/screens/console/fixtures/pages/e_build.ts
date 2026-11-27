@@ -776,9 +776,6 @@ function sub(r: FixtureRequest, rows: readonly unknown[]): FixtureReply {
     return r.set === 'error' ? apiError(500, 'server_error', 'The platform API failed to answer.') : list(rows);
 }
 
-/** The acting user: the `NoClick-User` header, your id for them as it is. */
-const actingUser = (r: FixtureRequest): string | null => r.headers.get('NoClick-User');
-
 /** An operation's view as `core/operations_store.view` shows a queued one to the owner, with its kind's own fields. */
 function operation(n: number, kind: string, summary: string, userId: string | null, fields: Json = {}) {
     return {
@@ -858,19 +855,6 @@ const repoRoutes: FixtureRoute[] = [
         reply: (r) => {
             const row = REPOS.find((x) => x.id === r.params.id) ?? CREATED.get(r.params.id);
             return row ? found(row, 'repo') : repoError(REPO_ERRORS.noRepo());
-        },
-    },
-    {
-        method: 'POST',
-        path: '/v1/repos',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name?: string; default_branch?: string };
-            const name = String(body.name ?? 'repo');
-            const taken = REPOS.find((x) => x.name === name);
-            if (taken) return repoError(REPO_ERRORS.taken(name, taken.id));
-            const made = repoWire({ id: buildId(109), name, default_branch: body.default_branch, user_id: actingUser(r), created_at: NOW });
-            CREATED.set(String(made.id), made);
-            return { status: 201, body: made };
         },
     },
     {
@@ -1128,39 +1112,6 @@ function removeDomain(r: FixtureRequest, app: App): FixtureReply {
 const projectRoutes: FixtureRoute[] = [
     { method: 'GET', path: '/v1/projects', reply: (r) => listed(r, PROJECTS) },
     { method: 'GET', path: '/v1/projects/:id', reply: (r) => found(PROJECTS.find((p) => p.id === r.params.id), 'app') },
-    {
-        method: 'POST',
-        path: '/v1/projects',
-        reply: (r) => {
-            const body = (r.body ?? {}) as Json;
-            const name = String(body.name ?? '');
-            const runtime = String(body.runtime ?? 'edge');
-            if (!(runtime in FRAMEWORKS)) return invalid('runtime is edge or container.', 'runtime');
-            const refused = projectRefusal(runtime, body);
-            if (refused) return refused;
-            const taken = PROJECTS.find((p) => p.name === name && p.user_id === actingUser(r));
-            if (taken) return apiError(409, 'conflict', `A project named '${name}' already exists.`, 'Use that one (Project.from_name), or pick another name.', { existing_id: taken.id });
-            const container = body.container === undefined ? CONTAINER_DEFAULTS : mergedContainer(CONTAINER_DEFAULTS, body.container);
-            if (isRefusal(container)) return container;
-            return {
-                status: 201,
-                body: project(209, {
-                    name,
-                    repo_id: String(body.repo_id ?? buildId(109)),
-                    runtime,
-                    framework: (body.framework as string | undefined) ?? null,
-                    production_branch: (body.production_branch as string | undefined) ?? 'main',
-                    // Every app made through the API has a budget: its maker's, else $10 (projects.service).
-                    budget_usd_per_month: (body.budget_usd_per_month as number | undefined) ?? 10,
-                    deploy_on_push: (body.deploy_on_push as string | undefined) ?? 'off',
-                    region: (body.region as string | undefined) ?? 'us-east',
-                    container: containerView(container, runtime),
-                    user_id: actingUser(r),
-                    created_at: NOW,
-                }),
-            };
-        },
-    },
     {
         method: 'DELETE',
         path: '/v1/projects/:id',

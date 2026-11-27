@@ -13,7 +13,8 @@ import { DISPLAY } from '@/ui/titles';
 import { ALL_USERS, Agent } from 'noclick';
 import { useSlot } from '@/slots';
 import { createKey, createSetupCode, fullAccessScopes, type KeyView, type SetupCode } from '@/sdk/owner';
-import { INSTALL_TABS, OPERATIONS_EMPTY, coderPrompt, envExport, snippetTabs } from '@/screens/console/lib/snippets';
+import { INSTALL_TABS, OPERATIONS_EMPTY, coderPrompt, envExport, snippetTabs, type CoderTask, type NewPlace } from '@/screens/console/lib/snippets';
+import { NEW_IN_CODE } from '@/screens/console/lib/newInCode';
 import { useAccount, useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { CodeSnippet } from './ui/CodeSnippet';
@@ -69,11 +70,12 @@ export function WorksWith() {
 }
 
 /**
- * Copy the coding-agent prompt. Each copy makes a fresh setup code inside the click (a code works once, and the
- * last one may be spent), so a prompt is only ever made to be pasted.
+ * Copy the coding-agent prompt for `task`. Each copy makes a fresh setup code inside the click (a code works once,
+ * and the last one may be spent), so a prompt is only ever made to be pasted.
  */
-export function useCopyPrompt() {
+export function useCopyPrompt(task: CoderTask, place: NewPlace = {}) {
     const { client, apiUrl } = useConsole();
+    const promptFor = (code: string) => coderPrompt(code, task, { apiBase: apiUrl, place });
     const [setup, setSetup] = useState<SetupCode | null>(null);
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState<unknown>(null);
@@ -84,7 +86,7 @@ export function useCopyPrompt() {
         let made: SetupCode | null = null;
         const minting = createSetupCode(client).then((code) => (made = code));
         try {
-            await copyToClipboard(minting.then((code) => coderPrompt(code.code, apiUrl)));
+            await copyToClipboard(minting.then((code) => promptFor(code.code)));
             setSetup(made);
             setState('copied');
         } catch (err) {
@@ -100,7 +102,7 @@ export function useCopyPrompt() {
             setCreating(false);
         }
     };
-    const prompt = setup ? coderPrompt(setup.code, apiUrl) : null;
+    const prompt = setup ? promptFor(setup.code) : null;
     return { state, setup, prompt, creating, error, copy };
 }
 
@@ -240,7 +242,7 @@ function FirstAgentWatch() {
 }
 
 export function Quickstart() {
-    const copier = useCopyPrompt();
+    const copier = useCopyPrompt(NEW_IN_CODE.agent);
     const quickKey = useQuickstartKey();
     const [lang, setLang] = useState('python');
     const example = snippetTabs(OPERATIONS_EMPTY);

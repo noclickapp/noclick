@@ -9,7 +9,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
-import { ALL_USERS, NO_USER, Project, Repo, TrashItem, type DeployOnPush, type ProjectRuntime } from 'noclick';
+import { ALL_USERS, NO_USER, Project, TrashItem } from 'noclick';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
@@ -19,23 +20,22 @@ import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { TrashSection } from '@/screens/resources/TrashSection';
 import type { TrashEntry } from '@/screens/resources/platform';
 import { AppDurableObjectsSection } from './AppsDurableObjects';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PillSwitch } from '../../ui/PillTabs';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { AppServicesSection } from './AppServicesSection';
 import { AppBindings, AppSchedules, AppSecrets, AppSettings } from './AppsConfig';
 import { AppDeployments, useDeploy } from './AppsDeployments';
-import { APPS_EMPTY, deploymentLook, deployOnPushOptions, FRAMEWORKS, NOT_DEPLOYED, RUNTIMES, withParams } from './AppsFormat';
-import { AppUrl, Choice } from './AppsParts';
+import { deploymentLook, NOT_DEPLOYED, withParams } from './AppsFormat';
+import { AppUrl } from './AppsParts';
 import { AppDomains, AppLogs, AppOverview, useAppUsage } from './AppsOverview';
-import { ConfirmAction, errorText, INPUT, LabeledInput, PanelToolbar, type PanelProps } from './shared';
+import { ConfirmAction, errorText, PanelToolbar, type PanelProps } from './shared';
 
 const TABS = [
     { id: 'overview', label: 'Overview' },
@@ -161,112 +161,6 @@ function AppDrawer({ appId, row, onClose }: { appId: string | null; row?: Projec
     );
 }
 
-const NEW_REPO = '__new__';
-
-function NewAppDialog({ open, onOpenChange, defaultUser, onCreated }: { open: boolean; onOpenChange: (open: boolean) => void; defaultUser: string | null; onCreated: (project: Project) => void }) {
-    const { client } = useConsole();
-    const [name, setName] = useState('');
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [repoId, setRepoId] = useState(NEW_REPO);
-    const [runtime, setRuntime] = useState<ProjectRuntime>('edge');
-    const [framework, setFramework] = useState('');
-    const [deployOnPush, setDeployOnPush] = useState<DeployOnPush>('off');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    useEffect(() => {
-        if (!open) return;
-        setName('');
-        setUser(defaultUser);
-        setRepoId(NEW_REPO);
-        setRuntime('edge');
-        setFramework('');
-        setDeployOnPush('off');
-        setError(undefined);
-    }, [open, defaultUser]);
-    // A project deploys a repo with the same owner: the same user, or your account.
-    const repos = useV1(open ? `repos?pick&${user ?? 'none'}` : null, () => Repo.list({ client, userFilter: user ?? NO_USER, limit: 100 }));
-    const slug = name.trim();
-    const valid = /^[a-z0-9][a-z0-9-]{0,62}$/.test(slug);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const project = await Project.create(slug, { client, user, repo: repoId === NEW_REPO ? undefined : repoId, runtime, framework: framework || undefined, deployOnPush });
-            invalidateV1('projects');
-            invalidateV1('repos');
-            invalidateV1('account');
-            toast(`Created ${project.name}. Deploy it to put it online.`);
-            onOpenChange(false);
-            onCreated(project);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <ConsoleDialog
-            open={open}
-            onOpenChange={onOpenChange}
-            title="New app"
-            description="An app deploys a repo to its own URL. Nothing goes online until you deploy it."
-            footer={
-                <ConsoleButton variant="primary" disabled={busy || !valid} onClick={() => void create()}>
-                    {busy ? 'Creating…' : 'Create app'}
-                </ConsoleButton>
-            }
-        >
-            <form
-                className="flex flex-col gap-3"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    if (valid) void create();
-                }}
-            >
-                <LabeledInput label="Name" id="app-name">
-                    <input id="app-name" className={INPUT} value={name} onChange={(e) => setName(e.target.value.toLowerCase())} placeholder="booking" autoComplete="off" />
-                </LabeledInput>
-                <p className="m-0 -mt-1 text-[12px] text-muted-foreground">
-                    {slug && !valid ? 'Lowercase letters, digits and dashes.' : `It serves at https://${slug || 'name'}.noclick.site until you add a domain.`}
-                </p>
-                <UserField value={user} onChange={setUser} />
-                <LabeledInput label="Repo" id="app-repo">
-                    <select id="app-repo" className={INPUT} value={repoId} onChange={(e) => setRepoId(e.target.value)}>
-                        <option value={NEW_REPO}>{slug ? `A new repo named ${slug}` : 'A new repo, named after the app'}</option>
-                        {(repos.data ?? []).map((r) => (
-                            <option key={r.id} value={r.id}>
-                                {r.name}
-                            </option>
-                        ))}
-                    </select>
-                </LabeledInput>
-                {repos.error !== undefined && <p className="m-0 text-[12px] text-red-600 dark:text-red-400">{errorText(repos.error)}</p>}
-                <Choice
-                    label="Runtime"
-                    options={RUNTIMES}
-                    value={runtime}
-                    onChange={(next) => {
-                        setRuntime(next);
-                        setFramework('');
-                    }}
-                />
-                <LabeledInput label="Framework" id="app-framework">
-                    <select id="app-framework" className={INPUT} value={framework} onChange={(e) => setFramework(e.target.value)}>
-                        <option value="">Detect from the repo at each build</option>
-                        {FRAMEWORKS[runtime].map((f) => (
-                            <option key={f.value} value={f.value}>
-                                {f.label}
-                            </option>
-                        ))}
-                    </select>
-                </LabeledInput>
-                <Choice label="Deploy on push" options={deployOnPushOptions('the production branch')} value={deployOnPush} onChange={setDeployOnPush} />
-                {error !== undefined && <ErrorPanel error={error} />}
-            </form>
-        </ConsoleDialog>
-    );
-}
-
 /** The apps in the trash the page's user filter shows, each restorable or purged now. */
 function AppsTrash({ user }: { user: string }) {
     const { client } = useConsole();
@@ -298,8 +192,7 @@ export function AppsPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [appId, setApp] = useSearchParam('app');
     const [, setParams] = useSearchParams();
-    const [creating, setCreating] = useState(false);
-    const [created, setCreated] = useState<Project | null>(null);
+    const place = { user: defaultWriteUser(user) };
     const paged = usePaged(`projects?${user}`, (cursor) => Project.listPage({ client, userFilter: user, cursor, limit: 50 }), (p) => p.id);
     const columns: Column<Project>[] = [
         {
@@ -355,15 +248,7 @@ export function AppsPanel({ user, setUser }: PanelProps) {
     const close = () => setParams((prev) => withParams(prev, { app: null, tab: null, deployment: null }), { replace: true, preventScrollReset: true });
     return (
         <>
-            <PanelToolbar
-                user={user}
-                setUser={setUser}
-                action={
-                    <ConsoleButton variant="primary" onClick={() => setCreating(true)}>
-                        New app
-                    </ConsoleButton>
-                }
-            />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="app" place={place} />} />
             <DataTable
                 rowMenu="app"
                 label="Apps"
@@ -378,19 +263,10 @@ export function AppsPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No apps yet." hint="An app deploys a repo to a URL, with previews, domains, secrets and schedules." snippet={APPS_EMPTY} />}
+                empty={<EmptyCode title="No apps yet." hint="An app deploys a repo to a URL, with previews, domains, secrets and schedules." snippet={NEW_SNIPPETS.app(place)} />}
             />
             <AppsTrash user={user} />
-            <AppDrawer appId={appId} row={paged.rows.find((p) => p.id === appId) ?? (created?.id === appId ? created : undefined)} onClose={close} />
-            <NewAppDialog
-                open={creating}
-                onOpenChange={setCreating}
-                defaultUser={defaultWriteUser(user)}
-                onCreated={(p) => {
-                    setCreated(p);
-                    setApp(p.id, { push: true });
-                }}
-            />
+            <AppDrawer appId={appId} row={paged.rows.find((p) => p.id === appId)} onClose={close} />
         </>
     );
 }

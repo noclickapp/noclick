@@ -1,5 +1,5 @@
-// The Browser profiles panel's dialogs: create a profile, ask a person to sign
-// in to a site (they get a link to a live browser), and forget a site.
+// The Browser profiles panel's dialogs: ask a person to sign in to a site (they
+// get a link to a live browser), and forget a site.
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -8,74 +8,15 @@ import { cn } from '@/ui/utils';
 import { BrowserProfile, type BrowserLogin } from 'noclick';
 import { operationStatus } from '@/screens/console/lib/status';
 import { userLabel } from '@/screens/console/lib/userFilter';
-import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
+import { useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { invalidateV1 } from '@/sdk/useV1';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { ActsFor, INPUT, LabeledInput } from './shared';
-
-export function NewProfile({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const profile = await BrowserProfile.create(name.trim(), { client, user });
-            setOpen(false);
-            invalidateV1('browser_profiles');
-            invalidateV1('account');
-            toast(`Created ${profile.name}. Ask its person to sign in to a site next.`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New profile
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New browser profile"
-                description="One person's sign-ins, used only by its user's browsers and agents."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <UserField value={user} onChange={setUser} />
-                    <LabeledInput label="Name" id="profile-name">
-                        <input id="profile-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="ana-work" />
-                    </LabeledInput>
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
 
 const HTTPS = /^https:\/\/[^\s/]+/;
 

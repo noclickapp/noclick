@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { SearchClearButton } from '@/ui/SearchClearButton';
 import { cn } from '@/ui/utils';
 import { Dict, type DictItem } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { formatRelative } from '@/screens/console/lib/format';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -15,6 +15,7 @@ import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
@@ -22,29 +23,10 @@ import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { JsonView } from '../../ui/JsonView';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { ConfirmAction, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { JsonField, jsonPreview, parseJson } from './DictsQueuesShared';
 import { DeleteByName, ExportSection, formatExact, formatSize, UsedByText } from './StorageShared';
-
-export const DICTS_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'seen = noclick.Dict.from_name("processed-orders", create_if_missing=True)',
-        'if seen.put_if_absent("o_1841", {"status": "refunded"}):',
-        '    print("First time we handle o_1841")',
-        'print(seen.increment("refunds-today"))',
-    ].join('\n'),
-    typescript: [
-        'import { Dict } from "noclick";',
-        '',
-        'const seen = Dict.fromName("processed-orders", { createIfMissing: true });',
-        'if (await seen.putIfAbsent("o_1841", { status: "refunded" })) console.log("First time we handle o_1841");',
-        'console.log(await seen.increment("refunds-today"));',
-    ].join('\n'),
-};
 
 const PAGE = 20;
 
@@ -401,64 +383,6 @@ function DictDrawer({ dictId, row, onClose }: { dictId: string | null; row?: Dic
     );
 }
 
-function CreateDict({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const store = await Dict.create(name.trim(), { client, user });
-            setOpen(false);
-            invalidateV1('dicts');
-            invalidateV1('account');
-            toast(`Created ${store.name}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New store
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New key-value store"
-                description="Your code reaches it by name, as its user: Dict.from_name."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <LabeledInput label="Name" id="dict-name">
-                        <input id="dict-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="processed-orders" autoComplete="off" />
-                    </LabeledInput>
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function DictsPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [dictId, setDict] = useSearchParam('dict');
@@ -479,7 +403,7 @@ export function DictsPanel({ user, setUser }: PanelProps) {
     ];
     return (
         <>
-            <PanelToolbar user={user} setUser={setUser} action={<CreateDict defaultUser={defaultWriteUser(user)} />} />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="dict" place={{ user: defaultWriteUser(user) }} label="New store" />} />
             <DataTable
                 rowMenu="store"
                 label="Key-value stores"
@@ -494,7 +418,7 @@ export function DictsPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No dicts yet." hint="Small shared state: what's been handled, counters, locks, a cache that empties itself." snippet={DICTS_EMPTY} />}
+                empty={<EmptyCode title="No dicts yet." hint="Small shared state: what's been handled, counters, locks, a cache that empties itself." snippet={NEW_SNIPPETS.dict({ user: defaultWriteUser(user) })} />}
             />
             <DictDrawer dictId={dictId} row={paged.rows.find((d) => d.id === dictId)} onClose={() => setDict(null)} />
         </>

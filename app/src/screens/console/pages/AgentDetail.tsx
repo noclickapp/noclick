@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { HAIRLINE, LiveDot, fmtBytes } from '@/ui/primitives';
 import { credentialLabel } from '@/ui/connectionMark';
 import { cn } from '@/ui/utils';
-import { ALL_USERS, Agent, Agents, Cron, Inbox, NO_USER, NoClickError, Event as NoClickEvent, OnEvent, OnPlatformEvent, OnQueue, OnWebhook, Operation, PhoneNumber, Policy, Queue, Repo, Secret, Usage, Volume, type AgentGrant, type AgentTrigger, type Conversation, type HarnessName, type IntegrationOperation, type JsonObject, type MemoryEntry, type Message, type PolicyVerdict, type Rehearsal } from 'noclick';
+import { ALL_USERS, Agent, Agents, Inbox, NO_USER, NoClickError, Operation, PhoneNumber, Policy, Repo, Secret, Usage, Volume, type AgentGrant, type AgentTrigger, type Conversation, type HarnessName, type IntegrationOperation, type JsonObject, type MemoryEntry, type Message, type PolicyVerdict, type Rehearsal } from 'noclick';
 import { BUCKET_TOOLS, DATABASE_TOOLS } from '@/sdk/source';
 import { formatCount, truncateId } from '@/screens/console/lib/format';
 import { agentCodeSnippet, snippetTabs } from '@/screens/console/lib/snippets';
@@ -43,7 +43,6 @@ import {
     harnessSummary,
     inputClass,
     keepsModelConnection,
-    modelIntegrationNames,
     modelUsageText,
     parseBudget,
     personLabel,
@@ -76,7 +75,6 @@ import { DataTable, type Column } from '../ui/DataTable';
 import { Drawer } from '../ui/Drawer';
 import { FacetSelect } from '../ui/FacetSelect';
 import { JsonView } from '../ui/JsonView';
-import { Segmented } from '../ui/Segmented';
 import { conversationParam, parseConversationParam } from './OperationDrawer';
 import { OperationsView } from './Operations';
 import { AgentTryIt, dottedTool } from './AgentTryIt';
@@ -84,6 +82,7 @@ import { AgentLiveChips, AskSection, ChildrenSection, JobsSection, TaskSection, 
 import { describeCron } from './Home';
 import { useUsers } from './lookups';
 import { QueuesTriggerTitle } from './resources/QueuesParts';
+import { NewInCode } from '../NewInCode';
 
 const DAY_MS = 86_400_000;
 const LIST_LIMIT = 200;
@@ -1532,238 +1531,6 @@ function TriggerRow({ trigger, paused, userId, onRemove }: { trigger: AgentTrigg
     );
 }
 
-type TriggerKindChoice = 'cron' | 'webhook' | 'event' | 'platform' | 'queue';
-
-/** At most this many waiting messages make one queue turn. */
-const MAX_BATCH = 25;
-
-function AddTriggerDialog({ agent, onAdded, onClose }: { agent: Agent; onAdded: (t: AgentTrigger) => void; onClose: () => void }) {
-    const { client } = useConsole();
-    const connections = useScopeConnections(agent.userId);
-    const catalog = useIntegrations();
-    // A model provider's connection has no app events, so the API refuses a trigger on one: the catalog says which they are.
-    const models = modelIntegrationNames(catalog.data);
-    const hearing = connections.data && models ? connections.data.filter((c) => !models.has(c.integration ?? '')) : undefined;
-    const [kind, setKind] = useState<TriggerKindChoice>('cron');
-    const [cron, setCron] = useState('0 8 * * 1-5');
-    const [tz, setTz] = useState('UTC');
-    const [name, setName] = useState('');
-    const [connection, setConnection] = useState('');
-    const [event, setEvent] = useState('');
-    const [filter, setFilter] = useState('');
-    const [queue, setQueue] = useState('');
-    const [batch, setBatch] = useState('1');
-    const [conversation, setConversation] = useState('');
-    const [message, setMessage] = useState('');
-    // A queue trigger reads a queue in the agent's own scope.
-    const queues = useV1(kind === 'queue' ? `queues?scope=${agent.userId ?? NO_USER}` : null, () => Queue.list({ client, userFilter: agent.userId ?? NO_USER }));
-    // The picked connection's app events, from its integration's catalog. It's held by the ref a trigger names it by:
-    // an account connected in the app by `credential:<id>`, never its name.
-    const picked = (hearing ?? []).find((c) => refFor(c) === connection);
-    const events = useV1(kind === 'event' && picked?.integration ? `integrations/${picked.integration}/events` : null, () => picked!.events());
-    const eventInfo = events.data?.find((e) => e.name === event.trim());
-    // NoClick's own events, from the catalog, the ones it sends today.
-    const [eventType, setEventType] = useState('');
-    const eventTypes = useV1(kind === 'platform' ? 'events/types' : null, () => NoClickEvent.types({ client }));
-    const batchSize = Number(batch);
-    const batchOk = Number.isInteger(batchSize) && batchSize >= 1 && batchSize <= MAX_BATCH;
-    // A conversation key comes from one delivery, so a batch of queue messages can't take one.
-    const keyed = conversation.trim() && !(kind === 'queue' && batchSize !== 1) ? { conversation: conversation.trim() } : {};
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const preview = kind === 'cron' ? describeCron(cron, tz.trim() || 'UTC') : null;
-    const filterPair = /^\s*([\w.-]+)\s*=\s*(.+?)\s*$/.exec(filter);
-    const ready =
-        kind === 'cron'
-            ? cron.trim().split(/\s+/).length === 5
-            : kind === 'webhook'
-              ? !!name.trim()
-              : kind === 'queue'
-                ? !!queue && batchOk
-                : kind === 'platform'
-                  ? !!eventType && (!filter.trim() || !!filterPair)
-                  : !!connection && !!event.trim() && (!filter.trim() || !!filterPair);
-    const definition = () => {
-        const options = message.trim() ? { message: message.trim() } : {};
-        if (kind === 'cron') return new Cron(cron.trim(), { tz: tz.trim() || 'UTC', ...options });
-        if (kind === 'webhook') return new OnWebhook(name.trim(), { ...options, ...keyed });
-        if (kind === 'queue') return new OnQueue(queue, { batchSize, ...options, ...keyed });
-        if (kind === 'platform') return new OnPlatformEvent(eventType, { ...(filterPair ? { filters: { [filterPair[1]]: filterPair[2] } } : {}), ...options, ...keyed });
-        return new OnEvent(connection, event.trim(), { filters: filterPair ? { [filterPair[1]]: filterPair[2] } : {}, ...options, ...keyed });
-    };
-    const add = async () => {
-        setSaving(true);
-        setError(undefined);
-        try {
-            onAdded(await agent.addTrigger(definition()));
-            toast.success(kind === 'webhook' ? 'Webhook added: copy its URL from the list' : 'Trigger added');
-            onClose();
-        } catch (err) {
-            setError(err);
-        } finally {
-            setSaving(false);
-        }
-    };
-    return (
-        <ConsoleDialog
-            open
-            onOpenChange={(o) => !o && onClose()}
-            title="Add a trigger"
-            description={`What wakes ${agent.name} besides a message. Mail and calls are set on an inbox or a phone number.`}
-            footer={
-                <>
-                    <ConsoleButton variant="ghost" onClick={onClose}>
-                        Cancel
-                    </ConsoleButton>
-                    <ConsoleButton variant="primary" onClick={() => void add()} disabled={saving || !ready}>
-                        {saving ? 'Adding…' : 'Add trigger'}
-                    </ConsoleButton>
-                </>
-            }
-        >
-            <div className="flex flex-col gap-4">
-                <Segmented
-                    label="Kind"
-                    value={kind}
-                    onChange={setKind}
-                    options={[
-                        { value: 'cron', label: 'Schedule' },
-                        { value: 'webhook', label: 'Webhook' },
-                        { value: 'event', label: 'App event' },
-                        { value: 'platform', label: 'NoClick event' },
-                        { value: 'queue', label: 'Queue' },
-                    ]}
-                    className="self-start"
-                />
-                {kind === 'cron' && (
-                    <>
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_12rem]">
-                            <FormField label="Cron expression" hint="Minute, hour, day of month, month, day of week.">
-                                <input value={cron} onChange={(e) => setCron(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="0 8 * * 1-5" />
-                            </FormField>
-                            <FormField label="Timezone">
-                                <input value={tz} onChange={(e) => setTz(e.target.value)} className={inputClass} placeholder="Europe/London" />
-                            </FormField>
-                        </div>
-                        <p className="m-0 text-[13px] text-foreground/85">{preview ?? <span className="text-muted-foreground">Runs on this expression; check it has five fields.</span>}</p>
-                    </>
-                )}
-                {kind === 'webhook' && (
-                    <FormField label="Name" hint="It gets a URL; each POST to it is a turn, its body the message.">
-                        <input value={name} onChange={(e) => setName(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="orders" />
-                    </FormField>
-                )}
-                {kind === 'event' && (
-                    <>
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                            <FormField label="Connection">
-                                <select value={connection} onChange={(e) => setConnection(e.target.value)} className={inputClass}>
-                                    <option value="">
-                                        {hearing
-                                            ? hearing.length
-                                                ? 'Pick one'
-                                                : 'No app connections in its scope'
-                                            : connections.error !== undefined || catalog.error !== undefined
-                                              ? "Couldn't load the connections"
-                                              : 'Loading…'}
-                                    </option>
-                                    {(hearing ?? []).map((c) => (
-                                        <option key={c.id} value={refFor(c)}>
-                                            {c.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </FormField>
-                            <FormField label="Event">
-                                {events.data?.length ? (
-                                    <select value={event} onChange={(e) => setEvent(e.target.value)} className={cn(inputClass, 'font-mono')}>
-                                        <option value="">Pick one</option>
-                                        {events.data.map((e) => (
-                                            <option key={e.name} value={e.name}>
-                                                {e.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    <input value={event} onChange={(e) => setEvent(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="channel_message" />
-                                )}
-                            </FormField>
-                        </div>
-                        <FormField
-                            label="Only when (optional)"
-                            hint={
-                                eventInfo && Object.keys(eventInfo.filters).length
-                                    ? `One filter as key=value. It takes: ${Object.entries(eventInfo.filters).map(([k, v]) => `${k} (${v})`).join('; ')}`
-                                    : 'One filter as key=value, like channel=C0123ABCD.'
-                            }
-                        >
-                            <input value={filter} onChange={(e) => setFilter(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="channel=C0123ABCD" />
-                        </FormField>
-                    </>
-                )}
-                {kind === 'platform' && (
-                    <>
-                        <FormField label="Event" hint="Its user's events; an account agent hears every event, its users' included, never its own turns'.">
-                            <select value={eventType} onChange={(e) => setEventType(e.target.value)} className={cn(inputClass, 'font-mono')}>
-                                <option value="">{eventTypes.data ? 'Pick one' : eventTypes.error !== undefined ? "Couldn't load the events" : 'Loading…'}</option>
-                                {(eventTypes.data ?? [])
-                                    .filter((t) => t.emitted)
-                                    .map((t) => (
-                                        <option key={t.name} value={t.name}>
-                                            {t.name}
-                                        </option>
-                                    ))}
-                            </select>
-                        </FormField>
-                        <FormField label="Only when (optional)" hint="One filter on the event's data as path=value, like kind=agent.task.">
-                            <input value={filter} onChange={(e) => setFilter(e.target.value)} className={cn(inputClass, 'font-mono')} placeholder="kind=agent.task" />
-                        </FormField>
-                    </>
-                )}
-                {kind === 'queue' && (
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_8rem]">
-                        <FormField label="Queue" hint="Each message becomes a turn; a turn that fails hands it back.">
-                            <select value={queue} onChange={(e) => setQueue(e.target.value)} className={inputClass}>
-                                <option value="">{queues.data ? (queues.data.length ? 'Pick one' : 'No queues in its scope') : queues.error !== undefined ? "Couldn't load queues" : 'Loading…'}</option>
-                                {(queues.data ?? []).map((q) => (
-                                    <option key={q.id} value={q.name}>
-                                        {q.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </FormField>
-                        <FormField label="Messages a turn" hint={`1 to ${MAX_BATCH}.`}>
-                            <input value={batch} onChange={(e) => setBatch(e.target.value)} inputMode="numeric" className={cn(inputClass, 'tabular-nums')} />
-                        </FormField>
-                    </div>
-                )}
-                {kind !== 'cron' && (
-                    <FormField
-                        label="Conversation (optional)"
-                        hint={
-                            kind === 'queue' && batchSize !== 1
-                                ? 'One message a turn only: a batch holds several.'
-                                : 'A template over what arrives: deliveries with the same key continue one conversation.'
-                        }
-                    >
-                        <input
-                            value={conversation}
-                            onChange={(e) => setConversation(e.target.value)}
-                            disabled={kind === 'queue' && batchSize !== 1}
-                            className={cn(inputClass, 'font-mono')}
-                            placeholder={kind === 'event' ? 'issue-{issue.number}' : kind === 'platform' ? 'connection-{data.id}' : 'order-{order_id}'}
-                        />
-                    </FormField>
-                )}
-                <FormField label="Message (optional)" hint="What it's told each time it wakes, above what arrived.">
-                    <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={2} className={cn(inputClass, 'h-auto py-2 leading-relaxed')} />
-                </FormField>
-                {error !== undefined && <ErrorPanel error={error} />}
-            </div>
-        </ConsoleDialog>
-    );
-}
-
 function RemoveTriggerDialog({ agent, trigger, onRemoved, onClose }: { agent: Agent; trigger: AgentTrigger; onRemoved: (t: AgentTrigger) => void; onClose: () => void }) {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<unknown>(undefined);
@@ -1812,7 +1579,6 @@ function RemoveTriggerDialog({ agent, trigger, onRemoved, onClose }: { agent: Ag
 function Triggers({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) => void }) {
     const key = `agents/${agent.id}/triggers`;
     const triggers = useV1(key, () => agent.triggers());
-    const [adding, setAdding] = useState(false);
     const [removing, setRemoving] = useState<AgentTrigger | null>(null);
     const [switching, setSwitching] = useState(false);
     const rows = triggers.data ?? [];
@@ -1845,9 +1611,7 @@ function Triggers({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) =>
                         </ConsoleButton>
                     )}
                     {agent.status !== 'expired' && (
-                        <ConsoleButton size="sm" icon={<Plus className="h-3.5 w-3.5" />} onClick={() => setAdding(true)}>
-                            Add trigger
-                        </ConsoleButton>
+                        <NewInCode kind="trigger" place={{ agent: agent.name, user: agent.userId }} label="Add trigger" variant="soft" size="sm" icon={<Plus className="h-3.5 w-3.5" />} />
                     )}
                 </>
             }
@@ -1867,7 +1631,6 @@ function Triggers({ agent, onSaved }: { agent: Agent; onSaved: (agent: Agent) =>
                     {'Only messages wake it. A schedule makes it an automation; a webhook gives your systems a URL to wake it at; an app event wakes it on a Slack message or a new contact; a queue hands it work one message at a time.'}
                 </p>
             )}
-            {adding && <AddTriggerDialog agent={agent} onAdded={(t) => triggers.mutate([...rows, t])} onClose={() => setAdding(false)} />}
             {removing && (
                 <RemoveTriggerDialog agent={agent} trigger={removing} onRemoved={(t) => triggers.mutate(rows.filter((r) => r.id !== t.id))} onClose={() => setRemoving(null)} />
             )}

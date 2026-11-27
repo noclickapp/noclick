@@ -9,13 +9,14 @@ import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Bucket, type BucketObject, type S3Credentials } from 'noclick';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { CodeSnippet } from '../../ui/CodeSnippet';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
@@ -26,27 +27,9 @@ import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { RevealOnceSecret } from '../../ui/RevealOnceSecret';
 import { Segmented } from '../../ui/Segmented';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { errorText, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
 import { DeleteByName, ExportSection, formatExact, formatSize, UsedByText } from './StorageShared';
-
-export const STORAGE_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'bucket = noclick.Bucket.from_name("uploads", create_if_missing=True)',
-        'bucket.put("hello.txt", "Hello from NoClick")',
-        'print(bucket.signed_url("hello.txt", expires_in=3600))',
-    ].join('\n'),
-    typescript: [
-        'import { Bucket } from "noclick";',
-        '',
-        'const bucket = Bucket.fromName("uploads", { createIfMissing: true });',
-        'await bucket.put("hello.txt", "Hello from NoClick");',
-        'console.log(await bucket.signedUrl("hello.txt", { expiresIn: 3600 }));',
-    ].join('\n'),
-};
 
 /** How long a copied signed link works. */
 const LINK_TTL_S = 3600;
@@ -454,81 +437,6 @@ function BucketDrawer({ bucketId, row, onClose }: { bucketId: string | null; row
     );
 }
 
-function CreateBucket({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [access, setAccess] = useState<'private' | 'public'>('private');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const bucket = await Bucket.create(name.trim(), { client, user, public: access === 'public' });
-            setOpen(false);
-            invalidateV1('buckets');
-            invalidateV1('account');
-            toast(`Created ${bucket.name}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setAccess('private');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New bucket
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New bucket"
-                description="Your code reaches it by name, as its user: Bucket.from_name."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <LabeledInput label="Name" id="bucket-name">
-                        <input id="bucket-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="uploads" autoComplete="off" />
-                    </LabeledInput>
-                    <div className="flex flex-col gap-1.5">
-                        <span className="text-[12px] font-medium text-muted-foreground">Access</span>
-                        <Segmented
-                            label="Access"
-                            value={access}
-                            onChange={setAccess}
-                            options={[
-                                { value: 'private', label: 'Private' },
-                                { value: 'public', label: 'Public' },
-                            ]}
-                        />
-                        <span className="text-[12px] text-muted-foreground">
-                            {access === 'private' ? 'Files are reached with your key or a signed link.' : 'Every file is readable at a plain URL, for assets a site serves.'}
-                        </span>
-                    </div>
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function StoragePanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [bucketId, setBucket] = useSearchParam('bucket');
@@ -554,7 +462,7 @@ export function StoragePanel({ user, setUser }: PanelProps) {
             <PanelToolbar
                 user={user}
                 setUser={setUser}
-                action={<CreateBucket defaultUser={defaultWriteUser(user)} />}
+                action={<NewInCode kind="bucket" place={{ user: defaultWriteUser(user) }} />}
             />
             <DataTable
                 rowMenu="bucket"
@@ -570,7 +478,7 @@ export function StoragePanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No buckets yet." hint="Files by key, private by default, with signed links." snippet={STORAGE_EMPTY} />}
+                empty={<EmptyCode title="No buckets yet." hint="Files by key, private by default, with signed links." snippet={NEW_SNIPPETS.bucket({ user: defaultWriteUser(user) })} />}
             />
             <BucketDrawer
                 bucketId={bucketId}

@@ -162,7 +162,7 @@ export function useHarnesses() {
 }
 
 /** The model providers' names (`kind: model`): an agent's model connection names one, never its tools. Null until read. */
-export function modelIntegrationNames(catalog: readonly IntegrationInfo[] | undefined): Set<string> | null {
+function modelIntegrationNames(catalog: readonly IntegrationInfo[] | undefined): Set<string> | null {
     return catalog ? new Set(catalog.filter((i) => i.kind === 'model').map((i) => i.name)) : null;
 }
 

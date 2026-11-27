@@ -9,8 +9,8 @@ import { Pause, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { Channel, User, Workspace, type ChannelMessage } from 'noclick';
-import { CHANNELS_EMPTY } from '@/screens/console/lib/snippets';
+import { Channel, Workspace, type ChannelMessage } from 'noclick';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
@@ -18,18 +18,16 @@ import { usePaged } from '@/sdk/usePaged';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
 import { CapMeter } from '../../ui/CapMeter';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
 import { JsonView } from '../../ui/JsonView';
-import { useAgentNames } from '../lookups';
 import {
     ChannelSubscriptions,
     WorkspacePicker,
@@ -43,7 +41,6 @@ import {
     errorText,
     Field,
     INPUT,
-    LabeledInput,
     PanelToolbar,
     Section,
     sleep,
@@ -412,202 +409,6 @@ function WorkspaceName({ id }: { id: string }) {
     );
 }
 
-function CreateChannel({
-    defaultUser,
-    workspace,
-}: {
-    defaultUser: string | null;
-    /** The workspace the rail picked; a channel made there takes its scope and members. */
-    workspace?: Workspace | null;
-}) {
-    const { client } = useConsole();
-    const agentNames = useAgentNames();
-    // In a workspace the agents and people come from its members; elsewhere, any agent and the channel's one user.
-    const agents = workspace
-        ? workspace.members.filter((m) => m.type === 'agent' && m.agentId).map((m) => ({ id: m.agentId!, name: m.name ?? m.agentId! }))
-        : [...agentNames.values()];
-    const people = workspace ? workspace.members.filter((m) => m.type === 'user' && m.userId).map((m) => m.userId!) : [];
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [users, setUsers] = useState<string[]>([]);
-    const [name, setName] = useState('');
-    const [mode, setMode] = useState<'mentions' | 'all'>('all');
-    const [members, setMembers] = useState<string[]>([]);
-    const [withUser, setWithUser] = useState(true);
-    const [budget, setBudget] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const budgetUsd = budget.trim() ? Number(budget) : undefined;
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            await Channel.create(name.trim(), {
-                client,
-                ...(workspace
-                    ? {
-                          workspace,
-                          members: [
-                              ...members.map((agentId) => ({ agentId })),
-                              ...users.map((id) => User.fromId(id, { client })),
-                          ],
-                      }
-                    : {
-                          user,
-                          members: [
-                              ...members.map((agentId) => ({ agentId })),
-                              ...(user && withUser ? (['user'] as const) : []),
-                          ],
-                      }),
-                mode,
-                budgetUsd,
-            });
-            setOpen(false);
-            invalidateV1('channels');
-            toast('Channel created');
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setMembers([]);
-                    setUsers([]);
-                    setOpen(true);
-                }}
-            >
-                New channel
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title={workspace ? `New channel in ${workspace.name}` : 'New channel'}
-                footer={
-                    <ConsoleButton
-                        variant="primary"
-                        disabled={
-                            busy ||
-                            !name.trim() ||
-                            (budgetUsd !== undefined && !(budgetUsd >= 0))
-                        }
-                        onClick={() => void create()}
-                    >
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    {workspace ? (
-                        <p className="m-0 text-[13px] text-muted-foreground">
-                            It takes {workspace.name}&apos;s members and acts{' '}
-                            {workspace.userId ? `for ${workspace.userId}` : 'for your account'}.
-                        </p>
-                    ) : (
-                        <UserField value={user} onChange={setUser} />
-                    )}
-                    <LabeledInput label="Name" id="channel-name">
-                        <input
-                            id="channel-name"
-                            className={INPUT}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="launch"
-                        />
-                    </LabeledInput>
-                    <LabeledInput label="Agents answer" id="channel-mode">
-                        <select
-                            id="channel-mode"
-                            className={INPUT}
-                            value={mode}
-                            onChange={(e) =>
-                                setMode(e.target.value as 'mentions' | 'all')
-                            }
-                        >
-                            <option value="all">Every message</option>
-                            <option value="mentions">When @mentioned</option>
-                        </select>
-                    </LabeledInput>
-                    <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                        <legend className="mb-1.5 text-[12px] font-medium text-muted-foreground">
-                            {workspace ? 'Members' : 'Agents'}
-                        </legend>
-                        {agents.map((a) => (
-                            <label
-                                key={a.id}
-                                className="flex items-center gap-2 text-[13px]"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={members.includes(a.id)}
-                                    onChange={(e) =>
-                                        setMembers((m) =>
-                                            e.target.checked
-                                                ? [...m, a.id]
-                                                : m.filter((x) => x !== a.id)
-                                        )
-                                    }
-                                />
-                                {a.name}
-                            </label>
-                        ))}
-                        {people.map((id) => (
-                            <label
-                                key={id}
-                                className="flex items-center gap-2 text-[13px]"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={users.includes(id)}
-                                    onChange={(e) =>
-                                        setUsers((u) =>
-                                            e.target.checked
-                                                ? [...u, id]
-                                                : u.filter((x) => x !== id)
-                                        )
-                                    }
-                                />
-                                {id}
-                            </label>
-                        ))}
-                        {!workspace && user && (
-                            <label className="flex items-center gap-2 text-[13px]">
-                                <input
-                                    type="checkbox"
-                                    checked={withUser}
-                                    onChange={(e) =>
-                                        setWithUser(e.target.checked)
-                                    }
-                                />
-                                The user ({user})
-                            </label>
-                        )}
-                    </fieldset>
-                    <LabeledInput
-                        label="Budget (USD, optional)"
-                        id="channel-budget"
-                    >
-                        <input
-                            id="channel-budget"
-                            inputMode="decimal"
-                            className={INPUT}
-                            value={budget}
-                            onChange={(e) => setBudget(e.target.value)}
-                            placeholder="No budget"
-                        />
-                    </LabeledInput>
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function ChannelsPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [channelId, setChannel] = useSearchParam('channel');
@@ -615,6 +416,8 @@ export function ChannelsPanel({ user, setUser }: PanelProps) {
     const workspaces = useWorkspaces(user);
     const workspaceRows = workspaces.data ?? [];
     const workspace = workspaceId ? (workspaceRows.find((w) => w.id === workspaceId) ?? null) : null;
+    // A channel made in the rail's workspace takes its scope; with its id, the user says whose workspace it is.
+    const place = workspace ? { workspace: workspace.id, user: workspace.userId } : { user: defaultWriteUser(user) };
     const scoped = workspaceId;
     const paged = usePaged(
         `channels?${user}${scoped ? `&workspace=${scoped}` : ''}`,
@@ -737,10 +540,7 @@ export function ChannelsPanel({ user, setUser }: PanelProps) {
                                 onSelect={(id) => setWorkspace(id)}
                             />
                         )}
-                        <CreateChannel
-                            defaultUser={defaultWriteUser(user)}
-                            workspace={workspace}
-                        />
+                        <NewInCode kind="channel" place={place} title={workspace ? `New channel in ${workspace.name}` : undefined} />
                     </>
                 }
             />
@@ -777,7 +577,7 @@ export function ChannelsPanel({ user, setUser }: PanelProps) {
                                 <EmptyCode
                                     title="No channels yet."
                                     hint="A channel is where a user, your agents and remote agents talk."
-                                    snippet={CHANNELS_EMPTY}
+                                    snippet={NEW_SNIPPETS.channel(place)}
                                 />
                             )
                         }

@@ -2,51 +2,28 @@
 // (`?volume=`, the folder in `&path=`) browses the files a folder at a time and
 // downloads one, lists who mounts it, shows the code that mounts it in a sandbox and an
 // agent, exports, and deletes (type the name).
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
-import { cn } from '@/ui/utils';
 import { Volume, type VolumeMount } from 'noclick';
-import { snippetTabs, type Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS, snippetTabs, type Snippet } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
-import { ConsoleButton } from '../../ui/Button';
+import { NewInCode } from '../../NewInCode';
 import { CodeSnippet } from '../../ui/CodeSnippet';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
-import { Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
+import { Field, PanelToolbar, Section, type PanelProps } from './shared';
 import { DeleteByName, ExportSection, formatExact, formatSize } from './StorageShared';
 import { VolumeFiles } from './VolumesFiles';
 import { UsesList, UsesSummary, type ResourceUse } from './VolumesSecretsShared';
-
-export const VOLUMES_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'vol = noclick.Volume.from_name("datasets", create_if_missing=True)',
-        'vol.write("/raw/hello.txt", "Hello from NoClick")',
-        'with noclick.Sandbox.create(volumes={"/data": vol}) as sb:',
-        '    print(sb.exec("cat /data/raw/hello.txt").stdout)',
-    ].join('\n'),
-    typescript: [
-        'import { Sandbox, Volume } from "noclick";',
-        '',
-        'const vol = Volume.fromName("datasets", { createIfMissing: true });',
-        'await vol.write("/raw/hello.txt", "Hello from NoClick");',
-        'const sb = await Sandbox.create({ volumes: { "/data": vol } });',
-        'console.log((await sb.exec("cat /data/raw/hello.txt")).stdout);',
-        'await sb.terminate();',
-    ].join('\n'),
-};
 
 /** The code that mounts `name` at `path` in a sandbox and in an agent's shell, acting for its user. */
 export function volumeMountSnippet(name: string, path: string, userId: string | null): Snippet {
@@ -169,71 +146,6 @@ function VolumeDrawer({ volumeId, row, onClose }: { volumeId: string | null; row
     );
 }
 
-function CreateVolume({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const volume = await Volume.create(name.trim(), { client, user });
-            setOpen(false);
-            invalidateV1('volumes');
-            invalidateV1('account');
-            toast(`Created ${volume.name}`);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New volume
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New volume"
-                description="An empty folder that sandboxes and agents mount. Your code reaches it by name, as its user: Volume.from_name."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <form
-                    className="flex flex-col gap-3"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        if (name.trim()) void create();
-                    }}
-                >
-                    <LabeledInput label="Name" id="volume-name">
-                        <input id="volume-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="datasets" autoComplete="off" />
-                    </LabeledInput>
-                    <UserField value={user} onChange={setUser} />
-                    <span className="text-[12px] text-muted-foreground">A user&apos;s sandboxes and agents can mount their own volumes and your account&apos;s.</span>
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </form>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function VolumesPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [volumeId, setVolume] = useSearchParam('volume');
@@ -255,7 +167,7 @@ export function VolumesPanel({ user, setUser }: PanelProps) {
     ];
     return (
         <>
-            <PanelToolbar user={user} setUser={setUser} action={<CreateVolume defaultUser={defaultWriteUser(user)} />} />
+            <PanelToolbar user={user} setUser={setUser} action={<NewInCode kind="volume" place={{ user: defaultWriteUser(user) }} />} />
             <DataTable
                 rowMenu="volume"
                 label="Volumes"
@@ -270,7 +182,7 @@ export function VolumesPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No volumes yet." hint="Persistent folders for datasets, caches and build output, mounted into sandboxes and agents." snippet={VOLUMES_EMPTY} />}
+                empty={<EmptyCode title="No volumes yet." hint="Persistent folders for datasets, caches and build output, mounted into sandboxes and agents." snippet={NEW_SNIPPETS.volume({ user: defaultWriteUser(user) })} />}
             />
             <VolumeDrawer
                 volumeId={volumeId}

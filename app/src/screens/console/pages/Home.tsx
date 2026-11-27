@@ -22,7 +22,7 @@ import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { useV1, type V1State } from '@/sdk/useV1';
 import { Quickstart } from '../Quickstart';
 import { purposeOf, toolEntryText, useAgentMonthSpend } from '../agentParts';
-import { NewAgentDialog } from '../NewAgent';
+import { NewInCodeDialog, useNewParam } from '../NewInCode';
 import { integrationNodeType } from '../connections';
 import { PageHeader, PageSection } from '../ui/PageHeader';
 import { ErrorPanel } from '../ui/ErrorPanel';
@@ -501,10 +501,8 @@ function HomeBody({ onCreate }: { onCreate: () => void }) {
 export default function Home() {
     const account = useAccount();
     // `?new=agent` (Home's button, ⌘K) shows the code that makes an agent.
-    const [newParam, setNew] = useSearchParam('new');
-    const creating = newParam === 'agent';
-    const setCreating = (open: boolean) => setNew(open ? 'agent' : null, open ? { push: true } : undefined);
-    const create = <NewAgentDialog open={creating} onOpenChange={setCreating} />;
+    const [creating, setCreating] = useNewParam('agent');
+    const create = <NewInCodeDialog kind="agent" open={creating} onOpenChange={setCreating} />;
     if (account.data?.counts.agents === 0) {
         return (
             <>

@@ -3,12 +3,11 @@
 // path, lists its background execs, and terminates it.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { toast } from 'sonner';
 import { HAIRLINE } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
-import { NO_USER, Operation, Sandbox, type ExecResult, type RegionName } from 'noclick';
+import { NO_USER, Operation, Sandbox, type ExecResult } from 'noclick';
 import { formatRelative, truncateId } from '@/screens/console/lib/format';
-import { SANDBOXES_EMPTY } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { operationStatus, sandboxStatus } from '@/screens/console/lib/status';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import {
@@ -21,28 +20,16 @@ import { regionLabel, useRegions } from '@/screens/console/hooks/useRegions';
 import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton } from '../../ui/Button';
-import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { DataTable, type Column } from '../../ui/DataTable';
 import { Drawer } from '../../ui/Drawer';
 import { EmptyCode } from '../../ui/EmptyCode';
 import { ErrorPanel } from '../../ui/ErrorPanel';
 import { ExecutionTimeline } from '../../ui/ExecutionTimeline';
-import { RegionField } from '../../ui/RegionField';
 import { StatusPill } from '../../ui/StatusPill';
-import { UserField } from '../../ui/UserField';
 import { TimeCell } from '../../ui/TimeCell';
-import {
-    ActsFor,
-    ConfirmAction,
-    errorText,
-    Field,
-    INPUT,
-    LabeledInput,
-    PanelToolbar,
-    Section,
-    type PanelProps,
-} from './shared';
+import { ActsFor, ConfirmAction, errorText, Field, INPUT, PanelToolbar, Section, type PanelProps } from './shared';
 
 /** How many recent background execs the drawer checks against this sandbox. */
 const EXEC_HISTORY = 10;
@@ -461,101 +448,6 @@ function SandboxDrawer({
     );
 }
 
-function CreateSandbox({ defaultUser }: { defaultUser: string | null }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [image, setImage] = useState<'python' | 'node'>('python');
-    const [timeout, setTimeoutS] = useState('600');
-    const [network, setNetwork] = useState(false);
-    const [region, setRegion] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const timeoutS = Number(timeout);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            await Sandbox.create({ client, user, image, timeoutS, network, region: (region || undefined) as RegionName | undefined });
-            setOpen(false);
-            invalidateV1('sandboxes');
-            invalidateV1('account');
-            toast('Sandbox started');
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setOpen(true);
-                }}
-            >
-                New sandbox
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New sandbox"
-                description="Billed per second until it times out or you terminate it."
-                footer={
-                    <ConsoleButton
-                        variant="primary"
-                        disabled={busy || !(timeoutS > 0)}
-                        onClick={() => void create()}
-                    >
-                        {busy ? 'Starting…' : 'Create'}
-                    </ConsoleButton>
-                }
-            >
-                <div className="flex flex-col gap-3">
-                    <UserField value={user} onChange={setUser} />
-                    <LabeledInput label="Image" id="sandbox-image">
-                        <select
-                            id="sandbox-image"
-                            className={INPUT}
-                            value={image}
-                            onChange={(e) =>
-                                setImage(e.target.value as 'python' | 'node')
-                            }
-                        >
-                            <option value="python">python</option>
-                            <option value="node">node</option>
-                        </select>
-                    </LabeledInput>
-                    <LabeledInput
-                        label="Lifetime (seconds)"
-                        id="sandbox-timeout"
-                    >
-                        <input
-                            id="sandbox-timeout"
-                            inputMode="numeric"
-                            className={INPUT}
-                            value={timeout}
-                            onChange={(e) => setTimeoutS(e.target.value)}
-                        />
-                    </LabeledInput>
-                    <RegionField id="sandbox-region" value={region} onChange={setRegion} hint="Fixed for its life. The price is the same everywhere." />
-                    <label className="flex items-center gap-2 text-[13px]">
-                        <input
-                            type="checkbox"
-                            checked={network}
-                            onChange={(e) => setNetwork(e.target.checked)}
-                        />
-                        Allow outbound internet
-                    </label>
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </div>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function SandboxesPanel({ user, setUser }: PanelProps) {
     const { client, now } = useConsole();
     const account = useAccount().data;
@@ -642,7 +534,7 @@ export function SandboxesPanel({ user, setUser }: PanelProps) {
                         : null
                 }
                 action={
-                    <CreateSandbox defaultUser={defaultWriteUser(user)} />
+                    <NewInCode kind="sandbox" place={{ user: defaultWriteUser(user) }} />
                 }
             />
             <DataTable
@@ -663,7 +555,7 @@ export function SandboxesPanel({ user, setUser }: PanelProps) {
                     <EmptyCode
                         title="No sandboxes yet."
                         hint="A sandbox is a disposable machine for running code, billed per second."
-                        snippet={SANDBOXES_EMPTY}
+                        snippet={NEW_SNIPPETS.sandbox({ user: defaultWriteUser(user) })}
                     />
                 }
             />

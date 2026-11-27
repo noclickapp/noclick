@@ -58,7 +58,7 @@ export const OWNER_ONLY = {
         operations: ['GET /v1/cli/logins/{user_code}', 'POST /v1/cli/logins/{user_code}/answer'],
         at: { page: 'cli', link: 'Approve it on NoClick' },
     },
-    /** The prompt for a coding agent, which carries a one-time code that becomes a key (Quickstart, New agent). */
+    /** The prompt for a coding agent, which carries a one-time code that becomes a key (Quickstart, every New dialog). */
     setupCode: {
         what: 'The coding agent’s setup prompt',
         why: 'A key can’t mint the one-time code that gives a coding agent a key of its own.',

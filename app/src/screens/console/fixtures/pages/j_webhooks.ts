@@ -36,7 +36,6 @@ const wid = (n: number) => fixtureId(7, 90_000 + n);
 export const PROD_HOOK_ID = wid(101);
 export const OPS_HOOK_ID = wid(102);
 export const ACME_HOOK_ID = wid(103);
-export const LAB_WEBHOOK_SECRET = 'nk_whsec_lab0000000000000000000000000000000';
 export const LAB_PUBLISHABLE_KEY = 'nk_pub_00000000000000000000000000000000';
 
 // ── the event catalog ───────────────────────────────────────────────────────
@@ -248,13 +247,11 @@ const INITIAL_DELIVERIES: readonly DeliveryRow[] = [
 
 let hooks: HookRow[] = INITIAL_HOOKS.map((h) => ({ ...h }));
 let deliveries: DeliveryRow[] = INITIAL_DELIVERIES.map((d) => ({ ...d }));
-let created = 0;
 
 /** Back to the story's webhooks and deliveries (tests call it between cases). */
 export function resetWebhookFixtures(): void {
     hooks = INITIAL_HOOKS.map((h) => ({ ...h }));
     deliveries = INITIAL_DELIVERIES.map((d) => ({ ...d }));
-    created = 0;
 }
 
 export const WEBHOOKS: readonly HookRow[] = INITIAL_HOOKS;
@@ -324,24 +321,6 @@ export const routes: FixtureRoute[] = [
         },
     },
     { method: 'GET', path: '/v1/webhooks/:id', reply: (r) => (hookFor(r) ? ok(hookFor(r)) : notFound('webhook')) },
-    {
-        method: 'POST',
-        path: '/v1/webhooks',
-        reply: (r) => {
-            const b = body(r);
-            const url = String(b.url ?? '');
-            if (!url.startsWith('https://')) return apiError(400, 'invalid_request', 'A webhook URL must start with https://.', 'Use noclick webhooks listen to try it on your machine.', { field: 'url' });
-            if (!Array.isArray(b.events) || !b.events.length) return apiError(400, 'invalid_request', 'Pick at least one event type.', undefined, { field: 'events' });
-            created += 1;
-            const row: HookRow = {
-                object: 'webhook', id: wid(150 + created), url, events: b.events as string[], enabled: true, status: 'healthy',
-                description: typeof b.description === 'string' ? b.description : null, success_rate_24h: null, last_failure: null,
-                user_id: r.headers.get('NoClick-User'), created_at: NOW,
-            };
-            hooks = [row, ...hooks];
-            return ok({ ...row, secret: LAB_WEBHOOK_SECRET });
-        },
-    },
     {
         method: 'PATCH',
         path: '/v1/webhooks/:id',

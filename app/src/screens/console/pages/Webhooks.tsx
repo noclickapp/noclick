@@ -11,7 +11,7 @@ import { HAIRLINE, ROW_HOVER, clickableRow } from '@/ui/primitives';
 import { cn } from '@/ui/utils';
 import { Event as NoClickEvent, Webhook, type EventType, type WebhookDelivery } from 'noclick';
 import { formatCount, formatDuration, formatRelative } from '@/screens/console/lib/format';
-import type { Snippet } from '@/screens/console/lib/snippets';
+import { NEW_SNIPPETS, type Snippet } from '@/screens/console/lib/snippets';
 import type { StatusLook } from '@/screens/console/lib/status';
 import { defaultWriteUser } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
@@ -32,30 +32,10 @@ import { RevealOnceSecret } from '../ui/RevealOnceSecret';
 import { Segmented } from '../ui/Segmented';
 import { StatusPill } from '../ui/StatusPill';
 import { TimeCell } from '../ui/TimeCell';
-import { UserField } from '../ui/UserField';
-import { ConfirmAction, errorText, Field, INPUT, LabeledInput, PanelToolbar, Section } from './resources/shared';
+import { NewInCode } from '../NewInCode';
+import { ConfirmAction, errorText, Field, INPUT, PanelToolbar, Section } from './resources/shared';
 
 // ── what the page says in code ─────────────────────────────────────────────
-
-export const WEBHOOKS_EMPTY: Snippet = {
-    python: [
-        'import noclick',
-        '',
-        'hook = noclick.Webhook.create(',
-        '    "https://api.yourco.test/noclick/events",',
-        '    events=["operation.succeeded", "operation.failed", "human.answered"],',
-        ')',
-        'print(hook.secret)   # shown once: your receiver verifies with it',
-    ].join('\n'),
-    typescript: [
-        'import { Webhook } from "noclick";',
-        '',
-        'const hook = await Webhook.create("https://api.yourco.test/noclick/events", {',
-        '  events: ["operation.succeeded", "operation.failed", "human.answered"],',
-        '});',
-        'console.log(hook.secret); // shown once: your receiver verifies with it',
-    ].join('\n'),
-};
 
 /** The receiver's side, reading the secret from the environment. */
 export const WEBHOOK_VERIFY: Snippet = {
@@ -680,123 +660,6 @@ function RotateSecret({ hook, onRotated }: { hook: Webhook; onRotated: (secret: 
     );
 }
 
-// ── adding an endpoint ─────────────────────────────────────────────────────
-
-function AddEndpoint({ defaultUser, onCreated }: { defaultUser: string | null; onCreated: (hook: Webhook) => void }) {
-    const { client } = useConsole();
-    const types = useEventTypes();
-    const [open, setOpen] = useState(false);
-    const [url, setUrl] = useState('');
-    const [description, setDescription] = useState('');
-    const [events, setEvents] = useState<string[]>([]);
-    const [oneUser, setOneUser] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [failure, setFailure] = useState<unknown>(undefined);
-    const [busy, setBusy] = useState(false);
-    const start = () => {
-        setUrl('');
-        setDescription('');
-        setEvents([]);
-        setOneUser(defaultUser !== null);
-        setUser(defaultUser);
-        setErrors({});
-        setFailure(undefined);
-        setOpen(true);
-    };
-    const create = async () => {
-        const local: Record<string, string> = {};
-        if (!/^https:\/\/\S+$/.test(url.trim())) local.url = 'Enter an https:// address your server answers.';
-        if (!events.length) local.events = 'Pick at least one event type.';
-        if (oneUser && !user) local.user = 'Pick the user whose events it receives.';
-        setErrors(local);
-        setFailure(undefined);
-        if (Object.keys(local).length) return;
-        setBusy(true);
-        try {
-            const hook = await Webhook.create(url.trim(), { client, events, description: description.trim() || undefined, user: oneUser ? user : null });
-            invalidateV1('webhooks');
-            setOpen(false);
-            onCreated(hook);
-        } catch (e) {
-            setFailure(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton variant="primary" onClick={start}>
-                New endpoint
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                size="lg"
-                title="New endpoint"
-                description="NoClick POSTs each event you pick to this URL as JSON, signed with a secret you'll see once."
-                footer={
-                    <>
-                        <ConsoleButton variant="ghost" onClick={() => setOpen(false)}>
-                            Cancel
-                        </ConsoleButton>
-                        <ConsoleButton variant="primary" disabled={busy} onClick={() => void create()}>
-                            {busy ? 'Adding…' : 'Add endpoint'}
-                        </ConsoleButton>
-                    </>
-                }
-            >
-                <form
-                    className="flex flex-col gap-4"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        void create();
-                    }}
-                >
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-                        <LabeledInput label="Endpoint URL" id="webhook-url">
-                            <input id="webhook-url" className={cn(INPUT, 'font-mono text-[12px]')} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://api.yourco.test/noclick/events" />
-                            {errors.url && <span className="text-[12px] text-red-600 dark:text-red-400">{errors.url}</span>}
-                        </LabeledInput>
-                        <LabeledInput label="Description (optional)" id="webhook-description">
-                            <input id="webhook-description" className={INPUT} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Production receiver" />
-                        </LabeledInput>
-                    </div>
-                    <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                        <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Events</legend>
-                        {types.error !== undefined && <ErrorPanel error={types.error} onRetry={() => void types.refresh()} />}
-                        {types.data ? <EventPicker types={types.data} value={events} onChange={setEvents} /> : types.error === undefined && <div aria-busy className="h-48 animate-pulse rounded-lg bg-foreground/[0.04]" />}
-                        {errors.events && <span className="text-[12px] text-red-600 dark:text-red-400">{errors.events}</span>}
-                    </fieldset>
-                    <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
-                        <legend className="mb-1.5 p-0 text-[12px] font-medium text-muted-foreground">Whose events</legend>
-                        {[
-                            { one: false, label: 'Every event', hint: "Your account's and every user's; each event names its user." },
-                            { one: true, label: "One user's events", hint: 'The endpoint belongs to that user and receives nothing else.' },
-                        ].map((o) => (
-                            <label key={o.label} className="flex cursor-pointer items-start gap-2.5 rounded-md px-1 py-1 text-[13px]">
-                                <input type="radio" name="webhook-scope" checked={oneUser === o.one} onChange={() => setOneUser(o.one)} className="mt-[3px] accent-[hsl(var(--foreground))]" />
-                                <span className="flex flex-col text-foreground">
-                                    {o.label}
-                                    <span className="text-[12px] text-muted-foreground">{o.hint}</span>
-                                </span>
-                            </label>
-                        ))}
-                        {oneUser && (
-                            <div className="max-w-xs pl-7">
-                                <UserField label="User" value={user} onChange={setUser} />
-                                {errors.user && <span className="text-[12px] text-red-600 dark:text-red-400">{errors.user}</span>}
-                            </div>
-                        )}
-                    </fieldset>
-                    {failure !== undefined && <ErrorPanel error={failure} className="bg-transparent" />}
-                    <button type="submit" hidden />
-                </form>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 /** The one-time secret, and the receiver code that uses it (only the env tab holds it). */
 function SecretReveal({ secret, title, onDone }: { secret: string | null; title: string; onDone: () => void }) {
     return (
@@ -843,6 +706,7 @@ export default function Webhooks() {
     const [user, setUser] = useUserParam();
     const [webhookId, setWebhookId] = useSearchParam('webhook');
     const [secret, setSecret] = useState<{ value: string; title: string } | null>(null);
+    const place = { user: defaultWriteUser(user) };
     const paged = usePaged(`webhooks?${user}`, (cursor) => Webhook.listPage({ client, userFilter: user, cursor, limit: 50 }), (w) => w.id);
     const failing = paged.rows.filter((w) => w.status === 'failing').length;
     const columns: Column<Webhook>[] = [
@@ -881,7 +745,7 @@ export default function Webhooks() {
                 user={user}
                 setUser={setUser}
                 limit={paged.rows.length ? `${plural(paged.rows.length, 'endpoint')}${failing ? `, ${failing} failing` : ''}` : null}
-                action={<AddEndpoint defaultUser={defaultWriteUser(user)} onCreated={(hook) => setSecret(hook.secret ? { value: hook.secret, title: 'Endpoint added' } : null)} />}
+                action={<NewInCode kind="webhook" place={place} />}
             />
             <DataTable
                 label="Webhook endpoints"
@@ -896,7 +760,7 @@ export default function Webhooks() {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No webhook endpoints yet." hint="Add one to hear about finished runs, answers and failures the moment they happen, instead of polling." snippet={WEBHOOKS_EMPTY} />}
+                empty={<EmptyCode title="No webhook endpoints yet." hint="Add one to hear about finished runs, answers and failures the moment they happen, instead of polling." snippet={NEW_SNIPPETS.webhook(place)} />}
             />
             <ListenHint />
             <WebhookDrawer

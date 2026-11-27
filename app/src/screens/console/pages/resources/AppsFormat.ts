@@ -126,40 +126,6 @@ export function withParams(prev: URLSearchParams, changes: Record<string, string
 
 const lines = (...parts: string[]) => parts.join('\n');
 
-export const APPS_EMPTY: Snippet = {
-    python: lines(
-        'import noclick',
-        '',
-        'repo = noclick.Repo.from_name("booking", create_if_missing=True)',
-        'app = noclick.Project.from_name("booking", repo=repo, create_if_missing=True)',
-        'print(app.deploy().wait().url)'
-    ),
-    typescript: lines(
-        'import { Project, Repo } from "noclick";',
-        '',
-        'const repo = Repo.fromName("booking", { createIfMissing: true });',
-        'const app = Project.fromName("booking", { repo, createIfMissing: true });',
-        'console.log((await (await app.deploy()).wait()).url);'
-    ),
-};
-
-export const REPOS_EMPTY: Snippet = {
-    python: lines(
-        'import noclick',
-        '',
-        'repo = noclick.Repo.from_name("agent-tools", create_if_missing=True)',
-        'repo.commit({"README.md": "# Agent tools\\n"}, message="Start the repo")',
-        'print(repo.clone_url())'
-    ),
-    typescript: lines(
-        'import { Repo } from "noclick";',
-        '',
-        'const repo = Repo.fromName("agent-tools", { createIfMissing: true });',
-        'await repo.commit({ "README.md": "# Agent tools\\n" }, { message: "Start the repo" });',
-        'console.log(await repo.cloneUrl());'
-    ),
-};
-
 export const SCHEDULES_EMPTY: Snippet = {
     python: lines(
         'import noclick',

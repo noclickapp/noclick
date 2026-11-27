@@ -376,17 +376,6 @@ const databaseRoutes: FixtureRoute[] = [
         },
     },
     { method: 'GET', path: '/v1/databases/:id', reply: (r) => found(database(r), 'database') },
-    {
-        method: 'POST',
-        path: '/v1/databases',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name: string; engine?: string };
-            const user = r.headers.get('NoClick-User');
-            const taken = DATABASES.find((d) => d.name === body.name && d.user_id === user);
-            if (taken) return apiError(409, 'conflict', `A database named ${body.name} already exists.`, 'Use Database.from_name to reach it, or pick another name.', { existing_id: taken.id });
-            return ok({ ...DATABASES[0], id: rid(5000, 9), name: body.name, engine: body.engine ?? 'sqlite', size_bytes: 0, table_count: 0, used_by: [], user_id: user, created_at: NOW });
-        },
-    },
     { method: 'POST', path: '/v1/databases/:id/query', reply: (r) => (database(r) ? runQuery(r) : apiError(404, 'not_found', 'No such database.')) },
     { method: 'GET', path: '/v1/databases/:id/schema', reply: (r) => (database(r) ? list(tablesOf(r.params.id).map(tableView)) : apiError(404, 'not_found', 'No such database.')) },
     { method: 'GET', path: '/v1/databases/:id/migrations', reply: (r) => list((MIGRATIONS[r.params.id] ?? []).map((m) => ({ object: 'migration', ...m }))) },
@@ -461,28 +450,6 @@ const bucketRoutes: FixtureRoute[] = [
         },
     },
     { method: 'GET', path: '/v1/buckets/:id', reply: (r) => found(bucket(r), 'bucket') },
-    {
-        method: 'POST',
-        path: '/v1/buckets',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name: string; public?: boolean };
-            const user = r.headers.get('NoClick-User');
-            const taken = BUCKETS.find((b) => b.name === body.name && b.user_id === user);
-            if (taken) return apiError(409, 'conflict', `A bucket named ${body.name} already exists.`, 'Use Bucket.from_name to reach it, or pick another name.', { existing_id: taken.id });
-            return ok({
-                ...BUCKETS[0],
-                id: rid(6000, 9),
-                name: body.name,
-                public: !!body.public,
-                public_base_url: body.public ? `https://files.noclick.site/${body.name}` : null,
-                size_bytes: 0,
-                object_count: 0,
-                used_by: [],
-                user_id: user,
-                created_at: NOW,
-            });
-        },
-    },
     {
         method: 'PATCH',
         path: '/v1/buckets/:id',

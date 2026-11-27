@@ -276,31 +276,6 @@ export const routes: FixtureRoute[] = [
 
     // ── users ───────────────────────────────────────────────────────────
     {
-        method: 'POST',
-        path: '/v1/users',
-        reply: (r) => {
-            const b = body(r);
-            const existing = USERS.find((u) => u.id === b.id);
-            if (existing) {
-                return apiError(409, 'conflict', `A user with id "${existing.id}" already exists.`, 'Use the existing user.', {
-                    existing_id: existing.id,
-                });
-            }
-            return ok({
-                object: 'user',
-                name: null,
-                email: null,
-                phone: null,
-                phone_verified_at: null,
-                spend_cap_usd_per_month: null,
-                metadata: {},
-                ...b,
-                status: 'active',
-                created_at: new Date(FIXTURE_NOW_MS).toISOString(),
-            });
-        },
-    },
-    {
         method: 'PATCH',
         path: '/v1/users/:id',
         reply: (r) => {

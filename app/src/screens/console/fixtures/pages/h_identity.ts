@@ -390,17 +390,6 @@ const profileRoutes: FixtureRoute[] = [
     { method: 'GET', path: '/v1/browser_profiles/:id', reply: (r) => found(r, BROWSER_PROFILES.find((p) => p.id === r.params.id), 'browser profile') },
     {
         method: 'POST',
-        path: '/v1/browser_profiles',
-        reply: (r) => {
-            const name = String((r.body as { name?: string } | null)?.name ?? '');
-            const userId = r.headers.get('NoClick-User');
-            const taken = BROWSER_PROFILES.find((p) => p.name === name && p.user_id === userId);
-            if (taken) return apiError(409, 'conflict', `A browser profile is already named '${name}'.`, undefined, { existing_id: taken.id });
-            return ok({ object: 'browser_profile', id: rid(200, 9), name, user_id: userId, sites: [], last_used_at: null, created_at: NOW });
-        },
-    },
-    {
-        method: 'POST',
         path: '/v1/browser_profiles/:id/login',
         reply: (r) => {
             const profile = BROWSER_PROFILES.find((p) => p.id === r.params.id);

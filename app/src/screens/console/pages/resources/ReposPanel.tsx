@@ -1,5 +1,5 @@
 // Code repos: Git repositories your code and agents commit to. The table shows each repo's
-// last commit and the apps that deploy it, and New repo makes an empty one; the drawer
+// last commit and the apps that deploy it, and New repo shows the code that makes one; the drawer
 // (`?repo=`, its tab in `?tab=`, the branch it reads in `?branch=`) browses files, commits
 // and branches, with Clone, Export to GitHub and Delete.
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import { fmtBytes, HAIRLINE } from '@/ui/primitives';
 import { authorName, refFor } from '@/lib/repoText';
 import { cn } from '@/ui/utils';
 import { NeedsConnection, Repo, type Commit } from 'noclick';
+import { NEW_SNIPPETS } from '@/screens/console/lib/snippets';
 import { defaultWriteUser, userLabel } from '@/screens/console/lib/userFilter';
 import { useConsole, useConsoleHref } from '@/screens/console/hooks/useConsole';
 import { usePaged } from '@/sdk/usePaged';
@@ -16,6 +17,7 @@ import { invalidateV1, useV1 } from '@/sdk/useV1';
 import { useSearchParam } from '@/screens/console/hooks/useQueryState';
 import { recordRecent } from '@/screens/console/hooks/useRecent';
 import { connectionLook, useScopeConnections } from '../../connections';
+import { NewInCode } from '../../NewInCode';
 import { ConsoleButton, consoleButtonClass } from '../../ui/Button';
 import { ConsoleDialog } from '../../ui/ConsoleDialog';
 import { CopyButton } from '../../ui/CopyButton';
@@ -26,8 +28,7 @@ import { ErrorPanel } from '../../ui/ErrorPanel';
 import { PillSwitch } from '../../ui/PillTabs';
 import { Segmented } from '../../ui/Segmented';
 import { TimeCell } from '../../ui/TimeCell';
-import { UserField } from '../../ui/UserField';
-import { REPOS_EMPTY, withParams } from './AppsFormat';
+import { withParams } from './AppsFormat';
 import { BranchName, Tag } from './AppsParts';
 import { RepoFiles } from './ReposFiles';
 import { ConfirmAction, Field, INPUT, LabeledInput, PanelToolbar, Section, type PanelProps } from './shared';
@@ -413,77 +414,6 @@ function RepoTabs({ repo, active, setTab }: { repo: Repo; active: TabId; setTab:
     );
 }
 
-/** An empty repo for the chosen user (or the account), its first branch `main` unless named. */
-function CreateRepo({ defaultUser, onCreated }: { defaultUser: string | null; onCreated: (repo: Repo) => void }) {
-    const { client } = useConsole();
-    const [open, setOpen] = useState(false);
-    const [user, setUser] = useState<string | null>(defaultUser);
-    const [name, setName] = useState('');
-    const [branch, setBranch] = useState('');
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState<unknown>(undefined);
-    const create = async () => {
-        setBusy(true);
-        setError(undefined);
-        try {
-            const repo = await Repo.create(name.trim(), { client, user, defaultBranch: branch.trim() || undefined });
-            setOpen(false);
-            invalidateV1('repos');
-            invalidateV1('account');
-            toast(`Created ${repo.name}`);
-            onCreated(repo);
-        } catch (e) {
-            setError(e);
-        } finally {
-            setBusy(false);
-        }
-    };
-    return (
-        <>
-            <ConsoleButton
-                variant="primary"
-                onClick={() => {
-                    setUser(defaultUser);
-                    setName('');
-                    setBranch('');
-                    setError(undefined);
-                    setOpen(true);
-                }}
-            >
-                New repo
-            </ConsoleButton>
-            <ConsoleDialog
-                open={open}
-                onOpenChange={setOpen}
-                title="New repo"
-                description="An empty git repo. Commit to it from code, push to it with a clone URL, or deploy it as an app."
-                footer={
-                    <ConsoleButton variant="primary" disabled={busy || !name.trim()} onClick={() => void create()}>
-                        {busy ? 'Creating…' : 'Create repo'}
-                    </ConsoleButton>
-                }
-            >
-                <form
-                    className="flex flex-col gap-3"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        if (name.trim()) void create();
-                    }}
-                >
-                    <LabeledInput label="Name" id="repo-name">
-                        <input id="repo-name" className={cn(INPUT, 'font-mono')} value={name} onChange={(e) => setName(e.target.value)} placeholder="agent-tools" autoComplete="off" />
-                    </LabeledInput>
-                    <LabeledInput label="Default branch" id="repo-branch">
-                        <input id="repo-branch" className={cn(INPUT, 'font-mono')} value={branch} onChange={(e) => setBranch(e.target.value)} placeholder="main" autoComplete="off" />
-                    </LabeledInput>
-                    <UserField value={user} onChange={setUser} />
-                    {error !== undefined && <ErrorPanel error={error} />}
-                </form>
-            </ConsoleDialog>
-        </>
-    );
-}
-
 export function ReposPanel({ user, setUser }: PanelProps) {
     const { client } = useConsole();
     const [repoId, setRepo] = useSearchParam('repo');
@@ -544,7 +474,7 @@ export function ReposPanel({ user, setUser }: PanelProps) {
             <PanelToolbar
                 user={user}
                 setUser={setUser}
-                action={<CreateRepo defaultUser={defaultWriteUser(user)} onCreated={(repo) => setRepo(repo.id, { push: true })} />}
+                action={<NewInCode kind="repo" place={{ user: defaultWriteUser(user) }} />}
             />
             <DataTable
                 rowMenu="repo"
@@ -560,7 +490,7 @@ export function ReposPanel({ user, setUser }: PanelProps) {
                 nextCursor={paged.nextCursor}
                 onLoadMore={() => void paged.loadMore()}
                 loadingMore={paged.loadingMore}
-                empty={<EmptyCode title="No repos yet." hint="A repo is plain git: your code and agents commit to it, and any git client can clone it." snippet={REPOS_EMPTY} />}
+                empty={<EmptyCode title="No repos yet." hint="A repo is plain git: your code and agents commit to it, and any git client can clone it." snippet={NEW_SNIPPETS.repo({ user: defaultWriteUser(user) })} />}
             />
             <RepoDrawer repoId={repoId} row={paged.rows.find((r) => r.id === repoId)} onClose={close} />
         </>

@@ -216,17 +216,6 @@ const volumeRoutes: FixtureRoute[] = [
     { method: 'GET', path: '/v1/volumes', reply: (r) => listed(r, VOLUMES) },
     { method: 'GET', path: '/v1/volumes/:id', reply: (r) => found(volume(r), 'volume') },
     {
-        method: 'POST',
-        path: '/v1/volumes',
-        reply: (r) => {
-            const body = (r.body ?? {}) as { name: string };
-            const user = r.headers.get('NoClick-User');
-            const taken = VOLUMES.find((v) => v.name === body.name && v.user_id === user);
-            if (taken) return apiError(409, 'conflict', `A volume named ${body.name} already exists.`, 'Use Volume.from_name to reach it, or pick another name.', { existing_id: taken.id });
-            return ok({ ...VOLUMES[1], id: vid(9), name: body.name, size_bytes: 0, file_count: 0, mounted_by: [], user_id: user, created_at: NOW });
-        },
-    },
-    {
         method: 'GET',
         path: '/v1/volumes/:id/files',
         reply: (r) => {

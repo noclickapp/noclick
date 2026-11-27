@@ -1,6 +1,7 @@
 // Every snippet the console shows, built in one place. Each is self-contained
 // (import, the idempotent lookup, the call), reads $NOCLICK_API_KEY, and is
-// type-checked (TypeScript) and parsed (Python) by snippets.test.ts.
+// checked by snippets.test.ts: type-checked against the TypeScript client, and
+// its names and keyword arguments against the Python one.
 import { CONSOLE_BASE_URL, DEFAULT_BASE_URL } from 'noclick';
 import { API_KEY_ENV } from '@/sdk/source';
 import type { ConsoleLanguage } from './highlightCode';
@@ -32,35 +33,290 @@ export function snippetTabs(snippet: Snippet): CodeTab[] {
     ];
 }
 
-const AGENT_PY = lines(
-    'agent = noclick.Agent.from_name(',
-    '    "support",',
-    '    create_if_missing=True,',
-    '    instructions="You answer billing questions.",',
-    ')'
-);
-const AGENT_TS = lines(
-    'const agent = Agent.fromName("support", {',
-    '    createIfMissing: true,',
-    '    instructions: "You answer billing questions.",',
-    '});'
-);
+/** Where a New dialog's code makes its thing: for one of your users, on an agent (by name), in a workspace (by id). */
+export interface NewPlace {
+    user?: string | null;
+    agent?: string;
+    workspace?: string;
+}
 
-/** "New agent": the code that makes one. An agent is made in code, never by a form in the console. */
-export const NEW_AGENT: Snippet = {
-    python: lines(PY, '', AGENT_PY),
-    typescript: lines('import { Agent } from "noclick";', '', AGENT_TS),
-};
+/** The most a line of a New dialog's code takes before it's broken, so the dialog never scrolls sideways. */
+const WIDTH = 88;
+
+/** `head(args)`, on one line while it fits, else an argument a line. */
+function pyCall(head: string, args: readonly string[], after = ''): string {
+    const one = `${head}(${args.join(', ')})${after}`;
+    return one.length <= WIDTH ? one : lines(`${head}(`, ...args.map((arg) => `    ${arg},`), `)${after}`);
+}
+
+/** `head(first, { options })`, on one line while it fits, else an option a line. */
+function tsCall(head: string, first: string, options: readonly string[], after = ''): string {
+    const one = `${head}(${first}, { ${options.join(', ')} })${after}`;
+    return one.length <= WIDTH ? one : lines(`${head}(${first}, {`, ...options.map((option) => `    ${option},`), `})${after}`);
+}
+
+/** The `user` argument, when the thing is one of your users'. */
+const pyUser = ({ user }: NewPlace) => (user ? [`user=${lit(user)}`] : []);
+const tsUser = ({ user }: NewPlace) => (user ? [`user: ${lit(user)}`] : []);
+
+/** The agent the snippets make the first time they run: `support`, doing what `instructions` says. */
+function agentLines(place: NewPlace = {}, instructions = 'You answer billing questions.'): Snippet {
+    return {
+        python: pyCall('agent = noclick.Agent.from_name', ['"support"', 'create_if_missing=True', `instructions=${lit(instructions)}`, ...pyUser(place)]),
+        typescript: tsCall('const agent = Agent.fromName', '"support"', ['createIfMissing: true', `instructions: ${lit(instructions)}`, ...tsUser(place)], ';'),
+    };
+}
+
+const AGENT = agentLines();
+
+/**
+ * What each kind's New dialog and its empty list show: the code that makes one. Run again, each finds the same one
+ * (but a sandbox, which lasts its run), and each uses it, since a reference by name sends nothing until it's used.
+ */
+export const NEW_SNIPPETS = {
+    agent: (): Snippet => ({
+        python: lines(PY, '', AGENT.python, 'print(agent.id)'),
+        typescript: lines('import { Agent } from "noclick";', '', AGENT.typescript, 'console.log((await agent.hydrate()).id);'),
+    }),
+    trigger: (place: NewPlace): Snippet => {
+        const name = lit(place.agent ?? 'support');
+        return {
+            python: lines(
+                PY,
+                '',
+                pyCall('agent = noclick.Agent.from_name', [name, ...pyUser(place)]),
+                '# A schedule; noclick.OnWebhook, OnEvent, OnPlatformEvent and OnQueue wake it too.',
+                pyCall('schedule = noclick.Cron', ['"0 8 * * 1-5"', 'tz="Europe/London"', 'message="Post the overnight summary."']),
+                'print(agent.add_trigger(schedule).next_run)'
+            ),
+            typescript: lines(
+                'import { Agent, Cron } from "noclick";',
+                '',
+                place.user ? tsCall('const agent = Agent.fromName', name, tsUser(place), ';') : `const agent = Agent.fromName(${name});`,
+                '// A schedule; OnWebhook, OnEvent, OnPlatformEvent and OnQueue wake it too.',
+                tsCall('const schedule = new Cron', '"0 8 * * 1-5"', ['tz: "Europe/London"', 'message: "Post the overnight summary."'], ';'),
+                'console.log((await agent.addTrigger(schedule)).nextRun);'
+            ),
+        };
+    },
+    /** A user is keyed by your own id for them: here `user_42`. */
+    user: (): Snippet => ({
+        python: lines(PY, '', pyCall('user = noclick.User.from_id', ['"user_42"', 'create_if_missing=True', 'email="ana@example.com"']), 'print(user.status)'),
+        typescript: lines(
+            'import { User } from "noclick";',
+            '',
+            tsCall('const user = User.fromId', '"user_42"', ['createIfMissing: true', 'email: "ana@example.com"'], ';'),
+            'console.log((await user.hydrate()).status);'
+        ),
+    }),
+    webhook: (place: NewPlace): Snippet => {
+        const url = '"https://api.yourco.test/noclick/events"';
+        const events = '["operation.succeeded", "operation.failed", "human.answered"]';
+        return {
+            python: lines(
+                PY,
+                '',
+                pyCall('hook = noclick.Webhook.from_name', [url, 'create_if_missing=True', `events=${events}`, ...pyUser(place)]),
+                'print(hook.secret)  # its signing secret, the first run only'
+            ),
+            typescript: lines(
+                'import { Webhook } from "noclick";',
+                '',
+                tsCall('const hook = Webhook.fromName', url, ['createIfMissing: true', `events: ${events}`, ...tsUser(place)], ';'),
+                'console.log((await hook.hydrate()).secret); // its signing secret, the first run only'
+            ),
+        };
+    },
+    app: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('repo = noclick.Repo.from_name', ['"booking"', 'create_if_missing=True', ...pyUser(place)]),
+            'repo.commit("./site", message="Deploy the site")  # commits only what changed',
+            pyCall('app = noclick.Project.from_name', ['"booking"', 'repo=repo', 'create_if_missing=True', ...pyUser(place)]),
+            'print(app.deploy().wait().url)'
+        ),
+        typescript: lines(
+            'import { Project, Repo } from "noclick";',
+            '',
+            tsCall('const repo = Repo.fromName', '"booking"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'await repo.commit("./site", { message: "Deploy the site" }); // commits only what changed',
+            tsCall('const app = Project.fromName', '"booking"', ['repo', 'createIfMissing: true', ...tsUser(place)], ';'),
+            'console.log((await (await app.deploy()).wait()).url);'
+        ),
+    }),
+    repo: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('repo = noclick.Repo.from_name', ['"agent-tools"', 'create_if_missing=True', ...pyUser(place)]),
+            'print(repo.clone_url(write=True))  # git push here; it works for an hour'
+        ),
+        typescript: lines(
+            'import { Repo } from "noclick";',
+            '',
+            tsCall('const repo = Repo.fromName', '"agent-tools"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'console.log(await repo.cloneUrl({ write: true })); // git push here; it works for an hour'
+        ),
+    }),
+    inbox: (place: NewPlace): Snippet => {
+        const agent = agentLines(place, 'You answer customer email.');
+        return {
+            python: lines(PY, '', agent.python, pyCall('inbox = noclick.Inbox.from_name', ['"support"', 'create_if_missing=True', 'agent=agent', ...pyUser(place)]), 'print(inbox.address)'),
+            typescript: lines(
+                'import { Agent, Inbox } from "noclick";',
+                '',
+                agent.typescript,
+                tsCall('const inbox = Inbox.fromName', '"support"', ['createIfMissing: true', 'agent', ...tsUser(place)], ';'),
+                'console.log((await inbox.hydrate()).address);'
+            ),
+        };
+    },
+    /** In a workspace it holds no agent: an agent there must be one of the workspace's members. */
+    channel: (place: NewPlace): Snippet => {
+        const ws = place.workspace;
+        return {
+            python: lines(
+                PY,
+                '',
+                ...(ws ? [] : [AGENT.python]),
+                pyCall('channel = noclick.Channel.from_name', ['"launch"', 'create_if_missing=True', ws ? `workspace=${lit(ws)}` : 'members=[agent]', ...pyUser(place)]),
+                'print(channel.id)'
+            ),
+            typescript: lines(
+                `import { ${ws ? '' : 'Agent, '}Channel } from "noclick";`,
+                '',
+                ...(ws ? [] : [AGENT.typescript]),
+                tsCall('const channel = Channel.fromName', '"launch"', ['createIfMissing: true', ws ? `workspace: ${lit(ws)}` : 'members: [agent]', ...tsUser(place)], ';'),
+                'console.log((await channel.hydrate()).id);'
+            ),
+        };
+    },
+    sandbox: (place: NewPlace): Snippet => ({
+        python: lines(PY, '', `${pyCall('with noclick.Sandbox.create', ['"python"', 'timeout_s=600', ...pyUser(place)])} as sb:`, `    print(sb.exec("python -c 'print(6 * 7)'").stdout)`),
+        typescript: lines(
+            'import { Sandbox } from "noclick";',
+            '',
+            `const sb = await Sandbox.create({ ${['image: "python"', 'timeoutS: 600', ...tsUser(place)].join(', ')} });`,
+            `console.log((await sb.exec("python -c 'print(6 * 7)'")).stdout);`,
+            'await sb.terminate();'
+        ),
+    }),
+    'browser-profile': (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('profile = noclick.BrowserProfile.from_name', ['"ana-work"', 'create_if_missing=True', ...pyUser(place)]),
+            'login = profile.login("https://portal.example.com", reason="to download your invoices")',
+            'print(login.url)  # where its person signs in, in a live browser'
+        ),
+        typescript: lines(
+            'import { BrowserProfile } from "noclick";',
+            '',
+            tsCall('const profile = BrowserProfile.fromName', '"ana-work"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            tsCall('const login = await profile.login', '"https://portal.example.com"', ['reason: "to download your invoices"'], ';'),
+            'console.log(login.url); // where its person signs in, in a live browser'
+        ),
+    }),
+    database: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('db = noclick.Database.from_name', ['"orders"', 'create_if_missing=True', ...pyUser(place)]),
+            'db.execute("create table if not exists orders (id text primary key, item text)")',
+            'print(db.query("select count(*) as n from orders").rows[0]["n"])'
+        ),
+        typescript: lines(
+            'import { Database } from "noclick";',
+            '',
+            tsCall('const db = Database.fromName', '"orders"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'await db.execute("create table if not exists orders (id text primary key, item text)");',
+            'console.log((await db.query("select count(*) as n from orders")).rows[0].n);'
+        ),
+    }),
+    bucket: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('bucket = noclick.Bucket.from_name', ['"uploads"', 'create_if_missing=True', ...pyUser(place)]),
+            'bucket.put("hello.txt", "Hello from NoClick")',
+            'print(bucket.signed_url("hello.txt", expires_in=3600))'
+        ),
+        typescript: lines(
+            'import { Bucket } from "noclick";',
+            '',
+            tsCall('const bucket = Bucket.fromName', '"uploads"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'await bucket.put("hello.txt", "Hello from NoClick");',
+            'console.log(await bucket.signedUrl("hello.txt", { expiresIn: 3600 }));'
+        ),
+    }),
+    volume: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('vol = noclick.Volume.from_name', ['"datasets"', 'create_if_missing=True', ...pyUser(place)]),
+            'vol.write("/raw/hello.txt", "Hello from NoClick")',
+            `${pyCall('with noclick.Sandbox.create', ['volumes={"/data": vol}', ...pyUser(place)])} as sb:`,
+            '    print(sb.exec("cat /data/raw/hello.txt").stdout)'
+        ),
+        typescript: lines(
+            'import { Sandbox, Volume } from "noclick";',
+            '',
+            tsCall('const vol = Volume.fromName', '"datasets"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'await vol.write("/raw/hello.txt", "Hello from NoClick");',
+            `const sb = await Sandbox.create({ ${['volumes: { "/data": vol }', ...tsUser(place)].join(', ')} });`,
+            'console.log((await sb.exec("cat /data/raw/hello.txt")).stdout);',
+            'await sb.terminate();'
+        ),
+    }),
+    dict: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('seen = noclick.Dict.from_name', ['"processed-orders"', 'create_if_missing=True', ...pyUser(place)]),
+            'if seen.put_if_absent("o_1841", {"status": "refunded"}):',
+            '    print("First time we handle o_1841")',
+            'print(seen.increment("refunds-today"))'
+        ),
+        typescript: lines(
+            'import { Dict } from "noclick";',
+            '',
+            tsCall('const seen = Dict.fromName', '"processed-orders"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'if (await seen.putIfAbsent("o_1841", { status: "refunded" })) {',
+            '    console.log("First time we handle o_1841");',
+            '}',
+            'console.log(await seen.increment("refunds-today"));'
+        ),
+    }),
+    queue: (place: NewPlace): Snippet => ({
+        python: lines(
+            PY,
+            '',
+            pyCall('jobs = noclick.Queue.from_name', ['"invoices"', 'create_if_missing=True', ...pyUser(place)]),
+            'jobs.put({"invoice": "INV-1042"})',
+            'for msg in jobs.iterate(lease_s=60, stop_when_empty=True):',
+            '    print("Sending", msg.body["invoice"])',
+            '    msg.ack()'
+        ),
+        typescript: lines(
+            'import { Queue } from "noclick";',
+            '',
+            tsCall('const jobs = Queue.fromName', '"invoices"', ['createIfMissing: true', ...tsUser(place)], ';'),
+            'await jobs.put({ invoice: "INV-1042" });',
+            'for await (const msg of jobs.iterate({ leaseS: 60, stopWhenEmpty: true })) {',
+            '    console.log("Sending", msg.body);',
+            '    await msg.ack();',
+            '}'
+        ),
+    }),
+} satisfies Record<string, (place: NewPlace) => Snippet>;
+
+export type NewKind = keyof typeof NEW_SNIPPETS;
 
 /** The first call: the Quickstart's example and the empty lists'. */
 export const OPERATIONS_EMPTY: Snippet = {
-    python: lines(PY, '', AGENT_PY, 'print(agent.message("hi").text)'),
-    typescript: lines(
-        'import { Agent } from "noclick";',
-        '',
-        AGENT_TS,
-        'console.log((await agent.message("hi")).text);'
-    ),
+    python: lines(PY, '', AGENT.python, 'print(agent.message("hi").text)'),
+    typescript: lines('import { Agent } from "noclick";', '', AGENT.typescript, 'console.log((await agent.message("hi")).text);'),
 };
 
 export const TOOL_CALLS_EMPTY: Snippet = {
@@ -87,47 +343,6 @@ export const HUMAN_REQUESTS_EMPTY: Snippet = {
         'import { User } from "noclick";',
         'const user = User.fromId("user_42", { createIfMissing: true, email: "ana@example.com" });',
         'console.log(await (await user.human.approve("Send the weekly summary to your team?")).wait());'
-    ),
-};
-
-/** A user is keyed by your own id for them: here `user_42`, created the first time it's used. */
-export const USERS_EMPTY: Snippet = {
-    python: lines(
-        PY,
-        'user = noclick.User.from_id("user_42", create_if_missing=True, email="ana@example.com")',
-        'print(user.status)'
-    ),
-    typescript: lines(
-        'import { User } from "noclick";',
-        'const user = await User.fromId("user_42", { createIfMissing: true, email: "ana@example.com" }).hydrate();',
-        'console.log(user.status);'
-    ),
-};
-
-export const CHANNELS_EMPTY: Snippet = {
-    python: lines(PY, AGENT_PY, 'noclick.Channel.create("launch", members=[agent])'),
-    typescript: lines(
-        'import { Agent, Channel } from "noclick";',
-        AGENT_TS,
-        'await Channel.create("launch", { members: [agent] });'
-    ),
-};
-
-export const INBOXES_EMPTY: Snippet = {
-    python: lines(PY, AGENT_PY, 'print(noclick.Inbox.create(agent=agent).address)'),
-    typescript: lines(
-        'import { Agent, Inbox } from "noclick";',
-        AGENT_TS,
-        'console.log((await Inbox.create({ agent })).address);'
-    ),
-};
-
-export const SANDBOXES_EMPTY: Snippet = {
-    python: lines(PY, 'sandbox = noclick.Sandbox.create("python", timeout_s=600)', 'print(sandbox.id)'),
-    typescript: lines(
-        'import { Sandbox } from "noclick";',
-        'const sandbox = await Sandbox.create({ image: "python", timeoutS: 600 });',
-        'console.log(sandbox.id);'
     ),
 };
 
@@ -175,22 +390,39 @@ export const INSTALL_TABS: CodeTab[] = [
 /** The public docs site, beside the console on the same host. */
 export const DOCS_URL = `${new URL(CONSOLE_BASE_URL).origin}/docs`;
 
+/** What a prompt has the coding agent build: "help me {goal}", its step 3 (`ask`), and the docs page it reads. */
+export interface CoderTask {
+    goal: string;
+    ask: string;
+    /** A page of the docs, as `docsUrl` takes it: `guide/inboxes`. */
+    guide: string;
+}
+
+/** Whose it is and where it goes, for the coding agent, from a dialog's place. */
+function placeNote({ user, agent, workspace }: NewPlace): string {
+    return [
+        agent ? ` It's for my agent ${lit(agent)}.` : '',
+        workspace ? ` It goes in my workspace ${workspace}.` : '',
+        user ? ` Make it as my user ${lit(user)} (my own id for them), with user=${lit(user)}.` : '',
+    ].join('');
+}
+
 /**
  * The prompt a coding agent is handed. It carries a one-time setup code, never a key: the agent's one command
  * trades the code for a key that goes from the response straight into the project's .env, so the key never
  * passes through the agent's context. `apiBase` is the API the console talks to, which minted the code.
  */
-export function coderPrompt(setupCode: string, apiBase: string = DEFAULT_BASE_URL): string {
+export function coderPrompt(setupCode: string, task: CoderTask, { apiBase = DEFAULT_BASE_URL, place = {} }: { apiBase?: string; place?: NewPlace } = {}): string {
     return lines(
-        'Set up NoClick in this project, then build an agent with me.',
+        `Set up NoClick in this project, then help me ${task.goal}.`,
         '',
         '1. Install the SDK for this project\'s language: `pip install noclick` (Python) or `npm install noclick` (TypeScript).',
         '2. Save my API key to .env with this command. It never prints the key, and its code works once, for 30 minutes:',
         `   curl -fsS -X POST ${apiBase}/v1/setup -d code=${setupCode} >> .env`,
         `   Make sure .env is in .gitignore. Never print, read or commit the key. The SDK reads ${API_KEY_ENV}, so load .env when the program starts. If the command fails, ask me for a fresh prompt.`,
-        `3. Ask me what the agent should do and where it runs, then build it. The guide: ${DOCS_URL}/guide. Every class and method: ${DOCS_URL}/reference/python.`,
+        `3. ${task.ask}${placeNote(place)} The guide: ${DOCS_URL}/${task.guide}. Every class and method: ${DOCS_URL}/reference/python.`,
         '',
-        `When it runs, the agent shows up in my console at ${CONSOLE_BASE_URL}.`
+        `When it runs, what it made shows up in my console at ${CONSOLE_BASE_URL}.`
     );
 }
 
@@ -297,15 +529,21 @@ export function keyRevealTabs(rawKey: string): CodeTab[] {
     ];
 }
 
-/** Every static snippet, for the compile check. */
+/** The places a New dialog's code is shown for: the account's own, one of your users', a workspace's. */
+const PLACES: Readonly<Record<string, NewPlace>> = {
+    '': { agent: 'support' },
+    '.user': { user: 'acme', agent: 'support' },
+    '.workspace': { workspace: 'wsp_01', user: 'acme' },
+};
+
+/** Every snippet, for the compile check: the static ones, each kind's New in every place, and the made ones. */
 export const ALL_SNIPPETS: Readonly<Record<string, Snippet>> = {
+    ...Object.fromEntries(
+        Object.entries(NEW_SNIPPETS).flatMap(([kind, make]) => Object.entries(PLACES).map(([suffix, place]) => [`new.${kind}${suffix}`, make(place)]))
+    ),
     OPERATIONS_EMPTY,
     TOOL_CALLS_EMPTY,
     HUMAN_REQUESTS_EMPTY,
-    USERS_EMPTY,
-    CHANNELS_EMPTY,
-    INBOXES_EMPTY,
-    SANDBOXES_EMPTY,
     MACHINES_START,
     PHONE_NUMBERS_EMPTY,
     POLICY_EMPTY,
