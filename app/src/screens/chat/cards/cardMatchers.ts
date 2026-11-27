@@ -31,16 +31,30 @@ export function isPlatformApproval(call: CoordinatorToolCall): boolean {
 }
 
 /** A link a person opens to connect an account, as a platform call made it (a connection made with its link, or a
- *  new link for one) or read back while it waits on them (fetch's `object`: how a link made earlier is handed over):
- *  its provide page, the account type it connects, and what it's for. */
+ *  new link for one; connections_connect answers the link's address and what it connects as its own fields) or read
+ *  back while it waits on them (fetch's `object`: how a link made earlier is handed over): its provide page, the
+ *  account type it connects, and what it's for. */
 export function connectLinkOf(call: CoordinatorToolCall): { url: string; credentialType: string; reason?: string } | undefined {
     if (failed(call.result)) return undefined;
     const response = obj(call.result, 'response') ?? (str(call.result, 'status') === 'awaiting_human' ? obj(call.result, 'object') : undefined);
     const link = str(response, 'object') === 'connect_link' ? response : obj(response, 'connect_link');
-    const url = str(link, 'url');
-    const credentialType = str(link, 'credential_type') ?? str(response, 'credential_type');
+    const url = str(link, 'url') ?? str(call.result, 'connect_url');
+    const credentialType = str(link, 'credential_type') ?? str(response, 'credential_type') ?? str(call.result, 'credential_type');
     if (!url?.includes('/credential/provide/') || !credentialType) return undefined;
-    return { url, credentialType, reason: str(obj(call.args, 'arguments'), 'reason') };
+    return { url, credentialType, reason: str(obj(call.args, 'arguments'), 'reason') ?? str(call.args, 'reason') };
+}
+
+const PROVIDE_LINK = /https?:\/\/[^\s<>()[\]"'`]+\/credential\/provide\/([\w-]+)/g;
+
+/** The request a connect link opens: its token, the last part of its provide page's address. */
+export function provideToken(url: string | undefined): string | undefined {
+    return url ? /\/credential\/provide\/([\w-]+)/.exec(url)?.[1] : undefined;
+}
+
+/** The connect links a reply hands the person (NoClick's provide pages it names), each once, by their tokens: however
+ *  the link was made (a NoClick tool, or the agent's own shell calling the API), the reply is where it's handed over. */
+export function handedLinkTokens(text: string | null | undefined): string[] {
+    return [...new Set([...(text ?? '').matchAll(PROVIDE_LINK)].map((m) => m[1]))];
 }
 
 export function isConnectLink(call: CoordinatorToolCall): boolean {
