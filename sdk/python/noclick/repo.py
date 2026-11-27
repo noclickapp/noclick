@@ -20,7 +20,7 @@ import hashlib
 import os
 from dataclasses import dataclass, field as dc_field
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Sequence, Union, overload
 from urllib.parse import quote
 
 from ._attachment import Attachment
@@ -34,6 +34,9 @@ from ._scope import AMBIENT, resolve_scope
 from .exceptions import Conflict, NotFound
 from .export import ExportBundle
 from .operation import Operation, register_result
+
+if TYPE_CHECKING:
+    from .project import PublicCode
 
 
 @dataclass(frozen=True)
@@ -899,6 +902,58 @@ class Repo(_Object):
         """
         path = f"{await self._repo_path()}/commits/{quote(sha, safe='')}"
         return CommitDiff._from(await self._request("GET", path))
+
+    # --- public ----------------------------------------------------------
+
+    @property
+    def public(self) -> "Optional[PublicCode]":
+        """A space template's code, while it's public (``make_public()``); None while it's private. An app's code is
+        public as its app (``Project.public``)."""
+        from .project import PublicCode
+
+        view = self._sync_raw().get("public")
+        return PublicCode._from(view) if view else None
+
+    @synced
+    async def make_public(self, *, dry_run: bool = False, transfer_cap_usd: Optional[float] = None) -> "PublicCode":
+        """Make a space template public (a repo holding a ``space.json`` at its default branch's head, as
+        ``Workspace.save_as_template`` writes one): anyone can then clone it from its ``origin_url`` and add it from
+        that address. What's public is a copy of that commit's files, never earlier history or other branches; one
+        file that looks like a secret refuses it all, naming each (``noclick.InvalidRequest``, reason
+        ``secrets_found``), as does a space file that doesn't read (reason ``not_a_template``). Called again, it
+        publishes the head as it is then. ``dry_run`` changes nothing; ``transfer_cap_usd`` bounds what clones cost
+        you a month ($5 unless set). Through MCP a first publish waits for the account's owner; a key needs
+        ``projects:publish``, which ``*`` holds only when named. An app's repo goes public as its app
+        (``Project.make_public``).
+
+        Returns:
+            Its ``PublicCode``.
+
+        Usage::
+
+            saved = noclick.Workspace.from_name("Social media").save_as_template()
+            print(saved.repo.make_public().origin_url)
+        """
+        from .project import PublicCode
+
+        raw = await self._request("POST", f"{await self._repo_path()}/public",
+                                  json=compact(dry_run=dry_run or None, transfer_cap_usd=transfer_cap_usd))
+        return PublicCode._from(raw)
+
+    @synced
+    async def make_private(self) -> "PublicCode":
+        """Nobody can clone the template from now on. Copies people already cloned or added stay theirs.
+
+        Returns:
+            Its ``PublicCode``, ``public=False``, its ``summary`` saying so.
+
+        Usage::
+
+            noclick.Repo.from_name("social-media-template").make_private()
+        """
+        from .project import PublicCode
+
+        return PublicCode._from(await self._request("DELETE", f"{await self._repo_path()}/public"))
 
     # --- leaving ---------------------------------------------------------
 

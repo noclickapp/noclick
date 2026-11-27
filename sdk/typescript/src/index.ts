@@ -1264,6 +1264,7 @@ export type {
   MyWorkspace,
   SpaceNoClick,
   SpaceQuestion,
+  SpaceTemplate,
   WorkspaceCreateOptions,
   WorkspaceMember,
   WorkspaceMemberInput,

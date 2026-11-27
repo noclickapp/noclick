@@ -363,6 +363,10 @@ class PublicApp:
     deploy: Dict[str, Any]
     #: Where to report public work that's harmful.
     report: Optional[str]
+    #: ``app`` (an app's code, at its address) or ``template`` (a space template, at its ``origin_url``).
+    kind: Optional[str]
+    #: A template's: what its space file adds (``channels``, ``agents``, ``skills``, ...) and asks for (``asks``).
+    template: Optional[Dict[str, Any]]
     raw: Dict[str, Any] = dc_field(repr=False)
 
     @classmethod
@@ -372,7 +376,7 @@ class PublicApp:
         return cls(raw.get("address") or "", bool(raw.get("public")), raw.get("name"), raw.get("title"),
                    raw.get("clone_url"), raw.get("origin_url"), raw.get("default_branch"), commit.get("sha"),
                    parse_time(commit.get("published_at")), int(raw.get("forks") or 0), raw.get("license"),
-                   dict(raw.get("deploy") or {}), raw.get("report"), raw)
+                   dict(raw.get("deploy") or {}), raw.get("report"), raw.get("kind"), raw.get("template"), raw)
 
     @synced
     @classmethod

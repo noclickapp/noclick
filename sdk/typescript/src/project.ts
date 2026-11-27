@@ -371,7 +371,8 @@ export interface PublicCode {
   raw: JsonObject;
 }
 
-function toPublicCode(value: unknown): PublicCode {
+/** @internal */
+export function toPublicCode(value: unknown): PublicCode {
   const raw = asObject(value);
   const commit = raw.commit && typeof raw.commit === "object" ? asObject(raw.commit) : {};
   const scanned = asObject(raw.scanned);
@@ -410,6 +411,10 @@ export class PublicApp {
   readonly deploy: JsonObject;
   /** Where to report public work that's harmful. */
   readonly report: string | null;
+  /** `app` (an app's code, at its address) or `template` (a space template, at its `originUrl`). */
+  readonly kind: "app" | "template" | null;
+  /** A template's: what its space file adds (`channels`, `agents`, `skills`, ...) and asks for (`asks`). */
+  readonly template: JsonObject | null;
   readonly raw: JsonObject;
 
   /** @internal */
@@ -428,6 +433,8 @@ export class PublicApp {
     this.license = str(raw.license);
     this.deploy = asObject(raw.deploy);
     this.report = str(raw.report);
+    this.kind = raw.kind === "app" || raw.kind === "template" ? raw.kind : null;
+    this.template = raw.template && typeof raw.template === "object" ? asObject(raw.template) : null;
     this.raw = raw;
   }
 

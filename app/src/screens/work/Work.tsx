@@ -45,6 +45,7 @@ import { SpaceDialog } from './SpaceDialog';
 import { dropAccountNoClick, EARLIER_NOCLICK_CHANNEL, giveSpaceNoClick, homeHoldsNoClick, isNoClickChannel, makeHomeNoClickChannel, NOCLICK_CHANNEL, openNoClickChannel, spaceNoClickFixes, useOwnSpaceNoClicks, useSpaceNoClick } from './intro';
 import { ASKED_TITLE, SpaceQuestionsPanel, useSpaceQuestions } from './questions';
 import { usePickerAgents } from './channels/pickerAgents';
+import { SaveTemplateDialog } from './SaveTemplateDialog';
 import { SpaceHeader } from './SpaceHeader';
 import { ArchivedBanner, SpaceSettingsDialog, unarchiveSpace, type SpaceAsk } from './spaceSettings';
 import { isSpaceKind, kindOf, prefetchSpaceShare } from './resources/space/data';
@@ -487,6 +488,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const authorName = (author: ChannelAuthor) => (meIn(author) ? 'You' : (authorMember(author, channel?.members ?? []) ?? { name: author.name }).name);
     const manages = space.role === 'owner' || space.role === 'admin';
     const [spaceAsk, setSpaceAsk] = useState<SpaceAsk | null>(null);
+    const [savingTemplate, setSavingTemplate] = useState(false);
 
     // ── the view's list ─────────────────────────────────────────────────────
     const dmRows: DmRow[] = dmChannels.flatMap((c) => {
@@ -693,6 +695,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             />
             {peopleId && <InviteDialog open={inviting} onOpenChange={setInviting} space={space} people={people} />}
             {spaceAsk && <SpaceSettingsDialog ask={spaceAsk} space={space} spaces={spaces} onClose={() => setSpaceAsk(null)} />}
+            {savingTemplate && <SaveTemplateDialog space={space} client={client} onClose={() => setSavingTemplate(false)} />}
         </>
     );
     const headerWith = (end: ReactNode) => (
@@ -709,6 +712,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             asked={questions?.length ?? 0}
             onAsk={setSpaceAsk}
             onUnarchive={() => void unarchiveSpace(spaces, space)}
+            onSaveTemplate={() => setSavingTemplate(true)}
             end={end}
         />
     );

@@ -61,3 +61,30 @@ test("anyone looks an address up", async () => {
   assert.equal(route.last.query.get("address"), "pilot-hub.noclick.site");
   assert.deepEqual([found.public, found.cloneUrl, found.forks, found.deploy.account_key_scopes], [true, PROJECT.url, 3, ["apps"]]);
 });
+
+test("a space saved as a template goes public with no app", async () => {
+  const { api } = setup();
+  const said = {
+    object: "space_template", name: "Social media", repo_name: "social-media-template",
+    contains: { agents: ["Writer"], app: false }, asks: { connections: [{ integration: "instagram", for: ["Writer"] }] },
+    left_out: [], never: ["the people in the space"], files: 4, summary: "...",
+  };
+  const route = api.on("POST", "/v1/workspaces/ws_1/template", (call: Call) => (call.body as { dry_run?: boolean }).dry_run
+    ? json(said)
+    : json({ ...said, repo: { object: "repo", id: "repo_1", name: "social-media-template", default_branch: "main" },
+        commit: { sha: "c".repeat(40) } }, { status: 201 }));
+  const space = nc.Workspace.fromId("ws_1");
+  const dry = await space.saveAsTemplate({ dryRun: true });
+  assert.deepEqual([route.last.body, dry.repo], [{ dry_run: true }, null]);
+  const saved = await space.saveAsTemplate({ repoName: "lumen-social", includeApp: false });
+  assert.deepEqual(route.last.body, { repo_name: "lumen-social", include_app: false });
+  assert.deepEqual([saved.repo?.id, saved.commitSha, saved.contains.agents], ["repo_1", "c".repeat(40), ["Writer"]]);
+
+  const published = api.on("POST", "/v1/repos/repo_1/public", json({ ...PUBLIC, kind: "template", clone_url: PUBLIC.origin_url }));
+  const made = await saved.repo!.makePublic();
+  assert.deepEqual([published.last.body, made.cloneUrl], [{}, PUBLIC.origin_url]);
+  api.on("GET", "/v1/public/apps", json({ object: "public_app", address: "api.noclick.com", public: true, kind: "template",
+    template: { agents: ["Writer"] } }));
+  const found = await nc.PublicApp.lookup(PUBLIC.origin_url);
+  assert.deepEqual([found.kind, found.template], ["template", { agents: ["Writer"] }]);
+});

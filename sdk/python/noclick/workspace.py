@@ -25,6 +25,7 @@ from ._scope import AMBIENT, resolve_scope, user_ref
 from .agent import Agent, agent_id
 from .channel import Channel, ChannelMessage, Subscription, _message_id, subscription_body
 from .exceptions import Conflict, NotFound
+from .repo import Repo
 from .session import Session
 from .user import User
 
@@ -124,6 +125,38 @@ class SpaceQuestion:
     def _from(cls, raw: Dict[str, Any]) -> "SpaceQuestion":
         return cls(raw["id"], raw["workspace_id"], raw.get("question") or "", raw.get("status") or "waiting",
                    raw.get("answer"), parse_time(raw.get("asked_at")), parse_time(raw.get("answered_at")), raw)
+
+
+@dataclass(frozen=True)
+class SpaceTemplate:
+    """A space saved as a template (``Workspace.save_as_template``): the repository holding it (None on a dry run),
+    what it holds, what it asks whoever adds it for, and what stayed behind."""
+
+    name: str
+    repo_name: str
+    repo: Optional[Repo]
+    #: Its parts by name: ``channels``, ``agents``, ``skills``, ``memories``, ``automations``, ``stores``, and
+    #: whether it carries an ``app``.
+    contains: Dict[str, Any]
+    #: What it asks for: ``connections`` (``{integration, for}``), ``secrets`` (``{name, keys, for}``), and
+    #: ``budget_usd_per_month``.
+    asks: Dict[str, Any]
+    #: Each ``{what, why}`` that stayed behind.
+    left_out: List[Dict[str, str]]
+    #: What a template never carries, in a person's words.
+    never: List[str]
+    files: int
+    commit_sha: Optional[str]
+    summary: str
+    raw: Dict[str, Any] = dc_field(repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any], client: Any = None, user: Any = AMBIENT) -> "SpaceTemplate":
+        repo = raw.get("repo")
+        return cls(raw.get("name") or "", raw.get("repo_name") or "",
+                   Repo._new(raw=repo, client=client, user=user) if repo else None, dict(raw.get("contains") or {}),
+                   dict(raw.get("asks") or {}), list(raw.get("left_out") or []), list(raw.get("never") or []),
+                   int(raw.get("files") or 0), (raw.get("commit") or {}).get("sha"), raw.get("summary") or "", raw)
 
 
 @dataclass(frozen=True)
@@ -875,6 +908,37 @@ class Workspace(_Object):
             print(acme.summary()["kinds"]["agents"]["working"])
         """
         return await self._request("GET", f"{await self._id_path()}/summary") or {}
+
+    @synced
+    async def save_as_template(self, *, repo_name: Optional[str] = None, description: Optional[str] = None,
+                               app: Any = None, include_app: bool = True, dry_run: bool = False) -> SpaceTemplate:
+        """Save the space as a template: a new repository of yours holding its ``space.json`` (its channels, agents
+        and their instructions, the skills and memories they use, the automations it shares), those parts' files,
+        and the code of the app it shares. Wherever one of your connections is named, the template names its
+        integration and asks for it. Never its messages, data, people, accounts or secrets' values (``never``);
+        ``left_out`` names what else stayed behind and why. The repository is private until you make it public
+        (``template.repo.make_public()``). Only one of the account's own spaces, never the personal space.
+
+        Args:
+            repo_name: The new repository's name (the space's name with ``-template`` unless set).
+            description: What the template does, in a line.
+            app: The app (or its id) whose code it carries, when the space shares several.
+            include_app: ``False`` carries no app's code.
+            dry_run: Say what would go in, making nothing.
+
+        Returns:
+            Its ``SpaceTemplate``: ``repo`` (None on a dry run), what it ``contains`` and ``asks`` for.
+
+        Usage::
+
+            saved = noclick.Workspace.from_name("Social media").save_as_template(description="Posts for Lumen.")
+            print(saved.contains["agents"], saved.asks.get("connections"))
+            print(saved.repo.make_public().origin_url)
+        """
+        raw = await self._request("POST", f"{await self._id_path()}/template", json=compact(
+            repo_name=repo_name, description=description, app_id=await ref_id(app) if app is not None else None,
+            include_app=None if include_app else False, dry_run=dry_run or None)) or {}
+        return SpaceTemplate._from(raw, client=self._client, user=self._call_scope())
 
     @synced
     async def noclick_agent(self) -> SpaceNoClick:

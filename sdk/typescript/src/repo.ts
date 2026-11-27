@@ -16,6 +16,9 @@ import {
 } from "./object.ts";
 import type { AllowExisting, CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
+// Read when a method runs, never as this module loads, so project.ts importing Repo back is no problem.
+import { toPublicCode } from "./project.ts";
+import type { PublicCode } from "./project.ts";
 import { resolveScope } from "./scope.ts";
 import type { UserOption, UserRef } from "./scope.ts";
 
@@ -396,6 +399,11 @@ export class Repo extends ApiObject {
     return RepoImport._fromResponse(raw.operation, { client: options.client, user: scope });
   }
 
+  /** @internal A repo as another call's answer holds it. */
+  static _fromView(raw: JsonObject, init: { client?: NoClick; user?: UserOption }): Repo {
+    return new Repo({ raw, client: init.client, user: init.user });
+  }
+
   /** @internal What an import settles with, as its `Repo`. */
   static _fromImport(result: unknown, op: Operation<unknown>): Repo {
     const raw = asObject(asObject(result).repo);
@@ -464,6 +472,32 @@ export class Repo extends ApiObject {
   }
   get createdAt(): Date | null {
     return parseTime(this._field("created_at"));
+  }
+  /** A space template's code, while it's public (`makePublic()`); null while it's private. An app's code is public as its app (`Project.public`). */
+  get public(): PublicCode | null {
+    const raw = this._field<JsonObject | null>("public");
+    return raw ? toPublicCode(raw) : null;
+  }
+
+  /**
+   * Make a space template public (a repo holding a `space.json` at its default branch's head, as
+   * `workspace.saveAsTemplate()` writes one): anyone can then clone it from its `originUrl` and add it from that
+   * address. What's public is a copy of that commit's files, never earlier history or other branches; one file that
+   * looks like a secret refuses it all, naming each (`InvalidRequest`, reason `secrets_found`), as does a space file
+   * that doesn't read (reason `not_a_template`). Called again, it publishes the head as it is then. `dryRun` changes
+   * nothing; `transferCapUsd` bounds what clones cost you a month ($5 unless set). Through MCP a first publish waits
+   * for the account's owner; a key needs `projects:publish`, which `*` holds only when named. An app's repo goes
+   * public as its app (`Project.makePublic`).
+   */
+  async makePublic(options: { dryRun?: boolean; transferCapUsd?: number } = {}): Promise<PublicCode> {
+    return toPublicCode(await this._request("POST", await this._repoPath("public"), {
+      json: compact({ dry_run: options.dryRun || undefined, transfer_cap_usd: options.transferCapUsd }),
+    }));
+  }
+
+  /** Nobody can clone the template from now on. Copies people already cloned or added stay theirs. */
+  async makePrivate(): Promise<PublicCode> {
+    return toPublicCode(await this._request("DELETE", await this._repoPath("public")));
   }
 
   protected async _load(): Promise<JsonObject> {

@@ -1,9 +1,10 @@
 // The space's name atop its list, Slack's way: the name itself opens the space's menu (inviting people, who's in it,
-// what members can reach, its name and logo; archiving or deleting one of yours, leaving one you joined), with no icons
+// what members can reach, its name and logo, saving one of yours as a template; archiving or deleting one of yours,
+// leaving one you joined), with no icons
 // beside it. A space is made from the rail's + alone (a phone, which has none, from the spaces its menu switches
 // between), so your personal space has no menu on a laptop until you share it: then inviting people and who's in it.
 import type { ReactNode } from 'react';
-import { Archive, ArchiveRestore, ChevronDown, KeyRound, LogOut, MessageCircleQuestion, Pencil, Plus, Trash2, UserPlus, UsersRound } from 'lucide-react';
+import { Archive, ArchiveRestore, ChevronDown, KeyRound, LayoutTemplate, LogOut, MessageCircleQuestion, Pencil, Plus, Trash2, UserPlus, UsersRound } from 'lucide-react';
 import { WorkspaceTile } from '@/screens/channels/workspaces';
 import { MENU_SURFACE } from '@/ui/menus';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/ui/dropdown-menu';
@@ -32,6 +33,7 @@ export function SpaceHeader({
     onNewSpace,
     onAsk,
     onUnarchive,
+    onSaveTemplate,
     asked = 0,
     end,
 }: {
@@ -50,6 +52,8 @@ export function SpaceHeader({
     /** Asks before archiving or deleting one of yours, or leaving one you joined. */
     onAsk: (ask: SpaceAsk) => void;
     onUnarchive: () => void;
+    /** Saves one of your spaces as a template: its setup, into a repository of yours. */
+    onSaveTemplate: () => void;
     /** How many questions your NoClick asked the space's: when any, they're a menu row of their own. */
     asked?: number;
     /** At the row's other end: the list's fold glyph, where the list folds. */
@@ -148,14 +152,18 @@ export function SpaceHeader({
                                     <span className="text-[12.5px] tabular-nums text-muted-foreground">{asked}</span>
                                 </DropdownMenuItem>
                             )}
+                            {((manages && !space.archived) || (space.own && !space.personal)) && <DropdownMenuSeparator className={SEPARATOR} />}
                             {manages && !space.archived && (
-                                <>
-                                    <DropdownMenuSeparator className={SEPARATOR} />
-                                    <DropdownMenuItem onSelect={onEdit} className={ITEM}>
-                                        <Pencil className={ICON} strokeWidth={1.75} />
-                                        Name and logo
-                                    </DropdownMenuItem>
-                                </>
+                                <DropdownMenuItem onSelect={onEdit} className={ITEM}>
+                                    <Pencil className={ICON} strokeWidth={1.75} />
+                                    Name and logo
+                                </DropdownMenuItem>
+                            )}
+                            {space.own && !space.personal && (
+                                <DropdownMenuItem onSelect={onSaveTemplate} className={ITEM}>
+                                    <LayoutTemplate className={ICON} strokeWidth={1.75} />
+                                    Save as template
+                                </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator className={SEPARATOR} />
                             {space.own ? (

@@ -58,3 +58,29 @@ def test_anyone_looks_an_address_up(api, client):
     assert route.calls.last.request.url.params["address"] == "pilot-hub.noclick.site"
     assert (found.public, found.clone_url, found.forks, found.deploy["account_key_scopes"]) == (
         True, PROJECT["url"], 3, ["apps"])
+
+
+def test_a_space_saved_as_a_template_goes_public_with_no_app(api, client):
+    said = {"object": "space_template", "name": "Social media", "repo_name": "social-media-template",
+            "contains": {"agents": ["Writer"], "app": False},
+            "asks": {"connections": [{"integration": "instagram", "for": ["Writer"]}]},
+            "left_out": [], "never": ["the people in the space"], "files": 4, "summary": "..."}
+    route = api.post("/v1/workspaces/ws_1/template").mock(side_effect=lambda request: httpx.Response(
+        200, json=said) if body(request).get("dry_run") else httpx.Response(201, json={
+            **said, "repo": {"object": "repo", "id": "repo_1", "name": "social-media-template", "default_branch": "main"},
+            "commit": {"sha": "c" * 40}}))
+    space = nc.Workspace.from_id("ws_1")
+    dry = space.save_as_template(dry_run=True)
+    assert body(route.calls.last.request) == {"dry_run": True} and dry.repo is None
+    saved = space.save_as_template(repo_name="lumen-social", include_app=False)
+    assert body(route.calls.last.request) == {"repo_name": "lumen-social", "include_app": False}
+    assert (saved.repo.id, saved.commit_sha, saved.contains["agents"]) == ("repo_1", "c" * 40, ["Writer"])
+
+    published = api.post("/v1/repos/repo_1/public").respond(json={**PUBLIC, "kind": "template",
+                                                                  "clone_url": PUBLIC["origin_url"]})
+    made = saved.repo.make_public()
+    assert body(published.calls.last.request) == {} and made.clone_url == PUBLIC["origin_url"]
+    api.get("/v1/public/apps").respond(json={"object": "public_app", "address": "api.noclick.com", "public": True,
+                                             "kind": "template", "template": {"agents": ["Writer"]}})
+    found = nc.PublicApp.lookup(PUBLIC["origin_url"])
+    assert (found.kind, found.template) == ("template", {"agents": ["Writer"]})

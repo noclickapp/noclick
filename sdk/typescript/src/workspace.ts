@@ -18,6 +18,7 @@ import {
 import type { AllowExisting, CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import type { NoClick as NoClickClient } from "./client.ts";
 import { resolveClient } from "./client.ts";
+import { Repo } from "./repo.ts";
 import { resolveScope } from "./scope.ts";
 import { Session } from "./session.ts";
 import { trashed } from "./trash.ts";
@@ -297,6 +298,27 @@ export interface WorkspaceSummaryKind {
 export interface WorkspaceSummary {
   workspaceId: string;
   kinds: Record<string, WorkspaceSummaryKind>;
+  raw: JsonObject;
+}
+
+/**
+ * A space saved as a template (`workspace.saveAsTemplate()`): the repository holding it (null on a dry run), what it
+ * holds, what it asks whoever adds it for, and what stayed behind.
+ */
+export interface SpaceTemplate {
+  name: string;
+  repoName: string;
+  repo: Repo | null;
+  /** Its parts by name: `channels`, `agents`, `skills`, `memories`, `automations`, `stores`, and whether it carries an `app`. */
+  contains: JsonObject;
+  /** What it asks for: `connections` (`{integration, for}`), `secrets` (`{name, keys, for}`), and `budget_usd_per_month`. */
+  asks: JsonObject;
+  leftOut: { what: string; why: string }[];
+  /** What a template never carries, in a person's words. */
+  never: string[];
+  files: number;
+  commitSha: string | null;
+  summary: string;
   raw: JsonObject;
 }
 
@@ -689,6 +711,34 @@ export class Workspace extends ApiObject {
   async summary(): Promise<WorkspaceSummary> {
     const raw = await this._request<JsonObject>("GET", `${await this.path()}/summary`);
     return { workspaceId: String(raw.workspace_id), kinds: asObject(raw.kinds) as unknown as Record<string, WorkspaceSummaryKind>, raw };
+  }
+
+  /**
+   * Save the space as a template: a new repository of yours holding its `space.json` (its channels, agents and their
+   * instructions, the skills and memories they use, the automations it shares), those parts' files, and the code of
+   * the app it shares. Wherever one of your connections is named, the template names its integration and asks for
+   * it. Never its messages, data, people, accounts or secrets' values (`never`); `leftOut` names what else stayed
+   * behind and why. The repository is private until you make it public (`template.repo.makePublic()`). Only one of
+   * the account's own spaces, never the personal space. `dryRun` says what would go in, making nothing.
+   */
+  async saveAsTemplate(options: {
+    repoName?: string; description?: string; app?: string | ApiObject; includeApp?: boolean; dryRun?: boolean;
+  } = {}): Promise<SpaceTemplate> {
+    const raw = await this._request<JsonObject>("POST", `${await this.path()}/template`, {
+      json: compact({
+        repo_name: options.repoName, description: options.description,
+        app_id: options.app === undefined ? undefined : await refId(options.app),
+        include_app: options.includeApp === false ? false : undefined, dry_run: options.dryRun || undefined,
+      }),
+    });
+    const repo = raw.repo && typeof raw.repo === "object" ? asObject(raw.repo) : null;
+    return {
+      name: str(raw.name) ?? "", repoName: str(raw.repo_name) ?? "",
+      repo: repo ? Repo._fromView(repo, { client: this._client, user: this._callScope() }) : null,
+      contains: asObject(raw.contains), asks: asObject(raw.asks),
+      leftOut: asList(raw.left_out) as { what: string; why: string }[], never: asList(raw.never) as string[],
+      files: num(raw.files) ?? 0, commitSha: str(asObject(raw.commit).sha), summary: str(raw.summary) ?? "", raw,
+    };
   }
 
   /**
