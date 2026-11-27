@@ -15,7 +15,8 @@ import { useModelAccounts } from '../newAgent/catalog';
 import { clockOf, XS_BUTTON, XS_GHOST, XS_OUTLINE } from './styles';
 import { changedFiles, stepsOf, type Failure, type MarkerEntry, type NoteEntry, type TurnEntry, type UserEntry } from '@/lib/agentThread/thread';
 import { TURN_FAILED_LINE } from '@/lib/agentThread/messages';
-import { withoutAskLinks } from '@/lib/linkDisplay';
+import { withoutLinks } from '@/lib/linkDisplay';
+import { cardLinks } from './cards';
 import { PlanLimitLine } from './ModelSwitch';
 import { useSlot } from '@/slots';
 import { REPLY_MARKDOWN } from '../slots';
@@ -254,8 +255,8 @@ export function TurnView({
         </div>
     );
     const steers = turn.parts.filter((p) => p.kind === 'user');
-    // A link one of its asks draws as a card below shows there alone.
-    const said = cards && turn.reply ? withoutAskLinks(turn.reply, turn.asks) : turn.reply;
+    // A link one of its cards below draws shows there alone.
+    const said = cards && turn.reply ? withoutLinks(turn.reply, cardLinks(turn)) : turn.reply;
     return (
         <div className="group" data-row="turn" data-status={turn.status}>
             {running ? (

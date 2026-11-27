@@ -138,6 +138,12 @@ export function byNoClick(author: ChannelAuthor): boolean {
     return author.type === 'system' || (postedForYou(author) && author.name === NOCLICK_NAME);
 }
 
+/** Whoever a pin's notice names ("Priya Shah pinned a message to this channel."): NoClick's own line in the room; null
+ *  for anything else. */
+export function pinnerNamed(author: { type: string }, text: string): string | null {
+    return author.type === 'system' ? (/^(.+?) pinned a message to this channel\.$/.exec(text)?.[1] ?? null) : null;
+}
+
 /** Who wrote a message, drawn as a member: you, a member of the room, or (one who left, or one posting for you) the
  *  name it posted under. */
 export function authorMember(author: ChannelAuthor, members: ChannelMember[]): ChannelMember | null {

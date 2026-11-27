@@ -9,12 +9,13 @@ import { ChevronRight, Eye, Hash, MessagesSquare, SquareArrowOutUpRight } from '
 import type { ChannelAuthor, HarnessRequest, MessageChannel, MessageChannelPost, RequestDecision } from 'noclick';
 import { MemberAvatar } from '@/screens/channels/avatars';
 import { MessageBody } from '@/screens/channels/MessageBody';
-import { authorMember, YOU } from '@/screens/channels/model';
+import { authorMember, NOCLICK_NAME, pinnerNamed, YOU } from '@/screens/channels/model';
 import type { ChannelAuthor as PostAuthor, ChannelMember } from '@/screens/channels/types';
 import { cn } from '@/ui/utils';
-import { withoutAskLinks } from '@/lib/linkDisplay';
+import { withoutLinks } from '@/lib/linkDisplay';
 import { allStepsOf, stepsOf, type Failure, type Step, type TurnEntry, type UserEntry } from '@/lib/agentThread/thread';
 import { doing, Elapsed, failedStep, Shine, StepList, type ToolCalls } from './Activity';
+import { cardLinks } from './cards';
 import { ApprovalRow, PlanCard, QuestionSummary, RefusedNote } from './Rows';
 import { clockOf, spent } from './styles';
 
@@ -34,7 +35,7 @@ export interface ChannelTurnProps {
     failureTold?: boolean;
     /** Opens the channel (at the thread its reply posts in). */
     onOpen?: (channelId: string, thread?: string) => void;
-    /** The cards its calls of NoClick's own tools draw, under its foot. */
+    /** The cards its calls of NoClick's own tools draw, under its reply. */
     cards?: ReactNode;
 }
 
@@ -43,6 +44,8 @@ const NO_CHANNELS = new Map<string, string>();
 /** A post's author as the channel draws them: you, an agent, a person. */
 function memberOf(author: ChannelAuthor, mine: ChannelTurnProps['mine']): ChannelMember {
     if (mine(author)) return YOU;
+    // NoClick's own note in the room wears its mark, as the channel draws it.
+    if (author.type === 'system') return { id: 'noclick', kind: 'human', name: NOCLICK_NAME, noclick: true };
     // The account's own post, read by someone else (a person in its space): its owner's.
     if (author.type === 'account' && !author.id) return { id: 'account', kind: 'human', name: 'The owner' };
     return authorMember({ ...author, type: author.type as PostAuthor['type'], name: author.name ?? '' }, []) ?? { id: `${author.type}:${author.id ?? author.name}`, kind: 'human', name: author.name || 'Someone' };
@@ -61,7 +64,8 @@ export function nowWords(turn: TurnEntry): string {
 /** Its reply so far: whole once it's in, else what it has written. */
 const replyOf = (turn: TurnEntry | null): string => (turn ? (turn.reply ?? turn.parts.flatMap((p) => (p.kind === 'text' ? [p.text] : [])).join('\n\n')).trim() : '');
 
-function Row({ member, name, at, agent, children }: { member: ChannelMember; name: string; at: number | null; agent?: boolean; children: ReactNode }) {
+/** A post's row; `under`, what goes under its words in its column (a reply's cards). */
+function Row({ member, name, at, agent, children, under }: { member: ChannelMember; name: string; at: number | null; agent?: boolean; children: ReactNode; under?: ReactNode }) {
     return (
         <div className="flex gap-2.5" data-post>
             <MemberAvatar member={member} size={28} className="mt-0.5" />
@@ -72,6 +76,7 @@ function Row({ member, name, at, agent, children }: { member: ChannelMember; nam
                     {at !== null && <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{clockOf(at)}</span>}
                 </p>
                 <div className="text-[14px] leading-relaxed text-foreground/90">{children}</div>
+                {under}
             </div>
         </div>
     );
@@ -157,7 +162,9 @@ export function ChannelTurn({ entry, turn, agent, mine, header, mode, requests, 
     const reply = replyOf(turn);
     const from = turn?.startedAt ?? entry.at;
     // Everyone the card names, so an @mention of one of them reads as the channel draws it.
-    const members = [agent.face, ...channel.posts.map((p) => memberOf(p.author, mine))];
+    // A pin's notice says nothing a turn acts on, so none is handed one; one kept from before is left out.
+    const posts = channel.posts.filter((p) => pinnerNamed(p.author, p.text) === null);
+    const members = [agent.face, ...posts.map((p) => memberOf(p.author, mine))];
     const where = channel.thread ? `A thread in #${channel.name}` : (channel.space?.name ?? 'Channel');
     const started = !!turn && (turn.parts.length > 0 || turn.reasoning.length > 0);
     let own: ReactNode;
@@ -165,8 +172,8 @@ export function ChannelTurn({ entry, turn, agent, mine, header, mode, requests, 
     else if (reply)
         own = (
             <div className={cn(running && "[&_p:last-of-type]:after:ml-0.5 [&_p:last-of-type]:after:inline-block [&_p:last-of-type]:after:h-[1em] [&_p:last-of-type]:after:w-[2px] [&_p:last-of-type]:after:animate-pulse [&_p:last-of-type]:after:bg-foreground/70 [&_p:last-of-type]:after:align-[-0.15em] [&_p:last-of-type]:after:content-['']")} data-writing={running || undefined}>
-                {/* A link one of its asks draws as a card below shows there alone. */}
-                <MessageBody text={cards && turn ? withoutAskLinks(reply, turn.asks) : reply} members={members} channels={NO_CHANNELS} onChannel={() => {}} />
+                {/* A link one of its cards below draws shows there alone. */}
+                <MessageBody text={cards && turn ? withoutLinks(reply, cardLinks(turn)) : reply} members={members} channels={NO_CHANNELS} onChannel={() => {}} />
             </div>
         );
     else
@@ -211,10 +218,10 @@ export function ChannelTurn({ entry, turn, agent, mine, header, mode, requests, 
                             </span>
                         </p>
                     )}
-                    {channel.posts.map((p) => (
+                    {posts.map((p) => (
                         <Post key={p.id} post={p} mine={mine} members={members} />
                     ))}
-                    <Row member={agent.face} name={agent.name} at={!running && reply && turn?.endedAt ? turn.endedAt : null} agent>
+                    <Row member={agent.face} name={agent.name} at={!running && reply && turn?.endedAt ? turn.endedAt : null} agent under={cards}>
                         {own}
                     </Row>
                 </div>
@@ -225,7 +232,6 @@ export function ChannelTurn({ entry, turn, agent, mine, header, mode, requests, 
                     </div>
                 )}
                 {turn && (started || !running) && <Foot agentName={agent.name} turn={turn} running={running} failed={failed} from={from} mode={mode} />}
-                {cards}
             </div>
             <ReadFold name={agent.name} text={entry.text} />
         </div>

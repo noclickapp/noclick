@@ -7,7 +7,7 @@ import { MORROW_SITE_HISTORY, MORROW_SITE_OPERATIONS } from '../fixtures/morrowS
 import { PLAN_LINKS_HISTORY } from '../fixtures/planLinksThread';
 import { TEAM_HISTORY } from '../fixtures/agentTeamThread';
 import { approvalScene, buildScene } from './cardScenes';
-import { CHANNELS_HISTORY, FILES, MEMORIES, WORKING } from './threads';
+import { CHANNEL_TURN_HISTORY, CHANNELS_HISTORY, FILES, MEMORIES, WORKING } from './threads';
 import type { ChatWorld } from './worlds';
 
 export interface ChatScene {
@@ -36,6 +36,7 @@ export const SCENES: readonly ChatScene[] = [
     { id: 'plan-links', title: 'Plan sign-in links (a long turn’s cards)', group: 'Threads', world: { history: PLAN_LINKS_HISTORY } },
     { id: 'morrow-site', title: 'A site built, deployed and checked', group: 'Threads', world: { history: MORROW_SITE_HISTORY, operations: MORROW_SITE_OPERATIONS } },
     { id: 'agent-team', title: 'An agent team and its channel', group: 'Threads', world: { history: TEAM_HISTORY, team: true } },
+    { id: 'channel-turn', title: 'A channel’s turn: an account to connect', group: 'Threads', world: { history: CHANNEL_TURN_HISTORY } },
 
     { id: 'build-asking', title: 'An automation being built, waiting on its question', group: 'Cards', world: buildScene('asking') },
     { id: 'build-done', title: 'An automation built, its app published', group: 'Cards', world: buildScene('done') },

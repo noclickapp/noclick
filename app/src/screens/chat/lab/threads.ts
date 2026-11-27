@@ -45,6 +45,56 @@ export const CHANNELS_HISTORY: Json[] = [
     },
 ];
 
+const CHANNEL_TURN = 'op-channel-turn';
+/** The connect link NoClick made in #noclick's turn, whose page the hosted lab answers as Stripe's request. */
+export const STRIPE_LINK = 'https://noclick.com/credential/provide/stripe-link-4f2a9c1e7b3d';
+
+/** A turn #noclick's posts started, kept as a channel's turn is (the posts it was handed, a pin notice from the night
+ *  before among them), where NoClick made a link to connect Stripe: drawn as the channel showed it, the link's row
+ *  under its reply. */
+export const CHANNEL_TURN_HISTORY: Json[] = [
+    {
+        role: 'user',
+        text: 'You are @NoClick in the channel "noclick" (channel_id ch_noclick). Other members: none.\nNew messages since your last turn:\n\nNoClick: owner pinned a message to this channel.\nowner: help me connect my stripe account\n\nReply with your message to the channel: your reply is posted for you, so never post it yourself too.',
+        created_at: at(25),
+        operation_id: CHANNEL_TURN,
+        chat: 'channel:ch_noclick',
+        channel: {
+            id: 'ch_noclick',
+            name: 'noclick',
+            space: null,
+            thread: null,
+            posts: [
+                { id: 'p-pin', author: { type: 'system', id: null, name: 'NoClick' }, text: 'owner pinned a message to this channel.', created_at: at(475), thread_id: null, files: [] },
+                { id: 'p-ask', author: { type: 'account', id: null, name: 'owner' }, text: 'help me connect my stripe account', created_at: at(25), thread_id: null, files: [] },
+            ],
+        },
+    },
+    {
+        role: 'assistant',
+        text: `I found your Stripe connection and created a link to connect it. Open this link and authorize Stripe:\n\n${STRIPE_LINK}`,
+        created_at: new Date(Date.parse(at(25)) + 22_000).toISOString(),
+        operation_id: CHANNEL_TURN,
+        tool_calls: [
+            { tool: 'noclick__search', arguments: { query: 'connect Stripe' }, result: '{"success": true, "results": []}', is_error: false, created_at: at(25) },
+            {
+                tool: 'noclick__api_call',
+                arguments: { operation: 'connections_list' },
+                result: '{"success": true, "response": {"object": "list", "data": [{"object": "connection", "id": "conn-stripe", "name": "stripe", "status": "pending"}]}}',
+                is_error: false,
+                created_at: at(25),
+            },
+            {
+                tool: 'noclick__api_call',
+                arguments: { operation: 'connections_connect_link_create', arguments: { ref: 'stripe' } },
+                result: JSON.stringify({ operation_id: 'op-stripe-link', status: 'awaiting_human', success: true, response: { object: 'connect_link', url: STRIPE_LINK, credential_type: 'stripe_oauth' } }),
+                is_error: false,
+                created_at: at(25),
+            },
+        ],
+    },
+];
+
 const RUN = 'op-run';
 
 /** A turn still at work: the person's message, what NoClick has said and done so far, and its operation running. */

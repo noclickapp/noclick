@@ -285,6 +285,13 @@ export function isPhonePurchaseLink(call: CoordinatorToolCall): boolean {
     return !!phonePurchasePageOf(call);
 }
 
+/** The pages a call's card sends a person to: an account's connect link, a payment link, a number's purchase page, a
+ *  held call's page to approve it. */
+export function cardPagesOf(call: CoordinatorToolCall): string[] {
+    const approval = isPlatformApproval(call) ? str(call.result, 'approval_id') : undefined;
+    return [connectLinkOf(call)?.url, str(paymentLinkOf(call), 'url'), phonePurchasePageOf(call), approval && `/approve/${approval}`].filter((page): page is string => !!page);
+}
+
 /** What each of the chat's cards draws on its canvas, tried in this order after a host's. Every browser card is about
  *  the conversation's one browser, so it's tried ahead of the operation's, which would otherwise claim an act's call. */
 export const CARD_CANVASES: readonly CanvasOf[] = [browserCanvas, workflowBuildCanvas, agentCanvas, channelCanvas, mcpServerCanvas, operationCanvas];

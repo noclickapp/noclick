@@ -72,6 +72,7 @@ GET /v1/operations/op-build-markets/wait
 GET /v1/operations/op-held-6d1c2b8e
 GET /v1/operations/op-held-9a8b7c6d
 GET /v1/operations/op-run
+GET /v1/operations/op-stripe-link
 GET /v1/projects
 GET /v1/projects/6b1f0c2e-4c1a-4b8e-9a51-2f7d3c8e1a01/live
 GET /v1/projects/6b1f0c2e-4c1a-4b8e-9a51-2f7d3c8e1a01/live/edits

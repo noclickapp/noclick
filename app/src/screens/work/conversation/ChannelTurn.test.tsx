@@ -28,6 +28,16 @@ const CHANNEL = {
         { id: 'm_2', author: { type: 'account', id: null, name: 'owner' }, text: 'and is it on the preview?', created_at: iso(-1), thread_id: null, files: [{ name: 'notes.txt', mime_type: 'text/plain' }] },
     ],
 };
+// A reply naming the link its call's card draws (a card, not an ask the turn's result kept), and a link no card draws.
+const LINK = 'https://noclick.com/credential/provide/tok-stripe';
+const CONNECT = {
+    tool: 'noclick__api_call',
+    arguments: { operation: 'connections_connect_link_create' },
+    result: JSON.stringify({ operation_id: 'op-link', status: 'awaiting_human', success: true, response: { object: 'connect_link', url: LINK, credential_type: 'stripe_oauth' } }),
+    is_error: false,
+    created_at: iso(2),
+};
+const LINKED = { id: '3', role: 'assistant', text: `Open this link and authorize Stripe:\n\n${LINK}\n\nThe [docs](https://docs.stripe.com) say more.`, created_at: iso(4), operation_id: OP, tool_calls: [CONNECT] };
 const ASKED = { id: '2', role: 'user', text: READ, created_at: iso(0), operation_id: OP, chat: 'channel:ch_1', channel: CHANNEL };
 
 type Frame = JsonObject & { type: string };
@@ -124,9 +134,44 @@ describe('a channel turn', () => {
         expect(onOpen).toHaveBeenCalledWith('ch_1', 'm_0');
     });
 
+    it('draws a connect link’s row once, under its reply inside the card, and leaves an old pin notice out', async () => {
+        const pin = { id: 'm_0', author: { type: 'system', id: null, name: 'NoClick' }, text: 'owner pinned a message to this channel.', created_at: iso(-600), thread_id: null, files: [] };
+        const halted = { id: 'm_00', author: { type: 'system', id: null, name: 'NoClick' }, text: 'Stopped after 10 agent turns without a person.', created_at: iso(-300), thread_id: null, files: [] };
+        const { card } = show(
+            history(
+                { ...ASKED, channel: { ...CHANNEL, posts: [pin, halted, ...CHANNEL.posts] } },
+                LINKED
+            )
+        );
+        const posts = [...card().querySelectorAll('[data-post]')];
+        // The pin notice is the channel's record, never a post; NoClick's other notes wear its mark, as the channel draws them.
+        expect(card().textContent).not.toContain('pinned a message');
+        expect(posts[0]!.textContent).toContain('Stopped after 10 agent turns');
+        expect(posts[0]!.querySelector('[data-noclick-mark]')).toBeTruthy();
+        // The row sits in the reply's own column, inside the card's body, ahead of its foot.
+        const reply = posts[posts.length - 1]!;
+        const row = await screen.findByTestId('coordinator-cards');
+        expect(reply.contains(row)).toBe(true);
+        expect(row.compareDocumentPosition(card().querySelector('[data-channel-foot]')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // Its link reads once, as the row; a link no card draws stays in the reply.
+        expect([...reply.querySelectorAll(`a[href="${LINK}"]`)].every((a) => row.contains(a))).toBe(true);
+        expect(reply.textContent).toContain('Open this link and authorize Stripe:');
+        expect(reply.querySelector('a[href="https://docs.stripe.com"]')).toBeTruthy();
+    });
+
     it('draws a message with no channel as it did', () => {
         const { view } = show(history({ id: '1', role: 'user', text: 'Hi there', created_at: iso(0), operation_id: OP, author: { type: 'account', id: null, name: 'Sam' } }));
         expect(view.container.querySelector('[data-row="channel-turn"]')).toBeNull();
         expect(screen.getByText('Hi there')).toBeTruthy();
+    });
+
+    it('reads a link its card draws once in a turn no channel started too', async () => {
+        const { view } = show(history({ id: '1', role: 'user', text: 'help me connect my stripe account', created_at: iso(0), operation_id: OP, author: { type: 'account', id: null, name: 'Sam' } }, LINKED));
+        const row = await screen.findByTestId('coordinator-cards');
+        const reply = view.container.querySelector('[data-reply]')!;
+        expect(reply.textContent).toContain('Open this link and authorize Stripe:');
+        expect(reply.querySelector(`a[href="${LINK}"]`)).toBeNull();
+        expect(reply.querySelector('a[href="https://docs.stripe.com"]')).toBeTruthy();
+        expect(row.querySelector(`a[href="${LINK}"]`)).toBeTruthy();
     });
 });

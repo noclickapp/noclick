@@ -14,7 +14,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react';
 import { ArrowRight, Check, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus, UserMinus, UserPlus } from 'lucide-react';
 import type { AgentNeed } from '@/lib/agentNeeds';
-import { withoutAskLinks } from '@/lib/linkDisplay';
+import { askLinks, withoutLinks } from '@/lib/linkDisplay';
 import type { AccountMenuUser } from '@/ui/accountParts';
 import { LogoMark, MARK_IN_A_SHAPE } from '@/ui/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/ui/dropdown-menu';
@@ -29,7 +29,7 @@ import { MessageAttachments } from './attachments';
 import { MemberAvatar, MENTION_HUE, presenceFace } from './avatars';
 import { EmojiPicker } from './EmojiPicker';
 import { MessageBody } from './MessageBody';
-import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, postedForYou } from './model';
+import { AGENT_HUES, authorMember, byNoClick, handoffsOf, modeLine, NOCLICK_NAME, pinnerNamed, postedForYou } from './model';
 import { ScheduleLines } from './schedules';
 import type { Channel, ChannelAuthor, ChannelMember, ChannelMembership, ChannelMessage, ChannelQuestionOption, ChannelReaction, ChannelSchedule } from './types';
 
@@ -501,7 +501,7 @@ function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; membe
  *  which names them ("Priya Shah pinned a message…"). */
 function pinnerOf(msg: ChannelMessage, target: ChannelMessage | undefined, members: ChannelMember[]): string {
     if (target?.pinned) return firstName(target.pinned.by, members);
-    const named = /^(.+?) pinned a message/.exec(msg.text)?.[1];
+    const named = pinnerNamed(msg.author, msg.text);
     return named ? named.split(' ')[0] : firstName(msg.author, members);
 }
 
@@ -722,7 +722,7 @@ export function MessageRow({
     const canReact = !msg.ephemeral && !msg.pending;
     const lit = actions.lit === msg.id;
     // A link one of its asks draws as a row below shows there alone.
-    const words = msg.turnAsks && actions.TurnAsks ? withoutAskLinks(msg.text, msg.turnAsks.asks) : msg.text;
+    const words = msg.turnAsks && actions.TurnAsks ? withoutLinks(msg.text, askLinks(msg.turnAsks.asks)) : msg.text;
     return (
         <div
             className={cn(

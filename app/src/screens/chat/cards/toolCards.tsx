@@ -12,6 +12,7 @@ import { Status } from '@/ui/chat/primitives';
 import { cardRefsOf, list, str, type CoordinatorToolCall, type JsonObject } from '@/lib/toolCalls';
 import type { CoordinatorJobs } from '@/lib/threadJobs';
 import { MORE_CARDS, SETUP_CARD, type MoreCards } from '../slots';
+import { cardPagesOf } from './cardMatchers';
 import { CanvasesProvider, newestCanvases, useNewerCard, type SetupCardRef } from './canvases';
 import { CARDS } from './table';
 import { CoordinatorJobsContext, ThreadMovedContext } from './toolCardRegistry';
@@ -34,6 +35,11 @@ function cardFor(call: CoordinatorToolCall, turn: readonly CoordinatorToolCall[]
 export function drawsCard(call: CoordinatorToolCall, turn: readonly CoordinatorToolCall[]): boolean {
     const more = standing(MORE_CARDS);
     return !!more.named[call.tool] || [...more.cards, ...CARDS].some((m) => m.match(call, turn));
+}
+
+/** The pages the cards a turn's calls draw send a person to, which its reply leaves to them. */
+export function drawnPages(calls: readonly CoordinatorToolCall[]): string[] {
+    return calls.filter((call) => !call.running && drawsCard(call, calls)).flatMap(cardPagesOf);
 }
 
 const LINK = /https?:\/\/[^\s<>()[\]"'`]+/g;

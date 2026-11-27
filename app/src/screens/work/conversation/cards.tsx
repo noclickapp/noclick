@@ -7,7 +7,7 @@ import { useMemo, type ReactNode } from 'react';
 import { announcedResult } from '@/lib/agentThread/messages';
 import type { ThreadJobs } from '@/lib/threadJobs';
 import type { TurnAsk } from '@/lib/turnAsks';
-import { CardsProvider, TurnCards } from '@/screens/chat/cards/toolCards';
+import { CardsProvider, drawnPages, TurnCards } from '@/screens/chat/cards/toolCards';
 import { TurnAskedProvider } from '@/screens/chat/cards/toolCardRegistry';
 import { parsePartialJson } from '@/lib/partialJson';
 import type { CoordinatorToolCall, JsonObject } from '@/lib/toolCalls';
@@ -67,6 +67,9 @@ export function turnCalls(turn: TurnEntry): CoordinatorToolCall[] {
         .map((a): CoordinatorToolCall => ({ id: `${turn.key}:announced:${String(a.id)}`, tool: String(a.kind), args: {}, result: announcedResult(a), running: false, startedAt: turn.startedAt }));
     return [...calls, ...announced, ...askCalls(turn, named)];
 }
+
+/** The pages the cards under a turn send a person to (TurnCardsOf's): its reply leaves each to its card. */
+export const cardLinks = (turn: TurnEntry): string[] => drawnPages(turnCalls(turn));
 
 /** What the cards under the thread's turns read: the work they started, followed as `follow` follows it. */
 export function ThreadCards({ thread, follow, children }: { thread: Thread; follow: ThreadJobs; children: ReactNode }) {
