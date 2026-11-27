@@ -397,9 +397,8 @@ export interface StepOutputOptions extends CallOptions {
 
 /**
  * A workflow's place in NoClick's template library (`Workflow.template`): whether it's `published`, its `title`,
- * `slug`, `description` and page (`publicUrl`) when it is, with where NoClick's review of it stands (`listing`:
- * `in_review`, `listed` in the gallery, or `not_listed` with the `listingReason`), and the `draftTitle` and
- * `draftDescription` saved for it before it's published.
+ * `slug`, `description` and page (`publicUrl`) when it is, and the `draftTitle` and `draftDescription` saved for it
+ * before it's published. Its page opens by its link; nothing lists it.
  */
 export interface WorkflowTemplate {
   published: boolean;
@@ -409,8 +408,6 @@ export interface WorkflowTemplate {
   publicUrl: string | null;
   draftTitle: string | null;
   draftDescription: string | null;
-  listing: "in_review" | "listed" | "not_listed" | null;
-  listingReason: string | null;
   raw: JsonObject;
 }
 
@@ -426,8 +423,6 @@ function toWorkflowTemplate(value: unknown): WorkflowTemplate {
     publicUrl: str(template.public_url),
     draftTitle: str(draft.title),
     draftDescription: str(draft.description),
-    listing: str(template.listing) as WorkflowTemplate["listing"],
-    listingReason: str(template.listing_reason),
     raw,
   };
 }
