@@ -22,7 +22,7 @@ export interface LabScene {
 }
 
 const SPACE = { space: 'ws_noclick' };
-/** Home lists every agent of the account. */
+/** Your personal space's agents. */
 const HOME_AGENTS = { space: 'home', show: 'agents' };
 const PROFILE = { ...HOME_AGENTS, agent: agentId(1), panel: 'profile' };
 const SPACE_MENU: LabStep = { press: '[data-testid="space-menu"]' };

@@ -24,7 +24,7 @@ import { useChannelSchedules } from '@/screens/channels/useChannelSchedules';
 import { useWork } from '../context';
 import { cn } from '@/ui/utils';
 import { LogoMark, MARK_IN_A_SHAPE } from '@/ui/LogoMark';
-import { keptByNoClick, noclickNaming, useAgentFrames, useAgentStates, useNoClickId } from '../agents/reads';
+import { keptByNoClick, noclickNaming, useAgentFrames, useAgentStates, useNoClickId, useSpaceNoClicks } from '../agents/reads';
 import { isNoClickChannel, noclickChannelTopic, useSpaceNoClick } from '../intro';
 import { ASKED_TITLE } from '../questions';
 import { ChannelMembers } from './ChannelMembers';
@@ -129,6 +129,7 @@ function ChannelPaneBody({
     // joined under).
     const noclick = useNoClickId();
     const ours = useSpaceNoClick(channel.workspaceId ?? null);
+    const personal = useSpaceNoClicks().personal.has(channel.workspaceId ?? '');
     const mentionable = useMemo(() => {
         const yours = new Map(channels.agents.map((a) => [a.id, a]));
         const named = (m: ChannelMember, space: { name: string } | null): ChannelMember => {
@@ -137,11 +138,11 @@ function ChannelPaneBody({
         };
         return channel.members.map((m): ChannelMember => {
             if (noclick && m.agentId === noclick) return named(m, null);
-            if (m.noclick && (ours ? m.agentId === ours.agentId : !!channel.workspaceId)) return named(m, { name: spaceName });
+            if (m.noclick && (ours ? m.agentId === ours.agentId : !!channel.workspaceId && !personal)) return named(m, { name: spaceName });
             const agent = yours.get(agentKey(m) ?? '');
             return agent ? { ...m, ...(agent.markType ? { markType: agent.markType } : {}), ...(agent.role ? { role: agent.role } : {}) } : m;
         });
-    }, [channel, channels.agents, noclick, ours, spaceName]);
+    }, [channel, channels.agents, noclick, ours, personal, spaceName]);
     const members = useMemo(() => [YOU, ...mentionable], [mentionable]);
     const history = channels.history(channel.id);
     const messages = useMemo(() => history?.messages ?? [], [history]);
@@ -149,7 +150,7 @@ function ChannelPaneBody({
     // The space's NoClick works quietly in a channel (judging who needs to know what was posted): its turns show only
     // in its own NoClick channel, where it answers.
     const theNoClickChannel = isNoClickChannel(channel, noclick, ours?.agentId);
-    const topic = theNoClickChannel ? noclickChannelTopic(channel) : channel.topic;
+    const topic = theNoClickChannel ? noclickChannelTopic(channel, personal) : channel.topic;
     const shownChannel = useMemo(() => (topic === channel.topic ? channel : { ...channel, topic }), [channel, topic]);
     const busy = mentionable.filter((m) => m.busy && !(ours && m.agentId === ours.agentId && !theNoClickChannel));
     // Who is at it, over the box: agents at work or waiting on you (their steps where the reader sees agents' activity:

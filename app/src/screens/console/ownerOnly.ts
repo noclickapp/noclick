@@ -123,12 +123,6 @@ export const OWNER_ONLY = {
         why: 'A key is the account, not the person who joined someone else’s space.',
         operations: ['POST /v1/me/workspaces/{workspace_id}/sessions', 'DELETE /v1/me/workspaces/{workspace_id}'],
     },
-    /** Opening the personal space to people, so they can be invited into it. */
-    sharePersonalSpace: {
-        what: 'Sharing your personal space',
-        why: 'Only the account’s owner, signed in, opens their personal space to people.',
-        operations: ['POST /v1/me/personal_space'],
-    },
     /** An agent's sandbox: its files (read and written), a command run there, and a shell of your own on it. */
     agentSandbox: {
         what: 'An agent’s sandbox',

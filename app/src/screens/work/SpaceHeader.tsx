@@ -1,8 +1,7 @@
 // The space's name atop its list, Slack's way: the name itself opens the space's menu (inviting people, who's in it,
 // what members can reach, its name and logo, saving one of yours as a template; archiving or deleting one of yours,
-// leaving one you joined), with no icons
-// beside it. A space is made from the rail's + alone (a phone, which has none, from the spaces its menu switches
-// between), so your personal space has no menu on a laptop until you share it: then inviting people and who's in it.
+// leaving one you joined), with no icons beside it. A space is made from the rail's + alone (a phone, which has none,
+// from the spaces its menu switches between). Your personal space is never archived, deleted or saved as a template.
 import type { ReactNode } from 'react';
 import { Archive, ArchiveRestore, ChevronDown, KeyRound, LayoutTemplate, LogOut, MessageCircleQuestion, Pencil, Plus, Trash2, UserPlus, UsersRound } from 'lucide-react';
 import { WorkspaceTile } from '@/screens/channels/workspaces';
@@ -12,7 +11,7 @@ import { cn } from '@/ui/utils';
 import type { WorkPanel } from './place';
 import { ASKED_TITLE } from './questions';
 import type { SpaceAsk } from './spaceSettings';
-import type { WorkSpace } from './spaces';
+import { isYourPersonal, type WorkSpace } from './spaces';
 
 const ITEM = 'gap-2.5 rounded-lg px-2.5 py-2 text-[14px] max-md:py-2.5 max-md:text-[15px]';
 const ICON = 'h-4 w-4 text-muted-foreground';
@@ -59,23 +58,13 @@ export function SpaceHeader({
     /** At the row's other end: the list's fold glyph, where the list folds. */
     end?: ReactNode;
 }) {
-    const home = !space.workspaceId;
-    const shared = home && !!space.sharedId;
+    const yours = isYourPersonal(space);
     const name = (
         <>
             {spaces && <WorkspaceTile workspace={space} size={28} />}
             <span className="truncate">{space.name}</span>
         </>
     );
-    if (home && !spaces && !shared)
-        return (
-            <div data-space-head className="flex h-12 shrink-0 items-center pl-2 pr-2.5">
-                <h2 className="flex min-w-0 items-center gap-1.5 px-2 py-1 text-[15px] font-semibold" data-testid="space-name">
-                    {name}
-                </h2>
-                {end}
-            </div>
-        );
     const manages = space.role === 'owner' || space.role === 'admin';
     const counts = [people !== null && plural(people, 'person', 'people'), agents !== null && plural(agents, 'agent', 'agents')].filter(Boolean).join(' · ');
     return (
@@ -94,7 +83,7 @@ export function SpaceHeader({
                         <div className="min-w-0">
                             <p className="truncate text-[15px] font-semibold">{space.name}</p>
                             <p className="truncate text-[12.5px] text-muted-foreground">
-                                {home ? 'Your personal space' : space.personal ? `${space.accountName ?? 'Someone'}’s personal space` : space.accountName ? `${space.accountName}’s space` : counts}
+                                {yours ? 'Your personal space' : space.personal ? `${space.accountName ?? 'Someone'}’s personal space` : space.accountName ? `${space.accountName}’s space` : counts}
                             </p>
                         </div>
                     </div>
@@ -114,83 +103,67 @@ export function SpaceHeader({
                                 <Plus className={ICON} strokeWidth={1.75} />
                                 New space
                             </DropdownMenuItem>
-                            {(!home || shared) && <DropdownMenuSeparator className={SEPARATOR} />}
-                        </>
-                    )}
-                    {shared && (
-                        <>
-                            <DropdownMenuItem onSelect={onInvite} className={ITEM}>
-                                <UserPlus className={ICON} strokeWidth={1.75} />
-                                Invite people
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => onMembers('people')} className={ITEM}>
-                                <UsersRound className={ICON} strokeWidth={1.75} />
-                                Members{counts && <span className="ml-auto text-[12.5px] tabular-nums text-muted-foreground">{counts}</span>}
-                            </DropdownMenuItem>
-                        </>
-                    )}
-                    {!home && (
-                        <>
-                            {manages && !space.archived && (
-                                <DropdownMenuItem onSelect={onInvite} className={ITEM}>
-                                    <UserPlus className={ICON} strokeWidth={1.75} />
-                                    Invite people to {space.name}
-                                </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem onSelect={() => onMembers('people')} className={ITEM}>
-                                <UsersRound className={ICON} strokeWidth={1.75} />
-                                Members and agents
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => onMembers('access')} className={ITEM}>
-                                <KeyRound className={ICON} strokeWidth={1.75} />
-                                What members can reach
-                            </DropdownMenuItem>
-                            {asked > 0 && (
-                                <DropdownMenuItem onSelect={() => onMembers('questions')} className={ITEM}>
-                                    <MessageCircleQuestion className={ICON} strokeWidth={1.75} />
-                                    <span className="flex-1">{ASKED_TITLE}</span>
-                                    <span className="text-[12.5px] tabular-nums text-muted-foreground">{asked}</span>
-                                </DropdownMenuItem>
-                            )}
-                            {((manages && !space.archived) || (space.own && !space.personal)) && <DropdownMenuSeparator className={SEPARATOR} />}
-                            {manages && !space.archived && (
-                                <DropdownMenuItem onSelect={onEdit} className={ITEM}>
-                                    <Pencil className={ICON} strokeWidth={1.75} />
-                                    Name and logo
-                                </DropdownMenuItem>
-                            )}
-                            {space.own && !space.personal && (
-                                <DropdownMenuItem onSelect={onSaveTemplate} className={ITEM}>
-                                    <LayoutTemplate className={ICON} strokeWidth={1.75} />
-                                    Save as template
-                                </DropdownMenuItem>
-                            )}
                             <DropdownMenuSeparator className={SEPARATOR} />
-                            {space.own ? (
-                                <>
-                                    {space.archived ? (
-                                        <DropdownMenuItem onSelect={onUnarchive} className={ITEM}>
-                                            <ArchiveRestore className={ICON} strokeWidth={1.75} />
-                                            Unarchive space
-                                        </DropdownMenuItem>
-                                    ) : (
-                                        <DropdownMenuItem onSelect={() => onAsk('archive')} className={ITEM}>
-                                            <Archive className={ICON} strokeWidth={1.75} />
-                                            Archive space
-                                        </DropdownMenuItem>
-                                    )}
-                                    <DropdownMenuItem onSelect={() => onAsk('delete')} className={DANGER}>
-                                        <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-                                        Delete space
-                                    </DropdownMenuItem>
-                                </>
+                        </>
+                    )}
+                    {manages && !space.archived && (
+                        <DropdownMenuItem onSelect={onInvite} className={ITEM}>
+                            <UserPlus className={ICON} strokeWidth={1.75} />
+                            Invite people to {space.name}
+                        </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onSelect={() => onMembers('people')} className={ITEM}>
+                        <UsersRound className={ICON} strokeWidth={1.75} />
+                        Members and agents
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => onMembers('access')} className={ITEM}>
+                        <KeyRound className={ICON} strokeWidth={1.75} />
+                        What members can reach
+                    </DropdownMenuItem>
+                    {asked > 0 && (
+                        <DropdownMenuItem onSelect={() => onMembers('questions')} className={ITEM}>
+                            <MessageCircleQuestion className={ICON} strokeWidth={1.75} />
+                            <span className="flex-1">{ASKED_TITLE}</span>
+                            <span className="text-[12.5px] tabular-nums text-muted-foreground">{asked}</span>
+                        </DropdownMenuItem>
+                    )}
+                    {((manages && !space.archived) || (space.own && !space.personal)) && <DropdownMenuSeparator className={SEPARATOR} />}
+                    {manages && !space.archived && (
+                        <DropdownMenuItem onSelect={onEdit} className={ITEM}>
+                            <Pencil className={ICON} strokeWidth={1.75} />
+                            Name and logo
+                        </DropdownMenuItem>
+                    )}
+                    {space.own && !space.personal && (
+                        <DropdownMenuItem onSelect={onSaveTemplate} className={ITEM}>
+                            <LayoutTemplate className={ICON} strokeWidth={1.75} />
+                            Save as template
+                        </DropdownMenuItem>
+                    )}
+                    {!yours && <DropdownMenuSeparator className={SEPARATOR} />}
+                    {yours ? null : space.own ? (
+                        <>
+                            {space.archived ? (
+                                <DropdownMenuItem onSelect={onUnarchive} className={ITEM}>
+                                    <ArchiveRestore className={ICON} strokeWidth={1.75} />
+                                    Unarchive space
+                                </DropdownMenuItem>
                             ) : (
-                                <DropdownMenuItem onSelect={() => onAsk('leave')} className={DANGER}>
-                                    <LogOut className="h-4 w-4" strokeWidth={1.75} />
-                                    Leave {space.name}
+                                <DropdownMenuItem onSelect={() => onAsk('archive')} className={ITEM}>
+                                    <Archive className={ICON} strokeWidth={1.75} />
+                                    Archive space
                                 </DropdownMenuItem>
                             )}
+                            <DropdownMenuItem onSelect={() => onAsk('delete')} className={DANGER}>
+                                <Trash2 className="h-4 w-4" strokeWidth={1.75} />
+                                Delete space
+                            </DropdownMenuItem>
                         </>
+                    ) : (
+                        <DropdownMenuItem onSelect={() => onAsk('leave')} className={DANGER}>
+                            <LogOut className="h-4 w-4" strokeWidth={1.75} />
+                            Leave {space.name}
+                        </DropdownMenuItem>
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>

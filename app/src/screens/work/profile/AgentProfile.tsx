@@ -157,7 +157,8 @@ function About({ agent, onOpenMachine, onOpenChannel, onTriggers }: { agent: Age
     const face = faces.get(agent.id) ?? { id: agent.id, kind: 'agent' as const, name, ...(facts.noclick ? { noclick: true } : {}) };
     const working = entry?.status === 'working';
     const needs = (entry?.needs ?? 0) > 0;
-    const space = place.space && place.space !== HOME_SPACE ? place.space : null;
+    // A NoClick isn't one of a space's agents to take out.
+    const space = place.space && place.space !== HOME_SPACE && !facts.noclick ? place.space : null;
     // Deleted, you go on to the next agent as the list orders them.
     const order = (states.data ?? []).map((s) => entryOf(s, undefined, Date.now())).sort(byAttention).map((e) => e.id);
     const deleting = useDeleteAgent(order);

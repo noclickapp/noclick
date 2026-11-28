@@ -6,7 +6,7 @@ import type { SpaceKind, SpaceShare, Thing } from './data';
 /** Where the tab is: its overview (null), one kind's list, or one item's page. */
 export type SpaceAt = { kind: SpaceKind; item?: string } | null;
 
-export type Dialog = { kind: 'create'; of: SpaceKind } | { kind: 'add'; of: SpaceKind } | { kind: 'delete'; key: string } | { kind: 'share'; key: string } | null;
+export type Dialog = { kind: 'create'; of: SpaceKind } | { kind: 'add'; of: SpaceKind } | { kind: 'delete'; key: string } | null;
 
 export interface Pane {
     spaceId: string;

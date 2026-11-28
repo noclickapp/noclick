@@ -1,17 +1,15 @@
 // @vitest-environment happy-dom
 // A space's Resources name each of the account's connections by the ref the platform resolves: a named connection by
 // its name, an account connected in the NoClick app by `credential:<id>`. Named by its name, an app account shared
-// with a space, given to one from home or deleted from home named no connection, or, where a named connection had its
-// name, that other account: the one shared or deleted for good. A space's link names what it shares by its id, so a
-// named connection shared already was still offered (by its name) and adding it again was refused.
-import { cleanup, configure, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
+// with a space named no connection, or, where a named connection had its name, that other account: the one shared for
+// good. A space's link names what it shares by its id, so a named connection shared already was still offered (by its
+// name) and adding it again was refused.
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { Connection, Workspace } from 'noclick';
 import { Toaster } from 'sonner';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { WorkProviders } from '../../agents/fixtures/providers';
 import { fakeWork, SPACE_ID } from '../../agents/fixtures/workAgents';
-import { HOME_SPACE } from '../../place';
-import { deletePath } from './actions';
 import { share, useSpaceShare } from './data';
 import { AddDialog } from './dialogs';
 
@@ -46,22 +44,6 @@ function namedOnThePlatform(ref: string, connections: readonly Json[]): Json | u
 
 /** The account's connections as the API lists them. */
 const listed = async (fake: ReturnType<typeof world>) => (await Connection.list({ client: fake.client })).map((c) => c.raw as Json);
-
-it('names each of home’s connections by its own ref, so deleting one deletes that account', async () => {
-    const fake = world();
-    const { result } = renderHook(() => useSpaceShare(HOME_SPACE), { wrapper: ({ children }) => <WorkProviders client={fake.client}>{children}</WorkProviders> });
-    await waitFor(() => expect(result.current.of('connections').some((t) => t.ref === APP_KEY.id)).toBe(true));
-    const connections = await listed(fake);
-    const things = result.current.of('connections');
-    // One row each, the app's key and the named connection of its name apart.
-    expect(new Set(things.map((t) => t.key)).size).toBe(things.length);
-    for (const t of things) expect(namedOnThePlatform(t.ref, connections)).toBeTruthy();
-    const app = things.find((t) => t.ref === APP_KEY.id)!;
-    expect(namedOnThePlatform(app.ref, connections)).toMatchObject({ origin: 'app', account: APP_KEY.account });
-    expect(deletePath(app)).toBe(`/v1/connections/${encodeURIComponent(APP_KEY.id)}`);
-    const named = things.find((t) => t.ref === APP_KEY.name)!;
-    expect(namedOnThePlatform(named.ref, connections)).toMatchObject({ account: NAMED_KEY_ACCOUNT });
-});
 
 /** The space's "Add from the account" for connections, with how many of its connections are shared with it. */
 function Adding() {

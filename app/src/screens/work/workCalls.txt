@@ -84,6 +84,8 @@ GET /v1/workspaces/ws_noclick/noclick
 GET /v1/workspaces/ws_noclick/questions
 GET /v1/workspaces/ws_noclick/resources
 GET /v1/workspaces/ws_noclick/summary
+GET /v1/workspaces/ws_personal
+GET /v1/workspaces/ws_personal/invites
 GET /v1/workspaces/ws_social
 GET /v1/workspaces/ws_social/invites
 GET /v1/workspaces/ws_social/noclick

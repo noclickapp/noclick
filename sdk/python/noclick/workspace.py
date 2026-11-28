@@ -73,7 +73,8 @@ class WorkspaceMember:
 class MyWorkspace:
     """A workspace as the signed-in person sees it (``Workspace.mine``): their account's
     (``own``, ``role`` ``owner``) or one they joined, whose it is (``account_name``) and
-    their ``user_id`` there (their login id)."""
+    their ``user_id`` there (their login id). ``personal``: a personal space, the one every
+    account has, where what's made without naming a space goes."""
 
     id: str
     name: str
@@ -86,12 +87,13 @@ class MyWorkspace:
     member_id: Optional[str]
     joined_at: Any
     raw: Dict[str, Any] = dc_field(repr=False)
+    personal: bool = False
 
     @classmethod
     def _from(cls, raw: Dict[str, Any]) -> "MyWorkspace":
         return cls(raw["id"], raw.get("name") or "", raw.get("logo_url"), bool(raw.get("own")), raw.get("role") or "",
                    raw.get("status"), raw.get("account_name"), raw.get("user_id"), raw.get("member_id"),
-                   parse_time(raw.get("joined_at")), raw)
+                   parse_time(raw.get("joined_at")), raw, bool(raw.get("personal")))
 
 
 @dataclass(frozen=True)
@@ -350,7 +352,9 @@ class Workspace(_Object):
     ``logo_url`` is the https image a workspace rail shows (its initials without one).
 
     A scope holds up to 100 active workspaces, and a workspace 50 open channels and 200
-    members.
+    members. Every account also has its personal space (``personal``), made the first time
+    it's read: a space like any other, where an agent or a channel made without naming a
+    space goes, uncapped, never archived or deleted.
     """
 
     _repr_keys = ("id", "name", "status")
@@ -360,6 +364,9 @@ class Workspace(_Object):
     logo_url: Optional[str] = field("logo_url", doc="The image that stands for it (``None``: its initials).")
     user_id: Optional[str] = field("user_id", doc="The user it belongs to (``None``: your account).")
     status: str = field("status", doc="``active``, or ``archived``: its channels closed, everything still readable.")
+    personal: Optional[bool] = field(
+        "personal", doc="The account's personal space: where what's made without naming a space goes.",
+    )
     budget_usd_per_month: Optional[float] = field(
         "budget_usd_per_month", doc="What its channels' agent turns may spend in a month (``None``: no cap of its own).",
     )
@@ -1034,9 +1041,9 @@ class Workspace(_Object):
     @synced
     @classmethod
     async def personal_space(cls, *, client: Optional[Client] = None) -> MyWorkspace:
-        """Your personal space (your channels in no workspace) as a space people can join, made the first time: its
-        invites, people and DMs go through it. Its channels stay where they are, shown to its people, never your own
-        chat with NoClick. Signed in to NoClick.
+        """Your personal space: the space every account has, made the first time it's read, where an agent or a
+        channel made without naming a space goes. Invite people to it as to any space; they never see your own chat
+        with NoClick there. Signed in to NoClick; ``mine()`` lists it too, first.
 
         Returns:
             It, as ``mine()`` lists it.
@@ -1052,11 +1059,11 @@ class Workspace(_Object):
     @synced
     @classmethod
     async def mine(cls, *, client: Optional[Client] = None) -> List[MyWorkspace]:
-        """The workspaces you see, signed in to NoClick: your account's active ones (``own``,
-        role ``owner``), then the active ones you joined in other accounts, with your role and
-        whose each is, then your account's archived ones (``status`` archived), which
-        ``unarchive`` brings back. One of the account's own secret keys reads the account's own
-        ones, its personal space's included, never those you joined.
+        """The workspaces you see, signed in to NoClick: your personal space first (``personal``),
+        your account's other active ones (``own``, role ``owner``), then the active ones you joined
+        in other accounts, with your role and whose each is, then your account's archived ones
+        (``status`` archived), which ``unarchive`` brings back. One of the account's own secret
+        keys reads the account's own ones, never those you joined.
 
         Returns:
             Each workspace as you see it.

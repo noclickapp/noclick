@@ -1,5 +1,5 @@
 // Work's Agents list: the New agent pill held at the top, a search, chips past six agents (All · Running · Needs you ·
-// Failed), the space's NoClick pinned first (yours in your personal space), then one list sorted needs-you first, each agent's state drawn as a ring round its avatar and its running
+// Failed), the space's NoClick pinned first (yours in your personal space, none in one you joined), then one list sorted needs-you first, each agent's state drawn as a ring round its avatar and its running
 // tool call as its line, and a menu on each row (Rename, Delete). Read from GET /v1/agents and /v1/agents/states, kept current
 // by the backend's frames.
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
@@ -88,11 +88,12 @@ function marked(text: string, terms: string[], bold: string, rest?: string): Rea
     return parts;
 }
 
-/** The space's agents as its list and its empty pane show them: each one's row (its ring, its line), needs-you first;
- *  their faces; the clock their lines read; and `loading` until they're read. NoClick's own agent works across the
- *  account, its conversation the Chat page, and each space's NoClick answers in its #noclick: neither is one of a
- *  space's agents, so neither is a row (the list pins the space's own above them). NoClick's helpers aren't yours:
- *  never listed. Resources lists the same agents (your home's). `ticking`: a working agent's line counts its time. */
+/** The space's agents as its list and its empty pane show them (`spaceId` null: every agent of the account, as
+ *  Resources lists them): each one's row (its ring, its line), needs-you first; their faces; the clock their lines
+ *  read; and `loading` until they're read. NoClick's own agent works across the account, its conversation the Chat
+ *  page, and each space's NoClick answers in its #noclick: neither is one of a space's agents, so neither is a row (the
+ *  list pins the one that answers there above them). NoClick's helpers aren't yours: never listed. `ticking`: a
+ *  working agent's line counts its time. */
 export function useAgentEntries(spaceId: string | null, { ticking = true }: { ticking?: boolean } = {}) {
     const agents = useAgents();
     const states = useAgentStates(spaceId);
@@ -124,11 +125,13 @@ export function AgentsList({ spaceId, selectedAgentId, onOpen, onNew }: AgentsLi
     const intent = useIntent((id) => {
         if (id !== selectedAgentId) prefetchConversation(client, id);
     });
-    // The space's own NoClick is pinned above its agents (yours in your personal space), never counted, chipped or
-    // deleted with them.
+    // The space's own NoClick is pinned above its agents (yours in your personal space, and with no space), never
+    // counted, chipped or deleted with them.
     const spaceNoClick = useSpaceNoClick(spaceId);
-    const pinnedId = spaceId ? spaceNoClick?.agentId : noclick;
-    const pinnedNaming = spaceId ? spaceNoClick : noclickNaming(null);
+    const home = useSpaceNoClicks().home;
+    const yours = !spaceId || spaceId === home;
+    const pinnedId = yours ? noclick : spaceNoClick?.agentId;
+    const pinnedNaming = yours ? noclickNaming(null) : spaceNoClick;
     const [query, setQuery] = useState('');
     const [chip, setChip] = useChip();
     const root = useRef<HTMLDivElement>(null);
@@ -138,7 +141,7 @@ export function AgentsList({ spaceId, selectedAgentId, onOpen, onNew }: AgentsLi
 
     const terms = termsOf(query);
     const searching = terms.length > 0;
-    const pinnedState = pinnedId ? states.data?.find((st) => st.agentId === pinnedId) : undefined;
+    const pinnedState = pinnedId ? (states.data ?? []).find((st) => st.agentId === pinnedId) : undefined;
     const pinnedEntry = pinnedState ? entryOf(pinnedState, undefined, now) : null;
     const pinned: Entry | null =
         pinnedId && pinnedNaming

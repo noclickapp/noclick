@@ -72,6 +72,11 @@ const MODELS: Record<string, Json[]> = {
     codex: [{ id: 'gpt-5.6', label: 'GPT-5.6' }],
 };
 const ACME_AGENT = agent('agt_acme_ops', 'Ops', 'Runs Acme’s deploys');
+/** Your personal space: every account has one, its agent members the ones in no other space. */
+export const PERSONAL = 'ws_personal';
+/** An agent in your personal space alone. */
+export const INBOX_AGENT: Json = agent('agt_inbox', 'Inbox', 'Sorts your email and drafts the replies', 'sdk', 'openrouter/openai/gpt-luna');
+const personalSpace = (members: Json[]): Json => ({ object: 'workspace', id: PERSONAL, name: 'Rowan’s space', logo_url: null, status: 'active', user_id: null, channel_count: 0, people_limit: 3, personal: true, members, created_at: at(9500) });
 /** The account's own NoClick agent, as the platform provides it: named `coordinator`, no user's, flagged a NoClick. */
 export const COORDINATOR: Json = { ...agent('agt_noclick', 'coordinator', 'Your assistant across the whole account', 'sdk'), user_id: null, noclick: true };
 // A NoClick joins as "NoClick", flagged, as the platform adds one.
@@ -118,6 +123,7 @@ const BARE_LINK = /(^|[^(\w])(https?:\/\/[^\s)<>]+)/g;
 function seed() {
     const wsPerson = (id: string, userId: string, name: string, role: string, email: string, seen: number) => ({ id, type: 'user', user_id: userId, name, role, email, person: true, last_seen_at: at(seen), joined_at: at(3000), created_at: at(3000) });
     const workspaces: Json[] = [
+        personalSpace([{ id: 'wsm_inbox', type: 'agent', agent_id: INBOX_AGENT.id, name: INBOX_AGENT.name, role: null }]),
         {
             object: 'workspace',
             id: 'ws_noclick',
@@ -245,12 +251,12 @@ function seed() {
 /** `mentions`: the platform counts what @-mentions the reader (`mention_count`) and lets a person join a channel. */
 export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?: boolean; oddNames?: boolean; mentions?: boolean } = {}): FakeWork {
     const live = createWorkLive();
-    const seeded = options.empty ? { workspaces: [], channels: [], messages: new Map<string, Json[]>(), bookmarks: new Map<string, Json[]>(), invites: [], links: [] } : seed();
+    const seeded = options.empty ? { workspaces: [personalSpace([])], channels: [], messages: new Map<string, Json[]>(), bookmarks: new Map<string, Json[]>(), invites: [], links: [] } : seed();
     const { workspaces, channels, messages, bookmarks, invites, links } = seeded;
     if (options.mentions) for (const c of channels) c.mention_count = c.mention_count ?? 0;
     // The space joined in another account is listed only when asked for.
     if (options.joined === false) workspaces.splice(workspaces.findIndex((w) => w.id === 'ws_acme') >>> 0, 1);
-    const agents = options.empty ? [] : [...AGENTS];
+    const agents = options.empty ? [] : [...AGENTS, INBOX_AGENT];
     // Listed beside the account's agents, and provided whenever it's asked for by name, an empty account's too.
     // Each space's own NoClick, made the first time it's asked for (`/v1/workspaces/{id}/noclick`), named for the space.
     const spaceNoClicks = new Map<string, Json>();
@@ -259,7 +265,8 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
     const ownSpaceNoClicks = () => [...spaceNoClicks].filter(([wid]) => !workspaces.find((w) => w.id === wid)?.joined).map(([, a]) => a);
     const withNoClick = () => [...(options.empty && !options.noclick ? agents : [...agents, COORDINATOR]), ...ownSpaceNoClicks()];
     const agentById = (id: unknown) => [...agents, COORDINATOR, ...spaceNoClicks.values()].find((a) => a.id === id);
-    const refusesNoClick = (workspaceId: unknown, agentIds: unknown[]) => !!workspaceId && agentIds.includes(COORDINATOR.id);
+    // The account's own NoClick joins your personal space's channels alone.
+    const refusesNoClick = (workspaceId: unknown, agentIds: unknown[]) => !!workspaceId && workspaceId !== PERSONAL && agentIds.includes(COORDINATOR.id);
     const OWN_NOCLICK_REFUSED = json({ error: { type: 'invalid_request', message: 'This space has its own NoClick; add that one.' } }, 400);
     const requests: FakeWork['requests'] = [];
     const failing = new Map<string, { message: string; method?: string }>();
@@ -389,27 +396,16 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
         // A session reaches only the space it was minted for.
         const visible = (w: Json) => (session ? w.id === 'ws_acme' : !w.joined);
         if (method === 'GET' && path === '/v1/me/workspaces') {
-            // As the platform lists them: your own active ones (newest first), the active ones you joined, then your own
-            // archived ones (newest first). Someone else's archived space isn't listed.
+            // As the platform lists them: your personal space, your other active ones (newest first), the active ones
+            // you joined, then your own archived ones (newest first). Someone else's archived space isn't listed.
             const newest = (x: Json, y: Json) => String(y.created_at).localeCompare(String(x.created_at));
-            // Your personal space's, once you've shared it, is last of your own active ones.
             const own = workspaces.filter((w) => !w.joined && !w.personal).sort(newest);
             const view = (w: Json) =>
                 w.joined
                     ? { object: 'my_workspace', id: w.id, name: w.name, logo_url: w.logo_url, own: false, role: 'member', account_name: 'Maya Lee', user_id: ME_THERE, member_id: 'wsm_me', joined_at: at(3000), status: w.status, personal: false }
                     : { object: 'my_workspace', id: w.id, name: w.name, logo_url: w.logo_url, own: true, role: 'owner', account_name: null, user_id: null, member_id: null, joined_at: null, status: w.status, personal: !!w.personal };
             const personal = workspaces.filter((w) => w.personal);
-            return json(list([...own.filter((w) => w.status === 'active'), ...personal, ...workspaces.filter((w) => w.joined && w.status === 'active'), ...own.filter((w) => w.status === 'archived')].map(view)));
-        }
-        // Your personal space as a space people can join: its workspace, made the first time.
-        if (method === 'POST' && path === '/v1/me/personal_space') {
-            let w = workspaces.find((x) => x.personal);
-            if (!w) {
-                w = { object: 'workspace', id: `ws_personal_${++made}`, name: 'Rowan’s space', logo_url: null, status: 'active', user_id: null, channel_count: 0, people_limit: 3, members: [], personal: true, created_at: new Date().toISOString() };
-                workspaces.push(w);
-                frame('workspace', { workspace_id: w.id });
-            }
-            return json({ object: 'my_workspace', id: w.id, name: w.name, logo_url: null, own: true, role: 'owner', account_name: null, user_id: null, member_id: null, joined_at: null, status: 'active', personal: true });
+            return json(list([...personal, ...own.filter((w) => w.status === 'active'), ...workspaces.filter((w) => w.joined && w.status === 'active'), ...own.filter((w) => w.status === 'archived')].map(view)));
         }
         const mine = path.match(/^\/v1\/me\/workspaces\/([^/]+)(\/sessions)?$/);
         if (mine) {
@@ -438,7 +434,7 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
             frame(held.kind === 'workspace' ? 'workspace' : 'channel', held.kind === 'workspace' ? { workspace_id: row.id } : { channel_id: row.id, workspace_id: row.workspace_id });
             return json({ ...row, restored: true });
         }
-        if (method === 'GET' && path === '/v1/workspaces') return json(list(workspaces.filter((w) => visible(w) && !w.personal && (!query.get('status') || w.status === query.get('status')))));
+        if (method === 'GET' && path === '/v1/workspaces') return json(list(workspaces.filter((w) => visible(w) && (!query.get('status') || w.status === query.get('status')))));
         if (method === 'POST' && path === '/v1/workspaces') {
             const w = { object: 'workspace', id: `ws_${++made}`, name: b.name, logo_url: null, status: 'active', user_id: null, channel_count: 0, people_limit: 50, members: [], created_at: new Date().toISOString() };
             workspaces.push(w);
@@ -462,6 +458,7 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
             if (sub === '' && method === 'GET') return json(workspaceView(w, session));
             if (sub === '/questions' && method === 'GET') return json(list(questions.get(wid) ?? []));
             if (sub === '/noclick' && method === 'GET') {
+                if (w.personal) return json({ error: { type: 'invalid_request', message: 'A personal space can’t be given a NoClick of its own.' } }, 400);
                 let own = spaceNoClicks.get(wid);
                 if (!own) {
                     const hex = Array.from(wid, (ch) => ch.charCodeAt(0).toString(16).padStart(2, '0')).join('').padEnd(32, '0').slice(0, 32);
@@ -584,11 +581,16 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
             return json(list((MODELS[models[1]] ?? []).filter((m) => !q || String(m.id).includes(q)).map((m) => ({ object: 'harness_model', canonical: m.id, route: 'maker', ...m }))));
         }
         if (method === 'GET' && path === '/v1/agents/states') {
-            // A person reads one space's agents at a time, the ones they reach there, never by their activity.
-            if (session && !query.get('workspace_id')) return json({ error: { type: 'invalid_request', message: 'Name the space whose agents to read.', field: 'workspace_id' } }, 400);
+            // A person reads one space's agents at a time, the ones they reach there, never by their activity. A space's
+            // are its members (your personal space's with your own NoClick); with none named, every agent.
+            const wid = query.get('workspace_id');
+            if (session && !wid) return json({ error: { type: 'invalid_request', message: 'Name the space whose agents to read.', field: 'workspace_id' } }, 400);
+            const space = wid && !session ? workspaces.find((w) => w.id === wid) : null;
+            const members = new Set(((space?.members as Json[] | undefined) ?? []).map((m) => m.agent_id));
+            const read = session ? [ACME_AGENT] : space ? withNoClick().filter((a) => members.has(a.id) || (space.personal && a.id === COORDINATOR.id)) : withNoClick();
             return json({
                 object: 'list',
-                data: (session ? [ACME_AGENT] : withNoClick()).map((a) => ({ agent_id: a.id, name: a.name, noclick: a.noclick === true, harness: a.harness, state: a.id === 'agt_support' ? 'needs_you' : 'idle', waiting: { total: a.id === 'agt_support' ? 2 : 0 }, last_active_at: at(60) })),
+                data: read.map((a) => ({ agent_id: a.id, name: a.name, noclick: a.noclick === true, harness: a.harness, state: a.id === 'agt_support' ? 'needs_you' : 'idle', waiting: { total: a.id === 'agt_support' ? 2 : 0 }, last_active_at: at(60) })),
                 read_at: new Date().toISOString(),
             });
         }
@@ -664,7 +666,8 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
                 halt_reason: null,
                 unread_count: 0,
                 user_id: null,
-                workspace_id: b.workspace_id ?? null,
+                // Made without a space, it's in your personal space.
+                workspace_id: b.workspace_id ?? PERSONAL,
                 kind: 'channel',
                 // A space's people join by their user ids, its agents by theirs.
                 members: ((b.members as Json[] | undefined) ?? []).map((m, i) => {

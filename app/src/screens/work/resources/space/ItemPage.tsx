@@ -34,7 +34,7 @@ export function ItemPage(props: Pane & { t: Thing }) {
         return (
             <>
                 <div className="px-5 sm:px-8">
-                    <Crumbs onAt={onAt} kind={t.kind} end={<ThingMenu pane={props} t={t} onPage label={props.share.home ? undefined : 'In this space'} className="bg-foreground/[0.05]" />} />
+                    <Crumbs onAt={onAt} kind={t.kind} end={<ThingMenu pane={props} t={t} onPage label="In this space" className="bg-foreground/[0.05]" />} />
                 </div>
                 <KnowledgePage
                     id={t.ref}
@@ -62,7 +62,7 @@ export function ItemPage(props: Pane & { t: Thing }) {
                 return (
                     <>
                         {t.place ? <MachineBody place={t.place} now={props.now} /> : <p className="mt-6 text-[14px] text-muted-foreground">{t.machine?.state === 'running' ? 'It’s running.' : 'It isn’t up now.'}</p>}
-                        {!props.share.home && (t.link || shareable(t)) && <InSpaceSection pane={props} t={t} />}
+                        {(t.link || shareable(t)) && <InSpaceSection pane={props} t={t} />}
                     </>
                 );
             default:
@@ -253,13 +253,13 @@ function ConnectionBody(props: Pane & { t: Thing }) {
             </Section>
             <UsedBySection pane={props} t={t} empty="No agent here uses it yet. Attach it on an agent’s profile." />
             {t.movedFrom && <MovedSection moved={t.movedFrom} what="its credential" />}
-            {!props.share.home && <InSpaceSection pane={props} t={t} />}
-            <Section title={props.share.home ? 'Who has it' : 'Shared with'}>
+            <InSpaceSection pane={props} t={t} />
+            <Section title="Shared with">
                 <Facts
                     rows={[
                         ['Owner', c?.userId ? 'One of your users' : 'The account'],
                         ['Elsewhere', holders.length ? holders.map((h) => h.name).join(', ') : 'Nothing else holds it'],
-                        ...((props.share.home ? [] : [['People here', t.link ? levelWords(t.link.kind, t.link.membersLevel) : 'No one: only its agents use it']]) as [string, string][]),
+                        ['People here', t.link ? levelWords(t.link.kind, t.link.membersLevel) : 'No one: only its agents use it'],
                     ]}
                 />
             </Section>
@@ -397,7 +397,7 @@ function AutomationBody(props: Pane & { t: Thing }) {
                     />
                 </Section>
             )}
-            {!props.share.home && <InSpaceSection pane={props} t={t} />}
+            <InSpaceSection pane={props} t={t} />
         </>
     );
 }

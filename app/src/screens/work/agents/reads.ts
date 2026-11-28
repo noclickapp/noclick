@@ -130,10 +130,12 @@ export interface SpaceNoClick extends NoClickNaming {
 export interface SpaceNoClicks {
     of: ReadonlyMap<string, SpaceNoClick>;
     names: ReadonlyMap<string, string>;
-    /** The personal spaces you joined: they have no NoClick of their own. */
+    /** The personal spaces (yours and the ones you joined): none has a NoClick of its own. */
     personal: ReadonlySet<string>;
+    /** Your own personal space's id, where the account's own NoClick is pinned. */
+    home: string | null;
 }
-const NONE: SpaceNoClicks = { of: new Map(), names: new Map(), personal: new Set() };
+const NONE: SpaceNoClicks = { of: new Map(), names: new Map(), personal: new Set(), home: null };
 export const SpaceNoClicksContext = createContext<SpaceNoClicks>(NONE);
 export const useSpaceNoClicks = () => useContext(SpaceNoClicksContext);
 

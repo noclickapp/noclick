@@ -28,7 +28,7 @@ it('a phone shows the agent’s screen the moment it’s tapped, before its sess
     });
     const lead = document.createElement('div');
     document.body.append(lead);
-    const router = createMemoryRouter([{ path: '/dashboard', element: <Work user={USER} /> }], { initialEntries: ['/dashboard?tab=work&space=home&show=agents'] });
+    const router = createMemoryRouter([{ path: '/dashboard', element: <Work user={USER} /> }], { initialEntries: ['/dashboard?tab=work&space=ws_noclick&show=agents'] });
     render(
         <WorkClientContext.Provider value={client}>
             <WorkLiveContext.Provider value={fake.live}>

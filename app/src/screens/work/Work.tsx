@@ -51,17 +51,16 @@ import { TemplatesPane } from './templates/TemplatesPane';
 import { SpaceHeader } from './SpaceHeader';
 import { ArchivedBanner, SpaceSettingsDialog, unarchiveSpace, type SpaceAsk } from './spaceSettings';
 import { isSpaceKind, kindOf, prefetchSpaceShare } from './resources/space/data';
-import { homeSpace, useSpaceClient, useSpaces, type Spaces, type WorkSpace } from './spaces';
+import { isYourPersonal, spaceWhere, useSpaceClient, useSpaces, type Spaces, type WorkSpace } from './spaces';
 import { WorkViewerContext, type WorkViewer } from './viewer';
 import { useWork } from './context';
 import { JOINED_TYPING } from './slots';
 import { ListColumn, useFoldedByChoice, useListRoom, useMeasuredWidth } from './listRail';
 import { LIST_COLUMN, PanelFrame } from './ui';
-import { ownerOnlyWhy, useOwnerOnly } from '@/screens/console/ownerOnly';
 
 const byAge = (a: Channel, b: Channel) => a.createdAt.localeCompare(b.createdAt);
-/** The space a channel is in: your personal space's, in no workspace or (a DM there) in its shared workspace, is home. */
-const spaceIdOf = (c: Channel, personalId: string | null) => (!c.workspaceId || c.workspaceId === personalId ? HOME_SPACE : c.workspaceId);
+/** The space a channel is in (none: a developer's user's own, in no space Work shows). */
+const spaceIdOf = (c: Channel) => c.workspaceId ?? '';
 
 /** The other person in a DM. */
 function otherIn(channel: Channel): ChannelMember | null {
@@ -111,13 +110,13 @@ function openingDm(dms: Channel[], spaceId: string): Channel | null {
 const openIdOf = (place: WorkPlace) =>
     (place.view === 'home' || place.view === 'dms') && place.channel && place.channel !== THREADS && place.channel !== TEMPLATES && place.channel !== NOCLICK_HERE ? place.channel : null;
 
-/** The personal space's NoClick channel, made the first time Work finds none there (`makeHomeNoClickChannel`) once
- *  it's `ready` (the spaces read, so where Work opens is settled), through the page's channels so it's listed the
- *  moment it's made (its frame then confirms it), then `onMade` with it. True while Home's channels can't be shown as
- *  they are: NoClick's own agent isn't read yet (`noclick` undefined while `reading`), or its channel is missing and on
- *  its way. A failure says so and stops the wait. */
-function useHomeNoClickChannel(client: NoClick, own: Channels, ready: boolean, homeName: string, noclick: string | null | undefined, reading: boolean, onMade: (id: string) => void): boolean {
-    const missing = ready && !own.error && typeof noclick === 'string' && !homeHoldsNoClick(own.channels, noclick);
+/** Your personal space's (`personalId`) NoClick channel, made the first time Work finds none there
+ *  (`makeHomeNoClickChannel`) once it's `ready` (the spaces read, so where Work opens is settled), through the page's
+ *  channels so it's listed the moment it's made (its frame then confirms it), then `onMade` with it. True while its
+ *  channels can't be shown as they are: NoClick's own agent isn't read yet (`noclick` undefined while `reading`), or
+ *  its channel is missing and on its way. A failure says so and stops the wait. */
+function useHomeNoClickChannel(client: NoClick, own: Channels, ready: boolean, personalId: string | null, homeName: string, noclick: string | null | undefined, reading: boolean, onMade: (id: string) => void): boolean {
+    const missing = ready && !own.error && !!personalId && typeof noclick === 'string' && !homeHoldsNoClick(own.channels, noclick, personalId);
     // The make answered (made, found outside the list read, or failed): Home shows what it has.
     const [answered, setAnswered] = useState(false);
     const latest = useRef({ onMade, create: own.createChannel });
@@ -127,7 +126,7 @@ function useHomeNoClickChannel(client: NoClick, own: Channels, ready: boolean, h
         let live = true;
         const start = () => {
             setAnswered(false);
-            makeHomeNoClickChannel(client, noclick, (input) => latest.current.create(input)).then(
+            makeHomeNoClickChannel(client, noclick, personalId!, (input) => latest.current.create(input)).then(
                 (made) => {
                     if (!live) return;
                     setAnswered(true);
@@ -144,7 +143,7 @@ function useHomeNoClickChannel(client: NoClick, own: Channels, ready: boolean, h
         return () => {
             live = false;
         };
-    }, [missing, client, homeName, noclick]);
+    }, [missing, client, homeName, noclick, personalId]);
     return ready && !own.error && ((noclick === undefined && reading) || (missing && !answered));
 }
 
@@ -170,59 +169,65 @@ export function Work({ user }: { user: AccountMenuUser }) {
     const [place, go] = useWorkPlace();
     useFollowSessions();
     const spaces = useSpaces();
+    // Your personal space is first on the rail, wearing your picture until it has a logo of its own. With nothing in it
+    // but its NoClick channel, Work opens on your first other space, and with none, on that channel.
+    const all = useMemo(
+        () => spaces.spaces.map((s) => (isYourPersonal(s) && !s.logoUrl && user.avatar_url ? { ...s, logoUrl: user.avatar_url } : s)),
+        [spaces.spaces, user.avatar_url]
+    );
+    const home = all.find(isYourPersonal) ?? null;
+    // `home` (a link from elsewhere, or remembered from before it was a space) names your personal space.
+    const alias = (id: string | null) => (id === HOME_SPACE ? (home?.id ?? null) : id);
+    const named = alias(place.space);
+    const remembered = alias(lastSpace());
     // A link that names a channel and no space is your own account's.
-    const chosen = spaces.spaces.find((s) => s.id === place.space) ?? (place.channel && !place.space ? null : (spaces.spaces.find((s) => s.id === lastSpace()) ?? null));
+    const chosen = all.find((s) => s.id === named) ?? (place.channel && !place.space ? null : (all.find((s) => s.id === remembered) ?? null));
     const joined = chosen && !chosen.own ? chosen : null;
     const own = useClientChannels(client, null, joined ? null : openIdOf(place));
 
-    // Your account's own home is always first on the rail: your channels in no space, and every agent of the account
-    // (one in no space is reached only here; NoClick's own is the Chat page's). With nothing in it but its NoClick
-    // channel, Work opens on your first space, and with no space either, on that channel.
-    const home = useMemo(
-        () => ({ ...homeSpace(user.display_name?.trim() || user.email.split('@')[0] || 'Your channels', user.avatar_url), ...(spaces.personalId ? { sharedId: spaces.personalId } : {}) }),
-        [user, spaces.personalId]
-    );
     const ownOpenChannels = useMemo(() => own.channels.channels.filter((c) => c.status !== 'closed'), [own.channels.channels]);
-    const all = useMemo(() => [home, ...spaces.spaces], [spaces.spaces, home]);
     const noclick = useNoClickId();
     const readingAgents = useAgents().loading;
     const spaceNoClicks = useOwnSpaceNoClicks(spaces.spaces);
     // Its NoClick channel (by its name until the agents are read) doesn't make it the space to open on.
-    const homeUsed = ownOpenChannels.some((c) => !c.workspaceId && !(noclick === undefined ? c.name === NOCLICK_CHANNEL : c.members.some((m) => m.agentId === noclick)));
+    const homeUsed = !!home && ownOpenChannels.some((c) => c.workspaceId === home.id && !(noclick === undefined ? c.name === NOCLICK_CHANNEL : c.members.some((m) => m.agentId === noclick)));
     const linked = place.space ? null : (ownOpenChannels.find((c) => c.id === place.channel) ?? null);
-    const space: WorkSpace =
-        all.find((s) => s.id === place.space) ??
-        (linked && all.find((s) => s.id === spaceIdOf(linked, spaces.personalId))) ??
-        (place.channel ? null : all.find((s) => s.id === lastSpace())) ??
-        (homeUsed ? null : spaces.spaces.find((s) => s.own)) ??
-        home;
+    const space: WorkSpace | null =
+        all.find((s) => s.id === named) ??
+        (linked && all.find((s) => s.id === spaceIdOf(linked))) ??
+        (place.channel ? null : all.find((s) => s.id === remembered)) ??
+        (homeUsed ? null : all.find((s) => s.own && !s.personal)) ??
+        home ??
+        all[0] ??
+        null;
     // A channel the URL names that your lists don't hold yet (made since they were read): its space is known once
     // they're read again, so nothing is chosen (or remembered, or written) in its place before.
     const finding = !place.space && !linked && own.channels.findingOpen;
     const loaded = !spaces.loading && !own.channels.loading && !finding;
     // A first open (nothing remembered, nothing in the URL) that opens on the personal space lands on its new channel.
     const [firstOpen] = useState(() => !lastSpace() && !place.space && !place.channel);
-    const openedOn = useRef(space.id);
-    openedOn.current = space.id;
-    const homePending = useHomeNoClickChannel(client, own.channels, loaded, home.name, noclick, readingAgents, (id) => {
-        if (firstOpen && openedOn.current === HOME_SPACE) go({ space: HOME_SPACE, view: 'home', channel: id, thread: null }, { replace: true });
+    const spaceId = space?.id ?? null;
+    const openedOn = useRef(spaceId);
+    openedOn.current = spaceId;
+    const homePending = useHomeNoClickChannel(client, own.channels, loaded, home?.id ?? null, home?.name ?? 'your personal space', noclick, readingAgents, (id) => {
+        if (firstOpen && home && openedOn.current === home.id) go({ space: home.id, view: 'home', channel: id, thread: null }, { replace: true });
     });
-    // Only a space chosen once the spaces are read is remembered: home stands in while they load.
+    // Only a space chosen once the spaces are read is remembered.
     useEffect(() => {
-        if (loaded) rememberSpace(space.id);
-    }, [loaded, space.id]);
+        if (loaded && spaceId) rememberSpace(spaceId);
+    }, [loaded, spaceId]);
 
     // The space in the URL once it's known, so every view (and a copied link) reads the same one. A space named there
-    // that's gone (left, deleted) takes what was open in it along.
+    // that's gone (left, deleted) takes what was open in it along; `space=home` keeps what it opened.
     useEffect(() => {
-        if (!loaded || place.space === space.id) return;
-        go(place.space ? { space: space.id, channel: null, thread: null, agent: null, machine: false, panel: null, res: null, item: null } : { space: space.id }, { replace: true });
-    }, [loaded, place.space, space.id, go]);
+        if (!loaded || !spaceId || place.space === spaceId) return;
+        go(place.space && place.space !== HOME_SPACE ? { space: spaceId, channel: null, thread: null, agent: null, machine: false, panel: null, res: null, item: null } : { space: spaceId }, { replace: true });
+    }, [loaded, place.space, spaceId, go]);
 
-    // Which space opens takes both reads (your spaces, and whether your home has channels): drawn on one alone, Work
-    // could open a space, read it, and switch away from it as the other lands.
+    // Which space opens takes both reads (your spaces, and whether your personal space has channels): drawn on one
+    // alone, Work could open a space, read it, and switch away from it as the other lands.
     if (!loaded) return <WorkLoading />;
-    if (own.channels.error && spaces.error) return <WorkNotice title="Work couldn't load" body={own.channels.error} action={{ label: 'Try again', onClick: () => (own.channels.refresh(), spaces.refresh()) }} />;
+    if (!space) return <WorkNotice title="Work couldn't load" body={spaces.error ?? own.channels.error ?? 'Your spaces couldn’t be read.'} action={{ label: 'Try again', onClick: () => (own.channels.refresh(), spaces.refresh()) }} />;
 
     const shared = { user, spaces, all, ownChannels: own.channels, homePending };
     return (
@@ -275,8 +280,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the client and whose eyes name the shelf
     const shelf = useMemo(() => platformShelf(client, person), [client, person?.me]);
     const drafts = useDrafts(transport);
-    // Whose people the space has: a team space's, or your personal space's once you've shared it.
-    const peopleId = space.workspaceId ?? space.sharedId ?? null;
+    const peopleId = space.workspaceId;
     const people = useSpacePeople(peopleId);
     useSpaceNoClickJoins(client, space, channels.channels);
     const noclicks = useSpaceNoClicks();
@@ -285,11 +289,11 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
         [space.own, space.userId, user.display_name, user.email]
     );
 
-    const personalId = spaces.personalId;
-    const placeOf = (c: Channel) => spaceIdOf(c, personalId);
+    const placeOf = spaceIdOf;
+    const yours = isYourPersonal(space);
     // A closed channel stays in Home, read-only; a closed DM goes.
     const open = useMemo(() => channels.channels.filter((c) => c.kind !== 'dm' || c.status !== 'closed'), [channels.channels]);
-    const inSpace = useMemo(() => open.filter((c) => spaceIdOf(c, personalId) === space.id), [open, space.id, personalId]);
+    const inSpace = useMemo(() => open.filter((c) => spaceIdOf(c) === space.id), [open, space.id]);
     const spaceChannels = useMemo(() => inSpace.filter((c) => c.kind !== 'dm').sort(byAge), [inSpace]);
     const dmChannels = useMemo(() => inSpace.filter((c) => c.kind === 'dm'), [inSpace]);
     const byName = useMemo(() => new Map(spaceChannels.map((c) => [c.name, c.id])), [spaceChannels]);
@@ -312,12 +316,13 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     // channels and the space's NoClick are read.
     const noclick = useNoClickId();
     const spaceNoClick = useSpaceNoClick(space.workspaceId);
-    const isTheNoClickChannel = (c: Channel) => isNoClickChannel(c, space.workspaceId ? null : noclick, spaceNoClick?.agentId);
-    const itsNoClickChannel = place.channel === NOCLICK_HERE && !channels.loading && (space.workspaceId ? !!spaceNoClick : noclick !== undefined) ? (spaceChannels.find(isTheNoClickChannel) ?? spaceChannels.find((c) => c.name === EARLIER_NOCLICK_CHANNEL) ?? null) : undefined;
+    const isTheNoClickChannel = (c: Channel) => isNoClickChannel(c, yours ? noclick : null, spaceNoClick?.agentId);
+    const itsNoClickChannel = place.channel === NOCLICK_HERE && !channels.loading && (yours ? noclick !== undefined : !!spaceNoClick) ? (spaceChannels.find(isTheNoClickChannel) ?? spaceChannels.find((c) => c.name === EARLIER_NOCLICK_CHANNEL) ?? null) : undefined;
     useEffect(() => {
         if (itsNoClickChannel !== undefined) go({ view: 'home', channel: itsNoClickChannel?.id ?? null }, { replace: true });
     }, [itsNoClickChannel, go]);
-    const questions = useSpaceQuestions(space.workspaceId);
+    // A personal space has no NoClick of its own for yours to ask.
+    const questions = useSpaceQuestions(space.personal ? null : space.workspaceId);
     // A DM opened from Home (a link, the palette) lands in DMs, and a channel in Home.
     useEffect(() => {
         if (!linked) return;
@@ -347,10 +352,9 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const spaceAhead = useIntent((id) => {
         const target = all.find((s) => s.id === id);
         if (!space.own || !target?.own || phone) return;
-        const home = ownChannels.channels.filter((c) => c.status !== 'closed' && c.kind !== 'dm' && placeOf(c) === id).sort(byAge);
-        const first = openingChannel(home, id);
+        const theirs = ownChannels.channels.filter((c) => c.status !== 'closed' && c.kind !== 'dm' && placeOf(c) === id).sort(byAge);
+        const first = openingChannel(theirs, id);
         if (first) ownChannels.prefetch(first.id);
-        if (!target.workspaceId) return;
         const workspaceId = target.workspaceId;
         prefetchV1(client, peopleKey(workspaceId), () => readPeople(client, workspaceId));
         prefetchV1(client, threadsKey(workspaceId), () => shelf.threads(workspaceId));
@@ -368,20 +372,18 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const remember = useWork().palette?.remember;
     useEffect(() => {
         if (!remember) return;
-        const home = (c: Channel) => ({ view: c.kind === 'dm' ? ('dms' as const) : ('home' as const), space: spaceIdOf(c, personalId), channel: c.id, thread: null, agent: null, panel: null, machine: false });
+        const home = (c: Channel) => ({ view: c.kind === 'dm' ? ('dms' as const) : ('home' as const), space: spaceIdOf(c), channel: c.id, thread: null, agent: null, panel: null, machine: false });
         remember([
             ...open.map((c) =>
                 c.kind === 'dm'
                     ? { id: `dm:${c.id}`, label: otherIn(c)?.name ?? c.name, context: `DM in ${space.name}`, icon: MessagesSquare, run: () => go(home(c)) }
-                    : { id: `channel:${c.id}`, label: c.name, context: all.find((s) => s.id === spaceIdOf(c, personalId))?.name, icon: Hash, about: c.topic, run: () => go(home(c)) }
+                    : { id: `channel:${c.id}`, label: c.name, context: all.find((s) => s.id === spaceIdOf(c))?.name, icon: Hash, about: c.topic, run: () => go(home(c)) }
             ),
             ...(agents.data ?? []).filter((a) => !isSpaceNoClick(a) && !a.helper).map((a) => ({ id: `agent:${a.id}`, label: nameOf(a, noclicks), context: 'Agent', icon: UsersRound, run: () => go({ view: 'agents', agent: a.id, machine: false, thread: null, panel: null }) })),
             ...all.map((s) => ({ id: `space:${s.id}`, label: s.name, context: 'Space', icon: BriefcaseBusiness, run: () => go({ space: s.id, view: 'home', channel: null, thread: null, agent: null, panel: null, machine: false }) })),
         ]);
-    }, [remember, open, all, agents.data, space.name, go, noclicks, personalId]);
+    }, [remember, open, all, agents.data, space.name, go, noclicks]);
 
-    // A key can't open the personal space to people: only its owner, signed in, can (screens/console/ownerOnly.ts).
-    const sharesPersonal = useOwnerOnly()('sharePersonalSpace');
     const [makingSpace, setMakingSpace] = useState(false);
     const [editingSpace, setEditingSpace] = useState(false);
     const [startingChannel, setStartingChannel] = useState(false);
@@ -389,7 +391,6 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const [inviting, setInviting] = useState(false);
 
     const startDm = async (userId: string) => {
-        if (!peopleId) return;
         try {
             const dm = await PlatformChannel.dm(userId, { workspace: peopleId, client, user: null });
             channels.refresh();
@@ -404,7 +405,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             openChannel: (id, options = {}) => {
                 const target = open.find((c) => c.id === id);
                 go(
-                    { view: target?.kind === 'dm' ? 'dms' : 'home', space: target ? spaceIdOf(target, personalId) : null, channel: id, thread: options.thread ?? null, machine: false, subagent: null, agent: null, panel: place.panel === 'profile' ? null : undefined },
+                    { view: target?.kind === 'dm' ? 'dms' : 'home', space: target ? spaceIdOf(target) : null, channel: id, thread: options.thread ?? null, machine: false, subagent: null, agent: null, panel: place.panel === 'profile' ? null : undefined },
                     { replace: options.replace }
                 );
             },
@@ -428,7 +429,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             openSubagent: (id, options) => go({ subagent: id }, { replace: options?.replace }),
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps -- startDm reads the space it was made for
-        [open, dmChannels, go, place.panel, place.subagent, space.id, client, personalId]
+        [open, dmChannels, go, place.panel, place.subagent, space.id, client]
     );
 
     // A space made here opens on its NoClick channel. If that fails the space stays as it is, and the error offers to try again.
@@ -441,18 +442,6 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             toast.error(`Couldn’t start #${NOCLICK_CHANNEL} in ${made.name}`, { description: errorText(e), duration: Infinity, action: { label: 'Try again', onClick: () => void startNoClickChannel(made) } });
         }
     };
-    // Inviting people to your personal space shares it first (its workspace, made once), then asks as a team space does.
-    const invite = async () => {
-        if (space.workspaceId || space.sharedId) return setInviting(true);
-        if (!sharesPersonal) return toast(ownerOnlyWhy('sharePersonalSpace'));
-        try {
-            const id = await spaces.sharePersonal();
-            await prefetchV1(client, peopleKey(id), () => readPeople(client, id));
-            setInviting(true);
-        } catch (e) {
-            toast.error('Couldn’t share your personal space', { description: errorText(e) });
-        }
-    };
     const switchSpace = (id: string) => go({ space: id, channel: null, thread: null, agent: null, machine: false, panel: null, res: null, item: null });
     // What a laptop reopens in a view: what was last open in it in this space, where that's still here. A channel you
     // left, a DM that closed or an agent deleted since opens the view as it opens without it; a resource gone since
@@ -463,7 +452,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
         if (view === 'home') return spot.channel === THREADS || spaceChannels.some((c) => c.id === spot.channel) ? spot : {};
         if (view === 'dms') return dmChannels.some((c) => c.id === spot.channel) ? spot : {};
         if (view === 'resources') return spot;
-        const pinned = space.workspaceId ? spaceNoClick?.agentId : noclick;
+        const pinned = yours ? noclick : spaceNoClick?.agentId;
         return spot.agent && (spot.agent === pinned || states.data?.some((s) => s.agentId === spot.agent)) ? spot : {};
     };
     // Each view reopens its own (a phone shows its list); Agents keeps an agent the URL already names, one whose
@@ -493,7 +482,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     // A template is added by the account to a space of its own (only the owner adds): its Home lists the gallery, and
     // an add from there aims at it (your personal space, at a new space).
     const addsTemplates = space.own && !space.archived;
-    const templateInto = space.id === HOME_SPACE ? null : space.workspaceId;
+    const templateInto = space.personal ? null : space.workspaceId;
     const [spaceAsk, setSpaceAsk] = useState<SpaceAsk | null>(null);
     const [savingTemplate, setSavingTemplate] = useState(false);
 
@@ -507,10 +496,10 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     const strangers: ChannelMember[] = others.filter((p) => !inDm.has(p.userId!)).map((p) => ({ id: p.userId!, userId: p.userId!, kind: 'human', name: p.name ?? p.email ?? 'Someone' }));
     // Who a new channel can take besides its agents: the space's people, each with when they were last on.
     const channelPeople: PersonChoice[] = others.map((p) => ({ id: p.userId!, name: p.name ?? p.email ?? 'Someone', detail: presenceOf(p.lastSeenAt) ?? p.email }));
-    // Home waits, never drawn empty, until its channels are read and (the personal space's) its NoClick channel is in.
-    const homeLoading = channels.loading || (space.id === HOME_SPACE && homePending);
+    // Home waits, never drawn empty, until its channels are read and (your personal space's) its NoClick channel is in.
+    const homeLoading = channels.loading || (yours && homePending);
     const newChannel = space.role === 'guest' || space.archived ? null : () => setStartingChannel(true);
-    const inviteMore = manages && !space.archived && (space.workspaceId || space.sharedId || sharesPersonal) ? () => void invite() : null;
+    const inviteMore = manages && !space.archived ? () => setInviting(true) : null;
     const online = (p: ChannelMember) => presenceOf(people.people.find((m) => m.userId === (p.userId ?? p.id))?.lastSeenAt ?? null) === 'Online';
     const viewList =
         place.view === 'home' ? (
@@ -572,7 +561,6 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
     ) : place.machine && agentOpen ? (
             <MachinePage agentId={agentOpen} file={place.file} onFile={(file) => go({ file }, { replace: true })} onBack={() => go({ machine: false })} />
         ) : place.view === 'resources' ? (
-            // Home's (`space.id` is HOME_SPACE) are its agents in no space and what the account has for them.
             <SpaceResourcesPane spaceId={space.id} />
         ) : place.view === 'agents' ? (
             place.agent === NEW_AGENT ? (
@@ -642,7 +630,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
                     dms={dmRows}
                     others={strangers}
                     user={user}
-                    spaceName={space.id === HOME_SPACE ? 'your personal space' : space.name}
+                    spaceName={spaceWhere(space)}
                     myName={meIn}
                     online={online}
                     onOpen={(id) => go({ channel: id, thread: null })}
@@ -680,9 +668,9 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
                     onOpenChannel={(id) => nav.openChannel(id)}
                 />
             </PanelFrame>
-        ) : place.panel === 'questions' && space.workspaceId ? (
+        ) : place.panel === 'questions' ? (
             questions?.length ? <SpaceQuestionsPanel questions={questions} spaceName={space.name} phone={phone} onClose={() => go({ panel: null })} /> : null
-        ) : place.panel && place.panel !== 'profile' && peopleId ? (
+        ) : place.panel && place.panel !== 'profile' ? (
             <MembersPanel
                 space={space}
                 people={people}
@@ -723,7 +711,7 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
                     go({ view: 'home', channel: made.id, thread: null });
                 }}
             />
-            {peopleId && <InviteDialog open={inviting} onOpenChange={setInviting} space={space} people={people} />}
+            <InviteDialog open={inviting} onOpenChange={setInviting} space={space} people={people} />
             {spaceAsk && <SpaceSettingsDialog ask={spaceAsk} space={space} spaces={spaces} onClose={() => setSpaceAsk(null)} />}
             {savingTemplate && <SaveTemplateDialog space={space} client={client} onClose={() => setSavingTemplate(false)} />}
         </>
@@ -733,9 +721,9 @@ function SpaceWork({ user, spaces, all, ownChannels, homePending, space, client,
             space={space}
             spaces={phone ? all : undefined}
             onSpace={switchSpace}
-            people={peopleId && !people.loading ? people.people.length + (space.own ? 1 : 0) : null}
-            agents={space.workspaceId && !space.personal && !people.loading ? people.agents.length : null}
-            onInvite={() => void invite()}
+            people={!people.loading ? people.people.length + (space.own ? 1 : 0) : null}
+            agents={!people.loading ? people.agents.length : null}
+            onInvite={() => setInviting(true)}
             onMembers={(tab) => nav.openMembers(tab)}
             onEdit={() => setEditingSpace(true)}
             onNewSpace={() => setMakingSpace(true)}

@@ -1,5 +1,5 @@
-// The account's agents on its Resources page, where what each one costs is read: the agents Work lists in your home
-// (`useAgentEntries`, so the two never disagree: never a NoClick, nor one of NoClick's helpers), each with its face and
+// The account's agents on its Resources page, where what each one costs is read: every agent the account owns, whatever
+// space it's in (`useAgentEntries(null)`: never a NoClick, nor one of NoClick's helpers), each with its face and
 // ring, what it's doing, where it works (an agent is the account's, and any number of its spaces can have it) and what
 // it has cost this month. A row opens the agent's own page here (agentPage.tsx: its files, spend and sessions, and Open
 // in Work), and its ⋯ menu renames it. Drawn inside PlatformReads, which provides Work's client.

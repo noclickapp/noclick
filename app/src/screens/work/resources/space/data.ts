@@ -4,29 +4,24 @@
 // agents' model keys are among its connections, and the secrets they hold are its secrets, each saying which came over
 // with a move from a computer. Sharing a resource with a space gives it to every person there at the level set;
 // removing it takes it from them while agents that hold it as their own keep it; deleting is account-wide, to the trash.
-// Home (`HOME_SPACE`) is read the same way from the account's own reads, since no space summarises it: its agents are
-// every agent of the account, as home's Agents tab lists them (each saying which spaces it's in), and it has every
-// machine, skill, memory, connection and secret of the account, each with the agents that use it, shared with no one.
+// Your personal space reads the same way, from its own summary.
 import { useMemo, type ComponentType } from 'react';
 import { BookOpen, Brain, AppWindow, Database, FileText, FolderGit2, Hash, KeyRound, Mail, Phone, Plug, Server, UsersRound, Workflow } from 'lucide-react';
 import { buildGraphPreview, type GraphPreview } from '@/lib/graphPreview';
 import { invalidateV1, prefetchV1 } from '@/sdk/useV1';
-import { Connection, Workspace, WorkspaceResource, type Agent, type NoClick, type WorkspaceResourceKind } from 'noclick';
-import { listCompute, listMemories, listOwnComputers, listSkills, type Compute, type Knowledge } from '@/screens/resources/knowledge';
+import { Connection, Workspace, WorkspaceResource, type NoClick, type WorkspaceResourceKind } from 'noclick';
+import { listCompute, listMemories, listOwnComputers, listSkills, type Knowledge } from '@/screens/resources/knowledge';
 import { listSecrets, SECRETS_KEY, type SecretItem } from '@/screens/resources/secrets';
 import { movedFrom, type MovedFrom } from '@/lib/movedFrom';
-import { entryOf, readAgentStates, ringOf, type AgentState, type RingStatus } from '../../agents/states';
+import { entryOf, readAgentStates, ringOf, type RingStatus } from '../../agents/states';
 import { AGENTS_KEY, factsOf, keptByNoClick, readAgents, statesKey, useAgents, useAgentStates, useSpaceNoClicks, useWorkV1 } from '../../agents/reads';
-import { HOME_SPACE } from '../../place';
-import { MEMORIES_KEY, SKILLS_KEY, useKnowledge, type KnowledgeState } from '../knowledge/store';
+import { MEMORIES_KEY, SKILLS_KEY, useKnowledge } from '../knowledge/store';
 import { fixWordCasing } from '@/lib/credentialLabels';
 import { refFor } from '@/lib/agentTools';
 import { COMPUTE_KEY, OWN_KEY, placeName, placeUp, type Place } from '../machines';
 
 export type SpaceKind = 'agents' | 'machines' | 'skills' | 'memories' | 'automations' | 'connections' | 'secrets' | 'channels' | 'code' | 'websites' | 'databases' | 'files' | 'numbers' | 'email';
 export const SPACE_KINDS: readonly SpaceKind[] = ['agents', 'machines', 'skills', 'memories', 'automations', 'connections', 'secrets', 'channels', 'code', 'websites', 'databases', 'files', 'numbers', 'email'];
-/** Home's: what its agents work with. What a space shares with its people (channels, code, sites…) it has none of. */
-export const HOME_KINDS: readonly SpaceKind[] = ['agents', 'machines', 'skills', 'memories', 'connections', 'secrets'];
 /** The kinds the space's summary doesn't list: its machines come apart, its secrets are what its agents hold. */
 type OwnRead = 'agents' | 'machines' | 'secrets';
 const isSummaryKind = (k: SpaceKind): k is Exclude<SpaceKind, OwnRead> => k !== 'agents' && k !== 'machines' && k !== 'secrets';
@@ -319,8 +314,6 @@ export interface AgentHere {
 }
 
 export interface SpaceShare {
-    /** Home: every agent and everything of the account's, shared with no one. */
-    home: boolean;
     /** The kinds it lists. */
     kinds: readonly SpaceKind[];
     loading: boolean;
@@ -387,44 +380,6 @@ function withoutNoClick(summary: SpaceSummary): SpaceSummary {
     };
 }
 
-/** Home's summary, from the account's own reads: every agent of yours (never NoClick's own, nor its helpers) and how
- *  each stands, where they run (and every machine kept on, whoever runs there), and every skill, memory and connection
- *  with the agents that use it. */
-function homeSummary({ agents, states, compute, knowledge, connections }: { agents: Agent[]; states: AgentState[]; compute: Compute[]; knowledge: KnowledgeState; connections: Connection[] }): SpaceSummary {
-    const ids = new Set(agents.map((a) => a.id));
-    const ring = new Map(states.map((st) => [st.agentId, ringOf(st.state)]));
-    const stateOf = (id: string) => {
-        const r = ring.get(id) ?? 'idle';
-        return r === 'needs' ? 'waiting' : r === 'working' || r === 'waking' ? 'working' : 'idle';
-    };
-    const agentItems: SummaryAgent[] = agents.map((a) => ({ id: a.id, name: a.name, noclick: a.noclick, state: stateOf(a.id), harness: a.harness ?? null, model: a.model ?? null }));
-    const machines: SummaryMachine[] = compute.flatMap((c): SummaryMachine[] => {
-        // A developer's sandbox runs code, not an agent.
-        if (c.kind === 'sandbox') return [];
-        const kept = c.kind === 'machine';
-        // Each agent once: its one session runs there, whoever talks to it.
-        const agentIds = [...new Set(c.running.filter((r) => ids.has(r.agentId)).map((r) => r.agentId))];
-        if (!agentIds.length) return kept ? [{ id: c.id, kind: 'machine', machineId: c.id, agentId: null, state: c.status }] : [];
-        return agentIds.map((agentId) => ({ id: c.id, kind: kept ? 'machine' : 'sandbox', machineId: kept ? c.id : null, agentId, state: c.status }));
-    });
-    const item = (ref: string, name: string, usedBy: string[]): SummaryItem => ({ id: ref, ref, name, linked: false, membersLevel: null, guestsLevel: null, usedBy: [...new Set(usedBy)].filter((a) => ids.has(a)), level: null });
-    const known = (k: Knowledge) => item(k.id, k.name ?? '', knowledge.usersOf(k).map((u) => u.agent.id));
-    const none = Object.fromEntries(SPACE_KINDS.filter(isSummaryKind).map((k) => [k, [] as SummaryItem[]])) as SpaceSummary['items'];
-    const count = (state: string) => agentItems.filter((a) => a.state === state).length;
-    return {
-        agents: { count: agentItems.length, working: count('working'), waiting: count('waiting'), idle: count('idle'), items: agentItems },
-        machines: { count: machines.length, up: machines.filter((m) => m.kind === 'sandbox' || m.state === 'running').length, items: machines, shared: [] },
-        items: {
-            ...none,
-            skills: knowledge.skills.map(known),
-            memories: knowledge.memories.map(known),
-            // A space names a connection by the ref an agent's tools name it by: a named one by its name, an account
-            // connected in the app by `credential:<id>` (its name names no connection, or another one).
-            connections: connections.map((c) => item(refFor(c), c.name, c.usedBy.filter((h) => h.kind === 'agent').map((h) => h.id))),
-        },
-    };
-}
-
 export const readSpaces = (client: NoClick) => Workspace.list({ client, status: 'active' });
 
 /** The names of the spaces each agent of the account works in, by agent id: an agent is the account's, and any number
@@ -439,9 +394,8 @@ const readConnections = (client: NoClick) => Connection.list({ client });
 /** Reads ahead what a space's Resources tab shows (the pointer resting on the tab), each read `useSpaceShare` makes,
  *  under its key, unless it was read in the last minute. */
 export function prefetchSpaceShare(client: NoClick, spaceId: string): void {
-    const home = spaceId === HOME_SPACE;
     const reads: [string, (client: NoClick) => Promise<unknown>][] = [
-        [statesKey(home ? null : spaceId), (c) => readAgentStates(c, home ? null : spaceId)],
+        [statesKey(spaceId), (c) => readAgentStates(c, spaceId)],
         [AGENTS_KEY, readAgents],
         [SKILLS_KEY, listSkills],
         [MEMORIES_KEY, listMemories],
@@ -450,18 +404,17 @@ export function prefetchSpaceShare(client: NoClick, spaceId: string): void {
         [SPACES_KEY, readSpaces],
         [CONNECTIONS_KEY, readConnections],
         [SECRETS_KEY, listSecrets],
+        [summaryKey(spaceId), (c) => readSummary(c, spaceId)],
+        [linksKey(spaceId), (c) => readLinks(c, spaceId)],
     ];
-    if (!home) reads.push([summaryKey(spaceId), (c) => readSummary(c, spaceId)], [linksKey(spaceId), (c) => readLinks(c, spaceId)]);
     for (const [key, read] of reads) prefetchV1(client, key, () => read(client), 60_000);
 }
 
-/** The space's own read, from its summary and links, drawn with the account's knowledge and machines; home's from the
- *  account's reads alone. */
+/** The space's own read, from its summary and links, drawn with the account's knowledge and machines. */
 export function useSpaceShare(spaceId: string): SpaceShare {
-    const home = spaceId === HOME_SPACE;
-    const summary = useWorkV1(home ? null : summaryKey(spaceId), (client) => readSummary(client, spaceId));
-    const links = useSpaceLinks(home ? null : spaceId);
-    const states = useAgentStates(home ? null : spaceId);
+    const summary = useWorkV1(summaryKey(spaceId), (client) => readSummary(client, spaceId));
+    const links = useSpaceLinks(spaceId);
+    const states = useAgentStates(spaceId);
     const agentsRead = useAgents();
     const knowledge = useKnowledge();
     const compute = useWorkV1(COMPUTE_KEY, listCompute);
@@ -472,14 +425,7 @@ export function useSpaceShare(spaceId: string): SpaceShare {
     const noclicks = useSpaceNoClicks();
     return useMemo(() => {
         const memberOf = spacesByAgent(spaces.data ?? []);
-        // Home's is whole once it knows its agents: the rest fill in as they're read.
-        const s = home
-            ? agentsRead.data
-                ? homeSummary({ agents: agentsRead.data.filter((a) => !keptByNoClick(a) && !a.helper), states: states.data ?? [], compute: compute.data?.data ?? [], knowledge, connections: connections.data ?? [] })
-                : null
-            : summary.data
-              ? withoutNoClick(summary.data)
-              : null;
+        const s = summary.data ? withoutNoClick(summary.data) : null;
         const linked = links.data ?? [];
         const now = Date.now();
         // Named and described as Work shows them: the account's coordinator is NoClick.
@@ -538,19 +484,18 @@ export function useSpaceShare(spaceId: string): SpaceShare {
             } else things.push({ key: thingKey('connections', name), kind: 'connections', ref: name, name: appName(name), link: null, usedBy: [a.id] });
         }
         for (const t of things) if (t.kind === 'connections') t.movedFrom = movedFrom(connOf(t.ref)?.raw.moved_from);
-        // The secrets its agents hold, each by name: the account's, in the space through them (home has every one).
+        // The secrets its agents hold, each by name: the account's, in the space through them.
         for (const sec of secrets.data ?? []) {
             const users = sec.agents.filter((a) => here.has(a.id)).map((a) => a.id);
-            if (users.length || home) things.push({ key: thingKey('secrets', sec.id), kind: 'secrets', ref: sec.id, name: sec.name, link: null, usedBy: users, secret: sec, movedFrom: sec.movedFrom });
+            if (users.length) things.push({ key: thingKey('secrets', sec.id), kind: 'secrets', ref: sec.id, name: sec.name, link: null, usedBy: users, secret: sec, movedFrom: sec.movedFrom });
         }
         const byKey = new Map(things.map((t) => [t.key, t]));
         const machinesUp = things.filter((t) => t.kind === 'machines' && (t.place ? placeUp(t.place) : t.machine?.state === 'running'));
         const statusRank = new Map(agents.map((a, i) => [a.id, i]));
         return {
-            home,
-            kinds: home ? HOME_KINDS : SPACE_KINDS,
-            loading: !s && (home ? agentsRead.loading : summary.loading),
-            error: home ? agentsRead.error : summary.error,
+            kinds: SPACE_KINDS,
+            loading: !s && summary.loading,
+            error: summary.error,
             summary: s,
             links: linked,
             of(kind) {
@@ -571,7 +516,7 @@ export function useSpaceShare(spaceId: string): SpaceShare {
             spaceName,
             spaces: (spaces.data ?? []).map((w) => ({ id: w.id, name: w.name, logoUrl: w.logoUrl ?? undefined, agentIds: w.members.flatMap((m) => (m.agentId ? [m.agentId] : [])) })),
         };
-    }, [home, summary.data, summary.loading, summary.error, links.data, states.data, agentsRead.data, agentsRead.loading, agentsRead.error, knowledge, compute.data, own.data, spaces.data, connections.data, secrets.data, spaceId, noclicks]);
+    }, [summary.data, summary.loading, summary.error, links.data, states.data, agentsRead.data, knowledge, compute.data, own.data, spaces.data, connections.data, secrets.data, spaceId, noclicks]);
 }
 
 /** The account's connections, read once for the tab's connection rows and pages (status, account, who holds it). */

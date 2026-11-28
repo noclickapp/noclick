@@ -78,3 +78,4 @@ GET /v1/projects/6b1f0c2e-4c1a-4b8e-9a51-2f7d3c8e1a01/live
 GET /v1/projects/6b1f0c2e-4c1a-4b8e-9a51-2f7d3c8e1a01/live/edits
 GET /v1/workflows
 GET /v1/workflows/wf-markets/graph
+GET /v1/workspaces/ws_personal

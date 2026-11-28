@@ -33,8 +33,6 @@ const aMachine = (t: Thing) => (t.place ? t.place.kind === 'machine' || t.place.
 const linkable = (t: Thing) => !!LINK_KIND[t.kind] && (t.kind !== 'machines' || aMachine(t));
 /** Shared with the space here: a kind a space shares that isn't yet. */
 export const shareable = (t: Thing) => linkable(t) && !t.link;
-/** Given to a space from home: an agent joins one, a kind a space shares is shared with it. */
-export const givable = (t: Thing) => t.kind === 'agents' || linkable(t);
 
 /** Where its delete goes, or null where it isn't deleted from here (a sandbox, a machine kept on, a number, an address). */
 export function deletePath(t: Thing): string | null {

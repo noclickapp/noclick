@@ -1,7 +1,7 @@
 // The parts a space's Resources tab draws its lists and pages with: rows (each opening its page, its menu on hover),
 // an item's mark, who here uses it, the way back, facts, and the one menu of everything that can be done to it.
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { ArrowLeft, ArrowUpRight, BookOpen, Brain, ChevronRight, Hash, Mail, MoreHorizontal, Pencil, Plug, Server, Trash2, UsersRound, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, BookOpen, Brain, ChevronRight, Hash, Mail, MoreHorizontal, Pencil, Plug, Server, Trash2, X } from 'lucide-react';
 import type { Connection } from 'noclick';
 import { BrandIcon } from '@/ui/BrandIcon';
 import { useInPhoneShell } from '@/ui/phoneBar';
@@ -25,7 +25,7 @@ import { useWorkClient } from '../../client';
 import { useWorkNav } from '../../nav';
 import { Faces } from '../knowledge/parts';
 import { PlaceIcon } from '../machines';
-import { changeLevel, deleteRefusal, givable, removable, removeFromSpace, renamable, titleFor } from './actions';
+import { changeLevel, deleteRefusal, removable, removeFromSpace, renamable, titleFor } from './actions';
 import { kindOf, levelWords, type SpaceKind, type SpaceLink, type Thing } from './data';
 import type { Pane } from './pane';
 
@@ -68,15 +68,10 @@ export function Chip({ children }: { children: ReactNode }) {
     return <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-foreground/[0.06] px-2 text-[11.5px] text-muted-foreground">{children}</span>;
 }
 
-/** "Also in Wirefern": the same one reaches agents in another space, so a change here shows there. Home, where every
- *  agent is, says where each is ("In Wirefern"). */
-export function Also({ names, lead = 'Also in' }: { names: string[]; lead?: string }) {
+/** "Also in Wirefern": the same one reaches agents in another space, so a change here shows there. */
+export function Also({ names }: { names: string[] }) {
     const unique = [...new Set(names)];
-    return unique.length ? (
-        <Chip>
-            {lead} {list(unique)}
-        </Chip>
-    ) : null;
+    return unique.length ? <Chip>Also in {list(unique)}</Chip> : null;
 }
 
 export function Count({ n }: { n: number }) {
@@ -90,7 +85,7 @@ export function UsedBy({ pane, agentIds, note, extra }: { pane: Pane; agentIds: 
     return (
         <span className="hidden w-[190px] shrink-0 items-center gap-2 text-[12.5px] text-muted-foreground @2xl:flex">
             {agents.length ? <Faces agents={agents} /> : null}
-            <span className="min-w-0 truncate">{agents.length ? [names, note, extra].filter(Boolean).join(' ') : pane.share.home ? 'No agent uses it' : 'No agent here uses it'}</span>
+            <span className="min-w-0 truncate">{agents.length ? [names, note, extra].filter(Boolean).join(' ') : 'No agent here uses it'}</span>
         </span>
     );
 }
@@ -108,7 +103,7 @@ export function Owned({ what, lead, onOpen }: { what: string; lead?: string; onO
     );
 }
 
-export function Empty({ kind, home }: { kind: SpaceKind; home?: boolean }) {
+export function Empty({ kind }: { kind: SpaceKind }) {
     const def = kindOf(kind);
     const Icon = def.icon;
     return (
@@ -122,9 +117,7 @@ export function Empty({ kind, home }: { kind: SpaceKind; home?: boolean }) {
                     ? 'A sandbox starts when one of its agents needs a shell.'
                     : kind === 'secrets'
                       ? 'A secret an agent here holds shows here by name, never its value.'
-                      : home
-                        ? 'Make one and it shows here.'
-                        : 'Make one, or add one the account already has.'}
+                      : 'Make one, or add one the account already has.'}
             </p>
         </div>
     );
@@ -365,16 +358,7 @@ export function ThingMenu({ pane, t, onRename, className, onPage, label }: { pan
                         </DropdownMenuRadioGroup>
                     </>
                 )}
-                {pane.share.home && givable(t) && (
-                    <>
-                        <DropdownMenuSeparator className={MENU_RULE} />
-                        <DropdownMenuItem onSelect={() => pane.ask({ kind: 'share', key: t.key })} className={MENU_ITEM}>
-                            <UsersRound className={MENU_ICON} strokeWidth={1.75} />
-                            {t.kind === 'agents' ? 'Add to a space…' : 'Share with a space…'}
-                        </DropdownMenuItem>
-                    </>
-                )}
-                {!pane.share.home && removable(t) && (
+                {removable(t) && (
                     <>
                         <DropdownMenuSeparator className={MENU_RULE} />
                         <DropdownMenuItem

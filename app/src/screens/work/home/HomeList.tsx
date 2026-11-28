@@ -61,7 +61,7 @@ export function HomeList({
 }: {
     /** The space's channels, oldest first. */
     channels: Channel[];
-    /** The space's workspace, whose channels your sections group (null: your channels in no workspace). */
+    /** The space's workspace, whose channels your sections group. */
     workspaceId: string | null;
     /** More are on their way (the first read, or a channel being made): with none yet, it waits rather than says so. */
     loading?: boolean;

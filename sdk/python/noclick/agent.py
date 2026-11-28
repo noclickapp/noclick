@@ -1446,6 +1446,7 @@ class Agent(_Object):
         app_testing: Optional[str] = None,
         model_switching: Any = None,
         approvals: Optional[Mapping[str, Any]] = None,
+        workspace: Any = None,
         allow_existing: bool = False,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
@@ -1454,6 +1455,11 @@ class Agent(_Object):
         duplicate raises ``noclick.Conflict`` with ``existing_id``). With
         ``allow_existing=True`` a taken name returns the agent already there, as it is:
         nothing about it changes, so it's made once and left alone after.
+
+        An agent of your account's own joins a space as it's made: ``workspace`` (a ``Workspace``
+        or id), else your account's personal space (``Workspace.mine()`` lists it first), where
+        it's a member like any other and can be removed. A child, a temporary agent or a user's
+        joins none.
 
         ``harness`` is what runs it: ``"sdk"`` (the default), NoClick's own agent
         loop, or a coding agent in a sandbox of its own with a shell and files:
@@ -1747,6 +1753,8 @@ class Agent(_Object):
         ), scope=scope)
         if approvals is not None:
             body = {**body, "approvals": settings_wire(dict(approvals))}
+        if workspace is not None:
+            body = {**body, "workspace_id": await ref_id(workspace)}
         raw = await cls._create_named("/v1/agents", body, allow_existing=allow_existing, user=scope, client=client)
         return cls._new(raw=raw, client=client, user=scope)
 

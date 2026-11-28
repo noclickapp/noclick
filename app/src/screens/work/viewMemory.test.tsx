@@ -70,7 +70,7 @@ function withSam(fake: FakeWork) {
 }
 
 it('Agents reopens the agent you picked after a visit to Home', async () => {
-    const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents');
+    const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick&show=agents');
     fireEvent.click(await agentRow('agt_growth'));
     await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
     expect(await screen.findByTestId('agent-conversation')).toBeTruthy();
@@ -86,7 +86,7 @@ it('Agents reopens the agent you picked after a visit to Home', async () => {
 });
 
 it('Agents reopens the agent and the profile beside it', async () => {
-    const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents&agent=agt_support&panel=profile');
+    const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick&show=agents&agent=agt_support&panel=profile');
     await screen.findByTestId('agent-profile');
 
     view('DMs');
@@ -119,8 +119,8 @@ it('DMs reopens the DM you last had open, not the newest', async () => {
 it('each space keeps its own: Agents in one space never reopens another’s agent', async () => {
     localStorage.setItem(VIEWS_KEY, JSON.stringify({ ws_noclick: { agents: { agent: 'agt_wirefern' } } }));
     const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents');
-    fireEvent.click(await agentRow('agt_growth'));
-    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
+    fireEvent.click(await agentRow('agt_inbox'));
+    await waitFor(() => expect(work.param('agent')).toBe('agt_inbox'));
 
     fireEvent.click(within(screen.getByRole('navigation', { name: 'Spaces' })).getByRole('button', { name: 'NoClick' }));
     await waitFor(() => expect(work.param('space')).toBe('ws_noclick'));
@@ -129,17 +129,17 @@ it('each space keeps its own: Agents in one space never reopens another’s agen
     view('Agents');
     await waitFor(() => expect(work.param('agent')).toBe('agt_wirefern'));
 
-    fireEvent.click(within(screen.getByRole('navigation', { name: 'Spaces' })).getByRole('button', { name: 'Rowan Hale' }));
-    await waitFor(() => expect(work.param('space')).toBe('home'));
-    await agentRow('agt_growth');
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'Spaces' })).getByRole('button', { name: 'Rowan’s space' }));
+    await waitFor(() => expect(work.param('space')).toBe('ws_personal'));
+    await agentRow('agt_inbox');
     view('Home');
     view('Agents');
-    await waitFor(() => expect(work.param('agent')).toBe('agt_growth'));
+    await waitFor(() => expect(work.param('agent')).toBe('agt_inbox'));
 });
 
 it('a remembered agent that’s gone opens Agents with nothing open, its agents there to pick', async () => {
-    localStorage.setItem(VIEWS_KEY, JSON.stringify({ home: { agents: { agent: 'agt_deleted' } } }));
-    const work = showWork(fakeWork(), '/dashboard?tab=work&space=home');
+    localStorage.setItem(VIEWS_KEY, JSON.stringify({ ws_noclick: { agents: { agent: 'agt_deleted' } } }));
+    const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick');
     // Where its agents stand is read: the rail counts what waits on you in Agents.
     await within(await screen.findByRole('navigation', { name: 'Views' })).findByText('2');
 
@@ -168,7 +168,7 @@ it('an agent whose profile is beside wins over the one Agents remembers', async 
 it('a phone shows each view’s list, never what was last open in it', async () => {
     const lead = document.createElement('div');
     document.body.append(lead);
-    const work = showWork(fakeWork(), '/dashboard?tab=work&space=home&show=agents', (page) => (
+    const work = showWork(fakeWork(), '/dashboard?tab=work&space=ws_noclick&show=agents', (page) => (
         <PhoneBarSlotProvider slot={null} lead={lead} setLeadTaken={() => undefined}>
             {page}
         </PhoneBarSlotProvider>

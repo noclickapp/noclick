@@ -2,9 +2,7 @@
 // each kind with how many the space has (machines: how many are up); the main pane is the overview, a kind's list or
 // an item's page, each made, added, renamed, shared, removed or deleted from here. It's the space's view of what it
 // can use, never a second owner: the account's Resources page owns each one. Where you are is the URL's (`res`,
-// `item`), and what moves is followed from the backend's frames. Home's tab (`HOME_SPACE`) is the same, for its agents
-// in no space and what the account has for them: nothing in it is shared with people, and each item can be shared with
-// a space from its menu.
+// `item`), and what moves is followed from the backend's frames. Your personal space's is the same as any space's.
 import { useMemo, useState, type ReactNode } from 'react';
 import { LayoutGrid } from 'lucide-react';
 import { invalidateV1 } from '@/sdk/useV1';
@@ -26,7 +24,7 @@ import { RES_OVERVIEW, useWorkPlace } from '../place';
 import { useKnowledgeFrames } from './knowledge/store';
 import { renameThing } from './space/actions';
 import { GROUPS, isSpaceKind, KINDS, readSpaceAgain, SPACES_KEY, useConnections, useSpaceShare, type KindIcon, type SpaceKind, type Thing } from './space/data';
-import { AddDialog, CreateDialog, DeleteDialog, ShareDialog } from './space/dialogs';
+import { AddDialog, CreateDialog, DeleteDialog } from './space/dialogs';
 import { ItemPage } from './space/ItemPage';
 import { KindPage } from './space/KindPage';
 import { Overview } from './space/Overview';
@@ -134,7 +132,7 @@ export function SpaceResourcesNav({ spaceId }: { spaceId: string }) {
         );
     };
     return (
-        <nav aria-label={share.home ? 'Your resources' : `${share.spaceName || 'This space'}’s resources`} className="flex flex-col gap-px" data-testid="space-resources-nav">
+        <nav aria-label={`${share.spaceName || 'This space'}’s resources`} className="flex flex-col gap-px" data-testid="space-resources-nav">
             {row(!phone && at === null, LayoutGrid, 'Overview', null, () => (phone ? go({ res: RES_OVERVIEW, item: null }) : onAt(null)))}
             {(Object.keys(GROUPS) as (keyof typeof GROUPS)[]).map((g) => {
                 const kinds = KINDS.filter((k) => k.group === g && share.kinds.includes(k.id));
@@ -171,7 +169,7 @@ export function SpaceResourcesPane({ spaceId }: { spaceId: string }) {
             </div>
         );
     } else if (share.error !== undefined && !share.summary) {
-        body = <p className="py-10 text-[14px] text-muted-foreground">{share.home ? 'Your' : 'This space’s'} resources couldn’t be read. They’re read again when you come back to this tab.</p>;
+        body = <p className="py-10 text-[14px] text-muted-foreground">This space’s resources couldn’t be read. They’re read again when you come back to this tab.</p>;
     } else if (at === null) body = <Overview {...pane} />;
     else if (at.item)
         body = item ? (
@@ -179,19 +177,17 @@ export function SpaceResourcesPane({ spaceId }: { spaceId: string }) {
         ) : (
             <>
                 <Crumbs onAt={pane.onAt} kind={at.kind} />
-                <p className="py-10 text-[14px] text-muted-foreground">{share.home ? 'It’s gone: it was deleted.' : 'It’s gone: it was deleted or taken out of this space.'}</p>
+                <p className="py-10 text-[14px] text-muted-foreground">It’s gone: it was deleted or taken out of this space.</p>
             </>
         );
     else body = <KindPage key={at.kind} kind={at.kind} {...pane} />;
     const deleting = dialog?.kind === 'delete' ? share.find(dialog.key) : undefined;
-    const sharing = dialog?.kind === 'share' ? share.find(dialog.key) : undefined;
     return (
         <div className="@container min-h-0 flex-1 overflow-y-auto scrollbar-subtle" data-testid="space-resources">
             <div className={cn('mx-auto w-full max-w-[1040px] pb-20', knowledge ? 'pt-4' : 'px-5 pt-6 @2xl:px-10 @2xl:pt-10')}>{body}</div>
             {dialog?.kind === 'add' && <AddDialog {...pane} kind={dialog.of} onClose={close} />}
             {dialog?.kind === 'create' && <CreateDialog {...pane} kind={dialog.of} onClose={close} />}
             {deleting && <DeleteDialog {...pane} t={deleting} onClose={close} />}
-            {sharing && <ShareDialog {...pane} t={sharing} onClose={close} />}
         </div>
     );
 }

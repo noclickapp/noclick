@@ -1,7 +1,7 @@
 // Inviting people to a space: one link to share first (anyone signed in to NoClick who opens it joins, as a member or
 // a guest), or an invite sent to one email address. Joining adds them as your account's users: what they do in the
-// space is paid by its owner, up to the plan's people. Your personal space takes people the same way: they see its
-// channels and the agents in them, never your chat with NoClick, your DMs or your settings.
+// space is paid by its owner, up to the plan's people. Your personal space takes people the same way, never showing
+// them your chat with NoClick, your DMs or your settings.
 import { useState, type FormEvent } from 'react';
 import { Link2, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,8 +20,6 @@ const CHOICES: [Exclude<WorkspaceRole, 'admin'>, string][] = [
     ['member', 'Every agent and channel here, and what the space is connected to'],
     ['guest', 'Only the channels you add them to, and those channels’ agents'],
 ];
-// A personal space shares its channels and their agents, never what it's connected to.
-const PERSONAL_MEMBER = 'Every channel here and the agents in them';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function InviteDialog({ open, onOpenChange, space, people }: { open: boolean; onOpenChange: (open: boolean) => void; space: WorkSpace; people: SpacePeople }) {
@@ -32,8 +30,7 @@ export function InviteDialog({ open, onOpenChange, space, people }: { open: bool
     const [problem, setProblem] = useState<string | null>(null);
     const full = people.peopleLimit !== null && people.peopleCount >= people.peopleLimit;
     const where = spaceWhere(space);
-    // Yours (Work's home) or someone's you joined: its channels and their agents, nothing it's connected to.
-    const personal = !space.workspaceId || !!space.personal;
+    const yours = space.own && !!space.personal;
     const Where = where.charAt(0).toUpperCase() + where.slice(1);
 
     const run = async (what: 'link' | 'email', work: () => Promise<void>) => {
@@ -79,11 +76,7 @@ export function InviteDialog({ open, onOpenChange, space, people }: { open: bool
             onOpenChange={onOpenChange}
             size="md"
             title={`Invite people to ${where}`}
-            description={
-                !personal
-                    ? 'They can message the agents here and use what the space is connected to.'
-                    : `They’ll see its channels and the agents in them.${space.workspaceId ? '' : ' Your chat with NoClick, your DMs and your settings stay yours.'}`
-            }
+            description={`They can message the agents here and use what the space is connected to.${yours ? ' Your chat with NoClick, your DMs and your settings stay yours.' : ''}`}
             mark={<UserPlus className="h-5 w-5" strokeWidth={1.75} />}
             testId="invite-dialog"
             footer={
@@ -150,7 +143,7 @@ export function InviteDialog({ open, onOpenChange, space, people }: { open: bool
                                     </span>
                                     {r}
                                 </span>
-                                <span className="mt-1 block text-[12.5px] leading-snug text-muted-foreground">{r === 'member' && personal ? PERSONAL_MEMBER : note}</span>
+                                <span className="mt-1 block text-[12.5px] leading-snug text-muted-foreground">{note}</span>
                             </button>
                         ))}
                     </div>

@@ -7,13 +7,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { ArrowUp, FileText, Paperclip, X } from 'lucide-react';
-import { Agent, Machine, NotAvailable, Workspace, type Attachment, type HarnessInfo } from 'noclick';
+import { Agent, Machine, NotAvailable, type Attachment, type HarnessInfo } from 'noclick';
 import { invalidateV1 } from '@/sdk/useV1';
 import { ShortcutTooltip } from '@/ui/ShortcutTooltip';
 import { useInPhoneShell } from '@/ui/phoneBar';
 import { cn } from '@/ui/utils';
 import { useWorkClient } from '../client';
-import { HOME_SPACE } from '../place';
 import { DisabledTip } from '../tooltip';
 import { SidewaysRow } from '../ui';
 import { AGENTS_KEY, STATES_KEY, useAgents } from '../agents/reads';
@@ -168,11 +167,12 @@ export function NewAgent({ spaceId, onCreated, onCancel }: NewAgentProps) {
                 budgetUsdPerMonth: budget,
                 ...(value.permissions !== 'full-access' ? { permissionMode: value.permissions } : {}),
                 ...(machine ? { machine } : {}),
+                // It joins the space it's made in.
+                ...(spaceId ? { workspace: spaceId } : {}),
             });
             const agent = made;
             // On a machine on its owner's plan, its creation says where the plan's sign-in is kept.
             const notes = machine ? answerNotes(agent.raw) : [];
-            if (spaceId && spaceId !== HOME_SPACE) await Workspace.fromId(spaceId, { client }).add(agent);
             const files: Attachment[] = [];
             for (const chip of chips) files.push(await agent.upload(chip.file));
             await agent.send(job.trim(), { files });
@@ -345,7 +345,7 @@ export function NewAgent({ spaceId, onCreated, onCancel }: NewAgentProps) {
                             <span className="h-px flex-1 bg-border dark:bg-foreground/[0.08]" />
                         </span>
                         <MoveCard
-                            spaceId={spaceId && spaceId !== HOME_SPACE ? spaceId : null}
+                            spaceId={spaceId}
                             machineId={runs.kind === 'machine' ? runs.id : null}
                             onMoved={(agentId) => {
                                 invalidateV1(AGENTS_KEY);

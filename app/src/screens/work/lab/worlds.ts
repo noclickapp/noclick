@@ -116,7 +116,7 @@ function agentMidTurn() {
     return fake;
 }
 
-/** The agent an agents page made, over the spaces': its channel among yours (in no space), it, the account's
+/** The agent an agents page made, over the spaces': its channel in your personal space, it, the account's
  *  connections and the harnesses as forAppsRoutes answers them. */
 function forAppsLayer(state: AgentForAppsState, spaces: Fetch): Fetch {
     const routes = forAppsRoutes(state);

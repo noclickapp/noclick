@@ -19,7 +19,7 @@ const PANELS: readonly WorkPanel[] = ['people', 'agents', 'access', 'profile', '
 export type ProfileTab = 'triggers' | 'tools' | 'files' | 'activity';
 const PROFILE_TABS: readonly ProfileTab[] = ['triggers', 'tools', 'files', 'activity'];
 
-/** Your own channels that sit in no space, as the space rail lists them. */
+/** Your personal space, as a link from outside Work names it (Work puts its id in the address once it's read). */
 export const HOME_SPACE = 'home';
 /** Home's list of every thread you follow, in a channel's place. */
 export const THREADS = 'threads';
@@ -33,7 +33,7 @@ export const NEW_AGENT = 'new';
 export const RES_OVERVIEW = 'overview';
 
 export interface WorkPlace {
-    /** The space's id (`HOME_SPACE` for your channels in none); null until the page picks one. */
+    /** The space's id (`HOME_SPACE`: your personal space); null until the page picks one. */
     space: string | null;
     view: WorkView;
     /** Home: a channel's id, `THREADS` or `TEMPLATES`; DMs: a DM's channel id. */
@@ -131,8 +131,8 @@ export function openTemplateInWork(source: string, spaceId?: string | null): voi
 }
 
 /** Open an agent in Work from outside it (a card, Resources): its session, with its profile beside, where it's
- *  changed; in your account's home, which lists every agent of the account. Whatever else Work had open closes. Work
- *  is where its host says (`WORK_ADDRESS`). */
+ *  changed; in your personal space. Whatever else Work had open closes. Work is where its host says
+ *  (`WORK_ADDRESS`). */
 export function openAgentInWork(agentId: string): void {
     standing(WORK_ADDRESS).go(withPlace(new URLSearchParams(), { space: HOME_SPACE, view: 'agents', agent: agentId, panel: 'profile' }));
 }

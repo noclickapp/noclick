@@ -1987,14 +1987,17 @@ export class Agent extends ApiObject {
   /**
    * Create an agent (names are unique per account and user; a duplicate throws `Conflict` with `existingId`).
    * With `allowExisting: true` a taken name returns the agent already there, as it is: nothing about it
-   * changes, so it's made once and left alone after.
+   * changes, so it's made once and left alone after. An account's own agent joins a space as it's made: the
+   * `workspace` named (a `Workspace` or id), else the account's personal space; a child, a temporary agent or a
+   * user's joins none.
    */
   static async create(
-    name: string, options: AgentCreateOptions & AgentApprovalsOption & AllowExisting & { instructions: string },
+    name: string,
+    options: AgentCreateOptions & AgentApprovalsOption & AllowExisting & { instructions: string; workspace?: string | ApiObject },
   ): Promise<Agent> {
     const scope = resolveScope(options.user);
     const json = defined({ ...await wireBody(name, options, await agentId(options.parent), scope),
-      approvals: wireSettings(options.approvals) });
+      workspace_id: await refId(options.workspace), approvals: wireSettings(options.approvals) });
     const raw = await createNamed("/v1/agents", json, { allowExisting: options.allowExisting, user: scope, client: options.client });
     return new Agent({ raw, client: options.client, user: scope });
   }

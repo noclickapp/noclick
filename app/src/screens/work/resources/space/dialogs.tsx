@@ -3,10 +3,9 @@
 // connection or a secret is removed for good, its access ending everywhere), and, from home, giving one to a space.
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Check, Hash, Plus, Search, Trash2, UsersRound } from 'lucide-react';
+import { Check, Hash, Plus, Search, Trash2 } from 'lucide-react';
 import { Agent, Bucket, Channel, Connection, Database, Machine, Project, Repo, Workflow } from 'noclick';
 import { BUTTON_DANGER, BUTTON_GHOST, BUTTON_PRIMARY, BUTTON_SECONDARY } from '@/ui/buttons';
-import { WorkspaceTile } from '@/screens/channels/workspaces';
 import { FIELD_LABEL } from '@/ui/fields';
 import { ShellDialog } from '@/ui/ShellDialog';
 import { useWork } from '../../context';
@@ -22,7 +21,7 @@ import { AgentFace, PILL_FIELD } from '../knowledge/parts';
 import { useKnowledge } from '../knowledge/store';
 import { addToSpace, deleteThing, previewDelete, removedForGood, titleFor } from './actions';
 import { useAutomationCanvas } from './Automations';
-import { kindOf, LINK_KIND, readSpaceAgain, share, thingKey, useSpaceLinks, type SpaceKind, type SpaceShare, type Thing } from './data';
+import { kindOf, readSpaceAgain, share, thingKey, type SpaceKind, type Thing } from './data';
 import { Lead, list, markOf } from './parts';
 import type { Pane } from './pane';
 
@@ -162,16 +161,14 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
         }
     }, [kind, nav, onClose]);
     if (kind === 'agents') return null;
-    /** Shares what was made with this space (home shares it with no one: it's the account's, and listed there as all
-     *  of them are), then opens it: an automation on its canvas where one opens, anything else on its page here. */
+    /** Shares what was made with this space, then opens it: an automation on its canvas where one opens, anything
+     *  else on its page here. */
     const sharedHere = async (made: { kind: keyof typeof MADE_KIND; id: string; name?: string }) => {
-        if (!pane.share.home) {
-            try {
-                await share(client, spaceId, made.kind, made.id);
-                readSpaceAgain(spaceId);
-            } catch (error) {
-                toast.error('Made, but not shared with this space', { description: error instanceof Error ? error.message : String(error) });
-            }
+        try {
+            await share(client, spaceId, made.kind, made.id);
+            readSpaceAgain(spaceId);
+        } catch (error) {
+            toast.error('Made, but not shared with this space', { description: error instanceof Error ? error.message : String(error) });
         }
         const k = MADE_KIND[made.kind];
         if (made.kind === 'automation' && canvas) canvas({ id: made.id, name: made.name ?? '' });
@@ -187,9 +184,9 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
     if (kind === 'machines') return <AddMachine onDone={() => onClose()} />;
     const WAYS: Partial<Record<SpaceKind, { about: string; manual?: { label: string; run: () => void | Promise<void> }; note?: string; ask: string }>> = {
         connections: {
-            about: pane.share.home ? 'A new sign-in for the account. Connect it in Connections and it shows here.' : 'A new sign-in for the account. Connect it in Connections, then add it here so everyone in this space gets it.',
+            about: 'A new sign-in for the account. Connect it in Connections, then add it here so everyone in this space gets it.',
             manual: openPage && { label: 'Open Connections', run: () => openPage('connections') },
-            ask: pane.share.home ? 'Connect an account for my agents.' : `Connect an account for the ${space} space’s agents.`,
+            ask: `Connect an account for the ${space} space’s agents.`,
         },
         code: { about: 'NoClick makes a repository for the account; share it here and its agents check it out on their machines.', ask: `Make a repository for the ${space} space.` },
         automations: {
@@ -265,7 +262,7 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
             }
         >
             <p className="pb-1 text-[13px] leading-relaxed text-muted-foreground">
-                {pane.share.home ? 'It lands in the account and shows here once it’s made.' : way.manual && way.note ? way.note : 'It lands in the account; add it to this space from here once it’s made.'}
+                {way.manual && way.note ? way.note : 'It lands in the account; add it to this space from here once it’s made.'}
             </p>
         </ShellDialog>
     );
@@ -415,66 +412,5 @@ export function DeleteDialog({ t, spaceId, share: here, onAt, onClose }: Pane & 
                 {t.link && <p className="text-muted-foreground">To keep it elsewhere, remove it from this space instead.</p>}
             </div>
         </ShellDialog>
-    );
-}
-
-/** Home's way to give one to a space: an agent joins it (staying in the others it's in), anything else is shared with
- *  everyone in it. A space that has it already says so. */
-export function ShareDialog({ t, share: here, onClose }: Pane & { t: Thing; onClose: () => void }) {
-    const client = useWorkClient();
-    const [busy, setBusy] = useState(false);
-    const agent = t.kind === 'agents';
-    const give = async (space: SpaceShare['spaces'][number]) => {
-        setBusy(true);
-        await addToSpace(client, space.id, [t], space.name);
-        onClose();
-    };
-    return (
-        <ShellDialog
-            open
-            onOpenChange={(o) => !o && onClose()}
-            title={agent ? `Add ${titleFor(t)} to a space` : `Share ${titleFor(t)} with a space`}
-            description={agent ? 'It works in the space’s channels, with the people there, and stays in the spaces it’s in.' : 'Everyone in the space gets it, and anyone who joins later. The agents that use it keep it.'}
-            mark={<UsersRound className="h-5 w-5" strokeWidth={1.75} />}
-            testId="share-with-space"
-            footer={
-                <button type="button" onClick={onClose} className={BUTTON_GHOST}>
-                    Cancel
-                </button>
-            }
-        >
-            {here.spaces.length ? (
-                <ul className="-mx-2 flex max-h-[340px] flex-col overflow-y-auto pb-1 scrollbar-subtle">
-                    {here.spaces.map((space) => (
-                        <SpaceChoice key={space.id} space={space} t={t} busy={busy} onPick={() => void give(space)} />
-                    ))}
-                </ul>
-            ) : (
-                <p className="pb-1 text-[13.5px] leading-relaxed text-muted-foreground">You have no space yet. Make one from the rail, and everyone you invite to it gets what you share.</p>
-            )}
-        </ShellDialog>
-    );
-}
-
-function SpaceChoice({ space, t, busy, onPick }: { space: SpaceShare['spaces'][number]; t: Thing; busy: boolean; onPick: () => void }) {
-    const agent = t.kind === 'agents';
-    const links = useSpaceLinks(agent ? null : space.id);
-    const has = agent ? space.agentIds.includes(t.ref) : !!links.data?.some((l) => l.kind === LINK_KIND[t.kind] && l.ref === t.ref);
-    // Unread, the space itself refuses one it has.
-    const reading = !agent && !links.data && !links.error;
-    return (
-        <li>
-            <button
-                type="button"
-                disabled={busy || has || reading}
-                onClick={onPick}
-                className="flex w-full items-center gap-3 rounded-full px-2 py-1.5 text-left transition-colors hover:bg-foreground/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none"
-            >
-                <WorkspaceTile workspace={space} size={28} />
-                <span className={cn('min-w-0 flex-1 truncate text-[14px] font-medium', has && 'text-muted-foreground')}>{space.name}</span>
-                {has && <span className="shrink-0 pr-2 text-[12.5px] text-muted-foreground">{agent ? 'In it already' : 'Shared already'}</span>}
-                {!!links.error && <span className="shrink-0 pr-2 text-[12.5px] text-muted-foreground">Couldn’t check what it has</span>}
-            </button>
-        </li>
     );
 }

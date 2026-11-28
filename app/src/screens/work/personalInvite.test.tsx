@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-// Inviting people to your personal space, over the fake /v1: Invite people shares the personal space (once) and opens
-// the same invite dialog a team space has, named for your personal space and saying what stays yours. No other space is
-// made, and Work stays where it is. An invite that fails says so in the dialog.
+// Inviting people to your personal space, over the fake /v1: it's a space like any other, so Invite people opens the
+// invite dialog a team space has, named for your personal space and saying what stays yours. Nothing is shared or made
+// first, and Work stays where it is. An invite that fails says so in the dialog.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -44,29 +44,26 @@ it('Invite people in the personal space invites into it, through the dialog a te
     const fake = fakeWork({ empty: true, noclick: true });
     const router = openDms(fake);
     const dialog = await inviteFromDms();
+    const [personal] = fake.workspaces.filter((w) => w.personal);
 
-    // The personal space was shared, once, and no space was made to invite people to.
-    expect(sent(fake, 'POST', '/v1/me/personal_space')).toHaveLength(1);
+    // Nothing was shared or made to invite people to.
+    expect(sent(fake, 'POST', '/v1/me/personal_space')).toHaveLength(0);
     expect(sent(fake, 'POST', '/v1/workspaces')).toHaveLength(0);
     expect(screen.queryByTestId('space-dialog')).toBeNull();
-    const [personal] = fake.workspaces.filter((w) => w.personal);
     expect(dialog.textContent).toContain('Invite people to your personal space');
     expect(dialog.textContent).toContain('Your chat with NoClick, your DMs and your settings stay yours.');
-    expect(document.body.textContent).not.toContain('Make a space to invite people to');
-    // Work stays in the personal space.
-    expect(new URLSearchParams(router.state.location.search).get('space')).toBe('home');
+    // Work stays in the personal space, named by its id.
+    expect(new URLSearchParams(router.state.location.search).get('space')).toBe(personal.id);
 
     fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'asha@example.com' } });
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
     await waitFor(() => expect(sent(fake, 'POST', `/v1/workspaces/${String(personal.id)}/invites`)).toHaveLength(1));
     expect(sent(fake, 'POST', `/v1/workspaces/${String(personal.id)}/invites`)[0].body).toEqual({ email: 'asha@example.com', role: 'member' });
 
-    // Shared, its header opens a menu with who's in it; Invite people again shares nothing more.
+    // Its header opens the menu every space has.
     fireEvent.click(screen.getByRole('button', { name: 'Done' }));
     await waitFor(() => expect(screen.queryByTestId('invite-dialog')).toBeNull());
     expect(await screen.findByTestId('space-menu')).toBeTruthy();
-    await inviteFromDms();
-    expect(sent(fake, 'POST', '/v1/me/personal_space')).toHaveLength(1);
 });
 
 it('an invite that fails says why in the dialog, which stays open with what was typed', async () => {
@@ -82,15 +79,4 @@ it('an invite that fails says why in the dialog, which stays open with what was 
     expect(alert.textContent).toContain('Invites are paused on this account.');
     expect(screen.getByTestId('invite-dialog')).toBeTruthy();
     expect((screen.getByLabelText('Email address') as HTMLInputElement).value).toBe('asha@example.com');
-});
-
-it("when the personal space can't be shared, no dialog opens and nothing is made", async () => {
-    const fake = fakeWork({ empty: true, noclick: true });
-    fake.fail('/v1/me/personal_space', 'Sharing is down for a moment.', 'POST');
-    openDms(fake);
-    fireEvent.click(await listInvite());
-    await waitFor(() => expect(sent(fake, 'POST', '/v1/me/personal_space')).toHaveLength(1));
-    expect(screen.queryByTestId('invite-dialog')).toBeNull();
-    expect(fake.workspaces.filter((w) => w.personal)).toHaveLength(0);
-    expect(sent(fake, 'POST', '/v1/workspaces')).toHaveLength(0);
 });

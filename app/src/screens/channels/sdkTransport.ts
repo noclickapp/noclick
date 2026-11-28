@@ -287,9 +287,9 @@ export interface TransportOptions {
  */
 export function platformTransport(client: NoClick, { sendTyping, person }: TransportOptions): PlatformTransport {
     const listeners = new Set<(change: ChannelChange) => void>();
-    // The agents not yet in `workspace` join it; a personal space's agents are the ones in its channels, never added.
+    // The agents not yet in `workspace` join it (never a NoClick: a space's is in it already, and the account's own
+    // joins your personal space's channels without being one of its members).
     const joinWorkspace = async (workspace: Workspace, agentIds: string[]) => {
-        if (workspace.raw.personal === true) return;
         const inside = new Set(workspace.members.flatMap((m) => (m.agentId ? [m.agentId] : [])));
         for (const id of agentIds.filter((a) => !inside.has(a))) await workspace.add(Agent.fromId(id, { client, user: null }));
     };
@@ -339,7 +339,7 @@ export function platformTransport(client: NoClick, { sendTyping, person }: Trans
                 if (workspaceId) {
                     // A workspace's channel takes its platform agents from the workspace: those not yet in it join it first.
                     const workspace = await Workspace.get(workspaceId, { client, user: null });
-                    await joinWorkspace(workspace, agentIds);
+                    await joinWorkspace(workspace, agents.filter((a) => !a.noclick).map((a) => a.id));
                 }
                 const made = await PlatformChannel.create(name, {
                     client,
@@ -348,7 +348,7 @@ export function platformTransport(client: NoClick, { sendTyping, person }: Trans
                     topic: topic || undefined,
                     // Agents in a new channel answer every message; mention-only is only a channel made that way before.
                     mode: 'all',
-                    // A space's people by their user ids; the personal space holds none.
+                    // A space's people by their user ids.
                     members: [...agentIds.map((agentId) => ({ agentId })), ...(workspaceId ? people.map((id) => User.fromId(id, { client })) : [])],
                 });
                 return room(made);
@@ -357,7 +357,7 @@ export function platformTransport(client: NoClick, { sendTyping, person }: Trans
         schedules: (channelId) => said(async () => (await channel(channelId).triggers()).flatMap(scheduleOf)),
         addAgent: (room, agent) =>
             said(async () => {
-                if (room.workspaceId) await joinWorkspace(await Workspace.get(room.workspaceId, { client, user: null }), [agent.id]);
+                if (room.workspaceId && !agent.noclick) await joinWorkspace(await Workspace.get(room.workspaceId, { client, user: null }), [agent.id]);
                 await channel(room.id).add({ agentId: agent.id });
                 return read(room.id);
             }),

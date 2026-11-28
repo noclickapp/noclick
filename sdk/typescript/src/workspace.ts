@@ -83,6 +83,11 @@ export interface MyWorkspace {
   userId: string | null;
   memberId: string | null;
   joinedAt: Date | null;
+  /**
+   * A personal space: the one every account has, its owner's own (made on first read), where what's made without
+   * naming a space goes. Never archived, deleted or left; listed first among your own.
+   */
+  personal: boolean;
   raw: JsonObject;
 }
 
@@ -98,6 +103,7 @@ function toMyWorkspace(raw: JsonObject): MyWorkspace {
     userId: str(raw.user_id),
     memberId: str(raw.member_id),
     joinedAt: parseTime(raw.joined_at),
+    personal: raw.personal === true,
     raw,
   };
 }
@@ -459,6 +465,10 @@ export class Workspace extends ApiObject {
   get status(): "active" | "archived" {
     return this._field("status");
   }
+  /** The account's personal space, made the first time it's read: where what's made without naming a space goes. */
+  get personal(): boolean {
+    return this._field<boolean | null>("personal") === true;
+  }
   get budgetUsdPerMonth(): number | null {
     return this._field("budget_usd_per_month");
   }
@@ -787,10 +797,10 @@ export class Workspace extends ApiObject {
   }
 
   /**
-   * The workspaces you see, signed in to NoClick: your account's active ones (`own`, role `owner`), then the active
-   * ones you joined in other accounts, with your role and whose each is, then your account's archived ones
-   * (`status` archived), which `unarchive` brings back. One of the account's own secret keys reads the account's own
-   * ones, its personal space's included, never those you joined.
+   * The workspaces you see, signed in to NoClick: your personal space first (`personal`), your account's other active
+   * ones (`own`, role `owner`), then the active ones you joined in other accounts, with your role and whose each is,
+   * then your account's archived ones (`status` archived), which `unarchive` brings back. One of the account's own
+   * secret keys reads the account's own ones, never those you joined.
    */
   static async mine(options: { client?: NoClickClient } = {}): Promise<MyWorkspace[]> {
     const rows = asList(await resolveClient(options.client).request("GET", "/v1/me/workspaces", { user: null })) as JsonObject[];
@@ -823,9 +833,9 @@ export class Workspace extends ApiObject {
   }
 
   /**
-   * Your personal space (your channels in no workspace) as a space people can join, made the first time: its invites,
-   * people and DMs go through it. Its channels stay where they are, shown to its people, never your own chat with
-   * NoClick. Signed in to NoClick; answers it as `mine()` lists it.
+   * Your personal space: the space every account has, made the first time it's read, where an agent or a channel
+   * made without naming a space goes. Invite people to it as to any space; they never see your own chat with NoClick
+   * there. Signed in to NoClick; answers it as `mine()` lists it (first).
    *
    *     const personal = await Workspace.personalSpace();
    *     console.log(personal.id, personal.name);

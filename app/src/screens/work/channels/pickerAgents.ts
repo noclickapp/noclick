@@ -7,17 +7,19 @@ import { useMemo } from 'react';
 import { Agent } from 'noclick';
 import type { AgentChoice } from '@/screens/channels/types';
 import { harnessLabel } from '../agents/harness';
-import { keptByNoClick, useNoClickId, useWorkV1, YOUR_NOCLICK } from '../agents/reads';
+import { keptByNoClick, useNoClickId, useSpaceNoClicks, useWorkV1, YOUR_NOCLICK } from '../agents/reads';
 import { useSpaceNoClick } from '../intro';
 import { listedModel, modelName } from '../newAgent/catalog';
 
 export const NOCLICK_LISTENS = 'Listens here and tells you directly';
 
 /** `reading`: the picker is open, so the models' names (and the space's NoClick) are worth reading. `workspaceId`: the
- *  space the channel is in, null for the personal space. */
+ *  space the channel is in (yours, your personal space: the account's NoClick leads). */
 export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspaceId: string | null): AgentChoice[] {
     const noclick = useNoClickId();
     const ours = useSpaceNoClick(workspaceId, reading);
+    const home = useSpaceNoClicks().home;
+    const yours = !workspaceId || workspaceId === home;
     const pairs = useMemo(
         () => [...new Set(agents.flatMap((a) => (a.harness && !keptByNoClick(a) ? [`${a.harness} ${a.model ?? ''}`] : [])))].sort(),
         [agents]
@@ -40,11 +42,11 @@ export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspa
         return Object.fromEntries(named.filter((n): n is readonly [string, string] => n[1] !== null));
     });
     return useMemo(() => {
-        const lead: AgentChoice[] = workspaceId
-            ? ours
-                ? [{ id: ours.agentId, name: ours.name, noclick: true, role: NOCLICK_LISTENS }]
-                : []
-            : agents.filter((a) => a.id === noclick).map((a) => ({ ...a, name: YOUR_NOCLICK, noclick: true, role: NOCLICK_LISTENS }));
+        const lead: AgentChoice[] = yours
+            ? agents.filter((a) => a.id === noclick).map((a) => ({ ...a, name: YOUR_NOCLICK, noclick: true, role: NOCLICK_LISTENS }))
+            : ours
+              ? [{ id: ours.agentId, name: ours.name, noclick: true, role: NOCLICK_LISTENS }]
+              : [];
         const rest = agents
             .filter((a) => !keptByNoClick(a))
             .map((a): AgentChoice => {
@@ -52,5 +54,5 @@ export function usePickerAgents(agents: AgentChoice[], reading: boolean, workspa
                 return line ? { ...a, modelLine: line } : a;
             });
         return [...lead, ...rest];
-    }, [agents, noclick, names.data, workspaceId, ours]);
+    }, [agents, noclick, names.data, yours, ours]);
 }

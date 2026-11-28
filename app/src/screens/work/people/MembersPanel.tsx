@@ -71,11 +71,9 @@ export function MembersPanel({
 }) {
     const faces = useAgentFaces();
     const others = people.people.filter((p) => p.userId !== space.userId);
-    // A personal space's agents are the ones in its channels, never added to it.
-    const personal = !space.workspaceId || space.personal;
     const tabs: [MembersTab, string][] = [
         ['people', `People ${others.length + 1}`],
-        ...(personal ? [] : [['agents', `Agents ${people.agents.length}`] as [MembersTab, string]]),
+        ['agents', `Agents ${people.agents.length}`],
         ['access', 'Access'],
     ];
     const act = (work: Promise<void>, done?: string) =>
@@ -89,7 +87,7 @@ export function MembersPanel({
             {!phone && (
                 <div className="flex items-center gap-2 px-5 pb-3 pt-4">
                     <p className="text-[16px] font-semibold">Members</p>
-                    <p className="truncate text-[13px] text-muted-foreground">{space.workspaceId ? space.name : 'Your personal space'}</p>
+                    <p className="truncate text-[13px] text-muted-foreground">{space.own && space.personal ? 'Your personal space' : space.name}</p>
                     <CloseButton onClose={onClose} />
                 </div>
             )}

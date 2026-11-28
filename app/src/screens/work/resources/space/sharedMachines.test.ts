@@ -2,7 +2,7 @@
 // placed on each; a machine's levels in people's words; and Share offered on the account's machines, never on an
 // agent's sandbox.
 import { describe, expect, it } from 'vitest';
-import { givable, shareable } from './actions';
+import { shareable } from './actions';
 import { levelWords, ownMachine, thingKey, toSummary, type Thing } from './data';
 
 const summary = toSummary({
@@ -39,8 +39,8 @@ describe('a machine shared with a space', () => {
     it('offers Share on the account’s machines, never on an agent’s sandbox', () => {
         const kept = row({ ref: 'mch_ops', machine: { id: 'mch_ops', kind: 'machine', machineId: 'mch_ops', agentId: null, state: 'stopped' } });
         const sandbox = row({ ref: 'nc-live-1', machine: { id: 'nc-live-1', kind: 'sandbox', machineId: null, agentId: 'agt_builder', state: 'up' } });
-        expect([shareable(kept), givable(kept)]).toEqual([true, true]);
-        expect([shareable(sandbox), givable(sandbox)]).toEqual([false, false]);
+        expect(shareable(kept)).toBe(true);
+        expect(shareable(sandbox)).toBe(false);
         const linked = { ...kept, link: { id: 'lnk_ops', kind: 'machine' as const, ref: 'mch_ops', name: 'ops-box', membersLevel: 'run', guestsLevel: 'none', levels: ['none', 'run', 'use'], addedBy: null, addedAt: null, raw: {} } };
         expect(shareable(linked)).toBe(false);
     });

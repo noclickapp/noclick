@@ -4,6 +4,7 @@
 // its model moved onto an OpenRouter key, its hello with first tasks to tap after that.
 import { ANTHROPIC_KEY } from '@/screens/chat/fixtures/coordinatorSwitchers';
 import { HARNESSES } from '../conversation/fixtures/workAgent';
+import { PERSONAL } from './workApi';
 
 type Json = Record<string, unknown>;
 export type AgentForAppsState = 'waiting' | 'ready';
@@ -42,7 +43,7 @@ const MEMBER: Json = { object: 'channel_member', id: 'mem_roblox', type: 'agent'
 
 export const ROBLOX_CHANNEL: Json = {
     object: 'channel', id: ROBLOX_CHANNEL_ID, name: 'roblox', topic: 'Where you talk to your Roblox agent.', mode: 'all', status: 'open', halt_reason: null,
-    unread_count: 1, user_id: null, workspace_id: null, kind: 'channel', members: [MEMBER], created_at: CREATED,
+    unread_count: 1, user_id: null, workspace_id: PERSONAL, kind: 'channel', members: [MEMBER], created_at: CREATED,
 };
 
 const message = (id: string, author: Json, text: string, seconds: number, event: Json | null = null): Json => ({

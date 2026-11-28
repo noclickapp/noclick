@@ -7,7 +7,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { workFixtureClient } from './fixtures/client';
 import { WorkClientContext } from './client';
-import { COORDINATOR, fakeWork, type FakeWork } from './fixtures/workApi';
+import { COORDINATOR, fakeWork, PERSONAL, type FakeWork } from './fixtures/workApi';
 import { HOME_NOCLICK_CHANNEL_TOPIC, NOCLICK_CHANNEL, NOCLICK_CHANNEL_TOPIC, noclickChannelTopic } from './intro';
 import { createWorkLive, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { Work } from './Work';
@@ -48,7 +48,7 @@ function openWork(fake: FakeWork, live: WorkLive = fake.live) {
     return { view, listed, empties, stop: () => watching.disconnect() };
 }
 
-const homeNoClicks = (fake: FakeWork) => fake.channels.filter((c) => c.name === NOCLICK_CHANNEL && !c.workspace_id);
+const homeNoClicks = (fake: FakeWork) => fake.channels.filter((c) => c.name === NOCLICK_CHANNEL && c.workspace_id === PERSONAL);
 
 it("a new account's first open shows #noclick, made then, and never an empty Home before it", async () => {
     const fake = fakeWork({ empty: true, noclick: true });
@@ -64,9 +64,9 @@ it("a new account's first open shows #noclick, made then, and never an empty Hom
 });
 
 it("shows a personal #noclick made with a space's topic as yours, and leaves a space's and a topic someone set alone", () => {
-    expect(noclickChannelTopic({ workspaceId: null, topic: NOCLICK_CHANNEL_TOPIC })).toBe(HOME_NOCLICK_CHANNEL_TOPIC);
-    expect(noclickChannelTopic({ workspaceId: 'ws-1', topic: NOCLICK_CHANNEL_TOPIC })).toBe(NOCLICK_CHANNEL_TOPIC);
-    expect(noclickChannelTopic({ workspaceId: null, topic: 'Where I plan the week' })).toBe('Where I plan the week');
+    expect(noclickChannelTopic({ topic: NOCLICK_CHANNEL_TOPIC }, true)).toBe(HOME_NOCLICK_CHANNEL_TOPIC);
+    expect(noclickChannelTopic({ topic: NOCLICK_CHANNEL_TOPIC }, false)).toBe(NOCLICK_CHANNEL_TOPIC);
+    expect(noclickChannelTopic({ topic: 'Where I plan the week' }, true)).toBe('Where I plan the week');
 });
 
 it('lists #noclick from the make itself, when the frame after it never arrives', async () => {

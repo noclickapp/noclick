@@ -41,15 +41,6 @@ const ABOUT: Record<SpaceKind, string> = {
     email: 'Email addresses this space’s agents answer.',
 };
 
-const HOME_ABOUT: Partial<Record<SpaceKind, string>> = {
-    agents: 'Every agent of the account, where each is, and what it’s doing now.',
-    machines: 'Where your agents run: each agent’s one cloud sandbox, shared by everyone talking to it, a machine kept on, or a computer of yours.',
-    skills: 'Every skill of the account. A change reaches every agent that uses it, here and in your spaces.',
-    memories: 'Every memory of the account, and each agent’s own.',
-    connections: 'Every sign-in the account holds, and which of your agents use each.',
-    secrets: 'Every key and token of the account, by name and where each is installed, and which came over when an agent moved from a computer. A value is never shown.',
-};
-
 /** Its line: shared with everyone here (at what level), or only its agents'. */
 export function sharedLine(t: Thing): string {
     if (!t.link) return 'Only its agents';
@@ -72,7 +63,7 @@ export function KindPage(pane: Pane & { kind: SpaceKind }) {
     const def = kindOf(kind);
     const things = share.of(kind);
     // Home already lists all of the account's.
-    const canAdd = !share.home && (kind === 'agents' || !!LINK_KIND[kind]);
+    const canAdd = kind === 'agents' || !!LINK_KIND[kind];
     // A machine here is a computer of yours, which can't be added while agents don't run on machines.
     const enabled = useAgentsOnMachines();
     const refusal = kind === 'machines' && enabled === false ? AGENTS_NOT_ENABLED : null;
@@ -85,7 +76,7 @@ export function KindPage(pane: Pane & { kind: SpaceKind }) {
             <PageHead
                 className="mb-6"
                 title={def.label}
-                line={(share.home && HOME_ABOUT[kind]) || ABOUT[kind]}
+                line={ABOUT[kind]}
                 actions={
                     (canAdd || def.make) && (
                         <>
@@ -118,7 +109,7 @@ export function KindPage(pane: Pane & { kind: SpaceKind }) {
                     )
                 }
             />
-            {things.length ? <KindBody {...pane} kind={kind} things={things} layout={layout} /> : <Empty kind={kind} home={share.home} />}
+            {things.length ? <KindBody {...pane} kind={kind} things={things} layout={layout} /> : <Empty kind={kind} />}
         </>
     );
 }
@@ -142,7 +133,7 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[]; layout: Brows
                         const a = share.agent(t.ref)!;
                         return row(t, {
                             lead: <AgentRing member={faces.get(a.id) ?? { id: a.id, kind: 'agent', name: a.name }} status={a.status} size={32} />,
-                            badge: <Also names={a.elsewhere} lead={share.home ? 'In' : undefined} />,
+                            badge: <Also names={a.elsewhere} />,
                             sub: a.line,
                             strong: a.status === 'needs',
                             slot,
@@ -192,7 +183,7 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[]; layout: Brows
             return (
                 <div className="flex flex-col gap-9">
                     {group('Cloud sandboxes', `${share.up.sandboxes} of ${sandboxes.length} up`, sandboxes, 'None here.')}
-                    {group('Kept on', `${share.up.keptOn} up`, keptOn, share.home ? 'No machine is kept on.' : 'No machine is kept on for this space’s agents.')}
+                    {group('Kept on', `${share.up.keptOn} up`, keptOn, 'No machine is kept on for this space’s agents.')}
                     {group('Your own computers', `${share.up.own} online`, own, 'None of yours here.')}
                 </div>
             );
@@ -214,8 +205,8 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[]; layout: Brows
                 <>
                     {own.length ? (
                         <div className="flex flex-col gap-9">
-                            <Group title={share.home ? 'For any agent' : 'Shared'} meta={shared.length}>
-                                {shared.length ? <List>{shared.map(knowRow)}</List> : <p className="px-1 text-[13px] text-muted-foreground">{share.home ? 'None yet.' : 'None shared here yet.'}</p>}
+                            <Group title="Shared" meta={shared.length}>
+                                {shared.length ? <List>{shared.map(knowRow)}</List> : <p className="px-1 text-[13px] text-muted-foreground">None shared here yet.</p>}
                             </Group>
                             <Group title="Each agent’s own" meta={own.length}>
                                 <List>{own.map(knowRow)}</List>
@@ -242,7 +233,7 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[]; layout: Brows
                             const c = pane.connections.get(t.ref);
                             return row(t, {
                                 connection: c,
-                                sub: broken(t) ? 'It stopped working: reconnect it' : [share.home ? null : sharedLine(t), c?.account, t.movedFrom ? movedLine(t.movedFrom) : null].filter(Boolean).join(' · '),
+                                sub: broken(t) ? 'It stopped working: reconnect it' : [sharedLine(t), c?.account, t.movedFrom ? movedLine(t.movedFrom) : null].filter(Boolean).join(' · '),
                                 attention: broken(t),
                                 slot,
                                 cols: <UsedBy pane={pane} agentIds={t.usedBy} />,
@@ -250,15 +241,13 @@ function KindBody(pane: Pane & { kind: SpaceKind; things: Thing[]; layout: Brows
                             });
                         })}
                     </List>
-                    {!share.home && (
-                        <p className="mt-4 text-[12.5px] text-muted-foreground">
-                            What people here get of one shared with this space is set on its page and in{' '}
-                            <button type="button" onClick={() => nav.openMembers('access')} className="text-foreground/85 underline-offset-2 hover:underline">
-                                What members can reach
-                            </button>
-                            . The rest are agents’ own. The account keeps all of them in Connections.
-                        </p>
-                    )}
+                    <p className="mt-4 text-[12.5px] text-muted-foreground">
+                        What people here get of one shared with this space is set on its page and in{' '}
+                        <button type="button" onClick={() => nav.openMembers('access')} className="text-foreground/85 underline-offset-2 hover:underline">
+                            What members can reach
+                        </button>
+                        . The rest are agents’ own. The account keeps all of them in Connections.
+                    </p>
                 </>
             );
         }

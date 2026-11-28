@@ -94,7 +94,7 @@ export function Overview(pane: Pane) {
         <>
             <PageHead
                 title="Resources"
-                line={share.home ? 'Everything the account has, and which of your agents use each.' : 'What people and agents here can use. Share one with the space and everyone in it gets it.'}
+                line="What people and agents here can use. Share one with the space and everyone in it gets it."
                 actions={
                     pane.accountPage && (
                         <button type="button" onClick={() => pane.accountPage?.(null)} className={cn(QUIET_LINK, '@2xl:mt-1')}>
@@ -170,11 +170,11 @@ export function Overview(pane: Pane) {
                                   ? `Used by ${few(skillUsers.map((id) => share.agent(id)?.name ?? '').filter(Boolean))}`
                                   : 'No agent here uses one'
                         )}
-                        {tile('memories', `${memories.length - ownMemories} ${share.home ? 'for any agent' : 'shared'}, ${ownMemories} ${ownMemories === 1 ? 'agent’s' : 'agents’'} own`)}
+                        {tile('memories', `${memories.length - ownMemories} shared, ${ownMemories} ${ownMemories === 1 ? 'agent’s' : 'agents’'} own`)}
                     </div>
                 </Group>
                 <Group title={GROUPS.reach}>
-                    <div className={cn('grid gap-2.5 @lg:grid-cols-2', !share.home && '@4xl:grid-cols-3')}>
+                    <div className="grid gap-2.5 @lg:grid-cols-2 @4xl:grid-cols-3">
                         {tile('automations', failing ? `${failing.name} failed` : names('automations'), !!failing)}
                         {tile('connections', broken ? `${broken.name} isn’t working` : names('connections'), !!broken)}
                         {tile('secrets', moved.length ? `${moved.length} moved from ${few(hosts)}` : `Held by ${few(holders) || 'no agent'}`)}

@@ -2,8 +2,8 @@
 // member of the space), and a space Work makes opens on its NoClick channel: that NoClick in it, answering every
 // message, the place to change the space by messaging NoClick. Made through the SDK right after the space itself, by
 // Work's own create flow alone: a workspace a developer's code makes for its users (the API's workspace create) gets
-// none. The personal space (the account's channels in no workspace) has the account's own NoClick in its NoClick
-// channel, made the first time Work finds none there: its owner's alone, never shown to the people they share it with.
+// none. Your personal space has no NoClick of its own: the account's own NoClick is in its NoClick channel, made the
+// first time Work finds none there, its owner's alone, never shown to the people in the space.
 import { useMemo } from 'react';
 import { Channel, Conflict, NO_USER, Workspace, type NoClick } from 'noclick';
 import type { Channel as Room } from '@/screens/channels/types';
@@ -17,10 +17,10 @@ export const NOCLICK_CHANNEL_TOPIC = 'Tell NoClick what to change in this space:
 /** The personal space's: the account's own NoClick answers there. */
 export const HOME_NOCLICK_CHANNEL_TOPIC = `${noclickNaming(null).line}. Tell it what you need.`;
 
-/** The topic a NoClick channel shows: one Work wrote says whose NoClick answers there (a personal space's made with the
- *  space's topic says yours); one someone set stays theirs. */
-export const noclickChannelTopic = (channel: Pick<Room, 'workspaceId' | 'topic'>) =>
-    !channel.workspaceId && channel.topic === NOCLICK_CHANNEL_TOPIC ? HOME_NOCLICK_CHANNEL_TOPIC : channel.topic;
+/** The topic a NoClick channel shows: one Work wrote says whose NoClick answers there (`personal`: a personal space's,
+ *  made with a space's topic, says yours); one someone set stays theirs. */
+export const noclickChannelTopic = (channel: Pick<Room, 'topic'>, personal: boolean) =>
+    personal && channel.topic === NOCLICK_CHANNEL_TOPIC ? HOME_NOCLICK_CHANNEL_TOPIC : channel.topic;
 
 /** What the NoClick channel was called before: a space made then still holds it. */
 export const EARLIER_NOCLICK_CHANNEL = 'intro';
@@ -47,9 +47,9 @@ export function spaceNoClickId(client: NoClick, workspaceId: string): Promise<st
 }
 
 /** The NoClicks of `spaces` that are the account's own, each asked for once a session (which makes it): read by Work
- *  for every view (`SpaceNoClicksContext`), so each is named for its space. */
+ *  for every view (`SpaceNoClicksContext`), so each is named for its space. A personal space has none to ask for. */
 export function useOwnSpaceNoClicks(spaces: readonly WorkSpace[]): SpaceNoClicks {
-    const own = spaces.flatMap((s) => (s.own && s.workspaceId ? [s.workspaceId] : [])).sort();
+    const own = spaces.flatMap((s) => (s.own && !s.personal ? [s.workspaceId] : [])).sort();
     const read = useWorkV1(own.length ? `work:space-noclicks:${own.join(',')}` : null, async (client) => {
         const got = await Promise.allSettled(own.map((id) => spaceNoClickId(client, id)));
         return own.flatMap((id, i) => {
@@ -59,13 +59,14 @@ export function useOwnSpaceNoClicks(spaces: readonly WorkSpace[]): SpaceNoClicks
         });
     });
     // Named again when a space is renamed.
-    const named = JSON.stringify(spaces.flatMap((s) => (s.workspaceId ? [[s.workspaceId, s.name]] : [])));
-    const personal = spaces.flatMap((s) => (s.personal && s.workspaceId ? [s.workspaceId] : [])).join(',');
+    const named = JSON.stringify(spaces.map((s) => [s.workspaceId, s.name]));
+    const personal = spaces.flatMap((s) => (s.personal ? [s.workspaceId] : [])).join(',');
+    const home = spaces.find((s) => s.own && s.personal)?.workspaceId ?? null;
     return useMemo(() => {
         const names = new Map<string, string>(JSON.parse(named) as [string, string][]);
         const of = new Map<string, SpaceNoClick>((read.data ?? []).map(([id, agentId]) => [id, { agentId, ...noclickNaming({ name: names.get(id) }) }]));
-        return { of, names, personal: new Set(personal.split(',').filter(Boolean)) };
-    }, [read.data, named, personal]);
+        return { of, names, personal: new Set(personal.split(',').filter(Boolean)), home };
+    }, [read.data, named, personal, home]);
 }
 
 /** The NoClick of the space `workspaceId`: one of the account's own as Work read it, else (a space you joined) asked
@@ -118,10 +119,10 @@ export async function dropAccountNoClick(client: NoClick, channelId: string, mem
     await Channel.fromId(channelId, { client, user: null }).remove(memberId);
 }
 
-/** Whether the personal space's channels (the account's in no workspace) hold one with NoClick's own agent in it,
- *  whatever it's called. */
-export const homeHoldsNoClick = (channels: readonly Room[], noclickId: string) =>
-    channels.some((c) => c.kind !== 'dm' && !c.workspaceId && c.members.some((m) => m.agentId === noclickId));
+/** Whether your personal space's channels (`personalId`) hold one with NoClick's own agent in it, whatever it's
+ *  called. */
+export const homeHoldsNoClick = (channels: readonly Room[], noclickId: string, personalId: string) =>
+    channels.some((c) => c.kind !== 'dm' && c.workspaceId === personalId && c.members.some((m) => m.agentId === noclickId));
 
 /** Opens the NoClick channel in the space `workspaceId` with the space's own NoClick in it (already a member of the
  *  space), answering every message. Run again after a failure, it takes what's already there. */
@@ -133,18 +134,17 @@ export async function openNoClickChannel(client: NoClick, workspaceId: string): 
 /** The personal space's NoClick channel as made (or found) this session, per client. */
 const homeMade = new WeakMap<NoClick, Promise<Room | null>>();
 
-/** Makes the personal space's NoClick channel with NoClick's own agent (`noclickId`, as Work read it) in it, once a
- *  session: none if the account already has a channel in no workspace with NoClick in it, read afresh, open or closed
- *  (outside a workspace a name isn't unique, so it's never found by name). Made through `create`, the page's channels,
- *  which list it the moment it's made. Answers the channel it made, else null; a failure is tried again by the next
- *  caller. */
-export function makeHomeNoClickChannel(client: NoClick, noclickId: string, create: Channels['createChannel']): Promise<Room | null> {
+/** Makes your personal space's (`personalId`) NoClick channel with NoClick's own agent (`noclickId`, as Work read it)
+ *  in it, once a session: none if a channel of the space already holds NoClick, read afresh, open or closed, or an
+ *  open one there already has the name. Made through `create`, the page's channels, which list it the moment it's made. Answers
+ *  the channel it made, else null; a failure is tried again by the next caller. */
+export function makeHomeNoClickChannel(client: NoClick, noclickId: string, personalId: string, create: Channels['createChannel']): Promise<Room | null> {
     const held = homeMade.get(client);
     if (held) return held;
     const making = (async () => {
-        const holding = await Channel.list({ client, userFilter: NO_USER, agent: noclickId, kind: 'channel' });
-        if (holding.some((c) => !c.workspaceId)) return null;
-        return await create({ workspaceId: null, name: NOCLICK_CHANNEL, topic: HOME_NOCLICK_CHANNEL_TOPIC, agents: [{ id: noclickId, name: YOUR_NOCLICK, noclick: true }] });
+        const theirs = await Channel.list({ client, userFilter: NO_USER, kind: 'channel', workspace: personalId });
+        if (theirs.some((c) => c.members.some((m) => m.agentId === noclickId) || (c.name === NOCLICK_CHANNEL && c.status !== 'closed'))) return null;
+        return await create({ workspaceId: personalId, name: NOCLICK_CHANNEL, topic: HOME_NOCLICK_CHANNEL_TOPIC, agents: [{ id: noclickId, name: YOUR_NOCLICK, noclick: true }] });
     })();
     homeMade.set(client, making);
     making.catch(() => homeMade.delete(client));

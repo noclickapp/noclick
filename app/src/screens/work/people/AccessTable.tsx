@@ -16,11 +16,7 @@ export function AccessTable({ space, manages }: { space: WorkSpace; manages: boo
     return (
         <div className="px-3 py-2" data-testid="access-table">
             <p className={cn('border-b pb-2 text-[12.5px] leading-snug text-muted-foreground', HAIRLINE)}>What {space.name} shares, and what its members and its guests get of each.</p>
-            {space.workspaceId && !space.personal ? (
-                <Links spaceId={space.workspaceId} manages={manages} />
-            ) : (
-                <Note>A personal space shares its channels and the agents in them, nothing else: its owner’s connections, settings and billing stay theirs.</Note>
-            )}
+            <Links spaceId={space.workspaceId} manages={manages} />
         </div>
     );
 }
