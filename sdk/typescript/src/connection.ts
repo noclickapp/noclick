@@ -332,6 +332,26 @@ export interface ChatProfile {
   raw: JsonObject;
 }
 
+/** A message a site sent a website login's own address. */
+export interface LoginMessage {
+  id: string;
+  sender: string;
+  subject: string | null;
+  text: string;
+  /** What it carried: `code`, `link` or `mail`. */
+  kind: string;
+  receivedAt: string | null;
+  expiresAt: string | null;
+  raw: JsonObject;
+}
+
+/** A website login's own address (null for one a person added) and the messages sent there. */
+export interface LoginMail {
+  address: string | null;
+  messages: LoginMessage[];
+  raw: JsonObject;
+}
+
 function toIntegrationEvents(response: unknown): IntegrationEvent[] {
   return asList(response).map((row) => asObject(row)).map((row) => ({
     name: str(row.name) ?? "",
@@ -1052,6 +1072,30 @@ export class Connection extends ApiObject {
       const raw = asObject(row);
       return { jid: str(raw.jid) ?? "", name: str(raw.name), avatarUrl: str(raw.avatar_url), raw };
     });
+  }
+
+  /**
+   * On a website login NoClick signed up for: its own email address (the account's email at the site) and the mail
+   * the site sent there, newest first, each kept 7 days. NoClick types its codes and opens its verification links for
+   * the browser signing in; this is for a person reading the login's page, never a model.
+   *
+   *     const mail = await Connection.fromName("acme-com").loginMail();
+   *     for (const message of mail.messages) console.log(message.subject, message.kind);
+   */
+  async loginMail(options: { user?: UserOption } = {}): Promise<LoginMail> {
+    const raw = asObject(await this._request("GET", `${this.path}/mail`, options.user === undefined ? {} : { user: options.user }));
+    return {
+      address: str(raw.address),
+      messages: asList(raw).map((row) => {
+        const message = asObject(row);
+        return {
+          id: str(message.id) ?? "", sender: str(message.from) ?? "", subject: str(message.subject),
+          text: str(message.text) ?? "", kind: str(message.kind) ?? "mail", receivedAt: str(message.received_at),
+          expiresAt: str(message.expires_at), raw: message,
+        };
+      }),
+      raw,
+    };
   }
 
   /**

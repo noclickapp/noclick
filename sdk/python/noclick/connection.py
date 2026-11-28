@@ -359,6 +359,39 @@ class ChatProfile:
         return cls(raw.get("jid") or "", raw.get("name"), raw.get("avatar_url"), raw)
 
 
+@dataclass(frozen=True)
+class LoginMessage:
+    """A message a site sent a website login's own address: who from (``sender``), its ``subject`` and ``text``,
+    what it carried (``kind``: ``code``, ``link`` or ``mail``), and when it came and goes."""
+
+    id: str
+    sender: str
+    subject: Optional[str]
+    text: str
+    kind: str
+    received_at: Optional[str]
+    expires_at: Optional[str]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "LoginMessage":
+        return cls(raw.get("id") or "", raw.get("from") or "", raw.get("subject"), raw.get("text") or "",
+                   raw.get("kind") or "mail", raw.get("received_at"), raw.get("expires_at"), raw)
+
+
+@dataclass(frozen=True)
+class LoginMail:
+    """A website login's own ``address`` (``None`` for one a person added) and the ``messages`` sent there."""
+
+    address: Optional[str]
+    messages: List[LoginMessage]
+    raw: Dict[str, Any] = dc_field(default_factory=dict, repr=False)
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "LoginMail":
+        return cls(raw.get("address"), [LoginMessage._from(row) for row in raw.get("data") or []], raw)
+
+
 def _integration_name(integration: Any) -> Optional[str]:
     if integration is None or isinstance(integration, str):
         return integration
@@ -1170,6 +1203,25 @@ class Connection(_Object):
         response = await self._request("GET", f"{self._path()}/chat_profiles", params={"jid": list(jids)},
                                        **kwargs) or {}
         return [ChatProfile._from(row) for row in response.get("data") or []]
+
+    @synced
+    async def login_mail(self, *, user: Any = AMBIENT) -> "LoginMail":
+        """On a website login NoClick signed up for: its own email address (the account's email at the site) and
+        the mail the site sent there, newest first, each kept 7 days. NoClick types its codes and opens its
+        verification links for the browser signing in; this is for a person reading the login's page, never a model.
+
+        Returns:
+            Its ``LoginMail``.
+
+        Usage::
+
+            login = noclick.Connection.from_name("acme-com")
+            mail = login.login_mail()
+            for message in mail.messages:
+                print(message.subject, message.kind)
+        """
+        kwargs: Dict[str, Any] = {} if user is AMBIENT else {"user": resolve_scope(user)}
+        return LoginMail._from(await self._request("GET", f"{self._path()}/mail", **kwargs) or {})
 
     # --- connecting ------------------------------------------------------
 

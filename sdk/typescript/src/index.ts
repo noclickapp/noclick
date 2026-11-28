@@ -452,6 +452,8 @@ export type {
   IntegrationKind,
   IntegrationOperation,
   LinkOptions,
+  LoginMail,
+  LoginMessage,
   LookupOption,
   LookupOptions,
   NumberAgent,

@@ -369,6 +369,20 @@ test("signIn signs in with a website login, and an act may sign up", async () =>
   assert.deepEqual(act.calls[0].body, { instruction: "Make an account for ana@acme.test", sign_up: true });
 });
 
+test("a website login's own address and the mail sent there", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/connections/acme-com/mail", json({
+    object: "list", address: "login-0f3a@noclick.email", has_more: false, data: [{
+      object: "login_mail", id: "lm_1", from: "no-reply@acme.com", subject: "Your Acme code", text: "Your code is 482910.",
+      kind: "code", received_at: "2026-11-28T10:00:00Z", expires_at: "2026-12-05T10:00:00Z",
+    }],
+  }));
+  const mail = await nc.Connection.fromName("acme-com").loginMail();
+  assert.equal(mail.address, "login-0f3a@noclick.email");
+  const [message] = mail.messages;
+  assert.deepEqual([message.sender, message.subject, message.kind], ["no-reply@acme.com", "Your Acme code", "code"]);
+});
+
 test("Browser.list reads by profile and status", async () => {
   const { api } = setup();
   const route = api.on("GET", "/v1/browsers", json(listing([BROWSER])));

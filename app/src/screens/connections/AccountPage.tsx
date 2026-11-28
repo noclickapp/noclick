@@ -1,5 +1,6 @@
 // One connected account, in full: proof it works in the provider's own words (your channels, your repositories), what a
-// host adds after it (a WhatsApp number's agent), the automations that depend on it, who else can use it, and which of
+// host adds after it (a WhatsApp number's agent), a website login's own mail (LoginMail.tsx), the automations that
+// depend on it, who else can use it, and which of
 // its actions wait for your approval. Rename, reconnect and delete live here too, so nothing about an account is two
 // clicks away. One an agent's move from a computer brought over says so, with a Remove that takes its access away
 // everywhere. What the page can do with an account comes with it (model.ts): an account the platform API lists is
@@ -26,6 +27,7 @@ import { AccountTitle, Moved } from './AccountParts';
 import { AccountMark, sourceLine } from './ConnectedList';
 import { useConnectionsContext } from './context';
 import { ConnectionDeleteDialog } from './DeleteDialog';
+import { LoginMail, WEBSITE_LOGIN } from './LoginMail';
 import type { ConnectedAccount } from './model';
 import { useConnectionProbe } from './probe';
 import { Proof } from './Proof';
@@ -208,6 +210,8 @@ export function AccountPage({
                 )}
 
                 <More account={account} />
+
+                {account.connection?.integration === WEBSITE_LOGIN && !revoked && <LoginMail connection={account.connection} />}
 
                 <Section title="Used by" meta={usedBy?.length || undefined}>
                     {!usedBy ? (

@@ -8,6 +8,7 @@ import { movedFrom, type MovedFrom } from '@/lib/movedFrom';
 import { AccountTitle, Moved, sharingLine } from './AccountParts';
 import { AccountTile, NoAccounts } from './AccountTile';
 import { CatalogTile } from './CatalogTile';
+import { LoginMailList } from './LoginMail';
 import { Proof, type ConnectionProbe } from './Proof';
 import { CONNECTIONS_VIEWS, connectionsAddress, connectionsViews } from './views';
 
@@ -213,6 +214,18 @@ describe('an account page’s parts', () => {
         rerender(<AccountTitle name="Release bot" renaming={false} onRename={onRename} onDone={() => undefined} />);
         await act(async () => undefined);
         expect(screen.getByRole('heading').textContent).toBe('Release bot');
+    });
+});
+
+describe('a website login’s mail', () => {
+    it('names its own address and opens each message the site sent', () => {
+        const message = { id: 'lm_1', sender: 'no-reply@acme.com', subject: 'Your Acme code', text: 'Your code is 482910.', kind: 'code', receivedAt: '2026-11-28T10:00:00Z', expiresAt: null, raw: {} };
+        render(<LoginMailList mail={{ address: 'login-0f3a@noclick.email', messages: [message], raw: {} }} />);
+        expect(screen.getByText('login-0f3a@noclick.email')).toBeTruthy();
+        expect(screen.getByText('Code')).toBeTruthy();
+        expect(screen.queryByText('Your code is 482910.')).toBeNull();
+        fireEvent.click(screen.getByRole('button', { name: /Your Acme code/ }));
+        expect(screen.getByText('Your code is 482910.')).toBeTruthy();
     });
 });
 

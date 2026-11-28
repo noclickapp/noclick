@@ -604,8 +604,11 @@ export class Browser extends ApiObject {
    * page of a site whose saved sign-in expired, and the new sign-in is saved to the profile.
    * The website logins the browser may use (connections of integration `website_login`) are told to the model by
    * name and username only: on a site's sign-in form NoClick types them in, with the two-factor code, and the model
-   * never reads them; `signUp` lets it create an account, kept as a new website login. Both only in a browser no
-   * agent is beside (a remote one, or one alone on a machine).
+   * never reads them. A code the site emails or texts, and a verification link it emails, NoClick waits for where the
+   * login says and types or opens it; one that never comes is asked of a person. `signUp` lets it create an account,
+   * kept as a new website login, with the username the task gives, else an email address of the login's own where
+   * NoClick receives the site's mail (`Connection.loginMail`). Both only in a browser no agent is beside (a remote
+   * one, or one alone on a machine).
    * `{ background: true }` returns at once with an `Operation` whose `wait()` resolves to the `ActResult`.
    */
   act(instruction: string, options: BrowserActOptions & { background: true }): Promise<Operation<ActResult>>;

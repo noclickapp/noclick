@@ -794,11 +794,15 @@ class Browser(_Object):
         The website logins the browser may use (connections of integration
         ``website_login``: a site's username, password and two-factor setup key) are
         told to the model by name and username only: on a site's sign-in form NoClick
-        types them in, with the two-factor code, and the model never reads them.
-        ``sign_up=True`` lets it create an account where the task needs one: NoClick
-        makes the password, types it, and keeps it as a new website login for the
-        site, with the username the task gives. Both only in a browser no agent is
-        beside (a remote one, or one alone on a machine).
+        types them in, with the two-factor code, and the model never reads them. A code
+        the site emails or texts, and a verification link it emails, NoClick waits for
+        where the login says and types or opens it; one that never comes is asked of a
+        person. ``sign_up=True`` lets it create an account where the task needs one:
+        NoClick makes the password, types it, and keeps it as a new website login for
+        the site, with the username the task gives, else an email address of the
+        login's own, where NoClick receives the site's mail (``Connection.login_mail``).
+        Both only in a browser no agent is beside (a remote one, or one alone on a
+        machine).
 
         ``timeout`` is how many seconds to wait here; the step keeps going after it.
         ``background=True`` returns at once.

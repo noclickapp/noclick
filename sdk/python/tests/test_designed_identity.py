@@ -383,6 +383,18 @@ def test_sign_in_with_a_website_login_and_an_act_that_may_sign_up(api, client):
     assert body(act.calls[0].request) == {"instruction": "Make an account for ana@acme.test", "sign_up": True}
 
 
+def test_a_website_logins_own_address_and_the_mail_sent_there(api, client):
+    api.get("/v1/connections/acme-com/mail").respond(json={
+        "object": "list", "address": "login-0f3a@noclick.email", "has_more": False, "data": [{
+            "object": "login_mail", "id": "lm_1", "from": "no-reply@acme.com", "subject": "Your Acme code",
+            "text": "Your code is 482910.", "kind": "code", "received_at": "2026-11-28T10:00:00Z",
+            "expires_at": "2026-12-05T10:00:00Z"}]})
+    mail = nc.Connection.from_name("acme-com").login_mail()
+    assert mail.address == "login-0f3a@noclick.email"
+    [message] = mail.messages
+    assert (message.sender, message.subject, message.kind) == ("no-reply@acme.com", "Your Acme code", "code")
+
+
 def test_a_captcha_holds_the_step_on_a_person(api, client):
     api.post("/v1/browsers/br_1/act").respond(202, json=operation(op_id="op_act", kind="browser.act", status="running"))
     waits = api.get("/v1/operations/op_act/wait").mock(side_effect=[
