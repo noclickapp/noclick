@@ -1239,3 +1239,89 @@ def test_a_table_fits_the_terminal_cutting_prose_before_ids(columns):
     body = visible(lines[4])
     assert rows[0][0] in body and body.rstrip("│ ").endswith("…")
     assert visible(lines[0]).strip() == "Releases of booking"
+
+
+# --- commands as they're typed ---------------------------------------------------------------------------------------
+
+
+def _operation_lines():
+    """For every area, its list and get operations' commands, as ``noclick describe`` gives them."""
+    from noclick._cli.commands import example, shadowed
+    from noclick._cli.spec import load
+    for area, ops in sorted(load().areas().items()):
+        for op in ops:
+            if (op["command"] == "list" or op["command"] == "get") and not shadowed(op):
+                yield op, example(op)
+
+
+@pytest.mark.parametrize("flags", [[], ["--color", "never"]], ids=["bare", "after-a-global-flag"])
+def test_every_areas_list_and_get_parse_and_make_their_call(home, api, capsys, flags):
+    import shlex
+    route = api.route().respond(json={"object": "list", "data": [], "next_cursor": None})
+    lines = list(_operation_lines())
+    assert {op["area"] for op, _ in lines} >= {"projects", "machines", "databases", "buckets", "domains", "repos"}
+    for op, line in lines:
+        calls = route.call_count
+        assert run(*flags, *shlex.split(line)[1:]) == 0, line
+        assert route.call_count == calls + 1 and route.calls.last.request.method == op["method"], line
+    capsys.readouterr()
+
+
+def test_a_command_given_as_one_argument_says_to_pass_its_words_apart(capsys):
+    with pytest.raises(SystemExit) as done:
+        run("projects list")
+    assert done.value.code == 2
+    assert "pass its words apart" in capsys.readouterr().err
+
+
+def test_a_group_alone_lists_its_commands(capsys):
+    for group, shows in (("agents", "noclick agents list"), ("projects", "noclick projects list"),
+                         ("machines", "noclick machines ssh"), ("agents move", "noclick agents move redeem")):
+        assert run(*group.split()) == 0
+        assert shows in capsys.readouterr().out, group
+
+
+def test_ls_runs_list_where_a_group_has_no_ls_of_its_own(home, api, capsys):
+    agents = api.get("/v1/agents").respond(json=listing(agent_row()))
+    projects = api.get("/v1/projects").respond(json=listing())
+    assert run("agents", "ls") == 0 and agents.called
+    assert run("--color", "never", "projects", "ls") == 0 and projects.called
+    # domains has an ls of its own (an app's domains), which stays itself.
+    assert cli._unaliased(["domains", "ls"]) == ["domains", "ls"]
+    with pytest.raises(SystemExit) as done:
+        run("agents", "lsit")
+    assert done.value.code == 2 and "Did you mean: agents list" in capsys.readouterr().err
+
+
+def test_resources_lists_each_kind_the_account_has_with_its_cost(home, api, capsys):
+    api.get("/v1/projects").respond(json=listing(
+        {"object": "project", "id": "p1", "name": "booking", "url": "https://booking.noclick.site",
+         "production": {"status": "ready"}}))
+    api.get("/v1/machines").respond(json=listing(
+        {"object": "machine", "id": "m1", "name": "build-box", "status": "running", "size": "small",
+         "region": "us", "monthly_usd": 12.5}))
+    api.get("/v1/databases").respond(json=listing())
+    for path in ("/v1/buckets", "/v1/repos", "/v1/domains", "/v1/phone_numbers", "/v1/inboxes", "/v1/volumes"):
+        api.get(path).respond(json=listing())
+    sandboxes = api.get("/v1/sandboxes").respond(json=listing())
+    spend = api.get("/v1/usage").respond(json={"total_usd": 1.84, "groups": [{"id": "p1", "usd": 1.84}]})
+    assert run("ls") == 0
+    out = capsys.readouterr().out
+    assert "Websites (1)" in out and "Machines (1)" in out and "Databases" not in out
+    assert "https://booking.noclick.site" in out and "$1.84" in out and "$12.50" in out
+    assert sandboxes.calls.last.request.url.params["status"] == "live"
+    assert spend.calls.last.request.url.params["group_by"] == "project"
+    # Every list is asked for the account's and every user's, as the Resources page reads them.
+    assert all(c.request.url.params.get("user_id") == "all" for r in api.routes if r is not spend for c in r.calls)
+
+    assert run("resources", "--kind", "machines", "--json") == 0
+    body = json.loads(capsys.readouterr().out)
+    assert list(body["kinds"]) == ["machines"] and body["errors"] == {}
+
+    # A kind it can't read (a key without that area's scope) is said, and the rest still answer with exit 0.
+    api.get("/v1/machines").respond(403, json={"error": {"type": "permission_denied", "message": "No machines here."}})
+    assert run("resources", "--kind", "machines", "--kind", "apps") == 0
+    captured = capsys.readouterr()
+    assert "Websites (1)" in captured.out and "machines: unread (No machines here.)" in captured.err
+    # Reading no kind at all is a failure.
+    assert run("resources", "--kind", "machines") == cli.exits.FAILED

@@ -5,6 +5,7 @@ import * as auth from "./auth.ts";
 import * as configure from "./configure.ts";
 import type { Run } from "./kit.ts";
 import * as operate from "./operate.ts";
+import { resources } from "./resources.ts";
 import * as ship from "./ship.ts";
 
 export const RUNNERS: Record<string, Run> = {
@@ -40,6 +41,7 @@ export const RUNNERS: Record<string, Run> = {
   "db create": configure.dbCreate,
   "bucket create": configure.bucketCreate,
   logs: operate.logs,
+  resources,
   estimate: operate.estimateCmd,
   "ops wait": operate.opsWait,
   "agents send": operate.agentsSend,

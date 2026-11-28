@@ -72,6 +72,18 @@ export interface Screens {
   next: [string, string][];
   signed_out: string;
   signup: { terms: [string, string]; harnesses: [string, string][]; works: string };
+  /** `noclick resources`' kinds: each one's list route and its columns (header, field, how it's shown). */
+  resources: ResourceKind[];
+  /** Words that mean others: `top` as the command (`ls`), `group` under a group without one of its own. */
+  aliases: { top: Record<string, string>; group: Record<string, string> };
+}
+
+export interface ResourceKind {
+  kind: string;
+  title: string;
+  path: string;
+  query?: Record<string, string>;
+  columns: [string, string, "text" | "status" | "usd" | "bytes" | "bool" | "date"][];
 }
 
 export interface Manifest {
@@ -164,6 +176,6 @@ export class Spec {
 let loaded: Spec | null = null;
 
 export function load(): Spec {
-  loaded ??= new Spec(manifestJson as Manifest, operationsJson as { operations: Op[] });
+  loaded ??= new Spec(manifestJson as unknown as Manifest, operationsJson as { operations: Op[] });
   return loaded;
 }

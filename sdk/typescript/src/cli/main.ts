@@ -102,6 +102,21 @@ function isGroup(path: string[]): boolean {
   return load().commands.some((c) => c.path.length > path.length && path.every((w, i) => c.path[i] === w));
 }
 
+/** `rest` (the command's words) with its aliases spelled out: `noclick ls` is `noclick resources`, and `ls` under a
+ *  group that has `list` and no `ls` of its own is `list`. */
+function unalias(rest: string[]): void {
+  const spec = load();
+  const { top, group } = spec.manifest.screens.aliases;
+  rest[0] = top[rest[0]!] ?? rest[0]!;
+  const meant = rest[1] === undefined ? undefined : group[rest[1]];
+  if (meant === undefined) return;
+  const names = new Set([
+    ...spec.commands.filter((c) => c.path.length > 1 && c.path[0] === rest[0]).map((c) => c.path[1]!),
+    ...(spec.areas().get(rest[0]!) ?? []).map((op) => op.command),
+  ]);
+  if (!names.has(rest[1]!) && names.has(meant)) rest[1] = meant;
+}
+
 /** `words` naming no command: the closest ones there are, exit 2. */
 function unknownCommand(io: Io, words: string[]): number {
   const spec = load();
@@ -151,6 +166,7 @@ export async function main(
     else return output.report(io, new UsageError(`No global flag ${flag}.`, "noclick --help"), { json: false });
   }
   if (!rest.length) return firstScreen(io, profile);
+  unalias(rest);
   const json = rest.includes("--json");
   try {
     // The longest curated path the words name, else an operation, else an area's list.

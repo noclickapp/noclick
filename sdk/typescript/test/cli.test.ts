@@ -261,3 +261,72 @@ for (const columns of [80, 120]) {
     assert.equal(visible(lines[0]!).trim(), "Releases of booking");
   });
 }
+
+/** Words as a shell splits them, quotes kept together. */
+const words = (line: string) => [...line.matchAll(/'([^']*)'|(\S+)/g)].map((m) => m[1] ?? m[2]!);
+
+test("every area's list and get parse and make their call, with a global flag in front or none", async () => {
+  const { configure } = await import("../src/client.ts");
+  const { example } = await import("../src/cli/commands.ts");
+  const spec = load();
+  const calls: string[] = [];
+  configure({ apiKey: "nk_live_test", baseUrl: "https://api.noclick.test", maxRetries: 0, fetch: async (input, init) => {
+    calls.push(`${init?.method ?? "GET"} ${new URL(String(input)).pathname}`);
+    return json({ object: "list", data: [], next_cursor: null });
+  } });
+  const ops = spec.operations.filter((op) => (op.command === "list" || op.command === "get") && !spec.shadowed(op));
+  assert.ok(["projects", "machines", "databases", "buckets", "domains", "repos"].every((a) => ops.some((op) => op.area === a)));
+  for (const flags of [[], ["--color", "never"]]) {
+    for (const op of ops) {
+      const line = example(op, spec);
+      const io = captured();
+      const before = calls.length;
+      assert.equal(await main([...flags, ...words(line).slice(1)], io, signedIn), OK, `${line}: ${io.stderr.join(" ")}`);
+      assert.equal(calls.length, before + 1, line);
+      assert.ok(calls.at(-1)!.startsWith(op.method), line);
+    }
+  }
+});
+
+test("a command given as one argument says to pass its words apart; a group alone lists its commands", async () => {
+  let io = captured();
+  assert.equal(await main(["projects list"], io), USAGE);
+  assert.ok(io.stderr.join("\n").includes("pass its words apart"));
+  for (const [group, shows] of [["projects", "noclick projects list"], ["agents", "noclick agents list"], ["agents move", "noclick agents move redeem"]] as const) {
+    io = captured();
+    assert.equal(await main(group.split(" "), io), OK);
+    assert.ok(io.stdout.some((l) => l.startsWith(shows)), group);
+  }
+});
+
+test("ls runs list where a group has no ls of its own, and noclick ls lists what the account has", async () => {
+  const { api } = setup();
+  const projects = api.on("GET", "/v1/projects", json({ object: "list", next_cursor: null, data: [
+    { object: "project", id: "p1", name: "booking", url: "https://booking.noclick.site", production: { status: "ready" } }] }));
+  assert.equal(await main(["--color", "never", "projects", "ls"], captured(), signedIn), OK);
+  assert.equal(projects.count, 1);
+  api.on("GET", "/v1/machines", json({ object: "list", next_cursor: null, data: [
+    { object: "machine", id: "m1", name: "build-box", status: "running", size: "small", region: "us", monthly_usd: 12.5 }] }));
+  for (const path of ["/v1/databases", "/v1/buckets", "/v1/repos", "/v1/domains", "/v1/phone_numbers", "/v1/inboxes", "/v1/volumes"]) {
+    api.on("GET", path, json({ object: "list", data: [], next_cursor: null }));
+  }
+  const sandboxes = api.on("GET", "/v1/sandboxes", json({ object: "list", data: [], next_cursor: null }));
+  const spend = api.on("GET", "/v1/usage", json({ total_usd: 1.84, groups: [{ id: "p1", usd: 1.84 }] }));
+  let io = captured();
+  assert.equal(await main(["ls"], io, signedIn), OK);
+  const out = io.stdout.join("\n");
+  assert.ok(out.includes("Websites (1)") && out.includes("Machines (1)") && !out.includes("Databases"));
+  assert.ok(out.includes("https://booking.noclick.site") && out.includes("$1.84") && out.includes("$12.50"));
+  assert.equal(sandboxes.last.query.get("status"), "live");
+  assert.equal(projects.last.query.get("user_id"), "all");
+  assert.equal(spend.last.query.get("group_by"), "project");
+  io = captured();
+  assert.equal(await main(["resources", "--kind", "machines", "--json"], io, signedIn), OK);
+  const body = JSON.parse(io.stdout.join("\n"));
+  assert.deepEqual(Object.keys(body.kinds), ["machines"]);
+  api.on("GET", "/v1/machines", apiError(403, "permission_denied", "No machines here."));
+  io = captured();
+  assert.equal(await main(["resources", "--kind", "machines", "--kind", "apps"], io, signedIn), OK);
+  assert.ok(io.stdout.join("\n").includes("Websites (1)") && io.stderr.includes("machines: unread (No machines here.)"));
+  assert.equal(await main(["resources", "--kind", "machines"], captured(), signedIn), FAILED);
+});

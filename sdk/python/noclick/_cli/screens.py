@@ -18,7 +18,7 @@ SECTIONS: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
     ("Start", ("signup", "setup", "login", "whoami", "logout", "init", "link", "unlink")),
     ("Ship", ("deploy", "status", "open", "releases", "rollback", "promote", "delete", "live")),
     ("Configure", ("secret", "env", "settings", "bind", "domains")),
-    ("Operate", ("logs", "db", "bucket", "wait", "ops", "estimate", "agents", "users", "machines", "webhooks")),
+    ("Operate", ("resources", "logs", "db", "bucket", "wait", "ops", "estimate", "agents", "users", "machines", "webhooks")),
     ("Everything else", ("api", "describe", "help")),
     ("Teach", ("docs", "skill", "mcp")),
 )
@@ -58,6 +58,43 @@ def unclaimed(claim_url: Optional[str]) -> str:
         claim_url or "a claim link (noclick api POST /v1/agent_signups/current/claim_link makes one)")
 
 
+# noclick resources: every kind of thing the account holds that runs, is kept or is paid for, as the app's Resources
+# page lists them (its ids), and sandboxes and volumes beside them. Each column is a header, the field it reads (a dot
+# goes into an object; "$spend" is this month's spend from GET /v1/usage?group_by=project) and how it's shown.
+RESOURCE_KINDS: Tuple[Dict[str, Any], ...] = (
+    {"kind": "apps", "title": "Websites", "path": "/v1/projects",
+     "columns": [["NAME", "name", "text"], ["URL", "url", "text"], ["STATUS", "production.status", "status"],
+                 ["THIS MONTH", "$spend", "usd"]]},
+    {"kind": "machines", "title": "Machines", "path": "/v1/machines",
+     "columns": [["NAME", "name", "text"], ["STATUS", "status", "status"], ["SIZE", "size", "text"],
+                 ["REGION", "region", "text"], ["A MONTH", "monthly_usd", "usd"]]},
+    {"kind": "databases", "title": "Databases", "path": "/v1/databases",
+     "columns": [["NAME", "name", "text"], ["ENGINE", "engine", "text"], ["STATUS", "status", "status"],
+                 ["SIZE", "size_bytes", "bytes"], ["TABLES", "table_count", "text"]]},
+    {"kind": "storage", "title": "Buckets", "path": "/v1/buckets",
+     "columns": [["NAME", "name", "text"], ["PUBLIC", "public", "bool"], ["SIZE", "size_bytes", "bytes"],
+                 ["OBJECTS", "object_count", "text"]]},
+    {"kind": "repos", "title": "Repos", "path": "/v1/repos",
+     "columns": [["NAME", "name", "text"], ["BRANCH", "default_branch", "text"], ["SIZE", "size_bytes", "bytes"]]},
+    {"kind": "domains", "title": "Domains", "path": "/v1/domains",
+     "columns": [["NAME", "name", "text"], ["STATUS", "status", "status"], ["EXPIRES", "expires_at", "date"],
+                 ["A YEAR", "renewal_usd", "usd"]]},
+    {"kind": "numbers", "title": "Phone numbers", "path": "/v1/phone_numbers",
+     "columns": [["NUMBER", "number", "text"], ["NAME", "name", "text"], ["A MONTH", "monthly_usd", "usd"]]},
+    {"kind": "email", "title": "Inboxes", "path": "/v1/inboxes",
+     "columns": [["ADDRESS", "address", "text"], ["NAME", "name", "text"]]},
+    {"kind": "sandboxes", "title": "Sandboxes", "path": "/v1/sandboxes", "query": {"status": "live"},
+     "columns": [["ID", "id", "text"], ["STATUS", "status", "status"], ["IMAGE", "image", "text"],
+                 ["REGION", "region", "text"]]},
+    {"kind": "volumes", "title": "Volumes", "path": "/v1/volumes",
+     "columns": [["NAME", "name", "text"], ["SIZE", "size_bytes", "bytes"], ["FILES", "file_count", "text"]]},
+)
+# A word that means another, wherever the command line has it: ``noclick ls`` is ``noclick resources``, and ``ls``
+# under a group with ``list`` and no ``ls`` of its own is ``list``.
+TOP_ALIASES = {"ls": "resources"}
+GROUP_ALIASES = {"ls": "list"}
+
+
 def manifest(summaries: Dict[str, str]) -> Dict[str, Any]:
     """The words, as the manifest keeps them: each section's commands with their summaries (``summaries``, by
     top-level command)."""
@@ -69,6 +106,8 @@ def manifest(summaries: Dict[str, str]) -> Dict[str, Any]:
         "next": [list(row) for row in NEXT],
         "signed_out": SIGNED_OUT,
         "signup": {"terms": list(TERMS), "harnesses": [list(row) for row in HARNESSES], "works": WORKS},
+        "resources": [dict(kind) for kind in RESOURCE_KINDS],
+        "aliases": {"top": TOP_ALIASES, "group": GROUP_ALIASES},
     }
 
 
@@ -130,6 +169,9 @@ def unknown(word: str, *, within: Sequence[str], curated: Sequence[str], areas: 
     """A command line naming a command there isn't: the closest curated commands, else the closest API areas (under
     a group, its commands and operations alike)."""
     said = " ".join([*within, word])
+    if len(word.split()) > 1:  # quoted as one argument ("projects list"): no command has a space in its name
+        return "\n".join([s.error(f"Unknown command '{said}'.") + " It came as one argument; pass its words apart:",
+                          f"  {s.link(' '.join(['noclick', *within, *word.split()]))}"])
     pools = [[*curated, *areas]] if within else [list(curated), list(areas)]
     near = next((found for found in (difflib.get_close_matches(word, pool, n=3) for pool in pools) if found), [])
     prefix = " ".join(["noclick", *within])

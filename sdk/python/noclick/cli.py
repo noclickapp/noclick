@@ -1821,14 +1821,69 @@ def _first_screen(profile: str) -> int:
     return exits.OK
 
 
+# The global flags that take a value: the word after one is that value, never the command.
+_VALUED_GLOBALS = ("--profile", "--color")
+
+
+def _command_start(argv: Sequence[str]) -> int:
+    """Where the command's own words start, past the global flags (``--profile x``, ``--color never``)."""
+    i = 0
+    while i < len(argv) and argv[i].startswith("-"):
+        i += 2 if argv[i] in _VALUED_GLOBALS else 1
+    return i
+
+
+def _is_group(path: Sequence[str]) -> bool:
+    """Whether ``path`` names commands of its own: a group of curated ones (``agents``, ``agents move``) or an
+    area of API operations (``projects``)."""
+    spec = load_spec()
+    if any(c["path"] == list(path) for c in spec.commands):  # a command of its own (status), whatever area shares it
+        return False
+    return (len(path) == 1 and path[0] in spec.areas()) or any(
+        len(c["path"]) > len(path) and c["path"][:len(path)] == list(path) for c in spec.commands)
+
+
+def _unaliased(argv: List[str]) -> List[str]:
+    """``argv`` with its aliases spelled out: ``noclick ls`` is ``noclick resources``, and ``ls`` under a group that
+    has ``list`` and no ``ls`` of its own is ``list``."""
+    i = _command_start(argv)
+    if i >= len(argv):
+        return argv
+    words = list(argv)
+    words[i] = screens.TOP_ALIASES.get(words[i], words[i])
+    j = i + 1
+    if j < len(words) and words[j] in screens.GROUP_ALIASES:
+        spec = load_spec()
+        group = words[i]
+        names = {c["path"][1] for c in spec.commands if len(c["path"]) > 1 and c["path"][0] == group}
+        names |= {op["command"] for op in spec.areas().get(group, [])}
+        meant = screens.GROUP_ALIASES[words[j]]
+        if words[j] not in names and meant in names:
+            words[j] = meant
+    return words
+
+
+def _bare_group(argv: Sequence[str]) -> Optional[List[str]]:
+    """The group a command line names alone (``noclick agents``, ``noclick projects --json``), whose commands it then
+    lists rather than refusing."""
+    rest = argv[_command_start(argv):]
+    if any(word in ("-h", "--help") for word in rest):
+        return None
+    words = [word for word in rest if not word.startswith("-")]
+    return words if words and _is_group(words) else None
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the ``noclick`` command; returns its exit status."""
-    argv = list(sys.argv[1:] if argv is None else argv)
+    argv = _unaliased(list(sys.argv[1:] if argv is None else argv))
     style.configure(style.mode_in(argv))
-    args = build_parser(argv).parse_args(argv)
-    if args.command is None:
+    bare = _bare_group(argv)
+    args = build_parser(argv).parse_args(argv) if bare is None else None
+    if args is not None and args.command is None:
         return _first_screen(args.profile)
     try:
+        if bare is not None:
+            return generated.run_help(argparse.Namespace(words=bare, json=False))
         if getattr(args, "token", None):
             configure(api_key=args.token, base_url=os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL)
         elif args.auth:

@@ -75,6 +75,10 @@ export function commands(screens: Screens, areas: Map<string, number> | null, s:
  * a group, its commands and operations alike). */
 export function unknown(word: string, within: string[], curated: string[], areas: string[], s: Style = PLAIN): string {
   const said = [...within, word].join(" ");
+  if (word.split(/\s+/).filter(Boolean).length > 1) { // quoted as one argument ("projects list"): no command has a space in its name
+    return [`${s.error(`Unknown command '${said}'.`)} It came as one argument; pass its words apart:`,
+      `  ${s.link(["noclick", ...within, ...word.split(/\s+/).filter(Boolean)].join(" "))}`].join("\n");
+  }
   const pools = within.length ? [[...curated, ...areas]] : [curated, areas];
   const near = pools.map((pool) => closeMatches(word, pool)).find((found) => found.length) ?? [];
   const mean = near.length ? ` Did you mean: ${near.map((n) => s.link([...within, n].join(" "))).join(", ")}?` : "";
