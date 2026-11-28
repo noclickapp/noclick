@@ -778,6 +778,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
  *  tool for one is named by it, `-` as `_`: `google_drive__…`). */
 export const AGENT_TOOL_APPS: ReadonlySet<string> = new Set(
     `123formbuilder
+1password
 2chat
 46elks
 7shifts
