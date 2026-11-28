@@ -121,7 +121,9 @@ export function entryOf(state: AgentState, facts: AgentFacts | undefined, now: n
     const started = state.turnStartedAt?.getTime() ?? state.now?.since?.getTime() ?? now;
     const last = state.lastActiveAt?.getTime() ?? null;
     let line: string;
-    if (state.state === 'needs_you') line = state.waiting.total > 1 ? `${state.waiting.total} things wait on you` : 'Waiting on you';
+    // Both, when a turn runs while something waits on you (a browser's step it asked of you): "Working · needs you".
+    if (state.state === 'needs_you' && state.now) line = `${nowWords(state.now) || 'Working'} · ${state.waiting.total > 1 ? `${state.waiting.total} things wait on you` : 'needs you'}`;
+    else if (state.state === 'needs_you') line = state.waiting.total > 1 ? `${state.waiting.total} things wait on you` : 'Waiting on you';
     else if (state.state === 'working') line = `${nowWords(state.now) || 'Working'} · ${elapsed(now - started)}`;
     else if (state.state === 'waking') line = state.waking?.why || 'Waking';
     else if (state.state === 'failed') line = `Failed: ${state.failed?.message ?? 'its last turn didn’t finish'}`;

@@ -49,7 +49,7 @@ import { SubagentBox } from './SubagentBox';
 import { isLive, type BesideItem } from './besideItems';
 import { BrowserMotion } from '../browser/pieces';
 import { ConversationBrowserView } from '../browser/BrowserView';
-import { ConversationBrowserProvider, useConversationBrowser } from '../browser/useConversationBrowser';
+import { chatsOf, ConversationBrowserProvider, useConversationBrowser } from '../browser/useConversationBrowser';
 import { useBeside } from './useBeside';
 import { useLoops } from './useLoops';
 import { runLoop } from './loops';
@@ -169,8 +169,10 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
 
     const live = liveTurn(thread);
     const requests = pendingRequests(thread);
-    // The browser it works in, read once for the card's tile, the turns' cards and the big view.
-    const browser = useConversationBrowser(agentId, conversation, c.ready ? agent.name : 'The agent');
+    // The browser it works in, read once for the card's tile, the turns' cards and the big view: the session's, started in
+    // any of the chats it shows.
+    const browserChats = useMemo(() => chatsOf(thread), [thread]);
+    const browser = useConversationBrowser(agentId, conversation, c.ready ? agent.name : 'The agent', browserChats);
     const besideOwn = useBeside(thread, requests, browser?.browser ?? null);
     const loops = useLoops(agentId, conversation, live?.operationId ?? null);
     const besideItems = useMemo(() => [...besideOwn, ...loops], [besideOwn, loops]);
@@ -193,6 +195,16 @@ export function AgentConversation({ agentId, conversation, onOpenProfile, onOpen
     // What its rows draw: the thread, and what came in on its triggered turns (a reply lands there, not in the thread).
     const drawn = useMemo(() => ({ thread, activity: c.activity.byTurn, ready: c.ready }), [thread, c.activity.byTurn, c.ready]);
     const { ref: scrollRef, onScroll } = useStuckToEnd(drawn);
+    // "Waiting on you" leads here: a step its browser waits on you for is scrolled to, once each, as it's drawn.
+    const askedOf = browser?.browser?.waitingOn?.forYou && !browser.browser.held ? (browser.browser.actId ?? browser.browser.id) : null;
+    const scrolledToAsk = useRef<string | null>(null);
+    useEffect(() => {
+        if (!askedOf || scrolledToAsk.current === askedOf) return;
+        const card = [...(scrollRef.current?.querySelectorAll<HTMLElement>('[data-browser-ask]') ?? [])].find((x) => x.dataset.browserAsk === askedOf);
+        if (!card) return;
+        scrolledToAsk.current = askedOf;
+        card.scrollIntoView?.({ block: 'center' });
+    });
     // The line above the box shows its subagents: the log goes to the first at work, which lights up a moment.
     const showSubagents = () => {
         const first = subagentsOf(thread)[0];

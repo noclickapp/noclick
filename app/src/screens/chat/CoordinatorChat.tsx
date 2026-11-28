@@ -12,7 +12,7 @@ import { setupSubject } from '@/lib/agentThread/thread';
 import { useWorkFrames, WorkLiveContext, type WorkLive } from '@/sdk/live';
 import { readsRestored } from '@/sdk/useV1';
 import { ConversationBrowserView } from '@/screens/work/browser/BrowserView';
-import { ConversationBrowserProvider, useConversationBrowser } from '@/screens/work/browser/useConversationBrowser';
+import { chatsOf, ConversationBrowserProvider, useConversationBrowser } from '@/screens/work/browser/useConversationBrowser';
 import { WorkClientContext } from '@/screens/work/client';
 import { accountFiles, attachmentOf } from '@/screens/work/conversation/Composer';
 import { useSessionControls } from '@/screens/work/conversation/sessionControls';
@@ -125,7 +125,8 @@ function Chat({ client, referenceDisplay, children }: { client: NoClick; referen
     );
 
     // NoClick's browser in this chat, once the chat has found its agent: the Beside's tile, the turns' cards, the big view.
-    const browser = useConversationBrowser(ownId, ownId ? session : null, 'NoClick');
+    const browserChats = useMemo(() => chatsOf(thread), [thread]);
+    const browser = useConversationBrowser(ownId, ownId ? session : null, 'NoClick', browserChats);
 
     const setups = useMemo(() => thread.entries.flatMap((e) => (e.kind === 'note' && e.setup ? [setupSubject(e.setup)] : [])), [thread]);
     const chat: ChatSource = {

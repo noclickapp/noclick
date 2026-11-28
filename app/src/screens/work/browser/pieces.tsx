@@ -263,26 +263,62 @@ export function BesideBrowserRail() {
     return ctl?.browser ? <BrowserRailBlock ctl={ctl} act={act} /> : null;
 }
 
-/** The ask, in the turn it stopped: Take over for the person it waits on, then what's left for them to do. */
+/** The ask, in the turn it stopped: the step it waits on a person for ("Sign in to developers.example.com."), Open the
+ *  browser for the person it asked (they take it over and finish it live, in NoClick's viewer), Done once they're
+ *  through (their hand back, as Done on the page NoClick sent them is), and Cancel, which calls off the task. One ask
+ *  with that page: finishing or calling it off in either place ends it in both. */
 export function AskRow({ ctl }: { ctl: BrowserControl }) {
     const browser = ctl.browser;
     const state = browser ? stateOf(browser) : 'done';
-    if (state === 'control') {
-        return (
-            <div className="flex flex-wrap items-center gap-2.5" data-testid="browser-ask">
-                <button type="button" onClick={() => void ctl.handBack()} disabled={ctl.pending !== null} className={PRIMARY}>
-                    Hand back
-                </button>
-                <span className="text-[11.5px] text-muted-foreground">You’re in control. {ctl.agentName} waits.</span>
-            </div>
-        );
-    }
-    if (state !== 'needs' || !browser?.waitingOn) return null;
-    const mine = browser.waitingOn.forYou;
+    if (!browser || (state !== 'needs' && state !== 'control')) return null;
+    const asked = browser.waitingOn;
+    if (state === 'needs' && !asked) return null;
+    const held = state === 'control';
+    const mine = held || !!asked?.forYou;
+    const busy = ctl.pending !== null;
+    const line = held
+        ? asked
+            ? `You’re in control. ${ctl.agentName} waits.`
+            : `${ctl.agentName} waits.`
+        : mine
+          ? 'Open the browser, finish it there, then tap Done.'
+          : 'Waiting on the person it asked to finish this step.';
     return (
-        <div className="flex flex-wrap items-center gap-2.5" data-testid="browser-ask">
-            {mine && <TakeOver ctl={ctl} />}
-            <span className="text-[11.5px] text-muted-foreground">{mine ? 'Finish it, then hand it back.' : 'Waiting on the person it asked to finish this step.'}</span>
+        <div className="nb-rise flex flex-col gap-2.5 rounded-[14px] p-3 ring-1 ring-inset ring-border dark:ring-foreground/[0.12]" data-testid="browser-ask" data-browser-ask={browser.actId ?? browser.id}>
+            <div className="flex min-w-0 items-start gap-2.5">
+                <StatusDot state={state} className="mt-[7px]" />
+                <div className="min-w-0 flex-1">
+                    <p className="text-[13.5px] font-medium leading-snug text-foreground" data-testid="browser-ask-step">
+                        {asked?.person || 'You’re in control'}
+                    </p>
+                    <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">{line}</p>
+                </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 pl-[18px]">
+                {held ? (
+                    <>
+                        <button type="button" onClick={() => void ctl.handBack()} disabled={busy} className={PRIMARY}>
+                            {asked ? 'Done' : 'Hand back'}
+                        </button>
+                        {!ctl.shown && (
+                            <button type="button" onClick={() => ctl.show({ mode: 'live' })} className={OUTLINE}>
+                                Open the browser
+                            </button>
+                        )}
+                    </>
+                ) : (
+                    mine && (
+                        <button type="button" onClick={() => void ctl.takeOver()} disabled={busy} className={PRIMARY}>
+                            Open the browser
+                        </button>
+                    )
+                )}
+                {asked && browser.actId && (
+                    <button type="button" onClick={() => void ctl.cancelAct()} disabled={busy} className={OUTLINE}>
+                        Cancel
+                    </button>
+                )}
+            </div>
         </div>
     );
 }

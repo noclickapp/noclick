@@ -204,8 +204,18 @@ export const LIVE_VIEW_TOKENS = new Map<string, { thumb: boolean; control: boole
 let liveViewTokens = 0;
 
 /** A browser's live view, as POST /v1/browsers/{id}/live_view and .../live_control answer it: a token for the socket,
- *  and for driving it, only once the browser is taken over. Undefined for any other request. */
+ *  and for driving it, only once the browser is taken over; and taking it over and handing it back (POST .../take_over
+ *  and .../hand_back), which a step it asks of you is finished by, as Done on its page finishes it. Undefined for any
+ *  other request. */
 export function liveViewRoutes(method: string, path: string, browsers: Json[], body: unknown): Response | undefined {
+    const moved = method === 'POST' ? path.match(/^\/v1\/browsers\/([^/]+)\/(take_over|hand_back)$/) : null;
+    if (moved) {
+        const browser = browsers.find((b) => b.id === moved[1]);
+        if (!browser) return notFound('No such browser.');
+        if (moved[2] === 'take_over') Object.assign(browser, { held: true, status: 'parked' });
+        else Object.assign(browser, { held: false, waiting_on: null, status: 'running', acting: !!browser.act_id });
+        return json(browser);
+    }
     const asked = method === 'POST' ? path.match(/^\/v1\/browsers\/([^/]+)\/(live_view|live_control)$/) : null;
     if (!asked) return undefined;
     const browser = browsers.find((b) => b.id === asked[1]);
@@ -456,6 +466,8 @@ export function fakeWorkAgent(
             if (!operations.has(id)) return notFound(`No operation ${id}.`);
             if (tail === '/cancel' && method === 'POST') {
                 settle(id, 'canceled');
+                // A browser's task called off takes the step it asked of a person with it, and frees its browser.
+                for (const b of options.browsers ?? []) if (b.act_id === id && b.waiting_on) Object.assign(b, { waiting_on: null, acting: false, status: 'parked' });
                 return json(operations.get(id));
             }
             if (tail === '/wait' && !TERMINAL.has(String(operations.get(id)!.status))) {

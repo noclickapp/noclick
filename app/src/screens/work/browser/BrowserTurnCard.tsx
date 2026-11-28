@@ -1,6 +1,7 @@
 // A browser act, in the turn that started it, on the Chat page and in Work alike (one card in the shared card
 // registry). On a laptop the browser itself lives in the Beside card: the turn says "Using a browser · beside this
-// conversation" (opening it big), carries the ask with Take over when a step waits on you, and ends in the receipt.
+// conversation" (opening it big), carries the ask's card when a step waits on you (the step, Open the browser, Done,
+// Cancel: `AskRow`), and ends in the receipt.
 // On a phone the live thumbnail is in the turn: it opens full screen, a pinned chip keeps it a tap away once it
 // scrolls out of sight, and it settles into the same receipt when the act is done.
 import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
@@ -13,7 +14,7 @@ import { stepLine, stepName } from '@/lib/stepLabels';
 import { cn } from '@/ui/utils';
 import { Elapsed } from '@/screens/work/conversation/Activity';
 import { actIdOf, BROWSER_CANVAS, isBrowserCall, operationOf } from '@/screens/chat/cards/cardMatchers';
-import { AskRow, BrowserMotion, Caption, frameOf, LivePicture, outcomeOf, Receipt, ReceiptView, restingFrame, startOf, StatusDot, TakeOver } from './pieces';
+import { AskRow, BrowserMotion, Caption, frameOf, LivePicture, outcomeOf, Receipt, ReceiptView, restingFrame, startOf, StatusDot } from './pieces';
 import { useBrowserAct, useBrowserControl, type BrowserControl } from './useConversationBrowser';
 import { captionOf, isLiveState, siteOf, stateOf } from './words';
 
@@ -126,7 +127,7 @@ function Inline({ ctl, act, caption = null }: { ctl: BrowserControl; act: Return
             <div className="flex min-h-7 min-w-0 items-center gap-2 text-[12.5px]">
                 <StatusDot state={state} />
                 <Caption text={caption && state === 'working' ? caption : captionOf(browser)} shine={state === 'working' || state === 'starting'} className="flex-1" />
-                {state === 'needs' && browser.waitingOn?.forYou && <TakeOver ctl={ctl} />}
+                {/* A step that waits on you is the ask card's, under it. */}
             </div>
             <PinnedChip ctl={ctl} target={box} />
         </div>
