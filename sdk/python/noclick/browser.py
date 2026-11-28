@@ -757,19 +757,19 @@ class Browser(_Object):
     @overload
     async def act(
         self, instruction: str, *, background: Literal[False] = False, max_steps: Optional[int] = None,
-        files: Optional[List[str]] = None, timeout: Optional[float] = None,
+        files: Optional[List[str]] = None, sign_up: bool = False, timeout: Optional[float] = None,
     ) -> ActResult: ...
 
     @overload
     async def act(
         self, instruction: str, *, background: Literal[True], max_steps: Optional[int] = None,
-        files: Optional[List[str]] = None, timeout: Optional[float] = None,
+        files: Optional[List[str]] = None, sign_up: bool = False, timeout: Optional[float] = None,
     ) -> Operation: ...
 
     @synced
     async def act(
         self, instruction: str, *, background: bool = False, max_steps: Optional[int] = None,
-        files: Optional[List[str]] = None, timeout: Optional[float] = None,
+        files: Optional[List[str]] = None, sign_up: bool = False, timeout: Optional[float] = None,
     ) -> Union[ActResult, Operation]:
         """Have the model carry out ``instruction`` on the page: clicking, typing,
         scrolling, uploading, downloading, at most ``max_steps`` actions (50 by
@@ -782,6 +782,15 @@ class Browser(_Object):
         whose saved sign-in expired: it asks the person who signed in
         (``SiteLogin.signed_in_by``) to sign in again, saves the new sign-in to the
         profile, and carries on.
+
+        The website logins the browser may use (connections of integration
+        ``website_login``: a site's username, password and two-factor setup key) are
+        told to the model by name and username only: on a site's sign-in form NoClick
+        types them in, with the two-factor code, and the model never reads them.
+        ``sign_up=True`` lets it create an account where the task needs one: NoClick
+        makes the password, types it, and keeps it as a new website login for the
+        site, with the username the task gives. Both only in a browser no agent is
+        beside (a remote one, or one alone on a machine).
 
         ``timeout`` is how many seconds to wait here; the step keeps going after it.
         ``background=True`` returns at once.
@@ -816,13 +825,46 @@ class Browser(_Object):
                     print(browser.act("Fill in the onboarding form and attach the W-9", files=[w9]).summary)
         """
         payload = await self._request(
-            "POST", f"{self._path()}/act", json=compact(instruction=instruction, max_steps=max_steps, files=files),
+            "POST", f"{self._path()}/act", json=compact(instruction=instruction, max_steps=max_steps, files=files,
+                                                         sign_up=True if sign_up else None),
         )
         op = Operation._from_payload(
             payload, client=self._client, user=self._call_scope(), kind="browser.act", reader=_read_act,
         )
         if background:
             return op
+        return await op.wait.aio(timeout=timeout)
+
+    @synced
+    async def sign_in(self, connection: Union[str, _Object], *, timeout: Optional[float] = None) -> ActResult:
+        """Sign in on the page the browser is on (the site's sign-in page) with a
+        website login, a connection of integration ``website_login``, by name, id or
+        object. NoClick types its username and password (and, holding a two-factor
+        setup key, the code it makes from it) into the site's own form, submits it,
+        and carries on through a next page asking for more, with no model: no value
+        reaches your code, a step or a log. It types only on the login's own sites,
+        over https, and only in a browser no agent is beside.
+
+        Returns:
+            How it went: ``done`` once the site no longer shows its sign-in form, a ``summary``,
+            and the ``url`` it ended on.
+
+        Usage::
+
+            login = noclick.Connection.create("acme-billing", integration="website_login",
+                                              data={"site": "billing.acme.com", "username": "ana@acme.test",
+                                                    "password": os.environ["ACME_PASSWORD"]})
+            with noclick.Browser.create() as browser:
+                browser.goto("https://billing.acme.com/login")
+                result = browser.sign_in(login)
+                print(result.done, result.summary)
+        """
+        payload = await self._request(
+            "POST", f"{self._path()}/sign_in", json={"connection": await ref_id(connection)},
+        )
+        op = Operation._from_payload(
+            payload, client=self._client, user=self._call_scope(), kind="browser.act", reader=_read_act,
+        )
         return await op.wait.aio(timeout=timeout)
 
     @synced

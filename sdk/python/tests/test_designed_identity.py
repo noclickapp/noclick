@@ -365,6 +365,22 @@ def test_act_waits_for_the_result_or_returns_the_operation(api, client):
     assert (later.done, later.summary, later.downloads) == (False, "Ran out of steps.", [])
 
 
+def test_sign_in_with_a_website_login_and_an_act_that_may_sign_up(api, client):
+    signed = api.post("/v1/browsers/br_1/sign_in").respond(
+        202, json=operation(op_id="op_in", kind="browser.act", status="running"))
+    api.get("/v1/operations/op_in/wait").respond(json=operation(
+        op_id="op_in", kind="browser.act", status="succeeded",
+        result={"done": True, "summary": "Signed in with 'acme-billing'.", "steps": [], "url": "https://acme.test/"}))
+    result = nc.Browser.from_id("br_1").sign_in("acme-billing")
+    assert body(signed.calls[0].request) == {"connection": "acme-billing"}
+    assert isinstance(result, nc.ActResult) and result.done and result.url == "https://acme.test/"
+
+    act = api.post("/v1/browsers/br_1/act").respond(202, json=operation(op_id="op_act", kind="browser.act",
+                                                                         status="running"))
+    nc.Browser.from_id("br_1").act("Make an account for ana@acme.test", sign_up=True, background=True)
+    assert body(act.calls[0].request) == {"instruction": "Make an account for ana@acme.test", "sign_up": True}
+
+
 def test_a_captcha_holds_the_step_on_a_person(api, client):
     api.post("/v1/browsers/br_1/act").respond(202, json=operation(op_id="op_act", kind="browser.act", status="running"))
     waits = api.get("/v1/operations/op_act/wait").mock(side_effect=[

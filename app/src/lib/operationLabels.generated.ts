@@ -131,6 +131,7 @@ export const OPERATIONS: Record<string, [string, string, string]> = {
     "browsers_goto": ["Goto", "POST", "outbound"],
     "browsers_list": ["List Browsers", "GET", "read"],
     "browsers_screenshot": ["Screenshot", "GET", "read"],
+    "browsers_sign_in": ["Sign In", "POST", "outbound"],
     "buckets_create": ["Create Bucket", "POST", "write"],
     "buckets_delete": ["Delete Bucket", "DELETE", "destructive"],
     "buckets_export": ["Export Bucket", "POST", "write"],
@@ -2504,6 +2505,7 @@ webex
 webflow
 webscraper-io
 webscraping-ai
+website-login
 websupport
 weezevent-da56471
 weeztix

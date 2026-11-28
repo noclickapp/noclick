@@ -21,6 +21,7 @@
  */
 
 import type { Agent } from "./agent.ts";
+import type { Connection } from "./connection.ts";
 import { BrowserLiveView, BrowserViewConnection } from "./browserView.ts";
 import type { BrowserViewConnectOptions, BrowserViewOptions } from "./browserView.ts";
 import { resolveClient } from "./client.ts";
@@ -387,6 +388,11 @@ export interface BrowserActOptions {
   maxSteps?: number;
   /** https URLs (a bucket's `signedUrl` works) NoClick downloads into the browser for the task's forms; up to 5. */
   files?: string[];
+  /**
+   * It may create an account where the task needs one: NoClick makes the password, types it, and keeps it as a
+   * new website login for the site, with the username the task gives.
+   */
+  signUp?: boolean;
   /** Seconds to wait here; the step keeps going after. */
   timeoutS?: number;
   /** Return at once with an `Operation` whose `wait()` resolves to the `ActResult`. */
@@ -587,18 +593,48 @@ export class Browser extends ApiObject {
    * two-factor prompt, parks the browser (not billed, not counted against its timeout) and sends a person
    * a page carrying the live view, and the step waits until they have dealt with it; so does the sign-in
    * page of a site whose saved sign-in expired, and the new sign-in is saved to the profile.
+   * The website logins the browser may use (connections of integration `website_login`) are told to the model by
+   * name and username only: on a site's sign-in form NoClick types them in, with the two-factor code, and the model
+   * never reads them; `signUp` lets it create an account, kept as a new website login. Both only in a browser no
+   * agent is beside (a remote one, or one alone on a machine).
    * `{ background: true }` returns at once with an `Operation` whose `wait()` resolves to the `ActResult`.
    */
   act(instruction: string, options: BrowserActOptions & { background: true }): Promise<Operation<ActResult>>;
   act(instruction: string, options?: BrowserActOptions & { background?: false }): Promise<ActResult>;
   async act(instruction: string, options: BrowserActOptions = {}): Promise<ActResult | Operation<ActResult>> {
     const payload = await this._request("POST", `${this.path}/act`, {
-      json: compact({ instruction, max_steps: options.maxSteps, files: options.files }),
+      json: compact({ instruction, max_steps: options.maxSteps, files: options.files, sign_up: options.signUp || undefined }),
     });
     const op = Operation._fromPayload<ActResult>(payload, {
       client: this._client, user: this._callScope(), kind: "browser.act", reader: toActResult,
     });
     return options.background ? op : await op.wait({ timeoutS: options.timeoutS });
+  }
+
+  /**
+   * Sign in on the page the browser is on (the site's sign-in page) with a website login, a connection of
+   * integration `website_login`, by name, id or object. NoClick types its username and password (and, holding a
+   * two-factor setup key, the code it makes from it) into the site's own form, submits it, and carries on through a
+   * next page asking for more, with no model: no value reaches your code, a step or a log. It types only on the
+   * login's own sites, over https, and only in a browser no agent is beside.
+   *
+   * @example
+   *   const login = await Connection.create("acme-billing", {
+   *     integration: "website_login",
+   *     data: { site: "billing.acme.com", username: "ana@acme.test", password: process.env.ACME_PASSWORD },
+   *   });
+   *   await browser.goto("https://billing.acme.com/login");
+   *   const result = await browser.signIn(login);
+   *   console.log(result.done, result.summary);
+   */
+  async signIn(connection: string | Connection, options: { timeoutS?: number } = {}): Promise<ActResult> {
+    const payload = await this._request("POST", `${this.path}/sign_in`, {
+      json: { connection: await refId(connection) },
+    });
+    const op = Operation._fromPayload<ActResult>(payload, {
+      client: this._client, user: this._callScope(), kind: "browser.act", reader: toActResult,
+    });
+    return await op.wait({ timeoutS: options.timeoutS });
   }
 
   /** Read what `query` describes off the page, shaped by `schema` (a JSON Schema) when you pass one. */

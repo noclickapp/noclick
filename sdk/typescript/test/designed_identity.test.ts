@@ -351,6 +351,21 @@ test("act waits for the result, holds on a person, or returns the operation", as
   assert.deepEqual([later.done, later.summary, later.downloads], [false, "Ran out of steps.", []]);
 });
 
+test("signIn signs in with a website login, and an act may sign up", async () => {
+  const { api } = setup();
+  const signed = api.on("POST", "/v1/browsers/br_1/sign_in", json(operation({ id: "op_in", kind: "browser.act", status: "running" }), { status: 202 }));
+  api.on("GET", "/v1/operations/op_in/wait", json(operation({
+    id: "op_in", kind: "browser.act", status: "succeeded",
+    result: { done: true, summary: "Signed in with 'acme-billing'.", steps: [], url: "https://acme.test/" },
+  })));
+  const result = await nc.Browser.fromId("br_1").signIn("acme-billing");
+  assert.deepEqual(signed.calls[0].body, { connection: "acme-billing" });
+  assert.deepEqual([result.done, result.url], [true, "https://acme.test/"]);
+  const act = api.on("POST", "/v1/browsers/br_1/act", json(operation({ id: "op_act", kind: "browser.act", status: "running" }), { status: 202 }));
+  await nc.Browser.fromId("br_1").act("Make an account for ana@acme.test", { signUp: true, background: true });
+  assert.deepEqual(act.calls[0].body, { instruction: "Make an account for ana@acme.test", sign_up: true });
+});
+
 test("Browser.list reads by profile and status", async () => {
   const { api } = setup();
   const route = api.on("GET", "/v1/browsers", json(listing([BROWSER])));
