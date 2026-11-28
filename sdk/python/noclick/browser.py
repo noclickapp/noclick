@@ -792,15 +792,19 @@ class Browser(_Object):
         profile, and carries on.
 
         The website logins the browser may use (connections of integration
-        ``website_login``: a site's username, password and two-factor setup key) are
-        told to the model by name and username only: on a site's sign-in form NoClick
-        types them in, with the two-factor code, and the model never reads them. A code
+        ``website_login``: a site's username, password and two-factor setup key), and
+        each login item with a site in a connected 1Password's vaults (named
+        ``<vault>/<item title>``, read from 1Password as they're typed), are told to
+        the model by name and username only: on a site's sign-in form NoClick types
+        them in, with the two-factor code, and the model never reads them. A code
         the site emails or texts, and a verification link it emails, NoClick waits for
         where the login says and types or opens it; one that never comes is asked of a
         person. ``sign_up=True`` lets it create an account where the task needs one:
-        NoClick makes the password, types it, and keeps it as a new website login for
-        the site, with the username the task gives, else an email address of the
-        login's own, where NoClick receives the site's mail (``Connection.login_mail``).
+        NoClick makes the password, types it, and keeps it in the account's 1Password
+        (the connection's vault for new logins, else the one vault it reaches) or else
+        as a new website login for the site, with the username the task gives, else an
+        email address of the login's own, where NoClick receives the site's mail
+        (``Connection.login_mail``). The step that signed up says where it went.
         Both only in a browser no agent is beside (a remote one, or one alone on a
         machine).
 
@@ -851,8 +855,9 @@ class Browser(_Object):
     async def sign_in(self, connection: Union[str, _Object], *, timeout: Optional[float] = None) -> ActResult:
         """Sign in on the page the browser is on (the site's sign-in page) with a
         website login, a connection of integration ``website_login``, by name, id or
-        object. NoClick types its username and password (and, holding a two-factor
-        setup key, the code it makes from it) into the site's own form, submits it,
+        object, or a connected 1Password's login item by its name, ``"<vault>/<item
+        title>"``. NoClick types its username and password (and its two-factor code)
+        into the site's own form, submits it,
         and carries on through a next page asking for more, with no model: no value
         reaches your code, a step or a log. It types only on the login's own sites,
         over https, and only in a browser no agent is beside.
