@@ -1527,8 +1527,8 @@ function integrationRefs(entries: (string | { name: string })[] | undefined): st
  */
 const CONVERGED = [
   "instructions", "model", "harness", "model_connection", "tools", "tool_rules", "can_request", "budget_usd_per_month",
-  "browser_profile_id", "card_id", "volumes", "memories", "skills", "secret_ids", "timezone", "repos", "network", "shell", "region",
-  "machine_id", "turn_limits", "effort", "speed", "permission_mode", "setup", "docker", "sandbox_size",
+  "browser_profile_id", "browser_machine_id", "card_id", "volumes", "memories", "skills", "secret_ids", "timezone", "repos",
+  "network", "shell", "region", "machine_id", "turn_limits", "effort", "speed", "permission_mode", "setup", "docker", "sandbox_size",
   "app_testing", "model_switching",
 ] as const;
 
@@ -1583,6 +1583,15 @@ export interface AgentCreateOptions extends AgentFields, CallOptions {
    * `update`, `null` signs it out.
    */
   browserProfile?: string | BrowserProfile | null;
+  /**
+   * The machine its `browser` tool runs on (a `Machine` or id): a browser alone in a container of its own there,
+   * which reaches the sites and private addresses the machine reaches and fills its website logins (your own
+   * machine, say, so a sign-up runs from your address and away from your screen). A call only NoClick's remote
+   * browsers serve (its profile, `remote`) still goes there. Setting it takes the key's `machines` scope, on a machine
+   * you may start a browser on (one of the agent's own scope's, or one a space it's in shares at `use`); a stopped
+   * machine refuses its browser, saying so. In `update`, `null` brings its next browsers back where it works.
+   */
+  browserMachine?: string | Machine | null;
   /**
    * Invite-only beta. The card it holds and pays with (a `Card` or id of its own scope; giving one
    * takes the key's `cards` scope): a card has one agent at a time. It gets `card__status` and
@@ -1751,6 +1760,7 @@ async function wireBody(name: string, options: AgentCreateOptions, parentId: str
     budget_usd_per_month: options.budgetUsdPerMonth,
     triggers: options.triggers ? await Promise.all(options.triggers.map(triggerWire)) : undefined,
     browser_profile_id: await refId((options.browserProfile ?? undefined) as string | ApiObject | undefined),
+    browser_machine_id: await refId((options.browserMachine ?? undefined) as string | ApiObject | undefined),
     card_id: await refId((options.card ?? undefined) as string | ApiObject | undefined),
     volumes: await volumeMountIds(options.volumes, options),
     memories: await memoryLinks(options.memories, options),
@@ -1778,7 +1788,8 @@ async function wireBody(name: string, options: AgentCreateOptions, parentId: str
 function cleared(options: AgentCreateOptions): JsonObject {
   const nullable: JsonObject = {
     model_connection: options.modelConnection, budget_usd_per_month: options.budgetUsdPerMonth,
-    browser_profile_id: options.browserProfile as string | null | undefined, card_id: options.card as string | null | undefined,
+    browser_profile_id: options.browserProfile as string | null | undefined,
+    browser_machine_id: options.browserMachine as string | null | undefined, card_id: options.card as string | null | undefined,
     timezone: options.timezone, turn_limits: options.turnLimits === null ? null : undefined,
     effort: options.effort, speed: options.speed, permission_mode: options.permissionMode,
   };
@@ -2009,8 +2020,8 @@ export class Agent extends ApiObject {
    * tools, `canRequest`, budget or another field `update` takes differ gets yours (the grants its user
    * gave it are kept), and its `triggers` too. `createIfMissing` only decides what happens when there's
    * none: `true` creates it (`instructions` is required then), else it throws `NotFound`. A field left
-   * out is never changed; `null` clears `modelConnection`, `budgetUsdPerMonth`, `browserProfile` or
-   * `card`, as `update` does. `region`, `ttlS` and `parent` are set when it's created, for good: an
+   * out is never changed; `null` clears `modelConnection`, `budgetUsdPerMonth`, `browserProfile`,
+   * `browserMachine` or `card`, as `update` does. `region`, `ttlS` and `parent` are set when it's created, for good: an
    * existing agent with another throws `Conflict` naming it.
    *
    * Setting fields is a write, every time it runs: do it at startup or in a setup script, and take the
@@ -2295,6 +2306,10 @@ export class Agent extends ApiObject {
   /** The browser profile its `browser` tool signs in with. */
   get browserProfileId(): string | null {
     return this._field("browser_profile_id");
+  }
+  /** The machine its `browser` tool runs on, a browser alone there (null: where it works, else NoClick's remote browsers). */
+  get browserMachineId(): string | null {
+    return this._field("browser_machine_id");
   }
   /** Invite-only beta. The card it holds and pays with (null: none of its own). */
   get cardId(): string | null {
@@ -2891,7 +2906,7 @@ export class Agent extends ApiObject {
        * refused with a `Conflict` whose `details.instructions` are them as they are now, when they changed since.
        */
       ifInstructions?: string;
-    } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "card" | "machine" |
+    } & Pick<AgentCreateOptions, "timezone" | "repos" | "network" | "shell" | "browserProfile" | "browserMachine" | "card" | "machine" |
       "memories" | "skills" | "turnLimits" | "secrets"> & AgentApprovalsOption,
   ): Promise<this> {
     const raw = await this._ensure();
@@ -2916,6 +2931,8 @@ export class Agent extends ApiObject {
         shell: changes.shell,
         browser_profile_id: changes.browserProfile === undefined ? undefined
           : changes.browserProfile === null ? null : await refId(changes.browserProfile as string | ApiObject),
+        browser_machine_id: changes.browserMachine === undefined ? undefined
+          : changes.browserMachine === null ? null : await refId(changes.browserMachine as string | ApiObject),
         card_id: changes.card === undefined ? undefined
           : changes.card === null ? null : await refId(changes.card as string | ApiObject),
         machine_id: changes.machine === undefined ? undefined

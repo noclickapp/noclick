@@ -111,6 +111,19 @@ def test_update_signs_its_browser_in_with_a_profile_and_out(api, client):
     assert body(patch.calls.last.request) == {"browser_profile_id": None}
 
 
+def test_its_browser_runs_on_a_machine_it_names_and_comes_back(api, client):
+    api.get("/v1/agents/ag_1").respond(json=AGENT)
+    patch = api.patch("/v1/agents/ag_1").respond(json={**AGENT, "browser_machine_id": "m_1"})
+    agent = nc.Agent.from_id("ag_1")
+    agent.update(browser_machine="m_1")
+    assert body(patch.calls.last.request) == {"browser_machine_id": "m_1"} and agent.browser_machine_id == "m_1"
+    agent.update(browser_machine=None)
+    assert body(patch.calls.last.request) == {"browser_machine_id": None}
+    create = api.post("/v1/agents").respond(201, json={**AGENT, "browser_machine_id": "m_1"})
+    made = nc.Agent.create("scout", instructions="Sign up.", browser_machine="m_1")
+    assert body(create.calls.last.request)["browser_machine_id"] == "m_1" and made.browser_machine_id == "m_1"
+
+
 def test_update_gives_a_card_and_takes_it_back(api, client):
     api.get("/v1/agents/ag_1").respond(json=AGENT)
     patch = api.patch("/v1/agents/ag_1").respond(json={**AGENT, "card_id": "card_1"})

@@ -66,6 +66,22 @@ test("update signs its browser in with a profile and out", async () => {
   assert.deepEqual(patch.last.body, { browser_profile_id: null });
 });
 
+test("its browser runs on a machine it names, and comes back", async () => {
+  const { api } = setup();
+  api.on("GET", "/v1/agents/ag_1", json(AGENT));
+  const patch = api.on("PATCH", "/v1/agents/ag_1", json({ ...AGENT, browser_machine_id: "m_1" }));
+  const agent = await nc.Agent.fromId("ag_1").hydrate();
+  await agent.update({ browserMachine: "m_1" });
+  assert.deepEqual(patch.last.body, { browser_machine_id: "m_1" });
+  assert.equal(agent.browserMachineId, "m_1");
+  await agent.update({ browserMachine: null });
+  assert.deepEqual(patch.last.body, { browser_machine_id: null });
+  const create = api.on("POST", "/v1/agents", json({ ...AGENT, browser_machine_id: "m_1" }));
+  const made = await nc.Agent.create("scout", { instructions: "Sign up.", browserMachine: "m_1" });
+  assert.equal((create.last.body as { browser_machine_id?: string }).browser_machine_id, "m_1");
+  assert.equal(made.browserMachineId, "m_1");
+});
+
 test("update gives a card and takes it back", async () => {
   const { api } = setup();
   api.on("GET", "/v1/agents/ag_1", json(AGENT));

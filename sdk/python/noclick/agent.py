@@ -969,8 +969,8 @@ def _integration_refs(entries: Any) -> Optional[List[str]]:
 # triggers sub-resource).
 _CONVERGED = (
     "instructions", "model", "harness", "model_connection", "tools", "tool_rules", "can_request", "budget_usd_per_month",
-    "browser_profile_id", "card_id", "volumes", "memories", "skills", "secret_ids", "timezone", "repos", "network", "shell",
-    "region", "machine_id", "turn_limits", "effort", "speed", "permission_mode", "setup", "docker", "sandbox_size",
+    "browser_profile_id", "browser_machine_id", "card_id", "volumes", "memories", "skills", "secret_ids", "timezone",
+    "repos", "network", "shell", "region", "machine_id", "turn_limits", "effort", "speed", "permission_mode", "setup", "docker", "sandbox_size",
     "app_testing", "model_switching",
 )
 # Set when an agent is created, for good: ``from_name`` checks them on an existing one.
@@ -1211,6 +1211,11 @@ class Agent(_Object):
         "browser_profile_id",
         doc="The browser profile its ``browser`` tool signs in with, of its own scope.",
     )
+    browser_machine_id: Optional[str] = field(
+        "browser_machine_id",
+        doc="The ``Machine`` its ``browser`` tool runs on, a browser alone there (None: where it works, else "
+            "NoClick's remote browsers).",
+    )
     card_id: Optional[str] = field(
         "card_id", doc="The ``Card`` it holds and pays with (None: none of its own; a spawned child may pay with its "
                        "parent's; invite-only beta).",
@@ -1355,8 +1360,9 @@ class Agent(_Object):
               setup: Optional[Sequence[str]] = None, tool_rules: Optional[Mapping[str, str]] = None,
               docker: Optional[bool] = None, sandbox_size: Optional[str] = None,
               app_testing: Optional[str] = None, model_switching: Any = None,
+              browser_machine: Any = None,
               user: Any = AMBIENT, client: Optional[Client] = None) -> Dict[str, Any]:
-        # ``parent_id``, ``browser_profile_id`` and ``card_id`` may still be lazy objects, ``tools`` and
+        # ``parent_id``, ``browser_profile_id``, ``browser_machine_id`` and ``card_id`` may still be lazy objects, ``tools`` and
         # ``model_connection`` lazy Connections, ``triggers`` definitions, ``repos`` checkouts and
         # ``volumes``/``secret_ids`` lazy refs here; ``_wire`` resolves them. A volume or secret named by a
         # string is looked up in ``user``.
@@ -1365,7 +1371,7 @@ class Agent(_Object):
             tools=tools, tool_rules=None if tool_rules is None else dict(tool_rules), ttl_s=ttl_s, parent_id=parent,
             budget_usd_per_month=budget_usd_per_month, can_request=_integration_refs(can_request),
             triggers=None if triggers is None else list(triggers),
-            browser_profile_id=browser_profile, card_id=card,
+            browser_profile_id=browser_profile, browser_machine_id=browser_machine, card_id=card,
             volumes=volume_refs(volumes, user=user, client=client),
             memories=memory_refs(memories, user=user, client=client),
             skills=skill_refs(skills, user=user, client=client),
@@ -1389,7 +1395,7 @@ class Agent(_Object):
             body = {**body, "model_switching": await switching_wire(body["model_switching"], scope=scope)}
         if "triggers" in body:
             body = {**body, "triggers": [await trigger_wire(t) for t in body["triggers"]]}
-        for key in ("browser_profile_id", "card_id", "machine_id"):
+        for key in ("browser_profile_id", "browser_machine_id", "card_id", "machine_id"):
             if key in body:
                 body = {**body, key: await ref_id(body[key])}
         if "volumes" in body:
@@ -1425,6 +1431,7 @@ class Agent(_Object):
         can_request: Optional[Sequence[Any]] = None,
         triggers: Optional[Sequence[Any]] = None,
         browser_profile: Any = None,
+        browser_machine: Any = None,
         card: Any = None,
         volumes: Optional[Mapping[str, Any]] = None,
         secrets: Optional[Sequence[Any]] = None,
@@ -1637,7 +1644,14 @@ class Agent(_Object):
         account's for an account agent) signs its ``browser`` tool in with that
         person's logins: each conversation gets a browser of its own for a turn, a
         step only a person can do holds the turn ``awaiting_human``, and its calls
-        follow policy as ``browser.*``.
+        follow policy as ``browser.*``. ``browser_machine`` (a ``Machine`` or id) runs
+        that browser on the machine, a browser alone in a container of its own there,
+        which reaches the sites and private addresses the machine reaches and fills its
+        website logins: say, your own machine, so a sign-up runs from your address and
+        away from your screen. A call only NoClick's remote browsers serve (its profile,
+        ``remote``) still goes there. Setting it takes the key's ``machines`` scope, on a
+        machine you may start a browser on (one of the agent's own scope's, or one a
+        space it's in shares at ``use``); a stopped machine refuses its browser, saying so.
 
         Invite-only beta: ``card`` (a ``Card`` or id of its own scope: a
         user's agent pays with that user's cards, an account agent with your account's;
@@ -1748,8 +1762,8 @@ class Agent(_Object):
             timezone=timezone, repos=repos, network=network, shell=shell, region=region, machine=machine,
             memories=memories, skills=skills, turn_limits=turn_limits, effort=effort, speed=speed,
             permission_mode=permission_mode, setup=setup, tool_rules=tool_rules, docker=docker,
-            sandbox_size=sandbox_size, app_testing=app_testing, model_switching=model_switching, user=scope,
-            client=client,
+            sandbox_size=sandbox_size, app_testing=app_testing, model_switching=model_switching,
+            browser_machine=browser_machine, user=scope, client=client,
         ), scope=scope)
         if approvals is not None:
             body = {**body, "approvals": settings_wire(dict(approvals))}
@@ -1779,6 +1793,7 @@ class Agent(_Object):
         can_request: Optional[Sequence[Any]] = None,
         triggers: Optional[Sequence[Any]] = None,
         browser_profile: Any = UNSET,
+        browser_machine: Any = UNSET,
         card: Any = UNSET,
         volumes: Optional[Mapping[str, Any]] = None,
         secrets: Optional[Sequence[Any]] = None,
@@ -1815,9 +1830,9 @@ class Agent(_Object):
         on the new harness). So are its ``triggers``: a trigger
         your code no longer lists is removed and a new one added, while one that
         stays keeps its webhook URL; mail and call triggers are never touched. So are its
-        ``browser_profile``, and its ``card`` (invite-only beta). A field you leave
+        ``browser_profile``, ``browser_machine``, and its ``card`` (invite-only beta). A field you leave
         out is never changed, and ``None`` clears ``model_connection``, ``budget_usd_per_month``,
-        ``browser_profile``, ``card``, ``timezone``, ``turn_limits``, ``effort`` or ``speed``, as in ``update()``: moving an agent back to ``sdk`` takes
+        ``browser_profile``, ``browser_machine``, ``card``, ``timezone``, ``turn_limits``, ``effort`` or ``speed``, as in ``update()``: moving an agent back to ``sdk`` takes
         ``harness="sdk", model_connection=None``. ``region``, ``ttl_s`` and ``parent_id`` are set when
         it's created, for good: an existing agent with another raises ``noclick.Conflict`` naming
         the field and its value.
@@ -1880,7 +1895,8 @@ class Agent(_Object):
         if create_if_missing and not instructions:
             raise ValueError("Agent.from_name(create_if_missing=True) needs instructions=")
         nullable = dict(model_connection=model_connection, budget_usd_per_month=budget_usd_per_month,
-                        browser_profile_id=browser_profile, card_id=card, timezone=timezone,
+                        browser_profile_id=browser_profile, browser_machine_id=browser_machine, card_id=card,
+                        timezone=timezone,
                         turn_limits=turn_limits, effort=effort, speed=speed, permission_mode=permission_mode)
         given = {k: (None if v is UNSET else v) for k, v in nullable.items()}
         agent._define({
@@ -1891,8 +1907,8 @@ class Agent(_Object):
                 network=network, shell=shell, region=region, machine=machine, memories=memories, skills=skills,
                 turn_limits=given["turn_limits"], effort=given["effort"], speed=given["speed"],
                 permission_mode=given["permission_mode"], setup=setup, tool_rules=tool_rules, docker=docker,
-                sandbox_size=sandbox_size, app_testing=app_testing, model_switching=model_switching, user=user,
-                client=client,
+                sandbox_size=sandbox_size, app_testing=app_testing, model_switching=model_switching,
+                browser_machine=given["browser_machine_id"], user=user, client=client,
             ),
             # An explicit None is a field you pass: it clears it on an existing agent.
             **{k: None for k, v in nullable.items() if v is None},
@@ -3115,6 +3131,7 @@ class Agent(_Object):
         network: Any = UNSET,
         shell: Any = UNSET,
         browser_profile: Any = UNSET,
+        browser_machine: Any = UNSET,
         card: Any = UNSET,
         machine: Any = UNSET,
         memories: Any = UNSET,
@@ -3145,6 +3162,8 @@ class Agent(_Object):
         ``create``, and ``network`` too, from its next turn (a coding harness's running
         sandbox restarts with it). ``browser_profile`` signs its browser in with
         another profile of its scope, from its next browser, and ``None`` signs it out.
+        ``browser_machine`` runs its next browsers on that ``Machine``, as in ``create``, and ``None``
+        brings them back where it works.
         ``card`` (invite-only beta) gives it a card in
         place of the one it holds, as in ``create``, and ``card=None`` takes its card back.
         ``machine`` (invite-only beta) moves it onto a
@@ -3259,7 +3278,8 @@ class Agent(_Object):
             changes["secret_ids"] = await secret_ids(secret_refs(secrets or [], user=self._call_scope(), client=self._client))
         if approvals is not UNSET:
             changes["approvals"] = settings_wire(dict(approvals or {}))
-        for key, value in (("browser_profile_id", browser_profile), ("card_id", card), ("machine_id", machine)):
+        for key, value in (("browser_profile_id", browser_profile), ("browser_machine_id", browser_machine),
+                           ("card_id", card), ("machine_id", machine)):
             if value is not UNSET:
                 changes[key] = await ref_id(value)
         raw = await self._ensure()
