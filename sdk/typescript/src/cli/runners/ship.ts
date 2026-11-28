@@ -23,7 +23,7 @@ import { host } from "../host.ts";
 import { FAILED, OK, USAGE } from "../exits.ts";
 import * as links from "../link.ts";
 import { OUT } from "../style.ts";
-import type { Io } from "../output.ts";
+import { type Io, printJson } from "../output.ts";
 import { CommandError, resolveCredentials } from "../store.ts";
 import { ID, answer, appOf, cell, lookup, noteUnclaimed, num, on, profileOf, str, table, usd } from "./kit.ts";
 
@@ -120,7 +120,7 @@ function leftOutData(left: LeftOut[]): Array<Record<string, unknown>> {
 
 // --- git --------------------------------------------------------------------------------------------------------
 
-function git(args: string[], cwd: string, extra: Record<string, string> = {}): Promise<string> {
+export function git(args: string[], cwd: string, extra: Record<string, string> = {}): Promise<string> {
   return new Promise((done, fail) => {
     execFile("git", args, { cwd, env: { ...host.env, ...extra } as NodeJS.ProcessEnv, maxBuffer: 64 * 1024 * 1024 },
       (err, stdout, stderr) => {
@@ -150,14 +150,14 @@ async function currentBranch(root: string): Promise<string | null> {
 }
 
 /** A one-command remote, so the tokened URL never lands in argv (others' `ps`) or in `.git/config`. */
-function remote(url: string): Record<string, string> {
+export function remote(url: string): Record<string, string> {
   return {
     GIT_CONFIG_COUNT: "1", GIT_CONFIG_KEY_0: "remote.noclick-deploy.url", GIT_CONFIG_VALUE_0: url,
     GIT_TERMINAL_PROMPT: "0", GIT_HTTP_LOW_SPEED_LIMIT: "1", GIT_HTTP_LOW_SPEED_TIME: String(GIT_GIVE_UP_S),
   };
 }
 
-async function push(root: string, repo: Repo, sha: string, branch: string): Promise<void> {
+export async function push(root: string, repo: Repo, sha: string, branch: string): Promise<void> {
   const env = remote(await repo.cloneUrl({ write: true, ttlS: 600 }));
   try {
     await git(["push", "noclick-deploy", `${sha}:refs/heads/${branch}`], root, env);
@@ -495,9 +495,18 @@ export async function releases(values: Values, io: Io): Promise<number> {
   const limit = num(values, "limit") ?? 10;
   const found = await project.deployments({ branch: on(values, "all") ? undefined : project.productionBranch, limit: limit + 1 });
   const shown = found.slice(0, limit);
-  answer(io, values, { data: shown.map((d) => d.raw), has_more: found.length > limit }, () => {
-    table(io, ["", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED"], shown.map((d) => [d.production ? "*" : "", d.id, d.branch,
-      d.status, (d.commit ?? "").slice(0, 7), d.createdAt]), `${project.name} has no deployments yet: noclick deploy.`,
+  if (on(values, "json")) {
+    printJson(io, { data: shown.map((d) => ({ id: d.id, branch: d.branch, status: d.status, commit: d.commit, url: d.url ?? null,
+      production: d.production, created_at: d.createdAt, warning: d.raw.warning ?? null })), has_more: found.length > limit });
+    return OK;
+  }
+  answer(io, values, {}, () => {
+    const message = (d: Deployment) => {
+      const first = (d.commitMessage ?? "").split("\n")[0]!;
+      return first.length <= 50 ? first : `${first.slice(0, 49)}…`;
+    };
+    table(io, ["", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED", "MESSAGE"], shown.map((d) => [d.production ? "*" : "", d.id, d.branch,
+      d.status, (d.commit ?? "").slice(0, 7), d.createdAt, message(d)]), `${project.name} has no deployments yet: noclick deploy.`,
       `Releases of ${project.name}`);
     return [];
   });

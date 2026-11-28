@@ -13,6 +13,8 @@ export interface FlagSpec {
   required?: boolean;
   /** Given alone (no value after it, or another flag next), the flag is this, as argparse's `nargs="?"`. */
   const?: string | null;
+  /** What it is when not given, as the Python CLI's parser fills it in. */
+  default?: unknown;
 }
 
 export interface ArgSpec {
@@ -117,6 +119,7 @@ export function parse(
     values[spec.name] = value;
   }
   if (positionals.length) throw new UsageError(`${usage}: unexpected ${positionals.join(" ")}.`, `${usage} --help`);
+  for (const spec of flags) if (spec.default !== undefined && values[spec.dest] === undefined) values[spec.dest] = spec.default;
   const missing = flags.filter((f) => f.required && values[f.dest] === undefined).map((f) => f.flag);
   if (missing.length) throw new UsageError(`${usage} needs ${missing.join(", ")}.`, `${usage} --help`);
   for (const group of oneOf) {

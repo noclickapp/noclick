@@ -30,10 +30,17 @@ function isObject(value: unknown): value is Json {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/** A time as the Python CLI's JSON writes it (`datetime.isoformat`, in UTC): `2026-11-20T09:15:00+00:00`, with
+ *  microseconds only when it has a fraction of a second. */
+export function isoformat(at: Date): string {
+  const [whole, fraction] = at.toISOString().slice(0, -1).split(".");
+  return `${whole}${fraction && Number(fraction) ? `.${fraction.padEnd(6, "0")}` : ""}+00:00`;
+}
+
 /** `value` as JSON holds it: an SDK object as its `raw`. */
 export function plain(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(plain);
-  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Date) return isoformat(value);
   if (isObject(value)) {
     const raw = (value as { raw?: unknown }).raw;
     if (isObject(raw) && raw !== value) return plain(raw);

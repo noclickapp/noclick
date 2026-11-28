@@ -183,10 +183,7 @@ export async function main(
         io.out(helpText(usage, command.summary, flags, args, command.examples, command.notes));
         return output.OK;
       }
-      const run = curated.get(path.join(" "));
-      if (!run) {
-        throw new UsageError(`${usage} isn't in npx noclick yet.`, `pip install noclick, then ${usage}`);
-      }
+      const run = curated.get(path.join(" "))!;
       if (typeof values.profile === "string") profile = values.profile;
       values.profile = profile;
       if (command.auth) signIn(profile);

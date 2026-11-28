@@ -11,7 +11,8 @@
    "flag": "--profile",
    "dest": "profile",
    "type": "string",
-   "help": "Which stored login to use (default: NOCLICK_PROFILE or 'default')."
+   "help": "Which stored login to use (default: NOCLICK_PROFILE or 'default').",
+   "default": "default"
   },
   {
    "flag": "--color",
@@ -22,7 +23,8 @@
     "always",
     "never"
    ],
-   "help": "Colours and tables: auto (only at a terminal, never under NO_COLOR, TERM=dumb or CI), always or never."
+   "help": "Colours and tables: auto (only at a terminal, never under NO_COLOR, TERM=dumb or CI), always or never.",
+   "default": "auto"
   }
  ],
  "commands": [
@@ -43,7 +45,8 @@
       "keychain",
       "file"
      ],
-     "help": "Where to keep the key: the OS keychain, or a file only you can read (default: the keychain where this machine has one, else the file)."
+     "help": "Where to keep the key: the OS keychain, or a file only you can read (default: the keychain where this machine has one, else the file).",
+     "default": "auto"
     },
     {
      "flag": "--no-browser",
@@ -112,7 +115,8 @@
      "flag": "--limit",
      "dest": "limit",
      "type": "integer",
-     "help": "Show at most this many (default 50; 0 for all)."
+     "help": "Show at most this many (default 50; 0 for all).",
+     "default": 50
     }
    ]
   },
@@ -278,7 +282,8 @@
      "flag": "--cwd",
      "dest": "cwd",
      "type": "string",
-     "help": "The folder the session works in (default: here)."
+     "help": "The folder the session works in (default: here).",
+     "default": "."
     },
     {
      "flag": "--host",
@@ -385,7 +390,8 @@
      "flag": "--path",
      "dest": "path",
      "type": "string",
-     "help": "A folder in the git repository (default: here)."
+     "help": "A folder in the git repository (default: here).",
+     "default": "."
     },
     {
      "flag": "--name",
@@ -492,7 +498,8 @@
      "flag": "--dotenv",
      "dest": "dotenv",
      "type": "string",
-     "help": "The dotenv file --from-dotenv reads (default: .env)."
+     "help": "The dotenv file --from-dotenv reads (default: .env).",
+     "default": ".env"
     },
     {
      "flag": "--to-env",
@@ -640,7 +647,8 @@
      "choices": [
       "http",
       "sse"
-     ]
+     ],
+     "default": "http"
     },
     {
      "flag": "--headers-file",
@@ -967,7 +975,8 @@
       "sqlite",
       "postgres"
      ],
-     "help": "Default: sqlite."
+     "help": "Default: sqlite.",
+     "default": "sqlite"
     },
     {
      "flag": "--region",
@@ -1202,7 +1211,8 @@
      "flag": "--limit",
      "dest": "limit",
      "type": "integer",
-     "help": "At most this many lines per read (default 100)."
+     "help": "At most this many lines per read (default 100).",
+     "default": 100
     },
     {
      "flag": "--timeout",
@@ -1589,6 +1599,44 @@
   },
   {
    "path": [
+    "live"
+   ],
+   "summary": "Edit the app live: a dev server with its real bindings, then ship what was edited.",
+   "auth": true,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--hours",
+     "dest": "hours",
+     "type": "number",
+     "help": "End it after this long at most (default 1).",
+     "default": 1.0
+    },
+    {
+     "flag": "--max-usd",
+     "dest": "max_usd",
+     "type": "number",
+     "metavar": "USD",
+     "help": "The most the session may cost, in US dollars: it's priced first and refused above it."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "number",
+     "metavar": "SECONDS",
+     "help": "How long to wait for it to start (default 300).",
+     "default": 300.0
+    },
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print the session as JSON."
+    }
+   ]
+  },
+  {
+   "path": [
     "live",
     "start"
    ],
@@ -1618,7 +1666,8 @@
      "flag": "--hours",
      "dest": "hours",
      "type": "number",
-     "help": "End it after this long at most (default 1)."
+     "help": "End it after this long at most (default 1).",
+     "default": 1.0
     },
     {
      "flag": "--max-usd",
@@ -1632,7 +1681,8 @@
      "dest": "timeout",
      "type": "number",
      "metavar": "SECONDS",
-     "help": "How long to wait for it to start (default 300)."
+     "help": "How long to wait for it to start (default 300).",
+     "default": 300.0
     }
    ],
    "examples": [
@@ -2145,7 +2195,8 @@
      "flag": "--limit",
      "dest": "limit",
      "type": "integer",
-     "help": "At most this many (default 10)."
+     "help": "At most this many (default 10).",
+     "default": 10
     }
    ],
    "examples": [
@@ -2343,7 +2394,8 @@
       "production",
       "preview"
      ],
-     "help": "Which deploys see it (default: all)."
+     "help": "Which deploys see it (default: all).",
+     "default": "all"
     },
     {
      "flag": "--from-env",
@@ -2409,7 +2461,8 @@
       "production",
       "preview"
      ],
-     "help": "Which deploys see it (default: all)."
+     "help": "Which deploys see it (default: all).",
+     "default": "all"
     }
    ],
    "examples": [
@@ -2457,7 +2510,8 @@
       "production",
       "preview"
      ],
-     "help": "Which deploys see it (default: all)."
+     "help": "Which deploys see it (default: all).",
+     "default": "all"
     }
    ],
    "examples": [
@@ -2698,7 +2752,8 @@
       "keychain",
       "file"
      ],
-     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file)."
+     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file).",
+     "default": "auto"
     }
    ]
   },
@@ -2724,7 +2779,8 @@
       "keychain",
       "file"
      ],
-     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file)."
+     "help": "Where to keep the key, as noclick login does (default: the keychain, else a file).",
+     "default": "auto"
     }
    ],
    "examples": [
@@ -2763,7 +2819,8 @@
      "flag": "--dir",
      "dest": "dir",
      "type": "string",
-     "help": "The folder (default: here)."
+     "help": "The folder (default: here).",
+     "default": "."
     },
     {
      "flag": "--no-wait",
@@ -2782,7 +2839,8 @@
      "dest": "timeout",
      "type": "number",
      "metavar": "SECONDS",
-     "help": "With --describe: how long to wait for the draft (default 900)."
+     "help": "With --describe: how long to wait for the draft (default 900).",
+     "default": 900.0
     }
    ],
    "examples": [
@@ -2835,7 +2893,8 @@
      "flag": "--limit",
      "dest": "limit",
      "type": "integer",
-     "help": "With --search: at most this many (default 10)."
+     "help": "With --search: at most this many (default 10).",
+     "default": 10
     }
    ],
    "examples": [
@@ -2905,13 +2964,15 @@
      "dest": "key_env",
      "type": "string",
      "metavar": "VAR",
-     "help": "The environment variable holding the key (default NOCLICK_API_KEY)."
+     "help": "The environment variable holding the key (default NOCLICK_API_KEY).",
+     "default": "NOCLICK_API_KEY"
     },
     {
      "flag": "--dir",
      "dest": "dir",
      "type": "string",
-     "help": "The project folder (default: here)."
+     "help": "The project folder (default: here).",
+     "default": "."
     }
    ],
    "examples": [
@@ -3023,6 +3084,32 @@
    ]
   }
  ],
+ "templates": {
+  "static": {
+   "about": "A site of files: HTML and CSS, served as they are.",
+   "files": {
+    "index.html": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>{name}</title>\n    <link rel=\"stylesheet\" href=\"/style.css\">\n  </head>\n  <body>\n    <main>\n      <h1>{name}</h1>\n      <p>Edit index.html, then run <code>noclick deploy</code>.</p>\n    </main>\n  </body>\n</html>\n",
+    "style.css": "body { font-family: system-ui, sans-serif; margin: 0; display: grid; place-items: center; min-height: 100vh; }\nmain { max-width: 40rem; padding: 2rem; }\n"
+   }
+  },
+  "worker": {
+   "about": "A Worker in front of a folder of files: an API route and the site, on the edge.",
+   "files": {
+    "wrangler.jsonc": "{{\n  \"name\": \"{name}\",\n  \"main\": \"src/index.js\",\n  \"compatibility_date\": \"2026-11-01\",\n  \"assets\": {{ \"directory\": \"./public\", \"binding\": \"ASSETS\" }}\n}}\n",
+    "src/index.js": "export default {\n  async fetch(request, env) {\n    const url = new URL(request.url);\n    if (url.pathname === \"/api/hello\") {\n      return Response.json({ hello: \"world\", at: new Date().toISOString() });\n    }\n    return env.ASSETS.fetch(request);\n  },\n};\n",
+    "public/index.html": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>{name}</title>\n    <link rel=\"stylesheet\" href=\"/style.css\">\n  </head>\n  <body>\n    <main>\n      <h1>{name}</h1>\n      <p>Edit index.html, then run <code>noclick deploy</code>.</p>\n    </main>\n  </body>\n</html>\n",
+    "public/style.css": "body { font-family: system-ui, sans-serif; margin: 0; display: grid; place-items: center; min-height: 100vh; }\nmain { max-width: 40rem; padding: 2rem; }\n"
+   }
+  },
+  "python": {
+   "about": "A Python web server in a container, on the standard library alone.",
+   "files": {
+    "main.py": "\"\"\"A small web server on Python's standard library: NoClick runs it in a container, on the port it names.\"\"\"\n\nimport json\nimport os\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\n\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/api/hello\":\n            body, kind = json.dumps({{\"hello\": \"world\"}}).encode(), \"application/json\"\n        else:\n            body, kind = b\"<h1>{name}</h1><p>Edit main.py, then run noclick deploy.</p>\", \"text/html\"\n        self.send_response(200)\n        self.send_header(\"Content-Type\", kind)\n        self.end_headers()\n        self.wfile.write(body)\n\n\nif __name__ == \"__main__\":\n    HTTPServer((\"0.0.0.0\", int(os.environ.get(\"PORT\", \"8080\"))), Handler).serve_forever()\n",
+    "requirements.txt": "",
+    "Procfile": "web: python main.py\n"
+   }
+  }
+ },
  "screens": {
   "intro": "NoClick's CLI: ship a folder as an app, configure and operate it, and reach every API operation.",
   "sections": [

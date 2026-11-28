@@ -42,6 +42,8 @@ export interface Flag {
   help?: string;
   /** A flag whose value is optional: what it is given alone (`--preview` is `--preview ""`). */
   const?: string | null;
+  /** What it is when not given. */
+  default?: unknown;
 }
 
 export interface Arg {
@@ -90,6 +92,8 @@ export interface Manifest {
   format: number;
   globals: Flag[];
   commands: Command[];
+  /** `noclick init`'s templates: what each is and its files (`{name}` is the app's name). */
+  templates: Record<string, { about: string; files: Record<string, string> }>;
   screens: Screens;
 }
 

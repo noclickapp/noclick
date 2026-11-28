@@ -17,7 +17,7 @@ import type { RegionName } from "../../region.ts";
 import { UsageError, type Values } from "../args.ts";
 import { host } from "../host.ts";
 import { OK } from "../exits.ts";
-import type { Io } from "../output.ts";
+import { type Io, printJson } from "../output.ts";
 import * as spend from "../spend.ts";
 import { CommandError } from "../store.ts";
 import { answer, appNamed, appOf, num, on, str, table, usd } from "./kit.ts";
@@ -55,7 +55,7 @@ export async function secretSet(values: Values, io: Io): Promise<number> {
 export async function secretLs(values: Values, io: Io): Promise<number> {
   const { project } = await appOf(values);
   const found = await project.secrets.list({ environment: environment(values) });
-  answer(io, values, { data: found }, () => {
+  answer(io, values, { data: Object.entries(found).sort().map(([name, at]) => ({ name, updated_at: at })) }, () => {
     table(io, ["NAME", "UPDATED"], Object.entries(found).sort(), `${project.name} has no secrets for ${environment(values)}.`,
       `Secrets of ${project.name} (${environment(values)})`);
     return [];
@@ -205,14 +205,18 @@ export async function bucketCreate(values: Values, io: Io): Promise<number> {
 }
 
 export async function domainsSearch(values: Values, io: Io): Promise<number> {
-  const offers = await Domain.search(String(values.query), { tlds: values.tld as string[] | undefined });
-  answer(io, values, { data: offers.map((o) => o.raw) }, () => {
-    table(io, ["DOMAIN", "AVAILABLE", "PRICE", "RENEWAL", "PREMIUM"],
-      offers.map((o) => [o.name, o.available, usd(o.priceUsd), usd(o.renewalUsd), o.premium]), "No names found.", `Domains for ${str(values, "query") ?? ""}`);
-    return [];
-  });
-  const free = offers.find((o) => o.available);
-  if (free) io.err(`Buying one spends money: noclick domains buy ${free.name} --max-price ${free.priceUsd ?? "<USD>"}`);
+  const query = String(values.query);
+  const offers = await Domain.search(query, { tlds: values.tld as string[] | undefined });
+  if (on(values, "json")) {
+    printJson(io, offers.map((o) => o.raw));
+    return OK;
+  }
+  table(io, ["DOMAIN", "AVAILABLE", "PRICE", "RENEWAL", "PREMIUM"],
+    offers.map((o) => [o.name, o.available, usd(o.priceUsd), usd(o.renewalUsd), o.premium]), `No domains found for ${query}.`, `Domains for ${query}`);
+  const asked = query.trim().toLowerCase().replace(/\.+$/, "");
+  if (asked.includes(".") && offers.every((o) => o.name.toLowerCase() !== asked)) {
+    io.err(`${asked} isn't for sale here: it's registered, or it names a well-known brand or bank, which NoClick never offers.`);
+  }
   return OK;
 }
 

@@ -1377,6 +1377,8 @@ SHELL_ENDED = 4410
 
 
 def cmd_machines_ssh(args: argparse.Namespace) -> int:
+    if os.name != "posix" or not sys.stdin.isatty():  # before any shell is opened for it
+        raise CommandError("noclick machines ssh needs a terminal on macOS or Linux (on Windows, use WSL).")
     machine = Machine.from_name(args.name)
     opened = machine.shell()
     return _attach_shell(opened.url, opened.token, renew=lambda: machine.shell().token)

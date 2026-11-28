@@ -1,6 +1,6 @@
-/** Operating an app, as the Python CLI's `logs`, `db query`, `estimate` and `ops wait` do. */
+/** Operating an app, as the Python CLI's `logs`, `db query`, `estimate`, `wait` and `ops wait` do. */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { basename } from "node:path";
 
 import { Agent } from "../../agent.ts";
@@ -8,13 +8,29 @@ import { Database } from "../../database.ts";
 import { Estimate, type EstimateRequestItem, estimate } from "../../estimate.ts";
 import { Operation } from "../../operation.ts";
 import { Deployment, type LogLine } from "../../project.ts";
-import { NotFound } from "../../errors.ts";
+import { NotFound, OperationTimeout } from "../../errors.ts";
 import { UsageError, type Values } from "../args.ts";
 import { host } from "../host.ts";
-import { FAILED, OK } from "../exits.ts";
+import { FAILED, OK, WaitingOnPerson } from "../exits.ts";
 import { type Io, printJson } from "../output.ts";
 import { CommandError } from "../store.ts";
-import { answer, appNamed, num, on, str, table, usd } from "./kit.ts";
+import { printResult } from "./data.ts";
+import { answer, appNamed, num, on, str, table } from "./kit.ts";
+
+/** `wait` reads the operation again this often. */
+const WAIT_POLL_MS = 2000;
+
+/** Say what a deploy's look at its release found (its result as the operation gave it); whether its check failed (a
+ *  `warning`: it's live but not working). */
+export function saidDeployment(io: Io, result: Record<string, unknown>): boolean {
+  if (result.warning) {
+    io.err(`warning: ${result.warning}`);
+    if (result.next_step) io.err(`  next step: ${result.next_step}`);
+    return true;
+  }
+  if (result.code_unchecked) io.err(`note: ${result.code_unchecked}`);
+  return false;
+}
 
 /** `--follow` reads again this often. */
 const FOLLOW_EVERY_MS = 2000;
@@ -97,28 +113,145 @@ export async function dbQuery(values: Values, io: Io): Promise<number> {
   const db = Database.fromName(String(values.database));
   const params = ((values.param as string[] | undefined) ?? []).map(param);
   const sql = String(values.sql);
-  const result = on(values, "write") ? await db.execute(sql, params) : await db.query(sql, params);
-  answer(io, values, { columns: result.columns, rows: result.rows, rows_read: result.rowsRead, rows_written: result.rowsWritten }, () => {
-    table(io, result.columns, result.rows.map((row) => result.columns.map((c) => row[c])), "No rows.");
-    return [];
-  });
-  if (result.rowsWritten) io.err(`${result.rowsWritten} rows changed.`);
+  const given = params.length ? params : undefined;
+  printResult(io, on(values, "write") ? await db.execute(sql, given) : await db.query(sql, given), on(values, "json"), sql);
   return OK;
 }
 
+/** A number as Python's `{:g}` writes it: six significant digits, no trailing zeros, an exponent when it's tiny or huge. */
+export function g(value: number): string {
+  if (value === 0 || !Number.isFinite(value)) return String(value);
+  const exponent = Math.floor(Math.log10(Math.abs(value)));
+  const trim = (text: string) => (text.includes(".") ? text.replace(/0+$/, "").replace(/\.$/, "") : text);
+  if (exponent < -4 || exponent >= 6) {
+    const [mantissa, power] = value.toExponential(5).split("e");
+    const n = Number(power);
+    return `${trim(mantissa!)}e${n < 0 ? "-" : "+"}${String(Math.abs(n)).padStart(2, "0")}`;
+  }
+  return trim(value.toPrecision(6));
+}
+
+const money = (value: number, digits: number) =>
+  `$${value.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
+
+/** `NAME=VALUE` from the command line, each value a number when `number`. */
+function pairs(given: string[], number = false): Record<string, string | number> {
+  const found: Record<string, string | number> = {};
+  for (const pair of given) {
+    const at = pair.indexOf("=");
+    const [name, value] = at < 0 ? [pair, ""] : [pair.slice(0, at), pair.slice(at + 1)];
+    if (at < 0 || !name) throw new CommandError(`'${pair}' isn't NAME=VALUE.`, { nextStep: "Like --usage hours=40" });
+    if (number) {
+      const n = Number(value);
+      if (value.trim() === "" || Number.isNaN(n)) throw new CommandError(`${name}'s usage is a number, not '${value}'.`);
+      found[name] = n;
+    } else found[name] = value;
+  }
+  return found;
+}
+
+/** The items in `path` (`-`: stdin): a JSON list of them, or an object holding them under `items`. */
+async function itemsIn(path: string): Promise<EstimateRequestItem[]> {
+  const text = path === "-" ? await host.stdin() : readFileSync(path, "utf8");
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    throw new CommandError(`${path} isn't JSON: ${(err as Error).message}.`,
+      { nextStep: 'Write a list of items, like [{"kind": "project", "usage": {"requests": 100000}}].' });
+  }
+  const items = data && typeof data === "object" && !Array.isArray(data) ? (data as { items?: unknown }).items : data;
+  if (!Array.isArray(items)) throw new CommandError(`${path} holds no list of items.`, { nextStep: 'Write a list of items, or {"items": [...]}.' });
+  return items as EstimateRequestItem[];
+}
+
+/** What a kind's variant is priced as, in a few words: its plain options. */
+const optionsOf = (options: Record<string, unknown>) =>
+  Object.values(options).filter((v) => v && ["string", "number"].includes(typeof v)).map(String).join(", ");
+
 export async function estimateCmd(values: Values, io: Io): Promise<number> {
+  const json = on(values, "json");
   if (on(values, "kinds")) {
-    const kinds = await Estimate.kinds();
-    answer(io, values, { data: kinds.map((k) => k.raw) }, () => kinds.map((k) => `${k.kind}: ${k.description}`));
+    const kinds = await Estimate.kinds({ region: str(values, "region") });
+    if (json) {
+      printJson(io, kinds.map((k) => k.raw));
+      return OK;
+    }
+    table(io, ["KIND", "AS", "CHARGE", "UNIT PRICE", "PER", "USAGE (DEFAULT)"],
+      kinds.flatMap((k) => k.prices.map((p) => [k.kind, optionsOf(k.options), p.charge, `$${g(p.unitUsd)}`, p.unit,
+        k.usage.filter((u) => p.usageFields.includes(u.name)).map((u) => `${u.name} (${g(u.default)})`).join(", ")])),
+      "Nothing to estimate.");
     return OK;
   }
   const file = str(values, "file");
-  if (!file) throw new UsageError("Name a JSON file of what to price (- for stdin), or pass --kinds.", "noclick estimate --kinds");
-  const items = JSON.parse(file === "-" ? await host.stdin() : readFileSync(file, "utf8")) as EstimateRequestItem[];
-  const region = str(values, "region");
-  const priced = await estimate(region ? items.map((item) => ({ region, ...item })) : items);
-  answer(io, values, priced.raw, () => [`${usd(priced.monthlyUsd)} a month${priced.estimated ? " (estimated from the usage given)" : ""}`]);
+  if (!file) {
+    throw new CommandError("Name what to estimate: a kind (noclick estimate database), or a JSON file of items (- for stdin).",
+      { nextStep: "Run noclick estimate --kinds to see what each kind takes." });
+  }
+  let items: EstimateRequestItem[];
+  if (file !== "-" && !existsSync(file) && /^[a-z_]+$/.test(file)) {
+    // One item by its kind, its usage and options from the command line, its options beside its kind as the API takes them.
+    const usage = (values.usage as string[] | undefined) ?? [];
+    items = [{ ...pairs((values.option as string[] | undefined) ?? []), kind: file,
+               ...(usage.length ? { usage: pairs(usage, true) } : {}) } as unknown as EstimateRequestItem];
+  } else items = await itemsIn(file);
+  const est = await estimate(items);
+  if (json) {
+    printJson(io, est.raw);
+    return OK;
+  }
+  table(io, ["ITEM", "CHARGE", "QUANTITY", "UNIT", "UNIT PRICE", "A MONTH"],
+    est.lines.map((line) => [line.item ?? line.kind, line.charge + (line.assumed ? " *" : ""), g(line.quantity), line.unit,
+      `$${g(line.unitUsd)}`, money(line.usd, 4)]), "Nothing was priced.");
+  io.out(`Total: ${money(est.monthlyUsd, 2)} a month`);
+  for (const item of est.items) if (item.assumed.length) io.err(`Assumed (${item.name ?? item.kind}): ${item.assumed.join(", ")}`);
+  if (est.lines.some((line) => line.assumed)) io.err("* a default decided it: give that usage or option to price it as you expect.");
+  for (const item of est.items) for (const left of item.notIncluded) io.err(`Not included (${item.name ?? item.kind}): ${left}`);
   return OK;
+}
+
+/** Where a person acts on work waiting on them, as the operation says. */
+function personLink(raw: Record<string, unknown>): string | null {
+  const question = (raw.question && typeof raw.question === "object" ? raw.question : {}) as Record<string, unknown>;
+  for (const found of [question.answer_url, question.url, raw.approve_url, raw.connect_url, raw.url]) {
+    if (typeof found === "string" && found) return found;
+  }
+  return null;
+}
+
+/** `wait`: until the operation ends, never on a person (exit 3 says who and where; `--people` waits through). */
+export async function wait(values: Values, io: Io): Promise<number> {
+  const op = Operation.fromId(String(values.operation_id));
+  const timeout = num(values, "timeout");
+  const ends = timeout === undefined ? null : Date.now() + timeout * 1000;
+  for await (const event of op.events({ intervalMs: WAIT_POLL_MS })) {
+    if (event.status === "awaiting_human" && !on(values, "people")) {
+      const raw = event.raw;
+      const question = (raw.question && typeof raw.question === "object" ? raw.question : {}) as Record<string, unknown>;
+      const what = question.text ?? question.message ?? raw.summary ?? "a person's answer";
+      const sent = Array.isArray(raw.sent_to) && raw.sent_to.length ? ` (sent to ${raw.sent_to.join(", ")})` : "";
+      throw new WaitingOnPerson(`${op.kind} waits on a person: ${what}${sent}.`,
+        { link: personLink(raw) ?? op.consoleUrl, nextStep: `Once they've answered: noclick wait ${op.id}` });
+    }
+    if (!["queued", "running", "awaiting_human"].includes(event.status)) break;
+    if (ends !== null && Date.now() >= ends) {
+      throw new OperationTimeout(`${op.kind} is still ${event.status} after ${g(timeout!)}s.`,
+        { nextStep: `Wait again: noclick wait ${op.id}`, details: { operation_id: op.id, operation_status: event.status } });
+    }
+  }
+  await op.wait(); // finished: throws the error it failed with
+  if (on(values, "json")) {
+    printJson(io, op);
+    return OK;
+  }
+  io.err(`${op.kind} ${op.status}`);
+  const raw = op.result as Record<string, unknown> | null | undefined;
+  if (raw && typeof raw === "object" && typeof raw.text === "string") io.out(raw.text);
+  else if (raw && typeof raw === "object" && typeof raw.url === "string") {
+    io.out(JSON.stringify(raw, null, 2));
+    io.out(raw.url);
+  } else if (raw !== null && raw !== undefined) io.out(JSON.stringify(raw, null, 2));
+  return ["project.deploy", "deployment.promote"].includes(op.kind) && raw && typeof raw === "object" && saidDeployment(io, raw) ? FAILED : OK;
 }
 
 export async function opsWait(values: Values, io: Io): Promise<number> {

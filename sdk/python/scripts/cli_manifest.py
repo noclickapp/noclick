@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from noclick import cli  # noqa: E402
-from noclick._cli import screens  # noqa: E402
+from noclick._cli import screens, templates  # noqa: E402
 
 MANIFEST = ROOT / "noclick" / "_cli" / "spec" / "manifest.json"
 # Every command's own, said once in the manifest's ``globals`` rather than on each command.
@@ -55,6 +55,8 @@ def _option(action: argparse.Action) -> Dict[str, Any]:
         found["metavar"] = action.metavar
     if action.help and action.help != argparse.SUPPRESS:
         found["help"] = action.help
+    if action.default not in (None, False, [], argparse.SUPPRESS) and found["type"] != "bool":
+        found["default"] = action.default  # what it is when not given, as argparse fills it in
     return found
 
 
@@ -75,6 +77,10 @@ def commands_of(parser: argparse.ArgumentParser, path: List[str], summary: str) 
     found: List[Dict[str, Any]] = []
     sub = next((a for a in parser._actions if isinstance(a, argparse._SubParsersAction)), None)
     if sub is not None:
+        if path and parser.get_default("run") is not None:  # a group that runs alone too (noclick live)
+            found.append({"path": path, "summary": summary, "auth": bool(parser.get_default("auth")), "args": [],
+                          "flags": [_option(a) for a in parser._actions
+                                    if a.option_strings and a.dest not in GLOBAL_DESTS]})
         helps = {a.dest: a.help for a in sub._choices_actions}
         for name, child in sub.choices.items():
             found.extend(commands_of(child, [*path, name], helps.get(name) or ""))
@@ -112,6 +118,8 @@ def manifest(existing: Dict[str, Any]) -> Dict[str, Any]:
         "globals": [_option(a) for a in parser._actions
                     if a.option_strings and a.dest not in GLOBAL_DESTS and a.help != argparse.SUPPRESS],
         "commands": commands,
+        # noclick init's templates, as the Python CLI writes them (``templates.files_of`` fills in ``{name}``).
+        "templates": {name: {"about": t["about"], "files": dict(t["files"])} for name, t in templates.TEMPLATES.items()},
         "screens": screens.manifest({a.dest: a.help or "" for a in top._choices_actions}),
     }
 

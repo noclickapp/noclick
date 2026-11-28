@@ -45,8 +45,11 @@ beforeEach(() => {
   host.stdinIsTty = () => false;
 });
 
-test("every curated command npx noclick runs is one the manifest lists", () => {
+test("npx noclick runs exactly the curated commands the manifest lists", () => {
   for (const path of Object.keys(RUNNERS)) assert.ok(load().curated(path.split(" ")), path);
+  const builtIn = new Set(["api", "describe", "help"]);
+  const missing = load().commands.map((c) => c.path.join(" ")).filter((p) => !builtIn.has(p) && !(p in RUNNERS));
+  assert.deepEqual(missing, []);
 });
 
 test("setup keeps the key where the Python CLI reads it, readable only by you, and never prints it", async () => {

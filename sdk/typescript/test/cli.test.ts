@@ -104,12 +104,6 @@ test("a next step naming a route, an operation or a command is the command that 
   assert.deepEqual(commands.runnable("Run noclick login, or set NOCLICK_API_KEY."), ["noclick login"]);
 });
 
-test("a curated command npx noclick doesn't run yet says how to run it", async () => {
-  const io = captured();
-  assert.equal(await main(["db", "shell", "notes"], io, signedIn), USAGE);
-  assert.ok(io.stderr.includes("  next step: pip install noclick, then noclick db shell"));
-});
-
 test("a wait that runs out exits 124 and names the command that picks it up", async () => {
   const { api } = setup();
   api.on("POST", "/v1/agents/a1/messages", json(operation({ id: "op_7", status: "running" }), { status: 202 }));
