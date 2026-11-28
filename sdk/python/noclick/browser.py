@@ -535,7 +535,8 @@ class Browser(_Object):
     place: Optional[str] = field(
         "place", doc="What runs it: ``remote`` (NoClick's remote browsers), or, for a coding agent's own browser beside "
                      "it, ``sandbox`` (its sandbox) or ``machine`` (its container on a machine, ``place_name``), which "
-                     "reaches what the agent runs on localhost.")
+                     "reaches what the agent runs on localhost; a browser started with ``machine`` is ``machine`` too, "
+                     "in a container of its own there.")
     place_name: Optional[str] = field("place_name", doc="The machine it runs on, for a browser whose ``place`` is "
                                                         "``machine``.")
     profile_id: Optional[str] = field("profile_id", doc="The profile it is signed in with (None if none).")
@@ -583,6 +584,7 @@ class Browser(_Object):
         region: Optional[str] = None,
         solve_captchas: bool = True,
         human: Optional[Human] = None,
+        machine: Any = None,
         user: Any = AMBIENT,
         client: Optional[Client] = None,
     ) -> "Browser":
@@ -597,7 +599,11 @@ class Browser(_Object):
         NoClick solves the CAPTCHAs it can before asking a person;
         ``solve_captchas=False`` turns that off for sites whose terms forbid it.
         ``human`` is who is asked when a page needs a person (the user by default,
-        you for an account browser).
+        you for an account browser). With ``machine`` (a ``Machine`` or id: one
+        NoClick runs for you, or your own) it runs on that machine, in a container
+        of its own with no agent: it reaches sites from the machine, costs nothing
+        beyond the machine and keeps no profile (leave ``profile`` and ``region``
+        out); its key needs the ``machines`` scope too.
 
         Returns:
             The browser, ``running`` on a blank page, with its ``live_url``.
@@ -615,6 +621,12 @@ class Browser(_Object):
                 browser = noclick.Browser.create(timeout_s=600)
                 print(browser.live_url)   # watch it, or take over
                 browser.close()
+
+            On one of your machines::
+
+                box = noclick.Machine.from_name("build-box")
+                with noclick.Browser.create(machine=box, timeout_s=900) as browser:
+                    print(browser.place, browser.place_name)   # machine build-box
         """
         scope = resolve_scope(user)
         if user is AMBIENT and isinstance(profile, BrowserProfile):
@@ -623,7 +635,8 @@ class Browser(_Object):
         raw = await resolve_client(client).request(
             "POST", "/v1/browsers",
             json=compact(profile_id=await ref_id(profile), timeout_s=timeout_s, region=region,
-                         solve_captchas=None if solve_captchas else False, human=_human(human)), user=scope,
+                         solve_captchas=None if solve_captchas else False, human=_human(human),
+                         machine_id=await ref_id(machine)), user=scope,
         )
         return cls._new(raw=raw, client=client, user=scope)
 

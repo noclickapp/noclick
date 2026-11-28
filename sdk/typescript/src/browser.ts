@@ -27,6 +27,7 @@ import { resolveClient } from "./client.ts";
 import type { NoClick } from "./client.ts";
 import { Conflict, NotFound } from "./errors.ts";
 import type { Human } from "./human.ts";
+import type { Machine } from "./machine.ts";
 import { ApiObject, asObject, compact, createNamed, listAll, listPage, num, parseTime, refId, str } from "./object.ts";
 import type { AllowExisting, CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult, withKinds } from "./operation.ts";
@@ -36,7 +37,10 @@ import { resolveScope } from "./scope.ts";
 /** `parked`: waiting on a person, or (an agent's browser) for its conversation's next turn; neither billed nor counted against `timeoutS`. */
 export type BrowserStatus = "starting" | "running" | "parked" | "closed" | "failed";
 export type BrowserContentFormat = "markdown" | "text" | "html";
-/** What runs a browser: NoClick's remote browsers, or a coding agent's own place (its sandbox, its container on a machine). */
+/**
+ * What runs a browser: NoClick's remote browsers, a coding agent's own place (its sandbox, its container on a machine),
+ * or a machine you started it on.
+ */
 export type BrowserPlace = "remote" | "sandbox" | "machine";
 
 /** Where the browser is: the page's `url` (after redirects) and `title`. */
@@ -370,6 +374,12 @@ export interface BrowserCreateOptions extends CallOptions {
   solveCaptchas?: boolean;
   /** Who is asked when a page needs a person: the user by default, you for an account browser. */
   human?: Human;
+  /**
+   * Run it on this machine (one NoClick runs for you, or your own), in a container of its own with no agent: it reaches
+   * sites from the machine, costs nothing beyond the machine and keeps no profile (leave `profile` and `region` out).
+   * Its key needs the `machines` scope too.
+   */
+  machine?: Machine | string;
 }
 
 export interface BrowserActOptions {
@@ -393,7 +403,15 @@ export class Browser extends ApiObject {
     super(init);
   }
 
-  /** Start a browser; with `profile` it is signed in to the profile's sites and acts in the profile's user. */
+  /**
+   * Start a browser; with `profile` it is signed in to the profile's sites and acts in the profile's user, and with
+   * `machine` it runs on that machine, alone.
+   *
+   * @example
+   * const box = Machine.fromName("build-box");
+   * const browser = await Browser.create({ machine: box, timeoutS: 900 });
+   * console.log(browser.place, browser.placeName); // "machine", "build-box"
+   */
   static async create(options: BrowserCreateOptions = {}): Promise<Browser> {
     let scope = resolveScope(options.user);
     if (options.user === undefined && options.profile instanceof BrowserProfile) {
@@ -404,6 +422,7 @@ export class Browser extends ApiObject {
       json: compact({
         profile_id: await refId(options.profile), timeout_s: options.timeoutS, region: options.region,
         solve_captchas: options.solveCaptchas === false ? false : undefined, human: humanTo(options.human),
+        machine_id: await refId(options.machine),
       }),
       user: scope,
     });
@@ -454,7 +473,8 @@ export class Browser extends ApiObject {
   }
   /**
    * What runs it: `remote` (NoClick's remote browsers), or, for a coding agent's own browser beside it, `sandbox`
-   * (its sandbox) or `machine` (its container on a machine, `placeName`), which reaches what the agent runs on localhost.
+   * (its sandbox) or `machine` (its container on a machine, `placeName`), which reaches what the agent runs on localhost;
+   * a browser started with `machine` is `machine` too, in a container of its own there.
    */
   get place(): BrowserPlace {
     return this._field("place") ?? "remote";

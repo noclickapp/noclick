@@ -312,6 +312,16 @@ def test_create_with_a_profile_acts_for_its_user_and_closes_on_exit(api, client)
     assert body(create.calls.last.request) == {}
 
 
+def test_create_on_a_machine_names_it_and_reads_where_it_runs(api, client):
+    on_box = {**BROWSER, "profile_id": None, "place": "machine", "place_name": "build-box"}
+    create = api.post("/v1/browsers").respond(json=on_box)
+    browser = nc.Browser.create(machine="m_1", timeout_s=900)
+    assert body(create.calls.last.request) == {"machine_id": "m_1", "timeout_s": 900}
+    assert (browser.place, browser.place_name) == ("machine", "build-box")
+    nc.Browser.create(machine=nc.Machine.from_id("m_2"))
+    assert body(create.calls.last.request) == {"machine_id": "m_2"}
+
+
 def test_goto_extract_screenshot_and_content(api, client):
     goto = api.post("/v1/browsers/br_1/goto").respond(json={"url": "https://portal.example.com/invoices", "title": "Invoices"})
     extract = api.post("/v1/browsers/br_1/extract").respond(json={"data": [{"number": "INV-0912", "total_usd": 120.5}]})

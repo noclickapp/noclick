@@ -293,6 +293,16 @@ test("Browser.create with a profile acts for its user; close stops it", async ()
   assert.deepEqual([close.count, browser.status], [1, "closed"]);
 });
 
+test("Browser.create on a machine names it and reads where it runs", async () => {
+  const { api } = setup();
+  const create = api.on("POST", "/v1/browsers", json({ ...BROWSER, profile_id: null, place: "machine", place_name: "build-box" }));
+  const browser = await nc.Browser.create({ machine: "m_1", timeoutS: 900 });
+  assert.deepEqual(create.last.body, { machine_id: "m_1", timeout_s: 900 });
+  assert.deepEqual([browser.place, browser.placeName], ["machine", "build-box"]);
+  await nc.Browser.create({ machine: nc.Machine.fromId("m_2") });
+  assert.deepEqual(create.last.body, { machine_id: "m_2" });
+});
+
 test("goto, extract, screenshot and content", async () => {
   const { api } = setup();
   const goto = api.on("POST", "/v1/browsers/br_1/goto", json({ url: "https://portal.example.com/invoices", title: "Invoices" }));
