@@ -117,7 +117,7 @@ def add_operation(group: Any, op: Dict[str, Any], parents: Sequence[argparse.Arg
     """The command ``op`` is, under ``name`` (its command); ``listed=False`` leaves it out of the group's help."""
     shown = {"help": op["summary"] or op["name"]} if listed else {}  # argparse lists a parser only given its help
     sub = group.add_parser(name or op["command"], **shown,
-                           description=f"{op['summary']}\n\n{op['method']} {op['path']}  ({op['risk']})",
+                           description=f"{op['description']}\n\n{op['method']} {op['path']}  ({op['risk']})",
                            formatter_class=argparse.RawDescriptionHelpFormatter, parents=list(parents))
     sub.epilog = f"Its fields, risk and an example: noclick describe {op['area']} {op['command']}"
     for param in op["params"]:
@@ -411,8 +411,8 @@ def run_describe(args: argparse.Namespace) -> int:
         return output.OK
     print(f"noclick {op['area']} {op['command']}   ({op['name']})")
     print(f"  {op['method']} {op['path']}   risk: {op['risk']}")
-    if op["summary"]:
-        print(f"  {op['summary']}")
+    if op["description"]:
+        print(f"  {op['description']}")
     for param in op["params"]:
         shown = param["name"] if param["in"] == "path" else flag_of(param["name"])
         traits = [param["type"]] + (["its name or id"] if param.get("lookup") else []) \

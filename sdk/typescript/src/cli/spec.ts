@@ -29,7 +29,10 @@ export interface Op {
   method: string;
   path: string;
   risk: string;
+  /** Its one line in a listing and in completion: a plain sentence of at most 80 characters. */
   summary: string;
+  /** What the API says of it, whole: its help. */
+  description: string;
   body: "merge" | "wrap" | null;
   params: Param[];
   /** Names its command had: they still run it, but no list shows them. */

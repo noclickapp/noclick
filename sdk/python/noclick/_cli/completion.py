@@ -42,9 +42,9 @@ Candidate = Tuple[str, str]
 
 
 def short(text: Optional[str]) -> str:
-    """A summary's first sentence, at most 70 characters."""
+    """A summary's first sentence, at most 80 characters, cut between words."""
     first = (text or "").split("\n")[0].split(". ")[0].rstrip(".")
-    return first if len(first) <= 70 else first[:69] + "…"
+    return first if len(first) <= 80 else first[:first.rfind(" ", 0, 80)].rstrip(",;:") + "…"
 
 
 # --- what a command line names ------------------------------------------------------------------------------------

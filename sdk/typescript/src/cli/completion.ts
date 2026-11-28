@@ -41,10 +41,10 @@ const HELP_FLAG: FlagLike = { flag: "--help", type: "bool", help: "Show this hel
 
 export type Candidate = [string, string];
 
-/** A summary's first sentence, at most 70 characters. */
+/** A summary's first sentence, at most 80 characters, cut between words. */
 export function short(text: string | undefined): string {
   const first = (text ?? "").split("\n")[0]!.split(". ")[0]!.replace(/\.+$/, "");
-  return first.length <= 70 ? first : `${first.slice(0, 69)}…`;
+  return first.length <= 80 ? first : `${first.slice(0, first.lastIndexOf(" ", 79)).replace(/[,;:]+$/, "")}…`;
 }
 
 function opFlags(op: Op): FlagLike[] {

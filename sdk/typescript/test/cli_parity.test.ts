@@ -262,6 +262,8 @@ const COMMANDS: [string[], string?, Files?][] = [
   [["changelog"]], [["changelog", "--limit", "1"]], [["changelog", "tab-completion"]], [["changelog", "nope"]], [["changelog", "--json"]],
   // generated commands by their names, and the name they had before
   [["account", "get"]], [["account", "account"]], [["machines", "get", "box"]], [["machines", "get", "nope"]],
+  // an area's commands, each in one plain sentence, listed and completed; its help keeps the API's whole text
+  [["machines"]], [["usage"]], [["usage", "--help"]], [["__complete", "--", "usage", ""]], [["describe", "usage", "charges"]],
   // settings kept in step with noclick.json, waits, a build's log
   [["env", "set", "SITE_NAME=Bo's"], "", LINKED], [["env", "rm", "LANG"], "", LINKED], [["env", "ls"], "", LINKED],
   [["wait", "op_3"]], [["logs", "--build", "--app", "booking"]], [["logs", "--build"]],

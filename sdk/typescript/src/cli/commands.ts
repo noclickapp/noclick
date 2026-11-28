@@ -255,7 +255,7 @@ export async function runOperation(io: Io, op: Op, argv: string[]): Promise<numb
   const { flags, args } = opSpecs(op);
   const values = parse(argv, flags, args, usage);
   if (values.help) {
-    io.out(helpText(usage, `${op.summary}\n\n${op.method} ${op.path}  (${op.risk})`, flags, args));
+    io.out(helpText(usage, `${op.description}\n\n${op.method} ${op.path}  (${op.risk})`, flags, args));
     return output.OK;
   }
   const answer = await call(requestOf(op, values, await resolveNames(op, values)), values.user);
@@ -303,7 +303,7 @@ export function runDescribe(io: Io, values: Values): number {
   }
   io.out(`noclick ${op.area} ${op.command}   (${op.name})`);
   io.out(`  ${op.method} ${op.path}   risk: ${op.risk}`);
-  if (op.summary) io.out(`  ${op.summary}`);
+  if (op.description) io.out(`  ${op.description}`);
   for (const param of op.params) {
     const shown = param.in === "path" ? param.name : flagOf(param.name);
     const traits = [param.type, ...(param.lookup ? ["its name or id"] : []), ...(param.required ? ["required"] : []),
