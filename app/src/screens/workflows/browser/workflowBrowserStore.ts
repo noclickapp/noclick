@@ -214,7 +214,7 @@ export const isWorkflowIconType = (t: string): boolean =>
 // actual harness mark. API-model agents (kind 'bot') keep the generic agent icon;
 // the '' fallback resolves to 'bot' exactly like any non-CLI default model would.
 // Shared by the card pill, list rows, and command palette.
-export function workflowIconTypes(w: WorkflowApp): string[] {
+export function workflowIconTypes(w: Pick<WorkflowApp, 'node_types' | 'graph_preview'>): string[] {
     const types = w.node_types ?? [];
     if (!types.includes('agent') || !w.graph_preview) return types;
     const kinds = new Set(

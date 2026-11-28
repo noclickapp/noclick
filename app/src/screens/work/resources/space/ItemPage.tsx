@@ -15,9 +15,7 @@ import { cn } from '@/ui/utils';
 import { AgentRing } from '../../agents/AgentRing';
 import { useAgentFaces, useWorkV1 } from '../../agents/reads';
 import { useWorkClient } from '../../client';
-import { useWork } from '../../context';
 import { useWorkNav } from '../../nav';
-import { useWorkViewer } from '../../viewer';
 import { dateLabel, relTime } from '@/lib/formatters';
 import { PageHead } from '@/ui/PageHead';
 import { KnowledgePage } from '../knowledge/KnowledgePage';
@@ -25,7 +23,8 @@ import { AgentFace } from '../knowledge/parts';
 import { MachineBody, placeKind } from '../machines';
 import { addToSpace, removedForGood, shareable, titleFor } from './actions';
 import { appName, kindOf, levelWords, thingKey, type Thing } from './data';
-import { ReconnectButton, RunNowButton, runsIt, sharedLine } from './KindPage';
+import { RunNowButton, runsIt, useAutomationCanvas } from './Automations';
+import { ReconnectButton, sharedLine } from './KindPage';
 import { Crumbs, Facts, LevelMenu, List, markOf, NameInput, PageRow, ThingMenu } from './parts';
 import { ACCOUNT_KIND, type Pane } from './pane';
 
@@ -361,13 +360,12 @@ function ChannelBody(props: Pane & { t: Thing }) {
 
 /** An automation's page actions: Run now for whoever may, and its canvas for the account. */
 function AutomationActions({ t, spaceId }: Pane & { t: Thing }) {
-    const { openWorkflow } = useWork();
-    const viewer = useWorkViewer();
+    const canvas = useAutomationCanvas();
     return (
         <>
             {runsIt(t) && <RunNowButton spaceId={spaceId} t={t} onPage />}
-            {openWorkflow && viewer.type === 'account' && (
-                <button type="button" onClick={() => openWorkflow({ id: t.ref, name: t.name })} className={BUTTON_SECONDARY}>
+            {canvas && (
+                <button type="button" onClick={() => canvas({ id: t.ref, name: t.name })} className={BUTTON_SECONDARY}>
                     <WorkflowIcon className="h-4 w-4" strokeWidth={1.75} />
                     Open on its canvas
                 </button>

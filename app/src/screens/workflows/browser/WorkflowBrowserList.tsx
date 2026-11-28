@@ -5,8 +5,9 @@
 // identically; only the visual presentation differs. Drag uses source 'list',
 // which the drag hook treats like 'grid' for multi-select but the drag overlay
 // renders as a compact pill (a 280px card preview would be absurd for a row).
+// An automation's row itself (AutomationRow) is drawn by a space's Automations too.
 
-import { useCallback, useRef, type ReactNode } from 'react';
+import { Fragment, useCallback, useRef, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { CornerDownRight, Folder, GitFork, MoreHorizontal, Settings, Share2, Workflow } from 'lucide-react';
 import {
     DropdownMenu,
@@ -227,6 +228,77 @@ export const FolderRow = ({
     );
 };
 
+/** The badge beside a row's facts: what the reader holds of it. */
+export function RowBadge({ children, title }: { children: ReactNode; title?: string }) {
+    return (
+        <span title={title} className="shrink-0 rounded-full bg-foreground/[0.06] px-2 py-0.5 text-[11.5px] font-medium text-muted-foreground">
+            {children}
+        </span>
+    );
+}
+
+/** What a row draws of an automation. */
+export type RowAutomation = Pick<WorkflowApp, 'id' | 'name' | 'graph_preview' | 'node_types'>;
+
+/** An automation as a row: its tile and name, where it lives (a search's), the apps it uses, its `facts` (under its
+ *  name on a phone, beside it elsewhere), a `badge` and its `actions`. The Automations page draws it with its folders'
+ *  drag and selection (WorkflowRow), a space with what it shares. */
+export function AutomationRow({
+    automation,
+    facts,
+    factsTitle,
+    badge,
+    actions,
+    location,
+    highlighted,
+    className,
+    ...row
+}: {
+    automation: RowAutomation;
+    facts: ReactNode[];
+    /** The facts' tooltip: the whole of what they shorten. */
+    factsTitle?: string;
+    badge?: ReactNode;
+    actions?: ReactNode;
+    /** Parent location shown as a chip on global-search results. */
+    location?: string;
+    /** Keyboard-nav highlight (search results). */
+    highlighted?: boolean;
+} & ComponentPropsWithRef<'div'>) {
+    const shown = facts.filter((fact) => fact !== null && fact !== undefined && fact !== false && fact !== '');
+    return (
+        <div role="button" tabIndex={0} className={cn(ROW_BASE, highlighted && ROW_HIGHLIGHT, className)} {...row}>
+            <RowTile>
+                <Workflow className="h-4 w-4" strokeWidth={1.75} />
+            </RowTile>
+            <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-medium text-foreground">{automation.name}</span>
+                {/* A phone has no room for the facts column: they sit under the name. */}
+                <span className="block truncate text-[12.5px] text-muted-foreground sm:hidden">
+                    {shown.map((fact, i) => (
+                        <Fragment key={i}>
+                            {i > 0 && ' · '}
+                            {fact}
+                        </Fragment>
+                    ))}
+                </span>
+            </span>
+            <LocationChip location={location} />
+            <NodeIconStack nodeTypes={workflowIconTypes(automation)} size="sm" maxShown={4} filter={isWorkflowIconType} className="hidden shrink-0 md:flex" />
+            <span className="hidden shrink-0 items-center gap-1.5 text-[12.5px] text-muted-foreground sm:flex" title={factsTitle}>
+                {shown.map((fact, i) => (
+                    <Fragment key={i}>
+                        {i > 0 && <span aria-hidden>·</span>}
+                        <span className={i === 0 ? 'max-w-[12rem] truncate' : 'tabular-nums'}>{fact}</span>
+                    </Fragment>
+                ))}
+            </span>
+            {badge}
+            {actions}
+        </div>
+    );
+}
+
 interface WorkflowRowProps {
     workflow: WorkflowApp;
     isMultiSelected?: boolean;
@@ -288,13 +360,14 @@ export const WorkflowRow = ({
     actions.push({ label: 'Settings', icon: Settings, onSelect: () => onSettings(workflow) });
 
     return (
-        <div
+        <AutomationRow
             ref={setNodeRef}
             {...attributes}
             {...listeners}
             data-workflow-card
-            role="button"
-            tabIndex={0}
+            automation={workflow}
+            location={location}
+            highlighted={isHighlighted}
             onKeyDown={(e) => openOnEnter(e, onClick)}
             onClick={(e) => {
                 if (handledByPointerUpRef.current) {
@@ -310,42 +383,11 @@ export const WorkflowRow = ({
                     onClick(e as unknown as React.MouseEvent);
                 }
             }}
-            className={cn(ROW_BASE, isHighlighted && ROW_HIGHLIGHT, (isDragging || isBeingDragged) && 'opacity-30', isMultiSelected && ROW_SELECTED)}
-        >
-            <RowTile>
-                <Workflow className="h-4 w-4" strokeWidth={1.75} />
-            </RowTile>
-            <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium text-foreground">{workflow.name}</span>
-                {/* A phone has no room for the facts column: they sit under the name. */}
-                <span className="block truncate text-[12.5px] text-muted-foreground sm:hidden">
-                    {leading}
-                    {editTime && ` · ${editTime}`}
-                </span>
-            </span>
-            <LocationChip location={location} />
-            <NodeIconStack
-                nodeTypes={workflowIconTypes(workflow)}
-                size="sm"
-                maxShown={4}
-                filter={isWorkflowIconType}
-                className="hidden shrink-0 md:flex"
-            />
-            <span className="hidden shrink-0 items-center gap-1.5 text-[12.5px] text-muted-foreground sm:flex" title={formatWorkflowMetaTooltip(workflow)}>
-                <span className="max-w-[12rem] truncate">{leading}</span>
-                {editTime && (
-                    <>
-                        <span aria-hidden>·</span>
-                        <span className="tabular-nums">{editTime}</span>
-                    </>
-                )}
-            </span>
-            {isShared && workflow.user_permission && (
-                <span className="shrink-0 rounded-full bg-foreground/[0.06] px-2 py-0.5 text-[11.5px] font-medium text-muted-foreground">
-                    {workflow.user_permission === 'edit' ? 'Can edit' : 'View only'}
-                </span>
-            )}
-            <RowActions actions={actions} isMobile={isMobile} />
-        </div>
+            className={cn((isDragging || isBeingDragged) && 'opacity-30', isMultiSelected && ROW_SELECTED)}
+            facts={[leading, editTime]}
+            factsTitle={formatWorkflowMetaTooltip(workflow)}
+            badge={isShared && workflow.user_permission && <RowBadge>{workflow.user_permission === 'edit' ? 'Can edit' : 'View only'}</RowBadge>}
+            actions={<RowActions actions={actions} isMobile={isMobile} />}
+        />
     );
 };

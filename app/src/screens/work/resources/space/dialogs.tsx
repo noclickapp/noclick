@@ -15,11 +15,13 @@ import { resourceAddress } from '@/screens/resources/kinds';
 import { useWorkV1 } from '../../agents/reads';
 import { useWorkClient } from '../../client';
 import { useWorkNav } from '../../nav';
+import { useWorkViewer } from '../../viewer';
 import { AddMachine } from '../inResources';
 import { NewMemoryDialog, NewSkillDialog } from '../knowledge/NewDialogs';
 import { AgentFace, PILL_FIELD } from '../knowledge/parts';
 import { useKnowledge } from '../knowledge/store';
 import { addToSpace, deleteThing, previewDelete, removedForGood, titleFor } from './actions';
+import { useAutomationCanvas } from './Automations';
 import { kindOf, LINK_KIND, readSpaceAgain, share, thingKey, useSpaceLinks, type SpaceKind, type SpaceShare, type Thing } from './data';
 import { Lead, list, markOf } from './parts';
 import type { Pane } from './pane';
@@ -135,12 +137,21 @@ export function AddDialog({ kind, share: here, spaceId, connections, onClose }: 
     );
 }
 
+/** What's made here, by the kind a space's link names it. */
+const MADE_KIND = { skill: 'skills', memory: 'memories', automation: 'automations' } as const;
+
 /** The real way to make one, by kind: made here (an agent's draft, a skill, a memory, a channel, a computer of
- *  yours), else the app's own page for it or a request to NoClick. What's made lands in the account and in this space. */
+ *  yours, a blank automation on its canvas), else the app's own page for it, or a request to NoClick beside either.
+ *  What's made here lands in the account and in this space; what NoClick makes, in the account. Code, websites,
+ *  databases and files have no page of the app's to make one by hand: NoClick makes them. */
 export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void }) {
     const client = useWorkClient();
     const nav = useWorkNav();
     const { ask, openPage } = useWork();
+    const canvas = useAutomationCanvas();
+    // Only the account makes one of its own: a person in a space they joined makes nothing in its account by hand.
+    const account = useWorkViewer().type === 'account';
+    const [making, setMaking] = useState(false);
     const { kind, spaceId, onClose, onAt } = pane;
     const def = kindOf(kind);
     const space = pane.share.spaceName || 'this';
@@ -151,10 +162,9 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
         }
     }, [kind, nav, onClose]);
     if (kind === 'agents') return null;
-    const sharedHere = async (made: { kind: 'skill' | 'memory'; id: string } | undefined) => {
-        onClose();
-        if (!made) return;
-        // Home shares it with no one: it's the account's, and listed here as all of them are.
+    /** Shares what was made with this space (home shares it with no one: it's the account's, and listed there as all
+     *  of them are), then opens it: an automation on its canvas where one opens, anything else on its page here. */
+    const sharedHere = async (made: { kind: keyof typeof MADE_KIND; id: string; name?: string }) => {
         if (!pane.share.home) {
             try {
                 await share(client, spaceId, made.kind, made.id);
@@ -163,21 +173,40 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
                 toast.error('Made, but not shared with this space', { description: error instanceof Error ? error.message : String(error) });
             }
         }
-        const k = made.kind === 'skill' ? 'skills' : 'memories';
-        onAt({ kind: k, item: thingKey(k, made.id) });
+        const k = MADE_KIND[made.kind];
+        if (made.kind === 'automation' && canvas) canvas({ id: made.id, name: made.name ?? '' });
+        else onAt({ kind: k, item: thingKey(k, made.id) });
     };
-    if (kind === 'skills') return <NewSkillDialog onClose={(made) => void sharedHere(made)} />;
-    if (kind === 'memories') return <NewMemoryDialog onClose={(made) => void sharedHere(made)} />;
+    const closed = (made: { kind: 'skill' | 'memory'; id: string } | undefined) => {
+        onClose();
+        if (made) void sharedHere(made);
+    };
+    if (kind === 'skills') return <NewSkillDialog onClose={closed} />;
+    if (kind === 'memories') return <NewMemoryDialog onClose={closed} />;
     if (kind === 'channels') return <NewChannelDialog {...pane} />;
     if (kind === 'machines') return <AddMachine onDone={() => onClose()} />;
-    const WAYS: Partial<Record<SpaceKind, { about: string; manual?: { label: string; run: () => void }; ask: string }>> = {
+    const WAYS: Partial<Record<SpaceKind, { about: string; manual?: { label: string; run: () => void | Promise<void> }; note?: string; ask: string }>> = {
         connections: {
             about: pane.share.home ? 'A new sign-in for the account. Connect it in Connections and it shows here.' : 'A new sign-in for the account. Connect it in Connections, then add it here so everyone in this space gets it.',
             manual: openPage && { label: 'Open Connections', run: () => openPage('connections') },
             ask: pane.share.home ? 'Connect an account for my agents.' : `Connect an account for the ${space} space’s agents.`,
         },
         code: { about: 'NoClick makes a repository for the account; share it here and its agents check it out on their machines.', ask: `Make a repository for the ${space} space.` },
-        automations: { about: 'NoClick builds an automation from what you describe: what starts it, the steps it takes and where it reports.', ask: `Build an automation for the ${space} space.` },
+        automations: {
+            about: 'Build it yourself on a blank canvas, or describe it and NoClick builds it: what starts it, the steps it takes and where it reports.',
+            // The Automations page's New: a blank one of the account's, here shared with this space as it's made.
+            manual: account
+                ? {
+                      label: 'Open a blank canvas',
+                      run: async () => {
+                          const made = await Workflow.create(null, { client });
+                          await sharedHere({ kind: 'automation', id: made.id, name: made.name });
+                      },
+                  }
+                : undefined,
+            note: 'A blank one is shared with everyone here as it’s made. One NoClick builds lands in the account; add it here once it’s made.',
+            ask: `Build an automation for the ${space} space.`,
+        },
         websites: { about: 'NoClick builds a site from what you describe and publishes it at its own address.', ask: `Build a small website for the ${space} space and publish it.` },
         databases: { about: 'A database the account owns, which agents here query through their tools.', ask: `Make a database for the ${space} space’s agents.` },
         files: { about: 'A bucket of files the account owns, shared with this space.', ask: `Make a shared folder of files for the ${space} space.` },
@@ -193,6 +222,16 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
         },
     };
     const way = WAYS[kind]!;
+    const byHand = async (manual: NonNullable<typeof way.manual>) => {
+        setMaking(true);
+        try {
+            await manual.run();
+            onClose();
+        } catch (error) {
+            setMaking(false);
+            toast.error(`Couldn’t make the ${def.noun[0]}`, { description: error instanceof Error ? error.message : String(error) });
+        }
+    };
     return (
         <ShellDialog
             open
@@ -206,14 +245,7 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
                         Cancel
                     </button>
                     {way.manual && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                onClose();
-                                way.manual!.run();
-                            }}
-                            className={BUTTON_SECONDARY}
-                        >
+                        <button type="button" disabled={making} onClick={() => void byHand(way.manual!)} className={BUTTON_SECONDARY}>
                             {way.manual.label}
                         </button>
                     )}
@@ -232,7 +264,9 @@ export function CreateDialog(pane: Pane & { kind: SpaceKind; onClose: () => void
                 </>
             }
         >
-            <p className="pb-1 text-[13px] leading-relaxed text-muted-foreground">{pane.share.home ? 'It lands in the account and shows here once it’s made.' : 'It lands in the account; add it to this space from here once it’s made.'}</p>
+            <p className="pb-1 text-[13px] leading-relaxed text-muted-foreground">
+                {pane.share.home ? 'It lands in the account and shows here once it’s made.' : way.manual && way.note ? way.note : 'It lands in the account; add it to this space from here once it’s made.'}
+            </p>
         </ShellDialog>
     );
 }

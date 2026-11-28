@@ -79,6 +79,39 @@ const member = (a: Json, i: number) => ({ object: 'channel_member', id: `mem_${S
 const person = (id: string, name: string) => ({ object: 'channel_member', id: `mem_${id}`, type: 'user', user_id: id, name, busy: false });
 
 const at = (minutesAgo: number) => new Date(Date.now() - minutesAgo * 60_000).toISOString();
+
+/** A step and a connection as a graph's picture names them (GET /v1/workflows?include=preview). */
+const step = (id: string, type: string, x: number, config: Json = {}) => ({ id, type, position: { x, y: 0 }, config });
+const wire = (source: string, target: string) => ({ id: `${source}-${target}`, source, target });
+
+/** What a space's summary says of each automation the fixtures share: its runs, its description and its picture. */
+const FLOW_FACTS: Record<string, Json> = {
+    wf_monday_plan: {
+        last_run: { id: 'run_plan', status: 'failed', at: at(60 * 24 * 4), error: 'Instagram isn’t connected' },
+        next_run: at(-60 * 24 * 3),
+        description: 'Every Monday, plans the week’s posts and schedules them on Instagram.',
+        updated_at: at(60 * 24 * 6),
+        preview: {
+            nodes: [step('monday', 'trigger-cron', 0), step('plan', 'agent', 320, { model: 'claude-sonnet-5-5' }), step('post', 'automation-instagram', 640, { operation: 'create_post' })],
+            edges: [wire('monday', 'plan'), wire('plan', 'post')],
+        },
+    },
+    wf_weekly_digest: {
+        last_run: { id: 'run_digest', status: 'succeeded', at: at(60 * 20), error: null },
+        next_run: at(-60 * 28),
+        description: 'Totals the week’s Stripe sales into the sales sheet and posts the digest in #sales.',
+        updated_at: at(60 * 24 * 2),
+        preview: {
+            nodes: [
+                step('friday', 'trigger-cron', 0),
+                step('sales', 'automation-stripe', 320, { operation: 'list_charges' }),
+                step('sheet', 'automation-google-sheets', 640, { operation: 'append_row' }),
+                step('post', 'automation-slack', 960, { operation: 'send_message' }),
+            ],
+            edges: [wire('friday', 'sales'), wire('sales', 'sheet'), wire('sheet', 'post')],
+        },
+    },
+};
 const MARKDOWN_LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
 const BARE_LINK = /(^|[^(\w])(https?:\/\/[^\s)<>]+)/g;
 
@@ -253,6 +286,8 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
         },
     };
     let made = 0;
+    // The blank automations made here, as the Automations page's New makes them.
+    const madeFlows: Json[] = [];
 
     // Each agent's conversations, newest first.
     const agentConversations = new Map<string, Json[]>();
@@ -410,6 +445,11 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
             frame('workspace', { workspace_id: w.id });
             return json(workspaceView(w, session), 201);
         }
+        if (method === 'POST' && path === '/v1/workflows') {
+            const flow = { object: 'workflow', id: `wf_new_${++made}`, name: 'Untitled', description: null, access: 'owner', created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+            madeFlows.push(flow);
+            return json(flow, 201);
+        }
         const ws = path.match(/^\/v1\/workspaces\/([^/]+)(\/.*)?$/);
         if (ws) {
             const [, wid, sub = ''] = ws;
@@ -489,6 +529,14 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
                 if (inv[2] === '/resend') return changed(200, Object.assign(i, { expires_at: at(-60 * 24 * 7) }));
             }
             if (sub === '/resources' && method === 'GET') return json(list(links.filter((l) => l.workspace_id === wid)));
+            // Shared with the space at its kind's own levels: an automation its people run, guests none.
+            if (sub === '/resources' && method === 'POST' && b.kind === 'automation') {
+                const flow = madeFlows.find((f) => f.id === b.ref);
+                if (!flow) return notFound(`No automation ${String(b.ref)}.`);
+                const link = { object: 'workspace_resource', id: `lnk_${++made}`, workspace_id: wid, kind: 'automation', ref: flow.id, name: flow.name, members_level: 'run', guests_level: 'none', levels: ['none', 'agents', 'runs', 'run', 'edit'], added_by: ACCOUNT, added_at: new Date().toISOString() };
+                links.push(link);
+                return changed(201, link);
+            }
             // What the space has, by kind, as its Resources tab reads it: its agents, its channels and what's shared with it.
             if (sub === '/summary' && method === 'GET') {
                 const here = (w.members as Json[]).filter((m) => m.type === 'agent').map((m) => agentById(m.agent_id)).filter((a): a is Json => !!a);
@@ -504,15 +552,14 @@ export function fakeWork(options: { empty?: boolean; noclick?: boolean; joined?:
                         channels: { items: channels.filter((c) => c.workspace_id === wid && c.kind !== 'dm').map((c) => item(c.id, c.id, c.name)) },
                         code: { items: linked('repo') },
                         databases: { items: linked('database') },
-                        // Each automation's last run and its next, as the account reads them.
+                        // Each automation's last run and its next, its description and a picture of its graph, as the
+                        // account reads them; a blank one made here has run nothing and has no steps.
                         automations: {
                             items: linked('automation').map((i) => ({
                                 ...i,
                                 level: 'edit',
                                 used_by: [],
-                                ...(i.ref === 'wf_monday_plan'
-                                    ? { last_run: { id: 'run_plan', status: 'failed', at: at(60 * 24 * 4), error: 'Instagram isn’t connected' }, next_run: at(-60 * 24 * 3) }
-                                    : { last_run: { id: 'run_digest', status: 'succeeded', at: at(60 * 20), error: null }, next_run: at(-60 * 28) }),
+                                ...(FLOW_FACTS[String(i.ref)] ?? { last_run: null, next_run: null, description: null, updated_at: new Date().toISOString(), preview: { nodes: [], edges: [] } }),
                             })),
                         },
                         ...Object.fromEntries(['skills', 'memories', 'connections', 'websites', 'files', 'numbers', 'email'].map((k) => [k, empty])),

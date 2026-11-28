@@ -8,8 +8,8 @@
 // every agent of the account, as home's Agents tab lists them (each saying which spaces it's in), and it has every
 // machine, skill, memory, connection and secret of the account, each with the agents that use it, shared with no one.
 import { useMemo, type ComponentType } from 'react';
-import { BookOpen, Brain, AppWindow, Database, FileText, FolderGit2, Hash, KeyRound, Mail, Phone, Plug, Server, UsersRound } from 'lucide-react';
-import { AutomationMark } from '@/ui/glyphs';
+import { BookOpen, Brain, AppWindow, Database, FileText, FolderGit2, Hash, KeyRound, Mail, Phone, Plug, Server, UsersRound, Workflow } from 'lucide-react';
+import { buildGraphPreview, type GraphPreview } from '@/lib/graphPreview';
 import { invalidateV1, prefetchV1 } from '@/sdk/useV1';
 import { Connection, Workspace, WorkspaceResource, type Agent, type NoClick, type WorkspaceResourceKind } from 'noclick';
 import { listCompute, listMemories, listOwnComputers, listSkills, type Compute, type Knowledge } from '@/screens/resources/knowledge';
@@ -45,7 +45,8 @@ export const LINK_KIND: Partial<Record<SpaceKind, LinkKind>> = {
     memories: 'memory',
 };
 
-/** A kind's mark: a line icon, or the one mark NoClick draws in colour, an automation's. */
+/** A kind's mark: a line icon, as the sidebar draws its pages (Automations its own). The coloured automation mark is
+ *  one automation's, where a pill or a card points at it, never the kind's. */
 export type KindIcon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
 /** Each kind as the tab names it; `make` is its way to make one here (none for secrets, which an agent's own page holds). */
@@ -54,7 +55,7 @@ export const KINDS: { id: SpaceKind; label: string; icon: KindIcon; group: 'work
     { id: 'machines', label: 'Machines', icon: Server, group: 'work', noun: ['machine', 'machines'], make: 'New machine' },
     { id: 'skills', label: 'Skills', icon: BookOpen, group: 'know', noun: ['skill', 'skills'], make: 'New skill' },
     { id: 'memories', label: 'Memories', icon: Brain, group: 'know', noun: ['memory', 'memories'], make: 'New memory' },
-    { id: 'automations', label: 'Automations', icon: AutomationMark, group: 'reach', noun: ['automation', 'automations'], make: 'New automation' },
+    { id: 'automations', label: 'Automations', icon: Workflow, group: 'reach', noun: ['automation', 'automations'], make: 'New automation' },
     { id: 'connections', label: 'Connections', icon: Plug, group: 'reach', noun: ['connection', 'connections'], make: 'Connect an account' },
     { id: 'secrets', label: 'Secrets', icon: KeyRound, group: 'reach', noun: ['secret', 'secrets'] },
     { id: 'channels', label: 'Channels', icon: Hash, group: 'reach', noun: ['channel', 'channels'], make: 'New channel' },
@@ -121,9 +122,13 @@ export interface SummaryItem {
     usedBy: string[];
     /** What its people hold through it (the account: its highest). */
     level: string | null;
-    /** An automation's last run and next one, where its people read its runs. */
+    /** An automation's last run and next one, where its people read its runs, with its description, when it last
+     *  changed and a picture of its graph, as the Automations page's cards draw one. */
     lastRun?: LastRun | null;
     nextRun?: string | null;
+    description?: string | null;
+    updatedAt?: string | null;
+    preview?: GraphPreview | null;
 }
 /** An automation's last run, whoever started it: `at` when it ended, else when it started. */
 export interface LastRun {
@@ -174,7 +179,15 @@ const toItem = (i: Wire): SummaryItem => ({
     guestsLevel: maybe(i.guests_level),
     usedBy: rows(i.used_by).map(String),
     level: maybe(i.level),
-    ...('last_run' in i ? { lastRun: i.last_run ? toLastRun(obj(i.last_run)) : null, nextRun: maybe(i.next_run) } : {}),
+    ...('last_run' in i
+        ? {
+              lastRun: i.last_run ? toLastRun(obj(i.last_run)) : null,
+              nextRun: maybe(i.next_run),
+              description: maybe(i.description),
+              updatedAt: maybe(i.updated_at),
+              preview: buildGraphPreview(i.preview) ?? null,
+          }
+        : {}),
 });
 
 export function toSummary(raw: Wire): SpaceSummary {
@@ -282,8 +295,8 @@ export interface Thing {
     secret?: SecretItem;
     /** Where a move carried it from (a connection or a secret), when it came over with one. */
     movedFrom?: MovedFrom | null;
-    /** An automation: what its people here hold of it, and its runs where they read them. */
-    automation?: Pick<SummaryItem, 'level' | 'lastRun' | 'nextRun'>;
+    /** An automation: what its people here hold of it, and its runs and its picture where they read them. */
+    automation?: Pick<SummaryItem, 'level' | 'lastRun' | 'nextRun' | 'description' | 'updatedAt' | 'preview'>;
 }
 
 export const thingKey = (kind: SpaceKind, ref: string) => `${kind}:${ref}`;
@@ -502,7 +515,7 @@ export function useSpaceShare(spaceId: string): SpaceShare {
                     link: linkOf(kind, i.ref),
                     usedBy: [...i.usedBy],
                     knowledge: kind === 'memories' || kind === 'skills' ? knowledge.find(i.ref) : undefined,
-                    automation: kind === 'automations' ? { level: i.level, lastRun: i.lastRun, nextRun: i.nextRun } : undefined,
+                    automation: kind === 'automations' ? { level: i.level, lastRun: i.lastRun, nextRun: i.nextRun, description: i.description, updatedAt: i.updatedAt, preview: i.preview } : undefined,
                 }))
             ),
         ];

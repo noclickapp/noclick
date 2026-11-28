@@ -15,8 +15,6 @@ import {
     FolderPlus,
     Trash2,
     ArrowRight,
-    LayoutGrid,
-    List,
     Users,
     User,
     UserPlus,
@@ -47,6 +45,7 @@ import { WorkflowBrowserDragOverlay } from './WorkflowBrowserDragOverlay';
 import {
     WorkflowCardSkeleton,
     DroppableHeaderBar,
+    AutomationGrid,
     FolderCard,
     WorkflowCard,
 } from './WorkflowBrowserCards';
@@ -67,60 +66,13 @@ import { useSlot } from '@/slots';
 import { ARRIVALS, CANVAS, PLAN_LIMITS, SHARING } from '../slots';
 import { anyDialogOpen, useWorkflowsHost, type BrowserAction, type FlowIntent } from './context';
 import { useBrowserPreference } from './useBrowserPreference';
-
-type BrowserLayoutMode = 'grid' | 'list';
+import { LayoutToggle, type BrowserLayoutMode } from './LayoutToggle';
 
 // The header's quiet controls: text and icon buttons on the page, no chrome until hovered.
 const TOOLBAR_BUTTON =
     'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-foreground/[0.06] data-[state=open]:text-foreground';
 const TOOLBAR_ICON_BUTTON =
     'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
-
-// Segmented grid/list toggle shown in the browser header. Switches how the
-// current folder's contents render (cards vs. compact rows); the choice is
-// persisted per browser via useCachedValtioState.
-function LayoutToggle({
-    mode,
-    onChange,
-}: {
-    mode: BrowserLayoutMode;
-    onChange: (mode: BrowserLayoutMode) => void;
-}) {
-    return (
-        <div className="flex shrink-0 items-center gap-0.5 rounded-full bg-foreground/[0.05] p-0.5">
-            <ShortcutTooltip label="Card view" keys={['C']} sideOffset={7}>
-                <button
-                    onClick={() => onChange('grid')}
-                    aria-label="Card view"
-                    aria-pressed={mode === 'grid'}
-                    className={cn(
-                        'grid h-8 w-8 place-items-center rounded-full transition-colors',
-                        mode === 'grid'
-                            ? 'bg-background text-foreground shadow-sm dark:bg-foreground/[0.12] dark:shadow-none'
-                            : 'text-muted-foreground hover:text-foreground'
-                    )}
-                >
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                </button>
-            </ShortcutTooltip>
-            <ShortcutTooltip label="List view" keys={['L']} sideOffset={7}>
-                <button
-                    onClick={() => onChange('list')}
-                    aria-label="List view"
-                    aria-pressed={mode === 'list'}
-                    className={cn(
-                        'grid h-8 w-8 place-items-center rounded-full transition-colors',
-                        mode === 'list'
-                            ? 'bg-background text-foreground shadow-sm dark:bg-foreground/[0.12] dark:shadow-none'
-                            : 'text-muted-foreground hover:text-foreground'
-                    )}
-                >
-                    <List className="w-3.5 h-3.5" />
-                </button>
-            </ShortcutTooltip>
-        </div>
-    );
-}
 
 // The header's one primary action: a blank automation on the canvas.
 function NewWorkflowButton({
@@ -1658,21 +1610,7 @@ export function WorkflowBrowser({
                                     </div>
                                 ) : (
                                     /* Workflows Grid */
-                                    <div
-                                        key="workflow-grid"
-                                        data-testid="automations-grid"
-                                        className="grid gap-[var(--gap)] [--gap:0.75rem] sm:[--gap:1rem]"
-                                        style={{
-                                            // Cap at 4 columns but step down to 3 / 2 / 1 as the content
-                                            // area narrows (both sidebars open, small screen) instead of
-                                            // squishing 4 columns. minmax() measures the grid's OWN width,
-                                            // so it reacts to container size — not just the viewport
-                                            // breakpoint, which can't see the sidebars. Each card stays
-                                            // >= 16rem; (100% - 3 gaps) / 4 keeps the cap at 4.
-                                            gridTemplateColumns:
-                                                'repeat(auto-fill, minmax(max(16rem, calc((100% - 3 * var(--gap)) / 4)), 1fr))',
-                                        }}
-                                    >
+                                    <AutomationGrid key="workflow-grid" data-testid="automations-grid">
                                         {/* Folder Cards */}
                                         {filteredFolders.map((folder) => (
                                             <FolderCard
@@ -1771,7 +1709,7 @@ export function WorkflowBrowser({
                                             filteredWorkflows.length === 0 && (
                                                 <div className="col-span-full">{emptyState}</div>
                                             )}
-                                    </div>
+                                    </AutomationGrid>
                                 )}
                             </div>
                         )}

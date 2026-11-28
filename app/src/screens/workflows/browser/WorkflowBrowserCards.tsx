@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, type ComponentPropsWithRef, type CSSProperties, type ReactNode } from 'react';
 import { Card } from '@/ui/card';
 import {
     Clock,
@@ -8,6 +8,7 @@ import {
     Share2,
     User,
     Workflow,
+    type LucideIcon,
 } from 'lucide-react';
 import { useDraggable } from '@dnd-kit/core';
 import { CarbonGradient } from '@/ui/CarbonGradient';
@@ -174,30 +175,8 @@ export const FolderCard = ({
         >
             {/* Action buttons - positioned over the image */}
             <div className="absolute top-2 right-2 flex items-center gap-1.5 z-10">
-                {onShare && canManage && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onShare(folder.id);
-                        }}
-                        className="p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center"
-                        title="Share"
-                    >
-                        <Share2 className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
-                    </button>
-                )}
-                {onSettings && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onSettings(folder.id);
-                        }}
-                        className="p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center"
-                        title="Settings"
-                    >
-                        <Settings className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
-                    </button>
-                )}
+                {onShare && canManage && <CardAction label="Share" icon={Share2} onClick={() => onShare(folder.id)} />}
+                {onSettings && <CardAction label="Settings" icon={Settings} onClick={() => onSettings(folder.id)} />}
             </div>
 
             {/* Folder Preview Section */}
@@ -248,6 +227,144 @@ export const FolderCard = ({
     );
 };
 
+/** The grid the Automations page lays its cards in, and a space its automations: four columns at most, fewer as the
+ *  grid itself narrows (both sidebars open, a small screen), never a card under 16rem. */
+export function AutomationGrid({ className, style, ...grid }: ComponentPropsWithRef<'div'>) {
+    // minmax() measures the grid's own width, so it follows the room it's given, not the viewport's breakpoints;
+    // (100% - 3 gaps) / 4 keeps the cap at 4.
+    const columns: CSSProperties = { gridTemplateColumns: 'repeat(auto-fill, minmax(max(16rem, calc((100% - 3 * var(--gap)) / 4)), 1fr))' };
+    return <div className={cn('grid gap-[var(--gap)] [--gap:0.75rem] sm:[--gap:1rem]', className)} style={{ ...columns, ...style }} {...grid} />;
+}
+
+const CARD_ACTION =
+    'p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center';
+
+/** One of the round actions over a card's picture: its click is its own, never the card's. */
+export function CardAction({ label, icon: Icon, onClick }: { label: string; icon: LucideIcon; onClick: () => void }) {
+    return (
+        <button
+            type="button"
+            onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+            }}
+            className={CARD_ACTION}
+            title={label}
+            aria-label={label}
+        >
+            <Icon className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
+        </button>
+    );
+}
+
+/** A card's action that opens a menu (a space's ⋯), drawn as its buttons are. */
+export const CARD_ACTION_TRIGGER = cn(CARD_ACTION, 'h-9 w-9 text-muted-foreground dark:text-foreground/80 hover:text-foreground');
+
+/** A fact on a card's picture: its mark, then a few words that give way first on a narrow card. */
+export function CardPill({ icon, children, className }: { icon?: ReactNode; children: ReactNode; className?: string }) {
+    return (
+        <div className={cn('flex items-center gap-1.5 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0', className)}>
+            {icon}
+            <span className="text-[0.625rem] text-foreground/80 truncate">{children}</span>
+        </div>
+    );
+}
+
+/** The badge at the right of a card's facts: what the reader holds of it (`strong`: they can change it). */
+export function CardBadge({ children, strong, title }: { children: ReactNode; strong?: boolean; title?: string }) {
+    return (
+        <span
+            title={title}
+            className={cn(
+                'ml-auto shrink-0 text-[0.625rem] px-2 py-1 rounded-full backdrop-blur-sm',
+                strong ? 'bg-blue-600/40 text-blue-700 dark:text-blue-300' : 'bg-card/80 border border-border text-muted-foreground dark:bg-black/60 dark:border-0'
+            )}
+        >
+            {children}
+        </span>
+    );
+}
+
+/** What a card draws of an automation. */
+export type CardAutomation = Pick<WorkflowApp, 'id' | 'name' | 'description' | 'graph_preview' | 'node_types'>;
+
+/** An automation as a card: a picture of its graph (a texture where its listing carries none), the apps it uses and
+ *  its `actions` along the top, its `facts` and a `badge` along the bottom, then its name and description. The
+ *  Automations page draws it with its folders' drag and selection (WorkflowCard), a space with what it shares. */
+export function AutomationCard({
+    automation,
+    actions,
+    facts,
+    factsTitle,
+    badge,
+    className,
+    ...card
+}: {
+    automation: CardAutomation;
+    actions?: ReactNode;
+    facts?: ReactNode;
+    /** The facts' tooltip: the whole of what they shorten. */
+    factsTitle?: string;
+    badge?: ReactNode;
+} & ComponentPropsWithRef<'div'>) {
+    // The icon map can land after the cards draw (a client navigation into the dashboard): they draw again with it.
+    const nodeIcons = useNodeIconData();
+    return (
+        <Card
+            className={cn(
+                'bg-card shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none dark:bg-card/50 backdrop-blur-sm border-border/70 dark:border-border/50 dark:hover:bg-card/60 transition-all cursor-pointer group',
+                'relative overflow-hidden h-[17.5rem]',
+                className
+            )}
+            {...card}
+        >
+            {/* A schematic of the real graph where the listing carries one (an empty graph draws as a blank canvas);
+                the texture only where it carries none (shared-with-me listings, what a space shares through agents). */}
+            <div className="h-[11.25rem] relative overflow-hidden">
+                {automation.graph_preview ? (
+                    // The graph preview themes itself (a light mini-canvas in light mode), so it gets no wash: that
+                    // muddied the schematic.
+                    <WorkflowGraphPreview graph={automation.graph_preview} nodeIcons={nodeIcons} className="w-full h-full" />
+                ) : (
+                    <>
+                        <CarbonGradient identifier={automation.id || automation.name} width={320} height={180} className="w-full h-full object-cover" />
+                        {/* The carbon texture is a dark asset: light mode lightens it to a light surface, keeping faint
+                            grain. Dark keeps the raw texture. */}
+                        <div className="absolute inset-0 pointer-events-none bg-muted/85 dark:bg-transparent" />
+                    </>
+                )}
+
+                {/* Its apps (left) and its actions (right) share one row, so they never overlap on a narrow card: the
+                    apps give way (they clip under their pill's edge) while the actions keep their size. */}
+                <div className="absolute top-2 inset-x-2 z-10 flex items-start gap-2">
+                    {automation.node_types?.some(isWorkflowIconType) && (
+                        <div className="flex items-center px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0 overflow-hidden">
+                            <NodeIconStack nodeTypes={workflowIconTypes(automation)} size="sm" maxShown={4} bare filter={isWorkflowIconType} />
+                        </div>
+                    )}
+                    {actions && <div className="flex items-center gap-1.5 shrink-0 ml-auto">{actions}</div>}
+                </div>
+
+                {/* Its facts and its badge share one row too: the first fact gives way first, the badge keeps its size
+                    at the right edge. */}
+                <div className="absolute bottom-2 inset-x-2 z-10 flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 min-w-0" title={factsTitle}>
+                        {facts}
+                    </div>
+                    {badge}
+                </div>
+            </div>
+
+            <div className="h-[6.25rem] p-4">
+                <div className="space-y-1">
+                    <h3 className="text-sm font-medium text-foreground/80 group-hover:text-foreground line-clamp-1 break-all">{automation.name}</h3>
+                    <p className="text-xs text-muted-foreground/80 dark:text-zinc-500 group-hover:text-muted-foreground line-clamp-3">{automation.description}</p>
+                </div>
+            </div>
+        </Card>
+    );
+}
+
 interface WorkflowCardProps {
     workflow: WorkflowApp;
     isMultiSelected?: boolean;
@@ -261,6 +378,7 @@ interface WorkflowCardProps {
     isMobile?: boolean;
 }
 
+/** The Automations page's card: dragged into folders, picked with a modifier, forked, shared and set from its actions. */
 export const WorkflowCard = ({
     workflow,
     isMultiSelected,
@@ -294,21 +412,16 @@ export const WorkflowCard = ({
     const isSharedFlow = workflow.is_owner === false && !!workflow.owner_name;
     // An agent's automation leads with its month's spend against its budget instead.
     const budgeted = useAutomationBudget(workflow.id);
-    // The icon map can land after the cards draw (a client navigation into the dashboard): they draw again with it.
-    const nodeIcons = useNodeIconData();
+    const edited = relativeShort(workflow.updated_at);
 
     return (
-        <Card
+        <AutomationCard
             ref={setNodeRef}
             {...attributes}
             {...listeners}
             data-workflow-card
-            className={cn(
-                'bg-card shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none dark:bg-card/50 backdrop-blur-sm border-border/70 dark:border-border/50 dark:hover:bg-card/60 transition-all cursor-pointer group',
-                'relative overflow-hidden h-[17.5rem]',
-                (isDragging || isBeingDragged) && 'opacity-30 scale-95',
-                isMultiSelected && 'ring-2 ring-blue-500/70'
-            )}
+            automation={workflow}
+            className={cn((isDragging || isBeingDragged) && 'opacity-30 scale-95', isMultiSelected && 'ring-2 ring-blue-500/70')}
             onClick={(e) => {
                 if (handledByPointerUpRef.current) {
                     handledByPointerUpRef.current = false;
@@ -325,154 +438,45 @@ export const WorkflowCard = ({
                     onClick(e as unknown as React.MouseEvent);
                 }
             }}
-        >
-            {/* Image Preview Section — schematic of the real graph when the list
-                entry carries a graph blob (zero-node workflows deliberately render
-                as a blank canvas); CarbonGradient only for blob-less entries
-                (shared-with-me listings). */}
-            <div className="h-[11.25rem] relative overflow-hidden">
-                {workflow.graph_preview ? (
-                    // The graph preview themes itself (light mini-canvas in light
-                    // mode), so it must NOT get the carbon wash below — that muddied
-                    // the schematic.
-                    <WorkflowGraphPreview
-                        graph={workflow.graph_preview}
-                        nodeIcons={nodeIcons}
-                        className="w-full h-full"
-                    />
-                ) : (
-                    <>
-                        <CarbonGradient
-                            identifier={workflow.id || workflow.name}
-                            width={320}
-                            height={180}
-                            className="w-full h-full object-cover"
-                        />
-                        {/* Light-mode wash — the carbon texture is a dark asset, so
-                            lighten it to a light surface in light mode while keeping
-                            faint grain. Dark keeps the raw texture (pixel-identical). */}
-                        <div className="absolute inset-0 pointer-events-none bg-muted/85 dark:bg-transparent" />
-                    </>
-                )}
-
-                {/* Top bar — integration logos (left) and action buttons (right)
-                    live in ONE flex row so they can never overlap on a narrow card
-                    (both sidebars open / small screen): the logos pill yields
-                    (min-w-0, clips under its rounded edge) while the buttons stay
-                    fixed (shrink-0, ml-auto). Mirrors the bottom metadata bar. */}
-                <div className="absolute top-2 inset-x-2 z-10 flex items-start gap-2">
-                    {workflow.node_types?.some(isWorkflowIconType) && (
-                        <div className="flex items-center px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0 overflow-hidden">
-                            <NodeIconStack
-                                nodeTypes={workflowIconTypes(workflow)}
-                                size="sm"
-                                maxShown={4}
-                                bare
-                                filter={isWorkflowIconType}
-                            />
-                        </div>
-                    )}
-                    <div className="flex items-center gap-1.5 shrink-0 ml-auto">
-                        {/* Fork button - shown for all workflows (useful for creating independent copies) */}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onFork(workflow);
-                            }}
-                            className="p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center"
-                            title="Fork (create a copy)"
-                        >
-                            <GitFork className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
-                        </button>
-                        {onShare && canManage && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onShare(workflow);
-                                }}
-                                className="p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center"
-                                title="Share"
-                            >
-                                <Share2 className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
-                            </button>
-                        )}
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onSettings(workflow);
-                            }}
-                            className="p-2 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm hover:bg-accent dark:hover:bg-zinc-700 transition-colors group/button min-w-9 min-h-9 flex items-center justify-center"
-                            title="Settings"
-                        >
-                            <Settings className="w-4 h-4 text-muted-foreground dark:text-foreground/80 group-hover/button:text-foreground transition-colors" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Bottom overlay bar — one full-width flex row so the metadata pills
-                    (leading owner/node-count pill + last-edited pill) and the permission
-                    badge share horizontal space instead of overlapping on narrow cards.
-                    The leading pill truncates first; the time pill and badge stay intact.
-                    The metadata group carries a single tooltip with the full breakdown. */}
-                <div className="absolute bottom-2 inset-x-2 z-10 flex items-center gap-1.5">
-                    <div
-                        className="flex items-center gap-1.5 min-w-0"
-                        title={formatWorkflowMetaTooltip(workflow)}
-                    >
-                        {budgeted && canManage ? (
-                            <budgeted.Pill budget={budgeted.budget} variant="card" />
-                        ) : (
-                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm min-w-0">
-                                {isSharedFlow ? (
+            actions={
+                <>
+                    {/* Fork: every automation, an independent copy */}
+                    <CardAction label="Fork (create a copy)" icon={GitFork} onClick={() => onFork(workflow)} />
+                    {onShare && canManage && <CardAction label="Share" icon={Share2} onClick={() => onShare(workflow)} />}
+                    <CardAction label="Settings" icon={Settings} onClick={() => onSettings(workflow)} />
+                </>
+            }
+            factsTitle={formatWorkflowMetaTooltip(workflow)}
+            facts={
+                <>
+                    {budgeted && canManage ? (
+                        <budgeted.Pill budget={budgeted.budget} variant="card" />
+                    ) : (
+                        <CardPill
+                            icon={
+                                isSharedFlow ? (
                                     <User className="w-3.5 h-3.5 shrink-0 text-sky-600 dark:text-sky-400" />
                                 ) : (
                                     <Workflow className="w-3.5 h-3.5 shrink-0 text-orange-600 dark:text-orange-400" />
-                                )}
-                                <span className="text-[0.625rem] text-foreground/80 truncate">
-                                    {formatWorkflowLeadingPill(workflow)}
-                                </span>
-                            </div>
-                        )}
-                        {relativeShort(workflow.updated_at) && (
-                            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-card/80 border border-border dark:bg-black/60 dark:border-0 backdrop-blur-sm shrink-0">
-                                <Clock className="w-3 h-3 shrink-0 text-muted-foreground" />
-                                <span className="text-[0.625rem] text-foreground/80 whitespace-nowrap">
-                                    {relativeShort(workflow.updated_at)}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Permission badge - pinned to the right edge of the bar */}
-                    {workflow.is_owner === false &&
-                        workflow.user_permission && (
-                            <span
-                                className={cn(
-                                    'ml-auto shrink-0 text-[0.625rem] px-2 py-1 rounded-full backdrop-blur-sm',
-                                    workflow.user_permission === 'edit'
-                                        ? 'bg-blue-600/40 text-blue-700 dark:text-blue-300'
-                                        : 'bg-card/80 border border-border text-muted-foreground dark:bg-black/60 dark:border-0'
-                                )}
-                            >
-                                {workflow.user_permission === 'edit'
-                                    ? 'Can edit'
-                                    : 'View only'}
-                            </span>
-                        )}
-                </div>
-            </div>
-
-            {/* Content Section */}
-            <div className="h-[6.25rem] p-4">
-                <div className="space-y-1">
-                    <h3 className="text-sm font-medium text-foreground/80 group-hover:text-foreground line-clamp-1 break-all">
-                        {workflow.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground/80 dark:text-zinc-500 group-hover:text-muted-foreground line-clamp-3">
-                        {workflow.description}
-                    </p>
-                </div>
-            </div>
-        </Card>
+                                )
+                            }
+                        >
+                            {formatWorkflowLeadingPill(workflow)}
+                        </CardPill>
+                    )}
+                    {edited && (
+                        <CardPill icon={<Clock className="w-3 h-3 shrink-0 text-muted-foreground" />} className="shrink-0">
+                            {edited}
+                        </CardPill>
+                    )}
+                </>
+            }
+            badge={
+                workflow.is_owner === false &&
+                workflow.user_permission && (
+                    <CardBadge strong={workflow.user_permission === 'edit'}>{workflow.user_permission === 'edit' ? 'Can edit' : 'View only'}</CardBadge>
+                )
+            }
+        />
     );
 };

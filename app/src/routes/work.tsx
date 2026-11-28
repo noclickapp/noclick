@@ -16,6 +16,7 @@ import type { ConsoleContextValue } from '@/screens/console/hooks/useConsole';
 import { NOCLICK_SITE } from '@/screens/console/lib/site';
 import { openCommandPalette } from '@/screens/shell/palette/open';
 import { rememberPaletteEntries } from '@/screens/shell/palette/sources';
+import { workflowRoute } from '@/screens/workflows/routes';
 import type { WorkContextValue } from '@/screens/work/context';
 import { WorkLoading, WorkNotice } from '@/screens/work/notices';
 import { WorkScreen } from '@/screens/work/WorkScreen';
@@ -62,7 +63,7 @@ export default function WorkRoute() {
         }),
         [client, api, country, account?.id, account?.email]
     );
-    // Resources, Connections and the chat are this app's own pages.
+    // Resources, Connections, the chat and a workflow's page are this app's own pages.
     const work = useMemo<WorkContextValue>(
         () => ({
             ask: askInChat(navigate),
@@ -70,6 +71,7 @@ export default function WorkRoute() {
                 const search = new URLSearchParams(Object.entries(params).filter((entry): entry is [string, string] => !!entry[1]));
                 navigate(`/${page}${search.size ? `?${search}` : ''}`);
             },
+            openWorkflow: (workflow) => navigate(workflowRoute(workflow.id)),
             palette: { remember: (entries) => rememberPaletteEntries('Work', entries), open: () => openCommandPalette() },
         }),
         [navigate]
