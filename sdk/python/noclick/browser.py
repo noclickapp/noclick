@@ -573,6 +573,10 @@ class Browser(_Object):
     started_at: Any = field("started_at", parse_time, doc="When it started running (None while it starts).")
     expires_at: Any = field("expires_at", parse_time)
     closed_at: Any = field("closed_at", parse_time)
+    end_reason: Optional[str] = field(
+        "end_reason", doc="Why it ended, once ``closed`` or ``failed``: ``closed`` (you closed it), ``expired``, "
+                          "``idle``, ``ended``, ``start_failed``, and for one on a machine ``image_pull_failed`` or "
+                          "``image_timed_out`` (its machine couldn't fetch its image, or not in time).")
 
     @synced
     @classmethod
@@ -603,10 +607,14 @@ class Browser(_Object):
         NoClick runs for you, or your own) it runs on that machine, in a container
         of its own with no agent: it reaches sites from the machine, costs nothing
         beyond the machine and keeps no profile (leave ``profile`` and ``region``
-        out); its key needs the ``machines`` scope too.
+        out); its key needs the ``machines`` scope too, and a machine a space shares
+        with you takes it at ``use``. While that machine fetches the browser's
+        image (its first, on a machine with no agents) the browser is ``starting``,
+        and runs once the image is held, or ends ``failed`` saying why.
 
         Returns:
-            The browser, ``running`` on a blank page, with its ``live_url``.
+            The browser, ``running`` on a blank page, with its ``live_url`` (on a
+            machine, possibly ``starting`` for a few minutes first).
 
         Usage:
             Use it as a context manager, so it closes when the block ends::

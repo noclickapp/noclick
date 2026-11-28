@@ -318,6 +318,8 @@ def test_create_on_a_machine_names_it_and_reads_where_it_runs(api, client):
     browser = nc.Browser.create(machine="m_1", timeout_s=900)
     assert body(create.calls.last.request) == {"machine_id": "m_1", "timeout_s": 900}
     assert (browser.place, browser.place_name) == ("machine", "build-box")
+    api.get("/v1/browsers/br_1").respond(json={**on_box, "status": "failed", "end_reason": "image_pull_failed"})
+    assert browser.refresh().end_reason == "image_pull_failed" and browser.status == "failed"
     nc.Browser.create(machine=nc.Machine.from_id("m_2"))
     assert body(create.calls.last.request) == {"machine_id": "m_2"}
 

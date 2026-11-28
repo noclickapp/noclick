@@ -378,7 +378,9 @@ export interface BrowserCreateOptions extends CallOptions {
   /**
    * Run it on this machine (one NoClick runs for you, or your own), in a container of its own with no agent: it reaches
    * sites from the machine, costs nothing beyond the machine and keeps no profile (leave `profile` and `region` out).
-   * Its key needs the `machines` scope too.
+   * Its key needs the `machines` scope too, and a machine a space shares with you takes it at `use`. While that machine
+   * fetches the browser's image (its first, on a machine with no agents) the browser is `starting`, and runs once the
+   * image is held, or ends `failed` saying why (`endReason`).
    */
   machine?: Machine | string;
 }
@@ -570,6 +572,13 @@ export class Browser extends ApiObject {
   }
   get closedAt(): Date | null {
     return parseTime(this._field("closed_at"));
+  }
+  /**
+   * Why it ended, once `closed` or `failed`: `closed` (you closed it), `expired`, `idle`, `ended`, `start_failed`, and
+   * for one on a machine `image_pull_failed` or `image_timed_out` (its machine couldn't fetch its image, or not in time).
+   */
+  get endReason(): string | null {
+    return this._field("end_reason") ?? null;
   }
 
   private get path(): string {

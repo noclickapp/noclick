@@ -299,6 +299,9 @@ test("Browser.create on a machine names it and reads where it runs", async () =>
   const browser = await nc.Browser.create({ machine: "m_1", timeoutS: 900 });
   assert.deepEqual(create.last.body, { machine_id: "m_1", timeout_s: 900 });
   assert.deepEqual([browser.place, browser.placeName], ["machine", "build-box"]);
+  api.on("GET", "/v1/browsers/br_1", json({ ...BROWSER, status: "failed", end_reason: "image_pull_failed" }));
+  await browser.refresh();
+  assert.deepEqual([browser.status, browser.endReason], ["failed", "image_pull_failed"]);
   await nc.Browser.create({ machine: nc.Machine.fromId("m_2") });
   assert.deepEqual(create.last.body, { machine_id: "m_2" });
 });
