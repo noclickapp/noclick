@@ -447,7 +447,7 @@ class Bucket(_Object):
             raise NotFound(
                 f"No bucket is named {name!r}.",
                 next_step="Create it with noclick.Bucket.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "bucket"},
             )
         try:
             return await self._request("POST", "/v1/buckets", json=self._create_with)

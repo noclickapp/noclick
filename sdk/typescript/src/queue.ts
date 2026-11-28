@@ -271,7 +271,7 @@ export class Queue extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No queue is named "${name}".`, {
         nextStep: "Create it with Queue.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "queue" },
       });
     }
     try {

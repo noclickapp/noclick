@@ -41,11 +41,13 @@ def cmd_signup(args: argparse.Namespace) -> int:
     if not args.accept_terms:
         raise UsageError("Signing up accepts NoClick's Developer Terms and Acceptable Use Policy: "
                          + " and ".join(screens.TERMS) + ".",
-                         next_step="Read them, then run noclick signup --accept-terms.")
+                         next_step="Read them, then run noclick signup --accept-terms.",
+                         run=["noclick signup --accept-terms"])
     if cli.resolve_credentials(args.profile).login.get("store"):
         raise cli.CommandError(f"The profile {args.profile} is signed in already: signing up would make another "
                                "account.", next_step="noclick signup --profile <another> --accept-terms, or noclick "
-                                                     "logout first.")
+                                                     "logout first.",
+                               run=["noclick signup --profile <another> --accept-terms", "noclick logout"])
     store = cli.key_store(args.store)
     api_url = (os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL).rstrip("/")
     agent = args.agent or screens.harness(dict(os.environ))
@@ -72,7 +74,8 @@ def cmd_signup(args: argparse.Namespace) -> int:
 def _app_name(args: argparse.Namespace, folder: Path) -> str:
     name = args.name or _NAME.sub("-", folder.resolve().name.lower()).strip("-")
     if not name:
-        raise cli.CommandError("Name the app: this folder's name makes none.", next_step="noclick init <name>")
+        raise cli.CommandError("Name the app: this folder's name makes none.", next_step="noclick init <name>",
+                               run=["noclick init <name> --template <template>"])
     return name
 
 
@@ -117,7 +120,9 @@ def cmd_init(args: argparse.Namespace) -> int:
     if bool(args.template) == bool(args.describe):
         raise cli.CommandError("Say what to start from: --template <name> or --describe \"what you want\".",
                                next_step=f"Templates: {', '.join(templates.TEMPLATES)}. Or: noclick init --describe "
-                                         "\"a page that takes bookings\"")
+                                         "\"a page that takes bookings\"",
+                               run=[f"noclick init --template {templates.TEMPLATES[0]}",
+                                    "noclick init --describe 'a page that takes bookings'"])
     folder = Path(args.dir)
     folder.mkdir(parents=True, exist_ok=True)
     name = _app_name(args, folder)
@@ -129,7 +134,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     elif any(p.name not in (".git", link.FOLDER) for p in folder.iterdir()):
         raise cli.CommandError("--describe drafts the app into an empty folder, and this one has files.",
                                next_step="Run it in a new folder (--dir <new folder>), or start from your files with "
-                                         "noclick deploy --create.")
+                                         "noclick deploy --create.", run=["noclick deploy --create"])
     app = _made(name)
     link.write(name, app_id=app.id, api_url=resolve_client(None).base_url, root=folder)
     out.note(f"Linked {folder.resolve()} to the app {name} (.noclick/project.json).")
@@ -153,9 +158,9 @@ def cmd_init(args: argparse.Namespace) -> int:
     try:
         sha = _fetch_draft(folder, app.repo, branch)
     except cli.CommandError as missed:
-        raise NotFound(f"The coding agent pushed nothing to {branch}: {missed.message}",
-                       next_step=f"Read what it said above, then ask again: noclick init --describe \"...\" --dir "
-                                 f"{args.dir}") from None
+        raise out.run(NotFound(f"The coding agent pushed nothing to {branch}: {missed.message}",
+                               next_step=f"Read what it said above, then ask again: noclick init --describe \"...\" "
+                                         f"--dir {args.dir}"), []) from None
     out.note(f"Checked its draft out here ({sha[:7]}). Next: noclick deploy")
     out.value_last(name)
     return 0

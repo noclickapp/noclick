@@ -30,6 +30,8 @@ work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 # Only what the virtualenv holds.
 unset PYTHONPATH
+# No test reaches the OS keychain, which is per user whatever HOME says: both CLIs keep keys in their file.
+export NOCLICK_KEYCHAIN=off PYTHON_KEYRING_BACKEND=keyring.backends.fail.Keyring
 
 if { runs app || runs worker; } && ! command -v pnpm > /dev/null; then
   echo "scripts/check.sh needs pnpm for the app: run 'corepack enable pnpm' (or see https://pnpm.io/installation)" >&2

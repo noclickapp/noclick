@@ -337,7 +337,7 @@ export class Bucket extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No bucket is named "${name}".`, {
         nextStep: "Create it with Bucket.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "bucket" },
       });
     }
     try {

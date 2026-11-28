@@ -58,6 +58,27 @@ def _read_exec(result: Any, op: Operation) -> ExecResult:
 register_result("sandbox.exec", _read_exec)
 
 
+@dataclass(frozen=True)
+class CodeSandboxShell:
+    """An interactive shell in a sandbox (``sandbox.shell()``): ``url`` is a websocket, opened once with ``token``
+    within two minutes. Its first message is ``{"type": "auth", "token": ..., "cols": ..., "rows": ...}``; then binary
+    messages carry what you type and what it prints, a text ``{"type": "resize", "cols", "rows"}`` sizes it, and it
+    sends ``{"type": "ready"}`` once and ``{"type": "state", "state": "exited", "reason", "exit_code"}`` as it closes
+    (code 4410): bash exited, ``idle_limit_s`` passed with nothing typed, or the socket closed. It closes 4401 once its
+    key is revoked or expires and 4404 once the sandbox stops."""
+
+    sandbox_id: str
+    url: str
+    token: str = dc_field(repr=False)  # opens the shell: never in a log line
+    token_expires_at: Any
+    idle_limit_s: int
+
+    @classmethod
+    def _from(cls, raw: Dict[str, Any]) -> "CodeSandboxShell":
+        return cls(raw["sandbox_id"], raw["url"], raw["token"], parse_time(raw.get("token_expires_at")),
+                   int(raw["idle_limit_s"]))
+
+
 class SandboxFiles:
     """``sb.files``: read and write files inside the sandbox."""
 
@@ -376,6 +397,23 @@ class Sandbox(_Object):
             timeout=(timeout_s or _DEFAULT_EXEC_S) + _EXEC_SLACK_S,
         )
         return ExecResult._from(raw)
+
+    @synced
+    async def shell(self) -> CodeSandboxShell:
+        """Open an interactive shell (``bash -l`` in ``/workspace``, in a PTY) in this running sandbox.
+        ``noclick shell <sandbox>`` opens one in your own terminal.
+
+        Returns:
+            The websocket's ``url`` and its single-use ``token`` (good for two minutes): hand them to a browser
+            terminal (xterm.js) from your server.
+
+        Usage::
+
+            sb = noclick.Sandbox.from_id("3b9d6f2e-1c4a-4e8b-9f7d-2a6c5e8b1d40")
+            opened = sb.shell()
+            send_to_browser(opened.url, opened.token)
+        """
+        return CodeSandboxShell._from(await self._request("POST", f"{self._path()}/shell"))
 
     @synced
     async def terminate(self) -> None:

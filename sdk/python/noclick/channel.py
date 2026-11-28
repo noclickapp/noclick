@@ -1089,7 +1089,7 @@ class Channel(_Object):
             raise NotFound(
                 f"No open channel is named {name!r}.",
                 next_step="Open it with noclick.Channel.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "channel"},
             )
         definition = self._create_with
         in_workspace = workspace_id is not None

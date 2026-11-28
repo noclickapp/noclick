@@ -939,6 +939,7 @@ export {
   SandboxFiles,
 } from "./sandbox.ts";
 export type {
+  CodeSandboxShell,
   ExecOptions,
   ExecResult,
   NetworkAccess,

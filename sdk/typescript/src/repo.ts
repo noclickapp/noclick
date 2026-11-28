@@ -510,7 +510,7 @@ export class Repo extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No repo is named "${name}".`, {
         nextStep: "Create it with Repo.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "repo" },
       });
     }
     try {

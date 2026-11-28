@@ -11,11 +11,11 @@ import { Project } from "../../project.ts";
 import type { Values } from "../args.ts";
 import { host } from "../host.ts";
 import * as links from "../link.ts";
-import { type Io, printJson } from "../output.ts";
+import { type Io, printJson, withRun } from "../output.ts";
 import * as screens from "../screens.ts";
 import { OUT } from "../style.ts";
 import { load } from "../spec.ts";
-import { PROFILE_ENV, readProfiles, writeProfile } from "../store.ts";
+import { activeProfile, readProfiles, writeProfile } from "../store.ts";
 
 export type Run = (values: Values, io: Io) => Promise<number>;
 
@@ -26,7 +26,7 @@ export const num = (values: Values, key: string): number | undefined =>
   typeof values[key] === "number" ? (values[key] as number) : undefined;
 
 export function profileOf(values: Values): string {
-  return str(values, "profile") ?? host.env[PROFILE_ENV] ?? "default";
+  return str(values, "profile") ?? activeProfile(host.env)[0];
 }
 
 /** The answer: whole as JSON with `--json`, else `lines` (the last one the value an agent wants next). */
@@ -38,8 +38,12 @@ export function answer(io: Io, values: Values, data: unknown, lines: () => strin
 export function cell(value: unknown): string {
   if (value === null || value === undefined) return "-";
   if (typeof value === "boolean") return value ? "yes" : "no";
-  if (value instanceof Date) return value.toISOString().replace("T", " ").slice(0, 16);
-  return String(value);
+  if (value instanceof Date) {
+    // In this machine's time zone, as the Python CLI's `output.cell` shows a time.
+    const two = (n: number) => String(n).padStart(2, "0");
+    return `${value.getFullYear()}-${two(value.getMonth() + 1)}-${two(value.getDate())} ${two(value.getHours())}:${two(value.getMinutes())}`;
+  }
+  return typeof value === "object" ? JSON.stringify(value) : String(value); // as the Python CLI's `output.scalar`
 }
 
 export function usd(value: number | null | undefined): string {
@@ -75,26 +79,20 @@ export async function appOf(values: Values, folder?: string): Promise<{ project:
   if (named) return { project: await lookup(named), link: null };
   const link = links.find(folder ?? host.cwd());
   if (!link) {
-    throw new links.NotLinked("This folder isn't linked to an app.", { nextStep: "noclick link <app> (once per folder), or pass --app <app>." });
+    throw withRun(new links.NotLinked("This folder isn't linked to an app.", { nextStep: "noclick link <app> (once per folder), or pass --app <app>." }), ["noclick link <app>"]);
   }
   try {
     return { project: await lookup(link.appId ?? link.app), link };
   } catch (err) {
     if (!(err instanceof NotFound)) throw err;
-    throw new NotFound(`${link.path} links this folder to ${link.app}, which this key doesn't reach (deleted, or another account's).`,
-      { nextStep: "noclick link <app> to link another, or noclick unlink." });
+    throw withRun(new NotFound(`${link.path} links this folder to ${link.app}, which this key doesn't reach (deleted, or another account's).`,
+      { nextStep: "noclick link <app> to link another, or noclick unlink." }), ["noclick link <app>", "noclick unlink"]);
   }
 }
 
-/** The app a command's words name (`settings set <app>`), else the folder's linked one. */
+/** The app a command's words name (`logs <app>`), else the folder's linked one. */
 export async function appNamed(named: string | undefined): Promise<Project> {
-  const name = links.appName(named ?? null, host.cwd());
-  try {
-    return await lookup(name);
-  } catch (err) {
-    if (!(err instanceof NotFound)) throw err;
-    throw new NotFound(`No app is named '${name}'.`, { nextStep: `noclick deploy --app ${name} --create makes it (and its repo).` });
-  }
+  return await lookup(links.appName(named ?? null, host.cwd()));
 }
 
 /** On an account `noclick signup` made that no person has claimed yet, say so (and where they claim it), once the

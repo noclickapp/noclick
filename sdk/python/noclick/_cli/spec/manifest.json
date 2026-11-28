@@ -4,15 +4,15 @@
   {
    "flag": "--version",
    "dest": "version",
-   "type": "string",
-   "help": "show program's version number and exit"
+   "type": "bool",
+   "help": "Print the CLI's version."
   },
   {
    "flag": "--profile",
    "dest": "profile",
    "type": "string",
-   "help": "Which stored login to use (default: NOCLICK_PROFILE or 'default').",
-   "default": "default"
+   "metavar": "NAME",
+   "help": "Which stored login to use (default: NOCLICK_PROFILE, else noclick profile use's)."
   },
   {
    "flag": "--color",
@@ -446,6 +446,7 @@
    "args": [
     {
      "name": "secrets",
+     "metavar": "name:kind:to",
      "many": true,
      "help": "Each as the person read it, never a value."
     }
@@ -559,6 +560,7 @@
    "args": [
     {
      "name": "commands",
+     "metavar": "command",
      "many": true
     }
    ],
@@ -1034,6 +1036,7 @@
    "args": [
     {
      "name": "path",
+     "metavar": "bucket[/prefix]",
      "optional": true,
      "help": "A bucket, optionally with a key prefix."
     }
@@ -1154,7 +1157,7 @@
     {
      "name": "project",
      "optional": true,
-     "help": "The app's name."
+     "help": "The app (default: the folder's linked one)."
     }
    ],
    "flags": [
@@ -1163,6 +1166,12 @@
      "dest": "user",
      "type": "string",
      "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
     },
     {
      "flag": "--build",
@@ -1233,89 +1242,6 @@
     "noclick logs booking --since 15m --level error",
     "noclick logs --grep \"POST /book\" --json",
     "noclick logs booking -f --timeout 60"
-   ]
-  },
-  {
-   "path": [
-    "settings",
-    "list"
-   ],
-   "summary": "List an app's settings and their values.",
-   "auth": true,
-   "args": [
-    {
-     "name": "project",
-     "help": "The app's name."
-    }
-   ],
-   "flags": [
-    {
-     "flag": "--json",
-     "dest": "json",
-     "type": "bool",
-     "help": "Print JSON instead of a table."
-    },
-    {
-     "flag": "--user",
-     "dest": "user",
-     "type": "string",
-     "help": "Act for this user: your id for them."
-    }
-   ]
-  },
-  {
-   "path": [
-    "settings",
-    "set"
-   ],
-   "summary": "Set one (it reaches the app at its next deploy).",
-   "auth": true,
-   "args": [
-    {
-     "name": "project",
-     "help": "The app's name."
-    },
-    {
-     "name": "name",
-     "help": "Letters, digits and _, starting with a letter."
-    },
-    {
-     "name": "value",
-     "help": "At most 4 KB; put anything sensitive in the app's secrets instead."
-    }
-   ],
-   "flags": [
-    {
-     "flag": "--user",
-     "dest": "user",
-     "type": "string",
-     "help": "Act for this user: your id for them."
-    }
-   ]
-  },
-  {
-   "path": [
-    "settings",
-    "delete"
-   ],
-   "summary": "Delete one (from the app's next deploy).",
-   "auth": true,
-   "args": [
-    {
-     "name": "project",
-     "help": "The app's name."
-    },
-    {
-     "name": "name"
-    }
-   ],
-   "flags": [
-    {
-     "flag": "--user",
-     "dest": "user",
-     "type": "string",
-     "help": "Act for this user: your id for them."
-    }
    ]
   },
   {
@@ -1479,6 +1405,7 @@
    "args": [
     {
      "name": "file",
+     "metavar": "kind|file",
      "optional": true,
      "help": "A kind (database, live_editing, ... from --kinds), or a JSON file of items (- for stdin), like [{\"kind\": \"project\", \"usage\": {\"requests\": 100000}}, {\"kind\": \"database\"}]."
     }
@@ -1567,14 +1494,126 @@
   },
   {
    "path": [
-    "ops",
-    "wait"
+    "profile",
+    "list"
    ],
-   "summary": "Wait for an operation to finish and print its result.",
-   "auth": true,
+   "summary": "Each stored login, its account and key; * marks the one commands use.",
+   "auth": false,
+   "args": [],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ]
+  },
+  {
+   "path": [
+    "profile",
+    "use"
+   ],
+   "summary": "Make a stored login the one commands use (--profile and NOCLICK_PROFILE still win).",
+   "auth": false,
    "args": [
     {
-     "name": "operation_id"
+     "name": "name",
+     "help": "The profile's name, as noclick profile list shows it."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ]
+  },
+  {
+   "path": [
+    "profile",
+    "show"
+   ],
+   "summary": "A stored login's account, key and API (default: the active one).",
+   "auth": false,
+   "args": [
+    {
+     "name": "name",
+     "optional": true,
+     "help": "The profile's name (default: the active one)."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ]
+  },
+  {
+   "path": [
+    "completion"
+   ],
+   "summary": "Print, or --install, Tab completion for your shell.",
+   "auth": false,
+   "args": [
+    {
+     "name": "shell",
+     "choices": [
+      "bash",
+      "zsh",
+      "fish",
+      "powershell"
+     ],
+     "help": "Your shell."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--install",
+     "dest": "install",
+     "type": "bool",
+     "help": "Put it where the shell loads it (running it again changes nothing)."
+    }
+   ]
+  },
+  {
+   "path": [
+    "dashboard"
+   ],
+   "summary": "Open the console in your browser (an app's page when named); prints the URL.",
+   "auth": false,
+   "args": [
+    {
+     "name": "app",
+     "optional": true,
+     "help": "The app's name."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    }
+   ]
+  },
+  {
+   "path": [
+    "changelog"
+   ],
+   "summary": "What changed in NoClick lately, newest first, or one change whole (no key needed).",
+   "auth": false,
+   "args": [
+    {
+     "name": "change",
+     "optional": true,
+     "help": "A change's title or slug: print it whole."
     }
    ],
    "flags": [
@@ -1585,16 +1624,12 @@
      "help": "Print JSON instead of a table."
     },
     {
-     "flag": "--timeout",
-     "dest": "timeout",
-     "type": "number",
-     "metavar": "SECONDS",
-     "help": "Give up after this long (exit 124)."
+     "flag": "--limit",
+     "dest": "limit",
+     "type": "integer",
+     "help": "At most this many (default 10).",
+     "default": 10
     }
-   ],
-   "notes": "A deploy or promote that went live but failed its check (its result's warning) exits 1.",
-   "examples": [
-    "noclick ops wait op_123 --timeout 300"
    ]
   },
   {
@@ -1663,6 +1698,12 @@
      "help": "Act for this user: your id for them."
     },
     {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
+    },
+    {
      "flag": "--hours",
      "dest": "hours",
      "type": "number",
@@ -1715,6 +1756,12 @@
      "dest": "user",
      "type": "string",
      "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
     }
    ],
    "examples": [
@@ -1747,6 +1794,12 @@
      "dest": "user",
      "type": "string",
      "help": "Act for this user: your id for them."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
     }
    ],
    "examples": [
@@ -1781,6 +1834,12 @@
      "help": "Act for this user: your id for them."
     },
     {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "help": "The app, as a flag: the same as the argument."
+    },
+    {
      "flag": "--no-deploy",
      "dest": "no_deploy",
      "type": "bool",
@@ -1813,7 +1872,8 @@
    "auth": true,
    "args": [
     {
-     "name": "operation_id"
+     "name": "operation_id",
+     "help": "The operation's id, as the command that started it printed."
     }
    ],
    "flags": [
@@ -1837,7 +1897,7 @@
      "help": "Wait through a person's answer too, instead of exiting 3."
     }
    ],
-   "notes": "Exit 0 done, 1 failed, 3 waiting on a person (it prints where they act), 4 refused, 124 --timeout ran out (the work goes on).",
+   "notes": "Exit 0 done, 1 failed (a deploy or promote that went live but failed its check, too), 3 waiting on a person (it prints where they act), 4 refused, 124 --timeout ran out (the work goes on). noclick ops wait is its old spelling.",
    "examples": [
     "noclick wait 3b9d6f2e-1c4a-4e8b-9f7d-2a6c5e8b1d40 --timeout 60 --json"
    ]
@@ -1886,6 +1946,66 @@
   },
   {
    "path": [
+    "shell"
+   ],
+   "summary": "A terminal (or one command) in a sandbox, on a machine or in an agent's sandbox.",
+   "auth": true,
+   "args": [
+    {
+     "name": "words",
+     "metavar": "sandbox [-- command]",
+     "optional": true,
+     "many": true,
+     "help": "A sandbox's id, then (after --) a command to run instead of a terminal."
+    }
+   ],
+   "flags": [
+    {
+     "flag": "--json",
+     "dest": "json",
+     "type": "bool",
+     "help": "Print JSON instead of a table."
+    },
+    {
+     "flag": "--machine",
+     "dest": "machine",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "A machine, by name or id."
+    },
+    {
+     "flag": "--agent",
+     "dest": "agent",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "An agent's sandbox, by name or id, beside its work."
+    },
+    {
+     "flag": "--conversation",
+     "dest": "conversation",
+     "type": "string",
+     "metavar": "ID",
+     "help": "With --agent: that conversation's (default: its session)."
+    },
+    {
+     "flag": "--app",
+     "dest": "app",
+     "type": "string",
+     "metavar": "NAME",
+     "help": "An app's live container, by name or id (commands only)."
+    },
+    {
+     "flag": "--timeout",
+     "dest": "timeout",
+     "type": "integer",
+     "metavar": "SECONDS",
+     "help": "With a command: stop it after this long (at most 90)."
+    }
+   ],
+   "notes": "A terminal needs one (on Windows, use WSL); a command after -- doesn't, and exits with the command's own exit code."
+  },
+  {
+   "path": [
     "deploy"
    ],
    "summary": "Ship this folder to its app and print the live URL.",
@@ -1893,6 +2013,7 @@
    "args": [
     {
      "name": "app_ref",
+     "metavar": "app",
      "optional": true,
      "help": "The app (default: this folder's)."
     }
@@ -1921,7 +2042,7 @@
      "dest": "timeout",
      "type": "number",
      "metavar": "SECONDS",
-     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick wait picks it up."
     },
     {
      "flag": "--app",
@@ -2015,6 +2136,7 @@
    "args": [
     {
      "name": "app_ref",
+     "metavar": "app",
      "optional": true,
      "help": "The app, by name or id."
     }
@@ -2247,7 +2369,7 @@
      "dest": "timeout",
      "type": "number",
      "metavar": "SECONDS",
-     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick wait picks it up."
     }
    ],
    "examples": [
@@ -2297,7 +2419,7 @@
      "dest": "timeout",
      "type": "number",
      "metavar": "SECONDS",
-     "help": "Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up."
+     "help": "Stop waiting after this long (exit 124); it goes on, and noclick wait picks it up."
     },
     {
      "flag": "--force",
@@ -2479,6 +2601,7 @@
    "args": [
     {
      "name": "names",
+     "metavar": "name",
      "many": true
     }
    ],
@@ -2528,6 +2651,7 @@
    "args": [
     {
      "name": "pairs",
+     "metavar": "key=value",
      "many": true
     }
    ],
@@ -2597,6 +2721,7 @@
    "args": [
     {
      "name": "names",
+     "metavar": "key",
      "many": true
     }
    ],
@@ -2645,6 +2770,7 @@
     },
     {
      "name": "resource",
+     "metavar": "name",
      "help": "The resource's name (for objects, the class's)."
     }
    ],
@@ -3011,6 +3137,19 @@
      "help": "Print JSON instead of a table."
     },
     {
+     "flag": "--output",
+     "dest": "output_file",
+     "type": "string",
+     "metavar": "FILE",
+     "help": "Save the answer to this file (a file's bytes as they are) instead of printing it."
+    },
+    {
+     "flag": "--table",
+     "dest": "table",
+     "type": "bool",
+     "help": "Print the answer as rows (a list) or fields (an object) instead of JSON."
+    },
+    {
      "flag": "--data",
      "dest": "data",
      "type": "string",
@@ -3040,6 +3179,7 @@
    "args": [
     {
      "name": "words",
+     "metavar": "operation",
      "many": true
     }
    ],
@@ -3065,6 +3205,7 @@
    "args": [
     {
      "name": "words",
+     "metavar": "command",
      "optional": true,
      "many": true,
      "help": "Only this command or area."
@@ -3137,6 +3278,10 @@
       "Revoke this profile's key and forget it."
      ],
      [
+      "profile",
+      "List the logins this machine keeps and choose the one commands use."
+     ],
+     [
       "init",
       "Make a folder an app: from a template, or drafted from what you describe. Links the folder."
      ],
@@ -3199,10 +3344,6 @@
       "Set the app's plain settings (they read back; keep secrets in noclick secret)."
      ],
      [
-      "settings",
-      "An app's plain settings, which it reads from its environment."
-     ],
-     [
       "bind",
       "Give the app a database, bucket, dict, queue or Durable Object class, made if it's missing."
      ],
@@ -3236,10 +3377,6 @@
       "Wait for an operation and print its result; exits 3 when it waits on a person."
      ],
      [
-      "ops",
-      "Wait on operations."
-     ],
-     [
       "estimate",
       "What apps, databases, buckets and repos would cost a month, before you make them."
      ],
@@ -3256,8 +3393,16 @@
       "Reach your machines."
      ],
      [
+      "shell",
+      "A terminal (or one command) in a sandbox, on a machine or in an agent's sandbox."
+     ],
+     [
       "webhooks",
       "Receive events on your machine."
+     ],
+     [
+      "dashboard",
+      "Open the console in your browser (an app's page when named); prints the URL."
      ]
     ]
    },
@@ -3275,6 +3420,14 @@
      [
       "help",
       "Every command, its arguments and flags (--json for all of it)."
+     ],
+     [
+      "completion",
+      "Print, or --install, Tab completion for your shell."
+     ],
+     [
+      "changelog",
+      "What changed in NoClick lately, newest first, or one change whole (no key needed)."
      ]
     ]
    },
@@ -3315,6 +3468,10 @@
    ]
   ],
   "next": [
+   [
+    "noclick ls",
+    "What your account has, by kind (the same as noclick resources)."
+   ],
    [
     "noclick --help",
     "Every command, by what it's for."
@@ -3628,7 +3785,171 @@
    },
    "group": {
     "ls": "list"
-   }
+   },
+   "old": [
+    [
+     [
+      "settings",
+      "list"
+     ],
+     [
+      "env",
+      "ls"
+     ],
+     [
+      "--app"
+     ]
+    ],
+    [
+     [
+      "settings",
+      "set"
+     ],
+     [
+      "env",
+      "set"
+     ],
+     [
+      "--app",
+      "="
+     ]
+    ],
+    [
+     [
+      "settings",
+      "delete"
+     ],
+     [
+      "env",
+      "rm"
+     ],
+     [
+      "--app"
+     ]
+    ],
+    [
+     [
+      "ops",
+      "wait"
+     ],
+     [
+      "wait"
+     ],
+     []
+    ],
+    [
+     [
+      "settings"
+     ],
+     [
+      "env"
+     ],
+     []
+    ],
+    [
+     [
+      "ops"
+     ],
+     [
+      "wait"
+     ],
+     []
+    ]
+   ],
+   "valued": [
+    "--user",
+    "--timeout",
+    "--profile",
+    "--color"
+   ]
+  },
+  "said": {
+   "makes": {
+    "project": [
+     "Create it with",
+     "noclick deploy {name} --create"
+    ],
+    "database": [
+     "Create it with",
+     "noclick db create {name}"
+    ],
+    "bucket": [
+     "Create it with",
+     "noclick bucket create {name}"
+    ],
+    "domain": [
+     "See if it's free to buy",
+     "noclick domains search {name}"
+    ]
+   },
+   "made_by": {
+    "agent": "/v1/agents",
+    "browser_profile": "/v1/browser_profiles",
+    "card": "/v1/cards",
+    "channel": "/v1/channels",
+    "dict": "/v1/dicts",
+    "inbox": "/v1/inboxes",
+    "machine": "/v1/machines",
+    "mcp_server": "/v1/mcp_servers",
+    "memory": "/v1/memories",
+    "phone_number": "/v1/phone_numbers",
+    "queue": "/v1/queues",
+    "repo": "/v1/repos",
+    "secret": "/v1/secrets",
+    "skill": "/v1/skills",
+    "volume": "/v1/volumes",
+    "workspace": "/v1/workspaces"
+   },
+   "kind_words": {
+    "project": "app"
+   },
+   "unreachable": [
+    [
+     "ECONNREFUSED",
+     "connection refused"
+    ],
+    [
+     "All connection attempts failed",
+     "connection refused"
+    ],
+    [
+     "Connection refused",
+     "connection refused"
+    ],
+    [
+     "ENOTFOUND",
+     "no such host"
+    ],
+    [
+     "EAI_AGAIN",
+     "no such host"
+    ],
+    [
+     "Name or service not known",
+     "no such host"
+    ],
+    [
+     "nodename nor servname",
+     "no such host"
+    ],
+    [
+     "ETIMEDOUT",
+     "timed out"
+    ],
+    [
+     "UND_ERR_CONNECT_TIMEOUT",
+     "timed out"
+    ],
+    [
+     "timed out",
+     "timed out"
+    ],
+    [
+     "ECONNRESET",
+     "connection reset"
+    ]
+   ],
+   "default_api": "https://api.noclick.com"
   }
  }
 }

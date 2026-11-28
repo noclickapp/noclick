@@ -413,7 +413,7 @@ class BrowserProfile(_Object):
             raise NotFound(
                 f"No browser profile is named {name!r}.",
                 next_step="Create it with noclick.BrowserProfile.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "browser_profile"},
             )
         try:
             return await self._request("POST", "/v1/browser_profiles", json=compact(name=name, region=self._region))

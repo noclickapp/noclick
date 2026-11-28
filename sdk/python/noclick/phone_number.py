@@ -1453,7 +1453,7 @@ class PhoneNumber(_Object):
             raise NotFound(
                 f"No phone number is named {name!r}.",
                 next_step="Buy it with noclick.PhoneNumber.buy(..., name=...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "phone_number"},
             )
         if self._connect_via is None:
             path, body = "/v1/phone_numbers", self._create_with

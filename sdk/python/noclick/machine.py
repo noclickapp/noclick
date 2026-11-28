@@ -818,7 +818,7 @@ class Machine(_Object):
             raise NotFound(
                 f"No machine is named {name!r}.",
                 next_step="Create it with noclick.Machine.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "machine"},
             )
         try:
             return await self._request("POST", "/v1/machines", json=await self._wire(self._create_with))

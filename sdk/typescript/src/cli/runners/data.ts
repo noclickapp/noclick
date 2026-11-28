@@ -15,7 +15,7 @@ import { host } from "../host.ts";
 import { type Io, printJson } from "../output.ts";
 import { CommandError } from "../store.ts";
 import { on, str, table } from "./kit.ts";
-import { size } from "./resources.ts";
+import { size } from "../output.ts";
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 // A statement that defines the schema: what the engine counts as rows written for it is its own catalog's.

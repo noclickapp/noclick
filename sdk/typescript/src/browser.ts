@@ -311,7 +311,7 @@ export class BrowserProfile extends ApiObject {
     if (!this._createOnLoad) {
       throw new NotFound(`No browser profile is named "${name}".`, {
         nextStep: "Create it with BrowserProfile.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "browser_profile" },
       });
     }
     try {

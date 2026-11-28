@@ -81,6 +81,8 @@ def cmd_resources(args: argparse.Namespace) -> int:
             failed[kind["kind"]] = answer
         elif answer.get("data"):
             found[kind["kind"]] = answer["data"]
+    if len(failed) == len(kinds) and len({e.type for e in failed.values()}) == 1:
+        raise next(iter(failed.values()))  # one reason none could be read (a key that isn't valid): said once
     if args.json:
         out.print_json({"kinds": found, "errors": {k: out.error_body(e) for k, e in failed.items()}})
         return _exit(kinds, failed)

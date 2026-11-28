@@ -970,7 +970,7 @@ export class Channel extends ApiObject {
     if (!definition || !this._creates) {
       throw new NotFound(`No open channel is named "${name}".`, {
         nextStep: "Open it with Channel.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "channel" },
       });
     }
     const inWorkspace = workspaceId !== undefined;

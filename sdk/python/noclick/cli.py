@@ -34,7 +34,7 @@ import webbrowser
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterable, Iterator, List, NoReturn, Optional, Sequence, Tuple
 
 import httpx
 
@@ -49,14 +49,14 @@ from .bucket import Bucket
 from .database import Database
 from .domain import Domain, DomainContact
 from .estimate import Estimate, estimate
-from .exceptions import Conflict, Error, InvalidRequest, NotFound, Unauthenticated
+from .exceptions import APIConnectionError, Conflict, Error, InvalidRequest, NotFound, Unauthenticated
 from .machine import Machine
 from .operation import Operation
 from .project import Deployment, Project
 from .user import User
 from .webhook import SIGNATURE_HEADER, Event
 from ._cli import commands as generated, exits, helpscreen, kit as cli_kit, link as cli_link, output, screens
-from ._cli import spend as cli_spend, style
+from ._cli import completion, spend as cli_spend, style, updates
 from ._cli.output import cell as _cell, note as _note, plain as _plain, plural as _plural, print_json as _print_json
 from ._cli.output import size as _size, table as _table, usd as _usd
 from ._cli.spec import load as load_spec
@@ -64,6 +64,13 @@ from ._cli.spec import load as load_spec
 PROFILE_ENV = "NOCLICK_PROFILE"
 CONFIG_DIR_ENV = "NOCLICK_CONFIG_DIR"
 KEYCHAIN_SERVICE = "noclick"
+# ``off`` (or ``file``) keeps every key in the file, the same in both CLIs; a test sets it, since the OS keychain is per
+# user whatever HOME says. (A path is the npm CLI's stand-in for the OS's tool; this CLI's keychain is the ``keyring``
+# library, which ``PYTHON_KEYRING_BACKEND`` points elsewhere.)
+KEYCHAIN_ENV = "NOCLICK_KEYCHAIN"
+# What login says when the OS keychain won't take the key, word for word as the npm CLI says it: the OS's own words
+# differ by library and tool.
+KEYCHAIN_REFUSED = "The OS keychain refused the key, so it's kept in a file only you can read instead."
 USER_AGENT = f"noclick-cli/{__version__}"
 
 # Polling cadence for `logs --follow` and `webhooks listen`; tests replace _sleep and _clock.
@@ -74,7 +81,7 @@ _clock: Callable[[], float] = time.monotonic
 MAX_LOG_READ = 1000
 
 
-class CommandError(Error):
+class CommandError(exits.Suggests, Error):
     """A problem the CLI found on your machine (not an API refusal)."""
 
     type = "command_error"
@@ -82,45 +89,59 @@ class CommandError(Error):
 
 # --- the command line's own words ----------------------------------------------
 # An error's next step and a build log are written for code (``noclick.Database.create(...)``, ``GET /v1/...``): the
-# command line says the command that does it instead.
+# command line says the command that does it instead, from the error's fields (``screens.MAKES``, ``MADE_BY``).
 
-#: What the running command is about, which its words name (the app a deploy or logs reads).
-_CONTEXT: Dict[str, str] = {}
-
-_MAKES = {
-    "Project": "Create it with its first deploy: noclick deploy {name} --create",
-    "Database": "Create it with: noclick db create {name}",
-    "Bucket": "Create it with: noclick bucket create {name}",
-}
-_SDK_MAKES = re.compile(r"(?:Create|Issue|Buy) it with noclick\.(\w+)\.\w+\(.*create_if_missing=True\.?")
 _BUILD_LOG_STEP = re.compile(r"Read its build log: GET /v1/deployments/([\w-]+)/logs\?kind=build\.?")
 _SETTING_SET = re.compile(r'app\.settings\.set\(("[^"]*"), ("[^"]*")\)')
 
 
-def _cli_words(text: str) -> str:
-    """``text`` with what it says to do in code said as the command that does it."""
-    text = _BUILD_LOG_STEP.sub(r"Read its build log: noclick logs --build --deployment \1", text)
-    app = _CONTEXT.get("app") or "<app>"
-    return _SETTING_SET.sub(lambda m: f"noclick settings set {app} {m.group(1)} {m.group(2)}", text)
+def _cli_words(text: str, run: List[str]) -> str:
+    """``text`` (the API's words, which say what to do in code) with each step said as the command that takes it,
+    added to ``run``."""
+    def build_log(m: "re.Match[str]") -> str:
+        run.append(f"noclick logs --build --deployment {m.group(1)}")
+        return f"Read its build log: noclick logs --build --deployment {m.group(1)}"
+
+    def setting(m: "re.Match[str]") -> str:
+        command = f"noclick env set {m.group(1)[1:-1]}={m.group(2)[1:-1]}"
+        run.append(command)
+        return command
+
+    return _SETTING_SET.sub(setting, _BUILD_LOG_STEP.sub(build_log, text))
 
 
-def _for_the_terminal(err: Error) -> Tuple[str, Optional[str]]:
-    """An error's message and next step as the command line says them."""
-    message, step = err.message, err.next_step
-    name = err.details.get("name") or ""
-    if message.startswith("No project is named"):  # an app, as every other command says
-        message = message.replace("No project is named", "No app is named", 1)
-    if step:
-        made = _SDK_MAKES.search(step)
+def _for_the_terminal(err: Error) -> Tuple[str, Optional[str], List[str]]:
+    """An error's message, next step and the commands that take it, as the command line says them."""
+    message, step, run = err.message, err.next_step, []
+    kind, name = err.details.get("kind"), err.details.get("name") or ""
+    if isinstance(err, Unauthenticated) and not getattr(err, "run", None):  # the API refused the key itself
+        return "This key isn't valid: run noclick login.", \
+            f"{err.message} Sign in again, or set {API_KEY_ENV} to a key that works.".lstrip(), ["noclick login"]
+    if isinstance(err, APIConnectionError) and err.details.get("api_url"):
+        message, step = screens.unreachable(err.details["api_url"], str(err.details.get("cause") or ""))
+        return message, step, run
+    if isinstance(err, NotFound) and isinstance(kind, str):
+        word = screens.KIND_WORDS.get(kind, kind.replace("_", " "))
+        message = f"No {word} is named '{name}'." if name else message
+        made = screens.MAKES.get(kind)
         if made:
-            step = _MAKES.get(made.group(1), "There's no noclick command that makes one: make it in the NoClick app, "
-                                             "or in code with noclick.{kind}.create(...).").format(
-                name=name or f"<{made.group(1).lower()}>", kind=made.group(1))
-        elif step.startswith("Run statements that write with execute"):
-            step = "Run it again with --write."
+            run.append(made[1].format(name=name or f"<{word}>"))
+            step = f"{made[0]}: {run[-1]}"
+        elif kind in screens.MADE_BY:
+            op = load_spec().for_call("POST", screens.MADE_BY[kind])
+            made = output.command_line(op, op["path"]) if op else f"noclick api POST {screens.MADE_BY[kind]}"
+            if op and name and any(p["name"] == "name" and p["in"] == "body" for p in op["params"]):
+                made += f" --name {name}"
+            run.append(made)
+            step = f"Make it first: {made}"
         else:
-            step = _cli_words(step)
-    return _cli_words(message), step
+            step = None
+        return message, step, run
+    if step and step.startswith("Run statements that write with execute"):
+        step = "Run it again with --write."
+    elif step:
+        step = _cli_words(step, run)
+    return _cli_words(message, run), step, run
 
 
 # --- credentials -------------------------------------------------------------
@@ -142,7 +163,7 @@ def _write_private(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     with os.fdopen(fd, "w") as handle:
-        json.dump(data, handle, indent=2)
+        handle.write(json.dumps(data, indent=2) + "\n")
 
 
 def _write_config(config: Dict[str, Any]) -> None:
@@ -226,6 +247,12 @@ def key_store(name: str) -> Any:
     """``keychain``, ``file``, or ``auto``: the OS keychain where this machine has one to keep it in, else the file."""
     if name == "file":
         return FileStore()
+    off = os.environ.get(KEYCHAIN_ENV)
+    if off in ("off", "file"):
+        if name == "auto":
+            return FileStore()
+        raise CommandError(f"The OS keychain is off here ({KEYCHAIN_ENV}={off}).",
+                           next_step="Pass --store file to keep the key in a file only you can read.")
     if name == "keychain":
         return KeychainStore()
     try:
@@ -259,12 +286,30 @@ def resolve_credentials(profile: str) -> Credentials:
     return Credentials(None, "none", profile, os.environ.get(API_URL_ENV) or DEFAULT_BASE_URL, login)
 
 
+# The profile ``noclick profile use`` set, in config.json beside the profiles.
+DEFAULT_PROFILE_KEY = "default_profile"
+# Why a profile is the one a command uses, in the words ``whoami`` and ``profile`` say it.
+PROFILE_SOURCES = {"flag": "from --profile", "env": f"from {PROFILE_ENV}", "config": "set by noclick profile use",
+                   "default": "the default"}
+
+
+def active_profile(given: Optional[str] = None) -> Tuple[str, str]:
+    """The profile a command uses and why (a key of ``PROFILE_SOURCES``): ``--profile``, else ``NOCLICK_PROFILE``,
+    else the one ``noclick profile use`` set, else ``default``."""
+    if given:
+        return given, "flag"
+    if os.environ.get(PROFILE_ENV):
+        return os.environ[PROFILE_ENV], "env"
+    chosen = _read_config().get(DEFAULT_PROFILE_KEY)
+    return (chosen, "config") if chosen else ("default", "default")
+
+
 def _signed_in(profile: str) -> Credentials:
     creds = resolve_credentials(profile)
     if not creds.key:
-        raise Unauthenticated(
-            "You're not signed in.", next_step=f"Run noclick login, or set {API_KEY_ENV}.",
-        )
+        raise output.run(Unauthenticated("You're not signed in.", next_step=(
+            f"Run noclick login (or noclick setup <code>, a code from the console's Quickstart), or set {API_KEY_ENV}.")),
+            ["noclick login"])
     return creds
 
 
@@ -335,7 +380,7 @@ def keep_key(profile: str, store_name: str, store: Any, api_url: str, got: Dict[
     except CommandError as refused:
         if store_name != "auto":
             raise
-        _note(f"{refused.message.rstrip('.')}. Keeping the key in a file only you can read instead.")
+        _note(KEYCHAIN_REFUSED)
         store = FileStore()
         store.write(profile, got["key"])
     config = _read_config()
@@ -389,26 +434,32 @@ def cmd_whoami(args: argparse.Namespace) -> int:
     source = {"env": f"from {API_KEY_ENV}", "keychain": "in the OS keychain", "file": "in a file"}[creds.source]
     if creds.source == "env" and creds.login.get("store"):
         _note(f"{API_KEY_ENV} overrides the login stored for this profile ({creds.login.get('email')}).")
-    name = f"{login['key_name']} ({_mask(creds.key)})" if login.get("key_name") else _mask(creds.key)
-    rows = [("Key", f"{name}, {source}"), ("Profile", creds.profile), ("API", creds.api_url)]
-    # The account the key is in, as the API says: what was stored at login can name another one.
+    def key_row(key_name: Optional[str]) -> Tuple[str, str]:
+        return "Key", f"{f'{key_name} ({_mask(creds.key)})' if key_name else _mask(creds.key)}, {source}"
+
+    why = PROFILE_SOURCES[getattr(args, "profile_source", "default")]
+    rows = [("Profile", f"{creds.profile} ({why})"), ("API", creds.api_url)]
+    # The account the key is in, and the key's name, as the API says: what was stored at login can name another.
     client = Client(api_key=creds.key, base_url=creds.api_url)
     try:
-        account = run_sync(client.request("GET", "/v1/status", user=None))["account"]
+        status = run_sync(client.request("GET", "/v1/status", user=None))
     except Error:
         if not args.json:
-            _print_rows(rows)  # which key the API refused
+            _print_rows([key_row(login.get("key_name")), *rows])  # which key the API refused
         raise
     finally:
         client.close()
+    account, caller = status["account"], status.get("caller") or {}
+    key_name = caller.get("key_name") or login.get("key_name")
     if args.json:
         _print_json({
-            "profile": creds.profile, "source": creds.source, "key_prefix": creds.key[:12], "api_url": creds.api_url,
-            "email": login.get("email"), "key_name": login.get("key_name"), "key_id": login.get("key_id"),
+            "profile": creds.profile, "profile_source": getattr(args, "profile_source", "default"),
+            "source": creds.source, "key_prefix": creds.key[:12], "api_url": creds.api_url,
+            "email": login.get("email"), "key_name": key_name, "key_id": caller.get("key_id") or login.get("key_id"),
             "account": account,
         })
         return 0
-    _print_rows([_signed_in_as(account), *rows])
+    _print_rows([_signed_in_as(account), key_row(key_name), *rows])
     note_unclaimed(args.profile)
     return 0
 
@@ -441,6 +492,8 @@ def cmd_logout(args: argparse.Namespace) -> int:
             client.close()
     store.delete(args.profile)
     del config["profiles"][args.profile]
+    if config.get(DEFAULT_PROFILE_KEY) == args.profile:
+        del config[DEFAULT_PROFILE_KEY]
     _write_config(config)
     print("Signed out.")
     return 0
@@ -487,7 +540,8 @@ def _agent_to_talk_to(name: str) -> Agent:
     live = [agent for agent in Agent.list(name=name) if agent.status != "expired"]
     found = sorted(live, key=lambda agent: agent.user_id is None)
     if not found:
-        raise NotFound(f"No agent is named {name!r}.", next_step="List agents with: noclick agents list")
+        raise output.run(NotFound(f"No agent is named {name!r}.", next_step="List agents with: noclick agents list"),
+                         ["noclick agents list"])
     return found[0]
 
 
@@ -506,7 +560,7 @@ def cmd_agents_chat(args: argparse.Namespace) -> int:
         try:
             reply = turn.wait()
         except KeyboardInterrupt:
-            _note(f"\nThe turn keeps running. Read its reply with: noclick ops wait {turn.id}")
+            _note(f"\nThe turn keeps running. Read its reply with: noclick wait {turn.id}")
             return 130
         conversation = reply.conversation or conversation
         tools = [call["tool"] for call in reply.tool_calls]
@@ -525,17 +579,18 @@ def cmd_agents_send(args: argparse.Namespace) -> int:
     a long one is never refused: the agent gets what fits and all of it as a file."""
     text = sys.stdin.read() if args.text == "-" else args.text
     if not text.strip():
-        raise InvalidRequest("Send some text.", next_step="noclick agents send <agent> 'What changed?'")
+        raise output.run(InvalidRequest("Send some text.", next_step="noclick agents send <agent> 'What changed?'"),
+                         [f"noclick agents send {args.name} 'What changed?'"])
     agent = _agent_to_talk_to(args.name)
     turn = agent.send(text, conversation=args.conversation, files=list(args.file or ()))
     if args.no_wait:
         print(turn.id)
-        _note(f"Sent. Read its reply with: noclick ops wait {turn.id}")
+        _note(f"Sent. Read its reply with: noclick wait {turn.id}")
         return 0
     try:
         reply = turn.wait()
     except KeyboardInterrupt:
-        _note(f"\nThe turn keeps running. Read its reply with: noclick ops wait {turn.id}")
+        _note(f"\nThe turn keeps running. Read its reply with: noclick wait {turn.id}")
         return 130
     if args.json:
         _print_json({"text": reply.text, "conversation": reply.conversation, "tool_calls": reply.tool_calls})
@@ -572,23 +627,6 @@ def cmd_users_create(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_ops_wait(args: argparse.Namespace) -> int:
-    op = Operation.from_id(args.operation_id)
-    op.wait(timeout=args.timeout)  # raises the operation's error, or OperationTimeout
-    result = op.result
-    if args.json:
-        _print_json(op)
-    else:
-        _note(f"{op.kind} {op.status}")
-        if isinstance(result, dict) and isinstance(result.get("text"), str):
-            print(result["text"])
-        elif result is not None:
-            print(json.dumps(result, indent=2, default=str))
-    # A deploy or promote that went live but failed its check exits as a failure: the result says what to fix.
-    return 1 if op.kind in ("project.deploy", "deployment.promote") and isinstance(result, dict) \
-        and _said_deployment(result) else 0
-
-
 # --- databases and storage -------------------------------------------------------
 
 
@@ -604,7 +642,7 @@ def _print_result(result: Any, as_json: bool, sql: str = "") -> None:
         return
     took = f" ({result.duration_ms:.0f} ms)" if result.duration_ms is not None else ""
     if result.columns:
-        _table(result.columns, [[row.get(c) for c in result.columns] for row in result.rows], empty="(no rows)")
+        _table(result.columns, [[row.get(c) for c in result.columns] for row in result.rows], empty="No rows.")
         _note(f"{_plural(len(result.rows), 'row')}{took}")
     elif _DEFINES.match(sql):
         _note(f"Done{took}.")
@@ -733,6 +771,7 @@ def cmd_bucket_cp(args: argparse.Namespace) -> int:
         raise CommandError(
             "Copy between your machine and a bucket: exactly one side is bucket:key.",
             next_step="For example: noclick bucket cp invoice.pdf uploads:invoices/0042.pdf",
+            run=["noclick bucket cp invoice.pdf uploads:invoices/0042.pdf"],
         )
     if dst:  # upload
         bucket = Bucket.from_name(dst[0])
@@ -769,8 +808,9 @@ def cmd_bucket_cp(args: argparse.Namespace) -> int:
         data = bucket.read(src[1])
     except NotFound as missing:
         folder = src[1].rpartition("/")[0]
-        raise NotFound(missing.message, next_step=f"List its files with: noclick bucket ls {src[0]}"
-                                                  f"{'/' + folder if folder else ''}", details=missing.details) from None
+        listing = f"noclick bucket ls {src[0]}{'/' + folder if folder else ''}"
+        raise output.run(NotFound(missing.message, next_step=f"List its files with: {listing}",
+                                  details=missing.details), [listing]) from None
     if args.dst == "-":
         sys.stdout.buffer.write(data)
         sys.stdout.buffer.flush()
@@ -831,8 +871,7 @@ def _push(root: str, url: str, branch: str) -> None:
 
 
 def _app(name: str) -> Project:
-    """The app ``name``, which the command's words name (``_CONTEXT``)."""
-    _CONTEXT["app"] = name
+    """The app named ``name``."""
     return Project.from_name(name)
 
 
@@ -856,10 +895,11 @@ def _build_log(deployment: Deployment, *, last: Optional[int] = None, leave_out:
     if lines and leave_out and lines[-1].message.strip() == leave_out.strip():
         lines = lines[:-1]
     for line in lines[-last:] if last else lines:
-        _note(f"  {_cli_words(line.message)}")
+        _note(f"  {_cli_words(line.message, [])}")
 
 
 def cmd_logs(args: argparse.Namespace) -> int:
+    args.project = args.project or args.app
     if args.build:
         if args.deployment:
             deployment = Deployment.from_id(args.deployment)
@@ -868,12 +908,13 @@ def cmd_logs(args: argparse.Namespace) -> int:
                 raise CommandError("Name the app, or a deployment with --deployment.")
             found = _app(args.project).deployments(limit=1)
             if not found:
-                raise NotFound(f"{args.project} has no deployments yet.",
-                               next_step=f"Deploy it with: noclick deploy {args.project}")
+                raise output.run(NotFound(f"{args.project} has no deployments yet.",
+                                          next_step=f"Deploy it with: noclick deploy {args.project}"),
+                                 [f"noclick deploy {args.project}"])
             deployment = found[0]
         _note(f"Build log of {deployment.id} ({deployment.branch}, {(deployment.commit or '')[:7]}, {deployment.status}):")
         for line in deployment.logs(kind="build"):
-            print(f"{(line.level or '').upper():<5}  {_cli_words(line.message)}", flush=True)
+            print(f"{(line.level or '').upper():<5}  {_cli_words(line.message, [])}", flush=True)
         return 0
     project = _app(cli_link.app_name(args.project))
     since = args.since
@@ -899,10 +940,10 @@ def cmd_logs(args: argparse.Namespace) -> int:
         for line in shown:
             # Flushed: piped (| grep, > file), each line as it comes, and none lost to Ctrl-C.
             if args.json:
-                output.line(json.dumps({"at": line.at.isoformat() if isinstance(line.at, datetime) else line.at,
+                output.line(output.dumps({"at": line.at.isoformat() if isinstance(line.at, datetime) else line.at,
                                      "level": line.level, "message": line.message,
                                      "deployment_id": line.deployment_id, **{k: line.raw.get(k) for k in (
-                                         "environment", "request_id", "status") if line.raw.get(k) is not None}}))
+                                         "environment", "request_id", "status") if line.raw.get(k) is not None}}, indent=None))
             else:
                 at = line.at.astimezone().strftime("%H:%M:%S") if isinstance(line.at, datetime) else line.at
                 output.line(f"{at}  {(line.level or '').upper():<5}  {line.message}")
@@ -933,31 +974,6 @@ def cmd_logs(args: argparse.Namespace) -> int:
     return 0
 
 
-# --- settings ----------------------------------------------------------------
-
-
-def cmd_settings_list(args: argparse.Namespace) -> int:
-    found = _app(args.project).settings.list()
-    if args.json:
-        _print_json(found)
-        return 0
-    _table(["NAME", "VALUE"], sorted(found.items()), empty=f"{args.project} has no settings.",
-           title=f"Settings of {args.project}")
-    return 0
-
-
-def cmd_settings_set(args: argparse.Namespace) -> int:
-    _app(args.project).settings.set(args.name, args.value)
-    _note(f"Set {args.name}. It reaches {args.project} at its next deploy: noclick deploy {args.project}")
-    return 0
-
-
-def cmd_settings_delete(args: argparse.Namespace) -> int:
-    _app(args.project).settings.delete(args.name)
-    _note(f"Deleted {args.name}. {args.project} stops seeing it at its next deploy.")
-    return 0
-
-
 # --- domains -----------------------------------------------------------------
 
 
@@ -984,7 +1000,7 @@ def cmd_domains_buy(args: argparse.Namespace) -> int:
     purchase = Domain.buy(args.name, max_price_usd=args.max_price, years=args.years, registrant=registrant)
     if args.no_wait:
         print(purchase.id)
-        _note(f"Buying {args.name}. Wait for it with: noclick ops wait {purchase.id}")
+        _note(f"Buying {args.name}. Wait for it with: noclick wait {purchase.id}")
         return 0
     for event in purchase.events(interval=POLL_S):
         if event.status == "awaiting_human":
@@ -1046,7 +1062,8 @@ def cmd_estimate(args: argparse.Namespace) -> int:
         return 0
     if not args.file:
         raise CommandError("Name what to estimate: a kind (noclick estimate database), or a JSON file of items (- for "
-                           "stdin).", next_step="Run noclick estimate --kinds to see what each kind takes.")
+                           "stdin).", next_step="Run noclick estimate --kinds to see what each kind takes.",
+                           run=["noclick estimate --kinds"])
     if args.file != "-" and not Path(args.file).exists() and re.fullmatch(r"[a-z_]+", args.file):
         # One item by its kind, its usage and options from the command line.
         # Its options sit beside its kind, as the API takes them (runtime, engine, region, framework).
@@ -1139,7 +1156,8 @@ def _moving() -> AgentMove:
     path = _move_key_path()
     if not path.exists():
         raise CommandError("No move is under way here.",
-                           next_step="Redeem the code your prompt gave: noclick agents move redeem --code nc_move_...")
+                           next_step="Redeem the code your prompt gave: noclick agents move redeem --code nc_move_...",
+                           run=["noclick agents move redeem --code <code>"])
     saved = json.loads(path.read_text())
     return AgentMove.current(client=Client(api_key=saved["key"], base_url=saved["api_url"]))
 
@@ -1384,17 +1402,17 @@ def cmd_machines_ssh(args: argparse.Namespace) -> int:
     return _attach_shell(opened.url, opened.token, renew=lambda: machine.shell().token)
 
 
-def _attach_shell(url: str, token: str, *, renew: Callable[[], str]) -> int:
-    """Your terminal on a machine's shell socket, raw, until its bash ends; returns bash's exit code. It says it
-    renews, so the shell lasts 15 minutes at a time: when the server asks, ``renew`` gets a new token for it, and bash
-    goes on."""
+def _attach_shell(url: str, token: str, *, renew: Callable[[], str], command: str = "noclick machines ssh") -> int:
+    """Your terminal on a shell socket (a machine's, a sandbox's), raw, until its bash ends; returns bash's exit code.
+    It says it renews, so the shell lasts 15 minutes at a time: when the server asks, ``renew`` gets a new token for
+    it, and bash goes on."""
     try:
         from websockets.exceptions import ConnectionClosed
         from websockets.sync.client import connect
     except ImportError:
         raise CommandError("A shell needs websockets: pip install websockets.") from None
     if os.name != "posix" or not sys.stdin.isatty():
-        raise CommandError("noclick machines ssh needs a terminal on macOS or Linux (on Windows, use WSL).")
+        raise CommandError(f"{command} needs a terminal on macOS or Linux (on Windows, use WSL).")
     import shutil
     import signal
     import termios
@@ -1472,19 +1490,94 @@ class _Parser(argparse.ArgumentParser):
         # A command it doesn't have: the closest ones it does, rather than every one.
         if isinstance(action, argparse._SubParsersAction) and value not in action.choices:
             within = self.prog.split()[1:]
+            hidden = set(load_spec().hidden(within[0])) if len(within) == 1 else set()  # names commands had
             curated = [n for n in action.choices if _curated([*within, n])]
             self.exit(exits.USAGE, screens.unknown(
-                value, within=within, curated=curated, areas=[n for n in action.choices if n not in curated],
-                s=style.ERR) + "\n")
+                value, within=within, curated=curated,
+                areas=[n for n in action.choices if n not in curated and n not in hidden], s=style.ERR) + "\n")
         super()._check_value(action, value)
 
-    def format_help(self) -> str:
+    def _command(self) -> Optional[Dict[str, Any]]:
+        """The curated command this parser is, as the manifest has it."""
         path = self.prog.split()[1:]
-        found = next((c.get("examples") for c in load_spec().commands if c["path"] == path), None)
-        if style.OUT.on:
-            return helpscreen.screen(self, style.OUT, examples=found or ())
-        text = super().format_help()
-        return f"{text}\n{screens.examples(found)}\n" if found else text
+        return next((c for c in load_spec().commands if c["path"] == path), None)
+
+    def format_help(self) -> str:
+        command = self._command()
+        if command is not None:
+            return helpscreen.command_screen(command, load_spec().manifest["globals"], style.OUT) + "\n"
+        return helpscreen.screen(self, style.OUT)
+
+    def format_usage(self) -> str:
+        command = self._command()
+        return f"usage: {helpscreen.usage_of(command)}\n" if command is not None else super().format_usage()
+
+    def error(self, message: str) -> "NoReturn":  # type: ignore[override]
+        """A command line this command can't take: said as the TypeScript CLI says it, with this command's usage
+        and its help as the command to run (never the top level's usage)."""
+        command = self._command()
+        usage = helpscreen.usage_of(command) if command is not None else self.prog
+        said = _usage_words(self, message)
+        self.exit(output.report(_UsageError(said, usage=usage, run=[f"{self.prog} --help"]), as_json=_AS_JSON[0]))
+
+
+#: Whether the command line asked for --json, so a mistake in it is said as JSON too.
+_AS_JSON = [False]
+
+
+class _UsageError(exits.Suggests, InvalidRequest):
+    """A command line its command can't take (exit 2): its ``usage`` printed under it."""
+
+    def __init__(self, message: str, *, usage: str, **kwargs: Any) -> None:
+        super().__init__(message, **kwargs)
+        self.usage = usage
+
+
+_ARGPARSE = (
+    (re.compile(r"the following arguments are required: (.+)"), lambda m, p: f"{p} needs {m[1]}."),
+    (re.compile(r"one of the arguments (.+) is required"),
+     lambda m, p: f"{p} needs one of {', '.join(m[1].split())}."),
+    (re.compile(r"argument (\S+?)(?:/\S+)?: not allowed with argument (\S+)"),
+     lambda m, p: f"{p}: {m[1]} and {m[2]} can't go together."),
+    (re.compile(r"argument (\S+?)(?:/\S+)?: expected one argument"), lambda m, p: f"{m[1]} takes a value."),
+    (re.compile(r"argument (-\S+?)(?:/\S+)?: invalid choice: '([^']*)' \(choose from (.+)\)"),
+     lambda m, p: f"{m[1]} takes one of {m[3].replace(chr(39), '')}, not {m[2]}."),
+    (re.compile(r"argument (\w+): invalid choice: '([^']*)' \(choose from (.+)\)"),
+     lambda m, p: f"{m[1]} is one of {m[3].replace(chr(39), '')}, not {m[2]}."),
+    (re.compile(r"argument (\S+?)(?:/\S+)?: invalid int value: '([^']*)'"), lambda m, p: f"{m[1]} takes a whole number, not {m[2]}."),
+    (re.compile(r"argument (\S+?)(?:/\S+)?: invalid float value: '([^']*)'"), lambda m, p: f"{m[1]} takes a number, not {m[2]}."),
+)
+
+
+def _usage_words(parser: argparse.ArgumentParser, message: str) -> str:
+    """argparse's ``message`` as the TypeScript CLI words the same mistake."""
+    for pattern, said in _ARGPARSE:
+        found = pattern.fullmatch(message)
+        if found:
+            return said(found, parser.prog)
+    return f"{parser.prog}: {message}."
+
+
+def _no_flag(parser: argparse.ArgumentParser, word: str) -> str:
+    """``noclick secret ls: no flag --jsn; did you mean --json?``: the closest flag this command has."""
+    import difflib
+
+    name = word.split("=", 1)[0]
+    flags = [o for a in parser._actions for o in a.option_strings if a.help != argparse.SUPPRESS and o.startswith("--")]
+    near = difflib.get_close_matches(name, flags, n=1)
+    if not name.startswith("-"):
+        return f"{parser.prog}: unexpected {word}."
+    return f"{parser.prog}: no flag {name}" + (f"; did you mean {near[0]}?" if near else ".")
+
+
+def _reached(parser: argparse.ArgumentParser, args: argparse.Namespace) -> argparse.ArgumentParser:
+    """The deepest command ``args`` reached (``noclick secret ls``), whose usage a mistake in it is said with."""
+    while True:
+        sub = next((a for a in parser._actions if isinstance(a, argparse._SubParsersAction)), None)
+        chosen = sub and getattr(args, sub.dest, None)
+        if not chosen or chosen not in sub.choices:
+            return parser
+        parser = sub.choices[chosen]
 
 
 class _Top(_Parser):
@@ -1493,21 +1586,27 @@ class _Top(_Parser):
 
     show_all = False
 
+    def parse_args(self, args: Any = None, namespace: Any = None) -> argparse.Namespace:  # type: ignore[override]
+        found, extra = self.parse_known_args(args, namespace)
+        if extra:
+            reached = _reached(self, found)
+            command = reached._command() if isinstance(reached, _Parser) else None
+            usage = helpscreen.usage_of(command) if command is not None else reached.prog
+            self.exit(output.report(_UsageError(_no_flag(reached, extra[0]), usage=usage,
+                                                run=[f"{reached.prog} --help"]), as_json=_AS_JSON[0]))
+        return found
+
     def format_help(self) -> str:
         sub = next(a for a in self._actions if isinstance(a, argparse._SubParsersAction))
         summaries = {a.dest: a.help or "" for a in sub._choices_actions if _curated([a.dest])}
         areas = {a: len(ops) for a, ops in load_spec().areas().items()} if self.show_all else None
-        if style.OUT.on:
-            return helpscreen.screen(self, style.OUT, middle=screens.commands(summaries, areas, style.OUT).split("\n"))
-        head = self._get_formatter()
-        head.add_usage(self.usage, self._actions, self._mutually_exclusive_groups)
-        head.add_text(self.description)
-        tail = self._get_formatter()
-        tail.start_section("options")
-        tail.add_arguments([a for a in self._actions if a.option_strings and a.help != argparse.SUPPRESS])
-        tail.end_section()
-        tail.add_text(self.epilog)
-        return f"{head.format_help()}\n{screens.commands(summaries, areas)}\n\n{tail.format_help()}"
+        globals_ = load_spec().manifest["globals"]
+        return helpscreen.render(
+            style.OUT, usage="noclick [OPTIONS] <command> ...", description=self.description or "",
+            middle=screens.commands(summaries, areas, style.OUT).split("\n"),
+            sections=[("Options", [*((helpscreen.invocation(g), g.get("help", "")) for g in globals_),
+                                   ("-h, --help", "Show this help (--all lists every API area).")])],
+            notes=self.epilog or "") + "\n"
 
 
 def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.ArgumentParser:
@@ -1520,10 +1619,11 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
                "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C. "
                "Docs: https://noclick.com/docs/guide/cli",
     )
-    parser.add_argument("--version", action="version", version=f"noclick {__version__}")
+    parser.add_argument("--version", action="version", version=f"noclick {__version__}",
+                        help="Print the CLI's version.")
     parser.add_argument(
-        "--profile", default=os.environ.get(PROFILE_ENV, "default"),
-        help=f"Which stored login to use (default: {PROFILE_ENV} or 'default').",
+        "--profile", default=None, metavar="NAME",
+        help=f"Which stored login to use (default: {PROFILE_ENV}, else noclick profile use's).",
     )
     parser.add_argument("--color", choices=style.MODES, default="auto",
                         help="Colours and tables: auto (only at a terminal, never under NO_COLOR, TERM=dumb or CI), "
@@ -1536,11 +1636,17 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     user.add_argument("--user", help="Act for this user: your id for them.")
     commands = parser.add_subparsers(dest="command", metavar="<command>", parser_class=_Parser)
 
+    # The global flags, taken after a command too (``noclick whoami --profile work``), listed under each command's
+    # help as its "Global flags", never as its own.
+    anywhere = argparse.ArgumentParser(add_help=False)
+    anywhere.add_argument("--profile", default=argparse.SUPPRESS, help=argparse.SUPPRESS)
+    anywhere.add_argument("--color", choices=style.MODES, default=argparse.SUPPRESS, help=argparse.SUPPRESS)
+
     def command(
         group: Any, name: str, run: Callable[[argparse.Namespace], int], summary: str, *,
         auth: bool = True, parents: Sequence[argparse.ArgumentParser] = (),
     ) -> argparse.ArgumentParser:
-        sub = group.add_parser(name, help=summary, description=summary, parents=list(parents))
+        sub = group.add_parser(name, help=summary, description=summary, parents=[*parents, anywhere])
         sub.set_defaults(run=run, auth=auth)
         return sub
 
@@ -1724,7 +1830,8 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     cp.add_argument("--content-type", metavar="TYPE", help="The upload's content type (guessed from the name otherwise).")
 
     logs = command(commands, "logs", cmd_logs, "Print an app's logs, or a deployment's build log.", parents=[user])
-    logs.add_argument("project", nargs="?", help="The app's name.")
+    logs.add_argument("project", nargs="?", help="The app (default: the folder's linked one).")
+    logs.add_argument("--app", help="The app, as a flag: the same as the argument.")
     logs.add_argument("--build", action="store_true", help="Print a build log: the app's newest deployment's, or "
                                                           "--deployment's.")
     logs.add_argument("--deployment", metavar="ID", help="With --build: this deployment's build log.")
@@ -1736,20 +1843,6 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     logs.add_argument("--timeout", type=float, metavar="SECONDS", help="With -f: stop following after this long.")
     logs.add_argument("--json", action="store_true", help="One JSON object a line: at, level, message, deployment_id, "
                                                           "environment, request_id, status.")
-
-    settings = group("settings", "An app's plain settings, which it reads from its environment.")
-    listed = command(settings, "list", cmd_settings_list, "List an app's settings and their values.",
-                     parents=[as_json, user])
-    listed.add_argument("project", help="The app's name.")
-    setting = command(settings, "set", cmd_settings_set, "Set one (it reaches the app at its next deploy).",
-                      parents=[user])
-    setting.add_argument("project", help="The app's name.")
-    setting.add_argument("name", help="Letters, digits and _, starting with a letter.")
-    setting.add_argument("value", help="At most 4 KB; put anything sensitive in the app's secrets instead.")
-    unset = command(settings, "delete", cmd_settings_delete, "Delete one (from the app's next deploy).",
-                    parents=[user])
-    unset.add_argument("project", help="The app's name.")
-    unset.add_argument("name")
 
     domains = group("domains", "Search for and buy domains.")
     search = command(domains, "search", cmd_domains_search, "Check which names are available, and their prices.",
@@ -1791,13 +1884,6 @@ def build_parser(argv: Sequence[str] = (), *, areas: bool = True) -> argparse.Ar
     listen.add_argument("--secret", help="Sign with this secret instead of a new one per session.")
     listen.add_argument("--user", dest="events_user",
                         help="Only this user's events (default: your account's and every user's).")
-
-    ops = group("ops", "Wait on operations.")
-    wait = command(ops, "wait", cmd_ops_wait, "Wait for an operation to finish and print its result.",
-                   parents=[as_json])
-    wait.epilog = "A deploy or promote that went live but failed its check (its result's warning) exits 1."
-    wait.add_argument("operation_id")
-    wait.add_argument("--timeout", type=float, metavar="SECONDS", help="Give up after this long (exit 124).")
 
     # The parts (noclick._cli.parts), each adding its own commands, then the built-ins and the generated ones,
     # which never take a name a command above has.
@@ -1851,7 +1937,7 @@ def _unaliased(argv: List[str]) -> List[str]:
     i = _command_start(argv)
     if i >= len(argv):
         return argv
-    words = list(argv)
+    words = [*argv[:i], *screens.spelled_out(argv[i:])]
     words[i] = screens.TOP_ALIASES.get(words[i], words[i])
     j = i + 1
     if j < len(words) and words[j] in screens.GROUP_ALIASES:
@@ -1866,21 +1952,32 @@ def _unaliased(argv: List[str]) -> List[str]:
 
 
 def _bare_group(argv: Sequence[str]) -> Optional[List[str]]:
-    """The group a command line names alone (``noclick agents``, ``noclick projects --json``), whose commands it then
-    lists rather than refusing."""
+    """The group a command line names alone (``noclick agents``, ``noclick projects --help``), whose commands it then
+    lists rather than refusing: the common verbs first, as ``noclick help <group>`` lists them."""
     rest = argv[_command_start(argv):]
-    if any(word in ("-h", "--help") for word in rest):
-        return None
     words = [word for word in rest if not word.startswith("-")]
     return words if words and _is_group(words) else None
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """Run the ``noclick`` command; returns its exit status."""
-    argv = _unaliased(list(sys.argv[1:] if argv is None else argv))
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == [completion.COMMAND]:  # a shell asking what Tab completes to: nothing else runs
+        return completion.answer(argv[1:])
+    code = _main(_unaliased(argv))
+    notice = updates.notice(argv, current=__version__, how=updates.PIP)
+    if notice:
+        print(notice, file=sys.stderr)
+    return code
+
+
+def _main(argv: List[str]) -> int:
+    _AS_JSON[0] = "--json" in argv
     style.configure(style.mode_in(argv))
     bare = _bare_group(argv)
     args = build_parser(argv).parse_args(argv) if bare is None else None
+    if args is not None:
+        args.profile, args.profile_source = active_profile(args.profile)
     if args is not None and args.command is None:
         return _first_screen(args.profile)
     try:

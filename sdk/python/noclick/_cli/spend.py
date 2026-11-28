@@ -21,7 +21,7 @@ def check(items: List[Dict[str, Any]], max_usd: Optional[float], *, what: str, p
     if max_usd is not None and total > max_usd:
         raise OverLimit(f"{said}, over --max-usd {output.usd(max_usd)}: nothing was done.",
                         next_step="Raise --max-usd, or see each line with: noclick estimate --json",
-                        details={"estimate_usd": total, "max_usd": max_usd})
+                        details={"estimate_usd": total, "max_usd": max_usd}, run=["noclick estimate --json"])
     output.note(f"{said}{'' if max_usd is None else f' (under --max-usd {output.usd(max_usd)})'}.")
     return priced
 

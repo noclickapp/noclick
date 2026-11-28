@@ -308,7 +308,7 @@ class Volume(_Object):
             raise NotFound(
                 f"No volume is named {name!r}.",
                 next_step="Create it with noclick.Volume.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "volume"},
             )
         try:
             return await self._request("POST", "/v1/volumes", json=self._create_with)

@@ -145,7 +145,7 @@ export class McpServer extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No MCP server is named "${name}".`, {
         nextStep: "Create it with McpServer.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "mcp_server" },
       });
     }
     try {

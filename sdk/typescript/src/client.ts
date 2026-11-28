@@ -57,8 +57,9 @@ export interface RequestOptions {
   idempotencyKey?: string;
   timeoutMs?: number;
   signal?: AbortSignal;
-  /** `bytes` returns a `Uint8Array` instead of decoded JSON. */
-  responseType?: "json" | "bytes";
+  /** `bytes` returns a `Uint8Array` instead of decoded JSON; `auto` the JSON when the API answered JSON, else its
+   *  bytes (a file read as it is). */
+  responseType?: "json" | "bytes" | "auto";
   /**
    * In a browser, let the request outlive the page that sent it (fetch's `keepalive`), as a closing tab's last save
    * needs. The browser caps such a body at 64 KB.
@@ -150,6 +151,14 @@ function retryAfterSeconds(response: Response): number | undefined {
   if (!Number.isNaN(seconds)) return Math.max(0, seconds);
   const when = Date.parse(value);
   return Number.isNaN(when) ? undefined : Math.max(0, (when - Date.now()) / 1000);
+}
+
+/** Why a request never reached the API, as the network said it: its code (ECONNREFUSED) or its words. */
+function connectionCause(err: unknown): string {
+  const cause = (err as { cause?: { code?: unknown; message?: unknown } } | null)?.cause;
+  if (typeof cause?.code === "string") return cause.code;
+  if (typeof cause?.message === "string" && cause.message) return cause.message;
+  return err instanceof Error ? err.message : String(err);
 }
 
 function parseJson(text: string): unknown {
@@ -295,6 +304,7 @@ export class NoClick {
             throw new APIConnectionError(`Could not reach the NoClick API at ${this.baseUrl}: ${detail}`, {
               nextStep: `Check your network and ${API_URL_ENV}, then retry.`,
               attempts: attempt + 1,
+              details: { api_url: this.baseUrl, cause: connectionCause(err) },
             });
           }
           await this._sleep(this.backoffDelay(attempt, undefined));
@@ -305,7 +315,8 @@ export class NoClick {
         options.signal?.removeEventListener("abort", onAbort);
       }
 
-      if (response.ok && options.responseType === "bytes") {
+      if (response.ok && (options.responseType === "bytes"
+        || (options.responseType === "auto" && !(response.headers.get("content-type") ?? "").includes("json")))) {
         return new Uint8Array(await response.arrayBuffer()) as T;
       }
       const text = await response.text();
@@ -360,6 +371,7 @@ export class NoClick {
         if (signal.aborted) throw err;
         throw new APIConnectionError(`Could not reach the NoClick API at ${this.baseUrl}: ${err instanceof Error ? err.message : String(err)}`, {
           nextStep: `Check your network and ${API_URL_ENV}, then stream again.`,
+          details: { api_url: this.baseUrl, cause: connectionCause(err) },
         });
       }
       if (response.ok && response.body) break;

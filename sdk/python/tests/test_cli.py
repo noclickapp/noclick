@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import re
 import stat
 import subprocess
 import sys
@@ -14,6 +15,7 @@ import pytest
 
 import noclick as nc
 from noclick import cli
+from noclick._cli.parts import operate
 from noclick._cli.spec import load
 from platform_helpers import BASE, USER_ID, agent_row, body, listing, operation, user_row
 
@@ -92,13 +94,14 @@ def test_help_lists_the_commands_by_section_and_the_api_as_one_line(capsys):
     out = capsys.readouterr().out
     text = " ".join(out.split())
     for command in ("login Sign in", "logout Revoke", "whoami Show", "agents List", "users List", "bucket List",
-                    "ops Wait", "webhooks Receive", "db Query", "deploy Ship", "link Tie", "status Everything", "logs Print", "domains Search"):
+                    "wait Wait", "env Set", "webhooks Receive", "db Query", "deploy Ship", "link Tie", "status Everything", "logs Print", "domains Search"):
         assert command in text, command
     sections = [line[:-1] for line in out.splitlines() if line.endswith(":") and not line.startswith(" ")]
     assert sections[:6] == ["Start", "Ship", "Configure", "Operate", "Everything else", "Teach"]
     assert out.split("Start:\n")[1].startswith("  signup ")
     assert "<area> <operation>" in out and "agent-conversations" not in out
-    assert len(out.splitlines()) < 70
+    assert "\n  settings " not in out and "\n  ops " not in out  # old spellings, which work and are listed nowhere
+    assert len(out.splitlines()) < 72
     with pytest.raises(SystemExit):
         run("--help", "--all")
     assert "agent-conversations" in capsys.readouterr().out
@@ -109,6 +112,7 @@ def test_noclick_alone_says_what_to_run_first_and_who_you_are(home, monkeypatch,
     assert run() == 0
     out = capsys.readouterr().out
     assert "noclick login" in out and "noclick deploy" in out and "noclick docs cli" in out
+    assert "noclick ls" in out and "noclick resources" in out
     assert "No account? noclick signup --accept-terms" in out
     assert len(out.splitlines()) <= 20
     signed_in_with_login(home, monkeypatch)
@@ -136,7 +140,10 @@ def test_a_commands_help_ends_with_its_examples(capsys):
     with pytest.raises(SystemExit):
         run("deploy", "--help")
     examples = next(c["examples"] for c in load().commands if c["path"] == ["deploy"])
-    assert capsys.readouterr().out.rstrip().endswith("examples:\n" + "\n".join(f"  {e}" for e in examples))
+    out = capsys.readouterr().out
+    assert out.rstrip().endswith("Examples:\n" + "\n".join(f"  {e}" for e in examples))
+    # The flags every command takes are said once, under their own heading, with what each does.
+    assert "Global flags:\n  --profile NAME " in out and "  -h, --help " in out and "--version" not in out
 
 
 @pytest.mark.parametrize("argv, run_fn, expected", [
@@ -155,7 +162,7 @@ def test_a_commands_help_ends_with_its_examples(capsys):
      {"name": "acmebooking.com", "max_price": 15.0, "years": None}),
     (["webhooks", "listen", "--forward-to", "http://localhost:3000/hooks", "--events", "operation.*,human.answered"],
      cli.cmd_webhooks_listen, {"events": ["operation.*", "human.answered"], "events_user": None}),
-    (["--profile", "staging", "ops", "wait", "op_1", "--timeout", "30"], cli.cmd_ops_wait,
+    (["wait", "op_1", "--timeout", "30", "--profile", "staging"], operate.cmd_wait,
      {"operation_id": "op_1", "timeout": 30.0, "profile": "staging"}),
 ])
 def test_parses_every_command(argv, run_fn, expected):
@@ -187,7 +194,7 @@ def test_commands_need_a_key(home, monkeypatch, api, capsys):
     route = api.get("/v1/agents").respond(json=listing())
     assert run("agents", "list") == 1
     err = capsys.readouterr().err
-    assert "You're not signed in." in err and "Run noclick login, or set NOCLICK_API_KEY." in err
+    assert "You're not signed in." in err and "  run: noclick login\n" in err
     assert route.call_count == 0
 
 
@@ -258,8 +265,20 @@ def test_login_without_a_keychain_keeps_the_key_in_a_private_file_and_says_where
     monkeypatch.setattr(cli, "_keyring", lambda: refusing)
     path.unlink()
     assert run("login", "--no-browser") == 0
-    assert "The OS keychain refused: no Secret Service. Keeping the key in a file" in capsys.readouterr().err
+    assert cli.KEYCHAIN_REFUSED in capsys.readouterr().err
     assert json.loads(path.read_text()) == {"default": "nk_live_filekey123"}
+
+
+def test_noclick_keychain_off_keeps_every_key_in_the_file_and_never_asks_the_keychain(home, monkeypatch, api, capsys):
+    monkeypatch.delenv("NOCLICK_API_KEY")
+    monkeypatch.setenv("NOCLICK_KEYCHAIN", "off")
+    monkeypatch.setattr(cli, "_keyring", lambda: pytest.fail("asked the keychain"))
+    api.post("/v1/cli/logins").respond(json={"device_code": "dc", "user_code": "A-B", "verification_url": "https://x.test"})
+    api.post("/v1/cli/logins/token").respond(json={"status": "approved", "key": "nk_live_filekey123", "key_name": "CLI"})
+    assert run("login", "--no-browser") == 0
+    assert json.loads((home.config / "config.json").read_text())["profiles"]["default"]["store"] == "file"
+    assert run("login", "--store", "keychain") == 1
+    assert "The OS keychain is off here (NOCLICK_KEYCHAIN=off)." in capsys.readouterr().err
 
 
 def test_login_can_keep_the_key_in_a_private_file(home, monkeypatch, api):
@@ -325,7 +344,7 @@ def test_whoami_says_which_key_the_api_refused(home, api, capsys):
     assert run("whoami") == 1
     captured = capsys.readouterr()
     assert "nk_live_test…, from NOCLICK_API_KEY" in captured.out and "Account" not in captured.out
-    assert "This API key was revoked." in captured.err
+    assert "This key isn't valid: run noclick login." in captured.err and "This API key was revoked." in captured.err
 
 
 def test_the_stored_key_signs_calls_on_its_own_api(home, monkeypatch, api):
@@ -452,26 +471,32 @@ def test_users_list_and_create(home, api, capsys):
     assert capsys.readouterr().out.strip() == "globex"
 
 
-def test_ops_wait_prints_the_result(home, api, capsys):
-    api.get("/v1/operations/op_1/wait").respond(json=operation(
-        "op_1", kind="agent.message", status="succeeded", result={"text": "Done.", "conversation": "c"}))
-    assert run("ops", "wait", "op_1") == 0
-    out = capsys.readouterr()
-    assert out.out == "Done.\n" and "agent.message succeeded" in out.err
+def _ended(api, op_id, **fields):
+    """An operation that has ended, as both reads of it answer."""
+    done = operation(op_id, **fields)
+    api.get(f"/v1/operations/{op_id}").respond(json=done)
+    api.get(f"/v1/operations/{op_id}/wait").respond(json=done)
 
-    api.get("/v1/operations/op_2/wait").respond(json=operation("op_2", kind="x.y", status="succeeded", result={"n": 1}))
-    assert run("ops", "wait", "op_2", "--json") == 0
+
+def test_wait_prints_the_result_and_ops_wait_is_its_old_spelling(home, api, capsys):
+    _ended(api, "op_1", kind="agent.message", status="succeeded", result={"text": "Done.", "conversation": "c"})
+    for spelled in (["wait", "op_1"], ["ops", "wait", "op_1"]):
+        assert run(*spelled) == 0
+        out = capsys.readouterr()
+        assert out.out == "Done.\n" and "agent.message succeeded" in out.err
+
+    _ended(api, "op_2", kind="x.y", status="succeeded", result={"n": 1})
+    assert run("wait", "op_2", "--json") == 0
     assert json.loads(capsys.readouterr().out)["result"] == {"n": 1}
 
 
-def test_ops_wait_exit_codes(home, api, capsys):
-    api.get("/v1/operations/op_f/wait").respond(json=operation(
-        "op_f", status="failed", error={"type": "operation_failed", "message": "The build failed."}))
-    assert run("ops", "wait", "op_f") == 1
+def test_wait_exit_codes(home, api, capsys):
+    _ended(api, "op_f", status="failed", error={"type": "operation_failed", "message": "The build failed."})
+    assert run("wait", "op_f") == 1
     assert "error: The build failed." in capsys.readouterr().err
 
     api.get("/v1/operations/op_r").respond(json=operation("op_r", status="running"))
-    assert run("ops", "wait", "op_r", "--timeout", "0") == cli.exits.TIMED_OUT
+    assert run("wait", "op_r", "--timeout", "0") == cli.exits.TIMED_OUT
 
 
 # --- databases and storage ------------------------------------------------------------
@@ -621,17 +646,15 @@ WARNED = {**DEPLOYMENT, "warning": "It's live, but https://booking.noclick.site/
 def test_a_wait_on_a_deploy_live_but_failing_its_check_prints_the_warning_and_exits_1(home, api, capsys):
     """The CLI once printed the URL and "Ready" and exited 0 for a site whose / answered 404 (2026-11-19)."""
     # A deploy waited on later says its check as the deploy does.
-    api.get("/v1/operations/op_d/wait").respond(json=operation(
-        "op_d", kind="project.deploy", status="succeeded", result=WARNED))
-    assert run("ops", "wait", "op_d") == 1
+    _ended(api, "op_d", kind="project.deploy", status="succeeded", result=WARNED)
+    assert run("wait", "op_d") == 1
     assert f"next step: {WARNED['next_step']}" in capsys.readouterr().err
-    assert run("ops", "wait", "op_d", "--json") == 1
+    assert run("wait", "op_d", "--json") == 1  # the same exit, whatever it prints
     assert json.loads(capsys.readouterr().out)["result"]["warning"] == WARNED["warning"]
 
     # A promote (a rollback too) is looked at as a deploy is, and a wait on one reads the same way.
-    api.get("/v1/operations/op_p/wait").respond(json=operation(
-        "op_p", kind="deployment.promote", status="succeeded", result=WARNED))
-    assert run("ops", "wait", "op_p") == 1
+    _ended(api, "op_p", kind="deployment.promote", status="succeeded", result=WARNED)
+    assert run("wait", "op_p") == 1
     assert f"warning: {WARNED['warning']}" in capsys.readouterr().err
 
 
@@ -1062,14 +1085,15 @@ def test_logs_build_prints_a_build_log_and_a_missing_app_is_an_app(home, api, ca
     assert run("logs", "booking", "--build") == 0
     out = capsys.readouterr()
     assert "Build log of dep_1 (main, 3f2a1c9, failed)" in out.err
-    assert out.out == 'WARN   Set it as one of the app\'s settings, which reach the build (noclick settings set ' \
-                      'booking "API_URL" "...")\n'
+    assert out.out == 'WARN   Set it as one of the app\'s settings, which reach the build (noclick env set ' \
+                      'API_URL=...)\n'
 
     api.get("/v1/projects").respond(json=listing())
     assert run("logs", "nccli-worker") == 1
     err = capsys.readouterr().err
     assert "error: No app is named 'nccli-worker'." in err
-    assert "next step: Create it with its first deploy: noclick deploy nccli-worker --create" in err
+    assert "next step: Create it with: noclick deploy nccli-worker --create" in err
+    assert err.count("noclick deploy nccli-worker --create") == 1  # said once, in the step
 
 
 @pytest.mark.parametrize("argv, route, answer, said, code", [
@@ -1083,7 +1107,7 @@ def test_logs_build_prints_a_build_log_and_a_missing_app_is_an_app(home, api, ca
      httpx.Response(404, json={"error": {"type": "not_found", "message": "No file at 'missing.pdf'.",
                                          "next_step": "List the bucket's files with GET .../objects."}}),
      "next step: List its files with: noclick bucket ls uploads", 1),
-    (["ops", "wait", "op_f"], ("GET", "/v1/operations/op_f/wait"),
+    (["wait", "op_f"], ("GET", "/v1/operations/op_f"),
      httpx.Response(200, json=operation("op_f", kind="project.deploy", status="failed", error={
          "type": "operation_failed", "message": "The build failed.",
          "next_step": "Read its build log: GET /v1/deployments/dep_9/logs?kind=build."})),
@@ -1095,8 +1119,14 @@ def test_a_next_step_names_the_command_that_takes_it(home, api, capsys, argv, ro
     api.get("/v1/buckets").respond(json=listing(BUCKET))
     if route:
         api.request(*route).mock(return_value=answer)
+        if route[1].startswith("/v1/operations/"):
+            api.get(f"{route[1]}/wait").mock(return_value=answer)
     assert run(*argv) == code
-    assert said in capsys.readouterr().err
+    err = capsys.readouterr().err
+    assert said in err
+    command = said.split(": ", 2)[-1]
+    if command.startswith("noclick "):  # the command it names is said once, whole: in the step, not again as run:
+        assert err.count(command) == 1
 
 
 def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home, api, capsys):
@@ -1123,17 +1153,20 @@ def test_db_and_bucket_create_and_a_statement_that_defines_reports_no_rows(home,
     assert "Done (5 ms)." in err and "written" not in err
 
 
-def test_settings_set_list_and_delete(home, api, capsys):
+def test_settings_are_env_under_their_old_spelling(home, api, capsys):
+    """``noclick settings`` was ``env`` named twice: its old spellings are env's commands, the app passed as --app."""
     api.get("/v1/projects").respond(json=listing(PROJECT))
     put = api.put("/v1/projects/prj_1/settings/API_URL").respond(json={})
     api.get("/v1/projects/prj_1/settings").respond(json=listing({"name": "API_URL", "value": "https://a.test"}))
     gone = api.delete("/v1/projects/prj_1/settings/API_URL").respond(204)
     assert run("settings", "set", "booking", "API_URL", "https://a.test") == 0
     assert body(put.calls.last.request) == {"value": "https://a.test"}
-    assert "reaches booking at its next deploy" in capsys.readouterr().err
+    assert "Set API_URL = https://a.test on booking." in capsys.readouterr().err
     assert run("settings", "list", "booking") == 0
     assert capsys.readouterr().out.splitlines()[1].split() == ["API_URL", "https://a.test"]
     assert run("settings", "delete", "booking", "API_URL") == 0 and gone.call_count == 1
+    assert cli._unaliased(["--profile", "w", "settings", "set", "booking", "A", "b c", "--json"]) == [
+        "--profile", "w", "env", "set", "A=b c", "--json", "--app", "booking"]
 
 
 def test_bucket_cp_of_a_checkout_leaves_its_git_history_out(home, api, tmp_path, capsys):
@@ -1221,7 +1254,7 @@ def test_at_a_terminal_it_is_styled_and_piped_or_told_not_to_it_prints_plain_tex
         assert style.wanted("auto", type("Tty", (), {"isatty": lambda self: True})(), os.environ) is False
         # Styled, the table is a box and the last line of what a command answers is still the bare value.
         assert "╭" in styled[0] and "│ support" in style.visible(styled[0])
-        assert style.visible(styled[3]).startswith("error: No agent named nope.")
+        assert style.visible(styled[3]).startswith("error: No agent named 'nope'.")
         # A status screen keeps its words, its labels dimmed and its status word coloured.
         screen = ["booking  https://booking.noclick.site", "  live        ready 3f2a1c9 on main"]
         shown = style.Style(True).fields(screen)
@@ -1245,13 +1278,14 @@ def test_a_table_fits_the_terminal_cutting_prose_before_ids(columns):
 
 
 def _operation_lines():
-    """For every area, its list and get operations' commands, as ``noclick describe`` gives them."""
+    """For every area, its list and get operations' commands, as ``noclick describe`` gives them, each path argument
+    an id (a name would be read from its list first)."""
     from noclick._cli.commands import example, shadowed
     from noclick._cli.spec import load
     for area, ops in sorted(load().areas().items()):
         for op in ops:
             if (op["command"] == "list" or op["command"] == "get") and not shadowed(op):
-                yield op, example(op)
+                yield op, re.sub(r"<\w+>", "3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b40", example(op))
 
 
 @pytest.mark.parametrize("flags", [[], ["--color", "never"]], ids=["bare", "after-a-global-flag"])
@@ -1323,5 +1357,15 @@ def test_resources_lists_each_kind_the_account_has_with_its_cost(home, api, caps
     assert run("resources", "--kind", "machines", "--kind", "apps") == 0
     captured = capsys.readouterr()
     assert "Websites (1)" in captured.out and "machines: unread (No machines here.)" in captured.err
-    # Reading no kind at all is a failure.
-    assert run("resources", "--kind", "machines") == cli.exits.FAILED
+    # Reading no kind at all, for one reason, is that reason said once, with its exit code.
+    assert run("resources", "--kind", "machines") == cli.exits.REFUSED
+    assert capsys.readouterr().err.count("No machines here.") == 1
+
+
+def test_ls_with_a_key_that_isnt_valid_says_so_once(home, api, capsys):
+    api.route(path__startswith="/v1/").respond(401, json={"error": {
+        "type": "unauthenticated", "message": "Unknown API key.", "next_step": "Make a new key."}})
+    assert run("ls") == cli.exits.FAILED
+    err = capsys.readouterr().err
+    assert err.startswith("error: This key isn't valid: run noclick login.\n") and err.count("Unknown API key.") == 1
+    assert "  run: noclick login\n" in err and "unread" not in err

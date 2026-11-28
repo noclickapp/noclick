@@ -697,7 +697,7 @@ export class Domain extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No domain is named "${name}".`, {
         nextStep: "Buy it with Domain.buy(...) or connect it with Domain.connect(...).",
-        details: { name },
+        details: { name, kind: "domain" },
       });
     }
     let purchase: JsonObject;

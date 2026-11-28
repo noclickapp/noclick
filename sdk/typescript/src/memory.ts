@@ -156,7 +156,7 @@ export class Memory extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No memory is named "${name}".`, {
         nextStep: "Create it with Memory.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "memory" },
       });
     }
     try {

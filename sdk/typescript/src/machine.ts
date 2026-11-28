@@ -703,7 +703,7 @@ export class Machine extends ApiObject {
     if (!this._creates) {
       throw new NotFound(`No machine is named "${name}".`, {
         nextStep: "Create it with Machine.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "machine" },
       });
     }
     try {

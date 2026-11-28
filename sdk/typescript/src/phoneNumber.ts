@@ -1233,7 +1233,7 @@ export class PhoneNumber extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No phone number is named "${name}".`, {
         nextStep: "Buy it with PhoneNumber.buy(..., { name }) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "phone_number" },
       });
     }
     const [path, json] = this._connectVia === null

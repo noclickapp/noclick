@@ -18,6 +18,7 @@ import shutil
 import socket
 import sys
 import tempfile
+import time
 import webbrowser
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -30,11 +31,11 @@ from ..._sync import run_sync
 from ...bucket import Bucket
 from ...database import Database
 from ...dicts import Dict as NcDict
-from ...exceptions import Conflict, Error, NotFound, OperationFailed
+from ...exceptions import Conflict, Error, NotFound, OperationFailed, OperationTimeout
 from ...project import Deployment, Project
 from ...queues import Queue
 from ...repo import Repo, _blob_sha
-from .. import appconfig, link as links, output, style
+from .. import appconfig, exits, link as links, output, progress, style
 
 CommandError = _cli.CommandError
 _note = output.note
@@ -71,7 +72,8 @@ def _link_of(folder: Optional[Path] = None) -> Optional[links.Link]:
         return links.find(folder)
     except (ValueError, KeyError, TypeError):
         raise CommandError(f"The folder's {links.FOLDER}/{links.FILE} doesn't say which app it's linked to.",
-                           next_step="noclick link <app> writes it again, or noclick unlink removes it.") from None
+                           next_step="noclick link <app> writes it again, or noclick unlink removes it.",
+                           run=["noclick link <app>", "noclick unlink"]) from None
 
 
 def _root(link: links.Link) -> Path:
@@ -83,7 +85,6 @@ def _lookup(ref: str) -> Project:
     """The app ``ref`` names (its id, or its name), loaded."""
     project = Project.from_id(ref) if _ID.match(ref) else Project.from_name(ref)
     project.production_branch  # loads it (a name or id given is only a hint), so a missing one says so here
-    _cli._CONTEXT["app"] = project.name  # what an error's next step names
     return project
 
 
@@ -95,13 +96,15 @@ def _app(args: argparse.Namespace, folder: Optional[Path] = None) -> Tuple[Proje
     link = _link_of(folder)
     if link is None:
         raise links.NotLinked("This folder isn't linked to an app.",
-                              next_step="noclick link <app> (once per folder), or pass --app <app>.")
+                              next_step="noclick link <app> (once per folder), or pass --app <app>.",
+                              run=["noclick link <app>"])
     try:
         return _lookup(link.app_id or link.app), link
     except NotFound:
-        raise NotFound(f"{link.path} links this folder to {link.app}, which this key doesn't reach (deleted, or "
-                       "another account's).",
-                       next_step="noclick link <app> to link another, or noclick unlink.") from None
+        raise output.run(NotFound(f"{link.path} links this folder to {link.app}, which this key doesn't reach "
+                                  "(deleted, or another account's).",
+                                  next_step="noclick link <app> to link another, or noclick unlink."),
+                         ["noclick link <app>", "noclick unlink"]) from None
 
 
 def _api_url(args: argparse.Namespace) -> str:
@@ -115,14 +118,16 @@ def cmd_link(args: argparse.Namespace) -> int:
     folder = Path(args.dir or os.getcwd()).resolve()
     ref = args.app_ref or args.app
     if ref is None:
-        raise CommandError("Name the app to link this folder to.", next_step="noclick link <app> (its name or id).")
+        raise CommandError("Name the app to link this folder to.", next_step="noclick link <app> (its name or id).",
+                           run=["noclick link <app>"])
     try:
         project = _lookup(ref)
     except NotFound:
         if not args.create:
-            raise NotFound(f"No app is named {ref!r}.",
-                           next_step=f"noclick link {ref} --create makes it (and its repo), or noclick deploy does "
-                                     "on the folder's first deploy.") from None
+            raise output.run(NotFound(f"No app is named {ref!r}.",
+                                      next_step=f"noclick link {ref} --create makes it (and its repo), or noclick "
+                                                "deploy does on the folder's first deploy."),
+                             [f"noclick link {ref} --create"]) from None
         project = _create(ref, args.budget)
         _note(f"Made the app {project.name} and its repo.")
     link = links.write(project.name, app_id=project.id, api_url=_api_url(args), root=folder)
@@ -300,6 +305,7 @@ def keep_secrets_out(root: Path, paths: Sequence[str], committed: Sequence[str] 
             next_step=f"git rm --cached {' '.join(in_history[:5])}, add it to .gitignore and commit; give the app "
                       "each value with noclick secret set NAME --from-env NAME, and change the values (they're in "
                       "this checkout's history).",
+            run=["noclick secret set <name> --from-env <name>"],
             details={"files": in_history})
     return [_left_out(root, p) for p in paths if _secret_file(root, p)]
 
@@ -484,7 +490,8 @@ def _push(root: str, env: Dict[str, str], sha: str, branch: str) -> None:
         stderr = err.details.get("stderr") or ""
         if "Operation too slow" in stderr:
             raise CommandError(f"The repo's git endpoint sent nothing for {_cli.GIT_GIVE_UP_S} seconds, so the push "
-                               "gave up.", next_step="noclick deploy again.", details=err.details) from None
+                               "gave up.", next_step="noclick deploy again.", details=err.details,
+                               run=["noclick deploy"]) from None
         if "[rejected]" not in stderr:
             raise
         _fetch(root, env, branch)
@@ -560,7 +567,8 @@ def ship_folder(root: Path, repo: Repo, branch: str, *, message: str) -> Shipped
         del local[item.path]
     if not local:
         raise CommandError(f"There's nothing to deploy: {root} holds no files.",
-                           next_step="Run noclick deploy in the app's folder (or pass --dir).")
+                           next_step="Run noclick deploy in the app's folder (or pass --dir).",
+                           run=["noclick deploy --dir <folder>"])
     branches = {b.name: b for b in repo.branches()}
     ref = branch if branch in branches else None
     remote = {f.path: f.sha for f in repo.files("", ref=ref, recursive=True) if f.type == "file"} if branches else {}
@@ -634,8 +642,9 @@ def _deploy_target(args: argparse.Namespace, root: Path, link: Optional[links.Li
             return _lookup(named), False
         except NotFound:
             if not args.create:
-                raise NotFound(f"No app is named {named!r}.",
-                               next_step=f"noclick deploy --app {named} --create makes it (and its repo).") from None
+                raise output.run(NotFound(f"No app is named {named!r}.",
+                                          next_step=f"noclick deploy --app {named} --create makes it (and its repo)."),
+                                 [f"noclick deploy --app {named} --create"]) from None
             return _create(named, args.budget), True
     if link is not None:
         return _app(argparse.Namespace(app=None), _root(link))[0], False
@@ -647,7 +656,8 @@ def _deploy_target(args: argparse.Namespace, root: Path, link: Optional[links.Li
     raise CommandError(
         f"This folder isn't linked to an app, and you already have an app named {existing.name} ({existing.url}).",
         next_step=f"Deploy to it: noclick link {existing.name}, then noclick deploy. Or make a new one: noclick "
-                  "deploy --app <new-name> --create.")
+                  "deploy --app <new-name> --create.",
+        run=[f"noclick link {existing.name}", "noclick deploy --app <new-name> --create"])
 
 
 def cmd_deploy(args: argparse.Namespace) -> int:
@@ -699,11 +709,18 @@ def cmd_deploy(args: argparse.Namespace) -> int:
     for change in applied.changes:
         _note(f"  {change}")
     message = f"Deploy {root.name} from {socket.gethostname()}"
-    if checkout:
-        shipped = ship_checkout(checkout, tree, project.repo.clone_url(write=True, ttl_s=600), branch,
-                                message=message)
-    else:
-        shipped = ship_folder(root, project.repo, branch, message=message)
+    steps, started = progress.Steps(), time.monotonic()
+    steps.start("Push")
+    try:
+        if checkout:
+            shipped = ship_checkout(checkout, tree, project.repo.clone_url(write=True, ttl_s=600), branch,
+                                    message=message)
+        else:
+            shipped = ship_folder(root, project.repo, branch, message=message)
+    except BaseException:
+        steps.end(False)
+        raise
+    steps.end(True)
     _said_shipped(shipped)
     serving = None if made else project.production
     if serving is not None and serving.commit == shipped.commit and serving.branch == branch:
@@ -721,23 +738,19 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         "made": applied.made, "translated": translated.added if translated else [],
         "left_out": [item.as_data() for item in shipped.left_out]}
     if args.no_wait:
-        _note(f"Deploying. Wait for it with: noclick ops wait {op.id}")
+        _note(f"Deploying. Wait for it with: noclick wait {op.id}")
         _out(args, data, op.id)
         return 0
-    _note("Building…")
-    try:
-        deployment = op.wait(timeout=args.timeout)
-    except OperationFailed as failed:
-        deployment_id = failed.details.get("deployment_id")
-        if deployment_id:  # its end, less a last line that's the error printed after it
-            _cli._build_log(Deployment.from_id(deployment_id), last=20, leave_out=failed.message)
-        raise
+    deployment = _follow(args, op, steps)
+    if deployment is None:
+        _out(args, data, op.id)
+        return exits.INTERRUPTED
     if deployment.raw.get("preview_link"):
         _note(f"The preview is private: it opens with {deployment.raw['preview_link']}")
     broken = _cli._said_deployment(deployment.raw)
     where = "production" if deployment.production else "a preview of " + branch
     _note(f"Live, but not working: {where} stays deployed (nothing was rolled back)." if broken else
-          f"Ready: {where}.")
+          f"Ready: {_summary(deployment.url, where, deployment.id, started)}")
     if not deployment.production:
         _note(f"Put it live in production with: noclick promote {branch}")
     data.update(url=deployment.url, deployment_id=deployment.id, status=deployment.status, ok=not broken,
@@ -752,7 +765,8 @@ def _published_source(paths: Sequence[str]) -> CommandError:
         f"This folder is a site of files, so every file in it is published, and it holds server code: "
         f"{', '.join(paths[:5])}" + (f" and {len(paths) - 5} more" if len(paths) > 5 else "") + ".",
         next_step="Deploy only the site's own folder (noclick deploy --dir public), or run the code as a server "
-                  "(a requirements.txt or Dockerfile beside it makes it one).", details={"files": list(paths)})
+                  "(a requirements.txt or Dockerfile beside it makes it one).", details={"files": list(paths)},
+        run=["noclick deploy --dir public"])
 
 
 def _said_shipped(shipped: Shipped) -> None:
@@ -833,8 +847,9 @@ def cmd_status(args: argparse.Namespace) -> int:
         if d.branch != project.production_branch and d.status == "ready" and d.branch not in previews:
             previews[d.branch] = d
     last = deployments[0] if deployments else None
+    urls = _urls(project)
     data: Dict[str, Any] = {
-        "app": {"id": project.id, "name": project.name, "url": project.url, "runtime": project.runtime,
+        "app": {"id": project.id, "name": project.name, "url": project.url, "urls": urls, "runtime": project.runtime,
                 "framework": project.framework, "production_branch": project.production_branch,
                 "domains": project.domain_names, "linked_from": str(_root(link)) if link else None},
         "production": _deployment_view(production) if production else None,
@@ -842,8 +857,8 @@ def cmd_status(args: argparse.Namespace) -> int:
         "last_deploy": _deployment_view(last) if last else None,
     }
     lines = [f"{project.name}  {project.url}"]
-    if project.domain_names:
-        lines.append(f"  domains     {', '.join(project.domain_names)}")
+    if len(urls) > 1:
+        lines.append(f"  also        {', '.join(urls[1:])}")
     if production is not None:
         lines.append(f"  live        {_release_line(production)}")
     else:
@@ -853,7 +868,8 @@ def cmd_status(args: argparse.Namespace) -> int:
         lines.append(f"  health      unread ({outcomes.message})")
     elif outcomes is not None:
         rate = "-" if outcomes.error_rate is None else f"{outcomes.error_rate:.1%}"
-        lines.append(f"  health      {outcomes.requests} requests in the last hour, {outcomes.errors} errors ({rate})")
+        lines.append(f"  health      {output.plural(outcomes.requests, 'request')} in the last hour, "
+                     f"{output.plural(outcomes.errors, 'error')} ({rate})")
         data["health"] = {"requests": outcomes.requests, "errors": outcomes.errors, "error_rate": outcomes.error_rate}
     if last is not None and (production is None or last.id != production.id):
         lines.append(f"  last deploy {_release_line(last)}")
@@ -892,6 +908,11 @@ def cmd_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def _urls(project: Project) -> List[str]:
+    """The app's addresses: its primary URL first, then each domain serving it."""
+    return list(dict.fromkeys([project.url, *(f"https://{d}" for d in project.domain_names)]))
+
+
 def _release_line(d: Deployment) -> str:
     when = d.created_at.astimezone().strftime("%Y-%m-%d %H:%M") if isinstance(d.created_at, datetime) else "-"
     warning = f", but {d.raw['warning']}" if d.raw.get("warning") else ""
@@ -911,8 +932,8 @@ def cmd_open(args: argparse.Namespace) -> int:
         ready = [d for d in project.deployments(limit=50) if d.status == "ready" and not d.production
                  and (branch is None or d.branch == branch) and d.branch != project.production_branch]
         if not ready:
-            raise NotFound(f"{project.name} has no preview{' of ' + branch if branch else ''} ready.",
-                           next_step="noclick deploy --preview makes one.")
+            raise output.run(NotFound(f"{project.name} has no preview{' of ' + branch if branch else ''} ready.",
+                                      next_step="noclick deploy --preview makes one."), ["noclick deploy --preview"])
         url = ready[0].url
     if sys.stdout.isatty() and not args.no_browser:
         webbrowser.open(url)
@@ -925,13 +946,17 @@ def cmd_releases(args: argparse.Namespace) -> int:
     branch = None if args.all else project.production_branch
     found = project.deployments(branch=branch, limit=args.limit + 1)
     shown = found[: args.limit]
+    urls = _urls(project)
     if getattr(args, "json", False):
-        _out(args, {"data": [_deployment_view(d) for d in shown], "has_more": len(found) > args.limit}, None)
+        _out(args, {"app": {"name": project.name, "url": project.url, "urls": urls},
+                    "data": [_deployment_view(d) for d in shown], "has_more": len(found) > args.limit}, None)
         return 0
+    print("\n".join(style.OUT.fields([f"{project.name}  {project.url}",
+                                      *([f"  also        {', '.join(urls[1:])}"] if len(urls) > 1 else [])])))
     output.table(("", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED", "MESSAGE"),
                 (["*" if d.production else "", d.id, d.branch, d.status, (d.commit or "")[:7], d.created_at,
                   appconfig.clip((d.commit_message or "").splitlines()[0] if d.commit_message else "", 50)]
-                 for d in shown), empty=f"{project.name} has no deployments yet: noclick deploy.",
+                 for d in shown), empty=f"{project.name} has no releases yet. Ship one with: noclick deploy",
                  title=f"Releases of {project.name}")
     if len(found) > args.limit:
         _note(f"More: noclick releases --limit {args.limit * 2}{' --all' if args.all else ''}")
@@ -940,16 +965,59 @@ def cmd_releases(args: argparse.Namespace) -> int:
     return 0
 
 
+# A release's one stage, and the words for it done, by the verb that started it.
+_RELEASES = {"Rolling back": ("Roll back", "Rolled back to"), "Promoting": ("Promote", "Promoted")}
+
+
+def _summary(url: Optional[str], where: Optional[str], release: str, started: float) -> str:
+    """What a release came to, in one line: where it serves, which release, how long it took."""
+    return " · ".join(part for part in (url, where, f"release {release}", progress.took(time.monotonic() - started))
+                      if part)
+
+
+def _follow(args: argparse.Namespace, op: Any, steps: progress.Steps, *, single: Optional[str] = None
+            ) -> Optional[Deployment]:
+    """Draw the release as it goes until it ends: its deployment, or None once Ctrl-C stopped following (it goes on,
+    and the note says how to pick it up)."""
+
+    def read(op_id: str, window: int, changed_since: Optional[str]) -> Dict[str, Any]:
+        return run_sync(op._request("GET", f"/v1/operations/{op_id}/wait", timeout=window + 15,
+                                    params={"timeout_s": window, **({"changed_since": changed_since}
+                                                                    if changed_since else {})}))
+
+    raw = progress.follow(op.id, op.raw, steps, read, timeout=args.timeout, single=single)
+    if raw is None:
+        _note(f"Detached: it goes on. Follow it with: noclick wait {op.id}")
+        return None
+    op._absorb(raw)
+    if raw.get("status") not in progress.TERMINAL:
+        raise output.run(OperationTimeout(f"It's still {raw.get('status')} after {args.timeout:g}s, and goes on.",
+                                          next_step=f"Follow it with: noclick wait {op.id}",
+                                          details={"operation_id": op.id}), [f"noclick wait {op.id}"])
+    try:
+        return op.wait()
+    except OperationFailed as failed:
+        deployment_id = failed.details.get("deployment_id")
+        if deployment_id and not steps.printed_lines:  # its end, less a last line that's the error printed after it
+            _cli._build_log(Deployment.from_id(deployment_id), last=20, leave_out=failed.message)
+        raise
+
+
 def _wait_release(args: argparse.Namespace, project: Project, op: Any, verb: str) -> int:
     if args.no_wait:
-        _note(f"{verb}. Wait for it with: noclick ops wait {op.id}")
+        _note(f"{verb}. Wait for it with: noclick wait {op.id}")
         _out(args, {"operation_id": op.id}, op.id)
         return 0
-    deployment = op.wait(timeout=args.timeout)
+    stage, done = _RELEASES[verb]
+    started = time.monotonic()
+    deployment = _follow(args, op, progress.Steps(), single=stage)
+    if deployment is None:
+        _out(args, {"operation_id": op.id}, op.id)
+        return exits.INTERRUPTED
     broken = _cli._said_deployment(deployment.raw)
-    _note("Live, but not working: it stays live (go back with noclick rollback)." if broken else
-          f"Live: {(deployment.commit or deployment.id)[:7]} serves production.")
     url = (deployment.raw.get("serves") or {}).get("production") or project.url
+    _note("Live, but not working: it stays live (go back with noclick rollback)." if broken else
+          f"{done} {(deployment.commit or deployment.id)[:7]}: {_summary(url, None, deployment.id, started)}")
     _out(args, {"operation_id": op.id, **_deployment_view(deployment), "url": url, "ok": not broken}, url)
     return 1 if broken else 0
 
@@ -962,14 +1030,16 @@ def cmd_rollback(args: argparse.Namespace) -> int:
         if target is None and _ID.match(args.release):
             target = Deployment.get(args.release)
         if target is None:
-            raise NotFound(f"No release of {project.name} is {args.release}.",
-                           next_step="noclick releases lists them by id and commit.")
+            raise output.run(NotFound(f"No release of {project.name} is {args.release}.",
+                                      next_step="noclick releases lists them by id and commit."),
+                             [f"noclick releases --app {project.name}"])
     else:
         live = next((i for i, d in enumerate(releases) if d.production), None)
         earlier = [d for d in releases[(live + 1 if live is not None else 0):] if d.status == "ready"]
         if not earlier:
-            raise NotFound(f"{project.name} has no earlier release to go back to.",
-                           next_step="noclick releases lists what it has.")
+            raise output.run(NotFound(f"{project.name} has no earlier release to go back to.",
+                                      next_step="noclick releases lists what it has."),
+                             [f"noclick releases --app {project.name}"])
         target = earlier[0]
     when = output.cell(target.created_at)
     _note(f"Rolling {project.name} back to {(target.commit or target.id)[:7]} ({when}).")
@@ -991,8 +1061,10 @@ def cmd_promote(args: argparse.Namespace) -> int:
         target = next((d for d in ready if d.branch == ref or d.url == ref.rstrip("/")), None) or \
             _find_release(ready, ref)
     if target is None:
-        raise NotFound(f"{project.name} has no ready preview of {ref}.",
-                       next_step=f"noclick deploy --preview {ref} makes one; noclick releases --all lists them.")
+        raise output.run(NotFound(f"{project.name} has no ready preview of {ref}.",
+                                  next_step=f"noclick deploy --preview {ref} makes one; noclick releases --all lists "
+                                            "them."),
+                         [f"noclick deploy --preview {ref}", f"noclick releases --all --app {project.name}"])
     _note(f"Promoting {target.branch} ({(target.commit or '')[:7]}) to production.")
     return _wait_release(args, project, target.promote(force=args.force), "Promoting")
 
@@ -1059,8 +1131,9 @@ def cmd_secret_ls(args: argparse.Namespace) -> int:
     if getattr(args, "json", False):
         _out(args, {"data": [{"name": n, "updated_at": at} for n, at in sorted(found.items())]}, None)
         return 0
-    output.table(("NAME", "UPDATED"), sorted(found.items()), empty=f"{project.name} has no secrets for {args.env}.",
-                 title=f"Secrets of {project.name} ({args.env})")
+    seen_by = {"all": "", "production": " for production", "preview": " for previews"}[args.env]
+    output.table(("NAME", "UPDATED"), sorted(found.items()), empty=f"{project.name} has no secrets{seen_by}.",
+                 title=f"Secrets of {project.name}{seen_by}")
     return 0
 
 
@@ -1278,7 +1351,7 @@ def register(kit: Any) -> None:
     wait = argparse.ArgumentParser(add_help=False)
     wait.add_argument("--no-wait", action="store_true", help="Print the operation id instead of waiting.")
     wait.add_argument("--timeout", type=float, metavar="SECONDS",
-                      help="Stop waiting after this long (exit 124); it goes on, and noclick ops wait picks it up.")
+                      help="Stop waiting after this long (exit 124); it goes on, and noclick wait picks it up.")
 
     deploy = command(commands, "deploy", cmd_deploy, "Ship this folder to its app and print the live URL.",
                      parents=[as_json, user, wait])

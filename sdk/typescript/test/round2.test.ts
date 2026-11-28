@@ -344,6 +344,18 @@ test("sandbox create, exec, files, list and terminate", async () => {
   assert.equal(del.count, 1);
 });
 
+test("a sandbox's shell is a terminal token for its own user's sandbox", async () => {
+  const { api } = setup();
+  const opened = api.on("POST", "/v1/sandboxes/sbx_1/shell", json({
+    object: "sandbox_shell", sandbox_id: "sbx_1", url: "wss://api.test/v1/terminals/attach", token: "tok_1",
+    token_expires_at: "2026-09-25T10:02:00Z", idle_limit_s: 900,
+  }));
+  const shell = await nc.Sandbox.fromId("sbx_1", { user: "user_42" }).shell();
+  assert.deepEqual([shell.sandboxId, shell.url, shell.token, shell.idleLimitS], ["sbx_1", "wss://api.test/v1/terminals/attach", "tok_1", 900]);
+  assert.ok(shell.tokenExpiresAt instanceof Date);
+  assert.equal(opened.last.headers.get("NoClick-User"), "user_42");
+});
+
 test("a non-zero exit is a result, not an error", async () => {
   const { api } = setup();
   api.on("POST", "/v1/sandboxes/sbx_1/exec", json({ stdout: "", stderr: "boom", exit_code: 2 }));

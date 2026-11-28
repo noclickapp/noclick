@@ -28,9 +28,10 @@ def _print_doc(doc_id: str) -> int:
         doc = Docs.read(doc_id)
     except NotFound:
         hits = Docs.search(doc_id.split(":", 1)[-1].replace("-", " "), limit=5)
-        raise NotFound(f"No doc is called {doc_id!r}.",
-                       next_step=f"Read one of these: {', '.join(f'noclick docs {h.id}' for h in hits)}" if hits
-                       else "List them with: noclick docs") from None
+        read = [f"noclick docs {h.id}" for h in hits] or ["noclick docs"]
+        raise out.run(NotFound(f"No doc is called {doc_id!r}.",
+                               next_step=f"Read one of these: {', '.join(read)}" if hits else "List them with: noclick docs"),
+                      read) from None
     out.line(f"# {doc.title}\n\n{doc.text.strip()}")
     if doc.sections:
         out.note(f"Its sections, one at a time: noclick docs {doc.sections[0]} ({len(doc.sections)} in all: "

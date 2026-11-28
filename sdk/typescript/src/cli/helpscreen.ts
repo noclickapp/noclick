@@ -5,6 +5,7 @@
  * printed as it always was.
  */
 
+import type { Arg, Command, Flag } from "./spec.ts";
 import type { Style } from "./style.ts";
 
 const NAME_COLUMN = 28;
@@ -59,4 +60,41 @@ export function screen(s: Style, help: HelpScreen): string {
   if (help.notes) lines.push(...s.section("Notes"), ...wrap(help.notes, width - 2).map((l) => `  ${s.dim(l)}`), "");
   if (help.examples?.length) lines.push(...s.section("Examples"), ...help.examples.map((e) => `  ${s.link(e)}`), "");
   return lines.join("\n").trimEnd();
+}
+
+/** A flag as its help names it: `-r, --recursive`, `--app APP`, `--env {all,production,preview}`, `--preview [NAME]`
+ *  (its value may be left out), as the Python CLI's `helpscreen.invocation`. */
+export function invocation(flag: Flag): string {
+  const names = flag.short ? `${flag.short}, ${flag.flag}` : flag.flag;
+  if (flag.type === "bool") return names;
+  const value = flag.choices?.length ? `{${flag.choices.join(",")}}` : (flag.metavar ?? flag.dest.toUpperCase());
+  return "const" in flag ? `${names} [${value}]` : `${names} ${value}`;
+}
+
+const argument = (arg: Arg) => {
+  const name = arg.metavar ?? arg.name;
+  return (arg.optional ? `[${name}]` : `<${name}>`) + (arg.many ? "..." : "");
+};
+
+/** `noclick secret set [OPTIONS] <name>`: a curated command's usage, from the manifest. */
+export function usageOf(command: Command): string {
+  return ["noclick", ...command.path, ...(command.flags.length ? ["[OPTIONS]"] : []), ...command.args.map(argument)].join(" ");
+}
+
+/** What every command's help lists after its own options: the flags any command takes. */
+export function globalFlags(globals: Flag[]): [string, string][] {
+  return [...globals.filter((g) => g.flag !== "--version").map((g) => [invocation(g), g.help ?? ""] as [string, string]), ["-h, --help", "Show this help."]];
+}
+
+/** A curated command's help, from the manifest: what the Python CLI's `helpscreen.command_screen` draws for it. */
+export function commandScreen(command: Command, globals: Flag[], s: Style): string {
+  return screen(s, {
+    usage: usageOf(command), description: command.summary,
+    sections: [
+      ["Arguments", command.args.map((a) => [a.metavar ?? a.name, a.help ?? ""] as [string, string])],
+      ["Options", command.flags.map((f) => [invocation(f), f.help ?? ""] as [string, string])],
+      ["Global flags", globalFlags(globals)],
+    ],
+    notes: command.notes, examples: command.examples,
+  });
 }

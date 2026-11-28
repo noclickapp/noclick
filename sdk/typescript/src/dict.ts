@@ -197,7 +197,7 @@ export class Dict extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No dict is named "${name}".`, {
         nextStep: "Create it with Dict.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "dict" },
       });
     }
     try {

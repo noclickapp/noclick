@@ -4,24 +4,28 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import type { NoClickError } from "../src/errors.ts";
+import { configure } from "../src/client.ts";
+import { Conflict, type NoClickError } from "../src/errors.ts";
 
 import { WAIT_WINDOW_S, commandsFor } from "../src/cli/commands.ts";
 import { TIMED_OUT, exitCode } from "../src/cli/exits.ts";
 import * as link from "../src/cli/link.ts";
-import { main } from "../src/cli/main.ts";
-import { FAILED, OK, REFUSED, USAGE, WAITING } from "../src/cli/output.ts";
+import { main, spelledOut } from "../src/cli/main.ts";
+import { host } from "../src/cli/host.ts";
+import { FAILED, OK, REFUSED, USAGE, WAITING, errorBody } from "../src/cli/output.ts";
 import * as spend from "../src/cli/spend.ts";
 import type { Io } from "../src/cli/output.ts";
 import { load } from "../src/cli/spec.ts";
 import { apiError, json, operation, setup } from "./helpers.ts";
 
 WAIT_WINDOW_S.value = 1;
+/** An id NoClick made: anything else given where one goes is a name, read from a list first. */
+const AGENT = "3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b40";
 
 function captured(): Io & { stdout: string[]; stderr: string[] } {
   const stdout: string[] = [];
   const stderr: string[] = [];
-  return { stdout, stderr, out: (line) => stdout.push(line), err: (line) => stderr.push(line) };
+  return { stdout, stderr, out: (line) => stdout.push(line), err: (line) => stderr.push(line), write: (data) => stdout.push(new TextDecoder().decode(data)) };
 }
 
 const signedIn = { signIn: () => {} };
@@ -37,9 +41,9 @@ test("every operation the spec has is a command of its own, but where a curated 
 
 test("a generated command makes its call through the SDK, its useful value last", async () => {
   const { api } = setup();
-  const route = api.on("POST", "/v1/agents/support%20bot/messages", json({ id: "msg_1", url: "https://noclick.test/m/1" }));
+  const route = api.on("POST", `/v1/agents/${AGENT}/messages`, json({ id: "msg_1", url: "https://noclick.test/m/1" }));
   const io = captured();
-  const code = await main(["agents", "messages-create", "support bot", "--text", "hi", "--attachments", "a1",
+  const code = await main(["agents", "messages-create", AGENT, "--text", "hi", "--attachments", "a1",
     "--attachments", "a2", "--data", '{"conversation": "c1", "text": "replaced"}'], io, signedIn);
   assert.equal(code, OK);
   assert.deepEqual(route.calls[0]!.body, { text: "hi", attachments: ["a1", "a2"], conversation: "c1" });
@@ -59,11 +63,11 @@ test("a required field left out is a usage error naming it, before any call", as
 
 test("an operation it starts is waited on, and one waiting on a person exits 3", async () => {
   const { api } = setup();
-  api.on("POST", "/v1/agents/a1/messages", json(operation({ id: "op_9", status: "running" }), { status: 202 }));
+  api.on("POST", `/v1/agents/${AGENT}/messages`, json(operation({ id: "op_9", status: "running" }), { status: 202 }));
   api.on("GET", "/v1/operations/op_9/wait",
     json(operation({ id: "op_9", status: "awaiting_human", result: { url: "https://noclick.test/h/1" } })));
   const io = captured();
-  assert.equal(await main(["agents", "messages-create", "a1", "--text", "hi"], io, signedIn), WAITING);
+  assert.equal(await main(["agents", "messages-create", AGENT, "--text", "hi"], io, signedIn), WAITING);
   assert.equal(io.stdout.at(-1), "https://noclick.test/h/1");
 });
 
@@ -71,11 +75,18 @@ test("an API refusal exits by what it is and names the command its next step mak
   for (const [status, type, code] of [[402, "approval_required", WAITING], [402, "spend_cap_exceeded", REFUSED],
     [400, "invalid_request", USAGE], [404, "not_found", FAILED]] as const) {
     const { api } = setup();
-    api.on("GET", "/v1/agents/a1", apiError(status, type, "No.", { next_step: "List agents with GET /v1/agents." }));
+    api.on("GET", `/v1/agents/${AGENT}`, apiError(status, type, "No.", { next_step: "List agents with GET /v1/agents." }));
     const io = captured();
-    assert.equal(await main(["agents", "get", "a1", "--json"], io, signedIn), code, type);
+    assert.equal(await main(["agents", "get", AGENT, "--json"], io, signedIn), code, type);
     const { error } = JSON.parse(io.stdout.join("\n"));
+    // The route it names is said as the command that makes it.
+    assert.equal(error.next_step, "List agents with noclick agents list.");
     assert.deepEqual(error.commands, ["noclick agents list"]);
+    const said = captured();
+    assert.equal(await main(["agents", "get", AGENT], said, signedIn), code, type);
+    // The translated step ends with the command, so it isn't said again as run:.
+    assert.ok(said.stderr.includes("  next step: List agents with noclick agents list."), said.stderr.join("\n"));
+    assert.ok(!said.stderr.some((line) => line.startsWith("  run:")), said.stderr.join("\n"));
   }
 });
 
@@ -97,20 +108,150 @@ test("api calls any route, describe and help need no key", async () => {
   assert.equal(listed.conventions.exit_codes["3"], "waiting on a person");
 });
 
-test("a next step naming a route, an operation or a command is the command that makes it", () => {
+test("a route a next step names is the command that makes it, and nothing is read out of its words", () => {
   const commands = commandsFor(load());
-  assert.deepEqual(commands.runnable("Read it again: GET /v1/workflows/{id}/approvals/{approval_id}."),
+  assert.deepEqual(commands.routes("Read it again: GET /v1/workflows/{id}/approvals/{approval_id}."),
     ["noclick workflows approvals-get <workflow_id> <approval_id>"]);
-  assert.deepEqual(commands.runnable("Run noclick login, or set NOCLICK_API_KEY."), ["noclick login"]);
+  assert.deepEqual(commands.routes("Run noclick link x --create makes it (and its repo)."), []);
+  assert.equal(commands.forCall("GET", "/v1/domains/search"), "noclick domains search <query>");
+  const served = new Conflict("y", { nextStep: "See GET /v1/agents.", details: { run: ["noclick agents list"] } });
+  assert.deepEqual(errorBody(served, commands).commands, ["noclick agents list"]);
+  assert.deepEqual(commands.routes("Call agents_update with a new name."), ["noclick agents update <agent_id>"]);
+  // In its words, each route and operation it names is the command, its query the flags that set it.
+  assert.equal(commands.translate("Use an id from GET /v1/machines?limit=5&name=build%20box (a user's are theirs)."),
+    "Use an id from noclick machines list --limit 5 --name 'build box' (a user's are theirs).");
+  assert.equal(commands.translate("Read the file with GET /v1/sandboxes/sb_1/files."), "Read the file with noclick sandboxes files-read sb_1.");
+  assert.equal(commands.translate("Call `agents_update` with a new name."), "Call `noclick agents update <agent_id>` with a new name.");
+  assert.equal(commands.translate("Ask again with GET /v1/nothing/here."), "Ask again with noclick api GET /v1/nothing/here.");
+});
+
+test("a command is named for what it does, and its old name still runs it", async () => {
+  const spec = load();
+  const named = new Map(spec.operations.map((op) => [op.name, `${op.area} ${op.command}`]));
+  assert.equal(named.get("sandboxes_files_list"), "sandboxes files-read");
+  assert.equal(named.get("sandboxes_files_replace"), "sandboxes files-write");
+  assert.equal(named.get("usage_charges_create"), "usage charges");
+  assert.equal(named.get("usage"), "usage summary");
+  // Every command it had before keeps running the same operation, though no list shows it.
+  const kept = JSON.parse(readFileSync(new URL("../../python/tests/fixtures/cli_names_before.json", import.meta.url), "utf8")) as [string, string, string][];
+  assert.ok(kept.length > 800);
+  for (const [area, command, name] of kept) assert.equal(spec.find(area, command)?.name, name, `noclick ${area} ${command}`);
+  let io = captured();
+  assert.equal(await main(["describe", "usage", "charges-create"], io), OK);
+  assert.ok(io.stdout[0]!.startsWith("noclick usage charges   (usage_charges_create)"));
+  io = captured();
+  assert.equal(await main(["usage"], io), OK);
+  assert.ok(io.stdout.some((l) => l.startsWith("noclick usage charges ")) && !io.stdout.some((l) => l.includes("charges-create")));
+  io = captured();
+  assert.equal(await main(["usage", "chargez"], io), USAGE);
+  assert.ok(io.stderr.join("\n").includes("Did you mean: usage charges?"));
+});
+
+test("a name given for an id is read from its list", async () => {
+  const { api } = setup();
+  const machine = (id: string, name: string, status = "running") => ({ object: "machine", id, name, status });
+  const machines = api.on("GET", "/v1/machines", json({ object: "list", data: [machine(AGENT, "build box"), machine("other", "build box 2")], next_cursor: null }));
+  const got = api.on("GET", `/v1/machines/${AGENT}`, json(machine(AGENT, "build box")));
+  let io = captured();
+  assert.equal(await main(["machines", "get", "build box", "--json"], io, signedIn), OK);
+  assert.equal(machines.last.query.get("name"), "build box");
+  assert.equal(got.count, 1);
+  assert.equal(JSON.parse(io.stdout.join("\n")).id, AGENT);
+  // An id goes as it is, read from no list.
+  assert.equal(await main(["machines", "get", AGENT], captured(), signedIn), OK);
+  assert.equal(machines.count, 1);
+
+  // None by that name: it says so, and how to list them.
+  api.on("GET", "/v1/machines", json({ object: "list", data: [], next_cursor: null }));
+  io = captured();
+  assert.equal(await main(["machines", "get", "nope"], io, signedIn), FAILED);
+  assert.ok(io.stderr.some((l) => l.startsWith("error: No machine named 'nope'.")));
+  assert.ok(io.stderr.includes("  next step: List them with noclick machines list.") && !io.stderr.some((l) => l.startsWith("  run:")));
+
+  // Two by that name: each is listed, and nothing is called with either.
+  const twins = [machine("3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b41", "web"), machine("3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b42", "web", "stopped")];
+  api.on("GET", "/v1/machines", json({ object: "list", data: twins, next_cursor: null }));
+  io = captured();
+  assert.equal(await main(["machines", "delete", "web", "--json"], io, signedIn), USAGE);
+  const { error } = JSON.parse(io.stdout.join("\n"));
+  assert.equal(error.message, "2 machines are named 'web': 3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b41 (running), 3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b42 (stopped).");
+  assert.deepEqual(error.details.matches.map((m: { id: string }) => m.id), twins.map((t) => t.id));
+
+  // A nested argument is read from its parent's list, the parent read first.
+  api.on("GET", "/v1/agents", json({ object: "list", data: [{ object: "agent", id: AGENT, name: "helpdesk", former_names: ["support"] }], next_cursor: null }));
+  const triggers = api.on("GET", `/v1/agents/${AGENT}/triggers`, json({ object: "list", data: [{ object: "trigger", id: "3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b49", name: "nightly" }], next_cursor: null }));
+  const paused = api.on("POST", `/v1/agents/${AGENT}/triggers/3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b49/pause`, json({ object: "trigger", id: "3b9e2c71-4f0d-4a68-9c15-7e2a8d1f6b49", status: "paused" }));
+  assert.equal(await main(["agents", "triggers-pause", "support", "nightly"], captured(), signedIn), OK);
+  assert.equal(triggers.count, 1);
+  assert.equal(paused.count, 1);
+});
+
+test("an error says what's missing, and an API out of reach, in the command line's words with the command to run", async () => {
+  let io = captured();
+  const project = (name: string) => ({ object: "list", data: [], name });
+  host.fetch = (async (url: string) => new Response(JSON.stringify(project(String(url))), { status: 200 })) as typeof fetch;
+  configure({ apiKey: "nk_live_t", baseUrl: "https://api.test", fetch: host.fetch });
+  assert.equal(await main(["db", "query", "nope", "select 1"], io, signedIn), 1);
+  // The step names the command whole, so it isn't said again as run: (--json still lists it in commands).
+  assert.deepEqual(io.stderr, ["error: No database is named 'nope'.", "  next step: Create it with: noclick db create nope"]);
+  io = captured();
+  const refused = Object.assign(new TypeError("fetch failed"), { cause: { code: "ECONNREFUSED" } });
+  configure({ apiKey: "nk_live_t", baseUrl: "https://api.noclick.com", fetch: (async () => { throw refused; }) as typeof fetch, maxRetries: 0 });
+  assert.equal(await main(["db", "query", "nope", "select 1"], io, signedIn), 1);
+  assert.deepEqual(io.stderr, ["error: Can't reach api.noclick.com (connection refused).", "  next step: Check your network, then try again."]);
+});
+
+test("old spellings are the commands they now are, as the Python CLI reads them", () => {
+  assert.deepEqual(spelledOut(["settings", "set", "booking", "A", "b c", "--json"]), ["env", "set", "A=b c", "--json", "--app", "booking"]);
+  assert.deepEqual(spelledOut(["settings", "list", "booking", "--user", "u1"]), ["env", "ls", "--user", "u1", "--app", "booking"]);
+  assert.deepEqual(spelledOut(["settings", "delete", "booking", "A", "B"]), ["env", "rm", "A", "B", "--app", "booking"]);
+  assert.deepEqual(spelledOut(["ops", "wait", "op_1", "--timeout", "5"]), ["wait", "op_1", "--timeout", "5"]);
+});
+
+test("a flag a command doesn't have is said with that command's usage and the closest flag it has", async () => {
+  const io = captured();
+  assert.equal(await main(["secret", "ls", "--jsn"], io, signedIn), USAGE);
+  assert.deepEqual(io.stderr, ["error: noclick secret ls: no flag --jsn; did you mean --json?",
+    "  usage: noclick secret ls [OPTIONS]", "  run: noclick secret ls --help"]);
+});
+
+test("a command's help says the global flags once, under their own heading, piped as at a terminal", async () => {
+  const io = captured();
+  assert.equal(await main(["deploy", "--help"], io), OK);
+  const out = io.stdout.join("\n");
+  assert.ok(out.startsWith("Usage: noclick deploy [OPTIONS] [app]\n"));
+  assert.ok(out.includes("Global flags:\n  --profile NAME ") && out.includes("  -h, --help ") && !out.includes("--version"));
+  assert.ok(out.includes("Examples:\n  noclick deploy"));
+});
+
+test("a generated command answered with a file prints its bytes as they are, or saves them with --output", async () => {
+  const { api } = setup();
+  const op = load().forCall("GET", "/v1/sandboxes/{sandbox_id}/files")!;
+  const words = ["sandboxes", op.command, "sb_1", "--path", "notes.txt"];
+  const written: Uint8Array[] = [];
+  const io = { ...captured(), write: (data: Uint8Array) => written.push(data) };
+  api.on("GET", "/v1/sandboxes/sb_1/files", new Response("two\nlines, no newline at the end", { headers: { "content-type": "text/plain" } }));
+  assert.equal(await main(words, io, signedIn), OK);
+  assert.equal(new TextDecoder().decode(written[0]), "two\nlines, no newline at the end");
+  const picture = new Uint8Array(256).map((_, i) => i);
+  api.on("GET", "/v1/sandboxes/sb_1/files", new Response(picture, { headers: { "content-type": "application/octet-stream" } }));
+  const saved = join(mkdtempSync(join(tmpdir(), "nc-out-")), "logo.png");
+  const io2 = captured();
+  assert.equal(await main([...words, "--output", saved], io2, signedIn), OK);
+  assert.deepEqual(new Uint8Array(readFileSync(saved)), picture);
+  assert.deepEqual(io2.stdout, [saved]);
+  api.on("GET", "/v1/sandboxes/sb_1/files", json({ path: "notes.txt" }));
+  assert.equal(await main([...words, "--output", saved], captured(), signedIn), OK);
+  assert.deepEqual(JSON.parse(readFileSync(saved, "utf8")), { path: "notes.txt" });
 });
 
 test("a wait that runs out exits 124 and names the command that picks it up", async () => {
   const { api } = setup();
-  api.on("POST", "/v1/agents/a1/messages", json(operation({ id: "op_7", status: "running" }), { status: 202 }));
+  api.on("POST", `/v1/agents/${AGENT}/messages`, json(operation({ id: "op_7", status: "running" }), { status: 202 }));
   api.on("GET", "/v1/operations/op_7/wait", json(operation({ id: "op_7", status: "running" })));
   const io = captured();
-  assert.equal(await main(["agents", "messages-create", "a1", "--text", "hi", "--timeout", "0.5", "--json"], io, signedIn), TIMED_OUT);
-  assert.deepEqual(JSON.parse(io.stdout.join("\n")).error.commands, ["noclick ops wait op_7"]);
+  assert.equal(await main(["agents", "messages-create", AGENT, "--text", "hi", "--timeout", "0.5", "--json"], io, signedIn), TIMED_OUT);
+  assert.deepEqual(JSON.parse(io.stdout.join("\n")).error.commands, ["noclick wait op_7"]);
 });
 
 test("a folder is linked once and read from anywhere inside it, never with a key", () => {
@@ -202,14 +343,14 @@ test("a command's help ends with its examples", async () => {
   const io = captured();
   assert.equal(await main(["deploy", "--help"], io), OK);
   const examples = load().curated(["deploy"])!.examples!;
-  assert.ok(io.stdout.join("\n").endsWith(["examples:", ...examples.map((e) => `  ${e}`)].join("\n")));
+  assert.ok(io.stdout.join("\n").endsWith(["Examples:", ...examples.map((e) => `  ${e}`)].join("\n")));
 });
 
 test("at a terminal it is styled; piped, or told not to, it prints plain text", async () => {
   const style = await import("../src/cli/style.ts");
   const terminal = (io: ReturnType<typeof captured>) => Object.assign(io, { terminal: () => ({ out: true, err: true, columns: 100 }) });
   const { api } = setup();
-  api.on("GET", "/v1/agents/a1", apiError(404, "not_found", "No agent a1.", { next_step: "List agents with GET /v1/agents." }));
+  api.on("GET", "/v1/agents", json({ object: "list", data: [], next_cursor: null }));
   const commands = [["--help"], ["deploy", "--help"], ["agents", "get", "a1"], []];
   const { host } = await import("../src/cli/host.ts");
   const env = host.env;
@@ -229,7 +370,7 @@ test("at a terminal it is styled; piped, or told not to, it prints plain text", 
     const styled = await shown(() => terminal(captured()));
     assert.ok(styled.every((text) => text.includes("\x1b[")));
     assert.deepEqual(await shown(() => terminal(captured()), ["--color", "never"]), piped);
-    assert.ok(style.visible(styled[2]!).startsWith("error: No agent a1."));
+    assert.ok(style.visible(styled[2]!).startsWith("error: No agent named 'a1'."));
     const screen = ["booking  https://booking.noclick.site", "  live        ready 3f2a1c9 on main"];
     const fields = new style.Style(true).fields(screen);
     assert.deepEqual(fields.map(style.visible), screen);
@@ -272,7 +413,7 @@ test("every area's list and get parse and make their call, with a global flag in
   assert.ok(["projects", "machines", "databases", "buckets", "domains", "repos"].every((a) => ops.some((op) => op.area === a)));
   for (const flags of [[], ["--color", "never"]]) {
     for (const op of ops) {
-      const line = example(op, spec);
+      const line = example(op, spec).replace(/<\w+>/g, AGENT); // ids: a name is read from its list first
       const io = captured();
       const before = calls.length;
       assert.equal(await main([...flags, ...words(line).slice(1)], io, signedIn), OK, `${line}: ${io.stderr.join(" ")}`);
@@ -322,5 +463,8 @@ test("ls runs list where a group has no ls of its own, and noclick ls lists what
   io = captured();
   assert.equal(await main(["resources", "--kind", "machines", "--kind", "apps"], io, signedIn), OK);
   assert.ok(io.stdout.join("\n").includes("Websites (1)") && io.stderr.includes("machines: unread (No machines here.)"));
-  assert.equal(await main(["resources", "--kind", "machines"], captured(), signedIn), FAILED);
+  // Reading no kind at all, for one reason, is that reason said once, with its exit code.
+  const once = captured();
+  assert.equal(await main(["resources", "--kind", "machines"], once, signedIn), REFUSED);
+  assert.equal(once.stderr.filter((l) => l.includes("No machines here.")).length, 1);
 });

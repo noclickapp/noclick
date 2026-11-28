@@ -6,13 +6,13 @@ follow, so an agent acts on it without reading the words:
 - 2 the command line was wrong (a missing argument or field, an unknown flag), or the API refused its arguments
 - 3 waiting on a person (a payment, an approval, a sign-in, an answer): the link where they act is printed
 - 4 refused by a limit, a price or a policy (a spending cap, ``--max-usd``, a permission the key lacks)
-- 124 a wait ran out (the work goes on: ``noclick ops wait <id>`` picks it up)
+- 124 a wait ran out (the work goes on: ``noclick wait <id>`` picks it up)
 - 130 Ctrl-C
 """
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
 from ..exceptions import Error
 
@@ -32,7 +32,16 @@ MEANINGS = {
 }
 
 
-class WaitingOnPerson(Error):
+class Suggests:
+    """Mixed into an error of the command line's own: ``run``, the whole command lines that take its next step,
+    printed after ``run:`` (``output.suggested``), so none is ever read out of its words."""
+
+    def __init__(self, message: str = "", *, run: Sequence[str] = (), **kwargs: Any) -> None:
+        super().__init__(message, **kwargs)  # type: ignore[call-arg]
+        self.run = list(run)
+
+
+class WaitingOnPerson(Suggests, Error):
     """What only a person can do now (approve, pay, answer, sign in): ``link`` is where they do it. The command
     exits 3 rather than wait on them."""
 
@@ -43,7 +52,7 @@ class WaitingOnPerson(Error):
         self.details.setdefault("link", link)
 
 
-class OverLimit(Error):
+class OverLimit(Suggests, Error):
     """A ``--max-usd`` (or another ceiling the command line set) the action would pass: nothing was done."""
 
     type = "over_limit"
@@ -91,6 +100,6 @@ def link_of(err: Any) -> Optional[str]:
     return None
 
 
-__all__ = ["OK", "FAILED", "USAGE", "WAITING", "REFUSED", "TIMED_OUT", "INTERRUPTED", "MEANINGS", "WaitingOnPerson",
+__all__ = ["Suggests", "OK", "FAILED", "USAGE", "WAITING", "REFUSED", "TIMED_OUT", "INTERRUPTED", "MEANINGS", "WaitingOnPerson",
            "OverLimit", "WAITING_TYPES", "REFUSED_TYPES", "USAGE_TYPES", "WAITING_STATUSES", "exit_code", "code_for",
            "link_of"]

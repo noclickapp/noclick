@@ -151,7 +151,7 @@ export class Secret extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No secret is named "${name}".`, {
         nextStep: "Create it with Secret.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "secret" },
       });
     }
     try {

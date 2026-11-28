@@ -566,7 +566,7 @@ class Repo(_Object):
             raise NotFound(
                 f"No repo is named {name!r}.",
                 next_step="Create it with noclick.Repo.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "repo"},
             )
         try:
             return await self._request("POST", "/v1/repos", json=self._create_with)

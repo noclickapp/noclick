@@ -94,7 +94,8 @@ def test_a_folders_first_deploy_makes_its_app_ships_its_commit_and_links_it(shel
     assert body(deploy.calls.last.request) == {"branch": "main", "commit": head}
     out = capsys.readouterr()
     assert out.out.splitlines()[-1] == "https://booking.noclick.site"
-    assert "Made the app booking" in out.err and "a site of files" in out.err and "Ready: production." in out.err
+    assert "Made the app booking" in out.err and "a site of files" in out.err and "Ready: https://booking.noclick.site · production · release dep_2 · " in out.err
+    assert "Push…\nPush: " in out.err
     saved = json.loads((shell / ".noclick" / "project.json").read_text())
     assert (saved["app"], saved["app_id"]) == ("booking", APP)
     assert git("status", "--porcelain", cwd=shell) == ""  # .noclick/ ignores itself: never committed or shipped
@@ -587,3 +588,49 @@ def test_a_same_size_edit_made_as_the_index_was_written_is_still_seen(shell):
     os.utime(shell / ".git" / "index", ns=(then, then))  # written in that same instant: git checks its content
     assert ship.working_tree(str(shell)).changes == [("M", "app.js")]
     assert git("status", "--porcelain", cwd=shell) == "M app.js"  # as git itself sees it (this rewrites the index)
+
+
+def test_a_deploy_draws_its_stages_and_build_lines_as_they_come_and_ctrl_c_leaves_it_running(shell, api, tmp_path,
+                                                                                           capsys, monkeypatch):
+    """Each read waits on the operation's own long-poll from the ``updated_at`` it last saw; piped, every stage and
+    build line is a line of its own, then where it serves, its release and how long it took. Ctrl-C stops following
+    and says how to pick it up again (exit 130); the deploy goes on."""
+    link(shell)
+    checkout(shell, {"index.html": "<h1>Booking</h1>\n"})
+    remote = tmp_path / "remote.git"
+    git("init", "--bare", "-q", "-b", "main", str(remote), cwd=tmp_path)
+    app_routes(api, remote).respond(202, json=operation("op_d", kind="project.deploy", status="queued",
+                                                        updated_at="2026-11-28T10:00:00Z"))
+
+    def moving(status, stage, lines, at, **extra):
+        stages = [{"name": n, "status": "done" if i < stage else "current" if i == stage else "pending"}
+                  for i, n in enumerate(["Queued", "Building", "Shipping", "Live"])]
+        return httpx.Response(200, json=operation("op_d", kind="project.deploy", status=status, updated_at=at,
+                                                  progress={"stages": stages, "lines": lines,
+                                                            "line_count": len(lines)}, **extra))
+
+    waits = api.get("/v1/operations/op_d/wait").mock(side_effect=[
+        moving("running", 1, ["> vite build"], "2026-11-28T10:00:02Z"),
+        moving("running", 2, ["> vite build", "built in 3.1s"], "2026-11-28T10:00:06Z"),
+        moving("succeeded", 4, ["> vite build", "built in 3.1s", "==> / answered 200"], "2026-11-28T10:00:08Z",
+               result=deployed()),
+    ])
+    assert run("deploy") == 0
+    assert [c.request.url.params.get("changed_since") for c in waits.calls] == [
+        "2026-11-28T10:00:00Z", "2026-11-28T10:00:02Z", "2026-11-28T10:00:06Z"]
+    out = capsys.readouterr()
+    assert out.out.splitlines()[-1] == "https://booking.noclick.site"
+    drawn = out.err[out.err.index("Queue…"):]
+    assert drawn.startswith("Queue…\nQueue: ") and "Build…\n  > vite build\n  built in 3.1s\nBuild: " in drawn
+    assert "Release…\n  ==> / answered 200\nRelease: " in drawn
+    assert "Ready: https://booking.noclick.site · production · release dep_2 · " in drawn
+
+    def pressed_ctrl_c(coro):  # Ctrl-C reaches the main thread, where the read is waited on
+        coro.close()
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(ship, "run_sync", pressed_ctrl_c)
+    assert run("deploy", "--json") == 130
+    out = capsys.readouterr()
+    assert json.loads(out.out)["operation_id"] == "op_d"  # --json still says what it started
+    assert "Detached: it goes on. Follow it with: noclick wait op_d" in out.err

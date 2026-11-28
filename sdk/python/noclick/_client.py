@@ -214,7 +214,7 @@ class Client:
         user: Any = AMBIENT,
         idempotency_key: Optional[str] = None,
         timeout: Optional[float] = None,
-        binary: bool = False,
+        binary: Any = False,
         content_type: Optional[str] = None,
         anonymous: bool = False,
     ) -> Any:
@@ -225,7 +225,8 @@ class Client:
         reused on every retry, so a retried POST can't do the work twice.
 
         Returns:
-            The response's decoded JSON (``None`` for an empty body), or its raw bytes with ``binary=True``.
+            The response's decoded JSON (``None`` for an empty body), or its raw bytes with ``binary=True``;
+            ``binary="auto"``: its JSON when the API answered JSON, else its raw bytes (a file read as it is).
             An error response raises its ``noclick.Error`` instead.
 
         Usage:
@@ -267,6 +268,7 @@ class Client:
                         raise APIConnectionError(
                             f"Could not reach the NoClick API at {self.base_url}: {exc.__class__.__name__}: {exc}",
                             next_step="Check your network and NOCLICK_API_URL, then retry.", attempts=attempt + 1,
+                            details={"api_url": str(self.base_url), "cause": str(exc) or exc.__class__.__name__},
                         ) from _frameless(exc)
                     await self._sleep(self._backoff_delay(attempt, None))
                     attempt += 1
@@ -383,12 +385,13 @@ class Client:
         return delay * (0.5 + random.random() / 2)
 
     @staticmethod
-    def _decode(response: httpx.Response, *, binary: bool = False) -> Any:
+    def _decode(response: httpx.Response, *, binary: Any = False) -> Any:
         # Cloudflare's ray names a request the API never answered (its own 52x); NoClick support finds either.
         edge_id = response.headers.get("cf-ray")
         request_id = response.headers.get("x-request-id") or edge_id
         if binary and response.is_success:
-            return response.content
+            if binary != "auto" or "json" not in response.headers.get("content-type", ""):
+                return response.content
         try:
             body = response.json() if response.content else None
         except ValueError:

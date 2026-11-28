@@ -373,7 +373,7 @@ export class Inbox extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No inbox is named "${name}".`, {
         nextStep: "Create it with Inbox.create({ name }) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "inbox" },
       });
     }
     try {

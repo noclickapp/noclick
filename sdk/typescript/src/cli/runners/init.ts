@@ -14,7 +14,7 @@ import type { Values } from "../args.ts";
 import { OK } from "../exits.ts";
 import { host } from "../host.ts";
 import * as links from "../link.ts";
-import type { Io } from "../output.ts";
+import { type Io, withRun } from "../output.ts";
 import { load } from "../spec.ts";
 import { CommandError } from "../store.ts";
 import { num, on, str } from "./kit.ts";
@@ -36,7 +36,10 @@ function filesOf(template: string, name: string): Record<string, string> {
 
 function appNameOf(values: Values, folder: string): string {
   const name = str(values, "name") ?? basename(resolve(folder)).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
-  if (!name) throw new CommandError("Name the app: this folder's name makes none.", { nextStep: "noclick init <name>" });
+  if (!name) {
+    throw withRun(new CommandError("Name the app: this folder's name makes none.", { nextStep: "noclick init <name>" }),
+      ["noclick init <name> --template <template>"]);
+  }
   return name;
 }
 

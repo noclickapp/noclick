@@ -187,7 +187,7 @@ export class Volume extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No volume is named "${name}".`, {
         nextStep: "Create it with Volume.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "volume" },
       });
     }
     try {

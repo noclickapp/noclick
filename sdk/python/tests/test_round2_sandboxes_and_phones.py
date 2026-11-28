@@ -59,6 +59,17 @@ def test_create_exec_files_terminate(api, client):
     assert delete.call_count == 1 and sb.status == "terminated"
 
 
+def test_a_sandboxs_shell_is_a_terminal_token_for_its_own_users_sandbox(api, client):
+    opened = api.post("/v1/sandboxes/sb_1/shell").respond(json={
+        "object": "sandbox_shell", "sandbox_id": "sb_1", "url": "wss://api.test/v1/terminals/attach", "token": "tok_1",
+        "token_expires_at": "2026-09-25T10:02:00Z", "idle_limit_s": 900})
+    shell = nc.Sandbox.from_id("sb_1", user="user_42").shell()
+    assert (shell.sandbox_id, shell.url, shell.token, shell.idle_limit_s) == (
+        "sb_1", "wss://api.test/v1/terminals/attach", "tok_1", 900)
+    assert "tok_1" not in repr(shell)  # opens the shell: never in a log line
+    assert opened.calls.last.request.headers["NoClick-User"] == "user_42"
+
+
 def test_non_zero_exit_is_a_result(api, client):
     api.post("/v1/sandboxes/sb_1/exec").respond(json={"stdout": "", "stderr": "boom", "exit_code": 2})
     result = nc.Sandbox.from_id("sb_1").exec("false")

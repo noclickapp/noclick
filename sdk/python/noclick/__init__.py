@@ -577,6 +577,7 @@ from .room import (
     RoomToken,
 )
 from .sandbox import (
+    CodeSandboxShell,
     ExecResult,
     Sandbox,
     SandboxFiles,
@@ -976,6 +977,7 @@ __all__ = [
     "NumberDocument",
     "PhoneNumberOrder",
     "Sandbox",
+    "CodeSandboxShell",
     "SandboxFiles",
     "ExecResult",
     "Machine",

@@ -299,7 +299,7 @@ class Dict(_Object):
             raise NotFound(
                 f"No dict is named {name!r}.",
                 next_step="Create it with noclick.Dict.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "dict"},
             )
         try:
             return await self._request("POST", "/v1/dicts", json=self._create_with)

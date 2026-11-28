@@ -916,7 +916,7 @@ class Domain(_Object):
             raise NotFound(
                 f"No domain is named {name!r}.",
                 next_step="Buy it with noclick.Domain.buy(...) or connect it with noclick.Domain.connect(...).",
-                details={"name": name},
+                details={"name": name, "kind": "domain"},
             )
         try:
             purchase = await self._request("POST", "/v1/domains", json=self._create_with) or {}

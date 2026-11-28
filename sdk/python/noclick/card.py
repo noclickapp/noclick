@@ -609,7 +609,7 @@ class Card(_Object):
             raise NotFound(
                 f"No open card is named {name!r}.",
                 next_step="Issue it with noclick.Card.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "card"},
             )
         try:
             # A card is issued monthly unless the code says otherwise; an existing one keeps its interval.

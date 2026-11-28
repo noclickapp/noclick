@@ -14,16 +14,17 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdir
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 
-import { Conflict, NotFound, OperationFailed } from "../../errors.ts";
+import { Conflict, NoClickError, NotFound, OperationFailed, OperationTimeout } from "../../errors.ts";
 import type { Operation } from "../../operation.ts";
-import { Deployment, Project } from "../../project.ts";
+import { type Binding, Deployment, Project } from "../../project.ts";
 import { Repo } from "../../repo.ts";
 import { UsageError, type Values } from "../args.ts";
 import { host } from "../host.ts";
-import { FAILED, OK, USAGE } from "../exits.ts";
+import { FAILED, INTERRUPTED, OK, USAGE } from "../exits.ts";
 import * as links from "../link.ts";
 import { OUT } from "../style.ts";
-import { type Io, printJson } from "../output.ts";
+import { type Io, timeText, withRun } from "../output.ts";
+import { Detached, Steps, TERMINAL, follow, took } from "../progress.ts";
 import { CommandError, resolveCredentials } from "../store.ts";
 import { ID, answer, appOf, cell, lookup, noteUnclaimed, num, on, profileOf, str, table, usd } from "./kit.ts";
 
@@ -125,7 +126,7 @@ export function git(args: string[], cwd: string, extra: Record<string, string> =
     execFile("git", args, { cwd, env: { ...host.env, ...extra } as NodeJS.ProcessEnv, maxBuffer: 64 * 1024 * 1024 },
       (err, stdout, stderr) => {
         if ((err as NodeJS.ErrnoException | null)?.code === "ENOENT") {
-          fail(new CommandError("git isn't installed.", { nextStep: "noclick deploy --no-git (it ships the folder through the API)" }));
+          fail(withRun(new CommandError("git isn't installed.", { nextStep: "noclick deploy --no-git (it ships the folder through the API)" }), ["noclick deploy --no-git"]));
         } else if (err) {
           fail(new CommandError(String(stderr).trim() || `git ${args[0]} failed.`, { details: { git: args, stderr: String(stderr) } }));
         } else done(String(stdout).trim());
@@ -164,7 +165,7 @@ export async function push(root: string, repo: Repo, sha: string, branch: string
   } catch (err) {
     const stderr = String((err as CommandError).details?.stderr ?? "");
     if (stderr.includes("Operation too slow")) {
-      throw new CommandError(`The repo's git endpoint sent nothing for ${GIT_GIVE_UP_S} seconds, so the push gave up.`, { nextStep: "noclick deploy" });
+      throw withRun(new CommandError(`The repo's git endpoint sent nothing for ${GIT_GIVE_UP_S} seconds, so the push gave up.`, { nextStep: "noclick deploy again." }), ["noclick deploy"]);
     }
     if (!stderr.includes("[rejected]")) throw err;
     await git(["fetch", "noclick-deploy", `+refs/heads/${branch}:refs/remotes/noclick/${branch}`], root, env);
@@ -271,7 +272,7 @@ async function target(values: Values, root: string, linked: boolean): Promise<{ 
     } catch (err) {
       if (!(err instanceof NotFound)) throw err;
       if (!on(values, "create")) {
-        throw new NotFound(`No app is named '${named}'.`, { nextStep: `noclick deploy --app ${named} --create makes it (and its repo).` });
+        throw withRun(new NotFound(`No app is named '${named}'.`, { nextStep: `noclick deploy --app ${named} --create makes it (and its repo).` }), [`noclick deploy --app ${named} --create`]);
       }
       return { project: await create(named, num(values, "budget")), made: true };
     }
@@ -285,8 +286,9 @@ async function target(values: Values, root: string, linked: boolean): Promise<{ 
     if (!(err instanceof NotFound)) throw err;
     return { project: await create(name, num(values, "budget")), made: true };
   }
-  throw new CommandError(`This folder isn't linked to an app, and you already have an app named ${existing.name} (${existing.url}).`,
-    { nextStep: `Deploy to it: noclick link ${existing.name}, then noclick deploy. Or make a new one: noclick deploy --app <new-name> --create.` });
+  throw withRun(new CommandError(`This folder isn't linked to an app, and you already have an app named ${existing.name} (${existing.url}).`,
+    { nextStep: `Deploy to it: noclick link ${existing.name}, then noclick deploy. Or make a new one: noclick deploy --app <new-name> --create.` }),
+  [`noclick link ${existing.name}`, "noclick deploy --app <new-name> --create"]);
 }
 
 async function branchOf(values: Values, project: Project, checkout: string | null): Promise<string> {
@@ -305,38 +307,84 @@ async function branchOf(values: Values, project: Project, checkout: string | nul
   return current;
 }
 
-/** Wait for a release (deploy, rollback, promote), or print its operation with `--no-wait`. */
-async function settle(values: Values, io: Io, op: Operation<Deployment>, verb: string, extra: Record<string, unknown> = {}): Promise<number> {
+/** Stages drawn on stderr: in place where `io` can (a terminal), else a line each. */
+function stepsFor(io: Io): Steps {
+  return io.errWrite ? new Steps(io.errWrite) : new Steps((text) => io.err(text.replace(/\n$/, "")), { live: false });
+}
+
+const seconds = () => performance.now() / 1000;
+
+/** What a release came to, in one line: where it serves, which release, how long it took. */
+function summary(url: string | null | undefined, where: string | null, release: string, started: number): string {
+  return [url, where, `release ${release}`, took(seconds() - started)].filter(Boolean).join(" · ");
+}
+
+/** A release's one stage, and the words for it done, by the verb that started it. */
+const RELEASES: Record<string, [string, string]> = { "Rolling back": ["Roll back", "Rolled back to"], Promoting: ["Promote", "Promoted"] };
+
+/** Wait for a release (deploy, rollback, promote), drawing it as it goes, or print its operation with `--no-wait`. */
+async function settle(values: Values, io: Io, op: Operation<Deployment>, verb: string, extra: Record<string, unknown> = {},
+  drawn?: { steps: Steps; started: number; branch: string }): Promise<number> {
   if (on(values, "no_wait")) {
-    io.err(`${verb}. Wait for it with: noclick ops wait ${op.id}`);
+    io.err(`${verb}. Wait for it with: noclick wait ${op.id}`);
     answer(io, values, { operation_id: op.id, ...extra }, () => [op.id]);
     return OK;
   }
-  io.err(`${verb}…`);
+  const [stage, done] = RELEASES[verb] ?? [undefined, undefined];
+  const steps = drawn?.steps ?? stepsFor(io);
+  const started = drawn?.started ?? seconds();
+  const read = async (opId: string, windowS: number, changedSince: string | null) =>
+    (await op._request("GET", `/v1/operations/${opId}/wait`, {
+      query: { timeout_s: windowS, changed_since: changedSince ?? undefined }, timeoutMs: (windowS + 15) * 1000,
+    })) as Record<string, unknown>;
+  const timeoutS = num(values, "timeout");
+  const caught = host.interrupted();
+  let raw: Record<string, unknown>;
+  try {
+    raw = await follow(op.id, op.raw, steps, read, { timeoutS, single: stage, interrupted: caught.promise });
+  } catch (err) {
+    if (!(err instanceof Detached)) throw err;
+    io.err(`Detached: it goes on. Follow it with: noclick wait ${op.id}`);
+    answer(io, values, { operation_id: op.id, ...extra }, () => [op.id]);
+    return INTERRUPTED;
+  } finally {
+    caught.release();
+  }
+  op._absorb(raw);
+  if (!TERMINAL.has(String(raw.status))) {
+    throw withRun(new OperationTimeout(`It's still ${raw.status} after ${timeoutS}s, and goes on.`,
+      { nextStep: `Follow it with: noclick wait ${op.id}`, details: { operation_id: op.id } }), [`noclick wait ${op.id}`]);
+  }
   let deployment: Deployment;
   try {
-    deployment = await op.wait({ timeoutS: num(values, "timeout") });
+    deployment = await op.wait();
   } catch (err) {
-    if (err instanceof OperationFailed && typeof err.details.deployment_id === "string") {
+    if (err instanceof OperationFailed && typeof err.details.deployment_id === "string" && !steps.printedLines) {
       const lines = await Deployment.fromId(err.details.deployment_id).logs({ kind: "build", limit: 20 });
       for (const line of lines) io.err(`  ${line.message}`);
     }
     throw err;
   }
-  answer(io, values, { ...extra, deployment_id: deployment.id, url: deployment.url, production: deployment.production,
-    status: deployment.status, warning: deployment.warning, next_step: deployment.nextStep }, () => [String(deployment.url)]);
+  const serves = (deployment.raw.serves ?? {}) as Record<string, unknown>;
+  const url = done ? String(serves.production ?? deployment.url ?? "") : deployment.url;
+  answer(io, values, { ...extra, deployment_id: deployment.id, url, production: deployment.production,
+    status: deployment.status, warning: deployment.warning, next_step: deployment.nextStep }, () => [String(url)]);
   if (deployment.warning) {
     io.err(`warning: ${deployment.warning}`);
     if (deployment.nextStep) io.err(`  next step: ${deployment.nextStep}`);
     io.err("It stays live (nothing was rolled back). Go back with: noclick rollback");
     return FAILED;
   }
-  io.err(`Ready: ${deployment.production ? "production" : "a preview"}.`);
+  if (done) io.err(`${done} ${(deployment.commit ?? deployment.id).slice(0, 7)}: ${summary(url, null, deployment.id, started)}`);
+  else {
+    const where = deployment.production ? "production" : `a preview of ${drawn?.branch ?? deployment.branch}`;
+    io.err(`Ready: ${summary(url, where, deployment.id, started)}`);
+  }
   return OK;
 }
 
 export async function deploy(values: Values, io: Io): Promise<number> {
-  if (str(values, "token")) throw new UsageError("npx noclick doesn't take a deploy token yet.", "pip install noclick, then noclick deploy --token <token>");
+  if (str(values, "token")) throw new UsageError("npx noclick doesn't take a deploy token yet.", "pip install noclick, then noclick deploy --token <token>", []);
   const folder = resolve(host.cwd(), str(values, "dir") ?? ".");
   if (!existsSync(folder) || !statSync(folder).isDirectory()) throw new CommandError(`${folder} isn't a folder.`, { nextStep: "Pass --dir the app's folder." });
   const link = links.find(folder);
@@ -374,25 +422,33 @@ export async function deploy(values: Values, io: Io): Promise<number> {
     const out = new Set(left.map((item) => item.path));
     files = files.filter((p) => !out.has(p));
   }
-  if (!files.length) throw new CommandError(`There's nothing to deploy: ${root} holds no files.`, { nextStep: "Run noclick deploy in the app's folder (or pass --dir)." });
+  if (!files.length) throw withRun(new CommandError(`There's nothing to deploy: ${root} holds no files.`, { nextStep: "Run noclick deploy in the app's folder (or pass --dir)." }), ["noclick deploy --dir <folder>"]);
 
   const { project, made } = await target(values, root, link !== null);
   if (made) io.err(`Made the app ${project.name} and its repo, with a monthly budget of ${usd(project.budgetUsdPerMonth)} (--budget sets another).`);
   else if (num(values, "budget") !== undefined) await project.update({ budgetUsdPerMonth: num(values, "budget")! });
   const repo = project.repo;
-  if (!repo) throw new CommandError(`${project.name} deploys no repo of NoClick's.`, { nextStep: `noclick status --app ${project.name}` });
+  if (!repo) throw withRun(new CommandError(`${project.name} deploys no repo of NoClick's.`, { nextStep: `noclick status --app ${project.name}` }), [`noclick status --app ${project.name}`]);
   const branch = await branchOf(values, project, checkout);
   const production = branch === project.productionBranch;
   io.err(`Deploying ${root} to ${project.name} (${production ? "production" : `a preview of ${branch}`}).`);
   sayLeftOut(io, left);
 
   let commit: string | null;
-  if (checkout && !dirty) {
-    commit = await git(["rev-parse", "HEAD"], checkout);
-    await push(checkout, repo, commit, branch);
-    io.err(`Pushed ${commit.slice(0, 7)} to ${branch}.`);
-  } else {
-    commit = await commitFiles(repo, root, files, branch);
+  const steps = stepsFor(io);
+  const started = seconds();
+  steps.start("Push");
+  try {
+    commit = checkout && !dirty ? await git(["rev-parse", "HEAD"], checkout) : null;
+    if (checkout && !dirty) await push(checkout, repo, commit!, branch);
+    else commit = await commitFiles(repo, root, files, branch);
+  } catch (err) {
+    steps.end(false);
+    throw err;
+  }
+  steps.end(true);
+  if (checkout && !dirty) io.err(`Pushed ${commit!.slice(0, 7)} to ${branch}.`);
+  else {
     io.err(`Shipping the folder as it is (${checkout ? "uncommitted or untracked files" : "not a git checkout"}): ${files.length} files` +
       (commit ? `, committed as ${commit.slice(0, 7)} to ${branch}.` : `, the same as ${branch} already holds.`));
   }
@@ -401,8 +457,8 @@ export async function deploy(values: Values, io: Io): Promise<number> {
     io.err(`Linked ${root} to ${project.name} (.noclick/project.json): later commands here act on it.`);
   }
   const op = await project.deploy({ branch, commit: commit ?? undefined });
-  return await settle(values, io, op, "Building", { app: { id: project.id, name: project.name }, branch, production, commit, made, files,
-    left_out: leftOutData(left) });
+  return await settle(values, io, op, "Deploying", { app: { id: project.id, name: project.name }, branch, production, commit, made, files,
+    left_out: leftOutData(left) }, { steps, started, branch });
 }
 
 // --- link ------------------------------------------------------------------------------------------------------
@@ -410,14 +466,16 @@ export async function deploy(values: Values, io: Io): Promise<number> {
 export async function link(values: Values, io: Io): Promise<number> {
   const folder = resolve(host.cwd(), str(values, "dir") ?? ".");
   const ref = str(values, "app_ref") ?? str(values, "app");
-  if (!ref) throw new CommandError("Name the app to link this folder to.", { nextStep: "noclick link <app> (its name or id)." });
+  if (!ref) throw withRun(new CommandError("Name the app to link this folder to.", { nextStep: "noclick link <app> (its name or id)." }), ["noclick link <app>"]);
   let project: Project;
   let made = false;
   try {
     project = await lookup(ref);
   } catch (err) {
     if (!(err instanceof NotFound) || !on(values, "create") || ID.test(ref)) {
-      if (err instanceof NotFound) throw new NotFound(`No app is named '${ref}'.`, { nextStep: `noclick link ${ref} --create makes it (and its repo).` });
+      if (err instanceof NotFound) {
+        throw withRun(new NotFound(`No app is named '${ref}'.`, { nextStep: `noclick link ${ref} --create makes it (and its repo), or noclick deploy does on the folder's first deploy.` }), [`noclick link ${ref} --create`]);
+      }
       throw err;
     }
     project = await create(ref, num(values, "budget"));
@@ -445,34 +503,99 @@ export async function unlink(values: Values, io: Io): Promise<number> {
 
 // --- read ------------------------------------------------------------------------------------------------------
 
+/** A failed read, as its error, so one read failing says so in its line and never fails the whole command. */
+async function settled<T>(read: () => Promise<T>): Promise<T | NoClickError> {
+  try {
+    return await read();
+  } catch (err) {
+    if (err instanceof NoClickError) return err;
+    throw err;
+  }
+}
+
+function releaseLine(d: Deployment): string {
+  return `${d.status} ${(d.commit ?? "").slice(0, 7)} on ${d.branch}, ${cell(d.createdAt)}${d.warning ? `, but ${d.warning}` : ""}`;
+}
+
+function deploymentView(d: Deployment): Record<string, unknown> {
+  return { id: d.id, branch: d.branch, status: d.status, commit: d.commit, url: d.url, production: d.production,
+    created_at: timeText(d.raw.created_at) ?? null, warning: d.warning };
+}
+
+/** The app's addresses: its primary URL first, then each domain serving it. */
+export function urlsOf(project: Project): string[] {
+  return [...new Set([project.url, ...project.domainNames.map((d) => `https://${d}`)])];
+}
+
+/** `status`: the app on one screen, as the Python CLI's: its URLs, the live release and its health, errors in the
+ *  last hour, bindings, secrets, settings and spend; a read that fails says so in its own line. */
 export async function status(values: Values, io: Io): Promise<number> {
   await noteUnclaimed(values, io);
-  const { project } = await appOf(values);
-  const since = new Date(Date.now() - 86_400_000);
-  const [releases, errors, bindings, secrets, settings, usage] = await Promise.all([
-    project.deployments({ limit: 5 }), project.logs({ since, level: "error", limit: 20 }), project.bindings(),
-    project.secrets.list(), project.settings.list(), project.usage(),
+  const { project, link } = await appOf(values);
+  const since = new Date(Date.now() - 3_600_000);
+  const [deployments, bindings, secrets, settings, usage, errors] = await Promise.all([
+    settled(() => project.deployments({ limit: 20 })), settled(() => project.bindings()), settled(() => project.secrets.list()),
+    settled(() => project.settings.list()), settled(() => project.usage()), settled(() => project.logs({ since, level: "error", limit: 5 })),
   ]);
-  const live = releases.find((d) => d.production) ?? null;
-  answer(io, values, {
-    app: { id: project.id, name: project.name }, url: project.url, production_branch: project.productionBranch,
-    live: live && { id: live.id, commit: live.commit, created_at: live.createdAt, warning: live.warning },
-    last_deploy: releases[0] && { id: releases[0].id, branch: releases[0].branch, status: releases[0].status },
-    errors_24h: errors.length, bindings: bindings.map((b) => ({ name: b.name, kind: b.kind })), secrets: Object.keys(secrets),
-    settings: Object.keys(settings), spend_usd: usage.usd, budget_usd: project.budgetUsdPerMonth,
-  }, () => [
-    ...OUT.fields([
-      `app         ${project.name} (${project.id})`,
-      `live        ${live ? `${(live.commit ?? live.id).slice(0, 7)} since ${cell(live.createdAt)}${live.warning ? `: ${live.warning}` : ""}` : "nothing yet: noclick deploy"}`,
-      `last deploy ${releases[0] ? `${releases[0].branch}, ${releases[0].status}` : "-"}`,
-      `errors      ${errors.length} in the last day${errors.length ? ": noclick logs --level error" : ""}`,
-      `bindings    ${bindings.map((b) => `${b.name} (${b.kind})`).join(", ") || "-"}`,
-      `secrets     ${Object.keys(secrets).sort().join(", ") || "-"}`,
-      `settings    ${Object.keys(settings).sort().join(", ") || "-"}`,
-      `spend       ${usd(usage.usd)} this month${project.budgetUsdPerMonth !== null ? ` of its ${usd(project.budgetUsdPerMonth)} budget` : ""}`,
-    ]),
-    project.url,
-  ]);
+  const production = project.production;
+  const outcomes = production ? await settled(() => production.requests({ since })) : null;
+  const shown = Array.isArray(deployments) ? deployments : [];
+  const previews = new Map<string, Deployment>();
+  for (const d of shown) {
+    if (d.branch !== project.productionBranch && d.status === "ready" && !previews.has(d.branch)) previews.set(d.branch, d);
+  }
+  const last = shown[0] ?? null;
+  const urls = urlsOf(project);
+  const data: Record<string, unknown> = {
+    app: { id: project.id, name: project.name, url: project.url, urls, runtime: project.runtime, framework: project.framework,
+      production_branch: project.productionBranch, domains: project.domainNames, linked_from: link ? rootOf(link) : null },
+    production: production ? deploymentView(production) : null,
+    previews: [...previews.values()].map(deploymentView),
+    last_deploy: last ? deploymentView(last) : null,
+  };
+  const lines = [`${project.name}  ${project.url}`];
+  if (urls.length > 1) lines.push(`  also        ${urls.slice(1).join(", ")}`);
+  lines.push(production ? `  live        ${releaseLine(production)}` : "  live        nothing yet: noclick deploy");
+  if (outcomes instanceof NoClickError) lines.push(`  health      unread (${outcomes.message})`);
+  else if (outcomes) {
+    const rate = outcomes.errorRate === null ? "-" : `${(outcomes.errorRate * 100).toFixed(1)}%`;
+    const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+    lines.push(`  health      ${plural(outcomes.requests, "request")} in the last hour, ${plural(outcomes.errors, "error")} (${rate})`);
+    data.health = { requests: outcomes.requests, errors: outcomes.errors, error_rate: outcomes.errorRate };
+  }
+  if (last && (!production || last.id !== production.id)) lines.push(`  last deploy ${releaseLine(last)}`);
+  for (const d of previews.values()) lines.push(`  preview     ${d.branch}: ${d.url}`);
+  if (errors instanceof NoClickError) lines.push(`  errors      unread (${errors.message})`);
+  else {
+    data.recent_errors = errors.map((e) => ({ at: e.at, message: e.message }));
+    if (errors.length) {
+      const latest = errors[errors.length - 1]!.message;
+      lines.push(`  errors      ${errors.length} in the last hour (noclick logs --level error); the latest:`,
+        `              ${latest.length <= 100 ? latest : `${latest.slice(0, 99)}…`}`);
+    }
+  }
+  const named: [string, string, unknown, (v: never) => string[]][] = [
+    ["bindings", "bindings", bindings, (bs: Binding[]) => bs.map((b) => `${b.name} (${b.kind} ${b.resourceName})`)],
+    ["secrets", "secrets", secrets, (v: Record<string, unknown>) => Object.keys(v).sort()],
+    ["settings", "env", settings, (v: Record<string, unknown>) => Object.keys(v).sort()],
+  ];
+  for (const [key, label, value, show] of named) {
+    if (value instanceof NoClickError) {
+      lines.push(`  ${label.padEnd(11)} unread (${value.message})`);
+      continue;
+    }
+    const names = show(value as never);
+    data[key] = names;
+    lines.push(`  ${label.padEnd(11)} ${names.length ? names.join(", ") : "none"}`);
+  }
+  if (usage instanceof NoClickError) lines.push(`  spend       unread (${usage.message})`);
+  else {
+    const budget = usage.budgetUsd !== null ? ` of its ${usd(usage.budgetUsd)} budget` : "";
+    const limited = usage.limitedBy ? ` (paid calls refused: ${usage.limitedBy}'s limit reached)` : "";
+    lines.push(`  spend       ${usd(usage.usd)} this month${budget}${limited}`);
+    data.spend = { usd: usage.usd, budget_usd: usage.budgetUsd, limited_by: usage.limitedBy };
+  }
+  answer(io, values, data, () => OUT.fields(lines));
   return OK;
 }
 
@@ -483,7 +606,7 @@ export async function open(values: Values, io: Io): Promise<number> {
   if (preview !== undefined) {
     const ready = (await project.deployments({ limit: 50 })).filter((d) => d.status === "ready" && !d.production &&
       (!preview || d.branch === preview) && d.branch !== project.productionBranch);
-    if (!ready.length) throw new NotFound(`${project.name} has no preview${preview ? ` of ${preview}` : ""} ready.`, { nextStep: "noclick deploy --preview makes one." });
+    if (!ready.length) throw withRun(new NotFound(`${project.name} has no preview${preview ? ` of ${preview}` : ""} ready.`, { nextStep: "noclick deploy --preview makes one." }), ["noclick deploy --preview"]);
     url = String(ready[0]!.url);
   }
   answer(io, values, { url }, () => [url]);
@@ -495,21 +618,19 @@ export async function releases(values: Values, io: Io): Promise<number> {
   const limit = num(values, "limit") ?? 10;
   const found = await project.deployments({ branch: on(values, "all") ? undefined : project.productionBranch, limit: limit + 1 });
   const shown = found.slice(0, limit);
-  if (on(values, "json")) {
-    printJson(io, { data: shown.map((d) => ({ id: d.id, branch: d.branch, status: d.status, commit: d.commit, url: d.url ?? null,
-      production: d.production, created_at: d.createdAt, warning: d.raw.warning ?? null })), has_more: found.length > limit });
-    return OK;
-  }
-  answer(io, values, {}, () => {
-    const message = (d: Deployment) => {
+  const urls = urlsOf(project);
+  answer(io, values, { app: { name: project.name, url: project.url, urls }, data: shown.map(deploymentView), has_more: found.length > limit }, () => {
+    for (const line of OUT.fields([`${project.name}  ${project.url}`, ...(urls.length > 1 ? [`  also        ${urls.slice(1).join(", ")}`] : [])])) io.out(line);
+    const said = (d: Deployment) => {
       const first = (d.commitMessage ?? "").split("\n")[0]!;
       return first.length <= 50 ? first : `${first.slice(0, 49)}…`;
     };
     table(io, ["", "ID", "BRANCH", "STATUS", "COMMIT", "CREATED", "MESSAGE"], shown.map((d) => [d.production ? "*" : "", d.id, d.branch,
-      d.status, (d.commit ?? "").slice(0, 7), d.createdAt, message(d)]), `${project.name} has no deployments yet: noclick deploy.`,
+      d.status, (d.commit ?? "").slice(0, 7), d.createdAt, said(d)]), `${project.name} has no releases yet. Ship one with: noclick deploy`,
       `Releases of ${project.name}`);
     return [];
   });
+  if (on(values, "json")) return OK;
   if (found.length > limit) io.err(`More: noclick releases --limit ${limit * 2}${on(values, "all") ? " --all" : ""}`);
   if (shown.length) io.err("* serves production. Go back to one: noclick rollback <id>");
   return OK;
@@ -526,11 +647,11 @@ export async function rollback(values: Values, io: Io): Promise<number> {
   let to: Deployment | undefined;
   if (ref) {
     to = findRelease(releases, ref) ?? (ID.test(ref) ? await Deployment.get(ref) : undefined);
-    if (!to) throw new NotFound(`No release of ${project.name} is ${ref}.`, { nextStep: "noclick releases lists them by id and commit." });
+    if (!to) throw withRun(new NotFound(`No release of ${project.name} is ${ref}.`, { nextStep: "noclick releases lists them by id and commit." }), [`noclick releases --app ${project.name}`]);
   } else {
     const live = releases.findIndex((d) => d.production);
     to = releases.slice(live + 1).find((d) => d.status === "ready");
-    if (!to) throw new NotFound(`${project.name} has no earlier release to go back to.`, { nextStep: "noclick releases lists what it has." });
+    if (!to) throw withRun(new NotFound(`${project.name} has no earlier release to go back to.`, { nextStep: "noclick releases lists what it has." }), [`noclick releases --app ${project.name}`]);
   }
   io.err(`Rolling ${project.name} back to ${(to.commit ?? to.id).slice(0, 7)} (${cell(to.createdAt)}).`);
   return await settle(values, io, await project.rollback(to), "Rolling back");
@@ -545,7 +666,10 @@ export async function promote(values: Values, io: Io): Promise<number> {
     const ready = (await project.deployments({ limit: 50 })).filter((d) => d.status === "ready");
     to = ready.find((d) => d.branch === ref || d.url === ref.replace(/\/+$/, "")) ?? findRelease(ready, ref);
   }
-  if (!to) throw new NotFound(`${project.name} has no ready preview of ${ref}.`, { nextStep: `noclick deploy --preview ${ref} makes one; noclick releases --all lists them.` });
+  if (!to) {
+    throw withRun(new NotFound(`${project.name} has no ready preview of ${ref}.`, { nextStep: `noclick deploy --preview ${ref} makes one; noclick releases --all lists them.` }),
+      [`noclick deploy --preview ${ref}`, `noclick releases --all --app ${project.name}`]);
+  }
   io.err(`Promoting ${to.branch} (${(to.commit ?? "").slice(0, 7)}) to production.`);
   return await settle(values, io, await to.promote({ force: on(values, "force") }), "Promoting");
 }

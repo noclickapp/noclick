@@ -253,7 +253,7 @@ class McpServer(_Object):
             raise NotFound(
                 f"No MCP server is named {name!r}.",
                 next_step="Create it with noclick.McpServer.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "mcp_server"},
             )
         try:
             body = await self._wire(self._create_with, scope=self._scope)

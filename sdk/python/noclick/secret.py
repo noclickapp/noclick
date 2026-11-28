@@ -261,7 +261,7 @@ class Secret(_Object):
             raise NotFound(
                 f"No secret is named {name!r}.",
                 next_step="Create it with noclick.Secret.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "secret"},
             )
         try:
             return await self._request("POST", "/v1/secrets", json=self._create_with)

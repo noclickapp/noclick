@@ -15,10 +15,9 @@ import type { JsonObject } from "../../object.ts";
 import type { Values } from "../args.ts";
 import { OK } from "../exits.ts";
 import { host } from "../host.ts";
-import { type Io, printJson } from "../output.ts";
+import { type Io, printJson, size, withRun } from "../output.ts";
 import { CommandError, configDir } from "../store.ts";
 import { on, str } from "./kit.ts";
-import { size } from "./resources.ts";
 import { git, remote } from "./ship.ts";
 
 const MOVE_KEY_FILE = "move.json";
@@ -31,8 +30,8 @@ const keyPath = () => join(configDir(host.env), MOVE_KEY_FILE);
 async function moving(): Promise<AgentMove> {
   const path = keyPath();
   if (!existsSync(path)) {
-    throw new CommandError("No move is under way here.",
-      { nextStep: "Redeem the code your prompt gave: noclick agents move redeem --code nc_move_..." });
+    throw withRun(new CommandError("No move is under way here.",
+      { nextStep: "Redeem the code your prompt gave: noclick agents move redeem --code nc_move_..." }), ["noclick agents move redeem --code <code>"]);
   }
   const saved = JSON.parse(readFileSync(path, "utf8")) as { key: string; api_url: string };
   return await AgentMove.current({ client: new NoClick({ apiKey: saved.key, baseUrl: saved.api_url, fetch: host.fetch }) });

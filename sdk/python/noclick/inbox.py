@@ -496,7 +496,7 @@ class Inbox(_Object):
             raise NotFound(
                 f"No inbox is named {name!r}.",
                 next_step="Create it with noclick.Inbox.create(name=...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "inbox"},
             )
         definition = self._create_with
         body = compact(**{**definition, "agent_id": await agent_id(definition.get("agent_id")),

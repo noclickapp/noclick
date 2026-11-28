@@ -1,12 +1,14 @@
-"""A command's ``--help`` at a terminal, as a person reads it: a ``Usage:`` line, its description, then sections
-(Arguments, Commands, Options, Notes, Examples) each under a heading and a rule, names in one column and what they
-do dimmed beside them. Off a terminal, argparse's own help is printed as it always was (``cli._Parser``)."""
+"""A command's ``--help``, as a person reads it: a ``Usage:`` line, its description, then sections (Arguments,
+Commands, Options, Global flags, Notes, Examples) each under a heading (and a rule, at a terminal), names in one
+column and what they do beside them. A curated command's and ``noclick --help`` are drawn from the manifest
+(``command_screen``, ``render``), as the TypeScript CLI's ``helpscreen.ts`` draws them, so both print the same help,
+at a terminal or piped."""
 
 from __future__ import annotations
 
 import argparse
 import textwrap
-from typing import Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from .style import Style
 
@@ -37,6 +39,12 @@ def usage(parser: argparse.ArgumentParser, s: Style) -> str:
     return f"{s.bold('Usage:')} {' '.join(words)}"
 
 
+def wrap(text: str, width: int) -> List[str]:
+    """``text`` in lines of at most ``width`` (a word longer than that alone on its line), as ``helpscreen.ts``
+    wraps."""
+    return textwrap.wrap(text, width, break_long_words=False, break_on_hyphens=False)
+
+
 def rows(items: Iterable[Tuple[str, str]], s: Style, *, name_as=None, width: Optional[int] = None) -> List[str]:
     """Names in one column and what they do beside them, dimmed, wrapped under its own column."""
     items = list(items)
@@ -48,7 +56,7 @@ def rows(items: Iterable[Tuple[str, str]], s: Style, *, name_as=None, width: Opt
     out: List[str] = []
     for name, text in items:
         room = max(total - column - 6, 30)
-        lines = textwrap.wrap(text, room) or [""]
+        lines = wrap(text, room) or [""]
         if len(name) > column:
             out.append(f"  {paint(name)}")
             out += [f"  {' ' * column}  {s.dim(line)}" for line in lines]
@@ -58,6 +66,65 @@ def rows(items: Iterable[Tuple[str, str]], s: Style, *, name_as=None, width: Opt
     return out
 
 
+def render(s: Style, *, usage: str, description: str = "", middle: Sequence[str] = (),
+           sections: Sequence[Tuple[str, Sequence[Tuple[str, str]]]] = (), notes: str = "",
+           examples: Sequence[str] = ()) -> str:
+    """A help screen from its parts (``helpscreen.ts``' ``screen``)."""
+    width = min(s.width(), 100)
+    lines = [f"{s.bold('Usage:')} {usage}", ""]
+    if description:
+        lines += [*(line for p in description.split("\n") for line in (wrap(p, width) if p else [""])), ""]
+    if middle:
+        lines += [*middle, ""]
+    for title, items in sections:
+        if items:
+            lines += [*s.section(title), *rows(items, s, width=width), ""]
+    if notes:
+        lines += [*s.section("Notes"), *(f"  {s.dim(line)}" for line in wrap(notes, width - 2)), ""]
+    if examples:
+        lines += [*s.section("Examples"), *(f"  {s.link(e)}" for e in examples), ""]
+    return "\n".join(lines).rstrip()
+
+
+def invocation(flag: Dict[str, Any]) -> str:
+    """A flag as its help names it: ``-r, --recursive``, ``--app APP``, ``--env {all,production,preview}``,
+    ``--preview [NAME]`` (its value may be left out)."""
+    names = f"{flag['short']}, {flag['flag']}" if flag.get("short") else flag["flag"]
+    if flag["type"] == "bool":
+        return names
+    value = ("{" + ",".join(str(c) for c in flag["choices"]) + "}" if flag.get("choices")
+             else flag.get("metavar") or flag["dest"].upper())
+    return f"{names} [{value}]" if "const" in flag else f"{names} {value}"
+
+
+def argument(arg: Dict[str, Any]) -> str:
+    name = arg.get("metavar") or arg["name"]
+    return (f"[{name}]" if arg.get("optional") else f"<{name}>") + ("..." if arg.get("many") else "")
+
+
+def usage_of(command: Dict[str, Any]) -> str:
+    """``noclick secret set [OPTIONS] <name>``: a curated command's usage, from the manifest."""
+    return " ".join(["noclick", *command["path"], *(["[OPTIONS]"] if command["flags"] else []),
+                     *(argument(a) for a in command["args"])])
+
+
+#: What every command's help lists after its own options: the flags any command takes.
+HELP_FLAG = ("-h, --help", "Show this help.")
+
+
+def global_flags(globals_: Sequence[Dict[str, Any]]) -> List[Tuple[str, str]]:
+    return [*((invocation(g), g.get("help", "")) for g in globals_ if g["flag"] != "--version"), HELP_FLAG]
+
+
+def command_screen(command: Dict[str, Any], globals_: Sequence[Dict[str, Any]], s: Style) -> str:
+    """A curated command's help, from the manifest: what ``helpscreen.ts`` draws for it."""
+    return render(s, usage=usage_of(command), description=command.get("summary", ""), sections=(
+        ("Arguments", [(a.get("metavar") or a["name"], a.get("help", "")) for a in command["args"]]),
+        ("Options", [(invocation(f), f.get("help", "")) for f in command["flags"]]),
+        ("Global flags", global_flags(globals_)),
+    ), notes=command.get("notes", ""), examples=command.get("examples") or ())
+
+
 def screen(parser: argparse.ArgumentParser, s: Style, *, examples: Sequence[str] = (),
            middle: Sequence[str] = ()) -> str:
     """A parser's help, styled. ``middle``: lines put after its description in place of its list of commands (the
@@ -65,7 +132,7 @@ def screen(parser: argparse.ArgumentParser, s: Style, *, examples: Sequence[str]
     width = min(s.width(), 100)
     lines = [usage(parser, s), ""]
     if parser.description:
-        lines += [*textwrap.wrap(parser.description, width), ""]
+        lines += [*wrap(parser.description, width), ""]
     if middle:
         lines += [*middle, ""]
     arguments, commands = [], []
@@ -83,7 +150,7 @@ def screen(parser: argparse.ArgumentParser, s: Style, *, examples: Sequence[str]
         if items:
             lines += [*s.section(title), *rows(items, s, width=width), ""]
     if parser.epilog:
-        lines += [*s.section("Notes"), *(f"  {s.dim(line)}" for line in textwrap.wrap(parser.epilog, width - 2)), ""]
+        lines += [*s.section("Notes"), *(f"  {s.dim(line)}" for line in wrap(parser.epilog, width - 2)), ""]
     if examples:
         lines += [*s.section("Examples"), *(f"  {s.link(e)}" for e in examples), ""]
     return "\n".join(lines).rstrip() + "\n"

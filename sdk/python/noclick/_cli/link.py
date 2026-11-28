@@ -11,12 +11,13 @@ from pathlib import Path
 from typing import Optional
 
 from ..exceptions import Error
+from . import exits
 
 FOLDER = ".noclick"
 FILE = "project.json"
 
 
-class NotLinked(Error):
+class NotLinked(exits.Suggests, Error):
     """A command that needs an app ran where none is named or linked."""
 
     type = "not_linked"
@@ -75,4 +76,5 @@ def app_name(named: Optional[str], *, start: Optional[Path] = None) -> str:
     if found is not None:
         return found.app
     raise NotLinked("Name the app: this folder isn't linked to one.",
-                    next_step="Pass the app's name, or link this folder once: noclick link <app>")
+                    next_step="Pass the app's name, or link this folder once: noclick link <app>",
+                    run=["noclick link <app>"])

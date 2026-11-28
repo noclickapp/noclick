@@ -2477,7 +2477,7 @@ export class Agent extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No agent is named "${name}".`, {
         nextStep: "Create it with Agent.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "agent" },
       });
     }
     try {

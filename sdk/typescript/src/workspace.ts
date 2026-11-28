@@ -528,7 +528,7 @@ export class Workspace extends ApiObject {
     if (!definition || !this._creates) {
       throw new NotFound(`No workspace is named "${name}".`, {
         nextStep: "Make it with Workspace.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "workspace" },
       });
     }
     const json = compact({

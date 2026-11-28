@@ -496,7 +496,7 @@ export class Card extends ApiObject {
     if (!this._createWith || !this._creates) {
       throw new NotFound(`No open card is named "${name}".`, {
         nextStep: "Issue it with Card.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "card" },
       });
     }
     try {

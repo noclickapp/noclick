@@ -1,6 +1,7 @@
 /** What each curated command runs, by its path in the manifest; `main` registers them all. A path the manifest
  *  doesn't list is refused there, so this can't drift from the Python CLI's commands. */
 
+import * as account from "./account.ts";
 import * as agents from "./agents.ts";
 import * as auth from "./auth.ts";
 import * as configure from "./configure.ts";
@@ -12,6 +13,7 @@ import * as machines from "./machines.ts";
 import * as move from "./move.ts";
 import * as operate from "./operate.ts";
 import { resources } from "./resources.ts";
+import { shell } from "./shell.ts";
 import * as ship from "./ship.ts";
 import * as teach from "./teach.ts";
 
@@ -57,6 +59,12 @@ export const RUNNERS: Record<string, Run> = {
   login: auth.login,
   whoami: auth.whoami,
   logout: auth.logout,
+  "profile list": account.profileList,
+  "profile use": account.profileUse,
+  "profile show": account.profileShow,
+  completion: account.completionCmd,
+  dashboard: account.dashboard,
+  changelog: account.changelogCmd,
   deploy: ship.deploy,
   link: ship.link,
   unlink: ship.unlink,
@@ -72,9 +80,6 @@ export const RUNNERS: Record<string, Run> = {
   "env set": configure.envSet,
   "env ls": configure.envLs,
   "env rm": configure.envRm,
-  "settings list": configure.settingsList,
-  "settings set": configure.settingsSet,
-  "settings delete": configure.settingsDelete,
   bind: configure.bind,
   "domains add": configure.domainAdd,
   "domains ls": configure.domainLs,
@@ -86,6 +91,6 @@ export const RUNNERS: Record<string, Run> = {
   logs: operate.logs,
   resources,
   estimate: operate.estimateCmd,
-  "ops wait": operate.opsWait,
   "agents send": operate.agentsSend,
+  shell,
 };

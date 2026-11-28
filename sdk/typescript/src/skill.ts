@@ -240,7 +240,7 @@ export class Skill extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No skill is named "${name}".`, {
         nextStep: "Create it with Skill.create(files) or pass { createIfMissing: true, files }.",
-        details: { name },
+        details: { name, kind: "skill" },
       });
     }
     try {

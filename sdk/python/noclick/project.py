@@ -2334,7 +2334,7 @@ class Project(_Object):
             raise NotFound(
                 f"No project is named {name!r}.",
                 next_step="Create it with noclick.Project.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "project"},
             )
         try:
             return await self._request("POST", "/v1/projects", json=await self._wire(self._create_with))

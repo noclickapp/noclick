@@ -6,7 +6,6 @@ import { createHmac, randomBytes } from "node:crypto";
 
 import { Machine } from "../../machine.ts";
 import { ALL_USERS } from "../../scope.ts";
-import { TerminalConnection } from "../../terminal.ts";
 import { Event, WEBHOOK_SIGNATURE_HEADER } from "../../webhook.ts";
 import { VERSION } from "../../version.ts";
 import type { Values } from "../args.ts";
@@ -14,56 +13,21 @@ import { OK } from "../exits.ts";
 import { host } from "../host.ts";
 import type { Io } from "../output.ts";
 import { CommandError } from "../store.ts";
+import { attachShell } from "../terminal.ts";
 import { str } from "./kit.ts";
 
 const POLL_MS = 2000;
 const USER_AGENT = `noclick-cli/${VERSION}`;
 
 /** Your terminal on a machine's shell, raw, until its bash ends; exits with bash's exit code. It renews, so the shell
- *  lasts 15 minutes at a time and goes on. */
-export async function machinesSsh(values: Values, io: Io): Promise<number> {
+ *  lasts 15 minutes at a time and goes on. A terminal is asked for before any shell is opened for it. */
+export async function machinesSsh(values: Values, _io: Io): Promise<number> {
   if (process.platform === "win32" || !host.stdinIsTty() || !process.stdout.isTTY) {
     throw new CommandError("noclick machines ssh needs a terminal on macOS or Linux (on Windows, use WSL).");
   }
   const machine = Machine.fromName(String(values.name));
   const opened = await machine.shell();
-  const size = () => ({ cols: process.stdout.columns || 100, rows: process.stdout.rows || 30 });
-  const stdin = process.stdin;
-  let ended: Record<string, unknown> = {};
-  let ready = false;
-  const code = await new Promise<number>((done, fail) => {
-    const typed = (data: Buffer) => connection.write(new Uint8Array(data));
-    const resized = () => connection.resize(size().cols, size().rows);
-    const restore = () => {
-      stdin.off("data", typed);
-      process.stdout.off("resize", resized);
-      if (stdin.isTTY) stdin.setRawMode(false);
-      stdin.pause();
-    };
-    const connection = new TerminalConnection(opened.url, opened.token, {
-      ...size(),
-      renew: async () => (await machine.shell()).token,
-      onReady: () => {
-        ready = true;
-        stdin.setRawMode(true);
-        stdin.resume();
-        stdin.on("data", typed);
-        process.stdout.on("resize", resized);
-      },
-      onData: (data) => process.stdout.write(data),
-      onState: (status) => {
-        if (status.state === "exited") ended = status.raw;
-      },
-      onClose: (event) => {
-        restore();
-        if (!ready) fail(new CommandError(`The shell didn't open: ${event.reason || "closed"}.`));
-        else done(typeof ended.exit_code === "number" ? ended.exit_code : 0);
-      },
-    });
-  });
-  if (ended.reason === "idle") io.err("\nThe shell closed after sitting idle.");
-  else if (ended.reason !== "exited") io.err("\nThe connection to the shell was lost.");
-  return code;
+  return await attachShell(opened.url, opened.token, async () => (await machine.shell()).token, "noclick machines ssh");
 }
 
 /** The `NoClick-Signature` header a delivery carries: HMAC-SHA256 over `timestamp.body`. */
@@ -98,8 +62,8 @@ export async function webhooksListen(values: Values, io: Io): Promise<number> {
   let since = new Date();
   let seen = new Set<string>();
   let stopped = false;
-  const stop = () => { stopped = true; };
-  process.once("SIGINT", stop);
+  const caught = host.interrupted();
+  void caught.promise.then(() => { stopped = true; });
   try {
     while (!stopped) {
       const events = await Event.list({ type: types.length ? types : undefined, since, userFilter: users });
@@ -116,7 +80,7 @@ export async function webhooksListen(values: Values, io: Io): Promise<number> {
       if (!stopped) await host.sleep(POLL_MS);
     }
   } finally {
-    process.off("SIGINT", stop);
+    caught.release();
   }
   return OK;
 }

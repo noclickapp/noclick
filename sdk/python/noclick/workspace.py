@@ -587,7 +587,7 @@ class Workspace(_Object):
             raise NotFound(
                 f"No workspace is named {name!r}.",
                 next_step="Make it with noclick.Workspace.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "workspace"},
             )
         definition = self._create_with
         body = {

@@ -1,6 +1,7 @@
 /** Parsing a command line by the spec's own description of a command: its positional arguments and its flags. */
 
 import { screen } from "./helpscreen.ts";
+import { closeMatches } from "./screens.ts";
 import { OUT } from "./style.ts";
 
 export interface FlagSpec {
@@ -11,6 +12,8 @@ export interface FlagSpec {
   choices?: unknown[];
   /** Must be given (argparse's `required=True`). */
   required?: boolean;
+  /** What its help calls its value. */
+  metavar?: string;
   /** Given alone (no value after it, or another flag next), the flag is this, as argparse's `nargs="?"`. */
   const?: string | null;
   /** What it is when not given, as the Python CLI's parser fills it in. */
@@ -27,10 +30,18 @@ export interface ArgSpec {
 export class UsageError extends Error {
   readonly type = "invalid_request";
   readonly nextStep: string | null;
+  /** The whole command lines that take its next step (`output.withRun`). */
+  run: string[];
+  /** The usage of the command the mistake was made in, printed under it. */
+  usage?: string;
+  readonly details?: Record<string, unknown>;
 
-  constructor(message: string, nextStep: string | null = null) {
+  constructor(message: string, nextStep: string | null = null, run: string[] = [], usage?: string, details?: Record<string, unknown>) {
     super(message);
     this.nextStep = nextStep;
+    this.run = run;
+    if (usage) this.usage = usage;
+    this.details = details;
   }
 }
 
@@ -51,11 +62,21 @@ function convert(spec: FlagSpec, raw: string): unknown {
 }
 
 /** `argv` read by `flags` and `args`; `-h`/`--help` sets `help`. Unknown flags and missing arguments are usage
- *  errors naming the command. */
+ *  errors naming the command (`usage`, its words), with its usage line (`shown`) and its help as the command to run. */
 export function parse(
   argv: string[], flags: FlagSpec[], args: ArgSpec[], usage: string,
-  oneOf: { dests: string[]; required: boolean }[] = [],
+  oneOf: { dests: string[]; required: boolean }[] = [], shown?: string,
 ): Values {
+  const wrong = (message: string) => new UsageError(message, null, [`${usage} --help`], shown ?? usage);
+  try {
+    return read(argv, flags, args, usage, oneOf);
+  } catch (err) {
+    if (err instanceof UsageError) throw wrong(err.message);
+    throw err;
+  }
+}
+
+function read(argv: string[], flags: FlagSpec[], args: ArgSpec[], usage: string, oneOf: { dests: string[]; required: boolean }[]): Values {
   const values: Values = {};
   const byFlag = new Map<string, FlagSpec>();
   for (const spec of flags) {
@@ -86,7 +107,10 @@ export function parse(
         continue;
       }
     }
-    if (!spec) throw new UsageError(`${usage}: no flag ${name}.`, `${usage} --help`);
+    if (!spec) {
+      const near = closeMatches(name, flags.map((f) => f.flag).filter((f) => f.startsWith("--")), 1);
+      throw new UsageError(`${usage}: no flag ${name}${near.length ? `; did you mean ${near[0]}?` : "."}`);
+    }
     if (spec.type === "bool") {
       values[spec.dest] = true;
       continue;
@@ -96,7 +120,7 @@ export function parse(
       continue;
     }
     const raw = inline ?? argv[++i];
-    if (raw === undefined) throw new UsageError(`${spec.flag} takes a value.`, `${usage} --help`);
+    if (raw === undefined) throw new UsageError(`${spec.flag} takes a value.`);
     const value = convert(spec, raw);
     if (spec.type === "list") values[spec.dest] = [...((values[spec.dest] as unknown[]) ?? []), value];
     else values[spec.dest] = value;
@@ -104,30 +128,30 @@ export function parse(
   if (values.help) return values;
   for (const spec of args) {
     if (spec.many) {
-      if (!positionals.length && !spec.optional) throw new UsageError(`${usage} needs ${spec.name}.`, `${usage} --help`);
+      if (!positionals.length && !spec.optional) throw new UsageError(`${usage} needs ${spec.name}.`);
       values[spec.name] = positionals.splice(0);
       continue;
     }
     const value = positionals.shift();
     if (value === undefined) {
       if (spec.optional) continue;
-      throw new UsageError(`${usage} needs ${spec.name}.`, `${usage} --help`);
+      throw new UsageError(`${usage} needs ${spec.name}.`);
     }
     if (spec.choices && !spec.choices.map((c) => String(c).toLowerCase()).includes(value.toLowerCase())) {
-      throw new UsageError(`${spec.name} is one of ${spec.choices.join(", ")}, not ${value}.`, `${usage} --help`);
+      throw new UsageError(`${spec.name} is one of ${spec.choices.join(", ")}, not ${value}.`);
     }
     values[spec.name] = value;
   }
-  if (positionals.length) throw new UsageError(`${usage}: unexpected ${positionals.join(" ")}.`, `${usage} --help`);
+  if (positionals.length) throw new UsageError(`${usage}: unexpected ${positionals.join(" ")}.`);
   for (const spec of flags) if (spec.default !== undefined && values[spec.dest] === undefined) values[spec.dest] = spec.default;
   const missing = flags.filter((f) => f.required && values[f.dest] === undefined).map((f) => f.flag);
-  if (missing.length) throw new UsageError(`${usage} needs ${missing.join(", ")}.`, `${usage} --help`);
+  if (missing.length) throw new UsageError(`${usage} needs ${missing.join(", ")}.`);
   for (const group of oneOf) {
     const named = (dest: string) => flags.find((f) => f.dest === dest)?.flag ?? dest;
     const given = group.dests.filter((d) => values[d] !== undefined && values[d] !== false);
-    if (given.length > 1) throw new UsageError(`${usage}: ${given.map(named).join(" and ")} can't go together.`, `${usage} --help`);
+    if (given.length > 1) throw new UsageError(`${usage}: ${given.map(named).join(" and ")} can't go together.`);
     if (group.required && !given.length) {
-      throw new UsageError(`${usage} needs one of ${group.dests.map(named).join(", ")}.`, `${usage} --help`);
+      throw new UsageError(`${usage} needs one of ${group.dests.map(named).join(", ")}.`);
     }
   }
   return values;
@@ -137,18 +161,11 @@ const invocation = (f: FlagSpec) => `${f.flag}${f.type === "bool" ? "" : ` <${f.
 
 /** A command's help, from the same specs it's parsed by: styled at a terminal (`helpscreen.ts`). */
 export function helpText(usage: string, summary: string, flags: (FlagSpec & { help?: string })[], args: (ArgSpec & { help?: string })[], examples: string[] = [], notes?: string): string {
-  if (OUT.on) {
-    const named = args.map((a) => (a.optional ? `[${a.name}]` : `<${a.name}>`) + (a.many ? "..." : ""));
-    return screen(OUT, {
-      usage: [usage, ...(flags.length ? ["[OPTIONS]"] : []), ...named].join(" "),
-      description: summary,
-      sections: [["Arguments", args.map((a) => [a.name, a.help ?? ""])], ["Options", flags.map((f) => [invocation(f), f.help ?? ""])]],
-      notes, examples,
-    });
-  }
-  const lines = [`usage: ${usage}${args.map((a) => ` ${a.optional ? `[${a.name}]` : `<${a.name}>`}${a.many ? "..." : ""}`).join("")} [flags]`, "", summary];
-  if (args.length) lines.push("", "arguments:", ...args.map((a) => `  ${a.name.padEnd(24)} ${a.help ?? ""}`));
-  if (flags.length) lines.push("", "flags:", ...flags.map((f) => `  ${invocation(f).padEnd(24)} ${f.help ?? ""}`));
-  if (examples.length) lines.push("", "examples:", ...examples.map((e) => `  ${e}`));
-  return lines.join("\n");
+  const named = args.map((a) => (a.optional ? `[${a.name}]` : `<${a.name}>`) + (a.many ? "..." : ""));
+  return screen(OUT, {
+    usage: [usage, ...(flags.length ? ["[OPTIONS]"] : []), ...named].join(" "),
+    description: summary,
+    sections: [["Arguments", args.map((a) => [a.name, a.help ?? ""])], ["Options", flags.map((f) => [invocation(f), f.help ?? ""])]],
+    notes, examples,
+  });
 }

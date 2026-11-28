@@ -4,6 +4,7 @@
  * reads and writes (`noclick/_cli/link.py`).
  */
 
+import { withRun } from "./output.ts";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
@@ -73,7 +74,7 @@ export function appName(named: string | null | undefined, start?: string): strin
   if (named) return named;
   const found = find(start);
   if (found) return found.app;
-  throw new NotLinked("Name the app: this folder isn't linked to one.", {
+  throw withRun(new NotLinked("Name the app: this folder isn't linked to one.", {
     nextStep: "Pass the app's name, or link this folder once: noclick link <app>",
-  });
+  }), ["noclick link <app>"]);
 }

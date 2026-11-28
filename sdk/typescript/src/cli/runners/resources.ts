@@ -10,7 +10,7 @@ import { NoClickError } from "../../errors.ts";
 import { ALL_USERS } from "../../scope.ts";
 import type { Values } from "../args.ts";
 import { FAILED, OK } from "../exits.ts";
-import { type Io, errorBody, printJson } from "../output.ts";
+import { type Io, errorBody, printJson, size } from "../output.ts";
 import { type ResourceKind, load } from "../spec.ts";
 import { OUT } from "../style.ts";
 import { on, str, table, usd } from "./kit.ts";
@@ -22,15 +22,6 @@ function field(item: Json, path: string): unknown {
   let value: unknown = item;
   for (const part of path.split(".")) value = value && typeof value === "object" ? (value as Json)[part] : undefined;
   return value;
-}
-
-export function size(n: number): string {
-  let amount = n;
-  for (const unit of ["B", "KB", "MB", "GB", "TB"]) {
-    if (amount < 1000 || unit === "TB") return unit === "B" ? `${amount.toFixed(0)} B` : `${amount.toFixed(1)} ${unit}`;
-    amount /= 1000;
-  }
-  return String(n);
 }
 
 /** A column's value as the table shows it. */
@@ -69,6 +60,8 @@ export async function resources(values: Values, io: Io): Promise<number> {
     if (answer instanceof NoClickError) failed[k.kind] = answer;
     else if ((answer.data as Json[] | undefined)?.length) found[k.kind] = answer.data as Json[];
   });
+  const reasons = Object.values(failed);
+  if (reasons.length === kinds.length && new Set(reasons.map((e) => e.type)).size === 1) throw reasons[0]!; // said once
   if (on(values, "json")) {
     printJson(io, { kinds: found, errors: Object.fromEntries(Object.entries(failed).map(([k, e]) => [k, errorBody(e)])) });
     return Object.keys(failed).length === kinds.length ? FAILED : OK;

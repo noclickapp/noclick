@@ -388,7 +388,7 @@ class Queue(_Object):
             raise NotFound(
                 f"No queue is named {name!r}.",
                 next_step="Create it with noclick.Queue.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "queue"},
             )
         try:
             return await self._request("POST", "/v1/queues", json=self._create_with)

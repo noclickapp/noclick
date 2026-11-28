@@ -15,11 +15,12 @@ INTRO = "NoClick's CLI: ship a folder as an app, configure and operate it, and r
 
 # The curated commands by what they're for, as the CLI's guide has them; every top-level command is in one.
 SECTIONS: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
-    ("Start", ("signup", "setup", "login", "whoami", "logout", "init", "link", "unlink")),
+    ("Start", ("signup", "setup", "login", "whoami", "logout", "profile", "init", "link", "unlink")),
     ("Ship", ("deploy", "status", "open", "releases", "rollback", "promote", "delete", "live")),
-    ("Configure", ("secret", "env", "settings", "bind", "domains")),
-    ("Operate", ("resources", "logs", "db", "bucket", "wait", "ops", "estimate", "agents", "users", "machines", "webhooks")),
-    ("Everything else", ("api", "describe", "help")),
+    ("Configure", ("secret", "env", "bind", "domains")),
+    ("Operate", ("resources", "logs", "db", "bucket", "wait", "estimate", "agents", "users", "machines", "shell", "webhooks",
+                 "dashboard")),
+    ("Everything else", ("api", "describe", "help", "completion", "changelog")),
     ("Teach", ("docs", "skill", "mcp")),
 )
 AREAS = ("<area> <operation>",
@@ -32,6 +33,7 @@ FIRST: Tuple[Tuple[str, str], ...] = (
 )
 SIGNED_OUT = "No account? noclick signup --accept-terms"
 NEXT: Tuple[Tuple[str, str], ...] = (
+    ("noclick ls", "What your account has, by kind (the same as noclick resources)."),
     ("noclick --help", "Every command, by what it's for."),
     ("noclick docs cli", "The CLI's guide, as Markdown."),
     ("noclick help --json", "Every command, its flags and examples, as data."),
@@ -89,10 +91,80 @@ RESOURCE_KINDS: Tuple[Dict[str, Any], ...] = (
     {"kind": "volumes", "title": "Volumes", "path": "/v1/volumes",
      "columns": [["NAME", "name", "text"], ["SIZE", "size_bytes", "bytes"], ["FILES", "file_count", "text"]]},
 )
+# An error's words as the command line says them (``cli._for_the_terminal``, the TypeScript CLI's ``said.ts``):
+# what isn't there, by its kind (the SDK's ``details.kind``), and the command that makes it, or the API route that
+# does (the command for it read from the spec); a kind the command line calls something else; why the API couldn't
+# be reached, as the network said it (a code, or words in it), said plainly.
+MAKES = {"project": ("Create it with", "noclick deploy {name} --create"),
+         "database": ("Create it with", "noclick db create {name}"),
+         "bucket": ("Create it with", "noclick bucket create {name}"),
+         "domain": ("See if it's free to buy", "noclick domains search {name}")}
+MADE_BY = {"agent": "/v1/agents", "browser_profile": "/v1/browser_profiles", "card": "/v1/cards",
+           "channel": "/v1/channels", "dict": "/v1/dicts", "inbox": "/v1/inboxes", "machine": "/v1/machines",
+           "mcp_server": "/v1/mcp_servers", "memory": "/v1/memories", "phone_number": "/v1/phone_numbers",
+           "queue": "/v1/queues", "repo": "/v1/repos", "secret": "/v1/secrets", "skill": "/v1/skills",
+           "volume": "/v1/volumes", "workspace": "/v1/workspaces"}
+KIND_WORDS = {"project": "app"}
+UNREACHABLE = (("ECONNREFUSED", "connection refused"), ("All connection attempts failed", "connection refused"),
+               ("Connection refused", "connection refused"), ("ENOTFOUND", "no such host"),
+               ("EAI_AGAIN", "no such host"), ("Name or service not known", "no such host"),
+               ("nodename nor servname", "no such host"), ("ETIMEDOUT", "timed out"),
+               ("UND_ERR_CONNECT_TIMEOUT", "timed out"), ("timed out", "timed out"), ("ECONNRESET", "connection reset"))
+DEFAULT_API = "https://api.noclick.com"
+
+
+def unreachable(api_url: str, cause: str) -> Tuple[str, str]:
+    """An API that couldn't be reached, said plainly: its host (its whole URL when NOCLICK_API_URL names another)
+    and why, as the network said it; and what to do."""
+    why = next((said for found, said in UNREACHABLE if found.lower() in (cause or "").lower()), cause or "no answer")
+    default = api_url.rstrip("/") == DEFAULT_API
+    where = DEFAULT_API.split("//", 1)[1] if default else api_url
+    return (f"Can't reach {where} ({why}).",
+            "Check your network, then try again." if default else
+            f"Check your network, and NOCLICK_API_URL ({api_url}), then try again.")
+
+
 # A word that means another, wherever the command line has it: ``noclick ls`` is ``noclick resources``, and ``ls``
 # under a group with ``list`` and no ``ls`` of its own is ``list``.
 TOP_ALIASES = {"ls": "resources"}
 GROUP_ALIASES = {"ls": "list"}
+# Older spellings of a command, which keep working and are listed nowhere: the words, the command they now are, and
+# what the old one's leading arguments become (``--app``: the next argument is the app; ``=``: the next two are one
+# KEY=value); the rest is passed on as it was. ``VALUED`` are the flags among them that take a value.
+OLD_SPELLINGS: Tuple[Tuple[Tuple[str, ...], Tuple[str, ...], Tuple[str, ...]], ...] = (
+    (("settings", "list"), ("env", "ls"), ("--app",)),
+    (("settings", "set"), ("env", "set"), ("--app", "=")),
+    (("settings", "delete"), ("env", "rm"), ("--app",)),
+    (("ops", "wait"), ("wait",), ()),
+    (("settings",), ("env",), ()),
+    (("ops",), ("wait",), ()),
+)
+VALUED = ("--user", "--timeout", "--profile", "--color")
+
+
+def spelled_out(words: Sequence[str]) -> List[str]:
+    """``words`` (the command's own, past the global flags) with an older spelling as the command it now is."""
+    for old, new, leading in OLD_SPELLINGS:
+        if tuple(words[:len(old)]) != old:
+            continue
+        rest, out, flags, i = list(words[len(old):]), [], [], 0
+        positional: List[str] = []
+        while i < len(rest):
+            if rest[i].startswith("-") and rest[i] != "-":
+                flags.append(rest[i])
+                if rest[i] in VALUED and i + 1 < len(rest):
+                    flags.append(rest[i + 1])
+                    i += 1
+            else:
+                positional.append(rest[i])
+            i += 1
+        for how in leading:
+            if how == "--app" and positional:
+                flags += ["--app", positional.pop(0)]
+            elif how == "=" and len(positional) >= 2:
+                out.append(f"{positional.pop(0)}={positional.pop(0)}")
+        return [*new, *out, *positional, *flags]
+    return list(words)
 
 
 def manifest(summaries: Dict[str, str]) -> Dict[str, Any]:
@@ -107,7 +179,11 @@ def manifest(summaries: Dict[str, str]) -> Dict[str, Any]:
         "signed_out": SIGNED_OUT,
         "signup": {"terms": list(TERMS), "harnesses": [list(row) for row in HARNESSES], "works": WORKS},
         "resources": [dict(kind) for kind in RESOURCE_KINDS],
-        "aliases": {"top": TOP_ALIASES, "group": GROUP_ALIASES},
+        "aliases": {"top": TOP_ALIASES, "group": GROUP_ALIASES,
+                    "old": [[list(old), list(new), list(leading)] for old, new, leading in OLD_SPELLINGS],
+                    "valued": list(VALUED)},
+        "said": {"makes": {kind: list(made) for kind, made in MAKES.items()}, "made_by": MADE_BY, "kind_words": KIND_WORDS,
+                 "unreachable": [list(row) for row in UNREACHABLE], "default_api": DEFAULT_API},
     }
 
 

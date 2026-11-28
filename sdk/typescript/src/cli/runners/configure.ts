@@ -5,7 +5,8 @@
  * only under a ceiling.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, resolve as resolvePath } from "node:path";
 
 import { Bucket } from "../../bucket.ts";
 import { Database, type DatabaseEngine } from "../../database.ts";
@@ -14,13 +15,17 @@ import { Domain, type DomainContact } from "../../domain.ts";
 import type { Bindable, SecretEnvironment } from "../../project.ts";
 import { Queue } from "../../queue.ts";
 import type { RegionName } from "../../region.ts";
+import { NotFound } from "../../errors.ts";
 import { UsageError, type Values } from "../args.ts";
+import * as links from "../link.ts";
+import type { Link } from "../link.ts";
 import { host } from "../host.ts";
 import { OK } from "../exits.ts";
-import { type Io, printJson } from "../output.ts";
+import { type Io, jsonText, printJson, withRun } from "../output.ts";
+import { findWrangler, readWrangler, setTopLevel } from "../wrangler.ts";
 import * as spend from "../spend.ts";
 import { CommandError } from "../store.ts";
-import { answer, appNamed, appOf, num, on, str, table, usd } from "./kit.ts";
+import { answer, appOf, num, on, str, table, usd } from "./kit.ts";
 
 function environment(values: Values): SecretEnvironment {
   return (str(values, "env") as SecretEnvironment | undefined) ?? "all";
@@ -44,20 +49,21 @@ export async function secretSet(values: Values, io: Io): Promise<number> {
     }
     value = (await host.stdin()).replace(/\r?\n$/, "");
   }
-  if (!value) throw new CommandError(`The value for ${name} is empty.`, { nextStep: "Set it to something, then run it again." });
+  if (!value) throw new CommandError("That value is empty.", { nextStep: "Pass the value through --from-env or --stdin." });
   const { project } = await appOf(values);
   await project.secrets.set(name, value, { environment: environment(values) });
-  io.err(`Set ${name} on ${project.name} (${environment(values)}). The app reads it from its next deploy: noclick deploy.`);
-  answer(io, values, { app: project.name, secret: name, environment: environment(values), set: true }, () => []);
+  const where = { all: "production and previews", production: "production", preview: "previews" }[environment(values)];
+  io.err(`Set ${name} for ${where} on ${project.name} (${value.length} characters, never shown). It reaches the app at its next deploy: noclick deploy.`);
+  answer(io, values, { name, environment: environment(values), app: project.name }, () => []);
   return OK;
 }
 
 export async function secretLs(values: Values, io: Io): Promise<number> {
   const { project } = await appOf(values);
   const found = await project.secrets.list({ environment: environment(values) });
-  answer(io, values, { data: Object.entries(found).sort().map(([name, at]) => ({ name, updated_at: at })) }, () => {
-    table(io, ["NAME", "UPDATED"], Object.entries(found).sort(), `${project.name} has no secrets for ${environment(values)}.`,
-      `Secrets of ${project.name} (${environment(values)})`);
+  answer(io, values, { data: Object.entries(found).sort().map(([n, at]) => ({ name: n, updated_at: at })) }, () => {
+    const seenBy = { all: "", production: " for production", preview: " for previews" }[environment(values)];
+    table(io, ["NAME", "UPDATED"], Object.entries(found).sort(), `${project.name} has no secrets${seenBy}.`, `Secrets of ${project.name}${seenBy}`);
     return [];
   });
   return OK;
@@ -68,25 +74,62 @@ export async function secretRm(values: Values, io: Io): Promise<number> {
   const names = values.names as string[];
   for (const name of names) {
     await project.secrets.delete(name, { environment: environment(values) });
-    io.err(`Deleted ${name} from ${project.name}.`);
+    io.err(`Deleted ${name} from ${project.name} (${environment(values)}); the app stops seeing it at its next deploy.`);
   }
-  answer(io, values, { app: project.name, deleted: names }, () => []);
+  answer(io, values, { deleted: names, environment: environment(values) }, () => []);
   return OK;
 }
 
 function pair(text: string): [string, string] {
   const at = text.indexOf("=");
-  if (at < 1) throw new UsageError(`Each setting is KEY=value, not ${text}.`, "noclick env set PORT=8080");
+  if (at < 1) throw new UsageError(`Each setting is KEY=value, not ${text}.`, "noclick env set PORT=8080", ["noclick env set PORT=8080"]);
   return [text.slice(0, at), text.slice(at + 1)];
 }
 
+/** Change `noclick.json`'s `section` the same way, where the linked folder's names one: the next deploy gives the app
+ *  what it says, so it would undo a change made only to the app. As the Python CLI's `_keep_in_step`. */
+function keepInStep(io: Io, link: Link | null, section: string, change: (held: Record<string, unknown>) => boolean): void {
+  if (!link) return;
+  const path = join(dirname(dirname(link.path)), "noclick.json");
+  if (!existsSync(path)) return;
+  let data: unknown;
+  try {
+    data = JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, ""));
+  } catch (err) {
+    throw new CommandError(`noclick.json isn't valid JSON (${(err as Error).message}).`, { nextStep: "Fix noclick.json, then deploy again." });
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new CommandError(`noclick.json is a JSON object, not ${Array.isArray(data) ? "list" : typeof data}.`,
+      { nextStep: "Fix noclick.json, then deploy again." });
+  }
+  const held = (data as Record<string, unknown>)[section];
+  if (!held || typeof held !== "object") return;
+  if (change(held as Record<string, unknown>)) {
+    writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`);
+    io.err(`  noclick.json's ${section} too, so the next deploy keeps it.`);
+  }
+}
+
+const put = (section: Record<string, unknown>, given: Record<string, unknown>) => {
+  const changed = Object.entries(given).some(([k, v]) => JSON.stringify(section[k]) !== JSON.stringify(v));
+  Object.assign(section, given);
+  return changed;
+};
+
+const drop = (section: Record<string, unknown>, names: string[]) => {
+  const held = names.filter((n) => n in section);
+  for (const n of held) delete section[n];
+  return held.length > 0;
+};
+
 export async function envSet(values: Values, io: Io): Promise<number> {
   const pairs = (values.pairs as string[]).map(pair);
-  const { project } = await appOf(values);
+  const { project, link } = await appOf(values);
   for (const [name, value] of pairs) {
     await project.settings.set(name, value);
-    io.err(`Set ${name} on ${project.name}.`);
+    io.err(`Set ${name} = ${value.length <= 60 ? value : `${value.slice(0, 59)}…`} on ${project.name}.`);
   }
+  keepInStep(io, link, "env", (env) => put(env, Object.fromEntries(pairs)));
   io.err("They reach the app at its next deploy: noclick deploy.");
   answer(io, values, { set: Object.fromEntries(pairs), app: project.name }, () => []);
   return OK;
@@ -103,38 +146,133 @@ export async function envLs(values: Values, io: Io): Promise<number> {
 }
 
 export async function envRm(values: Values, io: Io): Promise<number> {
-  const { project } = await appOf(values);
-  for (const name of values.names as string[]) await project.settings.delete(name);
-  io.err(`Deleted ${(values.names as string[]).join(", ")} from ${project.name}.`);
-  answer(io, values, { app: project.name, deleted: values.names }, () => []);
+  const { project, link } = await appOf(values);
+  for (const name of values.names as string[]) {
+    await project.settings.delete(name);
+    io.err(`Deleted ${name} from ${project.name}; the app stops seeing it at its next deploy.`);
+  }
+  keepInStep(io, link, "env", (env) => drop(env, values.names as string[]));
+  answer(io, values, { deleted: values.names }, () => []);
   return OK;
 }
 
-const KINDS: Record<string, { kind: string; make(name: string, values: Values, region: string | null): Promise<Bindable> }> = {
-  db: { kind: "database", make: (name, values, region) => Database.create(name, { allowExisting: true, engine: str(values, "engine") as "sqlite" | "postgres" | undefined, region: (region ?? undefined) as RegionName | undefined }) },
-  bucket: { kind: "bucket", make: (name, values, region) => Bucket.create(name, { allowExisting: true, public: on(values, "public"), region: (region ?? undefined) as RegionName | undefined }) },
-  dict: { kind: "dict", make: (name) => Dict.create(name, { allowExisting: true }) },
-  queue: { kind: "queue", make: (name) => Queue.create(name, { allowExisting: true }) },
-};
+/** What `bind` calls each kind, as the Python CLI's `_BIND_KINDS`. */
+const BIND_KINDS: Record<string, string> = { db: "database", database: "database", bucket: "bucket", dict: "dict", queue: "queue", objects: "objects" };
 
-/** A binding's name from a resource's (`booking-db` → `BOOKING_DB`). */
-function bindingName(resource: string): string {
-  return resource.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "").replace(/^(\d)/, "_$1");
+/** A lazy handle to the resource `name` of `kind`, made where it's missing when `make` holds how. */
+function handle(kind: string, name: string, make?: { engine?: string; public?: boolean; region?: string | null }): Bindable {
+  const region = (make?.region ?? undefined) as RegionName | undefined;
+  const createIfMissing = make !== undefined;
+  if (kind === "database") return Database.fromName(name, { createIfMissing, engine: make?.engine as DatabaseEngine | undefined, region });
+  if (kind === "bucket") return Bucket.fromName(name, { createIfMissing, ...(make?.public ? { public: true } : {}), region });
+  if (kind === "dict") return Dict.fromName(name, { createIfMissing, region });
+  return Queue.fromName(name, { createIfMissing, region });
+}
+
+/** A binding's name from a resource's (`booking-db` → `BOOKING_DB`, `ChatRoom` → `CHAT_ROOM`). */
+export function bindingName(resource: string): string {
+  const spaced = resource.replace(/(?<=[a-z0-9])(?=[A-Z])/g, "_");
+  const name = spaced.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "").toUpperCase();
+  return /^[A-Za-z]/.test(name) ? name : `R_${name}`;
 }
 
 export async function bind(values: Values, io: Io): Promise<number> {
-  const kind = String(values.kind);
-  const known = KINDS[kind];
-  if (!known) throw new UsageError(`npx noclick binds db, bucket, dict or queue, not ${kind}.`, `pip install noclick, then noclick bind ${kind} ...`);
+  const kind = BIND_KINDS[String(values.kind)]!;
   const resource = String(values.resource);
   const name = str(values, "as_") ?? bindingName(resource);
-  const { project } = await appOf(values);
-  const made = await known.make(resource, values, project.region);
-  const binding = await project.bind(name, made);
-  io.err(`Bound the ${known.kind} ${resource} to ${project.name} as ${binding.name}, from its next deploy: noclick deploy.`);
-  answer(io, values, { app: project.name, binding: binding.name, kind: binding.kind, resource, variables: binding.variables },
-    () => [binding.name]);
+  if (kind === "objects") return bindObjects(values, io, name);
+  const { project, link } = await appOf(values);
+  const engine = str(values, "engine");
+  const isPublic = on(values, "public");
+  let target = handle(kind, resource);
+  let made = false;
+  try {
+    await (target as unknown as { refresh(): Promise<unknown> }).refresh();
+    if (engine || isPublic) io.err(`The ${kind} ${resource} exists already: --engine and --public only shape a new one.`);
+  } catch (err) {
+    if (!(err instanceof NotFound)) throw err;
+    target = handle(kind, resource, { engine: kind === "database" ? engine : undefined, public: kind === "bucket" && isPublic, region: project.region });
+    await (target as unknown as { refresh(): Promise<unknown> }).refresh();
+    made = true;
+  }
+  const binding = await project.bind(name, target);
+  keepInStep(io, link, "bindings", (bindings) => put(bindings, { [name]: { [kind]: resource,
+    ...(kind === "database" && engine ? { engine } : {}), ...(kind === "bucket" && isPublic ? { public: true } : {}) } }));
+  io.err(`${made ? "Made the" : "Bound the"} ${kind} ${resource}${made ? " and bound it" : ""} to ${project.name} as ${name}. `
+    + `Its code reads it with Project.current().${kind}("${name}") from the next deploy: noclick deploy.`);
+  answer(io, values, { binding: binding.raw, made }, () => [name]);
   return OK;
+}
+
+/** A Durable Object class, which a Worker's wrangler config declares: its binding, and the migration that adds it. */
+function bindObjects(values: Values, io: Io, name: string): number {
+  const folder = resolvePath(str(values, "dir") ?? host.cwd());
+  const link = linkAt(folder);
+  const root = link ? dirname(dirname(link.path)) : folder;
+  const configured = rootOf(root);
+  const appFolder = configured ? join(root, configured) : root;
+  const path = findWrangler(appFolder);
+  const cls = String(values.resource);
+  const binding = { name, class_name: cls };
+  if (path === null || path.endsWith(".toml")) {
+    const snippet = jsonText({ durable_objects: { bindings: [binding] }, migrations: [{ tag: "v1", new_sqlite_classes: [cls] }] });
+    throw new CommandError(`A Durable Object runs in a Worker its wrangler config declares, and ${appFolder} has `
+      + `${path ? "a TOML one, which noclick doesn’t edit" : "none"}.`, {
+      nextStep: `Declare it in ${path ? basename(path) : "wrangler.jsonc (beside the worker’s main)"}: ${snippet}`, details: { snippet },
+    });
+  }
+  let text = readFileSync(path, "utf8").replace(/^\uFEFF/, "");
+  let data: Record<string, unknown>;
+  try {
+    data = readWrangler(path);
+  } catch (err) {
+    throw new CommandError((err as Error).message, { nextStep: (err as { nextStep?: string }).nextStep });
+  }
+  const objects = (data.durable_objects && typeof data.durable_objects === "object" ? data.durable_objects : {}) as Record<string, unknown>;
+  const bindings = Array.isArray(objects.bindings) ? [...objects.bindings] as Record<string, unknown>[] : [];
+  if (bindings.some((b) => b && typeof b === "object" && b.name === name)) {
+    io.err(`${basename(path)} already binds ${name}.`);
+    answer(io, values, { binding: name, changed: false }, () => [name]);
+    return OK;
+  }
+  bindings.push(binding);
+  const migrations = Array.isArray(data.migrations) ? [...data.migrations] as Record<string, unknown>[] : [];
+  const added = new Set<unknown>();
+  for (const m of migrations) {
+    if (!m || typeof m !== "object") continue;
+    for (const c of [...(m.new_sqlite_classes as unknown[] ?? []), ...(m.new_classes as unknown[] ?? [])]) added.add(c);
+    for (const r of (m.renamed_classes as unknown[] ?? [])) if (r && typeof r === "object") added.add((r as { to?: unknown }).to);
+  }
+  if (!added.has(cls)) migrations.push({ tag: `v${migrations.length + 1}`, new_sqlite_classes: [cls] });
+  text = setTopLevel(text, "durable_objects", { ...objects, bindings });
+  text = setTopLevel(text, "migrations", migrations);
+  writeFileSync(path, text);
+  io.err(`${basename(path)} binds ${name} to the Durable Object class ${cls}${added.has(cls) ? "" : ", with a migration that adds it"}. `
+    + `Export class ${cls} from the worker's main (it reaches the code as env.${name}), then noclick deploy.`);
+  answer(io, values, { binding: name, class_name: cls, changed: true, file: path }, () => [name]);
+  return OK;
+}
+
+/** The folder's link, its unreadable one said as the Python CLI says it. */
+function linkAt(folder: string): links.Link | null {
+  try {
+    return links.find(folder);
+  } catch {
+    throw withRun(new CommandError(`The folder's .noclick/project.json doesn't say which app it's linked to.`,
+      { nextStep: "noclick link <app> writes it again, or noclick unlink removes it." }), ["noclick link <app>", "noclick unlink"]);
+  }
+}
+
+/** `noclick.json`'s `root` at `root`, where it names one. */
+function rootOf(root: string): string | null {
+  const path = join(root, "noclick.json");
+  if (!existsSync(path)) return null;
+  try {
+    const data = JSON.parse(readFileSync(path, "utf8").replace(/^\uFEFF/, "")) as { root?: unknown };
+    return typeof data.root === "string" && data.root ? data.root : null;
+  } catch (err) {
+    throw new CommandError(`noclick.json isn't valid JSON (${(err as Error).message}).`, { nextStep: "Fix noclick.json, then deploy again." });
+  }
 }
 
 export async function domainAdd(values: Values, io: Io): Promise<number> {
@@ -157,30 +295,6 @@ export async function domainLs(values: Values, io: Io): Promise<number> {
       `Domains of ${project.name}`);
     return [];
   });
-  return OK;
-}
-
-export async function settingsList(values: Values, io: Io): Promise<number> {
-  const project = await appNamed(str(values, "project"));
-  const found = await project.settings.list();
-  answer(io, values, found, () => {
-    table(io, ["NAME", "VALUE"], Object.entries(found).sort(), `${project.name} has no settings.`, `Settings of ${project.name}`);
-    return [];
-  });
-  return OK;
-}
-
-export async function settingsSet(values: Values, io: Io): Promise<number> {
-  const project = await appNamed(str(values, "project"));
-  await project.settings.set(String(values.name), String(values.value));
-  io.err(`Set ${values.name}. It reaches ${project.name} at its next deploy: noclick deploy ${project.name}`);
-  return OK;
-}
-
-export async function settingsDelete(values: Values, io: Io): Promise<number> {
-  const project = await appNamed(str(values, "project"));
-  await project.settings.delete(String(values.name));
-  io.err(`Deleted ${values.name}. ${project.name} stops seeing it at its next deploy.`);
   return OK;
 }
 
@@ -233,7 +347,7 @@ export async function domainsBuy(values: Values, io: Io): Promise<number> {
   io.err(`Buying ${name} for at most ${usd(maxPriceUsd)}, charged to your account.`);
   const purchase = await Domain.buy(name, { maxPriceUsd, years: num(values, "years"), registrant: registrant ? registrantFrom(registrant) : undefined });
   if (on(values, "no_wait")) {
-    io.err(`Wait for it with: noclick ops wait ${purchase.id}`);
+    io.err(`Wait for it with: noclick wait ${purchase.id}`);
     answer(io, values, { operation_id: purchase.id, domain: name }, () => [purchase.id]);
     return OK;
   }

@@ -2228,7 +2228,7 @@ class Agent(_Object):
             raise NotFound(
                 f"No agent is named {name!r}.",
                 next_step="Create it with noclick.Agent.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "agent"},
             )
         try:
             body = compact(**await self._wire(self._create_with, scope=self._scope))

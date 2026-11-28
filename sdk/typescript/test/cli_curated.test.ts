@@ -11,7 +11,8 @@ import { beforeEach, test } from "node:test";
 
 import { main } from "../src/cli/main.ts";
 import { host } from "../src/cli/host.ts";
-import { FAILED, OK, REFUSED, USAGE, WAITING } from "../src/cli/exits.ts";
+import { osKeychain } from "../src/cli/keychain.ts";
+import { FAILED, INTERRUPTED, OK, REFUSED, USAGE, WAITING } from "../src/cli/exits.ts";
 import type { Io } from "../src/cli/output.ts";
 import { load } from "../src/cli/spec.ts";
 import { RUNNERS } from "../src/cli/runners/index.ts";
@@ -29,7 +30,7 @@ const signedIn = { signIn: () => {} };
 function captured(): Io & { stdout: string[]; stderr: string[]; all(): string } {
   const stdout: string[] = [];
   const stderr: string[] = [];
-  return { stdout, stderr, out: (l) => stdout.push(l), err: (l) => stderr.push(l), all: () => [...stdout, ...stderr].join("\n") };
+  return { stdout, stderr, out: (l) => stdout.push(l), err: (l) => stderr.push(l), write: (d) => stdout.push(new TextDecoder().decode(d)), all: () => [...stdout, ...stderr].join("\n") };
 }
 
 let config = "";
@@ -39,10 +40,15 @@ beforeEach(() => {
   const home = mkdtempSync(join(tmpdir(), "noclick-cli-"));
   config = join(home, "config");
   folder = mkdtempSync(join(tmpdir(), "noclick-app-"));
-  host.env = { NOCLICK_CONFIG_DIR: config, NOCLICK_API_URL: BASE, HOME: home, PATH: process.env.PATH };
+  // The OS keychain is per user, whatever HOME says: off, unless a test hands it a stand-in.
+  host.env = { NOCLICK_CONFIG_DIR: config, NOCLICK_API_URL: BASE, HOME: home, PATH: process.env.PATH, NOCLICK_KEYCHAIN: "off" };
+  host.platform = process.platform;
   host.cwd = () => folder;
   host.sleep = async () => {};
   host.stdinIsTty = () => false;
+  host.run = () => {
+    throw new Error("A test ran a program through host.run without a stand-in.");
+  };
 });
 
 test("npx noclick runs exactly the curated commands the manifest lists", () => {
@@ -132,12 +138,89 @@ test("login prints the link first, and a run cut short is picked up by the next"
     json({ status: "approved", key: KEY, key_id: "key_1", key_name: "noclick-cli", email: "ana@example.com" }));
   const cut = captured();
   assert.equal(await main(["login"], cut), FAILED);
-  assert.equal(cut.stdout[0], "Open https://noclick.com/cli?code=ABCD-EFGH and enter the code ABCD-EFGH");
+  assert.equal(cut.stdout[0], "Open https://noclick.com/cli and enter the code ABCD-EFGH");
   const done = captured();
   assert.equal(await main(["login"], done), OK);
   assert.equal(start.count, 1);
   assert.equal(done.all().includes(KEY), false);
   assert.equal(JSON.parse(readFileSync(join(config, "credentials.json"), "utf8")).default, KEY);
+});
+
+test("a login goes to the OS keychain where the machine has one, as the Python CLI keeps it, and logout takes it out", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  // A Secret Service, as secret-tool reaches it: items by their attributes, a secret only ever on stdin. A stand-in
+  // on every OS, so a developer's own keychain is never touched.
+  const tool = "/stand-in/secret-tool";
+  host.platform = "linux";
+  host.env.NOCLICK_KEYCHAIN = tool;
+  const items = new Map<string, string>();
+  const calls: string[][] = [];
+  host.run = (command, args, input) => {
+    calls.push([command, ...args]);
+    assert.equal(command, tool);
+    const at = (name: string) => args[args.indexOf(name) + 1];
+    const id = `${at("service")}/${at("username")}`;
+    if (args[0] === "lookup") return items.has(id) ? { status: 0, stdout: items.get(id)!, stderr: "" } : { status: 1, stdout: "", stderr: "" };
+    if (args[0] === "store") {
+      items.set(id, input ?? "");
+      return { status: 0, stdout: "", stderr: "" };
+    }
+    items.delete(id);
+    return { status: 0, stdout: "", stderr: "" };
+  };
+  api.on("POST", "/v1/setup", json({ key: KEY, key_id: "key_1", key_name: "Setup key", email: "ana@example.com" }));
+  const io = captured();
+  assert.equal(await main(["setup", "nc_setup_abc"], io), OK);
+  assert.equal(items.get("noclick/default"), KEY);
+  assert.ok(calls.every((call) => !call.includes(KEY))); // never in a process's arguments
+  assert.deepEqual(calls.find((c) => c[1] === "store")!.slice(-6), ["service", "noclick", "username", "default", "application", "Python keyring library"]);
+  assert.equal(existsSync(join(config, "credentials.json")), false);
+  assert.equal(JSON.parse(readFileSync(join(config, "config.json"), "utf8")).profiles.default.store, "keychain");
+  assert.ok(io.stderr.includes('The key "Setup key" is in the OS keychain. noclick logout revokes it.'));
+
+  api.on("GET", "/v1/status", json({ account: { id: "acct_1", name: "Ana", email: "ana@example.com" }, caller: { key_name: "Setup key" } }));
+  const who = captured();
+  assert.equal(await main(["whoami"], who), OK);
+  assert.ok(who.stdout.includes(`Key      Setup key (${KEY.slice(0, 12)}…), in the OS keychain`), who.stdout.join("\n"));
+
+  const revoked = api.on("DELETE", "/v1/keys/current", json({ revoked: true }));
+  const out = captured();
+  assert.equal(await main(["logout"], out), OK);
+  assert.equal(revoked.last.headers.get("authorization"), `Bearer ${KEY}`);
+  assert.equal(items.size, 0);
+  assert.deepEqual(out.stdout, ["Signed out."]);
+});
+
+test("a test that would reach the real OS keychain is stopped first", () => {
+  delete host.env.NOCLICK_KEYCHAIN;
+  assert.throws(() => osKeychain(), /A test reached the real OS keychain/);
+  host.env.NOCLICK_KEYCHAIN = "off";
+  assert.equal(osKeychain(), null);
+});
+
+test("on macOS the key is a generic password, service noclick and account the profile, handed to security on stdin", () => {
+  const calls: { args: string[]; input?: string }[] = [];
+  let held: string | null = null;
+  host.platform = "darwin";
+  host.env.NOCLICK_KEYCHAIN = "/stand-in/security";
+  host.run = (command, args, input) => {
+    assert.equal(command, "/stand-in/security");
+    calls.push({ args, input });
+    if (args[0] === "find-generic-password") return held === null ? { status: 44, stdout: "", stderr: "" } : { status: 0, stdout: `${held}\n`, stderr: "" };
+    if (args[0] === "-i") held = /-w "([^"]*)"/.exec(input ?? "")![1]!;
+    if (args[0] === "delete-generic-password") held = null;
+    return { status: 0, stdout: "", stderr: "" };
+  };
+  const keychain = osKeychain()!;
+  assert.equal(keychain.read("work"), null);
+  keychain.write("work", KEY);
+  assert.equal(calls.find((call) => call.args[0] === "-i")!.input, `add-generic-password -U -s "noclick" -a "work" -w "${KEY}"\n`);
+  assert.ok(calls.every((call) => !call.args.includes(KEY)));
+  assert.equal(keychain.read("work"), KEY);
+  assert.deepEqual(calls.at(-1)!.args, ["find-generic-password", "-s", "noclick", "-a", "work", "-w"]);
+  keychain.delete("work");
+  assert.equal(keychain.read("work"), null);
 });
 
 test("a secret's value comes from the environment, reaches the API and is never printed", async () => {
@@ -322,4 +405,65 @@ test("a clean checkout pushes the commit it is on, deploys exactly it, and print
   assert.deepEqual(deploy.last.body, { branch: "main", commit: sha });
   assert.equal(String(execFileSync("git", ["rev-parse", "main"], { cwd: remote })).trim(), sha);
   assert.equal(io.stdout.at(-1), "https://shop.noclick.site");
+});
+
+test("a deploy draws its stages and build lines as they come, and Ctrl-C leaves it running", async () => {
+  writeFileSync(join(folder, "index.html"), "<h1>shop</h1>");
+  const { api } = setup();
+  deployRoutes(api);
+  api.on("POST", "/v1/projects/" + APP_ID + "/deployments", json(operation({ id: "op_d", kind: "project.deploy", status: "queued", updated_at: "2026-11-28T10:00:00Z" }), { status: 202 }));
+  const moving = (status: string, stage: number, lines: string[], at: string, extra: Record<string, unknown> = {}) => json(operation({
+    id: "op_d", kind: "project.deploy", status, updated_at: at, ...extra, progress: {
+      stages: ["Queued", "Building", "Shipping", "Live"].map((name, i) => ({ name, status: i < stage ? "done" : i === stage ? "current" : "pending" })),
+      lines, line_count: lines.length,
+    },
+  }));
+  const waits = api.on("GET", "/v1/operations/op_d/wait",
+    moving("running", 1, ["> vite build"], "2026-11-28T10:00:02Z"),
+    moving("running", 2, ["> vite build", "built in 3.1s"], "2026-11-28T10:00:06Z"),
+    moving("succeeded", 4, ["> vite build", "built in 3.1s", "==> / answered 200"], "2026-11-28T10:00:08Z",
+      { result: { object: "deployment", id: "dep_2", url: "https://shop.noclick.site", production: true, status: "ready" } }));
+  const io = captured();
+  assert.equal(await main(["deploy", "--app", "shop"], io, signedIn), OK, io.all());
+  assert.deepEqual(waits.calls.map((call) => call.query.get("changed_since")),
+    ["2026-11-28T10:00:00Z", "2026-11-28T10:00:02Z", "2026-11-28T10:00:06Z"]);
+  assert.equal(io.stdout.at(-1), "https://shop.noclick.site");
+  const drawn = io.stderr.slice(io.stderr.indexOf("Queue…")).join("\n");
+  assert.match(drawn, /^Queue…\nQueue: /);
+  assert.ok(drawn.includes("Build…\n  > vite build\n  built in 3.1s\nBuild: "), drawn);
+  assert.ok(drawn.includes("Release…\n  ==> / answered 200\nRelease: "), drawn);
+  assert.ok(drawn.includes("Ready: https://shop.noclick.site · production · release dep_2 · "), drawn);
+
+  // Ctrl-C mid-read stops following, never the deploy.
+  api.on("GET", "/v1/operations/op_d/wait", () => new Promise<Response>(() => {}));
+  const detached = captured();
+  const caught = host.interrupted;
+  host.interrupted = () => ({ promise: Promise.resolve(), release: () => {} });
+  try {
+    assert.equal(await main(["deploy", "--app", "shop", "--json"], detached, signedIn), INTERRUPTED);
+  } finally {
+    host.interrupted = caught;
+  }
+  assert.equal(JSON.parse(detached.stdout.join("\n")).operation_id, "op_d");
+  assert.ok(detached.stderr.includes("Detached: it goes on. Follow it with: noclick wait op_d"), detached.all());
+});
+
+test("shell runs a command where it says and exits with the command's own code", async () => {
+  const { api } = setup();
+  host.fetch = api.fetch;
+  const sandbox = "3b9d6f2e-1c4a-4e8b-9f7d-2a6c5e8b1d40";
+  const ran = api.on("POST", `/v1/sandboxes/${sandbox}/exec`, json({ object: "sandbox_exec", stdout: "Python 3.12.7\n", stderr: "", exit_code: 3 }));
+  let io = captured();
+  assert.equal(await main(["shell", sandbox, "--", "python", "-c", "print('hi there')"], io, signedIn), 3);
+  assert.deepEqual(ran.last.body, { command: "python -c 'print('\"'\"'hi there'\"'\"')'" });
+  assert.deepEqual(io.stdout, ["Python 3.12.7"]);
+  api.on("GET", "/v1/projects", json(listing([PROJECT])));
+  const live = api.on("POST", `/v1/projects/${APP_ID}/live/exec`, json({ stdout: "4 passed\n", stderr: "", exit_code: 0, timed_out: false, ms: 900, vite: [] }));
+  io = captured();
+  assert.equal(await main(["shell", "--app", "shop", "--json", "--", "npm test"], io, signedIn), OK, io.all());
+  assert.equal((live.last.body as { command: string }).command, "npm test");
+  assert.deepEqual(JSON.parse(io.stdout.join("\n")), { stdout: "4 passed\n", stderr: "", exit_code: 0 });
+  io = captured();
+  assert.equal(await main(["shell", "--app", "shop"], io, signedIn), FAILED);
+  assert.ok(io.all().includes("noclick shell --app shop -- <command>"), io.all());
 });

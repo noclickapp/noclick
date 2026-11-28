@@ -5,8 +5,11 @@
 - **Output.** Short and human by default, on stdout; notes and progress on stderr. ``--json`` prints the whole answer
   as JSON on stdout, errors included (``{"error": {...}}``), and nothing else there.
 - **The last line.** Without ``--json``, the value an agent wants next (a URL, else an id) is stdout's last line, alone.
-- **Errors say the next command.** An error's ``next_step`` is printed, and where it names an API call (``GET
-  /v1/agents``) or an operation (``agents_list``), the ``noclick`` command that makes it is printed after ``run:``.
+- **Errors say the next command.** An error's ``next_step`` is printed, then each command it suggests after ``run:``.
+  Those come from fields, never out of its words: the commands the CLI's own error names (``run``, set where it's
+  raised: ``CommandError(..., run=[...])`` or ``output.run(err, [...])``), the API's own (``details.run``), and the
+  command that makes each API route its next step names (``GET /v1/agents``), from the spec.
+  The next step's own words say each API call and operation it names as the ``noclick`` command that makes it.
   A link only a person can open is printed after ``open:``; an error that waits on a person is said as
   ``waiting on a person:``, not ``error:``.
 - **Flushed.** Every line is flushed as it's printed, so each reaches a pipe (``| grep``, ``> file``) at once.
@@ -15,11 +18,13 @@
 from __future__ import annotations
 
 import json
+from decimal import Decimal
 import re
 import sys
 from dataclasses import asdict, is_dataclass
 from datetime import date, datetime
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
+from urllib.parse import parse_qsl
 
 from . import style
 from .exits import (  # noqa: F401  (the codes, read through output by the commands)
@@ -28,9 +33,9 @@ from .exits import (  # noqa: F401  (the codes, read through output by the comma
 
 _CALL = re.compile(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/v1/[^\s,;)`'\"]*[^\s,;.)`'\"])")
 _LINK = re.compile(r"https?://[^\s)`'\"]+[^\s.,;)`'\"]")
-_CLI = re.compile(r"\bnoclick(?:[ \t]+(?:[a-z][\w.:/@<>=-]*|--[\w-]+))+")
 _NAME = re.compile(r"`?\b([a-z][a-z0-9]*(?:_[a-z0-9]+)+)\b`?")
 _LAST_KEYS = ("url", "live_url", "preview_url", "approve_url", "connect_url", "link", "id")
+_SHELL_SAFE = re.compile(r"[\w@%+=:,./-]+")
 
 
 def plain(value: Any) -> Any:
@@ -51,8 +56,69 @@ def plain(value: Any) -> Any:
     return value
 
 
+def number(value: float) -> str:
+    """A number as JSON writes it in JavaScript (``JSON.stringify``), the one rule both CLIs print numbers by: a whole
+    float as an integer (``25.0`` is ``25``), else the shortest digits that read back as it, with an exponent past
+    ``1e21`` or under ``1e-6`` (``1e-7``, ``1e+21``)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError(value)
+    if isinstance(value, int):
+        return str(value)
+    if value != value or value in (float("inf"), float("-inf")):
+        return "null"
+    if value == int(value) and abs(value) < 1e21:
+        return str(int(value))
+    sign, digits, exponent = Decimal(repr(abs(value))).normalize().as_tuple()
+    text, k = "".join(map(str, digits)), len(digits)
+    n = exponent + k  # the decimal point's place after the first digit, as ECMAScript's Number::toString counts it
+    if k <= n <= 21:
+        shown = text + "0" * (n - k)
+    elif 0 < n <= 21:
+        shown = f"{text[:n]}.{text[n:]}"
+    elif -6 < n <= 0:
+        shown = f"0.{'0' * -n}{text}"
+    else:
+        shown = f"{text[0]}{'.' + text[1:] if k > 1 else ''}e{'+' if n - 1 >= 0 else '-'}{abs(n - 1)}"
+    return f"-{shown}" if value < 0 else shown
+
+
+def dumps(value: Any, *, indent: Optional[int] = 2, ascii: bool = True) -> str:
+    """``value`` as JSON exactly as the npm CLI writes it (``JSON.stringify(value, null, indent)``): numbers by
+    ``number``, ``ascii`` escaping every character past ASCII as ``--json`` does (a person's lines keep them)."""
+    def text(item: Any, depth: int) -> str:
+        if item is None or isinstance(item, bool):
+            return json.dumps(item)
+        if isinstance(item, (int, float)):
+            return number(item)
+        if isinstance(item, str):
+            return json.dumps(item, ensure_ascii=ascii)
+        if isinstance(item, dict):
+            pairs = [(json.dumps(str(k), ensure_ascii=ascii), v) for k, v in item.items()]
+            if not pairs:
+                return "{}"
+            if indent is None:
+                return "{" + ",".join(f"{k}:{text(v, depth + 1)}" for k, v in pairs) + "}"
+            inner, outer = " " * (indent * (depth + 1)), " " * (indent * depth)
+            return "{\n" + ",\n".join(f"{inner}{k}: {text(v, depth + 1)}" for k, v in pairs) + f"\n{outer}}}"
+        if isinstance(item, (list, tuple)):
+            if not item:
+                return "[]"
+            if indent is None:
+                return "[" + ",".join(text(v, depth + 1) for v in item) + "]"
+            inner, outer = " " * (indent * (depth + 1)), " " * (indent * depth)
+            return "[\n" + ",\n".join(f"{inner}{text(v, depth + 1)}" for v in item) + f"\n{outer}]"
+        return json.dumps(str(item), ensure_ascii=ascii)
+
+    return text(plain(value), 0)
+
+
+def scalar(value: Any) -> str:
+    """One value on a person's line (``key: value``): text as it is, everything else as JSON writes it."""
+    return value if isinstance(value, str) else dumps(value, indent=None, ascii=False)
+
+
 def print_json(value: Any) -> None:
-    print(json.dumps(plain(value), indent=2, default=str), flush=True)
+    print(dumps(value), flush=True)
 
 
 def note(text: str) -> None:
@@ -79,25 +145,49 @@ def last_value(value: Any) -> Optional[str]:
 
 
 class Commands:
-    """Turns what an error says into commands: a ``METHOD /v1/...`` call or an operation's name into the ``noclick``
-    command that makes it, from the generated spec (``spec.Spec``)."""
+    """The ``noclick`` command that makes an API route (``METHOD /v1/...``) or an operation (by its name), from the
+    generated spec (``spec.Spec``); ``flag`` names a query parameter's flag."""
 
     def __init__(self, by_call: Callable[[str, str], Optional[Dict[str, Any]]],
-                 by_name: Callable[[str], Optional[Dict[str, Any]]]):
+                 by_name: Callable[[str], Optional[Dict[str, Any]]] = lambda name: None,
+                 flag: Optional[Callable[[str], str]] = None, *,
+                 curated: Callable[[List[str]], Optional[Dict[str, Any]]] = lambda path: None,
+                 shadowed: Callable[[Dict[str, Any]], bool] = lambda op: False):
         self._by_call = by_call
         self._by_name = by_name
+        self._flag = flag
+        self._curated = curated
+        self._shadowed = shadowed
 
     def for_call(self, method: str, path: str) -> str:
         op = self._by_call(method, path)
         if op is None:
             return f"noclick api {method} {path}"
-        return command_line(op, path)
+        if not self._shadowed(op):
+            return command_line(op, path, self._flag)
+        # A curated command has its name (``domains search``): that one, with the arguments it needs, else the call.
+        command = self._curated([op["area"], op["command"]])
+        if command is None:
+            return f"noclick api {method} {path}"
+        return " ".join(["noclick", *command["path"],
+                         *(f"<{a['name']}>" for a in command["args"] if not a.get("optional"))])
 
-    def runnable(self, text: Optional[str]) -> List[str]:
-        """The commands ``text`` (an error's ``next_step``) names, in order."""
-        found: List[str] = [m.group(0).rstrip(".") for m in _CLI.finditer(text or "")]
-        for method, path in _CALL.findall(text or ""):
-            found.append(self.for_call(method, path))
+    def translate(self, text: Optional[str]) -> Optional[str]:
+        """``text`` (an error's ``next_step``) with each API call and operation it names said as the command that
+        makes it: "List agents with GET /v1/agents." is "List agents with noclick agents list."."""
+        if not text:
+            return text
+        text = _CALL.sub(lambda m: self.for_call(m.group(1), m.group(2)), text)
+
+        def named(m: "re.Match[str]") -> str:
+            op = self._by_name(m.group(1))
+            return m.group(0).replace(m.group(1), command_line(op, op["path"])) if op else m.group(0)
+
+        return _NAME.sub(named, text)
+
+    def routes(self, text: Optional[str]) -> List[str]:
+        """The command for each API route and each operation ``text`` (an error's ``next_step``) names, in order."""
+        found = [self.for_call(method, path) for method, path in _CALL.findall(text or "")]
         for name in _NAME.findall(text or ""):
             op = self._by_name(name)
             if op is not None:
@@ -105,8 +195,28 @@ class Commands:
         return list(dict.fromkeys(found))
 
 
-def command_line(op: Dict[str, Any], path: str) -> str:
-    """``noclick <area> <command>`` with the path's parameters: a concrete path's values, else ``<name>``."""
+def run(error: Any, commands: Sequence[str]) -> Any:
+    """``error`` suggesting ``commands`` (each a whole ``noclick`` command line), printed after ``run:``."""
+    error.run = list(commands)
+    return error
+
+
+def suggested(error: Any, commands: Optional[Commands] = None, *, step: Optional[str] = None,
+              also: Sequence[str] = ()) -> List[str]:
+    """The commands an error suggests: ``also`` (the command line's own wording of the API's step), the ones it was
+    raised with (``run``), the API's (``details.run``), then the command for each route its ``step`` names."""
+    details = getattr(error, "details", None) or {}
+    given = details.get("run")
+    found = [*also, *(getattr(error, "run", None) or []), *(given if isinstance(given, list) else [])]
+    if commands is not None:
+        found += commands.routes(step)
+    return list(dict.fromkeys(c for c in found if isinstance(c, str) and c))
+
+
+def command_line(op: Dict[str, Any], path: str, flag: Optional[Callable[[str], str]] = None) -> str:
+    """``noclick <area> <command>`` with the path's parameters: a concrete path's values, else ``<name>``; given
+    ``flag``, the query parameters the path carries as the flags that set them (``--limit 5``)."""
+    path, _, query = path.partition("?")
     template = op["path"].strip("/").split("/")
     given = path.strip("/").split("/")
     values: Dict[str, str] = {}
@@ -115,22 +225,35 @@ def command_line(op: Dict[str, Any], path: str) -> str:
             if t.startswith("{") and not (g.startswith("{") or g == "..."):
                 values[t[1:-1]] = g
     args = [values.get(p["name"], f"<{p['name']}>") for p in op["params"] if p["in"] == "path"]
-    return " ".join(["noclick", op["area"], op["command"], *args])
+    taken = {p["name"] for p in op["params"] if p["in"] == "query"}
+    flags = [f"{flag(k)} {_quoted(v)}" for k, v in parse_qsl(query) if flag and k in taken]
+    return " ".join(["noclick", op["area"], op["command"], *args, *flags])
+
+
+def _quoted(value: str) -> str:
+    """``value`` as a shell reads it back: as it is when it's safe there, else in single quotes."""
+    return value if _SHELL_SAFE.fullmatch(value) else "'" + value.replace("'", "'\\''") + "'"
 
 
 def error_body(error: Any, commands: Optional[Commands] = None, *,
-               said: Optional[Tuple[str, Optional[str]]] = None) -> Dict[str, Any]:
-    """An error as ``--json`` prints it: the API's fields, its exit code, and the commands its next step names."""
+               said: Optional[Tuple[str, Optional[str], Sequence[str]]] = None) -> Dict[str, Any]:
+    """An error as ``--json`` prints it: the API's fields, its exit code, and the commands it suggests."""
     details = dict(getattr(error, "details", None) or {})
-    message, step = said or (getattr(error, "message", None) or str(error), getattr(error, "next_step", None))
+    details.pop("run", None)
+    message, step, also = said or (getattr(error, "message", None) or str(error), getattr(error, "next_step", None), ())
     body: Dict[str, Any] = {
         "type": getattr(error, "type", None) or "error",
         "message": message,
         "next_step": step,
         "exit_code": code_for(error),
     }
+    if getattr(error, "usage", None):
+        body["usage"] = error.usage
+    found = suggested(error, commands, step=step, also=also)
+    if found:
+        body["commands"] = found
     if commands is not None and body["next_step"]:
-        body["commands"] = commands.runnable(body["next_step"])
+        body["next_step"] = commands.translate(body["next_step"])
     links = links_of(error)
     if links:
         body["links"] = links
@@ -157,9 +280,9 @@ def links_of(error: Any) -> List[str]:
 
 
 def report(error: Any, *, as_json: bool, commands: Optional[Commands] = None,
-           said: Optional[Tuple[str, Optional[str]]] = None) -> int:
-    """Print an error the convention's way and return its exit code. ``said`` is its message and next step as the
-    command line words them, in place of the API's."""
+           said: Optional[Tuple[str, Optional[str], Sequence[str]]] = None) -> int:
+    """Print an error the convention's way and return its exit code. ``said`` is its message, next step and the
+    commands that take it as the command line words them, in place of the API's."""
     body = error_body(error, commands, said=said)
     if as_json:
         print_json({"error": body})
@@ -168,10 +291,13 @@ def report(error: Any, *, as_json: bool, commands: Optional[Commands] = None,
         s = style.ERR
         said = s.warn("waiting on a person:") if waiting else s.error("error:")
         _say(f"{said} {s.bold(body['message']) if s.on else body['message']}")
+        if body.get("usage"):
+            _say(f"  {s.dim('usage:')} {body['usage']}")
         if body["next_step"]:
             _say(f"  {s.dim('next step:')} {body['next_step']}")
         for line in body.get("commands", []):
-            _say(f"  {s.dim('run:')} {s.link(line)}")
+            if not (body["next_step"] or "").rstrip(". ").endswith(line):  # said once: a step ending in it
+                _say(f"  {s.dim('run:')} {s.link(line)}")
         for link in body.get("links", []):
             _say(f"  {s.dim('open:')} {s.link(link)}")
         if body.get("request_id"):
@@ -194,18 +320,15 @@ def human(value: Any, *, indent: str = "") -> Iterable[str]:
         for key, item in value.items():
             if item is None or item == [] or item == {}:
                 continue
-            if isinstance(item, (dict, list)):
-                shown = json.dumps(item, default=str)
-                item = shown if len(shown) <= 100 else f"{shown[:97]}..."
-            yield f"{indent}{key}: {item}"
+            yield f"{indent}{key}: {scalar(item)}"  # a list or object whole: a cut value reads as another
         return
     if value is not None:
-        yield str(value)
+        yield scalar(value)
 
 
 def _rows(items: Sequence[Any]) -> Iterable[str]:
     if not items:
-        yield "(none)"
+        yield "Nothing to show."
         return
     if style.OUT.on and all(isinstance(item, dict) for item in items):
         rows = [[cell(item.get("id")), cell(_label(item)), cell(item.get("status") or item.get("state"))]
@@ -253,7 +376,7 @@ def cell(value: Any) -> str:
         return "yes" if value else "no"
     if isinstance(value, datetime):
         return value.astimezone().strftime("%Y-%m-%d %H:%M")
-    return str(value)
+    return scalar(value)
 
 
 def table(headers: Sequence[str], rows: Iterable[Sequence[Any]], *, empty: str, title: Optional[str] = None) -> None:

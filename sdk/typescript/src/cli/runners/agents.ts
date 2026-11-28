@@ -42,15 +42,11 @@ const INTERRUPTED_ = Symbol("interrupted");
 
 /** `work`, or `INTERRUPTED_` once Ctrl-C is pressed while it runs (which then stops waiting, not the work). */
 export async function untilInterrupted<T>(work: Promise<T>): Promise<T | typeof INTERRUPTED_> {
-  let stop: () => void = () => {};
-  const stopped = new Promise<typeof INTERRUPTED_>((done) => {
-    stop = () => done(INTERRUPTED_);
-    process.once("SIGINT", stop);
-  });
+  const caught = host.interrupted();
   try {
-    return await Promise.race([work, stopped]);
+    return await Promise.race([work, caught.promise.then((): typeof INTERRUPTED_ => INTERRUPTED_)]);
   } finally {
-    process.off("SIGINT", stop);
+    caught.release();
   }
 }
 
@@ -70,7 +66,7 @@ export async function agentsChat(values: Values, io: Io): Promise<number> {
     const turn = await agent.send(text, { conversation, user });
     const reply = await untilInterrupted(turn.wait());
     if (reply === INTERRUPTED_) {
-      io.err(`\nThe turn keeps running. Read its reply with: noclick ops wait ${turn.id}`);
+      io.err(`The turn keeps running. Read its reply with: noclick wait ${turn.id}`);
       return INTERRUPTED;
     }
     conversation = reply.conversation ?? conversation;

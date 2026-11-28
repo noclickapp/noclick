@@ -11,18 +11,21 @@ import { API_KEY_ENV, configure } from "../client.ts";
 import { NoClickError } from "../errors.ts";
 import { asUser } from "../scope.ts";
 import { VERSION } from "../version.ts";
-import { type ArgSpec, type FlagSpec, type Values, UsageError, helpText, parse } from "./args.ts";
-import { screen } from "./helpscreen.ts";
+import { type ArgSpec, type FlagSpec, type Values, UsageError, parse } from "./args.ts";
+import { commandScreen, invocation, screen, usageOf } from "./helpscreen.ts";
 import { commandsFor, runApi, runDescribe, runHelp, runOperation } from "./commands.ts";
 import * as output from "./output.ts";
 import type { Io } from "./output.ts";
 import { host } from "./host.ts";
+import { forTheTerminal } from "./said.ts";
 import { find as findLink } from "./link.ts";
 import * as screens from "./screens.ts";
 import * as style from "./style.ts";
 import { RUNNERS } from "./runners/index.ts";
 import { type Command, load } from "./spec.ts";
-import { PROFILE_ENV, readProfiles, signedIn } from "./store.ts";
+import { type ProfileSource, activeProfile, readProfiles, signedIn } from "./store.ts";
+import * as completion from "./completion.ts";
+import * as updates from "./updates.ts";
 
 export type Run = (values: Values, io: Io) => number | Promise<number>;
 
@@ -47,9 +50,10 @@ export function signInWith(profile: string): void {
 host.signIn = signInWith;
 for (const [path, run] of Object.entries(RUNNERS)) register(path.split(" "), run);
 
+/** The global flags, taken after a command too (`noclick whoami --profile work`). */
 const GLOBALS: FlagSpec[] = [
   { flag: "--profile", dest: "profile", type: "string" },
-  { flag: "--version", dest: "version", type: "bool" },
+  { flag: "--color", dest: "color", type: "string", choices: [...style.MODES] },
 ];
 
 function curatedSpecs(command: Command): { flags: (FlagSpec & { help?: string })[]; args: (ArgSpec & { help?: string })[] } {
@@ -59,27 +63,18 @@ function curatedSpecs(command: Command): { flags: (FlagSpec & { help?: string })
 const EXITS = "Exit status: 0 done, 1 failed, 2 the command line was wrong, 3 waiting on a person (a link says where), "
   + "4 refused by a limit, a price or a policy, 124 a wait ran out, 130 Ctrl-C.";
 
-/** `noclick --help`: the curated commands by section, the API's areas as one line (each of them with `--all`). */
+/** `noclick --help`: the curated commands by section, the API's areas as one line (each of them with `--all`), as
+ *  the Python CLI's, at a terminal or piped. */
 function topHelp(io: Io, all: boolean): number {
   const spec = load();
   const areas = all ? new Map([...spec.areas()].map(([area, ops]) => [area, ops.length])) : null;
-  const options = [...spec.manifest.globals, { flag: "-h, --help", help: "Show this help (--all lists every API area)." }];
-  if (style.OUT.on) {
-    io.out(screen(style.OUT, {
-      usage: "noclick [OPTIONS] <command> ...", description: "The NoClick platform from your terminal.",
-      middle: screens.commands(spec.manifest.screens, areas, style.OUT).split("\n"),
-      sections: [["Options", options.map((o) => [o.flag, o.help ?? ""] as [string, string])]],
-      notes: `${EXITS} Docs: https://noclick.com/docs/guide/cli (noclick ${VERSION})`,
-    }));
-    return output.OK;
-  }
-  io.out([
-    `usage: noclick [--profile <string>] [--version] <command> ...   (noclick ${VERSION})`, "",
-    "The NoClick platform from your terminal.", "",
-    screens.commands(spec.manifest.screens, areas), "",
-    "flags:", ...options.map((o) => `  ${o.flag.padEnd(24)} ${o.help ?? ""}`), "",
-    `${EXITS} Docs: https://noclick.com/docs/guide/cli`,
-  ].join("\n"));
+  io.out(screen(style.OUT, {
+    usage: "noclick [OPTIONS] <command> ...", description: "The NoClick platform from your terminal.",
+    middle: screens.commands(spec.manifest.screens, areas, style.OUT).split("\n"),
+    sections: [["Options", [...spec.manifest.globals.map((g) => [invocation(g), g.help ?? ""] as [string, string]),
+      ["-h, --help", "Show this help (--all lists every API area)."]]]],
+    notes: `${EXITS} Docs: https://noclick.com/docs/guide/cli`,
+  }));
   return output.OK;
 }
 
@@ -107,6 +102,7 @@ function isGroup(path: string[]): boolean {
 function unalias(rest: string[]): void {
   const spec = load();
   const { top, group } = spec.manifest.screens.aliases;
+  rest.splice(0, rest.length, ...spelledOut(rest));
   rest[0] = top[rest[0]!] ?? rest[0]!;
   const meant = rest[1] === undefined ? undefined : group[rest[1]];
   if (meant === undefined) return;
@@ -115,6 +111,30 @@ function unalias(rest: string[]): void {
     ...(spec.areas().get(rest[0]!) ?? []).map((op) => op.command),
   ]);
   if (!names.has(rest[1]!) && names.has(meant)) rest[1] = meant;
+}
+
+/** `words` (the command's own) with an older spelling as the command it now is, as `screens.spelled_out`. */
+export function spelledOut(words: string[]): string[] {
+  const { old, valued } = load().manifest.screens.aliases;
+  for (const [was, now, leading] of old) {
+    if (!was.every((w, i) => words[i] === w)) continue;
+    const rest = words.slice(was.length);
+    const positional: string[] = [];
+    const flags: string[] = [];
+    const out: string[] = [];
+    for (let i = 0; i < rest.length; i++) {
+      if (rest[i]!.startsWith("-") && rest[i] !== "-") {
+        flags.push(rest[i]!);
+        if (valued.includes(rest[i]!) && i + 1 < rest.length) flags.push(rest[++i]!);
+      } else positional.push(rest[i]!);
+    }
+    for (const how of leading) {
+      if (how === "--app" && positional.length) flags.push("--app", positional.shift()!);
+      else if (how === "=" && positional.length >= 2) out.push(`${positional.shift()}=${positional.shift()}`);
+    }
+    return [...now, ...out, ...positional, ...flags];
+  }
+  return [...words];
 }
 
 /** `words` naming no command: the closest ones there are, exit 2. */
@@ -136,13 +156,22 @@ function unknownCommand(io: Io, words: string[]): number {
 export async function main(
   argv: string[], given: Io = output.processIo, options: { signIn?: (profile: string) => void } = {},
 ): Promise<number> {
+  if (argv[0] === completion.COMMAND) return await completion.answer(argv.slice(1), given); // a shell asking what Tab completes to
+  const code = await run(argv, given, options);
+  const terminal = given.terminal?.() ?? { out: false, err: false, columns: 100 };
+  const notice = updates.notice(argv, { current: VERSION, how: updates.NPM, terminals: terminal.out && terminal.err });
+  if (notice) given.err(notice);
+  return code;
+}
+
+async function run(argv: string[], given: Io, options: { signIn?: (profile: string) => void }): Promise<number> {
   const terminal = given.terminal?.() ?? { out: false, err: false, columns: 100 };
   style.configure(style.modeIn(argv), terminal, host.env, () => terminal.columns);
   // A note for a person (stderr) reads as what it is: a check for what's done, an arrow for a step, the rest dim.
   const io: Io = style.ERR.on ? { ...given, err: (line) => given.err(style.ERR.note(line)) } : given;
   const signIn = options.signIn ?? signInWith;
   const spec = load();
-  let profile = host.env[PROFILE_ENV] || "default";
+  let flagged: string | undefined;
   const rest = [...argv];
   // Global flags before the command.
   while (rest[0]?.startsWith("-")) {
@@ -161,10 +190,11 @@ export async function main(
       continue;
     }
     if (flag.startsWith("--color=")) continue;
-    if (flag === "--profile") profile = rest.shift() ?? profile;
-    else if (flag.startsWith("--profile=")) profile = flag.slice(10);
+    if (flag === "--profile") flagged = rest.shift() ?? flagged;
+    else if (flag.startsWith("--profile=")) flagged = flag.slice(10);
     else return output.report(io, new UsageError(`No global flag ${flag}.`, "noclick --help"), { json: false });
   }
+  let [profile, source]: [string, ProfileSource] = activeProfile(host.env, flagged);
   if (!rest.length) return firstScreen(io, profile);
   unalias(rest);
   const json = rest.includes("--json");
@@ -178,14 +208,15 @@ export async function main(
       if (!command) continue;
       const usage = `noclick ${path.join(" ")}`;
       const { flags, args } = curatedSpecs(command);
-      const values = parse(rest.slice(n), flags, args, usage, command.one_of);
+      const values = parse(rest.slice(n), flags, args, usage, command.one_of, usageOf(command));
       if (values.help) {
-        io.out(helpText(usage, command.summary, flags, args, command.examples, command.notes));
+        io.out(commandScreen(command, spec.manifest.globals, style.OUT));
         return output.OK;
       }
       const run = curated.get(path.join(" "))!;
-      if (typeof values.profile === "string") profile = values.profile;
+      if (typeof values.profile === "string") [profile, source] = activeProfile(host.env, values.profile);
       values.profile = profile;
+      values.profile_source = source;
       if (command.auth) signIn(profile);
       const user = values.user;
       return await (typeof user === "string" ? asUser(user, () => run(values, io)) : run(values, io));
@@ -200,9 +231,10 @@ export async function main(
     if (isGroup(words)) return runHelp(io, { words });
     return unknownCommand(io, words);
   } catch (err) {
-    if (err instanceof NoClickError || err instanceof UsageError) {
-      return output.report(io, err, { json, commands: commandsFor(spec) });
+    if (err instanceof NoClickError) {
+      return output.report(io, err, { json, commands: commandsFor(spec), said: forTheTerminal(err, spec) });
     }
+    if (err instanceof UsageError) return output.report(io, err, { json, commands: commandsFor(spec) });
     if ((err as NodeJS.ErrnoException)?.code === "ENOENT") {
       return output.report(io, { type: "command_error", message: (err as Error).message }, { json });
     }

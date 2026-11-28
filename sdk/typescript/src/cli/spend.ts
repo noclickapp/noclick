@@ -5,7 +5,7 @@
 
 import { type Estimate, type EstimateRequestItem, estimate } from "../estimate.ts";
 import { OverLimit } from "./exits.ts";
-import type { Io } from "./output.ts";
+import { type Io, withRun } from "./output.ts";
 
 export function usd(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
@@ -22,10 +22,10 @@ export async function check(
   const said = `${options.what} costs about ${usd(total)} ${options.per ?? "a month"}`;
   const capped = maxUsd !== null && maxUsd !== undefined;
   if (capped && total > maxUsd) {
-    throw new OverLimit(`${said}, over --max-usd ${usd(maxUsd)}: nothing was done.`, {
+    throw withRun(new OverLimit(`${said}, over --max-usd ${usd(maxUsd)}: nothing was done.`, {
       nextStep: "Raise --max-usd, or see each line with: noclick estimate --json",
       details: { estimate_usd: total, max_usd: maxUsd },
-    });
+    }), ["noclick estimate --json"]);
   }
   io.err(`${said}${capped ? ` (under --max-usd ${usd(maxUsd)})` : ""}.`);
   return priced;

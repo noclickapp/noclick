@@ -336,7 +336,7 @@ export class Database extends ApiObject {
     if (!this._createWith) {
       throw new NotFound(`No database is named "${name}".`, {
         nextStep: "Create it with Database.create(...) or pass { createIfMissing: true }.",
-        details: { name },
+        details: { name, kind: "database" },
       });
     }
     try {

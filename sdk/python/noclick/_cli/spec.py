@@ -4,8 +4,9 @@
   summary, arguments, flags and examples. Every curated command a CLI has is in it, and nothing else
   (``tests/test_cli_spec.py`` holds Python's parser to it).
 - ``spec/operations.json``: every ``/v1`` operation, generated from the API's own description (the operations
-  ``api_describe`` serves, under the same names, plus the ones only a key reaches), each ``noclick <area> <command>``.
-  Never edited by hand: the backend's ``scripts/gen_cli_spec.py`` writes it.
+  ``api_describe`` serves, under the same names, plus the ones only a key reaches), each ``noclick <area> <command>``,
+  with the names it had before as hidden ``aliases`` and, on a path parameter naming something that has a name, where
+  its names are listed (``lookup``). Never edited by hand: the backend's ``scripts/gen_cli_spec.py`` writes it.
 """
 
 from __future__ import annotations
@@ -25,6 +26,9 @@ class Spec:
         self.manifest = manifest
         self.operations: List[Dict[str, Any]] = operations["operations"]
         self._by_command = {(op["area"], op["command"]): op for op in self.operations}
+        for op in self.operations:  # a name a command had still runs it, never a command's own name
+            for alias in op.get("aliases", ()):
+                self._by_command.setdefault((op["area"], alias), op)
         self._by_name = {op["name"]: op for op in self.operations}
         self._templates = [(op["method"], op["path"].strip("/").split("/"), op) for op in self.operations]
 
@@ -40,7 +44,12 @@ class Spec:
         return found
 
     def find(self, area: str, command: str) -> Optional[Dict[str, Any]]:
+        """An operation by its command, or a name its command had (a hidden alias)."""
         return self._by_command.get((area, command))
+
+    def hidden(self, area: str) -> List[str]:
+        """The names an area's commands had: they still run, but no list shows them."""
+        return [alias for op in self.areas().get(area, []) for alias in op.get("aliases", ())]
 
     def named(self, name: str) -> Optional[Dict[str, Any]]:
         return self._by_name.get(name)

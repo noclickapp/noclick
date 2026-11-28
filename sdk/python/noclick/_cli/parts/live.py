@@ -18,7 +18,7 @@ START_TIMEOUT_S = 300.0
 
 
 def _app(args: argparse.Namespace) -> Project:
-    return cli._app(link.app_name(getattr(args, "project", None)))
+    return cli._app(link.app_name(getattr(args, "project", None) or getattr(args, "app", None)))
 
 
 def _print_session(session: Any, as_json: bool) -> None:
@@ -43,8 +43,8 @@ def cmd_live_start(args: argparse.Namespace) -> int:
                 what=f"A session of up to {hours:g} hours", per="at most")
     status = app.live.status()
     if not status.supported:
-        raise NotAvailable(f"{app.name} can't be edited live: {status.unsupported_reason}",
-                           next_step="Deploy it with noclick deploy instead.")
+        raise out.run(NotAvailable(f"{app.name} can't be edited live: {status.unsupported_reason}",
+                                   next_step="Deploy it with noclick deploy instead."), ["noclick deploy"])
     if not status.enabled:
         app.update(live_editing=True)
         out.note(f"Turned live editing on for {app.name}.")
@@ -138,6 +138,7 @@ def register(kit: Any) -> None:
     def step(name: str, run: Any, summary: str) -> argparse.ArgumentParser:
         sub = kit.command(steps, name, run, summary, parents=[kit.as_json, kit.user])
         sub.add_argument("project", nargs="?", help="The app (default: the folder's linked one).")
+        sub.add_argument("--app", help="The app, as a flag: the same as the argument.")
         return sub
 
     _start_flags(step("start", cmd_live_start, "Start the session (what plain noclick live does) and print its link."),

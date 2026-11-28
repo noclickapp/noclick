@@ -531,7 +531,7 @@ class Database(_Object):
             raise NotFound(
                 f"No database is named {name!r}.",
                 next_step="Create it with noclick.Database.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "database"},
             )
         try:
             return await self._request("POST", "/v1/databases", json=self._create_with)

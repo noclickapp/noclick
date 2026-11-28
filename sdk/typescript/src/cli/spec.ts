@@ -17,6 +17,9 @@ export interface Param {
   choices?: (string | number)[];
   default?: unknown;
   description?: string;
+  /** Where the names of what it names are listed: its list operation, what one and several of it are called, and
+   *  the query narrowing the list to a name. */
+  lookup?: { list: string; noun: string; plural: string; query?: string };
 }
 
 export interface Op {
@@ -29,6 +32,8 @@ export interface Op {
   summary: string;
   body: "merge" | "wrap" | null;
   params: Param[];
+  /** Names its command had: they still run it, but no list shows them. */
+  aliases?: string[];
 }
 
 export interface Flag {
@@ -48,6 +53,8 @@ export interface Flag {
 
 export interface Arg {
   name: string;
+  /** What its help calls it, where that isn't its name. */
+  metavar?: string;
   optional?: boolean;
   many?: boolean;
   choices?: unknown[];
@@ -77,7 +84,23 @@ export interface Screens {
   /** `noclick resources`' kinds: each one's list route and its columns (header, field, how it's shown). */
   resources: ResourceKind[];
   /** Words that mean others: `top` as the command (`ls`), `group` under a group without one of its own. */
-  aliases: { top: Record<string, string>; group: Record<string, string> };
+  aliases: {
+    top: Record<string, string>;
+    group: Record<string, string>;
+    /** Older spellings, kept working and listed nowhere: the words, the command they now are, and what their leading
+     *  arguments become (`--app`, `=`). */
+    old: [string[], string[], string[]][];
+    valued: string[];
+  };
+  /** An error's words as the command line says them (`said.ts`). */
+  said: {
+    /** By kind: the words before the command that makes one, and the command (`{name}` its name). */
+    makes: Record<string, [string, string]>;
+    made_by: Record<string, string>;
+    kind_words: Record<string, string>;
+    unreachable: [string, string][];
+    default_api: string;
+  };
 }
 
 export interface ResourceKind {
@@ -110,6 +133,10 @@ export class Spec {
       this.#byCommand.set(`${op.area} ${op.command}`, op);
       this.#byName.set(op.name, op);
     }
+    for (const op of this.operations) {
+      // A name a command had still runs it, never a command's own name.
+      for (const alias of op.aliases ?? []) if (!this.#byCommand.has(`${op.area} ${alias}`)) this.#byCommand.set(`${op.area} ${alias}`, op);
+    }
   }
 
   get commands(): Command[] {
@@ -126,6 +153,7 @@ export class Spec {
     return found;
   }
 
+  /** An operation by its command, or a name its command had (a hidden alias). */
   find(area: string, command: string): Op | null {
     return this.#byCommand.get(`${area} ${command}`) ?? null;
   }
@@ -171,9 +199,10 @@ export class Spec {
     return null;
   }
 
-  /** Whether a curated command has the operation's name: that name runs the curated one. */
+  /** Whether a curated command has the operation's name (`domains search`), or its area's (`status`, a command of its
+   *  own): that name runs the curated one. */
   shadowed(op: Op): boolean {
-    return this.curated([op.area, op.command]) !== null;
+    return this.curated([op.area, op.command]) !== null || this.curated([op.area]) !== null;
   }
 }
 

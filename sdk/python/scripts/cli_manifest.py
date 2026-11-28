@@ -23,12 +23,14 @@ from noclick import cli  # noqa: E402
 from noclick._cli import screens, templates  # noqa: E402
 
 MANIFEST = ROOT / "noclick" / "_cli" / "spec" / "manifest.json"
-# Every command's own, said once in the manifest's ``globals`` rather than on each command.
-GLOBAL_DESTS = ("help",)
+# Every command's own (the global flags, which every command takes too), said once in the manifest's ``globals``
+# rather than on each command.
+GLOBAL_DESTS = ("help", "profile", "color")
 
 
 def _type(action: argparse.Action) -> str:
-    if isinstance(action, (argparse._StoreTrueAction, argparse._StoreFalseAction, argparse.BooleanOptionalAction)):
+    if isinstance(action, (argparse._StoreTrueAction, argparse._StoreFalseAction, argparse.BooleanOptionalAction,
+                           argparse._VersionAction)):
         return "bool"
     if isinstance(action, argparse._AppendAction):
         return "list"
@@ -62,6 +64,8 @@ def _option(action: argparse.Action) -> Dict[str, Any]:
 
 def _argument(action: argparse.Action) -> Dict[str, Any]:
     found: Dict[str, Any] = {"name": action.dest}
+    if action.metavar and not isinstance(action.metavar, tuple) and action.metavar != action.dest:
+        found["metavar"] = action.metavar.lower()  # what its help calls it (APP for app_ref)
     if action.nargs in ("?", "*"):
         found["optional"] = True
     if action.nargs in ("+", "*", argparse.REMAINDER):
@@ -116,7 +120,7 @@ def manifest(existing: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "format": 1,
         "globals": [_option(a) for a in parser._actions
-                    if a.option_strings and a.dest not in GLOBAL_DESTS and a.help != argparse.SUPPRESS],
+                    if a.option_strings and a.dest != "help" and a.help != argparse.SUPPRESS],
         "commands": commands,
         # noclick init's templates, as the Python CLI writes them (``templates.files_of`` fills in ``{name}``).
         "templates": {name: {"about": t["about"], "files": dict(t["files"])} for name, t in templates.TEMPLATES.items()},

@@ -214,7 +214,7 @@ class Memory(_Object):
             raise NotFound(
                 f"No memory is named {name!r}.",
                 next_step="Create it with noclick.Memory.create(...) or pass create_if_missing=True.",
-                details={"name": name},
+                details={"name": name, "kind": "memory"},
             )
         try:
             return await self._request("POST", "/v1/memories", json=self._create_with)

@@ -1,7 +1,7 @@
 /** Sandboxes: a disposable machine for running code, billed per second for the CPU and memory it reserves. */
 
 import { resolveClient } from "./client.ts";
-import { ApiObject, asObject, compact, listAll, listPage, parseTime, str } from "./object.ts";
+import { ApiObject, asObject, compact, listAll, listPage, num, parseTime, str } from "./object.ts";
 import type { CallOptions, JsonObject, ObjectInit, Page, PageOptions, ReadOptions } from "./object.ts";
 import { Operation, registerResult } from "./operation.ts";
 import { secretIdList } from "./secret.ts";
@@ -79,6 +79,20 @@ export interface SandboxCreateOptions extends CallOptions {
 }
 
 /** Files inside a sandbox: `await sandbox.files.write("a.py", "print(1)")`. */
+/**
+ * An interactive shell in a sandbox (`sandbox.shell()`): `url` is a websocket, opened once with `token` within a
+ * minute. Its first message is `{"type": "auth", token, cols, rows}`; then binary messages carry what you type and
+ * what it prints, a text `{"type": "resize", cols, rows}` sizes it, and it closes (code 4410) once bash exits (its
+ * last `state` frame naming `exit_code`), after `idleLimitS` with nothing typed, or when the socket closes.
+ */
+export interface CodeSandboxShell {
+  sandboxId: string;
+  url: string;
+  token: string;
+  tokenExpiresAt: Date | null;
+  idleLimitS: number;
+}
+
 export class SandboxFiles {
   private readonly sandbox: Sandbox;
 
@@ -224,6 +238,19 @@ export class Sandbox extends ApiObject {
       json: compact({ command, timeout_s: options.timeoutS }),
       timeoutMs: ((options.timeoutS ?? EXEC_DEFAULT_TIMEOUT_S) + 15) * 1000,
     }));
+  }
+
+  /**
+   * Open an interactive shell (`bash -l` in `/workspace`, in a PTY) in this running sandbox: the websocket's `url`
+   * and its single-use `token` (good for two minutes), for a browser terminal (xterm.js) or `TerminalConnection`.
+   * `noclick shell <sandbox>` opens one in your own terminal.
+   */
+  async shell(): Promise<CodeSandboxShell> {
+    const raw = asObject(await this._request("POST", `${this._path()}/shell`));
+    return {
+      sandboxId: str(raw.sandbox_id) ?? "", url: str(raw.url) ?? "", token: str(raw.token) ?? "",
+      tokenExpiresAt: parseTime(raw.token_expires_at), idleLimitS: num(raw.idle_limit_s) ?? 0,
+    };
   }
 
   /** Stop the sandbox now (billing stops with it). */

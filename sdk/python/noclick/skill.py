@@ -316,7 +316,7 @@ class Skill(_Object):
         if self._create_with is None:
             raise NotFound(f"No skill is named {name!r}.",
                            next_step="Create it with noclick.Skill.create(files) or pass create_if_missing=True "
-                                     "and files.", details={"name": name})
+                                     "and files.", details={"name": name, "kind": "skill"})
         try:
             return await self._request("POST", "/v1/skills", json=self._create_with)
         except Conflict as exc:  # created concurrently
